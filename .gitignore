@@ -1,6 +1,7 @@
 *.user
-EngineUnitTests/Temporary/*
-EngineUnitTests/packages/*
-EngineUnitTests/x64/*
-EngineUnitTests/x86/*
-EngineUnitTests/.idea/*
+*/Temporary/*
+*/packages/*
+*/x64/*
+*/x86/*
+*/.idea/*
+*/*/*/x64
