@@ -80,7 +80,7 @@ int GetFileSize(const std::string& filepath)
     std::fstream filestream(filepath.data(), fileMode);
     if (filestream.is_open())
     {
-        return filestream.tellg();
+        return static_cast<int>(filestream.tellg());
     }
     return 0;
 }
