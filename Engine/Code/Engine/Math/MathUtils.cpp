@@ -4,12 +4,10 @@
 #include "Vec2.h"
 
 
-
-float GetLength2D(Vec2 const& vec)
+float GetLength2D(const Vec2& vec)
 {
     return sqrtf(vec.x * vec.x + vec.y * vec.y);
 }
-
 
 
 void NormalizeVector2D(Vec2& vec)
@@ -22,10 +20,7 @@ void NormalizeVector2D(Vec2& vec)
 }
 
 
-
-float DotProduct2D(Vec2 const& vecA, Vec2 const& vecB)
+float DotProduct2D(const Vec2& vecA, const Vec2& vecB)
 {
     return vecA.x * vecB.x + vecA.y * vecB.y;
 }
-
-

@@ -5,37 +5,36 @@
 #include "Engine/Math/MathUtils.h"
 
 
-
 TEST(MathUtils, GetLength2D)
 {
-    Vec2 vec(1.f,0.f);
+    Vec2 vec(1.f, 0.f);
     EXPECT_FLOAT_EQ(GetLength2D(vec), 1.f);
-    
-    Vec2 vec2(0.f,-10.f);
+
+    Vec2 vec2(0.f, -10.f);
     EXPECT_FLOAT_EQ(GetLength2D(vec2), 10.f);
-    
-    Vec2 vec3(3.f,-4.f);
+
+    Vec2 vec3(3.f, -4.f);
     EXPECT_FLOAT_EQ(GetLength2D(vec3), 5.f);
 }
 
 TEST(MathUtils, NormalizeVector2D)
 {
-    Vec2 vecZero(0.f,0.f);
+    Vec2 vecZero(0.f, 0.f);
     NormalizeVector2D(vecZero);
     EXPECT_VEC2_EQf(vecZero, 0.f, 0.f);
     EXPECT_FLOAT_EQ(GetLength2D(vecZero), 0.f);
-    
-    Vec2 vec(1.f,0.f);
+
+    Vec2 vec(1.f, 0.f);
     NormalizeVector2D(vec);
     EXPECT_VEC2_EQf(vec, 1.f, 0.f);
     EXPECT_FLOAT_EQ(GetLength2D(vec), 1.f);
-    
-    Vec2 vec2(0.f,-10.f);
+
+    Vec2 vec2(0.f, -10.f);
     NormalizeVector2D(vec2);
     EXPECT_VEC2_EQf(vec2, 0.f, -1.f);
     EXPECT_FLOAT_EQ(GetLength2D(vec2), 1.f);
-    
-    Vec2 vec3(3.f,-4.f);
+
+    Vec2 vec3(3.f, -4.f);
     NormalizeVector2D(vec3);
     EXPECT_VEC2_EQf(vec3, 0.6f, -0.8f);
     EXPECT_FLOAT_EQ(GetLength2D(vec3), 1.f);
@@ -47,7 +46,7 @@ TEST(MathUtils, DotProduct2D)
     Vec2 backward(-1.f, 0.f);
     Vec2 left(0.f, 1.f);
     Vec2 right(0.f, -1.f);
-    
+
     // Same
     EXPECT_FLOAT_EQ(DotProduct2D(forward, forward), 1.f);
     EXPECT_FLOAT_EQ(DotProduct2D(left, left), 1.f);

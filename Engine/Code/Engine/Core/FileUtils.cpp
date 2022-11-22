@@ -2,33 +2,13 @@
 #include <fstream>
 
 
-
-int FileReadToBuffer(std::string const& filepath, uint8_t* bufferData, size_t bufferSize)
-{
-    int fileMode = std::ios::in | std::ios::ate | std::ios::binary;
-    std::fstream filestream(filepath.data(), fileMode);
-    if (filestream.is_open())
-    {
-        size_t fileSizeBytes = filestream.tellg(); // already at the end from std::ios::ate
-        fileSizeBytes = std::min(fileSizeBytes, bufferSize); // don't let it write more than the buffer can take
-        filestream.seekg(std::ios::beg);
-        filestream.read((char*) bufferData, static_cast<int>(fileSizeBytes));
-        filestream.close();
-        return static_cast<int>(fileSizeBytes);
-    }
-    // Error
-    return 0;
-}
-
-
-
-int FileWriteToDisk(std::string const& filepath, uint8_t const* bufferData, size_t bufferSize)
+int FileWriteToDisk(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize)
 {
     int fileMode = std::ios::out | std::ios::binary;
     std::fstream filestream(filepath.data(), fileMode);
     if (filestream.is_open())
-    { 
-        filestream.write(reinterpret_cast<char const*>(bufferData), static_cast<int>(bufferSize));
+    {
+        filestream.write(reinterpret_cast<const char*>(bufferData), static_cast<int>(bufferSize));
         filestream.close();
         return static_cast<int>(bufferSize);
     }
@@ -37,19 +17,28 @@ int FileWriteToDisk(std::string const& filepath, uint8_t const* bufferData, size
 }
 
 
-
-int FileReadToBuffer(std::string const& filepath, std::vector<uint8_t>& buffer)
+int FileWriteToDisk(const std::string& filepath, const std::vector<uint8_t>& buffer)
 {
-    std::fstream filestream;
+    return FileWriteToDisk(filepath, buffer.data(), buffer.size());
+}
+
+
+int StringWriteToDisk(const std::string& filepath, const std::string& string)
+{
+    return FileWriteToDisk(filepath, reinterpret_cast<const uint8_t*>(string.data()), string.size());
+}
+
+
+int FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bufferSize)
+{
     int fileMode = std::ios::in | std::ios::ate | std::ios::binary;
-    filestream.open(filepath.data(), fileMode);
+    std::fstream filestream(filepath.data(), fileMode);
     if (filestream.is_open())
     {
-        size_t fileSizeBytes = filestream.tellg();
+        size_t fileSizeBytes = filestream.tellg(); // already at the end from std::ios::ate
+        fileSizeBytes = std::min(fileSizeBytes, bufferSize); // don't let it write more than the buffer can take
         filestream.seekg(std::ios::beg);
-        buffer.clear();
-        buffer.resize(fileSizeBytes);
-        filestream.read((char*) buffer.data(), static_cast<int>(fileSizeBytes));
+        filestream.read((char*)bufferData, static_cast<int>(fileSizeBytes));
         filestream.close();
         return static_cast<int>(fileSizeBytes);
     }
@@ -58,43 +47,40 @@ int FileReadToBuffer(std::string const& filepath, std::vector<uint8_t>& buffer)
 }
 
 
-
-int FileWriteToDisk(std::string const& filepath, std::vector<uint8_t> const& buffer)
+int FileReadToBuffer(const std::string& filepath, std::vector<uint8_t>& buffer)
 {
-    int fileMode = std::ios::out | std::ios::binary | std::ios::trunc;
-    std::fstream filestream(filepath.data(), fileMode);
-    if (filestream.is_open())
-    { 
-        filestream.write(reinterpret_cast<char const*>(buffer.data()), static_cast<int>(buffer.size()));
-        filestream.close();
-        return static_cast<int>(buffer.size());
+    int fileSize = GetFileSize(filepath);
+    if (fileSize > 0)
+    {
+        buffer.clear();
+        buffer.resize(fileSize);
+        FileReadToBuffer(filepath, buffer.data(), fileSize);
     }
-    // Error
-    return 0;
+    return fileSize;
 }
 
 
-
-int FileReadToString(std::string const& filepath, std::string& string)
+int FileReadToString(const std::string& filepath, std::string& string)
 {
-    std::vector<uint8_t> buffer;
-    int bytesRead = FileReadToBuffer(filepath, buffer);
-    string = std::string(buffer.begin(), buffer.end());
-    return bytesRead;
+    int fileSize = GetFileSize(filepath);
+    if (fileSize > 0)
+    {
+        string.clear();
+        string.resize(fileSize);
+        auto stringDataAsBytes = reinterpret_cast<uint8_t*>(string.data());
+        FileReadToBuffer(filepath, stringDataAsBytes, fileSize);
+    }
+    return fileSize;
 }
 
 
-
-int StringWriteToDisk(std::string const& filepath, std::string const& string)
+int GetFileSize(const std::string& filepath)
 {
-    int fileMode = std::ios::out | std::ios::binary | std::ios::trunc;
+    int fileMode = std::ios::in | std::ios::ate | std::ios::binary;
     std::fstream filestream(filepath.data(), fileMode);
     if (filestream.is_open())
-    { 
-        filestream.write(string.data(), static_cast<int>(string.size()));
-        filestream.close();
-        return static_cast<int>(string.size());
+    {
+        return filestream.tellg();
     }
-    // Error
     return 0;
 }

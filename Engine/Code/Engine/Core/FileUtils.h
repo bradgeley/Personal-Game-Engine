@@ -5,19 +5,22 @@
 #include <vector>
 
 
-
 //----------------------------------------------------------------------------------------------------------------------
 // FileUtils
 //
 // Common functions for reading and writing to files
 // All functions return the number of bytes read/written
 //
-int FileReadToBuffer(std::string const& filepath, uint8_t* bufferData, size_t bufferSize);
-int FileWriteToDisk(std::string const& filepath, uint8_t const* bufferData, size_t bufferSize);
 
-int FileReadToBuffer(std::string const& filepath, std::vector<uint8_t>& buffer);
-int FileWriteToDisk(std::string const& filepath, std::vector<uint8_t> const& buffer);
+// Write files to disk
+int FileWriteToDisk(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize);
+int FileWriteToDisk(const std::string& filepath, const std::vector<uint8_t>& buffer);
+int StringWriteToDisk(const std::string& filepath, const std::string& string);
 
-int FileReadToString(std::string const& filepath, std::string& string);
-int StringWriteToDisk(std::string const& filepath, std::string const& string);
+// Read files from disk
+int FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bufferSize);
+int FileReadToBuffer(const std::string& filepath, std::vector<uint8_t>& buffer);
+int FileReadToString(const std::string& filepath, std::string& string);
 
+// Utility functions
+int GetFileSize(const std::string& filepath);

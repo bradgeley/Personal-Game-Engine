@@ -4,7 +4,6 @@
 #include "Engine/Math/Vec2.h"
 
 
-
 TEST(Vec2, Construct)
 {
     // Construction
@@ -50,7 +49,7 @@ TEST(Vec2, Subtract)
     Vec2 vec2(25.f, -7.f);
     Vec2 vec3 = vec - vec2;
     EXPECT_VEC2_EQf(vec3, -20.f, 2.f);
-    
+
     // Vec -= Vec
     vec3 -= vec;
     EXPECT_VEC2_EQf(vec3, -25.f, 7.f);
@@ -63,15 +62,15 @@ TEST(Vec2, Multiply)
     Vec2 vec2(5.f, 4.f);
     Vec2 vec3 = vec * vec2;
     EXPECT_VEC2_EQf(vec3, 10.f, -12.f);
-    
+
     // Vec *= Vec
     vec3 *= vec;
     EXPECT_VEC2_EQf(vec3, 20.f, 36.f);
-    
+
     // Vec * float
     Vec2 vec4 = vec3 * 0.5f;
     EXPECT_VEC2_EQf(vec4, 10.f, 18.f);
-    
+
     // Vec *= float
     vec3 *= -2.f;
     EXPECT_VEC2_EQf(vec3, -40.f, -72.f);
@@ -92,7 +91,7 @@ TEST(Vec2, Divide)
     // Vec / float
     Vec2 vec4 = vec2 / 2.f;
     EXPECT_VEC2_EQf(vec4, 2.5f, -1.5f);
-    
+
     // Vec /= float
     vec /= 2.f;
     EXPECT_VEC2_EQf(vec, 10.f, -40.5f);
