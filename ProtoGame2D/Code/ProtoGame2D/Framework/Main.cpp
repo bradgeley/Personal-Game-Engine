@@ -8,8 +8,12 @@
 static TCHAR szWindowClass[] = _T("DesktopApp");
 static TCHAR szTitle[] = _T("Windows Desktop Guided Tour Application");
 
+
+
 static HINSTANCE g_applicationInstance;
 static HWND g_window;
+
+
 
 LRESULT CALLBACK WndProc(_In_ HWND hWnd, _In_ UINT message, _In_ WPARAM wParam, _In_ LPARAM lParam);
 
@@ -22,7 +26,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 {
    WNDCLASSEX wcex;
 
-   wcex.cbSize = sizeof(WNDCLASSEX);
+   wcex.cbSize         = sizeof(WNDCLASSEX);
    wcex.style          = CS_HREDRAW | CS_VREDRAW;
    wcex.lpfnWndProc    = WndProc;
    wcex.cbClsExtra     = 0;
@@ -37,11 +41,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
    if (!RegisterClassEx(&wcex))
    {
-      MessageBox(NULL,
-         _T("Call to RegisterClassEx failed!"),
-         _T("Windows Desktop Guided Tour"),
-         NULL);
-
+      MessageBox(NULL, _T("Call to RegisterClassEx failed!"), _T("Windows Desktop Guided Tour"), NULL);
       return 1;
    }
 
@@ -74,11 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
    if (!g_window)
    {
-      MessageBox(NULL,
-         _T("Call to CreateWindow failed!"),
-         _T("Windows Desktop Guided Tour"),
-         NULL);
-
+      MessageBox(NULL, _T("Call to CreateWindow failed!"), _T("Windows Desktop Guided Tour"), NULL);
       return 1;
    }
 
