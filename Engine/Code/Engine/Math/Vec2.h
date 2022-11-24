@@ -2,6 +2,7 @@
 #pragma once
 
 
+
 //----------------------------------------------------------------------------------------------------------------------
 // Vec2
 //
@@ -10,14 +11,17 @@
 struct Vec2
 {
 public:
+    
     float x = 0.f;
     float y = 0.f;
 
 public:
+    
     explicit Vec2();
     explicit Vec2(float x, float y);
 
 public:
+    
     float GetLength() const;
     void Normalize();
     Vec2 GetNormalized() const;
@@ -43,6 +47,8 @@ public:
     void operator/=(float divisor);
 
 public:
+    
+    // Commonly used Vec2's
     static Vec2 ZeroVector;
     static Vec2 ZeroToOne;
 };
