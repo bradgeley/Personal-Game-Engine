@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
+#include <string>
 
 
 
@@ -11,7 +12,8 @@ extern class Window* g_window;
 //----------------------------------------------------------------------------------------------------------------------
 struct WindowConfig
 {
-    
+    std::string		m_windowTitle = "Untitled App";
+    float			m_clientAspect = 2.f;
 };
 
 
@@ -41,5 +43,7 @@ private:
 
 private:
 
-    WindowConfig const m_config;
+    WindowConfig const  m_config;
+    void*               m_windowHandle   = nullptr; // HWND
+    void*               m_displayContext = nullptr; // HDC
 };

@@ -13,6 +13,11 @@ Window* g_window = nullptr;
 
 
 
+// Forward Declaration
+LRESULT CALLBACK WindowsMessageHandlingProcedure( HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam );
+
+
+
 Window::Window(WindowConfig const& config) : m_config(config)
 {
 }
@@ -54,71 +59,51 @@ void Window::Shutdown()
 void Window::CreateMainWindow()
 {
     WNDCLASSEX wcex;
+    memset( &wcex, 0, sizeof(wcex) );
+    wcex.cbSize         = sizeof(WNDCLASSEX);
+    wcex.style          = CS_OWNDC;
+    wcex.lpfnWndProc    = WindowsMessageHandlingProcedure; // Register our Windows message-handling function
+    wcex.cbClsExtra     = 0;
+    wcex.cbWndExtra     = 0;
+    wcex.hInstance      = GetModuleHandle( NULL );
+    wcex.hIcon          = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+    wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
+    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
+    wcex.lpszMenuName   = NULL;
+    wcex.lpszClassName  = TEXT( "Simple Window Class" );
+    wcex.hIconSm        = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+    RegisterClassEx(&wcex);
 
-   wcex.cbSize         = sizeof(WNDCLASSEX);
-   wcex.style          = CS_HREDRAW | CS_VREDRAW;
-   wcex.lpfnWndProc    = WndProc;
-   wcex.cbClsExtra     = 0;
-   wcex.cbWndExtra     = 0;
-   wcex.hInstance      = hInstance;
-   wcex.hIcon          = LoadIcon(wcex.hInstance, IDI_APPLICATION);
-   wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
-   wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-   wcex.lpszMenuName   = NULL;
-   wcex.lpszClassName  = szWindowClass;
-   wcex.hIconSm        = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+    const DWORD windowStyleFlags = WS_CAPTION | WS_BORDER | WS_SYSMENU | WS_OVERLAPPED;
+    const DWORD windowStyleExFlags = WS_EX_APPWINDOW;
+ 
+    RECT desktopRect;
+    HWND desktopWindowHandle = GetDesktopWindow();
+    GetClientRect( desktopWindowHandle, &desktopRect );
+    AdjustWindowRectEx(&desktopRect, windowStyleFlags, FALSE, windowStyleFlags);
 
-   if (!RegisterClassEx(&wcex))
-   {
-      MessageBox(NULL, _T("Call to RegisterClassEx failed!"), _T("Windows Desktop Guided Tour"), NULL);
-      return 1;
-   }
+    RECT windowRect = desktopRect;
+    WCHAR windowTitle[13] = TEXT("Hello, World");
+    HWND hwnd = CreateWindowEx(
+        windowStyleExFlags,
+        wcex.lpszClassName,
+        windowTitle,
+        windowStyleFlags,
+        windowRect.left,
+        windowRect.top,
+        windowRect.right - windowRect.left,
+        windowRect.bottom - windowRect.top,
+        NULL,
+        NULL,
+        wcex.hInstance,
+        NULL );
 
-   // The parameters to CreateWindowEx explained:
-   // WS_EX_OVERLAPPEDWINDOW : An optional extended window style.
-   // szWindowClass: the name of the application
-   // szTitle: the text that appears in the title bar
-   // WS_OVERLAPPEDWINDOW: the type of window to create
-   // CW_USEDEFAULT, CW_USEDEFAULT: initial position (x, y)
-   // 500, 100: initial size (width, length)
-   // NULL: the parent of this window
-   // NULL: this application dows not have a menu bar
-   // hInstance: the first parameter from WinMain
-   // NULL: not used in this application
-   g_window = CreateWindowEx(
-      WS_EX_OVERLAPPEDWINDOW,
-      szWindowClass,
-      szTitle,
-      WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, CW_USEDEFAULT,
-      500, 100,
-      NULL,
-      NULL,
-      hInstance,
-      NULL
-   );
-
-   if (!g_window)
-   {
-      MessageBox(NULL, _T("Call to CreateWindow failed!"), _T("Windows Desktop Guided Tour"), NULL);
-      return 1;
-   }
-
-   // The parameters to ShowWindow explained:
-   // hWnd: the value returned from CreateWindow
-   // nCmdShow: the fourth parameter from WinMain
-   ShowWindow(g_window, nCmdShow);
-   UpdateWindow(g_window);
-
-   // Main message loop:
-   MSG msg;
-   while (GetMessage(&msg, NULL, 0, 0))
-   {
-      TranslateMessage(&msg);
-      DispatchMessage(&msg);
-   }
-
-   return (int) msg.wParam;
+    ShowWindow( hwnd, SW_SHOW );
+    SetForegroundWindow( hwnd );
+    SetFocus( hwnd );
+    
+    m_windowHandle = hwnd;
+    m_displayContext = GetDC( hwnd );
 }
 
 
@@ -137,4 +122,29 @@ void Window::RunMessagePump()
       TranslateMessage( &queuedMessage );
       DispatchMessage( &queuedMessage ); // This tells Windows to call our "WindowsMessageHandlingProcedure" (a.k.a. "WinProc") function
    }
+}
+
+
+
+LRESULT CALLBACK WindowsMessageHandlingProcedure( HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam )
+{
+    switch ( wmMessageCode )
+    {
+    case WM_ACTIVATE:       break;
+    case WM_CLOSE:          break;
+    case WM_MOVE:           break;
+    case WM_MOVING:         break;
+    case WM_SIZE:           break;
+    case WM_CHAR:           break;
+    case WM_KEYDOWN:        break;
+    case WM_KEYUP:          break;
+    case WM_LBUTTONDOWN:    break; // Left Mouse Button
+    case WM_LBUTTONUP:      break; // Left Mouse Button
+    case WM_RBUTTONDOWN:    break; // Right Mouse Button
+    case WM_RBUTTONUP:      break; // Right Mouse Button
+    case WM_MBUTTONDOWN:    break; // Other Mouse Buttons
+    case WM_MBUTTONUP:      break; // Other Mouse Buttons
+    case WM_MOUSEWHEEL:     break; // Mouse Wheel
+    }
+    return DefWindowProc( windowHandle, wmMessageCode, wParam, lParam );
 }
