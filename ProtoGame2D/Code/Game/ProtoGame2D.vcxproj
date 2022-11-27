@@ -266,11 +266,11 @@
       <SDLCheck>true</SDLCheck>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="WindowsApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
     <ClInclude Include="GameCommon.h" />
-    <ClInclude Include="WindowsApplication.cpp" />
     <ClInclude Include="WindowsApplication.h" />
   </ItemGroup>
   <ItemGroup>

@@ -23,16 +23,16 @@
         <Folder Include="ThirdParty" />
     </ItemGroup>
     <ItemGroup>
+      <ClCompile Include="Core\Engine.cpp" />
+      <ClCompile Include="Core\EngineSubsystem.cpp" />
       <ClCompile Include="Core\FileUtils.cpp" />
       <ClCompile Include="Math\MathUtils.cpp" />
       <ClCompile Include="Math\Vec2.cpp" />
       <ClCompile Include="Renderer\Window.cpp" />
     </ItemGroup>
     <ItemGroup>
-      <ClInclude Include="Core\Engine.cpp" />
       <ClInclude Include="Core\Engine.h" />
       <ClInclude Include="Core\EngineCommon.h" />
-      <ClInclude Include="Core\EngineSubsystem.cpp" />
       <ClInclude Include="Core\EngineSubsystem.h" />
       <ClInclude Include="Core\FileUtils.h" />
       <ClInclude Include="DataStructures\Singleton.cpp" />

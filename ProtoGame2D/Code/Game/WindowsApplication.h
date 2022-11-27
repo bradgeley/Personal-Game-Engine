@@ -4,6 +4,10 @@
 
 
 
+extern class WindowsApplication* g_theApp;
+
+
+
 class Engine;
 //class Game;
 
@@ -15,7 +19,7 @@ class Engine;
 // The layer between Windows and the game. Contains an Engine, an ECS which can be configured
 // based on the game, and a Game, which houses the ECS for the game.
 //
-class WindowsApplication : public Singleton<WindowsApplication>
+class WindowsApplication
 {
 public:
 

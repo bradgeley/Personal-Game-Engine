@@ -1,15 +1,26 @@
 // Bradley Christensen - 2022
-#include "Game/Framework/WindowsApplication.h"
+#include "Game/WindowsApplication.h"
 #include "Engine/Core/Engine.h"
 #include "Engine/Renderer/Window.h"
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+// THE APP
+//
+WindowsApplication* g_theApp = nullptr;
+
+
+
 void WindowsApplication::Startup()
 {
+    m_engine = new Engine();
+    
     WindowConfig windowConfig;
     g_window = new Window(windowConfig);
     //g_engine->RegisterSubsystem(g_window);
+
+    m_engine->Startup();
 }
 
 
@@ -17,7 +28,7 @@ void WindowsApplication::Startup()
 void WindowsApplication::Run()
 {
     float deltaSeconds = 0.f; // todo: calculate
-    while (!m_isQuitting)
+    //while (!m_isQuitting)
     {
         m_engine->BeginFrame();
         m_engine->Update(deltaSeconds);
@@ -34,6 +45,7 @@ void WindowsApplication::Shutdown()
 {
     //m_game->Shutdown();
     m_engine->Shutdown();
+    delete m_engine;
 }
 
 

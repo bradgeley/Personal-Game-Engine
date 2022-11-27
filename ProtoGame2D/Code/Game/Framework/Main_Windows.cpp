@@ -1,5 +1,5 @@
 // Bradley Christensen - 2022
-#include "WindowsApplication.h"
+#include "Game/WindowsApplication.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -16,11 +16,12 @@
 //
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-   WindowsApplication& app = WindowsApplication::Get();
-   app.Startup();
-   app.Run();
-   app.Shutdown();
-   WindowsApplication::Delete();
+   g_theApp = new WindowsApplication();
+   g_theApp->Startup();
+   g_theApp->Run();
+   g_theApp->Shutdown();
+   delete g_theApp;
+   g_theApp = nullptr;
    
    return 0;
 }
