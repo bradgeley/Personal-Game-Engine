@@ -3,7 +3,7 @@
 #include "Engine/Core/FileUtils.h"
 
 
-static std::string filePath = "../Temporary/TestFileUtilsBasicReadWrite.txt";
+static std::string filePath = "../../Temporary/TestFileUtilsBasicReadWrite.txt";
 static std::string fileContents =
     "Hello, SoBali Sai\r"
     "This is file writing to Disk test\r"

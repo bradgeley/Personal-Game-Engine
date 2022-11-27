@@ -4,9 +4,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// Engine Common
+// Job
 //
-// Common macros and functions for use in the engine
+// A unit of work, executed on an arbitrary thread
 //
-
-#define UNUSED(x) (void) x

@@ -33,7 +33,7 @@ void Window::Startup()
 
 void Window::BeginFrame()
 {
-    
+    RunMessagePump();
 }
 
 void Window::Update(float deltaSeconds)
@@ -131,7 +131,11 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure( HWND windowHandle, UINT wmMess
     switch ( wmMessageCode )
     {
     case WM_ACTIVATE:       break;
-    case WM_CLOSE:          break;
+    case WM_CLOSE:
+        {
+            g_window->m_isQuitting = true;
+            break;
+        }
     case WM_MOVE:           break;
     case WM_MOVING:         break;
     case WM_SIZE:           break;

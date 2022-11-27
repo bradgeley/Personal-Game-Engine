@@ -18,7 +18,7 @@ void WindowsApplication::Startup()
     
     WindowConfig windowConfig;
     g_window = new Window(windowConfig);
-    //g_engine->RegisterSubsystem(g_window);
+    m_engine->RegisterSubsystem(g_window);
 
     m_engine->Startup();
 }
@@ -28,7 +28,7 @@ void WindowsApplication::Startup()
 void WindowsApplication::Run()
 {
     float deltaSeconds = 0.f; // todo: calculate
-    //while (!m_isQuitting)
+    while (!IsQuitting())
     {
         m_engine->BeginFrame();
         m_engine->Update(deltaSeconds);
@@ -46,17 +46,19 @@ void WindowsApplication::Shutdown()
     //m_game->Shutdown();
     m_engine->Shutdown();
     delete m_engine;
+    m_engine = nullptr;
 }
 
 
 
 void WindowsApplication::Quit()
 {
-    m_isQuitting = true;
+    g_window->m_isQuitting = true;
 }
+
 
 
 bool WindowsApplication::IsQuitting() const
 {
-    return m_isQuitting;
+    return g_window->m_isQuitting;
 }

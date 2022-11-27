@@ -35,6 +35,10 @@ public:
     virtual void Render();
     virtual void EndFrame();
     virtual void Shutdown();
+    
+    // todo: move to event system
+    bool m_isQuitting = false;
+    //
 
 private:
 
@@ -42,7 +46,7 @@ private:
     void RunMessagePump();
 
 private:
-
+    
     WindowConfig const  m_config;
     void*               m_windowHandle   = nullptr; // HWND
     void*               m_displayContext = nullptr; // HDC

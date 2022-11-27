@@ -32,7 +32,9 @@ public:
     
 private:
 
-    bool m_isQuitting = false;
+    // todo: move here
+    //bool m_isQuitting = false;
+    //
 
     Engine* m_engine = nullptr;
     //Game* m_game = nullptr;
