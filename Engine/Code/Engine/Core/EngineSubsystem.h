@@ -16,14 +16,14 @@ public:
     
     virtual void Startup()                      {}
     virtual void BeginFrame()                   {}
-    virtual void Update(float deltaSeconds)     {}
+    virtual void Update([[maybe_unused]] float deltaSeconds)     {}
     virtual void Render()                       {}
     virtual void EndFrame()                     {}
     virtual void Shutdown()                     {}
 
     bool IsEnabled() const;
     void SetEnabled(bool isEnabled);
-    virtual void OnSetEnabled(bool isEnabled)   {}
+    virtual void OnSetEnabled([[maybe_unused]] bool isEnabled)   {}
 
 private:
 

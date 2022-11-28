@@ -31,10 +31,6 @@ public:
     
     virtual void Startup();
     virtual void BeginFrame();
-    virtual void Update(float deltaSeconds);
-    virtual void Render();
-    virtual void EndFrame();
-    virtual void Shutdown();
     
     // todo: move to event system
     bool m_isQuitting = false;

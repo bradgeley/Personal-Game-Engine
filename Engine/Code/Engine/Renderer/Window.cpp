@@ -36,25 +36,7 @@ void Window::BeginFrame()
     RunMessagePump();
 }
 
-void Window::Update(float deltaSeconds)
-{
-    
-}
 
-void Window::Render()
-{
-    
-}
-
-void Window::EndFrame()
-{
-    
-}
-
-void Window::Shutdown()
-{
-    
-}
 
 void Window::CreateMainWindow()
 {

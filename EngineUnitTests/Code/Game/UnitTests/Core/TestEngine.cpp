@@ -10,5 +10,6 @@ TEST(Engine, CreateDestroy)
     Engine* engine = new Engine();
     EXPECT_TRUE(engine != nullptr);
     delete engine;
+    engine = nullptr;
     EXPECT_TRUE(engine == nullptr);
 }

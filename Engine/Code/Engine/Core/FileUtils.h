@@ -13,9 +13,9 @@
 //
 
 // Write files to disk
-int FileWriteToDisk(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize);
-int FileWriteToDisk(const std::string& filepath, const std::vector<uint8_t>& buffer);
-int StringWriteToDisk(const std::string& filepath, const std::string& string);
+int FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize);
+int FileWriteFromBuffer(const std::string& filepath, const std::vector<uint8_t>& buffer);
+int FileWriteFromString(const std::string& filepath, const std::string& string);
 
 // Read files from disk
 int FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bufferSize);

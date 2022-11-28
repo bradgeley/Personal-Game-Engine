@@ -1,8 +1,9 @@
-﻿#include "FileUtils.h"
+﻿// Bradley Christensen - 2022
+#include "FileUtils.h"
 #include <fstream>
 
 
-int FileWriteToDisk(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize)
+int FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize)
 {
     int fileMode = std::ios::out | std::ios::binary;
     std::fstream filestream(filepath.data(), fileMode);
@@ -17,15 +18,15 @@ int FileWriteToDisk(const std::string& filepath, const uint8_t* bufferData, size
 }
 
 
-int FileWriteToDisk(const std::string& filepath, const std::vector<uint8_t>& buffer)
+int FileWriteFromBuffer(const std::string& filepath, const std::vector<uint8_t>& buffer)
 {
-    return FileWriteToDisk(filepath, buffer.data(), buffer.size());
+    return FileWriteFromBuffer(filepath, buffer.data(), buffer.size());
 }
 
 
-int StringWriteToDisk(const std::string& filepath, const std::string& string)
+int FileWriteFromString(const std::string& filepath, const std::string& string)
 {
-    return FileWriteToDisk(filepath, reinterpret_cast<const uint8_t*>(string.data()), string.size());
+    return FileWriteFromBuffer(filepath, reinterpret_cast<const uint8_t*>(string.data()), string.size());
 }
 
 

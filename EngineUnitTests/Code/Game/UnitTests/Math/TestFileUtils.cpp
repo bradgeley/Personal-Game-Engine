@@ -14,7 +14,7 @@ static std::string fileContents =
 TEST(FileUtils, StringReadWrite)
 {
     // Create or write the file
-    StringWriteToDisk(filePath, fileContents);
+    FileWriteFromString(filePath, fileContents);
 
     // Read the file
     std::string readFromDisk;
@@ -29,7 +29,7 @@ TEST(FileUtils, ByteVectorReadWrite)
 {
     // Create or write the file
     std::vector<uint8_t> buffer(fileContents.begin(), fileContents.end());
-    FileWriteToDisk(filePath, buffer);
+    FileWriteFromBuffer(filePath, buffer);
 
     // Read the file
     std::vector<uint8_t> readFromDisk;
