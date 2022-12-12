@@ -1,20 +1,15 @@
 ﻿// Bradley Christensen - 2022
 #pragma once
-#include <condition_variable>
+#include "JobID.h"
 #include <cstdint>
-
-
-
-typedef uint64_t JobID;
 
 
 
 enum class JobStatus : uint8_t
 {
-    Invalid,
-    WaitingToStart,
-    InProgress,
-    Complete,
+    Null, 
+    Posted,
+    Claimed,
 };
 
 
@@ -24,17 +19,23 @@ enum class JobStatus : uint8_t
 //
 // A unit of work, executed on an arbitrary thread
 //
-struct Job
+class Job
 {
-    Job();
+public:
+    
     virtual ~Job() = default;
+    
     virtual void Execute() {}
 
-    JobID const m_id;
-    JobStatus m_status              = JobStatus::Invalid;
-    uint64_t m_frameNumber          = 0;
-    uint64_t m_readDependencies     = 0;
-    uint64_t m_writeDependencies    = 0;
+    bool IsValid() const;
+    uint32_t GetIndex() const;
+    uint32_t GetUniqueID() const;
 
-    std::condition_variable m_condVar;
+public:
+    
+    JobID m_id                   = JobID::Invalid;
+    
+    uint64_t m_frameNumber       = 0;
+    uint64_t m_readDependencies  = 0;
+    uint64_t m_writeDependencies = 0;
 };

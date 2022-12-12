@@ -4,7 +4,7 @@
 
 
 
-struct Job;
+class Job;
 
 
 

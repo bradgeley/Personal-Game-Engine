@@ -68,7 +68,7 @@ template <typename T>
 std::optional<T> ThreadSafeQueue<T>::Pop()
 {
     std::optional<T> result = std::nullopt;
-    std::unique_lock<std::mutex> uniqueLock( m_lock );
+    std::unique_lock uniqueLock( m_lock );
     while ( std::queue<T>::empty() && !m_isQuitting )
     {
         m_condVar.wait( uniqueLock );

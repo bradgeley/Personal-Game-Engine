@@ -33,7 +33,8 @@ struct SimpleRecursiveJob : public Job
     std::atomic<int>& numToIncrement;
     void Execute() override
     {
-        g_theJobSystem->QueueJob(new IncIntJob(numToIncrement));
+        JobID job = g_theJobSystem->PostJob(new IncIntJob(numToIncrement));
+        g_theJobSystem->WaitForJob(job);
     }
 };
 
@@ -43,15 +44,16 @@ struct SimpleRecursiveJob : public Job
 TEST(JobSystem, JobID)
 {
     JobSystemConfig config;
-    config.m_threadCount = 100;
+    //config.m_threadCount = 100;
     g_theJobSystem = new JobSystem(config);
     g_theJobSystem->Startup();
 
     std::atomic testInt = 0;
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < 100000; ++i)
     {
         IncIntJob* newJob = new IncIntJob(testInt);
-        EXPECT_EQ((int) newJob->m_id, i);
+        JobID id = g_theJobSystem->PostJob(newJob);
+        EXPECT_EQ((int) id.m_uniqueID, i);
     }
     
     g_theJobSystem->Shutdown();
@@ -71,7 +73,7 @@ TEST(JobSystem, SimpleParallel)
     std::atomic testInt = 0;
     for (int i = 0; i < 100; ++i)
     {
-        g_theJobSystem->QueueJob(new IncIntJob(testInt));
+        g_theJobSystem->PostJob(new IncIntJob(testInt));
     }
     g_theJobSystem->WaitForAllJobs();
 
@@ -95,7 +97,7 @@ TEST(JobSystem, SimpleRecursive)
     std::atomic testInt = 0;
     for (int i = 0; i < 100; ++i)
     {
-        g_theJobSystem->QueueJob(new SimpleRecursiveJob(testInt));
+        g_theJobSystem->PostJob(new SimpleRecursiveJob(testInt));
     }
     g_theJobSystem->WaitForAllJobs();
 

@@ -1,15 +1,15 @@
 ﻿// Bradley Christensen - 2022
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
-#include "Engine/DataStructures/ThreadSafeQueue.h"
 #include "Job.h"
-#include <thread>
 #include <vector>
+#include <mutex>
 #include <atomic>
 
 
 
 struct JobWorker;
+class Job;
 
 
 
@@ -31,38 +31,55 @@ struct JobSystemConfig
 //
 class JobSystem : public EngineSubsystem
 {
-    friend struct Job;
+    friend class Job;
     
 public:
     
     JobSystem(JobSystemConfig const& config);
-    
-    void QueueJob(Job* job);
-    void WaitForAllJobs();
+    virtual ~JobSystem() override = default;
     
     virtual void Startup() override;
     virtual void Shutdown() override;
+    
+    JobID const PostJob(Job* job);
+    void WaitForJob(JobID jobID);
+    void WaitForAllJobs();
 
     JobSystemConfig const m_config;
 
 protected:
 
-    static JobID GetNextJobID();
     void WorkerLoop(JobWorker* worker);
-    Job* GetNextJob();
+    Job* ClaimNextJob();
 
 protected:
     
+    static uint32_t GetNextJobUniqueID();
+    
+protected:
+
+    // Master switch to halt all jobs
     std::atomic<bool>       m_isRunning = true;
 
     // Worker Threads
     std::vector<JobWorker*> m_workers;
 
+    // Job System lock
+    std::mutex              m_jobSystemMutex;
+
+    // Job Statuses
+    std::vector<JobStatus>  m_jobStatuses;
+
     // Queued Jobs
-    std::mutex              m_jobQueueMutex;
-    std::condition_variable m_jobCondVar;
     std::vector<Job*>       m_jobQueue;
+    int                     m_numJobsReadyToStart = 0;
+    
+    // Cond var that is notified when jobs are posted
+    std::condition_variable m_jobPostedCondVar;
+
+    // Cond var that is notified when jobs are complete
+    std::condition_variable m_jobCompleteCondVar;
 
     // Task ID Tracker
-    std::atomic<int>        m_nextJobID = 0;
+    std::atomic<uint32_t>   m_nextJobID = 0;
 };
