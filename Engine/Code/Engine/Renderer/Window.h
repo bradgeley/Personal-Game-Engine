@@ -3,6 +3,7 @@
 #include "Engine/Core/EngineSubsystem.h"
 #include <string>
 
+#include "Engine/Math/IntVec2.h"
 
 
 extern class Window* g_window;
@@ -29,8 +30,8 @@ public:
 
     Window(WindowConfig const& config);
     
-    virtual void Startup();
-    virtual void BeginFrame();
+    virtual void Startup() override;
+    virtual void BeginFrame() override;
     
     // todo: move to event system
     bool m_isQuitting = false;
@@ -44,6 +45,7 @@ private:
 private:
     
     WindowConfig const  m_config;
+    IntVec2             m_dimensiions;
     void*               m_windowHandle   = nullptr; // HWND
     void*               m_displayContext = nullptr; // HDC
 };

@@ -41,7 +41,7 @@ public:
     virtual void Startup() override;
     virtual void Shutdown() override;
     
-    JobID const PostJob(Job* job);
+    JobID PostJob(Job* job);
     void WaitForJob(JobID jobID);
     void WaitForAllJobs();
 

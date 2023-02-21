@@ -16,4 +16,4 @@ class Job;
 struct JobGraph
 {
     std::vector<Job*> m_jobs;
-};
+}; 

@@ -44,6 +44,8 @@ void WindowsApplication::Run()
 void WindowsApplication::Shutdown()
 {
     //m_game->Shutdown();
+    //delete m_game;
+    //m_game = nullptr;
     m_engine->Shutdown();
     delete m_engine;
     m_engine = nullptr;

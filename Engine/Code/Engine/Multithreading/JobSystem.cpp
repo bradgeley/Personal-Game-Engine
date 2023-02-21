@@ -74,7 +74,7 @@ void JobSystem::Shutdown()
 
 
 
-JobID const JobSystem::PostJob(Job* job)
+JobID JobSystem::PostJob(Job* job)
 {
     if (!job || !m_isRunning)
     {
