@@ -25,6 +25,7 @@
     <ItemGroup>
       <ClCompile Include="Core\Engine.cpp" />
       <ClCompile Include="Core\EngineSubsystem.cpp" />
+      <ClCompile Include="Core\ErrorUtils.cpp" />
       <ClCompile Include="Core\FileUtils.cpp" />
       <ClCompile Include="Core\StringUtils.cpp">
         <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -179,12 +180,15 @@
       <ClCompile Include="Multithreading\JobID.cpp" />
       <ClCompile Include="Multithreading\JobSystem.cpp" />
       <ClCompile Include="Multithreading\JobWorker.cpp" />
+      <ClCompile Include="Renderer\Renderer.cpp" />
+      <ClCompile Include="Renderer\Texture.cpp" />
       <ClCompile Include="Renderer\Window.cpp" />
     </ItemGroup>
     <ItemGroup>
       <ClInclude Include="Core\Engine.h" />
       <ClInclude Include="Core\EngineCommon.h" />
       <ClInclude Include="Core\EngineSubsystem.h" />
+      <ClInclude Include="Core\ErrorUtils.h" />
       <ClInclude Include="Core\FileUtils.h" />
       <ClInclude Include="Core\StringUtils.h" />
       <ClInclude Include="DataStructures\ThreadSafeQueue.cpp" />
@@ -197,6 +201,9 @@
       <ClInclude Include="Multithreading\JobID.h" />
       <ClInclude Include="Multithreading\JobSystem.h" />
       <ClInclude Include="Multithreading\JobWorker.h" />
+      <ClInclude Include="Renderer\Renderer.h" />
+      <ClInclude Include="Renderer\RendererInternal.h" />
+      <ClInclude Include="Renderer\Texture.h" />
       <ClInclude Include="Renderer\Window.h" />
     </ItemGroup>
     <PropertyGroup Label="Globals">

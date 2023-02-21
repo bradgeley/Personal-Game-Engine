@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022
 #include "Game/WindowsApplication.h"
 #include "Engine/Core/Engine.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Window.h"
 
 
@@ -17,9 +18,16 @@ void WindowsApplication::Startup()
     m_engine = new Engine();
     
     WindowConfig windowConfig;
+    windowConfig.m_windowTitle = "Protogame";
+    windowConfig.m_clientAspect = 1.f;
+    windowConfig.m_windowScale = 0.5;
     g_window = new Window(windowConfig);
     m_engine->RegisterSubsystem(g_window);
 
+    RendererConfig rendererConfig;
+    g_renderer = new Renderer(rendererConfig);
+    m_engine->RegisterSubsystem(g_renderer);
+    
     m_engine->Startup();
 }
 

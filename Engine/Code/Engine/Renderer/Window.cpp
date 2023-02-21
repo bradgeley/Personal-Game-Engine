@@ -38,6 +38,34 @@ void Window::BeginFrame()
 
 
 
+void* Window::GetHWND() const
+{
+    return m_windowHandle;
+}
+
+
+
+int Window::GetWidth() const
+{
+    return m_dimensiions.x;
+}
+
+
+
+int Window::GetHeight() const
+{
+    return m_dimensiions.y;
+}
+
+
+
+IntVec2 const& Window::GetDimensions() const
+{
+    return m_dimensiions;
+}
+
+
+
 void Window::CreateMainWindow()
 {
     WNDCLASSEX wcex;
@@ -66,8 +94,8 @@ void Window::CreateMainWindow()
     float desktopHeight = (float) (desktopRect.bottom - desktopRect.top);
     float desktopAspect = desktopWidth / desktopHeight;
 
-    float clientHeight = desktopHeight;
-    float clientWidth = desktopWidth;
+    float clientHeight = desktopHeight * m_config.m_windowScale;
+    float clientWidth = desktopWidth * m_config.m_windowScale;
     if (m_config.m_clientAspect > desktopAspect)
     {
         clientHeight = clientWidth / m_config.m_clientAspect;

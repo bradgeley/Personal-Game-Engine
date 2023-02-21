@@ -1,9 +1,9 @@
 ﻿// Bradley Christensen - 2022
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
+#include "Engine/Math/IntVec2.h"
 #include <string>
 
-#include "Engine/Math/IntVec2.h"
 
 
 extern class Window* g_window;
@@ -15,6 +15,7 @@ struct WindowConfig
 {
     std::string		m_windowTitle = "Untitled App";
     float			m_clientAspect = 2.f;
+    float           m_windowScale = 1.f;
 };
 
 
@@ -32,6 +33,11 @@ public:
     
     virtual void Startup() override;
     virtual void BeginFrame() override;
+
+    void* GetHWND() const;
+    int GetWidth() const;
+    int GetHeight() const;
+    IntVec2 const& GetDimensions() const;
     
     // todo: move to event system
     bool m_isQuitting = false;
