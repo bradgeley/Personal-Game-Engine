@@ -4,6 +4,8 @@
 
 
 
+class Shader;
+class Camera;
 class Texture;
 struct IDXGISwapChain;
 struct ID3D11Device;
@@ -53,6 +55,9 @@ public:
     virtual void Startup() override;
     virtual void BeginFrame() override;
     
+    void BeginCamera(Camera const& camera);
+    void EndCamera(Camera const& camera);
+    
     void BindRenderTarget( Texture* backbuffer );
     void SetBlendMode( BlendMode blendMode );
 
@@ -64,6 +69,7 @@ public:
 private:
 
     void CreateRenderContext();
+    void CreateDefaultShader();
     void DestroyRenderContext();
     void CreateBlendStates();
     void DestroyBlendStates();
@@ -72,6 +78,7 @@ private:
 
     RendererConfig const m_config;
 
+    Shader* m_defaultShader = nullptr;
     Texture* m_backbufferTexture = nullptr;
     
     // D3D11 Things

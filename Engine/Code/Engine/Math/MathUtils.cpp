@@ -2,6 +2,7 @@
 #include "MathUtils.h"
 #include "cmath"
 #include "Vec2.h"
+#include "Vec3.h"
 
 
 float GetLength2D(const Vec2& vec)
@@ -23,4 +24,16 @@ void NormalizeVector2D(Vec2& vec)
 float DotProduct2D(const Vec2& vecA, const Vec2& vecB)
 {
     return vecA.x * vecB.x + vecA.y * vecB.y;
+}
+
+
+float GetLength3D(const Vec3& vec) 
+{
+    return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}
+
+
+void NormalizeVector3D(Vec2& vec)
+{
+    
 }

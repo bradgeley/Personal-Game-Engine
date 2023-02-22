@@ -1,6 +1,9 @@
 ﻿// Bradley Christensen - 2022
 #include "Renderer.h"
+
+#include "DefaultShaderSource.h"
 #include "RendererInternal.h"
+#include "Shader.h"
 #include "Texture.h"
 #include "Window.h"
 #include "Engine/Core/ErrorUtils.h"
@@ -24,7 +27,7 @@ Renderer::Renderer(RendererConfig const& config) : m_config(config)
 void Renderer::Startup()
 {
 	CreateRenderContext();
-	//CreateDefaultShader();
+	CreateDefaultShader();
 	CreateBlendStates();
 }
 
@@ -33,6 +36,20 @@ void Renderer::Startup()
 void Renderer::BeginFrame()
 {
     
+}
+
+
+
+void Renderer::BeginCamera(Camera const& camera)
+{
+	
+}
+
+
+
+void Renderer::EndCamera(Camera const& camera)
+{
+	
 }
 
 
@@ -116,6 +133,16 @@ void Renderer::CreateRenderContext()
 
 
 
+void Renderer::CreateDefaultShader()
+{
+	ShaderConfig defaultShaderConfig;
+	defaultShaderConfig.m_name = "DefaultShader";
+	m_defaultShader = new Shader(defaultShaderConfig);
+	m_defaultShader->CreateFromSource(s_defaultShaderSource);
+}
+
+
+
 void Renderer::DestroyRenderContext()
 {
 	m_deviceContext->ClearState();
@@ -141,10 +168,6 @@ void Renderer::CreateBlendStates()
 	m_blendStateByMode[(int) BlendMode::Alpha] = CreateBlendState( D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD );
 	m_blendStateByMode[(int) BlendMode::Additive] = CreateBlendState( D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD );
 	
-	ASSERT_OR_DIE(m_blendStateByMode[(int) BlendMode::Opaque] != nullptr, "BlendMode::Opaque Failed to create.")
-	ASSERT_OR_DIE(m_blendStateByMode[(int) BlendMode::Alpha] != nullptr, "BlendMode::Alpha Failed to create.")
-	ASSERT_OR_DIE(m_blendStateByMode[(int) BlendMode::Additive] != nullptr, "BlendMode::Additive Failed to create.")
-	
 	// Default Blend Mode, move to separate default settings function?
 	SetBlendMode( BlendMode::Alpha );
 }
@@ -168,10 +191,13 @@ ID3D11BlendState* Renderer::CreateBlendState(::D3D11_BLEND srcFactor, ::D3D11_BL
 	blendDesc.RenderTarget[0].BlendOpAlpha = op;
 
 	ID3D11BlendState* blendState = nullptr;
-	m_device->CreateBlendState(
+	HRESULT result = m_device->CreateBlendState(
 		&blendDesc,
 		&blendState
 	);
+
+	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create blend state");
+	
 	return blendState;
 }
 

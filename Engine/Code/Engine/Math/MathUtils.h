@@ -10,6 +10,7 @@
 
 
 struct Vec2;
+struct Vec3;
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -18,3 +19,10 @@ struct Vec2;
 float GetLength2D(const Vec2& vec);
 void NormalizeVector2D(Vec2& vec);
 float DotProduct2D(const Vec2& vecA, const Vec2& vecB);
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 3D Vector
+//
+float GetLength3D(const Vec3& vec);
+void NormalizeVector3D(Vec3& vec);
