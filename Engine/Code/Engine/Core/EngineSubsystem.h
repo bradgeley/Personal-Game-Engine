@@ -17,7 +17,7 @@ public:
     virtual void Startup()                      {}
     virtual void BeginFrame()                   {}
     virtual void   Update([[maybe_unused]] float deltaSeconds)     {}
-    virtual void Render()                       {}
+    virtual void Render() const                 {}
     virtual void EndFrame()                     {}
     virtual void Shutdown()                     {}
 

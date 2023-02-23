@@ -32,6 +32,7 @@ public:
 	Shader(Shader const& copy) = delete;
     ~Shader();
 
+    ID3D11InputLayout* CreateOrGetInputLayout();
     bool CreateFromSource(std::string const& sourceCode);
 	void ReleaseResources();
 

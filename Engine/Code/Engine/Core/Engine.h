@@ -30,7 +30,7 @@ public:
     void Startup();
     void BeginFrame();
     void Update(float deltaSeconds);
-    void Render();
+    void Render() const;
     void EndFrame();
     void Shutdown();
 

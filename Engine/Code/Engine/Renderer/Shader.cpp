@@ -21,6 +21,17 @@ Shader::~Shader()
 
 
 
+ID3D11InputLayout* Shader::CreateOrGetInputLayout()
+{
+	if (m_inputLayout)
+	{
+		return m_inputLayout;
+	}
+	return CreateInputLayoutFor_Vertex_PCU();
+}
+
+
+
 bool Shader::CreateFromSource(std::string const& sourceCode)
 {
 	ASSERT_OR_DIE(!sourceCode.empty(), "Tried to create shader from empty source code")

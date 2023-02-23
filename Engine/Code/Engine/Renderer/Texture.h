@@ -16,12 +16,14 @@ class Texture
 
     void WatchInternal(ID3D11Texture2D* handle);
     void ReleaseResources();
+
+    static Texture*	CreateDepthBuffer(IntVec2 const& texelSize);
     
 protected:
     
-    ID3D11DepthStencilView*		GetOrCreateDepthStencilView();
-    ID3D11RenderTargetView*		GetOrCreateRenderTargetView();
-    ID3D11ShaderResourceView*	GetOrCreateShaderResourceView();
+    ID3D11DepthStencilView*		CreateOrGetDepthStencilView();
+    ID3D11RenderTargetView*		CreateOrGetRenderTargetView();
+    ID3D11ShaderResourceView*	CreateOrGetShaderResourceView();
 
 protected:
 

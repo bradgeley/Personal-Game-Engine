@@ -3,6 +3,7 @@
 #include "Engine/Core/Engine.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Window.h"
+#include "Game/Game.h"
 
 
 
@@ -29,6 +30,9 @@ void WindowsApplication::Startup()
     m_engine->RegisterSubsystem(g_renderer);
     
     m_engine->Startup();
+
+    m_game = new Game();
+    m_game->Startup();
 }
 
 
@@ -40,8 +44,8 @@ void WindowsApplication::Run()
     {
         m_engine->BeginFrame();
         m_engine->Update(deltaSeconds);
-        // m_game->Update(deltaSeconds);
-        // m_game->Render();
+        m_game->Update(deltaSeconds);
+        m_game->Render();
         m_engine->Render();
         m_engine->EndFrame();
     }
@@ -51,9 +55,10 @@ void WindowsApplication::Run()
 
 void WindowsApplication::Shutdown()
 {
-    //m_game->Shutdown();
-    //delete m_game;
-    //m_game = nullptr;
+    m_game->Shutdown();
+    delete m_game;
+    m_game = nullptr;
+    
     m_engine->Shutdown();
     delete m_engine;
     m_engine = nullptr;

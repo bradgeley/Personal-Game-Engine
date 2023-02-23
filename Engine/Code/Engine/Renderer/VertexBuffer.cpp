@@ -9,6 +9,9 @@
 
 void VertexBuffer::Initialize(int numExpectedVerts)
 {
+    // Release for reinitialization if already initialized
+    DX_SAFE_RELEASE(m_handle)
+    
     ID3D11Device* device = g_renderer->GetDevice();
     uint32_t byteWidth = numExpectedVerts * GetStride();
     
@@ -22,16 +25,16 @@ void VertexBuffer::Initialize(int numExpectedVerts)
 
     HRESULT result = device->CreateBuffer(&desc, nullptr, &m_handle);
     
-    ASSERT_OR_DIE( SUCCEEDED( result ), "Failed to create vertex buffer")
+    ASSERT_OR_DIE(SUCCEEDED( result ), "Failed to create gpu vertex buffer")
+
+    m_gpuBufferByteSize = (size_t) byteWidth;
 }
 
 
 
 void VertexBuffer::AddVerts(std::vector<Vertex_PCU> const& verts)
 {
-    m_verts.resize(m_verts.size() + verts.size());
-    Vertex_PCU* memLocToCopy = m_verts.data() + m_verts.size();
-    memcpy(memLocToCopy, verts.data(), verts.size());
+    m_verts.insert(m_verts.end(), verts.begin(), verts.end());
 }
 
 
@@ -46,4 +49,43 @@ int VertexBuffer::GetStride() const
 int VertexBuffer::GetNumVerts() const
 {
     return (int) m_verts.size();
+}
+
+
+
+void VertexBuffer::UpdateGPUBuffer()
+{
+    if (m_verts.empty())
+    {
+        if (m_handle)
+        {
+            DX_SAFE_RELEASE(m_handle)
+        }
+        return;
+    }
+
+    size_t bytesNeeded = m_verts.size() * GetStride();
+    if (bytesNeeded > m_gpuBufferByteSize)
+    {
+        Initialize((int) m_verts.size());
+    }
+
+    auto deviceContext = g_renderer->GetContext();
+    
+    D3D11_MAPPED_SUBRESOURCE mapping;
+    ID3D11Buffer* gpuBuffer = m_handle;
+
+    HRESULT result = deviceContext->Map(
+        gpuBuffer,
+        0,
+        D3D11_MAP_WRITE_DISCARD,
+        0,
+        &mapping
+    );
+    
+	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to map vertex buffer to gpu buffer");
+    
+	memcpy(mapping.pData, m_verts.data(), m_gpuBufferByteSize);
+
+    deviceContext->Unmap(gpuBuffer, 0);
 }

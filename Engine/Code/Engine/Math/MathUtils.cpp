@@ -33,7 +33,11 @@ float GetLength3D(const Vec3& vec)
 }
 
 
-void NormalizeVector3D(Vec2& vec)
+void NormalizeVector3D(Vec3& vec)
 {
-    
+    float length = GetLength3D(vec);
+    if (length != 0.f)
+    {
+        vec /= length;
+    }
 }

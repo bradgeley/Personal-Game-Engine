@@ -8,7 +8,7 @@ extern class WindowsApplication* g_theApp;
 
 
 class Engine;
-//class Game;
+class Game;
 
 
 
@@ -36,7 +36,7 @@ private:
     //
 
     Engine* m_engine = nullptr;
-    //Game* m_game = nullptr;
+    Game* m_game = nullptr;
 };
 
 

@@ -43,7 +43,7 @@ void Engine::Update(float deltaSeconds)
 
 
 
-void Engine::Render()
+void Engine::Render() const
 {
     for (auto& subsystem : m_subsystems)
     {

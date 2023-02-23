@@ -266,17 +266,18 @@
       <SDLCheck>true</SDLCheck>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="WindowsApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
     <ClInclude Include="GameCommon.h" />
+    <ClInclude Include="Game\Game.h" />
     <ClInclude Include="WindowsApplication.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Engine\Code\Engine\Engine.vcxproj">
-      <Project>{e22378ad-0f99-4f3e-8649-ed194f4ab5c7}</Project>
-      <Name>Engine</Name>
+      <Project>{59ae63af-6cd6-44f1-930f-12ad8960adfb}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
