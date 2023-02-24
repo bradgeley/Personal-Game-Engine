@@ -17,6 +17,6 @@ public:
     void Update(float deltaSeconds) override;
     void Render() const override;
 
-    Camera m_camera = Camera(Vec3(-1.f,-1.f,-1.f), Vec3(1.f, 1.f, 1.f));
+    Camera m_camera;
     VertexBuffer* m_vertexBuffer;
 };

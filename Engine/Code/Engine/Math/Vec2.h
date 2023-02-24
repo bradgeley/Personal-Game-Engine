@@ -19,6 +19,7 @@ public:
     
     explicit Vec2();
     explicit Vec2(float x, float y);
+    explicit Vec2(int x, int y);
 
 public:
     

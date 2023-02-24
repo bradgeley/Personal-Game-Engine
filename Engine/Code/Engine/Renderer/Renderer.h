@@ -1,6 +1,9 @@
 ﻿// Bradley Christensen - 2022
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
+#include "Engine/Math/Mat44.h"
+#include "Engine/Math/Vec3.h"
+
 
 
 struct Rgba8;
@@ -8,6 +11,7 @@ class Shader;
 class Camera;
 class Texture;
 class VertexBuffer;
+class ConstantBuffer;
 struct IDXGISwapChain;
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -32,6 +36,24 @@ enum class BlendMode
     Additive,
 
     Count
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct CameraConstants
+{
+    Mat44 m_worldToCamera       = Mat44();  // View Matrix
+    Mat44 m_cameraToClip        = Mat44();  // Projection Matrix
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct ModelConstants
+{
+    Mat44 m_modelMatrix     = Mat44();
+    float m_modelRgba[4]    = { 1.f, 1.f, 1.f, 1.f };
 };
 
 
@@ -65,10 +87,19 @@ public:
 
     void ClearScreen(Rgba8 const& tint);
     void DrawVertexBuffer(VertexBuffer* vbo);
+    
+    void SetCameraConstants(CameraConstants const& cameraConstants);
+    void SetModelConstants(ModelConstants const& modelConstants);
+    void SetModelMatrix(Mat44 const& modelMatrix);
+    void SetModelTint(Rgba8 const& modelTint);
 
     void BindShader(Shader* shader);
     void BindRenderTarget(Texture* texture);
     void SetBlendMode(BlendMode blendMode);
+    
+    void ClearDepth(float depth);
+    void BindVertexBuffer(VertexBuffer const* vbo) const;
+    void BindConstantBuffer(ConstantBuffer const* cbo, int slot) const;
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetContext() const;
@@ -78,17 +109,31 @@ public:
 private:
 
     void Draw(int vertexCount, int vertexOffset);
+    
     void CreateRenderContext();
-    void CreateDefaultShader();
-    void CreateRasterizerState();
-    void CreateDepthBuffer();
-    void ClearDepth(float depth);
     void DestroyRenderContext();
+    
+    void CreateConstantBuffers();
+    void DestroyConstantBuffers();
+    
     void CreateBlendStates();
     void DestroyBlendStates();
+    
+    void CreateDefaultShader();
+    void DestroyDefaultShader();
+    
+    void CreateRasterizerState();
+    void DestroyRasterizerState();
+    
+    void CreateDepthBuffer();
+    void DestroyDepthBuffer();
+    
     void UpdateRasterizerState();
     void UpdateDepthStencilState();
-    void BindVertexBuffer(VertexBuffer const* vbo) const;
+
+    void UpdateModelConstants();
+    void UpdateCameraConstants();
+
 
 private:
 
@@ -98,6 +143,12 @@ private:
     Shader* m_currentShader = nullptr;
     Texture* m_backbufferTexture = nullptr;
 	Texture* m_depthBuffer = nullptr;
+
+    // Constant Buffers
+    CameraConstants m_cameraConstants;
+    ConstantBuffer* m_cameraConstantsGPU = nullptr;
+    ModelConstants  m_modelConstants;
+    ConstantBuffer* m_modelConstantsGPU = nullptr;
     
     // D3D11 Things
     ID3D11Device* m_device = nullptr;
@@ -107,6 +158,9 @@ private:
     ID3D11RasterizerState* m_rasterizerState = nullptr;
 	ID3D11DepthStencilState* m_depthStencilState = nullptr;
 
+    // Renderer State
+    bool m_isCameraConstantsDirty = true;
+    bool m_isModelConstantsDirty = true;
     bool m_isRasterStateDirty = true;
     bool m_isDepthStencilStateDirty = true;
 };

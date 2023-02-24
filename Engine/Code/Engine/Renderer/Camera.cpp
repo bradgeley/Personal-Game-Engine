@@ -7,3 +7,10 @@ Camera::Camera(Vec3 const& bottomLeft, Vec3 const& topRight) : m_mins(bottomLeft
 {
     
 }
+
+
+
+Mat44 Camera::GetOrthoProjectionMatrix() const
+{
+    return Mat44::CreateOrthoProjection(m_mins.x, m_maxs.x, m_mins.y, m_maxs.y, m_mins.z, m_maxs.z);
+}

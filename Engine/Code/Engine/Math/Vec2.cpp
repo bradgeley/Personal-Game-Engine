@@ -17,6 +17,11 @@ Vec2::Vec2(float x, float y) : x(x), y(y)
 }
 
 
+Vec2::Vec2(int x, int y) : x(static_cast<float>(x)), y(static_cast<float>(y))
+{
+}
+
+
 float Vec2::GetLength() const
 {
     return GetLength2D(*this);

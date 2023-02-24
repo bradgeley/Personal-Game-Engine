@@ -19,6 +19,7 @@ public:
     VertexBuffer(VertexBuffer const& copy) = delete;
 
     void Initialize(int numExpectedVerts = 3);
+    void ReleaseResources();
     
     void AddVerts(std::vector<Vertex_PCU> const& verts);
     void UpdateGPUBuffer();
@@ -26,13 +27,10 @@ public:
     int GetStride() const;
 	int GetNumVerts() const;
 
-private:
-
-
 protected:
     
     ID3D11Buffer* m_handle = nullptr;
-    size_t m_gpuBufferByteSize = 0;
+    size_t m_gpuBufferByteWidth = 0;
 
     std::vector<Vertex_PCU> m_verts;
 };

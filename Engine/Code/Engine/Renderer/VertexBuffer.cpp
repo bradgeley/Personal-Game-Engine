@@ -27,7 +27,15 @@ void VertexBuffer::Initialize(int numExpectedVerts)
     
     ASSERT_OR_DIE(SUCCEEDED( result ), "Failed to create gpu vertex buffer")
 
-    m_gpuBufferByteSize = (size_t) byteWidth;
+    m_gpuBufferByteWidth = (size_t) byteWidth;
+}
+
+
+
+void VertexBuffer::ReleaseResources()
+{
+    DX_SAFE_RELEASE(m_handle)
+    m_gpuBufferByteWidth = 0;
 }
 
 
@@ -57,15 +65,12 @@ void VertexBuffer::UpdateGPUBuffer()
 {
     if (m_verts.empty())
     {
-        if (m_handle)
-        {
-            DX_SAFE_RELEASE(m_handle)
-        }
+        ReleaseResources();
         return;
     }
 
     size_t bytesNeeded = m_verts.size() * GetStride();
-    if (bytesNeeded > m_gpuBufferByteSize)
+    if (bytesNeeded > m_gpuBufferByteWidth)
     {
         Initialize((int) m_verts.size());
     }
@@ -85,7 +90,7 @@ void VertexBuffer::UpdateGPUBuffer()
     
 	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to map vertex buffer to gpu buffer");
     
-	memcpy(mapping.pData, m_verts.data(), m_gpuBufferByteSize);
+	memcpy(mapping.pData, m_verts.data(), m_gpuBufferByteWidth);
 
     deviceContext->Unmap(gpuBuffer, 0);
 }

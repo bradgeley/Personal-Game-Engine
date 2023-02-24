@@ -9,6 +9,8 @@
 #include "VertexBuffer.h"
 #include <thread>
 
+#include "Camera.h"
+#include "ConstantBuffer.h"
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -32,12 +34,17 @@ void Renderer::Startup()
 	CreateBlendStates();
 	CreateRasterizerState();
 	CreateDepthBuffer();
+	CreateConstantBuffers();
 }
 
 void Renderer::Shutdown()
 {
-	DestroyBlendStates();
 	DestroyRenderContext();
+	DestroyDefaultShader();
+	DestroyBlendStates();
+	DestroyRasterizerState();
+	DestroyDepthBuffer();
+	DestroyConstantBuffers();
 }
 
 
@@ -62,6 +69,14 @@ void Renderer::BeginCamera(Camera const& camera)
 {
 	BindRenderTarget(m_backbufferTexture);
 
+	// Fill Camera Constants
+	m_cameraConstants.m_cameraToClip = camera.GetOrthoProjectionMatrix();
+	m_cameraConstants.m_worldToCamera = Mat44();
+	SetCameraConstants(m_cameraConstants);
+
+	// Reset Model Constants
+	SetModelConstants(ModelConstants());
+	
 	// Set viewport
 	IntVec2 windowDims = g_window->GetDimensions();
 	Vec2 botLeft = Vec2::ZeroVector;
@@ -104,8 +119,42 @@ void Renderer::ClearScreen(Rgba8 const& tint)
 
 void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 {
-	BindVertexBuffer( vbo );
+	BindVertexBuffer(vbo);
 	Draw(vbo->GetNumVerts(), 0);
+}
+
+
+
+void Renderer::SetCameraConstants(CameraConstants const& cameraConstants)
+{
+	m_cameraConstants = cameraConstants;
+	m_isCameraConstantsDirty = true;
+}
+
+
+
+void Renderer::SetModelConstants(ModelConstants const& modelConstants)
+{
+	m_modelConstants = modelConstants;
+	m_isModelConstantsDirty = true;
+}
+
+
+
+void Renderer::SetModelMatrix(Mat44 const& modelMatrix)
+{
+	m_modelConstants.m_modelMatrix = modelMatrix;
+	//m_modelConstantsGPU->Update(&m_modelConstants, sizeof(ModelConstants));
+	m_isModelConstantsDirty = true;
+}
+
+
+
+void Renderer::SetModelTint(Rgba8 const& modelTint)
+{
+	modelTint.GetAsFloats(m_modelConstants.m_modelRgba);
+	//m_modelConstantsGPU->Update(&m_modelConstants, sizeof(ModelConstants));
+	m_isModelConstantsDirty = true;
 }
 
 
@@ -139,7 +188,7 @@ void Renderer::BindRenderTarget(Texture* texture)
 {
 	ID3D11DepthStencilView* dsv = m_depthBuffer->CreateOrGetDepthStencilView();
 	ID3D11RenderTargetView* rtv = texture->CreateOrGetRenderTargetView();
-	m_deviceContext->OMSetRenderTargets( 1, &rtv, dsv );
+	m_deviceContext->OMSetRenderTargets(1, &rtv, dsv);
 }
 
 
@@ -163,7 +212,40 @@ void Renderer::SetBlendMode(BlendMode blendMode)
 	ASSERT_OR_DIE(m_blendStateByMode[(int) blendMode] != nullptr, "SetBlendMode Failed due to invalid blend state.")
 	
 	static float const blendConstants[4] = { 0.f, 0.f, 0.f, 0.f };
-	m_deviceContext->OMSetBlendState( m_blendStateByMode[(int) blendMode], blendConstants, 0xffffffff );
+	m_deviceContext->OMSetBlendState(m_blendStateByMode[(int) blendMode], blendConstants, 0xffffffff);
+}
+
+void Renderer::ClearDepth(float depth)
+{
+	ID3D11DepthStencilView* view = m_depthBuffer->CreateOrGetDepthStencilView();
+	m_deviceContext->ClearDepthStencilView(view, D3D11_CLEAR_DEPTH, depth, 0);
+}
+
+
+
+void Renderer::BindVertexBuffer(VertexBuffer const* vbo) const
+{
+	UINT stride = (UINT) vbo->GetStride();
+	UINT offset = 0;
+
+	m_deviceContext->IASetVertexBuffers(
+		0,
+		1,
+		&vbo->m_handle,
+		&stride,
+		&offset
+	);
+
+	ID3D11InputLayout* vertexLayout = m_defaultShader->CreateOrGetInputLayout();
+	m_deviceContext->IASetInputLayout(vertexLayout);
+}
+
+
+
+void Renderer::BindConstantBuffer(ConstantBuffer const* cbo, int slot) const
+{
+	m_deviceContext->VSSetConstantBuffers(slot, 1, &cbo->m_handle);
+	m_deviceContext->PSSetConstantBuffers(slot, 1, &cbo->m_handle);
 }
 
 
@@ -177,6 +259,14 @@ void Renderer::Draw(int vertexCount, int vertexOffset)
 	if (m_isRasterStateDirty)
 	{
 		UpdateRasterizerState();
+	}
+	if (m_isCameraConstantsDirty)
+	{
+		UpdateCameraConstants();
+	}
+	if (m_isModelConstantsDirty)
+	{
+		UpdateModelConstants();
 	}
 	m_deviceContext->Draw(vertexCount, vertexOffset);
 }
@@ -242,6 +332,15 @@ void Renderer::CreateDefaultShader()
 
 
 
+void Renderer::DestroyDefaultShader()
+{
+	m_defaultShader->ReleaseResources();
+	delete m_defaultShader;
+	m_defaultShader = nullptr;
+}
+
+
+
 void Renderer::CreateRasterizerState()
 {
 	DX_SAFE_RELEASE(m_rasterizerState)
@@ -264,7 +363,14 @@ void Renderer::CreateRasterizerState()
 	rasterizerDesc.AntialiasedLineEnable = true;
 	rasterizerDesc.DepthClipEnable = true;
 
-	m_device->CreateRasterizerState( &rasterizerDesc, &m_rasterizerState );
+	m_device->CreateRasterizerState(&rasterizerDesc, &m_rasterizerState);
+}
+
+
+
+void Renderer::DestroyRasterizerState()
+{
+	DX_SAFE_RELEASE(m_rasterizerState)
 }
 
 
@@ -277,10 +383,50 @@ void Renderer::CreateDepthBuffer()
 
 
 
-void Renderer::ClearDepth(float depth)
+void Renderer::DestroyDepthBuffer()
 {
-	ID3D11DepthStencilView* view = m_depthBuffer->CreateOrGetDepthStencilView();
-	m_deviceContext->ClearDepthStencilView( view, D3D11_CLEAR_DEPTH, depth, 0 );
+	m_depthBuffer->ReleaseResources();
+	delete m_depthBuffer;
+	m_depthBuffer = nullptr;
+}
+
+
+
+void Renderer::CreateConstantBuffers()
+{
+	m_cameraConstantsGPU = new ConstantBuffer();
+	m_modelConstantsGPU = new ConstantBuffer();
+
+	m_cameraConstantsGPU->Initialize(sizeof(CameraConstants));
+	m_modelConstantsGPU->Initialize(sizeof(ModelConstants));
+	
+	BindConstantBuffer(m_cameraConstantsGPU, 2);
+	BindConstantBuffer(m_modelConstantsGPU, 3);
+}
+
+
+
+void Renderer::DestroyConstantBuffers()
+{
+	m_cameraConstantsGPU->ReleaseResources();
+	delete m_cameraConstantsGPU;
+	m_cameraConstantsGPU = nullptr;
+
+	m_modelConstantsGPU->ReleaseResources();
+	delete m_modelConstantsGPU;
+	m_modelConstantsGPU = nullptr;
+}
+
+
+
+void Renderer::CreateBlendStates()
+{
+	m_blendStateByMode[(int) BlendMode::Opaque] = CreateBlendState(D3D11_BLEND_ONE, D3D11_BLEND_ZERO, D3D11_BLEND_OP_ADD);
+	m_blendStateByMode[(int) BlendMode::Alpha] = CreateBlendState(D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD);
+	m_blendStateByMode[(int) BlendMode::Additive] = CreateBlendState(D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD);
+	
+	// Default Blend Mode, move to separate default settings function?
+	SetBlendMode(BlendMode::Alpha);
 }
 
 
@@ -290,28 +436,16 @@ void Renderer::DestroyRenderContext()
 	m_deviceContext->ClearState();
 	m_deviceContext->Flush();
 	
-	if ( m_backbufferTexture )
+	if (m_backbufferTexture)
 	{
 		m_backbufferTexture->ReleaseResources();
 	}
 	delete m_backbufferTexture;
 	m_backbufferTexture = nullptr;
 	
-	DX_SAFE_RELEASE( m_swapChain )
-	DX_SAFE_RELEASE( m_deviceContext )
-	DX_SAFE_RELEASE( m_device )
-}
-
-
-
-void Renderer::CreateBlendStates()
-{
-	m_blendStateByMode[(int) BlendMode::Opaque] = CreateBlendState( D3D11_BLEND_ONE, D3D11_BLEND_ZERO, D3D11_BLEND_OP_ADD );
-	m_blendStateByMode[(int) BlendMode::Alpha] = CreateBlendState( D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD );
-	m_blendStateByMode[(int) BlendMode::Additive] = CreateBlendState( D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD );
-	
-	// Default Blend Mode, move to separate default settings function?
-	SetBlendMode( BlendMode::Alpha );
+	DX_SAFE_RELEASE(m_swapChain)
+	DX_SAFE_RELEASE(m_deviceContext)
+	DX_SAFE_RELEASE(m_device)
 }
 
 
@@ -347,9 +481,9 @@ ID3D11BlendState* Renderer::CreateBlendState(::D3D11_BLEND srcFactor, ::D3D11_BL
 
 void Renderer::DestroyBlendStates()
 {
-	DX_SAFE_RELEASE( m_blendStateByMode[(int) BlendMode::Opaque] )
-	DX_SAFE_RELEASE( m_blendStateByMode[(int) BlendMode::Additive] )
-	DX_SAFE_RELEASE( m_blendStateByMode[(int) BlendMode::Alpha] )
+	DX_SAFE_RELEASE(m_blendStateByMode[(int) BlendMode::Opaque])
+	DX_SAFE_RELEASE(m_blendStateByMode[(int) BlendMode::Additive])
+	DX_SAFE_RELEASE(m_blendStateByMode[(int) BlendMode::Alpha])
 }
 
 
@@ -382,19 +516,20 @@ void Renderer::UpdateDepthStencilState()
 
 
 
-void Renderer::BindVertexBuffer(VertexBuffer const* vbo) const
+void Renderer::UpdateModelConstants()
 {
-	UINT stride = (UINT) vbo->GetStride();
-	UINT offset = 0;
-
-	m_deviceContext->IASetVertexBuffers(
-		0,
-		1,
-		&vbo->m_handle,
-		&stride,
-		&offset
-	);
-
-	ID3D11InputLayout* vertexLayout = m_defaultShader->CreateOrGetInputLayout();
-	m_deviceContext->IASetInputLayout(vertexLayout);
+	m_modelConstantsGPU->Update(&m_modelConstants, sizeof(ModelConstants));
+	m_isModelConstantsDirty = false;
 }
+
+
+
+void Renderer::UpdateCameraConstants()
+{
+	m_cameraConstantsGPU->Update(&m_cameraConstants, sizeof(CameraConstants));
+	m_isCameraConstantsDirty = false;
+}
+
+
+
+
