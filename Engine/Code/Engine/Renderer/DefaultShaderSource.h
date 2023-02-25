@@ -38,13 +38,6 @@ v2p_t VertexMain(vs_input_t input)
 {
     v2p_t v2p;
 
-    // TEST
-    //v2p.position = float4(input.position, 1.0);
-    //v2p.tint = input.tint;
-    //v2p.uvs = input.uvs;
-    //return v2p;
-    //
-
     float4 localPosition = float4(input.position, 1.0);
     float4 worldPosition = mul(localToWorld, localPosition);
     float4 cameraPosition = mul(worldToCamera, worldPosition);

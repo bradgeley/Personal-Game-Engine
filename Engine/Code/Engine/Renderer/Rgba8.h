@@ -8,16 +8,21 @@ struct Rgba8
 {
 public:
     
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t a;
+    uint8_t r = 255;
+    uint8_t g = 255;
+    uint8_t b = 255;
+    uint8_t a = 255;
     
 public:
-    
+
+    Rgba8() = default;
 	explicit Rgba8(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
 
     void GetAsFloats(float* fourFloatOutputArray) const;
+
+public:
+    
+    static Rgba8 Lerp(Rgba8 const& start, Rgba8 const& end, float t);
     
 public:
     

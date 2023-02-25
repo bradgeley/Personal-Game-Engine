@@ -1,8 +1,48 @@
 ﻿// Bradley Christensen - 2022
 #include "MathUtils.h"
-#include "cmath"
 #include "Vec2.h"
 #include "Vec3.h"
+
+#define _USE_MATH_DEFINES
+#include "cmath"
+
+
+float SinDegrees(float degrees)
+{
+    float radians = DegreesToRadians(degrees);
+    return sinf(radians);
+}
+
+
+float CosDegrees(float degrees)
+{
+    float radians = DegreesToRadians(degrees);
+    return cosf(radians);
+}
+
+
+float SinRadians(float radians)
+{
+    return sinf(radians);
+}
+
+
+float CosRadians(float radians)
+{
+    return cosf(radians);
+}
+
+
+float DegreesToRadians(float degrees)
+{
+    return degrees * static_cast<float>(M_PI) / 180.f;
+}
+
+
+float RadiansToDegrees(float radians)
+{
+    return radians * 180.f / static_cast<float>(M_PI);
+}
 
 
 float GetLength2D(const Vec2& vec)
@@ -40,4 +80,16 @@ void NormalizeVector3D(Vec3& vec)
     {
         vec /= length;
     }
+}
+
+
+float Interpolate(float a, float b, float t)
+{
+    return (b - a) * t + a;
+}
+
+
+int InterpolateInt(int a, int b, float t)
+{
+    return (int) Interpolate((float) a, (float) b, t);
 }

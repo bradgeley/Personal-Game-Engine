@@ -1,7 +1,8 @@
 ﻿// Bradley Christensen - 2023
 #include "Mat44.h"
-#include <cstring>
+#include "MathUtils.h"
 #include "Vec2.h"
+#include <cstring>
 
 
 
@@ -26,6 +27,27 @@ Mat44::Mat44(Vec2 const& iBasis2D, Vec2 const& jBasis2D, Vec2 const& translation
                  translation2D.x,   translation2D.y,    0.f,    1.f }
 {
     
+}
+
+
+
+float* Mat44::GetAsFloatArray()
+{
+	return m_values;
+}
+
+
+
+float const* Mat44::GetAsFloatArray() const
+{
+	return m_values;
+}
+
+
+
+float& Mat44::operator[](int index)
+{
+	return m_values[index];
 }
 
 
@@ -60,9 +82,77 @@ void Mat44::Append(Mat44 const& appendThis)
 
 
 
-float const* Mat44::GetAsFloatArray() const
+void Mat44::AppendXRotation(float degreesRotationAboutX)
 {
-	return m_values;
+	Append(CreateXRotationDegrees(degreesRotationAboutX));
+}
+
+
+
+void Mat44::AppendYRotation(float degreesRotationAboutY)
+{
+	Append(CreateYRotationDegrees(degreesRotationAboutY));
+}
+
+
+
+void Mat44::AppendZRotation(float degreesRotationAboutZ)
+{
+	Append(CreateZRotationDegrees(degreesRotationAboutZ));
+}
+
+
+
+Mat44 Mat44::CreateXRotationDegrees(float rotationDegreesAboutX)
+{
+	Mat44 xRotationMatrix;
+	float cos = CosDegrees(rotationDegreesAboutX);
+	float sin = SinDegrees(rotationDegreesAboutX);
+	
+	// J basis's Y value goes from 1 to 0, Z value goes from 0 to 1
+	xRotationMatrix[Jy] = cos;
+	xRotationMatrix[Jz] = sin;
+	
+	// K basis's Y value goes from 0 to -1, Z value goes from 1 to 0
+	xRotationMatrix[Ky] = -sin;
+	xRotationMatrix[Kz] = cos;
+	return xRotationMatrix;
+}
+
+
+
+Mat44 Mat44::CreateYRotationDegrees(float rotationDegreesAboutY)
+{
+	Mat44 yRotationMatrix;
+	float cos = CosDegrees(rotationDegreesAboutY);
+	float sin = SinDegrees(rotationDegreesAboutY);
+
+	// I basis's X value goes 1->0, Z value goes 0->-1
+	yRotationMatrix[Ix] = cos;
+	yRotationMatrix[Iz] = -sin;
+	
+	// K basis's X value goes from 0 to 1, Z value goes from 1 to 0
+	yRotationMatrix[Kx] = sin;
+	yRotationMatrix[Kz] = cos;
+	return yRotationMatrix;
+}
+
+
+
+Mat44 Mat44::CreateZRotationDegrees(float rotationDegreesAboutZ)
+{
+	Mat44 zRotationMatrix;
+	float cos = CosDegrees(rotationDegreesAboutZ);
+	float sin = SinDegrees(rotationDegreesAboutZ);
+	
+	// I basis's X value goes from 1 to 0, Y value goes from 0 to 1
+	zRotationMatrix[Ix] = cos;
+	zRotationMatrix[Iy] = sin;
+	
+	// J basis's X value goes from 0 to -1, Y value goes from 1 to 0
+	zRotationMatrix[Jx] = -sin;
+	zRotationMatrix[Jy] = cos;
+	return zRotationMatrix;
 }
 
 

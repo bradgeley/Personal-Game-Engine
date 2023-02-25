@@ -12,6 +12,16 @@
 struct Vec2;
 struct Vec3;
 
+//----------------------------------------------------------------------------------------------------------------------
+// Math
+//
+float SinDegrees(float degrees);
+float CosDegrees(float degrees);
+float SinRadians(float radians);
+float CosRadians(float radians);
+float DegreesToRadians(float degrees);
+float RadiansToDegrees(float radians);
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // 2D Vector
@@ -26,3 +36,10 @@ float DotProduct2D(const Vec2& vecA, const Vec2& vecB);
 //
 float GetLength3D(const Vec3& vec);
 void NormalizeVector3D(Vec3& vec);
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Lerp
+//
+float Interpolate(float a, float b, float t);
+int InterpolateInt(int a, int b, float t);

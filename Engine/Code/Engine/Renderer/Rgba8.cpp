@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022
 #include "Engine/Renderer/Rgba8.h"
 
+#include "Engine/Math/MathUtils.h"
 
 
 Rgba8 const Rgba8::RED( 255, 0, 0 );
@@ -35,4 +36,16 @@ void Rgba8::GetAsFloats(float* fourFloatOutputArray) const
     fourFloatOutputArray[1] = static_cast<float>(g) / 255.f;
     fourFloatOutputArray[2] = static_cast<float>(b) / 255.f;
     fourFloatOutputArray[3] = static_cast<float>(a) / 255.f;
+}
+
+
+
+Rgba8 Rgba8::Lerp(Rgba8 const& start, Rgba8 const& end, float t)
+{
+    Rgba8 result;
+    result.r = static_cast<uint8_t>(InterpolateInt(start.r, end.r, t));
+    result.g = static_cast<uint8_t>(InterpolateInt(start.g, end.g, t));
+    result.b = static_cast<uint8_t>(InterpolateInt(start.b, end.b, t));
+    result.a = static_cast<uint8_t>(InterpolateInt(start.a, end.a, t));
+    return result;
 }

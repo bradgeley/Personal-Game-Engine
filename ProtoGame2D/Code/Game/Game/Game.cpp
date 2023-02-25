@@ -12,7 +12,8 @@ void Game::Startup()
     m_vertexBuffer = new VertexBuffer();
     m_vertexBuffer->Initialize();
 
-    std::vector<Vertex_PCU> verts;  
+    std::vector<Vertex_PCU> verts;
+    verts.reserve(9);
     verts.emplace(verts.end(), Vec3(0.f,0.f,1.f), Rgba8::RED);
     verts.emplace(verts.end(), Vec3(1000,0.f,1.f), Rgba8::RED);
     verts.emplace(verts.end(), Vec3(0.f,1000.f,1.f), Rgba8::RED);
@@ -31,9 +32,18 @@ void Game::Startup()
 
 
 
+Mat44 g_testModelMatrix = Mat44();
+Rgba8 g_testTint;
+
+
+
 void Game::Update(float deltaSeconds)
 {
+    static float t = 0.f;
+    t += 0.01f;
+    g_testTint = Rgba8::Lerp(Rgba8::WHITE, Rgba8::BLACK, t);
 
+    g_testModelMatrix.AppendZRotation(1.f);
 }
 
 
@@ -42,5 +52,7 @@ void Game::Render() const
 {
     g_renderer->ClearScreen(Rgba8::MAGENTA);
     g_renderer->BeginCamera(m_camera);
+    g_renderer->SetModelMatrix(g_testModelMatrix);
+    g_renderer->SetModelTint(g_testTint);
     g_renderer->DrawVertexBuffer(m_vertexBuffer);
 }
