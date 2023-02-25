@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022
+﻿// Bradley Christensen - 2022-2023
 #include "Vec3.h"
 #include "MathUtils.h"
 

@@ -4,9 +4,9 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// Engine Common
+// Time
 //
-// Common macros and functions for use in the engine
+// Common time related functions
 //
-
-#define UNUSED(x) (void) x;
+double GetCurrentTimeSeconds();
+float GetCurrentTimeSecondsF();

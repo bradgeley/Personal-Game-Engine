@@ -1,5 +1,6 @@
-// Bradley Christensen - 2022
+// Bradley Christensen - 2022-2023
 #include "Game.h"
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 
@@ -40,10 +41,10 @@ Rgba8 g_testTint;
 void Game::Update(float deltaSeconds)
 {
     static float t = 0.f;
-    t += 0.01f;
+    t += deltaSeconds;
     g_testTint = Rgba8::Lerp(Rgba8::WHITE, Rgba8::BLACK, t);
 
-    g_testModelMatrix.AppendZRotation(1.f);
+    g_testModelMatrix.AppendZRotation(deltaSeconds * 90.f);
 }
 
 

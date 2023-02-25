@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2023
+﻿// Bradley Christensen - 2022-2023
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include <mutex>

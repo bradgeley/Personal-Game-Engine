@@ -1,6 +1,7 @@
-// Bradley Christensen - 2022
+// Bradley Christensen - 2022-2023
 #include "Game/WindowsApplication.h"
 #include "Engine/Core/Engine.h"
+#include "Engine/Core/Time.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Window.h"
 #include "Game/Game.h"
@@ -39,9 +40,16 @@ void WindowsApplication::Startup()
 
 void WindowsApplication::Run()
 {
-    float deltaSeconds = 0.f; // todo: calculate
+    static float timeThen = GetCurrentTimeSecondsF();
+    
     while (!IsQuitting())
     {
+        // todo: move to system clock and world clock, etc
+        float timeNow = GetCurrentTimeSecondsF();
+        float deltaSeconds = timeNow - timeThen;
+        timeThen = timeNow;
+        //
+        
         m_engine->BeginFrame();
         m_engine->Update(deltaSeconds);
         m_game->Update(deltaSeconds);

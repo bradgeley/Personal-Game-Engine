@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022
+﻿// Bradley Christensen - 2022-2023
 #pragma once
 #include <cstdint>
 
@@ -19,6 +19,7 @@ public:
 	explicit Rgba8(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
 
     void GetAsFloats(float* fourFloatOutputArray) const;
+    uint32_t GetAsUint32() const;
 
 public:
     

@@ -1,5 +1,6 @@
-﻿// Bradley Christensen - 2022
+﻿// Bradley Christensen - 2022-2023
 #include "Renderer.h"
+#include "Engine/Core/EngineCommon.h"
 #include "DefaultShaderSource.h"
 #include "RendererInternal.h"
 #include "Shader.h"
@@ -8,9 +9,9 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "VertexBuffer.h"
 #include <thread>
-
 #include "Camera.h"
 #include "ConstantBuffer.h"
+
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -101,7 +102,7 @@ void Renderer::BeginCamera(Camera const& camera)
 
 void Renderer::EndCamera(Camera const& camera)
 {
-	
+	UNUSED(camera)
 }
 
 

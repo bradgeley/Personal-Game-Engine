@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2023
+﻿// Bradley Christensen - 2022-2023
 #include "Mat44.h"
 #include "MathUtils.h"
 #include "Vec2.h"
