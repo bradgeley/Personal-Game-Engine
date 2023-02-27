@@ -23,6 +23,7 @@ public:
 public:
 
     // Component-wise const operators
+    bool operator==(const IntVec2& other);
     IntVec2 operator-() const;
 
     IntVec2 operator+(const IntVec2& other) const;

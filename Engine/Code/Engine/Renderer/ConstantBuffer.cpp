@@ -21,7 +21,7 @@ void ConstantBuffer::Update(void const* data, size_t byteWidth)
         D3D11_MAP_WRITE_DISCARD,
         0,
         &mapping
-    );
+   );
     
     ASSERT_OR_DIE(SUCCEEDED(result), "Failed to map data for constant buffer")
 

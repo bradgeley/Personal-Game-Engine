@@ -93,6 +93,7 @@ public:
     void SetModelMatrix(Mat44 const& modelMatrix);
     void SetModelTint(Rgba8 const& modelTint);
 
+    void BindTexture(Texture* texture, int slot = 0);
     void BindShader(Shader* shader);
     void BindRenderTarget(Texture* texture);
     void SetBlendMode(BlendMode blendMode);

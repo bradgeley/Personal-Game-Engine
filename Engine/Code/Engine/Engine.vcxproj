@@ -420,6 +420,8 @@
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Core\Time.h" />
     <ClInclude Include="DataStructures\ThreadSafeQueue.h" />
+    <ClInclude Include="Math\Grid.cpp" />
+    <ClInclude Include="Math\Grid.h" />
     <ClInclude Include="Math\IntVec2.h" />
     <ClInclude Include="Math\Mat44.h" />
     <ClInclude Include="Math\MathUtils.h" />

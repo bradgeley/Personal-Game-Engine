@@ -5,6 +5,7 @@
 
 
 
+class Texture;
 class VertexBuffer;
 
 
@@ -19,4 +20,5 @@ public:
 
     Camera m_camera;
     VertexBuffer* m_vertexBuffer;
+    Texture* m_texture = nullptr;
 };

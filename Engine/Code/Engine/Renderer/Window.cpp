@@ -108,8 +108,8 @@ void Window::CreateMainWindow()
     m_dimensiions.y = static_cast<int>(clientHeight);
 
     // Calculate client rect bounds by centering the client area
-    float clientMarginX = 0.5f * ( desktopWidth - clientWidth );
-    float clientMarginY = 0.5f * ( desktopHeight - clientHeight );
+    float clientMarginX = 0.5f * (desktopWidth - clientWidth);
+    float clientMarginY = 0.5f * (desktopHeight - clientHeight);
     RECT clientRect;
     clientRect.left = (int) clientMarginX;
     clientRect.right = clientRect.left + (int) clientWidth;
@@ -118,7 +118,7 @@ void Window::CreateMainWindow()
     
     // Calculate the outer dimensions of the physical window, including frame et. al.
     RECT windowRect = clientRect;
-    AdjustWindowRectEx( &windowRect, windowStyleFlags, FALSE, windowStyleExFlags );
+    AdjustWindowRectEx(&windowRect, windowStyleFlags, FALSE, windowStyleExFlags);
 
     // Convert window title to a wstring
     std::string titleString = m_config.m_windowTitle;

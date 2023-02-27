@@ -6,12 +6,12 @@
 
 
 //-----------------------------------------------------------------------------------------------
-double InitializeTime( LARGE_INTEGER& out_initialTime )
+double InitializeTime(LARGE_INTEGER& out_initialTime)
 {
     LARGE_INTEGER countsPerSecond;
-    QueryPerformanceFrequency( &countsPerSecond );
-    QueryPerformanceCounter( &out_initialTime );
-    return( 1.0 / static_cast< double >( countsPerSecond.QuadPart ) );
+    QueryPerformanceFrequency(&countsPerSecond);
+    QueryPerformanceCounter(&out_initialTime);
+    return(1.0 / static_cast< double >(countsPerSecond.QuadPart));
 }
 
 

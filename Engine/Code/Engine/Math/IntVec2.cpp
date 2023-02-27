@@ -18,6 +18,12 @@ IntVec2::IntVec2(int x, int y) : x(x), y(y)
 }
 
 
+bool IntVec2::operator==(const IntVec2& other)
+{
+    return x == other.x && y == other.y;
+}
+
+
 IntVec2 IntVec2::operator-() const
 {
     return IntVec2(-x, -y);

@@ -1,13 +1,12 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
-#include <string>
-#include <vector>
-#include "Engine/Math/IntVec2.h"
+#include "Engine/Math/Grid.h"
 #include "Engine/Renderer/Rgba8.h"
+#include <string>
 
 
 
-struct Rgba8;
+struct IntVec2;
 
 
 
@@ -16,20 +15,19 @@ struct Rgba8;
 //
 // A grid of pixels
 //
-class Image
+class Image : public Grid<Rgba8>
 {
 public:
     
     Image() = default;
-    explicit Image(Rgba8 const& color, IntVec2 const& dimensions);
+    explicit Image(IntVec2 const& dimensions, Rgba8 const& color);
     explicit Image(char const* imageFilePath);
+    
+    bool LoadFromFile(const char* imageFilePath, bool putOriginAtBottomLeft = true);
 
-    bool LoadFromFile(const char* imageFilePath, bool flipOriginToBottomLeft);
+    std::string const& GetSourceImagePath() const;
 
 private:
 
-    std::string	        m_sourceImagePath;
-	IntVec2	            m_dimensions = IntVec2::ZeroVector;
-	std::vector<Rgba8>	m_pixels;
-    
+    std::string	m_sourceImagePath;
 };

@@ -20,4 +20,4 @@
 
 
 
-#define DX_SAFE_RELEASE( dxResource ) if ( dxResource ) { (dxResource)->Release(); (dxResource) = nullptr; }
+#define DX_SAFE_RELEASE(dxResource) if (dxResource) { (dxResource)->Release(); (dxResource) = nullptr; }

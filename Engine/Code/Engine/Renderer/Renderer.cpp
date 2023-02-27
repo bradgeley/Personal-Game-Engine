@@ -160,6 +160,15 @@ void Renderer::SetModelTint(Rgba8 const& modelTint)
 
 
 
+void Renderer::BindTexture(Texture* texture, int slot)
+{
+	ASSERT_OR_DIE(texture, "Attempted to bind null texture")
+	ID3D11ShaderResourceView* srv = texture->CreateOrGetShaderResourceView();
+	m_deviceContext->PSSetShaderResources(slot, 1, &srv);
+}
+
+
+
 void Renderer::BindShader(Shader* shader)
 {
 	if (shader)
@@ -310,15 +319,8 @@ void Renderer::CreateRenderContext()
 
 	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create device and swap chain")
 
-	ID3D11Texture2D* backbufferHandle;
-	result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &backbufferHandle);
-	
-	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to get swap chain buffer")
-
 	m_backbufferTexture = new Texture();
-	m_backbufferTexture->WatchInternal(backbufferHandle);
-
-	DX_SAFE_RELEASE(backbufferHandle)
+	m_backbufferTexture->CreateFromSwapChain(m_swapChain);
 }
 
 

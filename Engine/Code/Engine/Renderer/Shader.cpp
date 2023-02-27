@@ -90,7 +90,7 @@ bool Shader::CompileAsVertexShader(std::string const& sourceCode)
 		compileFlags,
 		0,
 		&byteCode,
-		&errorBuffer );
+		&errorBuffer);
 
 	if (SUCCEEDED(result) && byteCode)
 	{
@@ -98,7 +98,7 @@ bool Shader::CompileAsVertexShader(std::string const& sourceCode)
 			byteCode->GetBufferPointer(),
 			byteCode->GetBufferSize(),
 			nullptr,
-			&m_vertexShader );
+			&m_vertexShader);
 
 		ASSERT_OR_DIE(SUCCEEDED(vertexShaderResult), "Failed to compile vertex shader.")
 		
@@ -109,7 +109,7 @@ bool Shader::CompileAsVertexShader(std::string const& sourceCode)
 	else
 	{
 		char const* errorString = (char const*) errorBuffer->GetBufferPointer();
-		ERROR_AND_DIE( errorString )
+		ERROR_AND_DIE(errorString)
 	}
 
 	DX_SAFE_RELEASE(byteCode)
@@ -139,7 +139,7 @@ bool Shader::CompileAsPixelShader(std::string const& sourceCode)
 		compileFlags,
 		0,
 		&byteCode,
-		&errorBuffer );
+		&errorBuffer);
 
 	if (SUCCEEDED(result) && byteCode)
 	{
@@ -154,7 +154,7 @@ bool Shader::CompileAsPixelShader(std::string const& sourceCode)
 	else
 	{
 		char const* errorString = (char const*) errorBuffer->GetBufferPointer();
-		ERROR_AND_DIE( errorString )
+		ERROR_AND_DIE(errorString)
 	}
 
 	DX_SAFE_RELEASE(byteCode)

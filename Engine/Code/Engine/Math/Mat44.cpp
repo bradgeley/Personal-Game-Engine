@@ -103,6 +103,13 @@ void Mat44::AppendZRotation(float degreesRotationAboutZ)
 
 
 
+void Mat44::AppendUniformScale(float uniformScale)
+{
+	Append(CreateUniformScale(uniformScale));
+}
+
+
+
 Mat44 Mat44::CreateXRotationDegrees(float rotationDegreesAboutX)
 {
 	Mat44 xRotationMatrix;
@@ -153,6 +160,17 @@ Mat44 Mat44::CreateZRotationDegrees(float rotationDegreesAboutZ)
 	zRotationMatrix[Jx] = -sin;
 	zRotationMatrix[Jy] = cos;
 	return zRotationMatrix;
+}
+
+
+
+Mat44 Mat44::CreateUniformScale(float uniformScale)
+{
+	Mat44 result;
+	result[Ix] = uniformScale;
+	result[Jy] = uniformScale;
+	result[Kz] = uniformScale;
+	return result;
 }
 
 

@@ -57,10 +57,6 @@ SamplerState SurfaceSampler : register(s0);
 
 float4 PixelMain(v2p_t input) : SV_Target0
 {
-    // TEST
-    return input.tint;
-    //
-
     float2 texCoord = input.uvs;
     float4 surfaceColor = SurfaceColorTexture.Sample(SurfaceSampler, texCoord);
 	
