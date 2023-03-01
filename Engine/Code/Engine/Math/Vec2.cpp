@@ -126,3 +126,9 @@ void Vec2::operator/=(float divisor)
     x *= oneOverDiv;
     y *= oneOverDiv;
 }
+
+
+bool Vec2::operator==(Vec2 const& rhs) const
+{
+    return (x == rhs.x) && (y == rhs.y);
+}

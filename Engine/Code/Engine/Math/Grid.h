@@ -17,10 +17,13 @@ public:
 
     Grid() = default;
     explicit Grid(IntVec2 const& dimensions, T const& initialValue);
+    explicit Grid(int width, int height, T const& initialValue);
 
     int GetIndexForCoords(IntVec2 const& coords) const;
     IntVec2 GetCoordsForIndex(int index) const;
     IntVec2 GetDimensions() const;
+    int GetWidth() const;
+    int GetHeight() const;
     void* GetRawData() const;
 
 public:
@@ -33,21 +36,23 @@ public:
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-Grid<T>::Grid(IntVec2 const& dimensions, T const& initialValue)
+Grid<T>::Grid(IntVec2 const& dimensions, T const& initialValue) : m_dimensions(dimensions)
 {
     m_data.resize((size_t) dimensions.x * dimensions.y);
+    
+    for (int i=0; i<dimensions.x * dimensions.y; ++i)
+    {
+        m_data[i] = initialValue;
+    }
+}
 
-    if constexpr (sizeof(T) == sizeof(int))
-    {
-        memset(m_data.data(), *(int*) &initialValue, m_data.size() * sizeof(T));
-    }
-    else
-    {
-        for (int i=0; i<dimensions.x * dimensions.y; ++i)
-        {
-            m_data.emplace_back(initialValue);
-        }
-    }
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+Grid<T>::Grid(int width, int height, T const& initialValue) : Grid(IntVec2(width, height), initialValue)
+{
+    
 }
 
 
@@ -65,7 +70,7 @@ int Grid<T>::GetIndexForCoords(IntVec2 const& coords) const
 template <typename T>
 IntVec2 Grid<T>::GetCoordsForIndex(int index) const
 {
-    return IntVec2(index % m_dimensions.x, index / m_dimensions.y);
+    return IntVec2(index % m_dimensions.x, index / m_dimensions.x);
 }
 
 
@@ -79,6 +84,25 @@ IntVec2 Grid<T>::GetDimensions() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+int Grid<T>::GetWidth() const
+{
+    return m_dimensions.x;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+int Grid<T>::GetHeight() const
+{
+    return m_dimensions.y;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 template <typename T>
 void* Grid<T>::GetRawData() const
 {

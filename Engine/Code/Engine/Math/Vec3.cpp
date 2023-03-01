@@ -44,7 +44,7 @@ Vec3 Vec3::operator-() const
 
 Vec3 Vec3::operator+(const Vec3& other) const
 {
-    return Vec3(x + other.x, y + other.y, y + other.z);
+    return Vec3(x + other.x, y + other.y, z + other.z);
 }
 
 
@@ -125,4 +125,10 @@ void Vec3::operator/=(float divisor)
     x *= oneOverDiv;
     y *= oneOverDiv;
     z *= oneOverDiv;
+}
+
+
+bool Vec3::operator==(Vec3 const& rhs) const
+{
+    return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
 }

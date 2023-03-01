@@ -39,8 +39,9 @@ bool Texture::CreateFromImage(Image const& image, bool createMipMap)
 
     if (createMipMap)
     {
-        float smallerOfXandY = float(m_dimensions.x < m_dimensions.y ? m_dimensions.x : m_dimensions.y);
-        float levels = std::logf(smallerOfXandY) / std::logf(2.f);
+        // Figure out how many levels we need (how many times we have to divide the dims by 2 to get to a 1x1, 1xY or Xx1 texture)
+        float smallerOfXandY = static_cast<float>(m_dimensions.x < m_dimensions.y ? m_dimensions.x : m_dimensions.y);
+        float mipLevels = std::logf(smallerOfXandY) / std::logf(2.f);
         
         D3D11_TEXTURE2D_DESC mipDesc = {};
         mipDesc.Width = m_dimensions.x;
@@ -51,7 +52,7 @@ bool Texture::CreateFromImage(Image const& image, bool createMipMap)
         mipDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
         mipDesc.CPUAccessFlags = 0;
         mipDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
-        mipDesc.MipLevels = (UINT) levels;
+        mipDesc.MipLevels = (UINT) mipLevels;
         mipDesc.SampleDesc.Count = 1;
         mipDesc.SampleDesc.Quality = 0;
 

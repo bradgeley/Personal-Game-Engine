@@ -31,17 +31,20 @@ public:
     float& operator[](int index);
 
     void Append(Mat44 const& appendThis);
+    Mat44 GetAppended(Mat44 const& appendThis) const;
     void AppendXRotation(float degreesRotationAboutX);
     void AppendYRotation(float degreesRotationAboutY);
     void AppendZRotation(float degreesRotationAboutZ);
-    void AppendUniformScale(float uniformScale);
+    void AppendUniformScale2D(float uniformScale);
+    void AppendUniformScale3D(float uniformScale);
 
 public:
     
     static Mat44 CreateXRotationDegrees(float rotationDegreesAboutX);
     static Mat44 CreateYRotationDegrees(float rotationDegreesAboutY);
     static Mat44 CreateZRotationDegrees(float rotationDegreesAboutZ);
-    static Mat44 CreateUniformScale(float uniformScale);
+    static Mat44 CreateUniformScale2D(float uniformScale);
+    static Mat44 CreateUniformScale3D(float uniformScale);
     static Mat44 CreateOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar);
     
     static const Mat44 Identity;

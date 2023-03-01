@@ -1,15 +1,22 @@
 // Bradley Christensen - 2022-2023
 #include "Game.h"
-#include "Engine/Core/EngineCommon.h"
+
+#include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexBuffer.h"
 
 
 
+Mat44 g_testModelMatrix = Mat44();
+Mat44 g_renderModelMatrix = Mat44();
+Rgba8 g_testTint;
+
+
+
 void Game::Startup()
 {
-    m_camera = Camera(Vec3(-1000.f,-1000.f,-1.f), Vec3(1000.f, 1000.f, 1.f));
+    m_camera = Camera(Vec3(-1000.f,-1000.f,-1000.f), Vec3(1000.f, 1000.f, 1000.f));
     
     m_vertexBuffer = new VertexBuffer();
     m_vertexBuffer->Initialize();
@@ -43,9 +50,6 @@ void Game::Startup()
 
 
 
-Mat44 g_testModelMatrix = Mat44();
-Rgba8 g_testTint;
-
 
 
 void Game::Update(float deltaSeconds)
@@ -55,7 +59,9 @@ void Game::Update(float deltaSeconds)
     g_testTint = Rgba8::Lerp(Rgba8::WHITE, Rgba8::BLACK, t);
 
     g_testModelMatrix.AppendZRotation(deltaSeconds * 90.f);
-    g_testModelMatrix.AppendUniformScale(0.99f);
+
+    float scale = 1.f + 0.5f * SinRadians(t);
+    g_renderModelMatrix = g_testModelMatrix.GetAppended(Mat44::CreateUniformScale2D(scale));
 }
 
 
@@ -64,7 +70,7 @@ void Game::Render() const
 {
     g_renderer->ClearScreen(Rgba8::MAGENTA);
     g_renderer->BeginCamera(m_camera);
-    g_renderer->SetModelMatrix(g_testModelMatrix);
+    g_renderer->SetModelMatrix(g_renderModelMatrix);
     g_renderer->SetModelTint(g_testTint);
     g_renderer->DrawVertexBuffer(m_vertexBuffer);
 }

@@ -82,6 +82,15 @@ void Mat44::Append(Mat44 const& appendThis)
 
 
 
+Mat44 Mat44::GetAppended(Mat44 const& appendThis) const
+{
+	Mat44 copy = Mat44(*this);
+	copy.Append(appendThis);
+	return copy;
+}
+
+
+
 void Mat44::AppendXRotation(float degreesRotationAboutX)
 {
 	Append(CreateXRotationDegrees(degreesRotationAboutX));
@@ -103,9 +112,16 @@ void Mat44::AppendZRotation(float degreesRotationAboutZ)
 
 
 
-void Mat44::AppendUniformScale(float uniformScale)
+void Mat44::AppendUniformScale2D(float uniformScale)
 {
-	Append(CreateUniformScale(uniformScale));
+	Append(CreateUniformScale2D(uniformScale));
+}
+
+
+
+void Mat44::AppendUniformScale3D(float uniformScale)
+{
+	Append(CreateUniformScale3D(uniformScale));
 }
 
 
@@ -164,7 +180,17 @@ Mat44 Mat44::CreateZRotationDegrees(float rotationDegreesAboutZ)
 
 
 
-Mat44 Mat44::CreateUniformScale(float uniformScale)
+Mat44 Mat44::CreateUniformScale2D(float uniformScale)
+{
+	Mat44 result;
+	result[Ix] = uniformScale;
+	result[Jy] = uniformScale;
+	return result;
+}
+
+
+
+Mat44 Mat44::CreateUniformScale3D(float uniformScale)
 {
 	Mat44 result;
 	result[Ix] = uniformScale;

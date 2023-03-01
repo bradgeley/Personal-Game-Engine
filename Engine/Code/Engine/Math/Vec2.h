@@ -46,6 +46,8 @@ public:
 
     void operator*=(float multiplier);
     void operator/=(float divisor);
+    
+    bool operator==(Vec2 const& rhs) const;
 
 public:
     

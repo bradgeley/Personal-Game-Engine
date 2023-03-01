@@ -1,9 +1,61 @@
 ﻿// Bradley Christensen - 2022
+#include <corecrt_math_defines.h>
+
 #include "gtest/gtest.h"
 #include "Game/UnitTests/TestUtils.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Math/MathUtils.h"
 
+TEST(MathUtils, Trig)
+{
+    constexpr float ALLOWABLE_ERROR = 0.00001f;
+    EXPECT_NEAR(SinDegrees(0.f), 0.f, ALLOWABLE_ERROR);
+    EXPECT_NEAR(CosDegrees(180.f), -1.f, ALLOWABLE_ERROR);
+    
+    EXPECT_NEAR(SinRadians(static_cast<float>(M_PI)), 0.f, ALLOWABLE_ERROR);
+    EXPECT_NEAR(CosRadians(static_cast<float>(M_PI)), -1.f, ALLOWABLE_ERROR);
+    
+    EXPECT_NEAR(DegreesToRadians(180.f), static_cast<float>(M_PI), ALLOWABLE_ERROR);
+    EXPECT_NEAR(RadiansToDegrees(static_cast<float>(M_PI) * 2.f), 360.f, ALLOWABLE_ERROR);
+}
+
+TEST(MathUtils, Clamp)
+{
+    float value = 4.f;
+    value = ClampF(value, 1.f, 10.f);
+    EXPECT_FLOAT_EQ(value, 4.f);
+    value = ClampF(value, 5.f, 10.f);
+    EXPECT_FLOAT_EQ(value, 5.f);
+    value = ClampF(value, 2.f, 3.f);
+    EXPECT_FLOAT_EQ(value, 3.f);
+}
+
+TEST(MathUtils, Lerp)
+{
+    EXPECT_FLOAT_EQ(Interpolate(2.f, 10.f, -1.f), -6.f);
+    EXPECT_FLOAT_EQ(Interpolate(2.f, 10.f, 0.f), 2.f);
+    EXPECT_FLOAT_EQ(Interpolate(2.f, 10.f, 0.5f), 6.f);
+    EXPECT_FLOAT_EQ(Interpolate(2.f, 10.f, 1.f), 10.f);
+    EXPECT_FLOAT_EQ(Interpolate(2.f, 10.f, 11.f), 90.f);
+    
+    EXPECT_FLOAT_EQ(InterpolateClamped(2.f, 10.f, -1.f), 2.f);
+    EXPECT_FLOAT_EQ(InterpolateClamped(2.f, 10.f, 0.f), 2.f);
+    EXPECT_FLOAT_EQ(InterpolateClamped(2.f, 10.f, 0.5f), 6.f);
+    EXPECT_FLOAT_EQ(InterpolateClamped(2.f, 10.f, 1.f), 10.f);
+    EXPECT_FLOAT_EQ(InterpolateClamped(2.f, 10.f, 11.f), 10.f);
+    
+    EXPECT_EQ(InterpolateInt(2, 10, -1.f), -6);
+    EXPECT_EQ(InterpolateInt(2, 10, 0.f), 2);
+    EXPECT_EQ(InterpolateInt(2, 10, 0.5f), 6);
+    EXPECT_EQ(InterpolateInt(2, 10, 1.f), 10);
+    EXPECT_EQ(InterpolateInt(2, 10, 11.f), 90);
+    
+    EXPECT_EQ(InterpolateIntClamped(2, 10, -1.f), 2);
+    EXPECT_EQ(InterpolateIntClamped(2, 10, 0.f), 2);
+    EXPECT_EQ(InterpolateIntClamped(2, 10, 0.5f), 6);
+    EXPECT_EQ(InterpolateIntClamped(2, 10, 1.f), 10);
+    EXPECT_EQ(InterpolateIntClamped(2, 10, 11.f), 10);
+}
 
 TEST(MathUtils, GetLength2D)
 {

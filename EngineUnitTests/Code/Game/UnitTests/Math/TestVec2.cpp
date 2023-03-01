@@ -23,6 +23,14 @@ TEST(Vec2, Construct)
     EXPECT_VEC2_EQf(vec4, -5, 5.f);
 }
 
+TEST(Vec2, Equality)
+{
+    // Construction
+    Vec2 vec(5.f, -5.f);
+    Vec2 vec2(5.f, -5.f);
+    EXPECT_TRUE(vec == vec2);
+}
+
 TEST(Vec2, Statics)
 {
     EXPECT_VEC2_EQf(Vec2::ZeroVector, 0.f, 0.f);
@@ -95,4 +103,15 @@ TEST(Vec2, Divide)
     // Vec /= float
     vec /= 2.f;
     EXPECT_VEC2_EQf(vec, 10.f, -40.5f);
+}
+
+TEST(Vec2, Normalize)
+{
+    Vec2 ez(3.f, 4.f);
+    EXPECT_FLOAT_EQ(ez.GetLength(), 5.f);
+    
+    EXPECT_FLOAT_EQ(ez.GetNormalized().GetLength(), 1.f);
+
+    ez.Normalize();
+    EXPECT_FLOAT_EQ(ez.GetLength(), 1.f);
 }

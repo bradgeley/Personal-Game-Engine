@@ -15,7 +15,7 @@ struct Vec3;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// Math
+// Trig
 //
 float SinDegrees(float degrees);
 float CosDegrees(float degrees);
@@ -23,6 +23,12 @@ float SinRadians(float radians);
 float CosRadians(float radians);
 float DegreesToRadians(float degrees);
 float RadiansToDegrees(float radians);
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Utilities
+//
+float ClampF(float value, float min, float max);
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -44,4 +50,6 @@ void NormalizeVector3D(Vec3& vec);
 // Lerp
 //
 float Interpolate(float a, float b, float t);
+float InterpolateClamped(float a, float b, float t);
 int InterpolateInt(int a, int b, float t);
+int InterpolateIntClamped(int a, int b, float t);
