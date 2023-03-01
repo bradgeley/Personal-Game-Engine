@@ -6,3 +6,8 @@
 */.idea/*
 */*/*/x64
 */*/*/x86
+*.ipch
+
+ProtoGame2D/.vs/ProtoGame2D/v16/.suo
+
+*.db
