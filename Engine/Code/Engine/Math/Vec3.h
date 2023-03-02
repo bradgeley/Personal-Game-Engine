@@ -3,6 +3,10 @@
 
 
 
+struct Vec2;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 // Vec3
 //
@@ -18,8 +22,9 @@ public:
 
 public:
     
-    explicit Vec3();
+    Vec3() = default;
     explicit Vec3(float x, float y, float z);
+    explicit Vec3(Vec2 const& fromVec2);
 
 public:
     

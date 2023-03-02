@@ -1,15 +1,13 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Vec2.h"
+#include "Vec3.h"
 #include "MathUtils.h"
+
 
 
 Vec2 Vec2::ZeroVector = Vec2(0.f, 0.f);
 Vec2 Vec2::ZeroToOne = Vec2(0.f, 1.f);
 
-
-Vec2::Vec2() : x(0.f), y(0.f)
-{
-}
 
 
 Vec2::Vec2(float x, float y) : x(x), y(y)
@@ -18,6 +16,11 @@ Vec2::Vec2(float x, float y) : x(x), y(y)
 
 
 Vec2::Vec2(int x, int y) : x(static_cast<float>(x)), y(static_cast<float>(y))
+{
+}
+
+
+Vec2::Vec2(Vec3 const& fromVec3) : x(fromVec3.x), y(fromVec3.y)
 {
 }
 
@@ -39,6 +42,34 @@ Vec2 Vec2::GetNormalized() const
     Vec2 copy = *this;
     NormalizeVector2D(copy);
     return copy;
+}
+
+
+Vec2 Vec2::GetRotated90() const
+{
+    return Vec2(-y, x);
+}
+
+
+Vec2 Vec2::GetRotatedMinus90() const
+{
+    return Vec2(y, -x);
+}
+
+
+void Vec2::Rotate90()
+{
+    float X = x;
+    x = -y;
+    y = X;
+}
+
+
+void Vec2::RotateMinus90()
+{
+    float X = x;
+    x = y;
+    y = -X;
 }
 
 

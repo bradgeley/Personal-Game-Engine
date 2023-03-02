@@ -32,6 +32,7 @@ void Renderer::Startup()
 {
 	CreateRenderContext();
 	CreateDefaultShader();
+	CreateDefaultTexture();
 	CreateBlendStates();
 	CreateRasterizerState();
 	CreateDepthBuffer();
@@ -42,6 +43,7 @@ void Renderer::Shutdown()
 {
 	DestroyRenderContext();
 	DestroyDefaultShader();
+	DestroyDefaultTexture();
 	DestroyBlendStates();
 	DestroyRasterizerState();
 	DestroyDepthBuffer();
@@ -69,6 +71,8 @@ void Renderer::EndFrame()
 void Renderer::BeginCamera(Camera const& camera)
 {
 	BindRenderTarget(m_backbufferTexture);
+	BindShader(m_defaultShader);
+	BindTexture(m_defaultTexture);
 
 	// Fill Camera Constants
 	m_cameraConstants.m_cameraToClip = camera.GetOrthoProjectionMatrix();
@@ -91,11 +95,6 @@ void Renderer::BeginCamera(Camera const& camera)
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1;
 	m_deviceContext->RSSetViewports(1, &viewport);
-
-	if (!m_currentShader)
-	{
-		BindShader(m_defaultShader);
-	}
 }
 
 
@@ -120,6 +119,10 @@ void Renderer::ClearScreen(Rgba8 const& tint)
 
 void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 {
+	if (vbo->IsDirty())
+	{
+		vbo->UpdateGPUBuffer();
+	}
 	BindVertexBuffer(vbo);
 	Draw(vbo->GetNumVerts(), 0);
 }
@@ -162,7 +165,10 @@ void Renderer::SetModelTint(Rgba8 const& modelTint)
 
 void Renderer::BindTexture(Texture* texture, int slot)
 {
-	ASSERT_OR_DIE(texture, "Attempted to bind null texture")
+	if (!texture)
+	{
+		texture = m_defaultTexture;
+	}
 	ID3D11ShaderResourceView* srv = texture->CreateOrGetShaderResourceView();
 	m_deviceContext->PSSetShaderResources(slot, 1, &srv);
 }
@@ -340,6 +346,23 @@ void Renderer::DestroyDefaultShader()
 	m_defaultShader->ReleaseResources();
 	delete m_defaultShader;
 	m_defaultShader = nullptr;
+}
+
+
+
+void Renderer::CreateDefaultTexture()
+{
+	m_defaultTexture = new Texture();
+	m_defaultTexture->CreateUniformTexture(IntVec2(1, 1), Rgba8::WHITE);
+}
+
+
+
+void Renderer::DestroyDefaultTexture()
+{
+	m_defaultTexture->ReleaseResources();
+	delete m_defaultTexture;
+	m_defaultTexture = nullptr;
 }
 
 

@@ -123,6 +123,9 @@ private:
     void CreateDefaultShader();
     void DestroyDefaultShader();
     
+    void CreateDefaultTexture();
+    void DestroyDefaultTexture();
+    
     void CreateRasterizerState();
     void DestroyRasterizerState();
     
@@ -142,6 +145,7 @@ private:
 
     Shader* m_defaultShader = nullptr;
     Shader* m_currentShader = nullptr;
+    Texture* m_defaultTexture = nullptr;
     Texture* m_backbufferTexture = nullptr;
 	Texture* m_depthBuffer = nullptr;
 

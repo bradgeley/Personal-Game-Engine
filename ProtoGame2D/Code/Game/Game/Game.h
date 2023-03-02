@@ -19,6 +19,7 @@ public:
     void Render() const override;
 
     Camera m_camera;
-    VertexBuffer* m_vertexBuffer;
+    VertexBuffer* m_staticGeometryVerts;
+    VertexBuffer* m_spinningTextureVerts;
     Texture* m_texture = nullptr;
 };

@@ -5,7 +5,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexBuffer.h"
-
+#include "Engine/Renderer/VertexUtils.h"
 
 
 Mat44 g_testModelMatrix = Mat44();
@@ -18,37 +18,23 @@ void Game::Startup()
 {
     m_camera = Camera(Vec3(-1000.f,-1000.f,-1000.f), Vec3(1000.f, 1000.f, 1000.f));
     
-    m_vertexBuffer = new VertexBuffer();
-    m_vertexBuffer->Initialize();
+    m_spinningTextureVerts = new VertexBuffer();
+    m_spinningTextureVerts->Initialize();
 
-    Rgba8 tint = Rgba8::WHITE;
-    Vec3 bottomRightPoint = Vec3(500.f, -500.f, 1.f);
-    Vec2 bottomRightUVs = Vec2(1.f, 0.f);
-    Vec3 topRightPoint = Vec3(500.f, 500.f, 1.f);
-    Vec2 topRightUVs = Vec2(1.f, 1.f);
-    Vec3 bottomLeftPoint = Vec3(-500.f, -500.f, 1.f);
-    Vec2 bottomLeftUVs = Vec2(0.f, 0.f);
-    Vec3 topLeftPoint = Vec3(-500.f, 500.f, 1.f);
-    Vec2 topLeftUVs = Vec2(0.f, 1.f);
+    auto& spinningTexVerts = m_spinningTextureVerts->GetMutableVerts();
+    AddVertsForSquare2D(spinningTexVerts, Vec2(-50.f, -50.f), Vec2(50.f,50.f));
+    m_spinningTextureVerts->AddVerts(spinningTexVerts);
 
-    std::vector<Vertex_PCU> verts;
-    verts.reserve(9);
-    verts.emplace(verts.end(), bottomLeftPoint, tint, bottomLeftUVs);
-    verts.emplace(verts.end(), bottomRightPoint, tint, bottomRightUVs);
-    verts.emplace(verts.end(), topRightPoint, tint, topRightUVs);
-    
-    verts.emplace(verts.end(), topRightPoint, tint, topRightUVs);
-    verts.emplace(verts.end(), topLeftPoint, tint, topLeftUVs);
-    verts.emplace(verts.end(), bottomLeftPoint, tint, bottomLeftUVs);
-    m_vertexBuffer->AddVerts(verts);
-    m_vertexBuffer->UpdateGPUBuffer();
-
-    m_texture = new Texture();
+    m_texture = new Texture(); 
     m_texture->LoadFromImageFile("Data/Images/TestUV.png");
-    g_renderer->BindTexture(m_texture);
+
+    m_staticGeometryVerts = new VertexBuffer();
+    m_staticGeometryVerts->Initialize();
+
+    auto& staticGeoVerts = m_staticGeometryVerts->GetMutableVerts();
+    AddVertsForLine2D(staticGeoVerts, Vec2(-100.f, -100.f), Vec2(100.f, 100.f), 5.f);
+    AddVertsForWireBox2D(staticGeoVerts, Vec2(-400.f, -400.f), Vec2(-250.f, -250.f), 5.f);
 }
-
-
 
 
 
@@ -68,9 +54,18 @@ void Game::Update(float deltaSeconds)
 
 void Game::Render() const
 {
+    g_renderer->BeginCamera(m_camera); // reset renderer state
+
+    // Clear screen first
     g_renderer->ClearScreen(Rgba8::MAGENTA);
-    g_renderer->BeginCamera(m_camera);
+    
+    // Then draw static geo
+    g_renderer->DrawVertexBuffer(m_staticGeometryVerts);
+
+    // Then moving things
     g_renderer->SetModelMatrix(g_renderModelMatrix);
     g_renderer->SetModelTint(g_testTint);
-    g_renderer->DrawVertexBuffer(m_vertexBuffer);
+    g_renderer->BindTexture(m_texture);
+    g_renderer->DrawVertexBuffer(m_spinningTextureVerts);
+    
 }

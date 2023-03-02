@@ -1,12 +1,12 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Engine/Renderer/VertexBuffer.h"
-
 #include "Renderer.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Renderer/RendererInternal.h"
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::Initialize(int numExpectedVerts)
 {
     // Release for reinitialization if already initialized
@@ -32,6 +32,7 @@ void VertexBuffer::Initialize(int numExpectedVerts)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::ReleaseResources()
 {
     DX_SAFE_RELEASE(m_handle)
@@ -40,13 +41,42 @@ void VertexBuffer::ReleaseResources()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+std::vector<Vertex_PCU> const& VertexBuffer::GetVerts() const
+{
+    return m_verts;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+std::vector<Vertex_PCU>& VertexBuffer::GetMutableVerts()
+{
+    m_isDirty = true;
+    return m_verts;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::AddVerts(std::vector<Vertex_PCU> const& verts)
 {
+    m_isDirty = true;
     m_verts.insert(m_verts.end(), verts.begin(), verts.end());
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+void VertexBuffer::ClearVerts()
+{
+    m_isDirty = true;
+    m_verts.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 int VertexBuffer::GetStride() const
 {
     return sizeof(Vertex_PCU);
@@ -54,6 +84,7 @@ int VertexBuffer::GetStride() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 int VertexBuffer::GetNumVerts() const
 {
     return (int) m_verts.size();
@@ -61,8 +92,19 @@ int VertexBuffer::GetNumVerts() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+bool VertexBuffer::IsDirty() const
+{
+    return m_isDirty;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::UpdateGPUBuffer()
 {
+    m_isDirty = false;
+    
     if (m_verts.empty())
     {
         ReleaseResources();

@@ -3,6 +3,10 @@
 
 
 
+struct Vec3;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 // Vec2
 //
@@ -17,15 +21,21 @@ public:
 
 public:
     
-    explicit Vec2();
+    Vec2() = default;
     explicit Vec2(float x, float y);
     explicit Vec2(int x, int y);
+    explicit Vec2(Vec3 const& fromVec3);
 
 public:
     
     float GetLength() const;
     void Normalize();
     Vec2 GetNormalized() const;
+    Vec2 GetRotated90() const;
+    Vec2 GetRotatedMinus90() const;
+    
+    void Rotate90();
+    void RotateMinus90();
 
     // Component-wise const operators
     Vec2 operator-() const;

@@ -8,6 +8,16 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+bool Texture::CreateUniformTexture(IntVec2 const& dims, Rgba8 const& tint)
+{
+    Image image(dims, tint);
+    return CreateFromImage(image, false);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Texture::CreateFromImage(Image const& image, bool createMipMap)
 {
     auto device = g_renderer->GetDevice();
@@ -81,6 +91,7 @@ bool Texture::CreateFromImage(Image const& image, bool createMipMap)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool Texture::LoadFromImageFile(const char* imageSource, bool createMipMap)
 {
     Image image = Image();
@@ -93,6 +104,7 @@ bool Texture::LoadFromImageFile(const char* imageSource, bool createMipMap)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool Texture::CreateFromSwapChain(IDXGISwapChain* swapChain)
 {
     swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &m_textureHandle);
@@ -110,6 +122,7 @@ bool Texture::CreateFromSwapChain(IDXGISwapChain* swapChain)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Texture::ReleaseResources()
 {
     DX_SAFE_RELEASE(m_shaderResourceView)
@@ -120,6 +133,7 @@ void Texture::ReleaseResources()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Texture* Texture::CreateDepthBuffer(IntVec2 const& texelSize)
 {
     Texture* texture = new Texture();
@@ -144,6 +158,7 @@ Texture* Texture::CreateDepthBuffer(IntVec2 const& texelSize)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11DepthStencilView* Texture::CreateOrGetDepthStencilView()
 {
     if (!m_depthStencilView)
@@ -157,6 +172,7 @@ ID3D11DepthStencilView* Texture::CreateOrGetDepthStencilView()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11RenderTargetView* Texture::CreateOrGetRenderTargetView()
 {
     if (!m_renderTargetView)
@@ -170,6 +186,7 @@ ID3D11RenderTargetView* Texture::CreateOrGetRenderTargetView()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11ShaderResourceView* Texture::CreateOrGetShaderResourceView()
 {
     if (!m_shaderResourceView)

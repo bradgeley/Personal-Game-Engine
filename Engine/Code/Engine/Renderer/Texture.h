@@ -6,6 +6,7 @@
 
 
 class Image;
+struct Rgba8;
 struct ID3D11DepthStencilView;
 struct ID3D11RenderTargetView;
 struct ID3D11ShaderResourceView;
@@ -14,6 +15,7 @@ struct IDXGISwapChain;
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 class Texture
 {
     friend class Renderer;
@@ -21,7 +23,8 @@ class Texture
 public:
 
     Texture() = default;
-    
+
+    bool CreateUniformTexture(IntVec2 const& dims, Rgba8 const& tint);
     bool CreateFromImage(Image const& image, bool createMipMap = true);
     bool LoadFromImageFile(const char* imageSource, bool createMipMap = true);
     
