@@ -18,7 +18,7 @@ public:
     Rgba8() = default;
 	explicit Rgba8(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
 
-    void GetAsFloats(float* fourFloatOutputArray) const;
+    void GetAsFloats(float* out_fourFloats) const;
     uint32_t GetAsUint32() const;
 
 public:

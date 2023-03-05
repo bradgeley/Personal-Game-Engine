@@ -7,6 +7,14 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+VertexBuffer::~VertexBuffer()
+{
+    ReleaseResources();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::Initialize(int numExpectedVerts)
 {
     // Release for reinitialization if already initialized

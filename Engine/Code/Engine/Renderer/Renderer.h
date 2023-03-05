@@ -38,6 +38,9 @@ struct RendererConfig
 //
 // The game's renderer! Make's triangles show up and stuff.
 //
+// Keeps track of current pipeline state in RendererSettings, keeping new changes in a copy called "dirtySettings"
+// Only updates renderer state, if necessary, just before a Draw call - in order to minimize the number of gpu syncs
+//
 class Renderer : public EngineSubsystem
 {
 public:
@@ -60,12 +63,12 @@ public:
     void SetModelMatrix(Mat44 const& modelMatrix);
     void SetModelTint(Rgba8 const& modelTint);
     void SetBlendMode(BlendMode blendMode);
-    void SetSamplerMode(SamplerFilter filter, SamplerAddressMode addressMode, int slot = 0);
+    void SetSamplerMode(SamplerFilter filter, SamplerAddressMode addressMode);
     void SetCullMode(CullMode cullMode);
     void SetWindingOrder(Winding winding);
     void SetFillMode(FillMode fillMode);
 
-    void BindTexture(Texture* texture, int slot = 0);
+    void BindTexture(Texture* texture);
     void BindShader(Shader* shader);
     void BindRenderTarget(Texture* texture);
     
@@ -86,7 +89,6 @@ private:
     void DestroyDebugLayer();
     void ReportLiveObjects();
     
-    void CreateSamplerStates();
     ID3D11SamplerState* CreateSamplerState(SamplerFilter filter, SamplerAddressMode addressMode);
     void DestroySamplerStates();
     
@@ -110,6 +112,7 @@ private:
     
     void CreateDepthBuffer();
     void DestroyDepthBuffer();
+    void DestroyDepthStencilState();
 
     void ResetRenderingPipelineState();
     void UpdateRenderingPipelineState(bool force = false);
@@ -145,7 +148,8 @@ private:
     ID3D11RasterizerState* m_rasterizerState = nullptr;
 	ID3D11DepthStencilState* m_depthStencilState = nullptr;
 
-    // Renderer State
+    // Renderer Pipeline State
+    // todo: add more things to this
     RendererSettings m_settings;
     RendererSettings m_dirtySettings;
 

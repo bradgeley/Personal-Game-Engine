@@ -23,6 +23,7 @@ class Texture
 public:
 
     Texture() = default;
+    ~Texture();
 
     bool CreateUniformTexture(IntVec2 const& dims, Rgba8 const& tint);
     bool CreateFromImage(Image const& image, bool createMipMap = true);

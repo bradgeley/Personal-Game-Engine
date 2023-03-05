@@ -24,6 +24,7 @@ public:
 
     VertexBuffer() = default;
     VertexBuffer(VertexBuffer const& copy) = delete;
+    ~VertexBuffer();
 
     void Initialize(int numExpectedVerts = 3);
     void ReleaseResources();

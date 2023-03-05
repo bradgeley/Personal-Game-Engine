@@ -45,6 +45,7 @@ void Renderer::Startup()
 	CreateRasterizerState();
 	CreateDepthBuffer();
 	CreateConstantBuffers();
+
 	UpdateRenderingPipelineState(true);
 }
 
@@ -53,13 +54,15 @@ void Renderer::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::Shutdown()
 {
-	DestroyRenderContext();
 	DestroyDefaultShader();
 	DestroyDefaultTexture();
 	DestroyBlendStates();
 	DestroyRasterizerState();
 	DestroyDepthBuffer();
 	DestroyConstantBuffers();
+	DestroySamplerStates();
+	DestroyDepthStencilState();
+	DestroyRenderContext();
 
 	ReportLiveObjects();
 	DestroyDebugLayer();
@@ -166,7 +169,7 @@ void Renderer::SetModelConstants(ModelConstants const& modelConstants)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::SetModelMatrix(Mat44 const& modelMatrix)
+void Renderer:: SetModelMatrix(Mat44 const& modelMatrix)
 {
 	m_dirtySettings.m_modelConstants.m_modelMatrix = modelMatrix;
 }
@@ -190,7 +193,7 @@ void Renderer::SetBlendMode(BlendMode blendMode)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::SetSamplerMode(SamplerFilter filter, SamplerAddressMode addressMode, int slot)
+void Renderer::SetSamplerMode(SamplerFilter filter, SamplerAddressMode addressMode)
 {
 	m_dirtySettings.m_samplerFilter = filter;
 	m_dirtySettings.m_samplerAddressMode = addressMode;
@@ -223,7 +226,7 @@ void Renderer::SetFillMode(FillMode fillMode)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::BindTexture(Texture* texture, int slot)
+void Renderer::BindTexture(Texture* texture)
 {
 	m_dirtySettings.m_texture = texture;
 }
@@ -316,7 +319,7 @@ void Renderer::CreateDebugLayer()
 {
 #if defined(_DEBUG)
 	HMODULE modHandle = ::LoadLibraryA("Dxgidebug.dll");
-	ASSERT_OR_DIE(modHandle, "Failed to load Dxgidebug.dll");
+	ASSERT_OR_DIE(modHandle, "Failed to load Dxgidebug.dll")
 
 	typedef HRESULT(WINAPI* GetDebugModuleFunc)(REFIID, void**);
 	GetDebugModuleFunc getModuleFunc = (GetDebugModuleFunc) ::GetProcAddress(modHandle, "DXGIGetDebugInterface");
@@ -361,13 +364,6 @@ void Renderer::ReportLiveObjects()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::CreateSamplerStates()
-{
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 ID3D11SamplerState* Renderer::CreateSamplerState(SamplerFilter filter, SamplerAddressMode addressMode)
 {
 	float maxAnisotropy = 0.f;
@@ -376,7 +372,7 @@ ID3D11SamplerState* Renderer::CreateSamplerState(SamplerFilter filter, SamplerAd
 
 	D3D11_SAMPLER_DESC desc = {};
 	desc.Filter = d3d11Filter;
-	desc.AddressU = d3d11AddressMode;
+ 	desc.AddressU = d3d11AddressMode;
 	desc.AddressV = d3d11AddressMode;
 	desc.AddressW = d3d11AddressMode;
 
@@ -388,7 +384,7 @@ ID3D11SamplerState* Renderer::CreateSamplerState(SamplerFilter filter, SamplerAd
 	
 	ID3D11SamplerState* samplerState = nullptr;
 	HRESULT result = m_device->CreateSamplerState(&desc, &samplerState);
-	ASSERT_OR_DIE(result, "Failed to create sampler state.")
+	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create sampler state.")
 	return samplerState;
 }
 
@@ -410,7 +406,7 @@ void Renderer::CreateRenderContext()
 	deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 	
-	DXGI_SWAP_CHAIN_DESC swapChainDesc = { 0 };
+	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.BufferDesc.Height = g_window->GetHeight();
 	swapChainDesc.BufferDesc.Width = g_window->GetWidth();
@@ -538,9 +534,17 @@ void Renderer::DestroyDepthBuffer()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Renderer::DestroyDepthStencilState()
+{
+	DX_SAFE_RELEASE(m_depthStencilState)
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::ResetRenderingPipelineState()
 {
-	m_settings = m_dirtySettings;
+	// Only reset the dirty settings, so changes will still be detected
 	m_dirtySettings = RendererSettings();
 	BindShader(m_defaultShader);
 	BindTexture(m_defaultTexture);
@@ -551,14 +555,14 @@ void Renderer::ResetRenderingPipelineState()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::UpdateRenderingPipelineState(bool force)
 {
-	UpdateRasterizerState();
-	UpdateDepthStencilState();
-	UpdateModelConstants();
-	UpdateCameraConstants();
-	UpdateBlendMode();
-	UpdateSamplerState();
-	UpdateTexture();
-	UpdateShader();
+	UpdateRasterizerState(force);
+	UpdateDepthStencilState(force);
+	UpdateModelConstants(force);
+	UpdateCameraConstants(force);
+	UpdateBlendMode(force);
+	UpdateSamplerState(force);
+	UpdateTexture(force);
+	UpdateShader(force);
 }
 
 
@@ -673,6 +677,10 @@ void Renderer::UpdateRasterizerState(bool force)
 		m_dirtySettings.m_winding  != m_settings.m_winding  ||
 		m_dirtySettings.m_fillMode != m_settings.m_fillMode)
 	{
+		m_settings.m_cullMode = m_dirtySettings.m_cullMode;
+		m_settings.m_winding = m_dirtySettings.m_winding;
+		m_settings.m_fillMode = m_dirtySettings.m_fillMode;
+		
 		DX_SAFE_RELEASE(m_rasterizerState)
 		CreateRasterizerState();
 		m_deviceContext->RSSetState(m_rasterizerState);
@@ -688,6 +696,9 @@ void Renderer::UpdateDepthStencilState(bool force)
 		m_dirtySettings.m_writeDepth != m_settings.m_writeDepth ||
 		m_dirtySettings.m_depthTest  != m_settings.m_depthTest)
 	{
+		m_settings.m_writeDepth = m_dirtySettings.m_writeDepth;
+		m_settings.m_depthTest = m_dirtySettings.m_depthTest;
+		
 		DX_SAFE_RELEASE(m_depthStencilState)
 	
 		D3D11_DEPTH_STENCIL_DESC desc;
@@ -708,7 +719,8 @@ void Renderer::UpdateModelConstants(bool force)
 {
 	if (force || m_dirtySettings.m_modelConstants != m_settings.m_modelConstants)
 	{
-		m_modelConstantsGPU->Update(&m_dirtySettings.m_modelConstants, sizeof(ModelConstants));
+		m_settings.m_modelConstants = m_dirtySettings.m_modelConstants;
+		m_modelConstantsGPU->Update(&m_settings.m_modelConstants, sizeof(ModelConstants));
 	}
 }
 
@@ -719,7 +731,8 @@ void Renderer::UpdateCameraConstants(bool force)
 {
 	if (force || m_dirtySettings.m_cameraConstants != m_settings.m_cameraConstants)
 	{
-		m_cameraConstantsGPU->Update(&m_dirtySettings.m_cameraConstants, sizeof(CameraConstants));
+		m_settings.m_cameraConstants = m_dirtySettings.m_cameraConstants;
+		m_cameraConstantsGPU->Update(&m_settings.m_cameraConstants, sizeof(CameraConstants));
 	}
 }
 
@@ -730,9 +743,10 @@ void Renderer::UpdateBlendMode(bool force)
 {
 	if (force || m_dirtySettings.m_blendMode != m_settings.m_blendMode)
 	{
-		ASSERT_OR_DIE(m_blendStateByMode[(int) m_dirtySettings.m_blendMode], "SetBlendMode Failed due to invalid blend state.")
+		m_settings.m_blendMode = m_dirtySettings.m_blendMode;
+		ASSERT_OR_DIE(m_blendStateByMode[(int) m_settings.m_blendMode], "SetBlendMode Failed due to invalid blend state.")
 		float constexpr blendConstants[4] = { 0.f, 0.f, 0.f, 0.f };
-		m_deviceContext->OMSetBlendState(m_blendStateByMode[(int) m_dirtySettings.m_blendMode], blendConstants, 0xffffffff);
+		m_deviceContext->OMSetBlendState(m_blendStateByMode[(int) m_settings.m_blendMode], blendConstants, 0xffffffff);
 	}
 }
 
@@ -745,9 +759,12 @@ void Renderer::UpdateSamplerState(bool force)
 		m_dirtySettings.m_samplerFilter	!= m_settings.m_samplerFilter ||
 		m_dirtySettings.m_samplerAddressMode != m_settings.m_samplerAddressMode)
 	{
+		m_settings.m_samplerFilter = m_dirtySettings.m_samplerFilter;
+		m_settings.m_samplerAddressMode = m_dirtySettings.m_samplerAddressMode;
+		
 		DX_SAFE_RELEASE(m_samplerState)
 		
-		m_samplerState = CreateSamplerState(m_dirtySettings.m_samplerFilter, m_dirtySettings.m_samplerAddressMode);
+		m_samplerState = CreateSamplerState(m_settings.m_samplerFilter, m_settings.m_samplerAddressMode);
 		ASSERT_OR_DIE(m_samplerState, "Failed to create or get sampler state")
 
 		// todo: support multiple samplers at a time
@@ -764,9 +781,12 @@ void Renderer::UpdateTexture(bool force)
 	{
 		if (!m_dirtySettings.m_texture)
 		{
-			m_dirtySettings.m_texture = m_defaultTexture;
+			ASSERT_OR_DIE(m_defaultTexture, "No default texture available.")
+			BindTexture(m_defaultTexture);
 		}
-		ID3D11ShaderResourceView* srv = m_dirtySettings.m_texture->CreateOrGetShaderResourceView();
+		m_settings.m_texture = m_dirtySettings.m_texture;
+
+		ID3D11ShaderResourceView* srv = m_settings.m_texture->CreateOrGetShaderResourceView();
 
 		// todo: support multiple textures bound at the same time
 		m_deviceContext->PSSetShaderResources(0, 1, &srv);
@@ -780,20 +800,16 @@ void Renderer::UpdateShader(bool force)
 {
 	if (force || m_dirtySettings.m_shader != m_settings.m_shader)
 	{
-		if (m_dirtySettings.m_shader)
+		if (m_dirtySettings.m_shader == nullptr)
 		{
-			m_deviceContext->VSSetShader(m_dirtySettings.m_shader->m_vertexShader, nullptr, 0);
-			m_deviceContext->PSSetShader(m_dirtySettings.m_shader->m_pixelShader, nullptr, 0);
-			m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		}
-		else if (m_defaultShader)
-		{
+			ASSERT_OR_DIE(m_defaultShader, "No default shader exists.")
 			BindShader(m_defaultShader);
 		}
-		else
-		{
-			ERROR_AND_DIE("Could not bind shader, and default didn't exist.")
-		}
+		m_settings.m_shader = m_dirtySettings.m_shader;
+
+		m_deviceContext->VSSetShader(m_settings.m_shader->m_vertexShader, nullptr, 0);
+		m_deviceContext->PSSetShader(m_settings.m_shader->m_pixelShader, nullptr, 0);
+		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 }
 

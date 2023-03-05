@@ -17,6 +17,7 @@ public:
     void Startup() override;
     void Update(float deltaSeconds) override;
     void Render() const override;
+    void Shutdown() override;
 
     Camera m_camera;
     VertexBuffer* m_staticGeometryVerts;

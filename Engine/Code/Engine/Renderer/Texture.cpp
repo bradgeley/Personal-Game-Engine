@@ -9,6 +9,14 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Texture::~Texture()
+{
+    ReleaseResources();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Texture::CreateUniformTexture(IntVec2 const& dims, Rgba8 const& tint)
 {
     Image image(dims, tint);
@@ -109,8 +117,6 @@ bool Texture::CreateFromSwapChain(IDXGISwapChain* swapChain)
 {
     swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &m_textureHandle);
     ASSERT_OR_DIE(m_textureHandle != nullptr, "Failed to create texture from swap chain backbuffer")
-
-    m_textureHandle->AddRef();
 
     D3D11_TEXTURE2D_DESC desc;
     m_textureHandle->GetDesc(&desc);

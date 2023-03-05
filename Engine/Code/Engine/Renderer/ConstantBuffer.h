@@ -18,6 +18,7 @@ public:
 
     ConstantBuffer() = default;
     ConstantBuffer(ConstantBuffer const& copy) = delete;
+    ~ConstantBuffer();
 
     void ReleaseResources();
     

@@ -69,3 +69,12 @@ void Game::Render() const
     g_renderer->DrawVertexBuffer(m_spinningTextureVerts);
     
 }
+
+
+
+void Game::Shutdown()
+{
+    delete m_texture;
+    delete m_staticGeometryVerts;
+    delete m_spinningTextureVerts;
+}

@@ -4,6 +4,8 @@
 #include "Engine/Math/MathUtils.h"
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 Rgba8 const Rgba8::RED(255, 0, 0);
 Rgba8 const Rgba8::BLUE(0, 0, 255);
 Rgba8 const Rgba8::LIGHT_BLUE(51,255,255);
@@ -23,6 +25,7 @@ Rgba8 const Rgba8::EMPTY(0, 0, 0, 0);
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Rgba8::Rgba8(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
     : r(r), g(g), b(b), a(a)
 {
@@ -30,26 +33,29 @@ Rgba8::Rgba8(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 
 
 
-void Rgba8::GetAsFloats(float* fourFloatOutputArray) const
+//----------------------------------------------------------------------------------------------------------------------
+void Rgba8::GetAsFloats(float* out_fourFloats) const
 {
-    fourFloatOutputArray[0] = static_cast<float>(r) / 255.f;
-    fourFloatOutputArray[1] = static_cast<float>(g) / 255.f;
-    fourFloatOutputArray[2] = static_cast<float>(b) / 255.f;
-    fourFloatOutputArray[3] = static_cast<float>(a) / 255.f;
+    out_fourFloats[0] = static_cast<float>(r) / 255.f;
+    out_fourFloats[1] = static_cast<float>(g) / 255.f;
+    out_fourFloats[2] = static_cast<float>(b) / 255.f;
+    out_fourFloats[3] = static_cast<float>(a) / 255.f;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 uint32_t Rgba8::GetAsUint32() const
 {
     void* addressOfR = (void*) &r;
-    int* asInt = reinterpret_cast<int*>(addressOfR);
-    int copy = *asInt;
+    uint32_t* asInt = reinterpret_cast<uint32_t*>(addressOfR);
+    uint32_t copy = *asInt;
     return copy;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Rgba8 Rgba8::Lerp(Rgba8 const& start, Rgba8 const& end, float t)
 {
     Rgba8 result;

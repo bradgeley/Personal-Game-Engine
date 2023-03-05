@@ -6,6 +6,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void ConstantBuffer::Update(void const* data, size_t byteWidth)
 {
     if (!m_handle || byteWidth > m_gpuBufferByteWidth)
@@ -32,6 +33,7 @@ void ConstantBuffer::Update(void const* data, size_t byteWidth)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void ConstantBuffer::Initialize(size_t byteWidth)
 {
     if (m_handle)
@@ -55,6 +57,15 @@ void ConstantBuffer::Initialize(size_t byteWidth)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+ConstantBuffer::~ConstantBuffer()
+{
+    ReleaseResources();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void ConstantBuffer::ReleaseResources()
 {
     DX_SAFE_RELEASE(m_handle)
