@@ -38,6 +38,8 @@ public:
     void AppendUniformScale2D(float uniformScale);
     void AppendUniformScale3D(float uniformScale);
 
+    bool operator==(Mat44 const& rhs) const;
+
 public:
     
     static Mat44 CreateXRotationDegrees(float rotationDegreesAboutX);

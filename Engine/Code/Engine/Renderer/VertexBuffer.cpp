@@ -52,7 +52,7 @@ std::vector<Vertex_PCU> const& VertexBuffer::GetVerts() const
 //----------------------------------------------------------------------------------------------------------------------
 std::vector<Vertex_PCU>& VertexBuffer::GetMutableVerts()
 {
-    m_isDirty = true;
+    m_isDirty = true; // for now just dirty the verts any time they are read as a mutable array, (assume changes were made)
     return m_verts;
 }
 
@@ -87,7 +87,7 @@ int VertexBuffer::GetStride() const
 //----------------------------------------------------------------------------------------------------------------------
 int VertexBuffer::GetNumVerts() const
 {
-    return (int) m_verts.size();
+    return (int) m_verts.size();  
 }
 
 

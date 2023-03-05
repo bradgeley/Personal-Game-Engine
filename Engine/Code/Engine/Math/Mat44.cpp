@@ -126,6 +126,20 @@ void Mat44::AppendUniformScale3D(float uniformScale)
 
 
 
+bool Mat44::operator==(Mat44 const& rhs) const
+{
+	for (int i = 0; i < 16; ++i)
+	{
+		if (m_values[i] != rhs.m_values[i])
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+
+
 Mat44 Mat44::CreateXRotationDegrees(float rotationDegreesAboutX)
 {
 	Mat44 xRotationMatrix;

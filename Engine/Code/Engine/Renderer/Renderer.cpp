@@ -12,6 +12,11 @@
 #include "Camera.h"
 #include "ConstantBuffer.h"
 
+#if defined(_DEBUG)
+#include <dxgidebug.h>
+#endif
+#pragma comment( lib, "dxguid.lib")
+
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -21,6 +26,7 @@ Renderer* g_renderer = nullptr;
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Renderer::Renderer(RendererConfig const& config) : m_config(config)
 {
     
@@ -28,8 +34,10 @@ Renderer::Renderer(RendererConfig const& config) : m_config(config)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::Startup()
 {
+	CreateDebugLayer();
 	CreateRenderContext();
 	CreateDefaultShader();
 	CreateDefaultTexture();
@@ -37,8 +45,12 @@ void Renderer::Startup()
 	CreateRasterizerState();
 	CreateDepthBuffer();
 	CreateConstantBuffers();
+	UpdateRenderingPipelineState(true);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::Shutdown()
 {
 	DestroyRenderContext();
@@ -48,9 +60,13 @@ void Renderer::Shutdown()
 	DestroyRasterizerState();
 	DestroyDepthBuffer();
 	DestroyConstantBuffers();
+
+	ReportLiveObjects();
+	DestroyDebugLayer();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::BeginFrame()
 {
 	ClearDepth(1.f);
@@ -58,6 +74,7 @@ void Renderer::BeginFrame()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::EndFrame()
 {
 	m_swapChain->Present(0, 0);
@@ -68,19 +85,15 @@ void Renderer::EndFrame()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::BeginCamera(Camera const& camera)
 {
+	ResetRenderingPipelineState();
+	
 	BindRenderTarget(m_backbufferTexture);
-	BindShader(m_defaultShader);
-	BindTexture(m_defaultTexture);
 
 	// Fill Camera Constants
-	m_cameraConstants.m_cameraToClip = camera.GetOrthoProjectionMatrix();
-	m_cameraConstants.m_worldToCamera = Mat44();
-	SetCameraConstants(m_cameraConstants);
-
-	// Reset Model Constants
-	SetModelConstants(ModelConstants());
+	m_dirtySettings.m_cameraConstants.m_cameraToClip = camera.GetOrthoProjectionMatrix();
 	
 	// Set viewport
 	IntVec2 windowDims = g_window->GetDimensions();
@@ -99,6 +112,7 @@ void Renderer::BeginCamera(Camera const& camera)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::EndCamera(Camera const& camera)
 {
 	UNUSED(camera)
@@ -106,6 +120,7 @@ void Renderer::EndCamera(Camera const& camera)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::ClearScreen(Rgba8 const& tint)
 {
 	float colorAsFloats[4] = {};
@@ -117,89 +132,113 @@ void Renderer::ClearScreen(Rgba8 const& tint)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 {
 	if (vbo->IsDirty())
 	{
 		vbo->UpdateGPUBuffer();
 	}
-	BindVertexBuffer(vbo);
-	Draw(vbo->GetNumVerts(), 0);
+	if (vbo->GetNumVerts() > 0)
+	{
+		// Only bother binding it if there are verts to draw
+		BindVertexBuffer(vbo);
+		Draw(vbo->GetNumVerts(), 0);
+	}
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::SetCameraConstants(CameraConstants const& cameraConstants)
 {
-	m_cameraConstants = cameraConstants;
-	m_isCameraConstantsDirty = true;
+	m_dirtySettings.m_cameraConstants = cameraConstants;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::SetModelConstants(ModelConstants const& modelConstants)
 {
-	m_modelConstants = modelConstants;
-	m_isModelConstantsDirty = true;
+	m_dirtySettings.m_modelConstants = modelConstants;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::SetModelMatrix(Mat44 const& modelMatrix)
 {
-	m_modelConstants.m_modelMatrix = modelMatrix;
-	//m_modelConstantsGPU->Update(&m_modelConstants, sizeof(ModelConstants));
-	m_isModelConstantsDirty = true;
+	m_dirtySettings.m_modelConstants.m_modelMatrix = modelMatrix;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::SetModelTint(Rgba8 const& modelTint)
 {
-	modelTint.GetAsFloats(m_modelConstants.m_modelRgba);
-	//m_modelConstantsGPU->Update(&m_modelConstants, sizeof(ModelConstants));
-	m_isModelConstantsDirty = true;
+	modelTint.GetAsFloats(m_dirtySettings.m_modelConstants.m_modelRgba);
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::SetBlendMode(BlendMode blendMode)
+{
+	m_dirtySettings.m_blendMode = blendMode;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::SetSamplerMode(SamplerFilter filter, SamplerAddressMode addressMode, int slot)
+{
+	m_dirtySettings.m_samplerFilter = filter;
+	m_dirtySettings.m_samplerAddressMode = addressMode;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::SetCullMode(CullMode cullMode)
+{
+	m_dirtySettings.m_cullMode = cullMode;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::SetWindingOrder(Winding winding)
+{
+	m_dirtySettings.m_winding = winding;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::SetFillMode(FillMode fillMode)
+{
+	m_dirtySettings.m_fillMode = fillMode;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::BindTexture(Texture* texture, int slot)
 {
-	if (!texture)
-	{
-		texture = m_defaultTexture;
-	}
-	ID3D11ShaderResourceView* srv = texture->CreateOrGetShaderResourceView();
-	m_deviceContext->PSSetShaderResources(slot, 1, &srv);
+	m_dirtySettings.m_texture = texture;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::BindShader(Shader* shader)
 {
-	if (shader)
-	{
-		if (shader == m_currentShader)
-		{
-			return;
-		}
-		m_deviceContext->VSSetShader(shader->m_vertexShader, nullptr, 0);
-		m_deviceContext->PSSetShader(shader->m_pixelShader, nullptr, 0);
-		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		m_currentShader = shader;
-	}
-	else if (m_defaultShader)
-	{
-		BindShader(m_defaultShader);
-	}
-	else
-	{
-		ERROR_AND_DIE("Could not bind shader, and default didn't exist.")
-	}
+	m_dirtySettings.m_shader = shader;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::BindRenderTarget(Texture* texture)
 {
 	ID3D11DepthStencilView* dsv = m_depthBuffer->CreateOrGetDepthStencilView();
@@ -209,6 +248,7 @@ void Renderer::BindRenderTarget(Texture* texture)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11Device* Renderer::GetDevice() const
 {
 	return m_device;
@@ -216,6 +256,7 @@ ID3D11Device* Renderer::GetDevice() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11DeviceContext* Renderer::GetContext() const
 {
 	return m_deviceContext;
@@ -223,14 +264,7 @@ ID3D11DeviceContext* Renderer::GetContext() const
 
 
 
-void Renderer::SetBlendMode(BlendMode blendMode)
-{
-	ASSERT_OR_DIE(m_blendStateByMode[(int) blendMode] != nullptr, "SetBlendMode Failed due to invalid blend state.")
-	
-	static float const blendConstants[4] = { 0.f, 0.f, 0.f, 0.f };
-	m_deviceContext->OMSetBlendState(m_blendStateByMode[(int) blendMode], blendConstants, 0xffffffff);
-}
-
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::ClearDepth(float depth)
 {
 	ID3D11DepthStencilView* view = m_depthBuffer->CreateOrGetDepthStencilView();
@@ -239,6 +273,7 @@ void Renderer::ClearDepth(float depth)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::BindVertexBuffer(VertexBuffer const* vbo) const
 {
 	UINT stride = (UINT) vbo->GetStride();
@@ -258,6 +293,7 @@ void Renderer::BindVertexBuffer(VertexBuffer const* vbo) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::BindConstantBuffer(ConstantBuffer const* cbo, int slot) const
 {
 	m_deviceContext->VSSetConstantBuffers(slot, 1, &cbo->m_handle);
@@ -266,29 +302,107 @@ void Renderer::BindConstantBuffer(ConstantBuffer const* cbo, int slot) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::Draw(int vertexCount, int vertexOffset)
 {
-	if (m_isDepthStencilStateDirty)
-	{
-		UpdateDepthStencilState();
-	}
-	if (m_isRasterStateDirty)
-	{
-		UpdateRasterizerState();
-	}
-	if (m_isCameraConstantsDirty)
-	{
-		UpdateCameraConstants();
-	}
-	if (m_isModelConstantsDirty)
-	{
-		UpdateModelConstants();
-	}
+	UpdateRenderingPipelineState();
 	m_deviceContext->Draw(vertexCount, vertexOffset);
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::CreateDebugLayer()
+{
+#if defined(_DEBUG)
+	HMODULE modHandle = ::LoadLibraryA("Dxgidebug.dll");
+	ASSERT_OR_DIE(modHandle, "Failed to load Dxgidebug.dll");
+
+	typedef HRESULT(WINAPI* GetDebugModuleFunc)(REFIID, void**);
+	GetDebugModuleFunc getModuleFunc = (GetDebugModuleFunc) ::GetProcAddress(modHandle, "DXGIGetDebugInterface");
+	ASSERT_OR_DIE(getModuleFunc, "Failed to acquire DXGIGetDebugInterface")
+
+	HRESULT result = getModuleFunc(__uuidof(IDXGIDebug), (void**) &m_debug);
+	ASSERT_OR_DIE(SUCCEEDED(result), "getModuleFunc Failed")
+
+	m_debugModule = modHandle;
+#endif
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::DestroyDebugLayer()
+{
+#if defined(_DEBUG)
+	if (m_debugModule)
+	{
+		DX_SAFE_RELEASE(m_debug)
+		::FreeLibrary((HMODULE) m_debugModule);
+		m_debugModule = nullptr;
+	}
+#endif
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::ReportLiveObjects()
+{
+#if defined(_DEBUG)
+	if (m_debug)
+	{
+		DXGI_DEBUG_RLO_FLAGS flags = (DXGI_DEBUG_RLO_FLAGS) (DXGI_DEBUG_RLO_DETAIL | DXGI_DEBUG_RLO_IGNORE_INTERNAL);
+		m_debug->ReportLiveObjects(DXGI_DEBUG_ALL, flags);
+	}
+#endif
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::CreateSamplerStates()
+{
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+ID3D11SamplerState* Renderer::CreateSamplerState(SamplerFilter filter, SamplerAddressMode addressMode)
+{
+	float maxAnisotropy = 0.f;
+	D3D11_FILTER d3d11Filter = GetD3D11SamplerFilter(filter, maxAnisotropy);
+	D3D11_TEXTURE_ADDRESS_MODE d3d11AddressMode = GetD3D11SamplerAddressMode(addressMode);
+
+	D3D11_SAMPLER_DESC desc = {};
+	desc.Filter = d3d11Filter;
+	desc.AddressU = d3d11AddressMode;
+	desc.AddressV = d3d11AddressMode;
+	desc.AddressW = d3d11AddressMode;
+
+	desc.MipLODBias = 0.f;
+	desc.MinLOD = 0.f;
+	desc.MaxLOD = D3D11_FLOAT32_MAX;
+	desc.MaxAnisotropy = (UINT) maxAnisotropy;
+	desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	
+	ID3D11SamplerState* samplerState = nullptr;
+	HRESULT result = m_device->CreateSamplerState(&desc, &samplerState);
+	ASSERT_OR_DIE(result, "Failed to create sampler state.")
+	return samplerState;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::DestroySamplerStates()
+{
+	DX_SAFE_RELEASE(m_samplerState)
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::CreateRenderContext()
 {
 	UINT deviceFlags = 0;
@@ -331,6 +445,7 @@ void Renderer::CreateRenderContext()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::CreateDefaultShader()
 {
 	ShaderConfig defaultShaderConfig;
@@ -341,6 +456,7 @@ void Renderer::CreateDefaultShader()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyDefaultShader()
 {
 	m_defaultShader->ReleaseResources();
@@ -350,6 +466,7 @@ void Renderer::DestroyDefaultShader()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::CreateDefaultTexture()
 {
 	m_defaultTexture = new Texture();
@@ -358,6 +475,7 @@ void Renderer::CreateDefaultTexture()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyDefaultTexture()
 {
 	m_defaultTexture->ReleaseResources();
@@ -367,18 +485,15 @@ void Renderer::DestroyDefaultTexture()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::CreateRasterizerState()
 {
 	DX_SAFE_RELEASE(m_rasterizerState)
-
-	D3D11_CULL_MODE cullMode = D3D11_CULL_NONE;
-	D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID;
-	bool windCounterClockwise = true;
 	
 	D3D11_RASTERIZER_DESC rasterizerDesc;
-	rasterizerDesc.FillMode = fillMode;
-	rasterizerDesc.CullMode = cullMode;
-	rasterizerDesc.FrontCounterClockwise = windCounterClockwise;
+	rasterizerDesc.FillMode = GetD3D11FillMode(m_settings.m_fillMode);
+	rasterizerDesc.CullMode = GetD3D11CullMode(m_settings.m_cullMode);
+	rasterizerDesc.FrontCounterClockwise = m_settings.m_winding == Winding::CounterClockwise ? true : false;
 
 	rasterizerDesc.DepthBias = 0;
 	rasterizerDesc.DepthBiasClamp = 0.f;
@@ -390,10 +505,12 @@ void Renderer::CreateRasterizerState()
 	rasterizerDesc.DepthClipEnable = true;
 
 	m_device->CreateRasterizerState(&rasterizerDesc, &m_rasterizerState);
+	ASSERT_OR_DIE(m_rasterizerState, "Failed to create rasterizer state")
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyRasterizerState()
 {
 	DX_SAFE_RELEASE(m_rasterizerState)
@@ -401,6 +518,7 @@ void Renderer::DestroyRasterizerState()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::CreateDepthBuffer()
 {
 	Window* window = g_window;
@@ -409,6 +527,7 @@ void Renderer::CreateDepthBuffer()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyDepthBuffer()
 {
 	m_depthBuffer->ReleaseResources();
@@ -418,6 +537,33 @@ void Renderer::DestroyDepthBuffer()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::ResetRenderingPipelineState()
+{
+	m_settings = m_dirtySettings;
+	m_dirtySettings = RendererSettings();
+	BindShader(m_defaultShader);
+	BindTexture(m_defaultTexture);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateRenderingPipelineState(bool force)
+{
+	UpdateRasterizerState();
+	UpdateDepthStencilState();
+	UpdateModelConstants();
+	UpdateCameraConstants();
+	UpdateBlendMode();
+	UpdateSamplerState();
+	UpdateTexture();
+	UpdateShader();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::CreateConstantBuffers()
 {
 	m_cameraConstantsGPU = new ConstantBuffer();
@@ -432,6 +578,7 @@ void Renderer::CreateConstantBuffers()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyConstantBuffers()
 {
 	m_cameraConstantsGPU->ReleaseResources();
@@ -445,6 +592,7 @@ void Renderer::DestroyConstantBuffers()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::CreateBlendStates()
 {
 	m_blendStateByMode[(int) BlendMode::Opaque] = CreateBlendState(D3D11_BLEND_ONE, D3D11_BLEND_ZERO, D3D11_BLEND_OP_ADD);
@@ -457,6 +605,7 @@ void Renderer::CreateBlendStates()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyRenderContext()
 {
 	m_deviceContext->ClearState();
@@ -476,6 +625,7 @@ void Renderer::DestroyRenderContext()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11BlendState* Renderer::CreateBlendState(::D3D11_BLEND srcFactor, ::D3D11_BLEND dstFactor, ::D3D11_BLEND_OP op)
 {
 	D3D11_BLEND_DESC blendDesc;
@@ -505,6 +655,7 @@ ID3D11BlendState* Renderer::CreateBlendState(::D3D11_BLEND srcFactor, ::D3D11_BL
 
 	
 
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyBlendStates()
 {
 	DX_SAFE_RELEASE(m_blendStateByMode[(int) BlendMode::Opaque])
@@ -514,46 +665,136 @@ void Renderer::DestroyBlendStates()
 
 
 
-void Renderer::UpdateRasterizerState()
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateRasterizerState(bool force)
 {
-	DX_SAFE_RELEASE(m_rasterizerState)
-	CreateRasterizerState();
-	m_deviceContext->RSSetState(m_rasterizerState);
-	m_isRasterStateDirty = false;
+	if (force ||
+		m_dirtySettings.m_cullMode != m_settings.m_cullMode ||
+		m_dirtySettings.m_winding  != m_settings.m_winding  ||
+		m_dirtySettings.m_fillMode != m_settings.m_fillMode)
+	{
+		DX_SAFE_RELEASE(m_rasterizerState)
+		CreateRasterizerState();
+		m_deviceContext->RSSetState(m_rasterizerState);
+	}
 }
 
 
 
-void Renderer::UpdateDepthStencilState()
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateDepthStencilState(bool force)
 {
-	DX_SAFE_RELEASE(m_depthStencilState)
+	if (force ||
+		m_dirtySettings.m_writeDepth != m_settings.m_writeDepth ||
+		m_dirtySettings.m_depthTest  != m_settings.m_depthTest)
+	{
+		DX_SAFE_RELEASE(m_depthStencilState)
 	
-	D3D11_DEPTH_STENCIL_DESC desc;
-	desc.DepthEnable = TRUE;
-	desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-	desc.DepthFunc = D3D11_COMPARISON_ALWAYS;
-	desc.StencilEnable = FALSE;
+		D3D11_DEPTH_STENCIL_DESC desc;
+		desc.DepthEnable = TRUE;
+		desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		desc.DepthFunc = D3D11_COMPARISON_ALWAYS;
+		desc.StencilEnable = FALSE;
 	
-	m_device->CreateDepthStencilState(&desc, &m_depthStencilState);
-	m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 0);
-	
-	m_isDepthStencilStateDirty = false;
+		m_device->CreateDepthStencilState(&desc, &m_depthStencilState);
+		m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 0);
+	}
 }
 
 
 
-void Renderer::UpdateModelConstants()
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateModelConstants(bool force)
 {
-	m_modelConstantsGPU->Update(&m_modelConstants, sizeof(ModelConstants));
-	m_isModelConstantsDirty = false;
+	if (force || m_dirtySettings.m_modelConstants != m_settings.m_modelConstants)
+	{
+		m_modelConstantsGPU->Update(&m_dirtySettings.m_modelConstants, sizeof(ModelConstants));
+	}
 }
 
 
 
-void Renderer::UpdateCameraConstants()
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateCameraConstants(bool force)
 {
-	m_cameraConstantsGPU->Update(&m_cameraConstants, sizeof(CameraConstants));
-	m_isCameraConstantsDirty = false;
+	if (force || m_dirtySettings.m_cameraConstants != m_settings.m_cameraConstants)
+	{
+		m_cameraConstantsGPU->Update(&m_dirtySettings.m_cameraConstants, sizeof(CameraConstants));
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateBlendMode(bool force)
+{
+	if (force || m_dirtySettings.m_blendMode != m_settings.m_blendMode)
+	{
+		ASSERT_OR_DIE(m_blendStateByMode[(int) m_dirtySettings.m_blendMode], "SetBlendMode Failed due to invalid blend state.")
+		float constexpr blendConstants[4] = { 0.f, 0.f, 0.f, 0.f };
+		m_deviceContext->OMSetBlendState(m_blendStateByMode[(int) m_dirtySettings.m_blendMode], blendConstants, 0xffffffff);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateSamplerState(bool force)
+{
+	if (force ||
+		m_dirtySettings.m_samplerFilter	!= m_settings.m_samplerFilter ||
+		m_dirtySettings.m_samplerAddressMode != m_settings.m_samplerAddressMode)
+	{
+		DX_SAFE_RELEASE(m_samplerState)
+		
+		m_samplerState = CreateSamplerState(m_dirtySettings.m_samplerFilter, m_dirtySettings.m_samplerAddressMode);
+		ASSERT_OR_DIE(m_samplerState, "Failed to create or get sampler state")
+
+		// todo: support multiple samplers at a time
+		m_deviceContext->PSSetSamplers(0, 1, &m_samplerState);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateTexture(bool force)
+{
+	if (force || m_dirtySettings.m_texture != m_settings.m_texture)
+	{
+		if (!m_dirtySettings.m_texture)
+		{
+			m_dirtySettings.m_texture = m_defaultTexture;
+		}
+		ID3D11ShaderResourceView* srv = m_dirtySettings.m_texture->CreateOrGetShaderResourceView();
+
+		// todo: support multiple textures bound at the same time
+		m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateShader(bool force)
+{
+	if (force || m_dirtySettings.m_shader != m_settings.m_shader)
+	{
+		if (m_dirtySettings.m_shader)
+		{
+			m_deviceContext->VSSetShader(m_dirtySettings.m_shader->m_vertexShader, nullptr, 0);
+			m_deviceContext->PSSetShader(m_dirtySettings.m_shader->m_pixelShader, nullptr, 0);
+			m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		}
+		else if (m_defaultShader)
+		{
+			BindShader(m_defaultShader);
+		}
+		else
+		{
+			ERROR_AND_DIE("Could not bind shader, and default didn't exist.")
+		}
+	}
 }
 
 
