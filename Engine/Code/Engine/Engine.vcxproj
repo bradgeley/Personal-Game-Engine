@@ -171,6 +171,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\EngineSubsystem.cpp" />
     <ClCompile Include="Core\ErrorUtils.cpp" />
@@ -337,7 +338,9 @@
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\ConstantBuffer.cpp" />
     <ClCompile Include="Renderer\D3D11Utils.cpp" />
+    <ClCompile Include="Renderer\DebugDrawUtils.cpp" />
     <ClCompile Include="Renderer\EngineConstantBuffers.cpp" />
+    <ClCompile Include="Renderer\Font.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\Rgba8.cpp" />
     <ClCompile Include="Renderer\Shader.cpp" />
@@ -348,6 +351,8 @@
     <ClCompile Include="Renderer\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\ThirdParty\stb\stb_image.h" />
+    <ClInclude Include="..\ThirdParty\tinyxml2\tinyxml2.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\EngineCommon.h" />
     <ClInclude Include="Core\EngineSubsystem.h" />
@@ -356,6 +361,7 @@
     <ClInclude Include="Core\Image.h" />
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Core\Time.h" />
+    <ClInclude Include="Core\XmlUtils.h" />
     <ClInclude Include="DataStructures\ThreadSafeQueue.h" />
     <ClInclude Include="Math\AABB2.h" />
     <ClInclude Include="Math\Grid.cpp" />
@@ -373,8 +379,11 @@
     <ClInclude Include="Renderer\Camera.h" />
     <ClInclude Include="Renderer\ConstantBuffer.h" />
     <ClInclude Include="Renderer\D3D11Utils.h" />
+    <ClInclude Include="Renderer\DebugDrawUtils.h" />
     <ClInclude Include="Renderer\DefaultShaderSource.h" />
     <ClInclude Include="Renderer\EngineConstantBuffers.h" />
+    <ClInclude Include="Renderer\Font.h" />
+    <ClInclude Include="Renderer\FontShaderSource.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Renderer\RendererInternal.h" />
     <ClInclude Include="Renderer\RendererSettings.h" />

@@ -11,6 +11,8 @@
 #include <thread>
 #include "Camera.h"
 #include "ConstantBuffer.h"
+#include "Font.h"
+#include "FontShaderSource.h"
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>
@@ -45,6 +47,7 @@ void Renderer::Startup()
 	CreateRasterizerState();
 	CreateDepthBuffer();
 	CreateConstantBuffers();
+	CreateDefaultFont();
 
 	UpdateRenderingPipelineState(true);
 }
@@ -54,6 +57,7 @@ void Renderer::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::Shutdown()
 {
+	DestroyDefaultFont();
 	DestroyDefaultShader();
 	DestroyDefaultTexture();
 	DestroyBlendStates();
@@ -148,6 +152,17 @@ void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 		BindVertexBuffer(vbo);
 		Draw(vbo->GetNumVerts(), 0);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::ResetRenderingPipelineState()
+{
+	// Only reset the dirty settings, so changes will still be detected
+	m_dirtySettings = RendererSettings();
+	BindShader(m_defaultShader);
+	BindTexture(m_defaultTexture);
 }
 
 
@@ -301,6 +316,14 @@ void Renderer::BindConstantBuffer(ConstantBuffer const* cbo, int slot) const
 {
 	m_deviceContext->VSSetConstantBuffers(slot, 1, &cbo->m_handle);
 	m_deviceContext->PSSetConstantBuffers(slot, 1, &cbo->m_handle);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Font* Renderer::GetDefaultFont() const
+{
+	return m_defaultFont;
 }
 
 
@@ -466,7 +489,7 @@ void Renderer::DestroyDefaultShader()
 void Renderer::CreateDefaultTexture()
 {
 	m_defaultTexture = new Texture();
-	m_defaultTexture->CreateUniformTexture(IntVec2(1, 1), Rgba8::WHITE);
+	m_defaultTexture->CreateUniformTexture(IntVec2(1, 1), Rgba8::White);
 }
 
 
@@ -477,6 +500,28 @@ void Renderer::DestroyDefaultTexture()
 	m_defaultTexture->ReleaseResources();
 	delete m_defaultTexture;
 	m_defaultTexture = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::CreateDefaultFont()
+{
+	m_defaultFont = new Font();
+	m_defaultFont->LoadFNT("Data/Fonts/Gypsy.fnt");
+	ShaderConfig config;
+	config.m_name = "Default Font Shader";
+	m_defaultFont->m_shader = new Shader(config);
+	m_defaultFont->m_shader->CreateFromSource(s_defaultFontShaderSource);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::DestroyDefaultFont()
+{
+	delete m_defaultFont;
+	m_defaultFont = nullptr;
 }
 
 
@@ -537,17 +582,6 @@ void Renderer::DestroyDepthBuffer()
 void Renderer::DestroyDepthStencilState()
 {
 	DX_SAFE_RELEASE(m_depthStencilState)
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Renderer::ResetRenderingPipelineState()
-{
-	// Only reset the dirty settings, so changes will still be detected
-	m_dirtySettings = RendererSettings();
-	BindShader(m_defaultShader);
-	BindTexture(m_defaultTexture);
 }
 
 

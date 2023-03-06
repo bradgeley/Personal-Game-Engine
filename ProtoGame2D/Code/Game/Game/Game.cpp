@@ -2,6 +2,8 @@
 #include "Game.h"
 
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Renderer/DebugDrawUtils.h"
+#include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexBuffer.h"
@@ -10,6 +12,8 @@
 
 Mat44 g_testModelMatrix = Mat44();
 Mat44 g_renderModelMatrix = Mat44();
+Mat44 g_helloWorldModelMatrix = Mat44();
+float g_helloWorldScale = 0.f;
 Rgba8 g_testTint;
 
 
@@ -19,21 +23,28 @@ void Game::Startup()
     m_camera = Camera(Vec3(-1000.f,-1000.f,-1000.f), Vec3(1000.f, 1000.f, 1000.f));
     
     m_spinningTextureVerts = new VertexBuffer();
-    m_spinningTextureVerts->Initialize();
 
     auto& spinningTexVerts = m_spinningTextureVerts->GetMutableVerts();
-    AddVertsForSquare2D(spinningTexVerts, Vec2(-50.f, -50.f), Vec2(50.f,50.f));
+    AddVertsForRect2D(spinningTexVerts, Vec2(-50.f, -50.f), Vec2(50.f,50.f));
     m_spinningTextureVerts->AddVerts(spinningTexVerts);
 
     m_texture = new Texture(); 
     m_texture->LoadFromImageFile("Data/Images/TestUV.png");
 
     m_staticGeometryVerts = new VertexBuffer();
-    m_staticGeometryVerts->Initialize();
 
     auto& staticGeoVerts = m_staticGeometryVerts->GetMutableVerts();
-    AddVertsForLine2D(staticGeoVerts, Vec2(-100.f, -100.f), Vec2(100.f, 100.f), 5.f);
-    AddVertsForWireBox2D(staticGeoVerts, Vec2(-400.f, -400.f), Vec2(-250.f, -250.f), 5.f);
+    AddVertsForLine2D(staticGeoVerts, Vec2(-200.f, -200.f), Vec2(0.f, 0.f), 25.f);
+    AddVertsForWireBox2D(staticGeoVerts, Vec2(-900.f, -900.f), Vec2(-200.f, -200.f), 50.f);
+
+    m_textVerts = new VertexBuffer();
+    auto& textVerts = m_textVerts->GetMutableVerts();
+    Font* font = g_renderer->GetDefaultFont();
+    font->AddVertsForText2D(textVerts, Vec2(-970.f, 300.f), 400.f, "Hello, World!");
+
+    m_textVerts2 = new VertexBuffer();
+    auto& text2Verts = m_textVerts2->GetMutableVerts();
+    font->AddVertsForText2D(text2Verts, Vec2(-970.f, -100.f), 400.f, "Hello, World!");
 }
 
 
@@ -42,12 +53,16 @@ void Game::Update(float deltaSeconds)
 {
     static float t = 0.f;
     t += deltaSeconds;
-    g_testTint = Rgba8::Lerp(Rgba8::WHITE, Rgba8::BLACK, t);
+    g_testTint = Rgba8::Lerp(Rgba8::White, Rgba8::Black, t);
 
     g_testModelMatrix.AppendZRotation(deltaSeconds * 90.f);
 
     float scale = 1.f + 0.5f * SinRadians(t);
     g_renderModelMatrix = g_testModelMatrix.GetAppended(Mat44::CreateUniformScale2D(scale));
+
+    g_helloWorldScale = (1.f + 0.25f * SinRadians(t));
+    g_helloWorldModelMatrix = Mat44();
+    g_helloWorldModelMatrix.AppendUniformScale2D(g_helloWorldScale);
 }
 
 
@@ -57,17 +72,25 @@ void Game::Render() const
     g_renderer->BeginCamera(m_camera); // reset renderer state
 
     // Clear screen first
-    g_renderer->ClearScreen(Rgba8::MAGENTA);
+    g_renderer->ClearScreen(Rgba8::Magenta);
     
     // Then draw static geo
     g_renderer->DrawVertexBuffer(m_staticGeometryVerts);
+    DebugDrawMesh2D(m_staticGeometryVerts->GetVerts(), 5.f);
 
     // Then moving things
     g_renderer->SetModelMatrix(g_renderModelMatrix);
     g_renderer->SetModelTint(g_testTint);
     g_renderer->BindTexture(m_texture);
     g_renderer->DrawVertexBuffer(m_spinningTextureVerts);
+    DebugDrawMesh2D(m_spinningTextureVerts->GetVerts(), 5.f);
     
+    // Then text
+    Font* font = g_renderer->GetDefaultFont();
+    font->SetRendererState();
+    g_renderer->SetModelMatrix(g_helloWorldModelMatrix);
+    g_renderer->DrawVertexBuffer(m_textVerts);
+    DebugDrawMesh2D(m_textVerts->GetVerts(), 5.f);
 }
 
 

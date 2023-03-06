@@ -16,8 +16,6 @@ struct ShaderConfig
     std::string	m_name;
     std::string	m_vertexEntryPoint = "VertexMain";
     std::string	m_pixelEntryPoint = "PixelMain";
-    std::string	m_sourcePath;
-    std::string	m_sourceCodeAsString;
 };
 
 
@@ -45,7 +43,7 @@ protected:
 
 protected:
 
-    ShaderConfig m_config;
+    ShaderConfig const m_config;
     
     ID3D11InputLayout* m_inputLayout  = nullptr;
     ID3D11VertexShader* m_vertexShader = nullptr;

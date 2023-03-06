@@ -16,5 +16,5 @@ public:
 
 public:
 
-    explicit Vertex_PCU(Vec3 const& position, Rgba8 const& tint = Rgba8::WHITE, Vec2 const& uvs = Vec2::ZeroToOne);
+    explicit Vertex_PCU(Vec3 const& position, Rgba8 const& tint = Rgba8::White, Vec2 const& uvs = Vec2::ZeroToOne);
 };

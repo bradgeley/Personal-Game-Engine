@@ -27,20 +27,20 @@ public:
     
 public:
     
-    static Rgba8 const RED;
-    static Rgba8 const BLUE;
-    static Rgba8 const LIGHT_BLUE;
-    static Rgba8 const GREEN;
-    static Rgba8 const CYAN;
-    static Rgba8 const DARK_GREEN;
-    static Rgba8 const BLACK;
-    static Rgba8 const LIGHT_GRAY;
-    static Rgba8 const GRAY;
-    static Rgba8 const DARK_GRAY;
-    static Rgba8 const WHITE;
-    static Rgba8 const GOLD;
-    static Rgba8 const ORANGE;
-    static Rgba8 const YELLOW;
-    static Rgba8 const MAGENTA;
-    static Rgba8 const EMPTY;
+    static Rgba8 const Red;
+    static Rgba8 const Blue;
+    static Rgba8 const LightBlue;
+    static Rgba8 const Green;
+    static Rgba8 const Cyan;
+    static Rgba8 const DarkGreen;
+    static Rgba8 const Black;
+    static Rgba8 const LightGray;
+    static Rgba8 const Gray;
+    static Rgba8 const DarkGray;
+    static Rgba8 const White;
+    static Rgba8 const Gold;
+    static Rgba8 const Orange;
+    static Rgba8 const Yellow;
+    static Rgba8 const Magenta;
+    static Rgba8 const Empty;
 };

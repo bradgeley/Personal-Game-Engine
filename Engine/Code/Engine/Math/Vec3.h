@@ -15,7 +15,7 @@ struct Vec2;
 struct Vec3
 {
 public:
-    
+
     float x = 0.f;
     float y = 0.f;
     float z = 0.f;
@@ -27,7 +27,7 @@ public:
     explicit Vec3(Vec2 const& fromVec2);
 
 public:
-    
+
     float GetLength() const;
     void Normalize();
     Vec3 GetNormalized() const;

@@ -31,15 +31,15 @@ void AddVertsForLine2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start, Ve
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForSquare2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& square, Rgba8 const& tint, AABB2 const& UVs)
+void AddVertsForAABB2(std::vector<Vertex_PCU>& out_verts, AABB2 const& square, Rgba8 const& tint, AABB2 const& UVs)
 {
-    AddVertsForSquare2D(out_verts, square.mins, square.maxs, tint, UVs);
+    AddVertsForRect2D(out_verts, square.mins, square.maxs, tint, UVs);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForSquare2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint, AABB2 const& UVs)
+void AddVertsForRect2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint, AABB2 const& UVs)
 {
     // Get corners
     Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, 1.f);
@@ -92,7 +92,7 @@ void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, 
     AddVertsForLine2D(out_verts, bottomLeftPoint, bottomRightPoint, lineThickness, tint);
 
     // Left and right (dropped down by half thickness)
-    Vec2 offset = Vec2(0.f, halfThickness);
+    Vec2 offset = Vec2(0.f, lineThickness);
     AddVertsForLine2D(out_verts, topLeftPoint - offset, bottomLeftPoint + offset, lineThickness, tint);
     AddVertsForLine2D(out_verts, topRightPoint - offset, bottomRightPoint + offset, lineThickness, tint);
 }

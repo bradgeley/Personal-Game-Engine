@@ -36,10 +36,7 @@ void ConstantBuffer::Update(void const* data, size_t byteWidth)
 //----------------------------------------------------------------------------------------------------------------------
 void ConstantBuffer::Initialize(size_t byteWidth)
 {
-    if (m_handle)
-    {
-        DX_SAFE_RELEASE(m_handle)
-    }
+    ReleaseResources();
     
     D3D11_BUFFER_DESC desc;
     desc.ByteWidth = (UINT) byteWidth;

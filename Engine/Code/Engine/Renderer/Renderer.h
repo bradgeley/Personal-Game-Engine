@@ -17,6 +17,7 @@ extern class Renderer* g_renderer;
 
 //----------------------------------------------------------------------------------------------------------------------
 struct Rgba8;
+class Font;
 class Shader;
 class Camera;
 class Texture;
@@ -58,6 +59,7 @@ public:
     void ClearScreen(Rgba8 const& tint);
     void DrawVertexBuffer(VertexBuffer* vbo);
     
+    void ResetRenderingPipelineState();
     void SetCameraConstants(CameraConstants const& cameraConstants);
     void SetModelConstants(ModelConstants const& modelConstants);
     void SetModelMatrix(Mat44 const& modelMatrix);
@@ -75,6 +77,8 @@ public:
     void ClearDepth(float depth);
     void BindVertexBuffer(VertexBuffer const* vbo) const;
     void BindConstantBuffer(ConstantBuffer const* cbo, int slot) const;
+
+    Font* GetDefaultFont() const; // todo: move somewhere else?
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetContext() const;
@@ -107,6 +111,9 @@ private:
     void CreateDefaultTexture();
     void DestroyDefaultTexture();
     
+    void CreateDefaultFont();
+    void DestroyDefaultFont();
+    
     void CreateRasterizerState();
     void DestroyRasterizerState();
     
@@ -114,7 +121,6 @@ private:
     void DestroyDepthBuffer();
     void DestroyDepthStencilState();
 
-    void ResetRenderingPipelineState();
     void UpdateRenderingPipelineState(bool force = false);
     void UpdateRasterizerState(bool force = false);
     void UpdateDepthStencilState(bool force = false);
@@ -132,6 +138,7 @@ private:
 
     Shader* m_defaultShader = nullptr;
     Texture* m_defaultTexture = nullptr;
+    Font* m_defaultFont = nullptr;
     Texture* m_backbufferTexture = nullptr;
 	Texture* m_depthBuffer = nullptr;
 
