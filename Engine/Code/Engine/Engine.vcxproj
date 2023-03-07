@@ -251,7 +251,15 @@
     </ClCompile>
     <ClCompile Include="Core\StringUtils.cpp" />
     <ClCompile Include="Core\Time.cpp" />
+    <ClCompile Include="DataStructures\NamedProperties.cpp" />
     <ClCompile Include="DataStructures\ThreadSafeQueue.cpp" />
+    <ClCompile Include="Events\EventDelegate.cpp" />
+    <ClCompile Include="Events\EventSubscriber.cpp" />
+    <ClCompile Include="Events\EventSystem.cpp" />
+    <ClCompile Include="Events\EventUtils.cpp" />
+    <ClCompile Include="Input\InputSystem.cpp" />
+    <ClCompile Include="Input\InputUtils.cpp" />
+    <ClCompile Include="Input\KeyButtonState.cpp" />
     <ClCompile Include="Math\AABB2.cpp" />
     <ClCompile Include="Math\IntVec2.cpp" />
     <ClCompile Include="Math\Mat44.cpp">
@@ -362,7 +370,15 @@
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Core\Time.h" />
     <ClInclude Include="Core\XmlUtils.h" />
+    <ClInclude Include="DataStructures\NamedProperties.h" />
     <ClInclude Include="DataStructures\ThreadSafeQueue.h" />
+    <ClInclude Include="Events\EventDelegate.h" />
+    <ClInclude Include="Events\EventSubscriber.h" />
+    <ClInclude Include="Events\EventSystem.h" />
+    <ClInclude Include="Events\EventUtils.h" />
+    <ClInclude Include="Input\InputSystem.h" />
+    <ClInclude Include="Input\InputUtils.h" />
+    <ClInclude Include="Input\KeyButtonState.hpp" />
     <ClInclude Include="Math\AABB2.h" />
     <ClInclude Include="Math\Grid.cpp" />
     <ClInclude Include="Math\Grid.h" />

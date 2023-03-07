@@ -23,6 +23,5 @@ public:
     VertexBuffer* m_staticGeometryVerts;
     VertexBuffer* m_spinningTextureVerts;
     VertexBuffer* m_textVerts;
-    VertexBuffer* m_textVerts2;
     Texture* m_texture = nullptr;
 };

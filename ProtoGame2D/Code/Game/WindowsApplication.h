@@ -7,6 +7,7 @@ extern class WindowsApplication* g_theApp;
 
 
 
+struct NamedProperties;
 class Engine;
 class Game;
 
@@ -26,14 +27,12 @@ public:
     void Run();
     void Shutdown();
 
-    void Quit();
+    bool HandleQuit(NamedProperties& args);
     bool IsQuitting() const;
     
 private:
 
-    // todo: move here
-    //bool m_isQuitting = false;
-    //
+    bool m_isQuitting = false;
 
     Engine* m_engine = nullptr;
     Game* m_game = nullptr;

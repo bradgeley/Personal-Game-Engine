@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Window.h"
+#include "Engine/Core/ErrorUtils.h"
+#include "Engine/DataStructures/NamedProperties.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include "Windows.h"
@@ -168,27 +170,110 @@ void Window::RunMessagePump()
 
 LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
 {
+    ASSERT_OR_DIE(g_window, "Window doesn't exist during message handling procedure.")
+    
+    NamedProperties args;
     switch (wmMessageCode)
     {
-    case WM_ACTIVATE:       break;
-    case WM_CLOSE:
+        case WM_ACTIVATE:       break;
+        case WM_CLOSE:
         {
-            g_window->m_isQuitting = true;
+            g_window->m_quit.Broadcast(args);
             break;
         }
-    case WM_MOVE:           break;
-    case WM_MOVING:         break;
-    case WM_SIZE:           break;
-    case WM_CHAR:           break;
-    case WM_KEYDOWN:        break;
-    case WM_KEYUP:          break;
-    case WM_LBUTTONDOWN:    break; // Left Mouse Button
-    case WM_LBUTTONUP:      break; // Left Mouse Button
-    case WM_RBUTTONDOWN:    break; // Right Mouse Button
-    case WM_RBUTTONUP:      break; // Right Mouse Button
-    case WM_MBUTTONDOWN:    break; // Other Mouse Buttons
-    case WM_MBUTTONUP:      break; // Other Mouse Buttons
-    case WM_MOUSEWHEEL:     break; // Mouse Wheel
+        case WM_MOVE:           break;
+        case WM_MOVING:         break;
+        case WM_SIZE:           break;
+        case WM_CHAR:
+        {
+			int charCode = (int) wParam;
+            args.Set("Char", charCode);
+            g_window->m_charInputEvent.Broadcast(args);
+            break;
+        }
+        case WM_KEYDOWN:
+        {
+			int keyCode = (int) wParam;
+            args.Set("Key", keyCode);
+            g_window->m_keyDownEvent.Broadcast(args);
+            break;
+        }
+        case WM_KEYUP:
+        {
+			int keyCode = (int) wParam;
+            args.Set("Key", keyCode);
+            g_window->m_keyUpEvent.Broadcast(args);
+            break;
+        }
+        case WM_LBUTTONDOWN:
+        {
+			bool bDown = (wParam & MK_LBUTTON) != 0;
+            if (bDown)
+            {
+                args.Set("MouseButton", 0);
+                g_window->m_mouseButtonDownEvent.Broadcast(args);
+            }
+            break;
+        }
+        case WM_LBUTTONUP:
+        {
+            bool bUp = (wParam & MK_LBUTTON) != 0;
+            if (bUp)
+            {
+                args.Set("MouseButton", 0);
+                g_window->m_mouseButtonUpEvent.Broadcast(args);
+            }
+            break;
+        }
+        case WM_RBUTTONDOWN:
+        {
+            bool bDown = (wParam & MK_RBUTTON) != 0;
+            if (bDown)
+            {
+                args.Set("MouseButton", 1);
+                g_window->m_mouseButtonDownEvent.Broadcast(args);
+            }
+            break;
+        }
+        case WM_RBUTTONUP:
+        {
+            bool bUp = (wParam & MK_RBUTTON) != 0;
+            if (bUp)
+            {
+                args.Set("MouseButton", 1);
+                g_window->m_mouseButtonUpEvent.Broadcast(args);
+            }
+            break;
+        }
+        case WM_MBUTTONDOWN:
+        {
+            bool bDown = (wParam & MK_MBUTTON) != 0;
+            if (bDown)
+            {
+                args.Set("MouseButton", 2);
+                g_window->m_mouseButtonDownEvent.Broadcast(args);
+            }
+            break;
+        }
+        case WM_MBUTTONUP:
+        {
+            bool bUp = (wParam & MK_MBUTTON) != 0;
+            if (bUp)
+            {
+                args.Set("MouseButton", 2);
+                g_window->m_mouseButtonUpEvent.Broadcast(args);
+            }
+            break;
+        }
+        case WM_MOUSEWHEEL:
+        {
+			int wheelChange = ((int) wParam >> 16) / 120;
+            args.Set("WheelChange", wheelChange);
+            g_window->m_mouseWheelEvent.Broadcast(args);
+            break;
+        }
+        default:
+            break;
     }
     return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
 }

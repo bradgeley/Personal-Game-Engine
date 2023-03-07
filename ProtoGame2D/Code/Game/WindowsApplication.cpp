@@ -1,7 +1,9 @@
 // Bradley Christensen - 2022-2023
 #include "Game/WindowsApplication.h"
 #include "Engine/Core/Engine.h"
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/Time.h"
+#include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Window.h"
 #include "Game/Game.h"
@@ -26,9 +28,15 @@ void WindowsApplication::Startup()
     g_window = new Window(windowConfig);
     m_engine->RegisterSubsystem(g_window);
 
+    g_window->m_quit.SubscribeMethod(*this, &WindowsApplication::HandleQuit);
+
     RendererConfig rendererConfig;
     g_renderer = new Renderer(rendererConfig);
     m_engine->RegisterSubsystem(g_renderer);
+
+    InputSystemConfig inputConfig;
+    g_input = new InputSystem(inputConfig);
+    m_engine->RegisterSubsystem(g_input);
     
     m_engine->Startup();
 
@@ -74,14 +82,16 @@ void WindowsApplication::Shutdown()
 
 
 
-void WindowsApplication::Quit()
+bool WindowsApplication::HandleQuit(NamedProperties& args)
 {
-    g_window->m_isQuitting = true;
+    UNUSED(args)
+    m_isQuitting = true;
+    return true;
 }
 
 
 
 bool WindowsApplication::IsQuitting() const
 {
-    return g_window->m_isQuitting;
+    return m_isQuitting;
 }

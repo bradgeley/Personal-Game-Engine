@@ -60,8 +60,8 @@ float4 PixelMain(v2p_t input) : SV_Target0
     float4 tint = input.tint;
     float4 finalColor = tint * surfaceColor;
     
-    float lowerThreshold = 0.35;
-    float upperThreshold = 0.65;
+    float lowerThreshold = 0.25;
+    float upperThreshold = 0.45;
     float thresholdWidth = upperThreshold - lowerThreshold;
     
     if (surfaceColor.a <= lowerThreshold)

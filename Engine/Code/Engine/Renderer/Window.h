@@ -4,6 +4,8 @@
 #include "Engine/Math/IntVec2.h"
 #include <string>
 
+#include "Engine/Events/EventDelegate.h"
+
 
 
 extern class Window* g_window;
@@ -38,10 +40,17 @@ public:
     int GetWidth() const;
     int GetHeight() const;
     IntVec2 const& GetDimensions() const;
-    
-    // todo: move to event system
-    bool m_isQuitting = false;
-    //
+
+public:
+
+    // Input events
+    EventDelegate m_quit;
+    EventDelegate m_mouseButtonDownEvent;
+    EventDelegate m_mouseButtonUpEvent;
+    EventDelegate m_charInputEvent;
+    EventDelegate m_keyDownEvent;
+    EventDelegate m_keyUpEvent;
+    EventDelegate m_mouseWheelEvent;
 
 private:
 
@@ -51,7 +60,8 @@ private:
 private:
     
     WindowConfig const  m_config;
-    IntVec2             m_dimensiions;
-    void*               m_windowHandle   = nullptr; // HWND
-    void*               m_displayContext = nullptr; // HDC
+    IntVec2 m_dimensiions;
+    
+    void* m_windowHandle   = nullptr; // HWND
+    void* m_displayContext = nullptr; // HDC
 };

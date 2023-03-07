@@ -40,11 +40,7 @@ void Game::Startup()
     m_textVerts = new VertexBuffer();
     auto& textVerts = m_textVerts->GetMutableVerts();
     Font* font = g_renderer->GetDefaultFont();
-    font->AddVertsForText2D(textVerts, Vec2(-970.f, 300.f), 400.f, "Hello, World!");
-
-    m_textVerts2 = new VertexBuffer();
-    auto& text2Verts = m_textVerts2->GetMutableVerts();
-    font->AddVertsForText2D(text2Verts, Vec2(-970.f, -100.f), 400.f, "Hello, World!");
+    font->AddVertsForText2D(textVerts, Vec2(-970.f, 300.f), 400.f, "Hello, soBali!");
 }
 
 
@@ -65,7 +61,7 @@ void Game::Update(float deltaSeconds)
     g_helloWorldModelMatrix.AppendUniformScale2D(g_helloWorldScale);
 }
 
-
+ 
 
 void Game::Render() const
 {
