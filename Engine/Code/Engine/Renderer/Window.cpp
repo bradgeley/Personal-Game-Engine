@@ -15,17 +15,19 @@ Window* g_window = nullptr;
 
 
 
-// Forward Declaration
+//----------------------------------------------------------------------------------------------------------------------
 LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam);
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Window::Window(WindowConfig const& config) : m_config(config)
 {
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Window::Startup()
 {
     CreateMainWindow();
@@ -33,6 +35,7 @@ void Window::Startup()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Window::BeginFrame()
 {
     RunMessagePump();
@@ -40,6 +43,7 @@ void Window::BeginFrame()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void* Window::GetHWND() const
 {
     return m_windowHandle;
@@ -47,6 +51,7 @@ void* Window::GetHWND() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 int Window::GetWidth() const
 {
     return m_dimensiions.x;
@@ -54,6 +59,7 @@ int Window::GetWidth() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 int Window::GetHeight() const
 {
     return m_dimensiions.y;
@@ -61,6 +67,7 @@ int Window::GetHeight() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 IntVec2 const& Window::GetDimensions() const
 {
     return m_dimensiions;
@@ -68,6 +75,7 @@ IntVec2 const& Window::GetDimensions() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Window::CreateMainWindow()
 {
     WNDCLASSEX wcex;
@@ -150,6 +158,7 @@ void Window::CreateMainWindow()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Window::RunMessagePump()
 {
    MSG queuedMessage;
@@ -168,6 +177,7 @@ void Window::RunMessagePump()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
 {
     ASSERT_OR_DIE(g_window, "Window doesn't exist during message handling procedure.")

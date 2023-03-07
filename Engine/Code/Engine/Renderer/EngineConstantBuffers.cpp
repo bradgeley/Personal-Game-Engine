@@ -3,6 +3,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool CameraConstants::operator==(CameraConstants const& rhs) const
 {
     return m_worldToCamera == rhs.m_worldToCamera && m_cameraToClip == rhs.m_cameraToClip;
@@ -10,6 +11,7 @@ bool CameraConstants::operator==(CameraConstants const& rhs) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool CameraConstants::operator!=(CameraConstants const& rhs) const
 {
     return !((*this) == rhs);
@@ -17,6 +19,7 @@ bool CameraConstants::operator!=(CameraConstants const& rhs) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool ModelConstants::operator==(ModelConstants const& rhs) const
 {
     for (int i = 0; i < 4; ++i)
@@ -31,6 +34,7 @@ bool ModelConstants::operator==(ModelConstants const& rhs) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool ModelConstants::operator!=(ModelConstants const& rhs) const
 {
     return !((*this) == rhs);

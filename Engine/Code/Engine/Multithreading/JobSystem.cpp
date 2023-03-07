@@ -12,6 +12,7 @@ JobSystem* g_theJobSystem = nullptr;
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 JobSystem::JobSystem(JobSystemConfig const& config) : m_config(config)
 {
 
@@ -19,6 +20,7 @@ JobSystem::JobSystem(JobSystemConfig const& config) : m_config(config)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void JobSystem::Startup()
 {
     EngineSubsystem::Startup();
@@ -35,6 +37,7 @@ void JobSystem::Startup()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void JobSystem::Shutdown()
 {
     EngineSubsystem::Shutdown();
@@ -74,6 +77,7 @@ void JobSystem::Shutdown()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 JobID JobSystem::PostJob(Job* job)
 {
     if (!job || !m_isRunning)
@@ -121,6 +125,7 @@ JobID JobSystem::PostJob(Job* job)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void JobSystem::WaitForJob(JobID jobID)
 {
     if (jobID == JobID::Invalid)
@@ -154,6 +159,7 @@ void JobSystem::WaitForJob(JobID jobID)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void JobSystem::WaitForAllJobs()
 {
     while (m_isRunning)
@@ -183,6 +189,7 @@ void JobSystem::WaitForAllJobs()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 uint32_t JobSystem::GetNextJobUniqueID()
 {
     return g_theJobSystem->m_nextJobID.fetch_add(1);
@@ -190,6 +197,7 @@ uint32_t JobSystem::GetNextJobUniqueID()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void JobSystem::WorkerLoop(JobWorker* worker)
 {
     while (m_isRunning && worker->m_isRunning)
@@ -221,6 +229,7 @@ void JobSystem::WorkerLoop(JobWorker* worker)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Job* JobSystem::ClaimNextJob()
 {
     Job* result = nullptr;

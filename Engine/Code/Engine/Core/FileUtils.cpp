@@ -3,6 +3,8 @@
 #include <fstream>
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize)
 {
     int fileMode = std::ios::out | std::ios::binary;
@@ -18,18 +20,24 @@ int FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, 
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int FileWriteFromBuffer(const std::string& filepath, const std::vector<uint8_t>& buffer)
 {
     return FileWriteFromBuffer(filepath, buffer.data(), buffer.size());
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int FileWriteFromString(const std::string& filepath, const std::string& string)
 {
     return FileWriteFromBuffer(filepath, reinterpret_cast<const uint8_t*>(string.data()), string.size());
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bufferSize)
 {
     int fileMode = std::ios::in | std::ios::ate | std::ios::binary;
@@ -48,6 +56,8 @@ int FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bu
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int FileReadToBuffer(const std::string& filepath, std::vector<uint8_t>& buffer)
 {
     int fileSize = GetFileSize(filepath);
@@ -61,6 +71,8 @@ int FileReadToBuffer(const std::string& filepath, std::vector<uint8_t>& buffer)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int FileReadToString(const std::string& filepath, std::string& string)
 {
     int fileSize = GetFileSize(filepath);
@@ -75,6 +87,8 @@ int FileReadToString(const std::string& filepath, std::string& string)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int GetFileSize(const std::string& filepath)
 {
     int fileMode = std::ios::in | std::ios::ate | std::ios::binary;

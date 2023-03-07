@@ -7,6 +7,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Image::Image(IntVec2 const& dimensions, Rgba8 const& color)
     : Grid<Rgba8>(dimensions, color), m_sourceImagePath("None")
 {
@@ -15,6 +16,7 @@ Image::Image(IntVec2 const& dimensions, Rgba8 const& color)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Image::Image(char const* imageFilePath)
 {
     LoadFromFile(imageFilePath);   
@@ -22,6 +24,7 @@ Image::Image(char const* imageFilePath)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool Image::LoadFromFile(const char* imageFilePath, bool putOriginAtBottomLeft)
 {
     ASSERT_OR_DIE(m_data.empty(), "Trying to load an image from disc when it already is initialized. Not supported.")
@@ -65,6 +68,7 @@ bool Image::LoadFromFile(const char* imageFilePath, bool putOriginAtBottomLeft)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 std::string const& Image::GetSourceImagePath() const
 {
     return m_sourceImagePath;

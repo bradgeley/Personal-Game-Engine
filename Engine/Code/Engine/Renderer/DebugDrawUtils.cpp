@@ -7,6 +7,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, Rgba8 tint)
 {
     // For each triangle, draw 18 verts, so for each vert in "triangles" we push 6 verts

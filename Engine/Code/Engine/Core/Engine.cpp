@@ -4,6 +4,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Engine::Startup()
 {
     for (EngineSubsystem*& subsystem : m_subsystems)
@@ -17,6 +18,7 @@ void Engine::Startup()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Engine::BeginFrame()
 {
     for (auto& subsystem : m_subsystems)
@@ -30,6 +32,7 @@ void Engine::BeginFrame()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Engine::Update(float deltaSeconds)
 {
     for (auto& subsystem : m_subsystems)
@@ -43,6 +46,7 @@ void Engine::Update(float deltaSeconds)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Engine::Render() const
 {
     for (auto& subsystem : m_subsystems)
@@ -56,6 +60,7 @@ void Engine::Render() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Engine::EndFrame()
 {
     for (auto& subsystem : m_subsystems)
@@ -69,6 +74,7 @@ void Engine::EndFrame()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Engine::Shutdown()
 {
     for (int i = (int) m_subsystems.size() - 1; i >= 0; --i)
@@ -86,6 +92,7 @@ void Engine::Shutdown()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Engine::RegisterSubsystem(EngineSubsystem* system)
 {
     m_subsystems.push_back(system);

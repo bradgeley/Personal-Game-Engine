@@ -7,6 +7,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Shader::Shader(ShaderConfig const& config) : m_config(config)
 {
 	
@@ -14,6 +15,7 @@ Shader::Shader(ShaderConfig const& config) : m_config(config)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Shader::~Shader()
 {
 	ReleaseResources();
@@ -21,6 +23,7 @@ Shader::~Shader()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11InputLayout* Shader::CreateOrGetInputLayout()
 {
 	if (m_inputLayout)
@@ -32,6 +35,7 @@ ID3D11InputLayout* Shader::CreateOrGetInputLayout()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool Shader::CreateFromSource(std::string const& sourceCode)
 {
 	ASSERT_OR_DIE(!sourceCode.empty(), "Tried to create shader from empty source code")

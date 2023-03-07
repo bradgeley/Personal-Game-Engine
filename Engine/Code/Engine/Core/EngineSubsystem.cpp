@@ -3,6 +3,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool EngineSubsystem::IsEnabled() const
 {
     return m_isEnabled;
@@ -10,6 +11,7 @@ bool EngineSubsystem::IsEnabled() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void EngineSubsystem::SetEnabled(bool isEnabled)
 {
     m_isEnabled = isEnabled;
