@@ -38,12 +38,15 @@ public:
     void Update(float deltaSeconds) override;
     void Shutdown() override;
 
+    bool IsValidKey(int key) const;
     bool IsKeyDown(int keyCode) const;
     bool WasKeyJustPressed(int keyCode) const;
     bool WasKeyJustReleased(int keyCode) const;
 
-    bool IsValidKey(int key) const;
-    bool IsValidMouseButton(int btn) const;
+    bool IsValidMouseButton(int mouseButton) const;
+    bool IsMouseButtonDown(int mouseButton) const;
+    bool WasMouseButtonJustPressed(int mouseButton);
+    bool WasMouseButtonJustReleased(int mouseButton);
 
 private:
 

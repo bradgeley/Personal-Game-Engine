@@ -217,8 +217,8 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
         }
         case WM_LBUTTONUP:
         {
-            bool bUp = (wParam & MK_LBUTTON) != 0;
-            if (bUp)
+            bool bDown = (wParam & MK_LBUTTON) != 0;
+            if (!bDown)
             {
                 args.Set("MouseButton", 0);
                 g_window->m_mouseButtonUpEvent.Broadcast(args);
@@ -237,8 +237,8 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
         }
         case WM_RBUTTONUP:
         {
-            bool bUp = (wParam & MK_RBUTTON) != 0;
-            if (bUp)
+            bool bDown = (wParam & MK_RBUTTON) != 0;
+            if (!bDown)
             {
                 args.Set("MouseButton", 1);
                 g_window->m_mouseButtonUpEvent.Broadcast(args);
@@ -257,8 +257,8 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
         }
         case WM_MBUTTONUP:
         {
-            bool bUp = (wParam & MK_MBUTTON) != 0;
-            if (bUp)
+            bool bDown = (wParam & MK_MBUTTON) != 0;
+            if (!bDown)
             {
                 args.Set("MouseButton", 2);
                 g_window->m_mouseButtonUpEvent.Broadcast(args);

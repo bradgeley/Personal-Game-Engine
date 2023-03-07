@@ -66,11 +66,19 @@ void InputSystem::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool InputSystem::IsValidKey(int key) const
+{
+    return (key >= 0 && key < MAX_KEYS);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool InputSystem::IsKeyDown(int keyCode) const
 {
-    if (keyCode >= 0 && keyCode < MAX_KEYS)
+    if (IsValidKey(keyCode))
     {
-        return m_keyStates->IsPressed();
+        return m_keyStates[keyCode].IsPressed();
     }
     return false;
 }
@@ -80,9 +88,9 @@ bool InputSystem::IsKeyDown(int keyCode) const
 //----------------------------------------------------------------------------------------------------------------------
 bool InputSystem::WasKeyJustPressed(int keyCode) const
 {
-    if (keyCode >= 0 && keyCode < MAX_KEYS)
+    if (IsValidKey(keyCode))
     {
-        return m_keyStates->WasJustPressed();
+        return m_keyStates[keyCode].WasJustPressed();
     }
     return false;
 }
@@ -92,9 +100,9 @@ bool InputSystem::WasKeyJustPressed(int keyCode) const
 //----------------------------------------------------------------------------------------------------------------------
 bool InputSystem::WasKeyJustReleased(int keyCode) const
 {
-    if (keyCode >= 0 && keyCode < MAX_KEYS)
+    if (IsValidKey(keyCode))
     {
-        return m_keyStates->WasJustReleased();
+        return m_keyStates[keyCode].WasJustReleased();
     }
     return false;
 }
@@ -102,17 +110,45 @@ bool InputSystem::WasKeyJustReleased(int keyCode) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool InputSystem::IsValidKey(int key) const
+bool InputSystem::IsValidMouseButton(int mouseButton) const
 {
-    return (key >= 0 && key < MAX_KEYS);
+    return (mouseButton >= 0 && mouseButton < MAX_MOUSE_BUTTONS);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool InputSystem::IsValidMouseButton(int btn) const
+bool InputSystem::IsMouseButtonDown(int mouseButton) const
 {
-    return (btn >= 0 && btn < MAX_MOUSE_BUTTONS);
+    if (IsValidMouseButton(mouseButton))
+    {
+        return m_mouseButtonStates[mouseButton].IsPressed();
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool InputSystem::WasMouseButtonJustPressed(int mouseButton)
+{
+    if (IsValidMouseButton(mouseButton))
+    {
+        return m_mouseButtonStates[mouseButton].WasJustPressed();
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool InputSystem::WasMouseButtonJustReleased(int mouseButton)
+{
+    if (IsValidMouseButton(mouseButton))
+    {
+        return m_mouseButtonStates[mouseButton].WasJustReleased();
+    }
+    return false;
 }
 
 

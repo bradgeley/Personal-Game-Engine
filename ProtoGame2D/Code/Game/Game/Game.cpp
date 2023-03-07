@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2023
 #include "Game.h"
 
+#include "Engine/Input/InputSystem.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/DebugDrawUtils.h"
 #include "Engine/Renderer/Font.h"
@@ -49,14 +50,29 @@ void Game::Update(float deltaSeconds)
 {
     static float t = 0.f;
     t += deltaSeconds;
-    g_testTint = Rgba8::Lerp(Rgba8::White, Rgba8::Black, t);
+
+    if (g_input->IsMouseButtonDown(0))
+    {
+        g_testTint = Rgba8::LightBlue;
+    }
+    else
+    {
+        g_testTint = Rgba8::Lerp(Rgba8::White, Rgba8::Black, t);
+    }
 
     g_testModelMatrix.AppendZRotation(deltaSeconds * 90.f);
 
     float scale = 1.f + 0.5f * SinRadians(t);
     g_renderModelMatrix = g_testModelMatrix.GetAppended(Mat44::CreateUniformScale2D(scale));
 
-    g_helloWorldScale = (1.f + 0.25f * SinRadians(t));
+    if (g_input->IsKeyDown('B'))
+    {
+        g_helloWorldScale = 0.5f;
+    }
+    else
+    {
+        g_helloWorldScale = (1.f + 0.25f * SinRadians(t));
+    }
     g_helloWorldModelMatrix = Mat44();
     g_helloWorldModelMatrix.AppendUniformScale2D(g_helloWorldScale);
 }
