@@ -36,6 +36,22 @@ void InputSystem::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void InputSystem::BeginFrame()
 {
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void InputSystem::Update(float deltaSeconds)
+{
+    UNUSED(deltaSeconds)
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void InputSystem::EndFrame()
+{
     for (auto& key : m_keyStates)
     {
         key.OnNextFrame();
@@ -45,14 +61,6 @@ void InputSystem::BeginFrame()
         mouseBtn.OnNextFrame();
     }
     m_frameMouseWheelChange = 0;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void InputSystem::Update(float deltaSeconds)
-{
-    UNUSED(deltaSeconds)
 }
 
 
@@ -91,7 +99,7 @@ bool InputSystem::WasKeyJustPressed(int keyCode) const
     if (IsValidKey(keyCode))
     {
         return m_keyStates[keyCode].WasJustPressed();
-    }
+    } 
     return false;
 }
 
@@ -105,6 +113,30 @@ bool InputSystem::WasKeyJustReleased(int keyCode) const
         return m_keyStates[keyCode].WasJustReleased();
     }
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool InputSystem::IsKeyDown(KeyCode keyCode) const
+{
+    return IsKeyDown((int)keyCode);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool InputSystem::WasKeyJustPressed(KeyCode keyCode) const
+{
+    return WasKeyJustPressed((int)keyCode);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool InputSystem::WasKeyJustReleased(KeyCode keyCode) const
+{
+    return WasKeyJustReleased((int)keyCode);
 }
 
 
@@ -149,6 +181,22 @@ bool InputSystem::WasMouseButtonJustReleased(int mouseButton)
         return m_mouseButtonStates[mouseButton].WasJustReleased();
     }
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 InputSystem::GetMouseClientPosition(bool originBottomLeft) const
+{
+    return g_window->GetMouseClientPosition(originBottomLeft);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 InputSystem::GetMouseClientRelativePosition(bool originBottomLeft) const
+{
+    return g_window->GetMouseClientRelativePosition(originBottomLeft);
 }
 
 

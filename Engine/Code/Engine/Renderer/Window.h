@@ -1,10 +1,10 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
-#include "Engine/Math/IntVec2.h"
-#include <string>
-
 #include "Engine/Events/EventDelegate.h"
+#include "Engine/Math/IntVec2.h"
+#include "Engine/Math/Vec2.h"
+#include <string>
 
 
 
@@ -40,6 +40,9 @@ public:
     int GetWidth() const;
     int GetHeight() const;
     IntVec2 const& GetDimensions() const;
+
+    IntVec2 GetMouseClientPosition(bool originBottomLeft = true) const;
+    Vec2 GetMouseClientRelativePosition(bool originBottomLeft = true) const;
 
 public:
 

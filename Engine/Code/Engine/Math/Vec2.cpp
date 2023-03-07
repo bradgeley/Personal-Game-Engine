@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Vec2.h"
+#include "IntVec2.h"
 #include "Vec3.h"
 #include "MathUtils.h"
 
@@ -16,6 +17,11 @@ Vec2::Vec2(float x, float y) : x(x), y(y)
 
 
 Vec2::Vec2(int x, int y) : x(static_cast<float>(x)), y(static_cast<float>(y))
+{
+}
+
+
+Vec2::Vec2(IntVec2 const& fromIntVec2) : x(static_cast<float>(fromIntVec2.x)), y(static_cast<float>(fromIntVec2.y))
 {
 }
 

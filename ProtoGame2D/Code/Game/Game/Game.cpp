@@ -1,7 +1,10 @@
 // Bradley Christensen - 2022-2023
 #include "Game.h"
 
+#include "GameCommon.h"
+#include "WindowsApplication.h"
 #include "Engine/Input/InputSystem.h"
+#include "Engine/Input/InputUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/DebugDrawUtils.h"
 #include "Engine/Renderer/Font.h"
@@ -22,7 +25,7 @@ Rgba8 g_testTint;
 
 void Game::Startup()
 {
-    m_camera = Camera(Vec3(-1000.f,-1000.f,-1000.f), Vec3(1000.f, 1000.f, 1000.f));
+    m_camera = Camera(Vec3(-2000.f,-1000.f,-1000.f), Vec3(2000.f, 1000.f, 1000.f));
     
     m_spinningTextureVerts = new VertexBuffer();
 
@@ -52,6 +55,11 @@ void Game::Update(float deltaSeconds)
     static float t = 0.f;
     t += deltaSeconds;
 
+    if (g_input->WasKeyJustReleased(KeyCode::ESCAPE))
+    {
+        g_theApp->Quit();
+    }
+
     if (g_input->IsMouseButtonDown(0))
     {
         g_testTint = Rgba8::LightBlue;
@@ -76,6 +84,14 @@ void Game::Update(float deltaSeconds)
     }
     g_helloWorldModelMatrix = Mat44();
     g_helloWorldModelMatrix.AppendUniformScale2D(g_helloWorldScale);
+
+    if (g_input->IsMouseButtonDown(0))
+    {
+        auto& verts = m_staticGeometryVerts->GetMutableVerts();
+        Vec2 mouseRelativePos = g_input->GetMouseClientRelativePosition();
+        Vec2 worldPos = m_camera.ScreenToWorldOrtho(mouseRelativePos);
+        AddVertsForLine2D(verts, Vec2::ZeroVector, worldPos, 5.f);
+    }
 }
 
  

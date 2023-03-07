@@ -27,6 +27,7 @@ public:
     void Run();
     void Shutdown();
 
+    void Quit();
     bool HandleQuit(NamedProperties& args);
     bool IsQuitting() const;
     

@@ -1,7 +1,10 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
+#include "InputUtils.h"
 #include "KeyButtonState.hpp"
 #include "Engine/Core/EngineSubsystem.h"
+#include "Engine/Math/IntVec2.h"
+#include "Engine/Math/Vec2.h"
 
 
 
@@ -36,17 +39,24 @@ public:
     void Startup() override;
     void BeginFrame() override;
     void Update(float deltaSeconds) override;
+    void EndFrame() override;
     void Shutdown() override;
 
     bool IsValidKey(int key) const;
     bool IsKeyDown(int keyCode) const;
     bool WasKeyJustPressed(int keyCode) const;
     bool WasKeyJustReleased(int keyCode) const;
+    bool IsKeyDown(KeyCode keyCode) const;
+    bool WasKeyJustPressed(KeyCode keyCode) const;
+    bool WasKeyJustReleased(KeyCode keyCode) const;
 
     bool IsValidMouseButton(int mouseButton) const;
     bool IsMouseButtonDown(int mouseButton) const;
     bool WasMouseButtonJustPressed(int mouseButton);
     bool WasMouseButtonJustReleased(int mouseButton);
+    
+    IntVec2	GetMouseClientPosition(bool originBottomLeft = true) const;
+    Vec2 GetMouseClientRelativePosition(bool originBottomLeft = true) const;
 
 private:
 

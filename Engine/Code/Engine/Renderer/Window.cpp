@@ -76,6 +76,39 @@ IntVec2 const& Window::GetDimensions() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+IntVec2 Window::GetMouseClientPosition(bool originBottomLeft) const
+{
+    POINT mousePos;
+    POINT origin = { 0, 0 };
+    RECT clientRect;
+    ::GetClientRect((HWND) m_windowHandle, &clientRect);
+    ::ClientToScreen((HWND) m_windowHandle, &origin);
+
+    ::GetCursorPos( &mousePos );
+    IntVec2 result = IntVec2(mousePos.x - origin.x, mousePos.y - origin.y);
+    if (originBottomLeft)
+    {
+        result.y = clientRect.bottom - result.y;
+    }
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 Window::GetMouseClientRelativePosition(bool originBottomLeft) const
+{
+    Vec2 relativePosition = Vec2(GetMouseClientPosition(originBottomLeft));
+    RECT clientRect;
+    ::GetClientRect((HWND) m_windowHandle, &clientRect);
+    relativePosition.y /= static_cast<float>(clientRect.bottom);
+    relativePosition.x /= static_cast<float>(clientRect.right);
+    return relativePosition;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Window::CreateMainWindow()
 {
     WNDCLASSEX wcex;

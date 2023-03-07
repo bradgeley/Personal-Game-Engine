@@ -23,7 +23,7 @@ void WindowsApplication::Startup()
     
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Protogame";
-    windowConfig.m_clientAspect = 1.f;
+    windowConfig.m_clientAspect = 2.f;
     windowConfig.m_windowScale = 0.5;
     g_window = new Window(windowConfig);
     m_engine->RegisterSubsystem(g_window);
@@ -82,10 +82,17 @@ void WindowsApplication::Shutdown()
 
 
 
+void WindowsApplication::Quit()
+{
+    m_isQuitting = true;
+}
+
+
+
 bool WindowsApplication::HandleQuit(NamedProperties& args)
 {
     UNUSED(args)
-    m_isQuitting = true;
+    Quit();
     return true;
 }
 

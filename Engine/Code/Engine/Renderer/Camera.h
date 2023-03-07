@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Math/Mat44.h"
 #include "Engine/Math/Vec3.h"
+#include "Engine/Math/Vec2.h"
 
 
 
@@ -14,6 +15,8 @@ public:
 	explicit Camera(Vec3 const& bottomLeft, Vec3 const& topRight);
     
     Mat44 GetOrthoProjectionMatrix() const;
+    Vec3 GetOrthoDimensions() const;
+    Vec2 ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const;
 
 private:
     
