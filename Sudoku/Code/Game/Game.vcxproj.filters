@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Framework\Main_Windows.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Game.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\WindowsApplication.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Framework\EngineBuildPreferences.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Game.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameCommon.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WindowsApplication.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{e8c71141-5bb4-4ec3-a422-14ab30c8ff89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{6c46eb85-7209-4657-98f4-0f55a327cad0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -72,6 +72,14 @@ void Font::AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& tex
 
 
 //----------------------------------------------------------------------------------------------------------------------
+GlyphData const& Font::GetGlyphData(uint8_t glyph) const
+{
+	return m_glyphData[glyph];
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float Font::GetKerning(uint8_t lhs, uint8_t rhs) const
 {
 	// Kernings are stored in a vector of pair of glyph id and kerning value

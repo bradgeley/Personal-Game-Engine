@@ -19,12 +19,15 @@ public:
     explicit Grid(IntVec2 const& dimensions, T const& initialValue);
     explicit Grid(int width, int height, T const& initialValue);
 
+	int GetIndexForCoords(int x, int y) const;
     int GetIndexForCoords(IntVec2 const& coords) const;
     IntVec2 GetCoordsForIndex(int index) const;
     IntVec2 GetDimensions() const;
     int GetWidth() const;
     int GetHeight() const;
     void* GetRawData() const;
+
+    T& operator[](int index);
 
 public:
 
@@ -62,6 +65,15 @@ template <typename T>
 int Grid<T>::GetIndexForCoords(IntVec2 const& coords) const
 {
     return coords.y * m_dimensions.x + coords.x;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+int Grid<T>::GetIndexForCoords(int x, int y) const
+{
+	return y * m_dimensions.x + x;
 }
 
 
@@ -107,4 +119,13 @@ template <typename T>
 void* Grid<T>::GetRawData() const
 {
     return (void*) m_data.data();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+T& Grid<T>::operator[](int index)
+{
+    return m_data[index];
 }

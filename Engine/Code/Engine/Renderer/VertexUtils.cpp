@@ -1,6 +1,8 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Math/AABB2.h"
+#include "Engine/Math/IntVec2.h"
+#include <Engine\Core\ErrorUtils.h>
 
 
 
@@ -77,15 +79,13 @@ void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& box, 
 //----------------------------------------------------------------------------------------------------------------------
 void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, Vec2 const& maxs, float lineThickness, Rgba8 const& tint)
 {
-    float halfThickness = lineThickness * 0.5f;
-    
     // Get corners
     Vec2 const& topRightPoint = maxs;
     Vec2 const& bottomLeftPoint = mins;
     Vec2 bottomRightPoint = Vec2(maxs.x, mins.y);
     Vec2 topLeftPoint = Vec2(mins.x, maxs.y);
 
-    out_verts.reserve(out_verts.size() + static_cast<size_t>(3 * 8));
+    out_verts.reserve(out_verts.size() + (3 * 8));
 
     // Top and bottom
     AddVertsForLine2D(out_verts, topLeftPoint, topRightPoint, lineThickness, tint);
@@ -95,4 +95,35 @@ void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, 
     Vec2 offset = Vec2(0.f, lineThickness);
     AddVertsForLine2D(out_verts, topLeftPoint - offset, bottomLeftPoint + offset, lineThickness, tint);
     AddVertsForLine2D(out_verts, topRightPoint - offset, bottomRightPoint + offset, lineThickness, tint);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Add lines for columns and rows to create a grid
+// There will be some overlap where lines intersect, but doing it this way will result in fewer total triangles
+// than if I ensured no overlaps.
+//
+void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint)
+{
+    ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
+    Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
+
+    // Add lines for columns
+    for (int x = 0; x <= dims.x; ++x)
+    {
+        float cellPosX = x * cellDims.x;
+        Vec2 bot = boundingAABB.mins + Vec2(cellPosX, 0.f);
+        Vec2 top = boundingAABB.GetTopLeft() + Vec2(cellPosX, 0.f);
+        AddVertsForLine2D(out_verts, top, bot, lineThickness, tint);
+    }
+
+    // Add lines for rows
+	for (int y = 0; y <= dims.y; ++y)
+	{
+		float cellPosY = y * cellDims.y;
+		Vec2 left = boundingAABB.mins + Vec2(0.f, cellPosY);
+		Vec2 right = boundingAABB.GetBottomRight() + Vec2(0.f, cellPosY);
+		AddVertsForLine2D(out_verts, left, right, lineThickness, tint);
+	}
 }

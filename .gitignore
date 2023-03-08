@@ -14,3 +14,10 @@ ProtoGame2D/.vs/ProtoGame2D/v16/.suo
 ProtoGame2D/.vs/ProtoGame2D/v16/Browse.VC.db-shm
 ProtoGame2D/.vs/ProtoGame2D/v16/Browse.VC.db-wal
 ProtoGame2D/.vs/ProtoGame2D/v16/Browse.VC.opendb
+Sudoku/.vs/Sudoku/v16/.suo
+*.log
+Sudoku/GPUCache/index
+Sudoku/GPUCache/data_3
+Sudoku/GPUCache/data_2
+Sudoku/GPUCache/data_1
+Sudoku/GPUCache/data_0

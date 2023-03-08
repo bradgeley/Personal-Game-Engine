@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
-#include "IntVec2.h"
+#include "Engine/Math/IntVec2.h"
+#include "Engine/Math/Vec2.h"
 
 
 
@@ -16,6 +17,12 @@ IntVec2::IntVec2() : x(0), y(0)
 IntVec2::IntVec2(int x, int y) : x(x), y(y)
 {
 }
+
+
+IntVec2::IntVec2(Vec2 const& fromVec2) : x(static_cast<int>(fromVec2.x)), y(static_cast<int>(fromVec2.y))
+{
+}
+
 
 
 bool IntVec2::operator==(const IntVec2& other)

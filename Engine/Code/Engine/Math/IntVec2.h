@@ -3,6 +3,10 @@
 
 
 
+struct Vec2;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 // IntVec2
 //
@@ -18,7 +22,8 @@ public:
 public:
     
     explicit IntVec2();
-    explicit IntVec2(int x, int y);
+	explicit IntVec2(int x, int y);
+	explicit IntVec2(Vec2 const& fromVec2);
 
 public:
 
