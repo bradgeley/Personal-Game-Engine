@@ -41,7 +41,7 @@ protected:
     bool CompileAsVertexShader(std::string const& sourceCode);
     bool CompileAsPixelShader(std::string const& sourceCode);
     
-    ID3D11InputLayout*  CreateInputLayoutFor_Vertex_PCU();
+    ID3D11InputLayout* CreateInputLayoutFor_Vertex_PCU();
 
 protected:
 

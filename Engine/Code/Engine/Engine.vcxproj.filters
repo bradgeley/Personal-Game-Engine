@@ -1,6 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="Multithreading\Job.cpp">
+      <Filter>Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="Multithreading\JobGraph.cpp">
+      <Filter>Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="Multithreading\JobID.cpp">
+      <Filter>Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="Multithreading\JobSystem.cpp">
+      <Filter>Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="Multithreading\JobWorker.cpp">
+      <Filter>Multithreading</Filter>
+    </ClCompile>
     <ClCompile Include="Core\Engine.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -13,25 +28,31 @@
     <ClCompile Include="Core\FileUtils.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Image.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="Core\StringUtils.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Math\IntVec2.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Math\MathUtils.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Math\Vec2.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Math\Vec3.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
-    <ClCompile Include="DataStructures\ThreadSafeQueue.cpp">
-      <Filter>Data Structures</Filter>
+    <ClCompile Include="Core\Time.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Camera.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\ConstantBuffer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11Utils.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\DebugDrawUtils.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\EngineConstantBuffers.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\Font.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Renderer.cpp">
@@ -52,11 +73,80 @@
     <ClCompile Include="Renderer\VertexBuffer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\VertexUtils.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="Renderer\Window.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="DataStructures\NamedProperties.cpp">
+      <Filter>DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructures\ThreadSafeQueue.cpp">
+      <Filter>DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\EventDelegate.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\EventSubscriber.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\EventSystem.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\EventUtils.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\AABB2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Grid.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\IntVec2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Mat44.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MathUtils.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vec2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vec3.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputSystem.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\InputUtils.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\KeyButtonState.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp">
+      <Filter>ThirdParty\tinyxml</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Multithreading\Job.h">
+      <Filter>Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="Multithreading\JobGraph.h">
+      <Filter>Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="Multithreading\JobID.h">
+      <Filter>Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="Multithreading\JobSystem.h">
+      <Filter>Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="Multithreading\JobWorker.h">
+      <Filter>Multithreading</Filter>
+    </ClInclude>
     <ClInclude Include="Core\Engine.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -72,34 +162,49 @@
     <ClInclude Include="Core\FileUtils.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Image.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="Core\StringUtils.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Math\IntVec2.h">
-      <Filter>Math</Filter>
+    <ClInclude Include="Core\Time.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Math\MathUtils.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vec2.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vec3.h">
-      <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="DataStructures\ThreadSafeQueue.h">
-      <Filter>Data Structures</Filter>
+    <ClInclude Include="Core\XmlUtils.h">
+      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Camera.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\ConstantBuffer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11Utils.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\DebugDrawUtils.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="Renderer\DefaultShaderSource.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\EngineConstantBuffers.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\Font.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\FontShaderSource.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Renderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\RendererInternal.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RendererSettings.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Rgba8.h">
@@ -117,22 +222,97 @@
     <ClInclude Include="Renderer\VertexBuffer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\VertexUtils.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="Renderer\Window.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="DataStructures\NamedProperties.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructures\ThreadSafeQueue.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\EventDelegate.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\EventSubscriber.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\EventSystem.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\EventUtils.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\AABB2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Grid.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\IntVec2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Mat44.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathUtils.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vec2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vec3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputSystem.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\InputUtils.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\KeyButtonState.hpp">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\tinyxml2\tinyxml2.h">
+      <Filter>ThirdParty\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\stb\stb_image.h">
+      <Filter>ThirdParty\stb</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Math">
-      <UniqueIdentifier>{8fac6711-bb15-4ff9-b672-a4d88fce6335}</UniqueIdentifier>
+    <Filter Include="Multithreading">
+      <UniqueIdentifier>{6c2a1c3d-2182-40f3-b0d9-bd17c52d186d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core">
-      <UniqueIdentifier>{29c049fd-60b2-48cc-b559-b55826aac6d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Data Structures">
-      <UniqueIdentifier>{4348acc4-de9b-4223-8488-e95dde72a60e}</UniqueIdentifier>
+      <UniqueIdentifier>{76eb5966-a335-4f5e-b3a7-4b0575020d9d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Renderer">
-      <UniqueIdentifier>{66eb12b1-5302-418f-93b1-7059f205fb96}</UniqueIdentifier>
+      <UniqueIdentifier>{883d7d1a-bcb0-41e9-a2b4-48e33e31e610}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DataStructures">
+      <UniqueIdentifier>{8f900e73-baf2-4bfb-88de-9fc887668513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Events">
+      <UniqueIdentifier>{fe394d7a-39af-4a1f-8b11-c89002714b53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{92cf47ec-7243-4b13-bd65-ee8691af17a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{95f7b6d2-5fd7-4602-911b-f1dbca134d6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty">
+      <UniqueIdentifier>{ebfb071c-4fa3-469b-9332-bcc1598129bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\tinyxml">
+      <UniqueIdentifier>{258fdf2d-efbf-41ab-bb1f-12e8266bfcf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\stb">
+      <UniqueIdentifier>{6603f47e-3092-4d2a-8532-04b8b13063d0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

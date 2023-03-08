@@ -45,7 +45,10 @@ void Game::Startup()
     m_textVerts = new VertexBuffer();
     auto& textVerts = m_textVerts->GetMutableVerts();
     Font* font = g_renderer->GetDefaultFont();
-    font->AddVertsForText2D(textVerts, Vec2(-970.f, 300.f), 400.f, "Hello, soBali!");
+    if (font)
+    {
+        font->AddVertsForText2D(textVerts, Vec2(-970.f, 300.f), 400.f, "Hello, soBali!");
+    }
 }
 
 
@@ -116,10 +119,13 @@ void Game::Render() const
     
     // Then text
     Font* font = g_renderer->GetDefaultFont();
-    font->SetRendererState();
-    g_renderer->SetModelMatrix(g_helloWorldModelMatrix);
-    g_renderer->DrawVertexBuffer(m_textVerts);
-    DebugDrawMesh2D(m_textVerts->GetVerts(), 5.f);
+    if (font)
+	{
+		font->SetRendererState();
+		g_renderer->SetModelMatrix(g_helloWorldModelMatrix);
+		g_renderer->DrawVertexBuffer(m_textVerts);
+		DebugDrawMesh2D(m_textVerts->GetVerts(), 5.f);
+    }
 }
 
 
@@ -129,4 +135,5 @@ void Game::Shutdown()
     delete m_texture;
     delete m_staticGeometryVerts;
     delete m_spinningTextureVerts;
+    delete m_textVerts;
 }

@@ -1,12 +1,12 @@
 // Bradley Christensen - 2022-2023
-#include "Game/WindowsApplication.h"
+#include "WindowsApplication.h"
 #include "Engine/Core/Engine.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/Time.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Window.h"
-#include "Game/Game.h"
+#include "Game.h"
 
 
 

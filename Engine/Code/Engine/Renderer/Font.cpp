@@ -1,9 +1,9 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Engine/Renderer/Font.h"
-
-#include "Renderer.h"
-#include "Texture.h"
-#include "VertexUtils.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Texture.h"
+#include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/Shader.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
@@ -106,6 +106,8 @@ Shader* Font::GetShader() const
 //----------------------------------------------------------------------------------------------------------------------
 Font::~Font()
 {
+	delete m_shader;
+	m_shader = nullptr;
 	delete m_texture;
 	m_texture = nullptr;
 }
