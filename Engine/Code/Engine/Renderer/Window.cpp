@@ -204,7 +204,6 @@ void Window::RunMessagePump()
       }
 
       TranslateMessage(&queuedMessage);
-      DispatchMessage(&queuedMessage); // This tells Windows to call our "WindowsMessageHandlingProcedure" (a.k.a. "WinProc") function
    }
 }
 
