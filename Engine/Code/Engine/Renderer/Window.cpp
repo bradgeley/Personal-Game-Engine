@@ -204,6 +204,7 @@ void Window::RunMessagePump()
       }
 
       TranslateMessage(&queuedMessage);
+      DispatchMessage(&queuedMessage);
    }
 }
 
