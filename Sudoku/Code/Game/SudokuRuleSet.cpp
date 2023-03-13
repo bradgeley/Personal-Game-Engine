@@ -3,6 +3,18 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+SudokuRuleSet::SudokuRuleSet(SudokuRuleSet const& copy)
+{
+	for (auto& rule : copy.m_rules)
+	{
+		m_rules.emplace_back(rule->Clone());
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 SudokuRuleSet::~SudokuRuleSet()
 {
 	for (auto& rule : m_rules)
@@ -13,18 +25,7 @@ SudokuRuleSet::~SudokuRuleSet()
 }
 
 
-
-SudokuRuleSet SudokuRuleSet::GetStandardSudokuRules()
-{
-	SudokuRuleSet standardRules;
-	standardRules.m_rules.push_back(new SudokuRuleRowOnceEach());
-	standardRules.m_rules.push_back(new SudokuRuleColumnOnceEach());
-	standardRules.m_rules.push_back(new SudokuRuleBoxOnceEach());
-	return standardRules;
-}
-
-
-
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuRuleRowOnceEach::Evaluate(SudokuGrid const& grid) const
 {
 	return false;
@@ -32,6 +33,14 @@ bool SudokuRuleRowOnceEach::Evaluate(SudokuGrid const& grid) const
 
 
 
+SudokuRule* SudokuRuleRowOnceEach::Clone() const
+{
+	return new SudokuRuleRowOnceEach();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuRuleColumnOnceEach::Evaluate(SudokuGrid const& grid) const
 {
 	return false;
@@ -39,7 +48,22 @@ bool SudokuRuleColumnOnceEach::Evaluate(SudokuGrid const& grid) const
 
 
 
+SudokuRule* SudokuRuleColumnOnceEach::Clone() const
+{
+	return new SudokuRuleColumnOnceEach();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuRuleBoxOnceEach::Evaluate(SudokuGrid const& grid) const
 {
 	return false;
+}
+
+
+
+SudokuRule* SudokuRuleBoxOnceEach::Clone() const
+{
+	return new SudokuRuleBoxOnceEach();
 }

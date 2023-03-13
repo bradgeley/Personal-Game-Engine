@@ -21,9 +21,14 @@ public:
 
 	void BeginGame(SudokuGrid* grid);
 
+	void SelectCell(int index);
+
+private:
+	
 	void UpdateSelectedCell(float deltaSeconds);
 	void UpdateNumberEntry();
-
+	void UpdateArrowKeysSelectedCellMovement(float deltaSeconds);
+	
 public:
 
 	Camera* m_camera;
@@ -31,6 +36,6 @@ public:
 protected:
 
 	SudokuGrid* m_grid = nullptr;
-	int m_selectedCellIndex = 0;
+	std::vector<int> m_selectedCellIndices;
 };
 

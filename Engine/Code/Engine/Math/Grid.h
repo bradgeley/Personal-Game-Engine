@@ -16,6 +16,7 @@ class Grid
 public:
 
     Grid() = default;
+    explicit Grid(Grid<T> const& copy);
     explicit Grid(IntVec2 const& dimensions, T const& initialValue);
     explicit Grid(int width, int height, T const& initialValue);
 
@@ -36,6 +37,15 @@ public:
     IntVec2 m_dimensions;
     std::vector<T> m_data;
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+Grid<T>::Grid(Grid<T> const& copy) : m_data(copy.m_data), m_dimensions(copy.m_dimensions)
+{
+    
+}
 
 
 
@@ -66,7 +76,7 @@ Grid<T>::Grid(int width, int height, T const& initialValue) : Grid(IntVec2(width
 template <typename T>
 bool Grid<T>::IsValidIndex(int index) const
 {
-    return index > 0 && index < m_data.size();
+    return index >= 0 && index < m_data.size();
 }
 
 

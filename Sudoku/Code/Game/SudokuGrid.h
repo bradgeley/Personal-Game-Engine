@@ -12,8 +12,8 @@ class VertexBuffer;
 //----------------------------------------------------------------------------------------------------------------------
 struct SudokuGridConfig
 {
-	IntVec2 m_dims;
-	SudokuRuleSet m_rules;
+	IntVec2 m_dims = IntVec2(9, 9);
+	SudokuRuleSet m_ruleSet;
 	Grid<int> m_solution;
 	Grid<int> m_startingState;
 };
@@ -25,7 +25,7 @@ class SudokuGrid : public Grid<int>
 {
 public:
 
-	SudokuGrid(SudokuGridConfig config);
+	SudokuGrid(SudokuGridConfig const& config);
 	~SudokuGrid();
 
 	void Update(float deltaSeconds);

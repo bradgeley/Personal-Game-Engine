@@ -4,6 +4,7 @@
 
 
 struct Vec2;
+struct IntVec2;
 
 
 
@@ -23,8 +24,9 @@ public:
 public:
     
     Vec3() = default;
-    explicit Vec3(float x, float y, float z);
-    explicit Vec3(Vec2 const& fromVec2);
+    explicit Vec3(float x, float y, float z = 0.f);
+    explicit Vec3(Vec2 const& fromVec2, float z = 0.f);
+    explicit Vec3(IntVec2 const& fromIntVec2, float z = 0.f);
 
 public:
 

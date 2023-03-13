@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Vec3.h"
+#include "IntVec2.h"
 #include "Vec2.h"
 #include "MathUtils.h"
 
@@ -14,7 +15,12 @@ Vec3::Vec3(float x, float y, float z) : x(x), y(y), z(z)
 }
 
 
-Vec3::Vec3(Vec2 const& fromVec2) : x(fromVec2.x), y(fromVec2.y)
+Vec3::Vec3(Vec2 const& fromVec2, float z) : x(fromVec2.x), y(fromVec2.y), z(z)
+{
+}
+
+
+Vec3::Vec3(IntVec2 const& fromIntVec2, float z) : x(static_cast<float>(fromIntVec2.x)), y(static_cast<float>(fromIntVec2.y)), z(z)
 {
 }
 
