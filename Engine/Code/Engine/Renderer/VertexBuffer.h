@@ -30,7 +30,7 @@ public:
     void ReleaseResources();
     
     std::vector<Vertex_PCU> const& GetVerts() const;
-    std::vector<Vertex_PCU>& GetMutableVerts(); // Don't call unless you will be adding verts
+    std::vector<Vertex_PCU>& GetMutableVerts(); // Calling this method dirties the buffer
     
     void AddVerts(std::vector<Vertex_PCU> const& verts);
     void ClearVerts();

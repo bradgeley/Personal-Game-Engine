@@ -19,6 +19,8 @@ public:
     explicit Grid(IntVec2 const& dimensions, T const& initialValue);
     explicit Grid(int width, int height, T const& initialValue);
 
+    bool IsValidIndex(int index) const;
+    bool IsValidCoords(IntVec2 const& coords) const;
 	int GetIndexForCoords(int x, int y) const;
     int GetIndexForCoords(IntVec2 const& coords) const;
     IntVec2 GetCoordsForIndex(int index) const;
@@ -56,6 +58,27 @@ template <typename T>
 Grid<T>::Grid(int width, int height, T const& initialValue) : Grid(IntVec2(width, height), initialValue)
 {
     
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+bool Grid<T>::IsValidIndex(int index) const
+{
+    return index > 0 && index < m_data.size();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+bool Grid<T>::IsValidCoords(IntVec2 const& coords) const
+{
+	return  coords.x < m_dimensions.x   && 
+            coords.y < m_dimensions.y   && 
+            coords.x >= 0               && 
+            coords.y >= 0;
 }
 
 

@@ -1,13 +1,12 @@
 // Bradley Christensen - 2022-2023
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
-#include "Engine/Renderer/Camera.h"
-#include "Engine/Math/Grid.h"
 
 
 
 class Texture;
-class VertexBuffer;
+class SudokuGrid;
+class SudokuPlayer;
 
 
 
@@ -20,14 +19,6 @@ public:
     void Render() const override;
     void Shutdown() override;
 
-    void UpdateTextVerts();
-    void UpdateSelectedCell(float deltaSeconds);
-    void UpdateNumberEntry();
-
-    Camera m_camera;
-    Grid<int> m_grid;
-    int m_selectedCellIndex = 0;
-    VertexBuffer* m_staticGridVerts;
-	VertexBuffer* m_textVerts;
-	VertexBuffer* m_selectedCellVerts;
+    SudokuGrid* m_grid;
+    SudokuPlayer* m_player;
 };

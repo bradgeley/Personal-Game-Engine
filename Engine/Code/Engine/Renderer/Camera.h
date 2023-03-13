@@ -15,6 +15,8 @@ public:
     Camera() = default;
 	explicit Camera(Vec3 const& bottomLeft, Vec3 const& topRight);
     
+    void SetOrthoBounds(Vec3 const& mins, Vec3 const& maxs);
+
     AABB2 GetOrthoBounds2D() const;
     Mat44 GetOrthoProjectionMatrix() const;
     Vec3 GetOrthoDimensions() const;
