@@ -23,7 +23,7 @@ bool EventSubscriberFunction::DoesObjectMatch(void const* objectAddress) const
 //----------------------------------------------------------------------------------------------------------------------
 bool EventSubscriberFunction::DoesFunctionMatch(void const* functionAddress) const
 {
-    return *reinterpret_cast<size_t const*>(&m_callbackFunc) == *reinterpret_cast<size_t*>(&functionAddress);
+    return m_callbackFunc == *reinterpret_cast<EventCallbackFunction const*>(functionAddress);
 }
 
 

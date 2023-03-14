@@ -16,18 +16,23 @@ public:
 	SudokuPlayer();
 	~SudokuPlayer();
 
+	void Startup();
 	void Update(float deltaSeconds);
 	void Render() const;
+	void Shutdown();
 
 	void BeginGame(SudokuGrid* grid);
 
+	void DeselectAllCells();
 	void SelectCell(int index);
 
 private:
 	
 	void UpdateSelectedCell(float deltaSeconds);
-	void UpdateNumberEntry();
 	void UpdateArrowKeysSelectedCellMovement(float deltaSeconds);
+	
+	bool OnCharDown(NamedProperties& args);
+	bool OnKeyDown(NamedProperties& args);
 	
 public:
 

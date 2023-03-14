@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2023
 #pragma once
 #include "SudokuRuleSet.h"
+#include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Math/Grid.h"
 
 
@@ -28,8 +29,10 @@ public:
 	SudokuGrid(SudokuGridConfig const& config);
 	~SudokuGrid();
 
+	void Startup();
 	void Update(float deltaSeconds);
 	void Render() const;
+	void Shutdown();
 
 	void RenderSelectedCells(std::vector<int> const& m_selectedCellIndices) const;
 

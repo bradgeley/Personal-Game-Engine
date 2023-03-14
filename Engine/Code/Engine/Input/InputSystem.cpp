@@ -23,12 +23,12 @@ InputSystem::InputSystem(InputSystemConfig const& config) : m_config(config)
 //----------------------------------------------------------------------------------------------------------------------
 void InputSystem::Startup()
 {
-    g_window->m_charInputEvent.SubscribeMethod(*this, &InputSystem::HandleChar);
-    g_window->m_keyDownEvent.SubscribeMethod(*this, &InputSystem::HandleKeyDown);
-    g_window->m_keyUpEvent.SubscribeMethod(*this, &InputSystem::HandleKeyUp);
-    g_window->m_mouseButtonDownEvent.SubscribeMethod(*this, &InputSystem::HandleMouseButtonDown);
-    g_window->m_mouseButtonUpEvent.SubscribeMethod(*this, &InputSystem::HandleMouseButtonUp);
-    g_window->m_mouseWheelEvent.SubscribeMethod(*this, &InputSystem::HandleMouseWheel);
+    g_window->m_charInputEvent.SubscribeMethod(this, &InputSystem::HandleChar);
+    g_window->m_keyDownEvent.SubscribeMethod(this, &InputSystem::HandleKeyDown);
+    g_window->m_keyUpEvent.SubscribeMethod(this, &InputSystem::HandleKeyUp);
+    g_window->m_mouseButtonDownEvent.SubscribeMethod(this, &InputSystem::HandleMouseButtonDown);
+    g_window->m_mouseButtonUpEvent.SubscribeMethod(this, &InputSystem::HandleMouseButtonUp);
+    g_window->m_mouseWheelEvent.SubscribeMethod(this, &InputSystem::HandleMouseWheel);
 }
 
 

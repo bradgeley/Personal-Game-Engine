@@ -47,13 +47,13 @@ struct EventSubscriberMethod : public EventSubscriber
 {
     typedef bool (T::*EventCallbackMethod)(NamedProperties& args);
 
-    explicit EventSubscriberMethod(T& object, EventCallbackMethod method);
+    explicit EventSubscriberMethod(T* object, EventCallbackMethod method);
 
-    virtual bool DoesObjectMatch(void const* objectAddress) const override;
+    virtual bool DoesObjectMatch(void const* object) const override;
     virtual bool DoesFunctionMatch(void const* functionAddress) const override;
     virtual void Execute(NamedProperties& args) override;
 
-    T& m_object;
+    T* m_object;
     EventCallbackMethod m_method;
 };
 
@@ -61,7 +61,7 @@ struct EventSubscriberMethod : public EventSubscriber
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-EventSubscriberMethod<T>::EventSubscriberMethod(T& object, EventCallbackMethod method) : m_object(object), m_method(method)
+EventSubscriberMethod<T>::EventSubscriberMethod(T* object, EventCallbackMethod method) : m_object(object), m_method(method)
 {
         
 }
@@ -70,9 +70,9 @@ EventSubscriberMethod<T>::EventSubscriberMethod(T& object, EventCallbackMethod m
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-bool EventSubscriberMethod<T>::DoesObjectMatch(void const* objectAddress) const
+bool EventSubscriberMethod<T>::DoesObjectMatch(void const* object) const
 {
-    return (void*)(&m_object) == objectAddress;
+    return m_object == object;
 }
 
 
@@ -81,7 +81,7 @@ bool EventSubscriberMethod<T>::DoesObjectMatch(void const* objectAddress) const
 template <typename T>
 bool EventSubscriberMethod<T>::DoesFunctionMatch(void const* functionAddress) const
 {
-    return *reinterpret_cast<size_t const*>(&m_method) == *reinterpret_cast<size_t*>(&functionAddress);
+    return m_method == *reinterpret_cast<EventCallbackMethod const*>(functionAddress);
 }
 
 
@@ -90,7 +90,8 @@ bool EventSubscriberMethod<T>::DoesFunctionMatch(void const* functionAddress) co
 template <typename T>
 void EventSubscriberMethod<T>::Execute(NamedProperties& args)
 {
-    (m_object.*m_method)(args);
+    T& object = *m_object;
+    (object.*m_method)(args);
 }
 
 

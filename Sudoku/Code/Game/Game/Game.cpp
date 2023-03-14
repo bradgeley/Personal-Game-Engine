@@ -21,7 +21,9 @@ void Game::Startup()
     gameConfig.m_startingState = Grid(gameConfig.m_dims, 6);
     gameConfig.m_solution = Grid(gameConfig.m_dims, 9);
     m_grid = new SudokuGrid(gameConfig);
+    m_grid->Startup();
     m_player = new SudokuPlayer();
+    m_player->Startup();
     m_player->BeginGame(m_grid);
 }
 
@@ -54,8 +56,11 @@ void Game::Render() const
 
 void Game::Shutdown()
 {
-    delete m_grid;
+    m_player->Shutdown();
     m_player = nullptr;
     delete m_player;
+    
+    m_grid->Shutdown();
+    delete m_grid;
     m_grid = nullptr;
 }

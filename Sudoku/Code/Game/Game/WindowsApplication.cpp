@@ -28,7 +28,7 @@ void WindowsApplication::Startup()
     g_window = new Window(windowConfig);
     m_engine->RegisterSubsystem(g_window);
 
-    g_window->m_quit.SubscribeMethod(*this, &WindowsApplication::HandleQuit);
+    g_window->m_quit.SubscribeMethod(this, &WindowsApplication::HandleQuit);
 
     RendererConfig rendererConfig;
     g_renderer = new Renderer(rendererConfig);

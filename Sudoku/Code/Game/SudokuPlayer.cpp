@@ -6,6 +6,7 @@
 #include "Engine/Core/EngineCommon.h"
 #include "SudokuPlayer.h"
 #include "SudokuGrid.h"
+#include "Engine/Renderer/Window.h"
 
 
 
@@ -30,14 +31,18 @@ SudokuPlayer::~SudokuPlayer()
 
 
 
+void SudokuPlayer::Startup()
+{
+	g_window->m_charInputEvent.SubscribeMethod(this, &SudokuPlayer::OnCharDown);
+	g_window->m_keyDownEvent.SubscribeMethod(this, &SudokuPlayer::OnKeyDown);
+}
+
+
+
 void SudokuPlayer::Update(float deltaSeconds)
 {
 	UpdateSelectedCell(deltaSeconds);
-	UpdateNumberEntry();
-	if (m_selectedCellIndices.size() == 1)
-	{
-		UpdateArrowKeysSelectedCellMovement(deltaSeconds);
-	}
+	UpdateArrowKeysSelectedCellMovement(deltaSeconds);
 }
 
 
@@ -45,6 +50,14 @@ void SudokuPlayer::Update(float deltaSeconds)
 void SudokuPlayer::Render() const
 {
 	m_grid->RenderSelectedCells(m_selectedCellIndices);
+}
+
+
+
+void SudokuPlayer::Shutdown()
+{
+	g_window->m_charInputEvent.UnsubscribeMethod(this, &SudokuPlayer::OnCharDown);
+	g_window->m_keyDownEvent.UnsubscribeMethod(this, &SudokuPlayer::OnKeyDown);
 }
 
 
@@ -59,45 +72,49 @@ void SudokuPlayer::BeginGame(SudokuGrid* grid)
 
 
 
-void SudokuPlayer::UpdateSelectedCell(float deltaSeconds)
+void SudokuPlayer::DeselectAllCells()
 {
-	UNUSED(deltaSeconds)
-
-	// Update selection
-	if (g_input->WasMouseButtonJustPressed(0))
-	{
-		Vec2 clientRelativePos = g_input->GetMouseClientRelativePosition();
-		Vec2 clientCellPos = clientRelativePos * Vec2(m_grid->GetWidth(), m_grid->GetHeight());
-		IntVec2 cellCoords = IntVec2(clientCellPos); // round down
-		int cellIndex = m_grid->GetIndexForCoords(cellCoords);
-		SelectCell(cellIndex);
-	}
+	m_selectedCellIndices.clear();
 }
 
 
 
-void SudokuPlayer::UpdateNumberEntry()
+void SudokuPlayer::UpdateSelectedCell(float deltaSeconds)
 {
-	for (auto& selectedCell : m_selectedCellIndices)
+	UNUSED(deltaSeconds)
+	
+	// Right mouse button, clear cells
+	if (g_input->WasMouseButtonJustPressed(1))
 	{
-		if (!m_grid->IsValidIndex(selectedCell))
+		DeselectAllCells();
+	}
+	
+	bool isLeftMouseButtonDown = g_input->IsMouseButtonDown(0);
+	if (!isLeftMouseButtonDown)
+	{
+		return;
+	}
+	
+	// Get cell at the current mouse position
+	Vec2 clientRelativePos = g_input->GetMouseClientRelativePosition();
+	Vec2 clientCellPos = clientRelativePos * Vec2(m_grid->GetWidth(), m_grid->GetHeight());
+	IntVec2 cellCoords = IntVec2(clientCellPos); // round down
+	int cellIndex = m_grid->GetIndexForCoords(cellCoords);
+	
+	// Update selection
+	if (g_input->WasMouseButtonJustPressed(0))
+	{
+		if (!g_input->IsKeyDown(KeyCode::SHIFT))
 		{
-			return;
+			DeselectAllCells();
 		}
+		SelectCell(cellIndex);
+	}
 
-		int numEntered = 0;
-		for (int c = (int) '0'; c <= (int) '9'; ++c)
-		{
-			if (g_input->WasKeyJustPressed(c))
-			{
-				(*m_grid)[selectedCell] = c - (int) '0';
-			}
-		}
-
-		if (g_input->IsKeyDown(KeyCode::DEL) || g_input->IsKeyDown(KeyCode::BACKSPACE))
-		{
-			(*m_grid)[selectedCell] = 0;
-		}
+	// If dragging, select all cells
+	if (isLeftMouseButtonDown)
+	{ 
+		SelectCell(cellIndex);
 	}
 }
 
@@ -105,6 +122,13 @@ void SudokuPlayer::UpdateNumberEntry()
 
 void SudokuPlayer::UpdateArrowKeysSelectedCellMovement(float deltaSeconds)
 {
+	UNUSED(deltaSeconds)
+	if (m_selectedCellIndices.size() != 1)
+	{
+		// Only do this if there's 1 selected cell
+		return;
+	}
+	
 	auto& selectedCellIndex = m_selectedCellIndices[0];
 	IntVec2 selectedCellCoords = m_grid->GetCoordsForIndex(selectedCellIndex);
 	constexpr float minSecondsBetweenArrowMoves = 0.1f;
@@ -149,6 +173,37 @@ void SudokuPlayer::UpdateArrowKeysSelectedCellMovement(float deltaSeconds)
 		}
 		selectedCellIndex = m_grid->GetIndexForCoords(selectedCellCoords);
 	}
+}
+
+
+
+bool SudokuPlayer::OnCharDown(NamedProperties& args)
+{
+	int c = args.Get("Char", -1);
+	for (auto& selectedCell : m_selectedCellIndices)
+	{
+		if (!m_grid->IsValidIndex(selectedCell))
+		{
+			continue;
+		}
+		
+		(*m_grid)[selectedCell] = c;
+
+		if (g_input->IsKeyDown(KeyCode::DEL) || g_input->IsKeyDown(KeyCode::BACKSPACE))
+		{
+			(*m_grid)[selectedCell] = 0;
+		}
+	}
+	return true;
+}
+
+
+
+bool SudokuPlayer::OnKeyDown(NamedProperties& args)
+{
+	int key = args.Get("Key", -1);
+	UNUSED(key)
+	return true;
 }
 
 

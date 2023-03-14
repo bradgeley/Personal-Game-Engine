@@ -6,6 +6,7 @@
 #include "Engine/Renderer/Font.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Renderer/Window.h"
 
 
 
@@ -35,6 +36,12 @@ SudokuGrid::~SudokuGrid()
 
 
 
+void SudokuGrid::Startup()
+{
+}
+
+
+
 void SudokuGrid::Update(float deltaSeconds)
 {
 	UNUSED(deltaSeconds)
@@ -46,7 +53,6 @@ void SudokuGrid::Update(float deltaSeconds)
 void SudokuGrid::Render() const
 {
 	g_renderer->DrawVertexBuffer(m_staticGridVerts);
-	g_renderer->DrawVertexBuffer(m_selectedCellVerts);
 
 	auto font = g_renderer->GetDefaultFont();
 	font->SetRendererState();
@@ -55,9 +61,22 @@ void SudokuGrid::Render() const
 
 
 
+void SudokuGrid::Shutdown()
+{
+	
+}
+
+
+
 void SudokuGrid::RenderSelectedCells(std::vector<int> const& m_selectedCellIndices) const
 {
-	g_renderer->ResetRenderingPipelineState();
+	if (m_selectedCellIndices.size() == 0)
+	{
+		return;
+	}
+	
+	g_renderer->BindShader(nullptr);
+	g_renderer->BindTexture(nullptr);
 	m_selectedCellVerts->ClearVerts();
 	for (auto& index : m_selectedCellIndices)
 	{
@@ -72,6 +91,7 @@ void SudokuGrid::RenderSelectedCells(std::vector<int> const& m_selectedCellIndic
 			AddVertsForWireBox2D(verts, selectedCell, 0.1f, Rgba8(100, 100, 200));
 		}
 	}
+	g_renderer->DrawVertexBuffer(m_selectedCellVerts);
 }
 
 
@@ -87,15 +107,15 @@ void SudokuGrid::UpdateTextVerts()
 		for (int y = 0; y < GetHeight(); ++y)
 		{
 			int cellIndex = GetIndexForCoords(x, y);
-			if (m_data[cellIndex] == 0)
+			uint8_t c = static_cast<uint8_t>(m_data[cellIndex]);
+			if (c == 0)
 			{
-				// 0 means empty
 				continue;
 			}
 
 			Vec2 cellBotLeft = Vec2(x, y);
-			std::string asString = StringF("%i", m_data[cellIndex]);
-			auto glyphData = font->GetGlyphData(asString[0]);
+			std::string asString = StringF("%c", c);
+			auto glyphData = font->GetGlyphData(c);
 			float glyphWidth = glyphData.m_width;
 			float glyphOffsetX = glyphData.a;
 			cellBotLeft.x += (1.f - glyphWidth) * 0.5f - glyphOffsetX;
@@ -103,3 +123,4 @@ void SudokuGrid::UpdateTextVerts()
 		}
 	}
 }
+

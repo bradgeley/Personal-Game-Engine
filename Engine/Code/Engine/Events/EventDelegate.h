@@ -15,10 +15,10 @@ struct EventDelegate
     void UnsubscribeFunction(EventCallbackFunction callbackFunc);
 
     template<typename T_Object, typename T_Method>
-    void SubscribeMethod(T_Object& object, T_Method method);
+    void SubscribeMethod(T_Object* object, T_Method method);
 
     template<typename T_Object, typename T_Method>
-    void UnsubscribeMethod(T_Object& object, T_Method method);
+    void UnsubscribeMethod(T_Object* object, T_Method method);
 
 protected:
 
@@ -29,7 +29,7 @@ protected:
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T_Object, typename T_Method>
-void EventDelegate::SubscribeMethod(T_Object& object, T_Method method)
+void EventDelegate::SubscribeMethod(T_Object* object, T_Method method)
 {
     m_subs.emplace_back(new EventSubscriberMethod(object, method));
 }
@@ -38,12 +38,12 @@ void EventDelegate::SubscribeMethod(T_Object& object, T_Method method)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T_Object, typename T_Method>
-void EventDelegate::UnsubscribeMethod(T_Object& object, T_Method method)
+void EventDelegate::UnsubscribeMethod(T_Object* object, T_Method method)
 {
     for (int i = 0; i < (int) m_subs.size(); ++i)
     {
         auto& sub = m_subs[i];
-        if (sub->DoesObjectMatch(object) && sub->DoesFunctionMatch(method))
+        if (sub->DoesObjectMatch(object) && sub->DoesFunctionMatch(&method))
         {
             m_subs.erase(m_subs.begin() + i);
             return;
