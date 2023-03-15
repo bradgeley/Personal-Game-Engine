@@ -1,8 +1,9 @@
 // Bradley Christensen - 2022-2023
 #pragma once
 #include "SudokuRuleSet.h"
-#include "Engine/DataStructures/NamedProperties.h"
-#include "Engine/Math/Grid.h"
+#include "Engine/Math/Grid2D.h"
+#include "Engine/Renderer/Rgba8.h"
+#include "Game/GameCommon.h"
 
 
 
@@ -15,14 +16,14 @@ struct SudokuGridConfig
 {
 	IntVec2 m_dims = IntVec2(9, 9);
 	SudokuRuleSet m_ruleSet;
-	Grid<int> m_solution;
-	Grid<int> m_startingState;
+	Grid2D<int> m_solution;
+	Grid2D<int> m_startingState;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SudokuGrid : public Grid<int>
+class SudokuGrid : public Grid2D<int>
 {
 public:
 
@@ -34,18 +35,35 @@ public:
 	void Render() const;
 	void Shutdown();
 
-	void RenderSelectedCells(std::vector<int> const& m_selectedCellIndices) const;
+	void SelectCell(int index);
+	void SelectCell(IntVec2 const& coords);
+	void DeselectCell(int index);
+	void DeselectCell(IntVec2 const& coords);
+	void DeselectAllCells();
+
+	int CountSelectedCells() const;
+	int GetSelectedCellIndex() const;
+	void MoveSelectedCell(EDirection direction);
+
+	// Actions that apply to selected cells
+	void ClearCell();
+	void EnterCharacter(uint8_t character);
 
 protected:
 
 	void UpdateTextVerts();
+	void UpdateSelectedCellVerts() const;
+	void AddVertsForSelectedCell(int index) const;
 
 protected:
 
 	SudokuGridConfig m_config;
 
-	VertexBuffer* m_staticGridVerts;
-	VertexBuffer* m_selectedCellVerts;
-	VertexBuffer* m_textVerts;
+	Grid2D<bool> m_selectedCells;
+	Grid2D<Rgba8> m_cellFill;
+
+	VertexBuffer* m_staticGridVerts = nullptr;
+	VertexBuffer* m_selectedCellVerts = nullptr;
+	VertexBuffer* m_textVerts = nullptr;
 };
 

@@ -18,13 +18,9 @@ public:
 
 	void Startup();
 	void Update(float deltaSeconds);
-	void Render() const;
 	void Shutdown();
 
 	void BeginGame(SudokuGrid* grid);
-
-	void DeselectAllCells();
-	void SelectCell(int index);
 
 private:
 	
@@ -41,6 +37,5 @@ public:
 protected:
 
 	SudokuGrid* m_grid = nullptr;
-	std::vector<int> m_selectedCellIndices;
 };
 

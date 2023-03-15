@@ -28,7 +28,7 @@ void EventDelegate::UnsubscribeFunction(EventCallbackFunction callbackFunc)
 	for (int i = 0; i < (int) m_subs.size(); ++i)
 	{
 		auto& sub = m_subs[i];
-		if (sub->DoesObjectMatch(nullptr) && sub->DoesFunctionMatch(callbackFunc))
+		if (sub->DoesObjectMatch(nullptr) && sub->DoesFunctionMatch((void const*)callbackFunc))
 		{
 			m_subs.erase(m_subs.begin() + i);
 			return;

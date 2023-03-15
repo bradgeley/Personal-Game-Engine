@@ -14,12 +14,12 @@
 void Game::Startup()
 {
     SudokuGridConfig gameConfig;
-    gameConfig.m_dims = IntVec2(6, 6);
+    gameConfig.m_dims = IntVec2(9, 9);
     gameConfig.m_ruleSet.m_rules.emplace_back(new SudokuRuleRowOnceEach());
     gameConfig.m_ruleSet.m_rules.emplace_back(new SudokuRuleColumnOnceEach());
     gameConfig.m_ruleSet.m_rules.emplace_back(new SudokuRuleBoxOnceEach());
-    gameConfig.m_startingState = Grid(gameConfig.m_dims, 6);
-    gameConfig.m_solution = Grid(gameConfig.m_dims, 9);
+    gameConfig.m_startingState = Grid2D(gameConfig.m_dims, 6);
+    gameConfig.m_solution = Grid2D(gameConfig.m_dims, 9);
     m_grid = new SudokuGrid(gameConfig);
     m_grid->Startup();
     m_player = new SudokuPlayer();
@@ -49,18 +49,12 @@ void Game::Render() const
 	g_renderer->BeginCamera(*(m_player->m_camera)); // reset renderer state
 
     m_grid->Render();
-    m_player->Render();
 }
 
 
 
 void Game::Shutdown()
 {
-    m_player->Shutdown();
-    m_player = nullptr;
-    delete m_player;
-    
-    m_grid->Shutdown();
-    delete m_grid;
-    m_grid = nullptr;
+    SHUTDOWN_AND_DESTROY(m_player)
+    SHUTDOWN_AND_DESTROY(m_grid)
 }

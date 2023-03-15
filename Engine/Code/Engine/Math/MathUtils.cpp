@@ -121,3 +121,19 @@ int InterpolateIntClamped(int a, int b, float t)
     t = ClampF(t, 0.f, 1.f);
     return (int) Interpolate((float) a, (float) b, t);
 }
+
+
+float GetFractionWithin(float val, float min, float max)
+{
+    float range = max - min;
+    float valRelative = val - min;
+    return valRelative / range;
+}
+
+
+float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
+{
+    float fractionWithin = GetFractionWithin(valueInRangeA, minRangeA, maxRangeA);
+    float rangeB = maxRangeB - minRangeB;
+    return minRangeB + fractionWithin * rangeB;
+}

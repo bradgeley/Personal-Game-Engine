@@ -54,7 +54,7 @@ void* Window::GetHWND() const
 //----------------------------------------------------------------------------------------------------------------------
 int Window::GetWidth() const
 {
-    return m_dimensiions.x;
+    return m_dimensions.x;
 }
 
 
@@ -62,7 +62,7 @@ int Window::GetWidth() const
 //----------------------------------------------------------------------------------------------------------------------
 int Window::GetHeight() const
 {
-    return m_dimensiions.y;
+    return m_dimensions.y;
 }
 
 
@@ -70,7 +70,7 @@ int Window::GetHeight() const
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 const& Window::GetDimensions() const
 {
-    return m_dimensiions;
+    return m_dimensions;
 }
 
 
@@ -115,7 +115,7 @@ void Window::CreateMainWindow()
     memset(&wcex, 0, sizeof(wcex));
     wcex.cbSize         = sizeof(WNDCLASSEX);
     wcex.style          = CS_OWNDC;
-    wcex.lpfnWndProc    = WindowsMessageHandlingProcedure; // Register our Windows message-handling function
+    wcex.lpfnWndProc    = WindowsMessageHandlingProcedure;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = GetModuleHandle(NULL);
@@ -126,10 +126,10 @@ void Window::CreateMainWindow()
     wcex.lpszClassName  = TEXT("Simple Window Class");
     wcex.hIconSm        = LoadIcon(wcex.hInstance, IDI_APPLICATION);
     RegisterClassEx(&wcex);
-
+    
     const DWORD windowStyleFlags = WS_CAPTION | WS_BORDER | WS_SYSMENU | WS_OVERLAPPED;
     const DWORD windowStyleExFlags = WS_EX_APPWINDOW;
- 
+
     RECT desktopRect;
     HWND desktopWindowHandle = GetDesktopWindow();
     GetClientRect(desktopWindowHandle, &desktopRect);
@@ -147,8 +147,8 @@ void Window::CreateMainWindow()
     {
         clientWidth = clientHeight * m_config.m_clientAspect;
     }
-    m_dimensiions.x = static_cast<int>(clientWidth);
-    m_dimensiions.y = static_cast<int>(clientHeight);
+    m_dimensions.x = static_cast<int>(clientWidth);
+    m_dimensions.y = static_cast<int>(clientHeight);
 
     // Calculate client rect bounds by centering the client area
     float clientMarginX = 0.5f * (desktopWidth - clientWidth);

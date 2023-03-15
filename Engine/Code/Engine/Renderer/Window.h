@@ -63,7 +63,7 @@ private:
 private:
     
     WindowConfig const  m_config;
-    IntVec2 m_dimensiions;
+    IntVec2 m_dimensions;
     
     void* m_windowHandle   = nullptr; // HWND
     void* m_displayContext = nullptr; // HDC

@@ -4,3 +4,17 @@
 
 
 extern class WindowsApplication* g_app;
+
+
+
+enum class EDirection : int
+{
+    North,
+    South,
+    East,
+    West,
+    NorthEast,
+    NorthWest,
+    SouthEast,
+    SouthWest,
+};

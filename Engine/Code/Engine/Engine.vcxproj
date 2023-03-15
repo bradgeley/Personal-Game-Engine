@@ -177,7 +177,7 @@
     <ClCompile Include="Input\InputUtils.cpp" />
     <ClCompile Include="Input\KeyButtonState.cpp" />
     <ClCompile Include="Math\AABB2.cpp" />
-    <ClCompile Include="Math\Grid.cpp" />
+    <ClCompile Include="Math\Grid2D.cpp" />
     <ClCompile Include="Math\IntVec2.cpp" />
     <ClCompile Include="Math\Mat44.cpp" />
     <ClCompile Include="Math\MathUtils.cpp" />
@@ -225,7 +225,7 @@
     <ClInclude Include="Input\InputUtils.h" />
     <ClInclude Include="Input\KeyButtonState.hpp" />
     <ClInclude Include="Math\AABB2.h" />
-    <ClInclude Include="Math\Grid.h" />
+    <ClInclude Include="Math\Grid2D.h" />
     <ClInclude Include="Math\IntVec2.h" />
     <ClInclude Include="Math\Mat44.h" />
     <ClInclude Include="Math\MathUtils.h" />

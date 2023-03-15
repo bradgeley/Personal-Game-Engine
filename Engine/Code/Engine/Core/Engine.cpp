@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Engine.h"
+
+#include "EngineCommon.h"
 #include "EngineSubsystem.h"
 
 
@@ -82,10 +84,8 @@ void Engine::Shutdown()
         EngineSubsystem*& subsystem = m_subsystems[i];
         if (subsystem)
         {
-            subsystem->Shutdown();
+            SHUTDOWN_AND_DESTROY(subsystem)
         }
-        delete subsystem;
-        subsystem = nullptr;
     }
     m_subsystems.clear();
 }

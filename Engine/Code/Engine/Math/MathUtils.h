@@ -53,3 +53,10 @@ float Interpolate(float a, float b, float t);
 float InterpolateClamped(float a, float b, float t);
 int InterpolateInt(int a, int b, float t);
 int InterpolateIntClamped(int a, int b, float t);
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Range Map
+//
+float GetFractionWithin(float val, float min, float max);
+float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB);
