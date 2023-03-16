@@ -8,13 +8,17 @@ AABB2 const AABB2::ZeroToOne = AABB2();
 
 
 
-AABB2::AABB2(Vec2 const& mins, Vec2 const& maxs) : mins(mins), maxs(maxs)
+AABB2::AABB2(Vec2 const& mins, Vec2 const& maxs) :
+    mins(MinF(mins.x, maxs.x), MinF(mins.y, maxs.y)),
+    maxs(MaxF(mins.x, maxs.x), MaxF(mins.y, maxs.y))
 {
 }
 
 
 
-AABB2::AABB2(float minX, float minY, float maxX, float maxY) : mins(minX, minY), maxs(maxX, maxY)
+AABB2::AABB2(float minX, float minY, float maxX, float maxY) :
+    mins(MinF(minX, maxX), MinF(minY, maxY)),
+    maxs(MaxF(minX, maxX), MaxF(minY, maxY))
 {
 }
 
@@ -105,15 +109,20 @@ bool AABB2::IsPointInside(Vec2 const& point) const
 
 bool AABB2::IsOverlapping(AABB2 const& otherBox) const
 {
-    // All AABB2 overlaps involve at least one corner point touching the other shape
-    return IsPointInside(otherBox.maxs) ||
-           IsPointInside(otherBox.mins) ||
-           IsPointInside(otherBox.GetTopLeft()) ||
-           IsPointInside(otherBox.GetBottomRight()) ||
-           otherBox.IsPointInside(mins) ||
-           otherBox.IsPointInside(maxs) ||
-           otherBox.IsPointInside(GetTopLeft()) ||
-           otherBox.IsPointInside(GetBottomRight());
+    if ((otherBox.mins.x > mins.x && otherBox.mins.x < maxs.x) ||
+        (otherBox.maxs.x > mins.x && otherBox.maxs.x < maxs.x) ||
+        (otherBox.mins.x > mins.x && otherBox.maxs.x < maxs.x) ||
+        (otherBox.mins.x < mins.x && otherBox.maxs.x > maxs.x))
+    {
+        if ((otherBox.mins.y > mins.y && otherBox.mins.y < maxs.y) ||
+            (otherBox.maxs.y > mins.y && otherBox.maxs.y < maxs.y) ||
+            (otherBox.mins.y > mins.y && otherBox.maxs.y < maxs.y) ||
+            (otherBox.mins.y < mins.y && otherBox.maxs.y > maxs.y))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 

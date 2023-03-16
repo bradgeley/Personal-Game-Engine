@@ -59,10 +59,15 @@ void WindowsApplication::Run()
         //
         
         m_engine->BeginFrame();
+        m_game->BeginFrame();
+        
         m_engine->Update(deltaSeconds);
         m_game->Update(deltaSeconds);
+        
         m_game->Render();
         m_engine->Render();
+        
+        m_game->EndFrame();
         m_engine->EndFrame();
     }
 }

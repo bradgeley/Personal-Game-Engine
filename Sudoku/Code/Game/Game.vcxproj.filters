@@ -10,9 +10,15 @@
     <ClCompile Include="Game\WindowsApplication.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="SudokuGrid.cpp" />
-    <ClCompile Include="SudokuRuleSet.cpp" />
-    <ClCompile Include="SudokuPlayer.cpp" />
+    <ClCompile Include="SudokuGrid.cpp">
+      <Filter>Sudoku</Filter>
+    </ClCompile>
+    <ClCompile Include="SudokuPlayer.cpp">
+      <Filter>Sudoku</Filter>
+    </ClCompile>
+    <ClCompile Include="SudokuRuleSet.cpp">
+      <Filter>Sudoku</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -27,9 +33,15 @@
     <ClInclude Include="Game\WindowsApplication.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="SudokuGrid.h" />
-    <ClInclude Include="SudokuRuleSet.h" />
-    <ClInclude Include="SudokuPlayer.h" />
+    <ClInclude Include="SudokuGrid.h">
+      <Filter>Sudoku</Filter>
+    </ClInclude>
+    <ClInclude Include="SudokuPlayer.h">
+      <Filter>Sudoku</Filter>
+    </ClInclude>
+    <ClInclude Include="SudokuRuleSet.h">
+      <Filter>Sudoku</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -37,6 +49,9 @@
     </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{6c46eb85-7209-4657-98f4-0f55a327cad0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sudoku">
+      <UniqueIdentifier>{fb25fc32-54a3-4e49-a854-aa4c203e32f6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

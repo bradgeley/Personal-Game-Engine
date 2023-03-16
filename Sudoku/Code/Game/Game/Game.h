@@ -16,6 +16,7 @@ public:
 
     void Startup() override;
     void Update(float deltaSeconds) override;
+    void EndFrame() override;
     void Render() const override;
     void Shutdown() override;
 

@@ -60,3 +60,10 @@ int InterpolateIntClamped(int a, int b, float t);
 //
 float GetFractionWithin(float val, float min, float max);
 float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB);
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Simple Functions
+//
+float MinF(float a, float b);
+float MaxF(float a, float b);

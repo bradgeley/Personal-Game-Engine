@@ -124,7 +124,7 @@ void Window::CreateMainWindow()
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = NULL;
     wcex.lpszClassName  = TEXT("Simple Window Class");
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, IDI_APPLICATION);
+    wcex.hIconSm        = LoadIcon(wcex.hInstance, IDI_APPLICATION); 
     RegisterClassEx(&wcex);
     
     const DWORD windowStyleFlags = WS_CAPTION | WS_BORDER | WS_SYSMENU | WS_OVERLAPPED;

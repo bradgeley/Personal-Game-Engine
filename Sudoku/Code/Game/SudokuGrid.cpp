@@ -125,7 +125,7 @@ int SudokuGrid::CountSelectedCells() const
 	int count = 0;
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
 	{
-		if (m_selectedCells.Get(i))
+		if (IsCellSelected(i))
 		{
 			++count;
 		}
@@ -139,12 +139,26 @@ int SudokuGrid::GetSelectedCellIndex() const
 {
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
 	{
-		if (m_selectedCells.Get(i))
+		if (IsCellSelected(i))
 		{
 			return i;
 		}
 	}
 	return -1;
+}
+
+
+
+bool SudokuGrid::IsCellSelected(int index) const
+{
+	return m_selectedCells.Get(index);
+}
+
+
+
+bool SudokuGrid::IsGivenDigit(int index) const
+{
+	return m_config.m_startingState.Get(index) != 0;
 }
 
 
@@ -190,7 +204,7 @@ void SudokuGrid::ClearCell()
 {
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
 	{
-		if (m_selectedCells.Get(i))
+		if (IsCellSelected(i))
 		{
 			Set(i, 0);
 		}
@@ -203,7 +217,7 @@ void SudokuGrid::EnterCharacter(uint8_t character)
 {
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
 	{
-		if (m_selectedCells.Get(i))
+		if (IsCellSelected(i) && !IsGivenDigit(i))
 		{
 			Set(i, character);
 		}
@@ -219,7 +233,7 @@ void SudokuGrid::UpdateSelectedCellVerts() const
 	m_selectedCellVerts->ClearVerts();
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
 	{
-		if (!m_selectedCells.Get(i))
+		if (!IsCellSelected(i))
 		{
 			continue;
 		}
@@ -245,7 +259,7 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 
 	// north wall
 	int northIndex = GetIndexNorthOf(index);
-	bool isNorthBlocked = (northIndex == -1 || !m_selectedCells.Get(northIndex));
+	bool isNorthBlocked = (northIndex == -1 || !IsCellSelected(northIndex));
 	if (isNorthBlocked)
 	{
 		// blocked to the north, draw the north side of the selection box
@@ -254,7 +268,7 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 
 	// east wall
 	int eastIndex = GetIndexEastOf(index);
-	bool isEastBlocked = (eastIndex == -1 || !m_selectedCells.Get(eastIndex));
+	bool isEastBlocked = (eastIndex == -1 || !IsCellSelected(eastIndex));
 	if (isEastBlocked)
 	{
 		// blocked to the north, draw the north side of the selection box
@@ -263,7 +277,7 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 	
 	// south wall
 	int southIndex = GetIndexSouthOf(index);
-	bool isSouthBlocked = (southIndex == -1 || !m_selectedCells.Get(southIndex));
+	bool isSouthBlocked = (southIndex == -1 || !IsCellSelected(southIndex));
 	if (isSouthBlocked)
 	{
 		// blocked to the north, draw the north side of the selection box
@@ -272,7 +286,7 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 
 	// west wall
 	int westIndex = GetIndexWestOf(index);
-	bool isWestBlocked = (westIndex == -1 || !m_selectedCells.Get(westIndex));
+	bool isWestBlocked = (westIndex == -1 || !IsCellSelected(westIndex));
 	if (isWestBlocked)
 	{
 		// blocked to the north, draw the north side of the selection box
@@ -281,7 +295,7 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 
 	// North East Corner (when both are open)
 	int northEastIndex = GetIndexEastOf(northIndex);
-	bool isNorthEastBlocked = (northEastIndex == -1 || !m_selectedCells.Get(northEastIndex));
+	bool isNorthEastBlocked = (northEastIndex == -1 || !IsCellSelected(northEastIndex));
 	if (!isNorthBlocked && !isEastBlocked && isNorthEastBlocked)
 	{
 		AddVertsForRect2D(verts, selectedCell.maxs - Vec2(outlineThickness, outlineThickness), selectedCell.maxs, outlineTint);
@@ -289,7 +303,7 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 
 	// North West Corner (when both are open)
 	int northWestIndex = GetIndexWestOf(northIndex);
-	bool isNorthWestBlocked = (northWestIndex == -1 || !m_selectedCells.Get(northWestIndex));
+	bool isNorthWestBlocked = (northWestIndex == -1 || !IsCellSelected(northWestIndex));
 	if (!isNorthBlocked && !isWestBlocked && isNorthWestBlocked)
 	{
 		AddVertsForRect2D(verts, selectedCell.GetTopLeft() - Vec2(0.f, outlineThickness), selectedCell.GetTopLeft() + Vec2(outlineThickness, 0.f), outlineTint);
@@ -297,7 +311,7 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 
 	// South East Corner (when both are open)
 	int southEastIndex = GetIndexEastOf(southIndex);
-	bool isSouthEastBlocked = (southEastIndex == -1 || !m_selectedCells.Get(southEastIndex));
+	bool isSouthEastBlocked = (southEastIndex == -1 || !IsCellSelected(southEastIndex));
 	if (!isSouthBlocked && !isEastBlocked && isSouthEastBlocked)
 	{
 		AddVertsForRect2D(verts, selectedCell.GetBottomRight() - Vec2(outlineThickness, 0.f), selectedCell.GetBottomRight() + Vec2(0.f, outlineThickness), outlineTint);
@@ -305,7 +319,7 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 
 	// South West Corner (when both are open)
 	int southWestIndex = GetIndexWestOf(southIndex);
-	bool isSouthWestBlocked = (southWestIndex == -1 || !m_selectedCells.Get(southWestIndex));
+	bool isSouthWestBlocked = (southWestIndex == -1 || !IsCellSelected(southWestIndex));
 	if (!isSouthBlocked && !isWestBlocked && isSouthWestBlocked)
 	{
 		AddVertsForRect2D(verts, selectedCell.mins, selectedCell.mins + Vec2(outlineThickness, outlineThickness), outlineTint);
@@ -337,7 +351,8 @@ void SudokuGrid::UpdateTextVerts()
 			float glyphWidth = glyphData.m_width;
 			float glyphOffsetX = glyphData.a;
 			cellBotLeft.x += (1.f - glyphWidth) * 0.5f - glyphOffsetX;
-			font->AddVertsForText2D(verts, cellBotLeft, 1.f, asString);
+			Rgba8 tint = IsGivenDigit(cellIndex) ? Rgba8::Black : Rgba8(90, 100, 225);
+			font->AddVertsForText2D(verts, cellBotLeft, 1.f, asString, tint);
 		}
 	}
 }

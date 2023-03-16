@@ -44,9 +44,14 @@ public:
     IntVec2 GetMouseClientPosition(bool originBottomLeft = true) const;
     Vec2 GetMouseClientRelativePosition(bool originBottomLeft = true) const;
 
+private:
+
+    void CreateMainWindow();
+    void RunMessagePump();
+    
 public:
 
-    // Input events
+    // The input system listens to these events from the window and turns them into input events
     EventDelegate m_quit;
     EventDelegate m_mouseButtonDownEvent;
     EventDelegate m_mouseButtonUpEvent;
@@ -54,11 +59,6 @@ public:
     EventDelegate m_keyDownEvent;
     EventDelegate m_keyUpEvent;
     EventDelegate m_mouseWheelEvent;
-
-private:
-
-    void CreateMainWindow();
-    void RunMessagePump();
 
 private:
     

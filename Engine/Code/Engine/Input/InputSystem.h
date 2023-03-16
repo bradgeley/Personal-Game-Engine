@@ -1,8 +1,9 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
 #include "InputUtils.h"
-#include "KeyButtonState.hpp"
+#include "KeyButtonState.h"
 #include "Engine/Core/EngineSubsystem.h"
+#include "Engine/Events/EventDelegate.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 
@@ -67,6 +68,16 @@ private:
     bool HandleMouseButtonDown(NamedProperties& args);
     bool HandleMouseButtonUp(NamedProperties& args);
     bool HandleMouseWheel(NamedProperties& args);
+
+public:
+
+    // Input events
+    EventDelegate m_mouseButtonDownEvent;
+    EventDelegate m_mouseButtonUpEvent;
+    EventDelegate m_charInputEvent;
+    EventDelegate m_keyDownEvent;
+    EventDelegate m_keyUpEvent;
+    EventDelegate m_mouseWheelEvent;
 
 private:
 

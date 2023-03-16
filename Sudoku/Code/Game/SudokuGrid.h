@@ -43,6 +43,8 @@ public:
 
 	int CountSelectedCells() const;
 	int GetSelectedCellIndex() const;
+	bool IsCellSelected(int index) const;
+	bool IsGivenDigit(int index) const;
 	void MoveSelectedCell(EDirection direction);
 
 	// Actions that apply to selected cells

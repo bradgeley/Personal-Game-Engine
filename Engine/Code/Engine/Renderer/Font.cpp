@@ -12,6 +12,19 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Vec2 Font::AlignCentered	= Vec2(0.5f, 0.5f);
+Vec2 Font::AlignTop			= Vec2(0.5f, 1.f);
+Vec2 Font::AlignBottom		= Vec2(0.5f, 0.f);
+Vec2 Font::AlignRight		= Vec2(1.0f, 0.5f);
+Vec2 Font::AlignLeft		= Vec2(0.f, 0.5f);
+Vec2 Font::AlignTopRight	= Vec2(1.0f, 1.f);
+Vec2 Font::AlignTopLeft		= Vec2(0.f, 1.f);
+Vec2 Font::AlignBottomRight = Vec2(1.0f, 0.f);
+Vec2 Font::AlignBottomLeft	= Vec2(0.f, 0.f);
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Font::SetRendererState() const
 {
 	g_renderer->SetModelConstants(ModelConstants());
@@ -67,6 +80,15 @@ void Font::AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& tex
 			penPosition += scaledKerning;
 		}
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Font::AddVertsForTextInBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, Vec2 const& textMaxs,
+	float cellHeight, std::string const& text, Rgba8 const& tint, Vec2 const& alignment)
+{
+	
 }
 
 

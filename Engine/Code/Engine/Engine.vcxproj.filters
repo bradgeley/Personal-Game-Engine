@@ -127,8 +127,11 @@
     <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp">
       <Filter>ThirdParty\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="Math\Grid.cpp">
+    <ClCompile Include="Math\Grid2D.cpp">
       <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\DevConsole.cpp">
+      <Filter>Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -279,8 +282,11 @@
     <ClInclude Include="..\ThirdParty\stb\stb_image.h">
       <Filter>ThirdParty\stb</Filter>
     </ClInclude>
-    <ClInclude Include="Math\Grid.h">
+    <ClInclude Include="Math\Grid2D.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug\DevConsole.h">
+      <Filter>Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +319,9 @@
     </Filter>
     <Filter Include="ThirdParty\stb">
       <UniqueIdentifier>{6603f47e-3092-4d2a-8532-04b8b13063d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Debug">
+      <UniqueIdentifier>{eeef522a-392d-403f-9b30-389d4b7ffc63}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

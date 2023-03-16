@@ -36,7 +36,7 @@ void InputSystem::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void InputSystem::BeginFrame()
 {
-
+    
 }
 
 
@@ -204,10 +204,16 @@ Vec2 InputSystem::GetMouseClientRelativePosition(bool originBottomLeft) const
 //----------------------------------------------------------------------------------------------------------------------
 bool InputSystem::HandleChar(NamedProperties& args)
 {
+    if (!m_isEnabled)
+    {
+        return false;
+    }
+    
     int character = args.Get("Char", -1);
     if (IsValidKey(character))
     {
         m_keyStates[character].Press();
+        m_charInputEvent.Broadcast(args);
         return true; 
     }
     return false;
@@ -218,10 +224,16 @@ bool InputSystem::HandleChar(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool InputSystem::HandleKeyDown(NamedProperties& args)
 {
+    if (!m_isEnabled)
+    {
+        return false;
+        
+    }
     int key = args.Get("Key", -1);
     if (IsValidKey(key))
     {
         m_keyStates[key].Press();
+        m_keyDownEvent.Broadcast(args);
         return true; 
     }
     return false;
@@ -232,10 +244,16 @@ bool InputSystem::HandleKeyDown(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool InputSystem::HandleKeyUp(NamedProperties& args)
 {
+    if (!m_isEnabled)
+    {
+        return false;
+    }
+    
     int key = args.Get("Key", -1);
     if (IsValidKey(key))
     {
         m_keyStates[key].Release();
+        m_keyUpEvent.Broadcast(args);
         return true; 
     }
     return false;
@@ -246,10 +264,16 @@ bool InputSystem::HandleKeyUp(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool InputSystem::HandleMouseButtonDown(NamedProperties& args)
 {
+    if (!m_isEnabled)
+    {
+        return false;
+    }
+    
     int mouseButton = args.Get("MouseButton", -1);
     if (IsValidMouseButton(mouseButton))
     {
         m_mouseButtonStates[mouseButton].Press();    
+        m_mouseButtonDownEvent.Broadcast(args);
     }
     return true;
 }
@@ -259,10 +283,16 @@ bool InputSystem::HandleMouseButtonDown(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool InputSystem::HandleMouseButtonUp(NamedProperties& args)
 {
+    if (!m_isEnabled)
+    {
+        return false;
+    }
+    
     int mouseButton = args.Get("MouseButton", -1);
     if (IsValidMouseButton(mouseButton))
     {
-        m_mouseButtonStates[mouseButton].Release();    
+        m_mouseButtonStates[mouseButton].Release();
+        m_mouseButtonUpEvent.Broadcast(args);
     }
     return true;
 }
@@ -272,6 +302,12 @@ bool InputSystem::HandleMouseButtonUp(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool InputSystem::HandleMouseWheel(NamedProperties& args)
 {
+    if (!m_isEnabled)
+    {
+        return false;
+        
+    }
 	m_frameMouseWheelChange = args.Get("WheelChange", 0);
+    m_mouseWheelEvent.Broadcast(args);
     return true;
 }

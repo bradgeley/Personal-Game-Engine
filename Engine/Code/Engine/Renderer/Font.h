@@ -56,12 +56,27 @@ public:
     
     void AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, float cellHeight,
         std::string const& text, Rgba8 const& tint = Rgba8::Black);
+
+    void AddVertsForTextInBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, Vec2 const& textMaxs,
+        float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, Vec2 const& alignment = AlignCentered);
     
     GlyphData const& GetGlyphData(uint8_t glyph) const;
     float GetKerning(uint8_t lhs, uint8_t rhs) const;
     
     Texture* GetTexture() const;
     Shader* GetShader() const;
+
+public:
+
+    static Vec2 AlignCentered;
+    static Vec2 AlignTop;
+    static Vec2 AlignBottom;
+    static Vec2 AlignRight;
+    static Vec2 AlignLeft;
+    static Vec2 AlignTopRight;
+    static Vec2 AlignTopLeft;
+    static Vec2 AlignBottomRight;
+    static Vec2 AlignBottomLeft;
 
 protected:
 

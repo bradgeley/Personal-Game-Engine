@@ -137,3 +137,15 @@ float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minR
     float rangeB = maxRangeB - minRangeB;
     return minRangeB + fractionWithin * rangeB;
 }
+
+
+float MinF(float a, float b)
+{
+	return a <= b ? a : b;
+}
+
+
+float MaxF(float a, float b)
+{
+	return a >= b ? a : b;
+}

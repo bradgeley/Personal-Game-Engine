@@ -1,9 +1,24 @@
 ﻿// Bradley Christensen - 2022-2023
-#include "Engine/Renderer/DebugDrawUtils.h"
+#include "Engine/Debug/DebugDrawUtils.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Renderer/VertexUtils.h"
 
-#include "Renderer.h"
-#include "VertexBuffer.h"
-#include "VertexUtils.h"
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DebugDrawLine2D(Vec2 const& start, Vec2 const& end, float thickness, Rgba8 tint)
+{
+    VertexBuffer vbo;
+    auto& verts = vbo.GetMutableVerts();
+    verts.reserve(6);
+
+    AddVertsForLine2D(verts, start, end, thickness, tint);
+
+    g_renderer->BindShader(nullptr);
+    g_renderer->BindTexture(nullptr);
+    g_renderer->DrawVertexBuffer(&vbo);
+}
 
 
 

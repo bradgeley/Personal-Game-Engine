@@ -4,11 +4,11 @@
 #include "Engine/Core/Time.h"
 #include "Engine/Math/Grid2D.h"
 #include "Engine/Core/EngineCommon.h"
-#include "Engine/Renderer/Window.h"
 #include "Engine/DataStructures/NamedProperties.h"
-#include "Engine/Math/MathUtils.h"
 #include "SudokuPlayer.h"
 #include "SudokuGrid.h"
+#include "Engine/Debug/DebugDrawUtils.h"
+#include "Engine/Math/GeometryUtils.h"
 
 
 
@@ -32,8 +32,8 @@ SudokuPlayer::~SudokuPlayer()
 
 void SudokuPlayer::Startup()
 {
-	g_window->m_charInputEvent.SubscribeMethod(this, &SudokuPlayer::OnCharDown);
-	g_window->m_keyDownEvent.SubscribeMethod(this, &SudokuPlayer::OnKeyDown);
+	g_input->m_charInputEvent.SubscribeMethod(this, &SudokuPlayer::OnCharDown);
+	g_input->m_keyDownEvent.SubscribeMethod(this, &SudokuPlayer::OnKeyDown);
 }
 
 
@@ -46,10 +46,28 @@ void SudokuPlayer::Update(float deltaSeconds)
 
 
 
+void SudokuPlayer::Render() const
+{
+	// Render the drag line
+	Vec2 clientRelativePos = g_input->GetMouseClientRelativePosition();
+	Vec2 clientCellPos = m_camera->ScreenToWorldOrtho(clientRelativePos);
+	Vec2 clientCellPosLastFrame = m_camera->ScreenToWorldOrtho(m_mouseClientRelativePosLastFrame);
+	DebugDrawLine2D(clientCellPos, clientCellPosLastFrame, 0.1f, Rgba8::Green);
+}
+
+
+
+void SudokuPlayer::EndFrame()
+{
+	m_mouseClientRelativePosLastFrame = g_input->GetMouseClientRelativePosition();
+}
+
+
+
 void SudokuPlayer::Shutdown()
 {
-	g_window->m_charInputEvent.UnsubscribeMethod(this, &SudokuPlayer::OnCharDown);
-	g_window->m_keyDownEvent.UnsubscribeMethod(this, &SudokuPlayer::OnKeyDown);
+	g_input->m_charInputEvent.UnsubscribeMethod(this, &SudokuPlayer::OnCharDown);
+	g_input->m_keyDownEvent.UnsubscribeMethod(this, &SudokuPlayer::OnKeyDown);
 }
 
 
@@ -99,10 +117,11 @@ void SudokuPlayer::UpdateSelectedCell(float deltaSeconds)
 		m_grid->SelectCell(cellCoords);
 	}
 
-	// If dragging, select all cells
+	// If dragging, select all cells in the line between last frame's mouse pos and this frame's
 	if (isLeftMouseButtonDown)
 	{ 
-		m_grid->SelectCell(cellCoords);
+		Vec2 clientCellPosLastFrame = m_camera->ScreenToWorldOrtho(m_mouseClientRelativePosLastFrame);
+		SelectCellsInLine(clientCellPos, clientCellPosLastFrame);
 	}
 }
 
@@ -135,6 +154,24 @@ void SudokuPlayer::UpdateArrowKeysSelectedCellMovement(float deltaSeconds)
 		{
 			m_grid->MoveSelectedCell(EDirection::East);
 			timeOfLastArrowMove = GetCurrentTimeSecondsF();
+		}
+	}
+}
+
+
+
+void SudokuPlayer::SelectCellsInLine(Vec2 const& start, Vec2 const& end) const
+{
+	// Get all cells between last frame's and this frame's mouse positions
+	for (int x = 0; x < m_grid->GetWidth(); ++x)
+	{
+		for (int y = 0; y < m_grid->GetHeight(); ++y)
+		{
+			AABB2 cellBounds = AABB2((float) x, (float) y, (float) x + 1.f, (float) y + 1.f);
+			if (DoesLineIntersectAABB2(start, end, cellBounds))
+			{
+				m_grid->SelectCell(IntVec2(x, y));
+			}
 		}
 	}
 }
