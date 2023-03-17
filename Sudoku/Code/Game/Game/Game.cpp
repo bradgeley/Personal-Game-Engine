@@ -13,15 +13,18 @@
 
 void Game::Startup()
 {
-    SudokuGridConfig gameConfig;
-    gameConfig.m_dims = IntVec2(9, 9);
-    gameConfig.m_ruleSet.m_rules.emplace_back(new SudokuRuleRowOnceEach());
-    gameConfig.m_ruleSet.m_rules.emplace_back(new SudokuRuleColumnOnceEach());
-    gameConfig.m_ruleSet.m_rules.emplace_back(new SudokuRuleBoxOnceEach());
-    gameConfig.m_startingState = Grid2D(gameConfig.m_dims, (int) 0);
-    gameConfig.m_startingState.Set(10, '6');
-    gameConfig.m_solution = Grid2D(gameConfig.m_dims, (int) 0);
-    m_grid = new SudokuGrid(gameConfig);
+    SudokuGridConfig gridConfig;
+    gridConfig.m_dims = IntVec2(9, 9);
+    gridConfig.m_ruleSet.m_rules.push_back(new SudokuRuleRowOnceEach());
+    gridConfig.m_ruleSet.m_rules.push_back(new SudokuRuleColumnOnceEach());
+    gridConfig.m_ruleSet.m_rules.push_back(new SudokuRuleBoxOnceEach());
+    gridConfig.m_startingState = Grid2D(gridConfig.m_dims, 0);
+    gridConfig.m_startingState.Set(10, '6');
+    gridConfig.m_solution = Grid2D(gridConfig.m_dims, 0);
+    gridConfig.m_cellShading = Grid2D(gridConfig.m_dims, Rgba8::White);
+    gridConfig.m_bigDigitFontConstants = FontConstants(Rgba8::Black, 0.15f, 0.05f, 0.4f);
+    
+    m_grid = new SudokuGrid(gridConfig);
     m_grid->Startup();
     m_player = new SudokuPlayer();
     m_player->Startup();

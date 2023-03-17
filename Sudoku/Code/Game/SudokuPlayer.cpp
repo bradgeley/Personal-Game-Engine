@@ -9,6 +9,10 @@
 #include "SudokuGrid.h"
 #include "Engine/Debug/DebugDrawUtils.h"
 #include "Engine/Math/GeometryUtils.h"
+#include "Engine/Math/MathUtils.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Renderer/VertexUtils.h"
 
 
 
@@ -34,6 +38,20 @@ void SudokuPlayer::Startup()
 {
 	g_input->m_charInputEvent.SubscribeMethod(this, &SudokuPlayer::OnCharDown);
 	g_input->m_keyDownEvent.SubscribeMethod(this, &SudokuPlayer::OnKeyDown);
+	g_input->m_mouseWheelUpEvent.SubscribeMethod(this, &SudokuPlayer::OnMouseWheelUp);
+	g_input->m_mouseWheelDownEvent.SubscribeMethod(this, &SudokuPlayer::OnMouseWheelDown);
+
+	m_colorPalette.emplace_back(Rgba8(158, 1, 66));
+	m_colorPalette.emplace_back(Rgba8(213, 62, 79));
+	m_colorPalette.emplace_back(Rgba8(244, 109, 67));
+	m_colorPalette.emplace_back(Rgba8(253, 174, 97));
+	m_colorPalette.emplace_back(Rgba8(254, 224, 139));
+	m_colorPalette.emplace_back(Rgba8(230, 245, 152));
+	m_colorPalette.emplace_back(Rgba8(171, 221, 164));
+	m_colorPalette.emplace_back(Rgba8(102, 194, 165));
+	//m_colorPalette.emplace_back(50, 136, 189); blue
+	m_colorPalette.emplace_back(Rgba8(94, 79, 162));
+	m_colorPalette.emplace_back(Rgba8::White);
 }
 
 
@@ -42,17 +60,14 @@ void SudokuPlayer::Update(float deltaSeconds)
 {
 	UpdateSelectedCell(deltaSeconds);
 	UpdateArrowKeysSelectedCellMovement(deltaSeconds);
+	UpdateFill();
 }
 
 
 
 void SudokuPlayer::Render() const
 {
-	// Render the drag line
-	Vec2 clientRelativePos = g_input->GetMouseClientRelativePosition();
-	Vec2 clientCellPos = m_camera->ScreenToWorldOrtho(clientRelativePos);
-	Vec2 clientCellPosLastFrame = m_camera->ScreenToWorldOrtho(m_mouseClientRelativePosLastFrame);
-	DebugDrawLine2D(clientCellPos, clientCellPosLastFrame, 0.1f, Rgba8::Green);
+	RenderColorPalette();
 }
 
 
@@ -101,9 +116,14 @@ void SudokuPlayer::UpdateSelectedCell(float deltaSeconds)
 	// Get cell at the current mouse position
 	Vec2 clientRelativePos = g_input->GetMouseClientRelativePosition();
 	Vec2 clientCellPos = m_camera->ScreenToWorldOrtho(clientRelativePos);
-	IntVec2 cellCoords = IntVec2(clientCellPos); // round down
+	IntVec2 cellCoords = IntVec2(FloorF(clientCellPos.x), FloorF(clientCellPos.y)); // round down
 	if (!m_grid->IsValidCoords(cellCoords))
 	{
+		if (g_input->WasMouseButtonJustPressed(0))
+		{
+			// clicked outside the grid
+			m_grid->DeselectAllCells();
+		}
 		return;
 	}
 	
@@ -160,6 +180,16 @@ void SudokuPlayer::UpdateArrowKeysSelectedCellMovement(float deltaSeconds)
 
 
 
+void SudokuPlayer::UpdateFill()
+{
+	if (g_input->WasMouseButtonJustPressed(2))
+	{
+		m_grid->FillSelectedCells(m_colorPalette[m_currentColorPaletteIndex]);
+	}
+}
+
+
+
 void SudokuPlayer::SelectCellsInLine(Vec2 const& start, Vec2 const& end) const
 {
 	// Get all cells between last frame's and this frame's mouse positions
@@ -178,8 +208,49 @@ void SudokuPlayer::SelectCellsInLine(Vec2 const& start, Vec2 const& end) const
 
 
 
+void SudokuPlayer::RenderColorPalette() const
+{
+	VertexBuffer paletteVbo, textVbo;
+	auto& paletteVerts = paletteVbo.GetMutableVerts();
+	
+	Vec2 botLeftOfScreen = m_camera->ScreenToWorldOrtho(Vec2::ZeroVector);
+	
+	for (int i = 0; i < (int) m_colorPalette.size(); ++i)
+	{
+		Rgba8 const& tint = m_colorPalette[i];
+		Vec2 botLeft = botLeftOfScreen + Vec2(0.f, (float) i * 0.5f);
+		Vec2 topRight = botLeft + Vec2(0.5f, 0.5f);
+		AABB2 box(botLeft, topRight);
+		AddVertsForAABB2(paletteVerts, box, tint);
+
+		if (m_currentColorPaletteIndex == i)
+		{
+			// Draw thick yellow outline
+			box.Squeeze(0.02f);
+			AddVertsForWireBox2D(paletteVerts, box, 0.04f, Rgba8::Yellow);
+		}
+		else
+		{
+			// Draw thin black outline
+			box.Squeeze(0.015f);
+			AddVertsForWireBox2D(paletteVerts, box, 0.03f, Rgba8::Black);
+		}
+	}
+
+	g_renderer->BindShader(nullptr);
+	g_renderer->BindTexture(nullptr);
+	g_renderer->DrawVertexBuffer(&paletteVbo);
+}
+
+
+
 bool SudokuPlayer::OnCharDown(NamedProperties& args)
 {
+	if (g_input->IsKeyDown(KeyCode::CTRL))
+	{
+		return false;
+	}
+	
 	int c = args.Get("Char", -1);
 	m_grid->EnterCharacter((uint8_t)c);
 	return true;
@@ -192,7 +263,33 @@ bool SudokuPlayer::OnKeyDown(NamedProperties& args)
 	int key = args.Get("Key", -1);
 	if (key == (int) KeyCode::DEL || key == (int) KeyCode::BACKSPACE)
 	{
-		(*m_grid).ClearCell();
+		(*m_grid).ClearSelectedCells();
 	}
+	if (key == 'Z' && g_input->IsKeyDown(KeyCode::CTRL))
+	{
+		m_grid->RevertLastEvent();
+	}
+	if (key == 'Y' && g_input->IsKeyDown(KeyCode::CTRL))
+	{
+		m_grid->RestoreLastEvent();
+	}
+	return true;
+}
+
+
+
+bool SudokuPlayer::OnMouseWheelUp(NamedProperties& args)
+{
+	UNUSED(args)
+	m_currentColorPaletteIndex = IncrementIntInRange(m_currentColorPaletteIndex, 0, (int) m_colorPalette.size() - 1, true);
+	return true;
+}
+
+
+
+bool SudokuPlayer::OnMouseWheelDown(NamedProperties& args)
+{
+	UNUSED(args)
+	m_currentColorPaletteIndex = DecrementIntInRange(m_currentColorPaletteIndex, 0, (int) m_colorPalette.size() - 1, true);
 	return true;
 }

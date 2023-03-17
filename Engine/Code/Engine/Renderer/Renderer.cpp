@@ -159,7 +159,7 @@ void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::ResetRenderingPipelineState()
 {
-	// Only reset the dirty settings, so changes will still be detected
+	// Only reset the dirty settings, so changes will be detected and applies on Draw
 	m_dirtySettings = RendererSettings();
 	BindShader(m_defaultShader);
 	BindTexture(m_defaultTexture);
@@ -179,6 +179,14 @@ void Renderer::SetCameraConstants(CameraConstants const& cameraConstants)
 void Renderer::SetModelConstants(ModelConstants const& modelConstants)
 {
 	m_dirtySettings.m_modelConstants = modelConstants;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::SetFontConstants(FontConstants const& fontConstants)
+{
+	m_dirtySettings.m_fontConstants = fontConstants;
 }
 
 
@@ -593,6 +601,7 @@ void Renderer::UpdateRenderingPipelineState(bool force)
 	UpdateDepthStencilState(force);
 	UpdateModelConstants(force);
 	UpdateCameraConstants(force);
+	UpdateFontConstants(force);
 	UpdateBlendMode(force);
 	UpdateSamplerState(force);
 	UpdateTexture(force);
@@ -606,12 +615,15 @@ void Renderer::CreateConstantBuffers()
 {
 	m_cameraConstantsGPU = new ConstantBuffer();
 	m_modelConstantsGPU = new ConstantBuffer();
+	m_fontConstantsGPU = new ConstantBuffer();
 
 	m_cameraConstantsGPU->Initialize(sizeof(CameraConstants));
 	m_modelConstantsGPU->Initialize(sizeof(ModelConstants));
+	m_fontConstantsGPU->Initialize(sizeof(FontConstants));
 	
 	BindConstantBuffer(m_cameraConstantsGPU, 2);
 	BindConstantBuffer(m_modelConstantsGPU, 3);
+	BindConstantBuffer(m_fontConstantsGPU, 4);
 }
 
 
@@ -626,6 +638,10 @@ void Renderer::DestroyConstantBuffers()
 	m_modelConstantsGPU->ReleaseResources();
 	delete m_modelConstantsGPU;
 	m_modelConstantsGPU = nullptr;
+	
+	m_fontConstantsGPU->ReleaseResources();
+	delete m_fontConstantsGPU;
+	m_fontConstantsGPU = nullptr;
 }
 
 
@@ -767,6 +783,18 @@ void Renderer::UpdateCameraConstants(bool force)
 	{
 		m_settings.m_cameraConstants = m_dirtySettings.m_cameraConstants;
 		m_cameraConstantsGPU->Update(&m_settings.m_cameraConstants, sizeof(CameraConstants));
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::UpdateFontConstants(bool force)
+{
+	if (force || m_dirtySettings.m_fontConstants != m_settings.m_fontConstants)
+	{
+		m_settings.m_fontConstants = m_dirtySettings.m_fontConstants;
+		m_fontConstantsGPU->Update(&m_settings.m_fontConstants, sizeof(FontConstants));
 	}
 }
 

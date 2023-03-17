@@ -62,6 +62,7 @@ public:
     void ResetRenderingPipelineState();
     void SetCameraConstants(CameraConstants const& cameraConstants);
     void SetModelConstants(ModelConstants const& modelConstants);
+    void SetFontConstants(FontConstants const& fontConstants);
     void SetModelMatrix(Mat44 const& modelMatrix);
     void SetModelTint(Rgba8 const& modelTint);
     void SetBlendMode(BlendMode blendMode);
@@ -126,6 +127,7 @@ private:
     void UpdateDepthStencilState(bool force = false);
     void UpdateModelConstants(bool force = false);
     void UpdateCameraConstants(bool force = false);
+    void UpdateFontConstants(bool force = false);
     void UpdateBlendMode(bool force = false);
     void UpdateSamplerState(bool force = false);
     void UpdateTexture(bool force = false);
@@ -145,6 +147,7 @@ private:
     // Constant Buffers
     ConstantBuffer* m_cameraConstantsGPU = nullptr;
     ConstantBuffer* m_modelConstantsGPU = nullptr;
+    ConstantBuffer* m_fontConstantsGPU = nullptr;
     
     // D3D11 Things
     ID3D11Device* m_device = nullptr;

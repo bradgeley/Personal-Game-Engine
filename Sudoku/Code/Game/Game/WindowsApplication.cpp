@@ -24,7 +24,7 @@ void WindowsApplication::Startup()
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Sudoku";
     windowConfig.m_clientAspect = 1.f;
-    windowConfig.m_windowScale = 0.5;
+    windowConfig.m_windowScale = 0.9f;
     g_window = new Window(windowConfig);
     m_engine->RegisterSubsystem(g_window);
 

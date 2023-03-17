@@ -1,5 +1,7 @@
 // Bradley Christensen - 2022-2023
 #include "SudokuGrid.h"
+
+#include "SudokuHistoryEvent.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Renderer.h"
@@ -10,7 +12,11 @@
 
 
 
-SudokuGrid::SudokuGrid(SudokuGridConfig const& config) : Grid2D<int>(config.m_startingState), m_config(config), m_selectedCells(config.m_dims, false)
+SudokuGrid::SudokuGrid(SudokuGridConfig const& config) :
+	Grid2D<int>(config.m_startingState),
+	m_config(config),
+	m_selectedCells(config.m_dims, false),
+	m_cellShading(config.m_cellShading)
 {
 	
 }
@@ -22,6 +28,7 @@ SudokuGrid::~SudokuGrid()
 	delete m_staticGridVerts;
 	delete m_textVerts;
 	delete m_selectedCellVerts;
+	delete m_cellShadingVerts;
 }
 
 
@@ -31,14 +38,18 @@ void SudokuGrid::Startup()
 	m_textVerts = new VertexBuffer();
 	m_staticGridVerts = new VertexBuffer();
 	m_selectedCellVerts = new VertexBuffer();
+	m_cellShadingVerts = new VertexBuffer();
 
-	auto& verts = m_staticGridVerts->GetMutableVerts();
+	auto& staticGridVerts = m_staticGridVerts->GetMutableVerts();
 	AABB2 bounds;
 	bounds.mins = Vec2::ZeroVector;
 	bounds.maxs = Vec2(m_config.m_dims);
-	AddVertsForGrid2D(verts, bounds, m_config.m_dims, 0.033f, Rgba8::LightGray);
+	AddVertsForWireGrid2D(staticGridVerts, bounds, m_config.m_dims, 0.033f, Rgba8::LightGray);
 	// todo: make boxes a thing?
-	AddVertsForGrid2D(verts, bounds, IntVec2(3, 3), 0.08f, Rgba8::Black);
+	AddVertsForWireGrid2D(staticGridVerts, bounds, IntVec2(3, 3), 0.08f, Rgba8::Black);
+
+	auto& cellShadingVerts = m_cellShadingVerts->GetMutableVerts();
+	AddVertsForGrid2D(cellShadingVerts, bounds, m_config.m_dims, Rgba8::White);
 }
 
 
@@ -54,12 +65,17 @@ void SudokuGrid::Update(float deltaSeconds)
 
 void SudokuGrid::Render() const
 {
+	g_renderer->BindShader(nullptr);
+	g_renderer->BindTexture(nullptr);
+	g_renderer->DrawVertexBuffer(m_cellShadingVerts);
 	g_renderer->DrawVertexBuffer(m_staticGridVerts);
 	g_renderer->DrawVertexBuffer(m_selectedCellVerts);
 
 	auto font = g_renderer->GetDefaultFont();
 	font->SetRendererState();
+	g_renderer->SetFontConstants(m_config.m_bigDigitFontConstants);
 	g_renderer->DrawVertexBuffer(m_textVerts);
+	g_renderer->SetFontConstants(FontConstants());
 }
 
 
@@ -200,36 +216,87 @@ void SudokuGrid::MoveSelectedCell(EDirection direction)
 
 
 
-void SudokuGrid::ClearCell()
+void SudokuGrid::ClearSelectedCells()
 {
-	for (int i = 0; i < m_selectedCells.Size(); ++i)
-	{
-		if (IsCellSelected(i))
-		{
-			Set(i, 0);
-		}
-	}
+	EnterCharacter(0);
 }
 
 
 
 void SudokuGrid::EnterCharacter(uint8_t character)
 {
+	SudokuEventChangeDigits* event = new SudokuEventChangeDigits();
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
 	{
 		if (IsCellSelected(i) && !IsGivenDigit(i))
 		{
+			event->m_indices.push_back((uint8_t)i);
+			event->m_digitsBefore.push_back((uint8_t)Get(i));
 			Set(i, character);
+			event->m_digitsAfter.push_back(character);
 		}
 	}
+	m_history.AddEvent(event);
+}
+
+
+
+void SudokuGrid::FillSelectedCells(Rgba8 const& tint)
+{
+	SudokuEventFillColor* event = new SudokuEventFillColor();
+	for (int i = 0; i < m_selectedCells.Size(); ++i)
+	{
+		if (IsCellSelected(i))
+		{
+			event->m_indices.push_back((uint8_t)i);
+			event->m_tintBefore.push_back(m_cellShading.Get(i));
+			SetCellFill(i, tint);
+			event->m_tintAfter.push_back(tint);
+		}
+	}
+	m_history.AddEvent(event);
+}
+
+
+
+void SudokuGrid::SetCellFill(int index, Rgba8 const& tint)
+{
+	m_cellShading.Set(index, tint);
+	// Update the grid representation of the cell shading
+
+	auto& verts = m_cellShadingVerts->GetMutableVerts();
+	int vertIndex = index * 6; // 6 verts per rect, in index order
+	for (int i = vertIndex; i < vertIndex + 6; ++i)
+	{
+		verts[i].tint = tint;
+	}
+}
+
+
+
+void SudokuGrid::SetCellCharacter(int index, uint8_t character)
+{
+	Set(index, character);
+}
+
+
+
+void SudokuGrid::RevertLastEvent()
+{
+	m_history.Revert(this);
+}
+
+
+
+void SudokuGrid::RestoreLastEvent()
+{
+	m_history.Restore(this);
 }
 
 
 
 void SudokuGrid::UpdateSelectedCellVerts() const
 { 
-	g_renderer->BindShader(nullptr);
-	g_renderer->BindTexture(nullptr);
 	m_selectedCellVerts->ClearVerts();
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
 	{
@@ -239,7 +306,6 @@ void SudokuGrid::UpdateSelectedCellVerts() const
 		}
 		AddVertsForSelectedCell(i);
 	}
-	g_renderer->DrawVertexBuffer(m_selectedCellVerts);
 }
 
 
@@ -351,7 +417,7 @@ void SudokuGrid::UpdateTextVerts()
 			float glyphWidth = glyphData.m_width;
 			float glyphOffsetX = glyphData.a;
 			cellBotLeft.x += (1.f - glyphWidth) * 0.5f - glyphOffsetX;
-			Rgba8 tint = IsGivenDigit(cellIndex) ? Rgba8::Black : Rgba8(90, 100, 225);
+			Rgba8 tint = IsGivenDigit(cellIndex) ? m_config.m_givenDigitColor : m_config.m_enteredDigitColor;
 			font->AddVertsForText2D(verts, cellBotLeft, 1.f, asString, tint);
 		}
 	}

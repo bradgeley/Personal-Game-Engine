@@ -57,8 +57,8 @@ public:
     void AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, float cellHeight,
         std::string const& text, Rgba8 const& tint = Rgba8::Black);
 
-    void AddVertsForTextInBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, Vec2 const& textMaxs,
-        float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, Vec2 const& alignment = AlignCentered);
+    //void AddVertsForTextInBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, Vec2 const& textMaxs,
+    //    float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, Vec2 const& alignment = AlignCentered);
     
     GlyphData const& GetGlyphData(uint8_t glyph) const;
     float GetKerning(uint8_t lhs, uint8_t rhs) const;

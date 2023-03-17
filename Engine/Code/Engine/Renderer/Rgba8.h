@@ -17,7 +17,7 @@ public:
 public:
 
     Rgba8() = default;
-	explicit Rgba8(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
+	Rgba8(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
 
     void GetAsFloats(float* out_fourFloats) const;
     uint32_t GetAsUint32() const;
@@ -31,6 +31,7 @@ public:
     static Rgba8 const Red;
     static Rgba8 const Blue;
     static Rgba8 const LightBlue;
+    static Rgba8 const Cerulean;
     static Rgba8 const Green;
     static Rgba8 const Cyan;
     static Rgba8 const DarkGreen;

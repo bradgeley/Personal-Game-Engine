@@ -78,6 +78,8 @@ public:
     EventDelegate m_keyDownEvent;
     EventDelegate m_keyUpEvent;
     EventDelegate m_mouseWheelEvent;
+    EventDelegate m_mouseWheelUpEvent;
+    EventDelegate m_mouseWheelDownEvent;
 
 private:
 

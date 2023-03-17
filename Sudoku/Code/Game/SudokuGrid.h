@@ -1,7 +1,9 @@
 // Bradley Christensen - 2022-2023
 #pragma once
+#include "SudokuHistory.h"
 #include "SudokuRuleSet.h"
 #include "Engine/Math/Grid2D.h"
+#include "Engine/Renderer/EngineConstantBuffers.h"
 #include "Engine/Renderer/Rgba8.h"
 #include "Game/GameCommon.h"
 
@@ -14,10 +16,20 @@ class VertexBuffer;
 //----------------------------------------------------------------------------------------------------------------------
 struct SudokuGridConfig
 {
+	// Grid and Rules
 	IntVec2 m_dims = IntVec2(9, 9);
 	SudokuRuleSet m_ruleSet;
 	Grid2D<int> m_solution;
 	Grid2D<int> m_startingState;
+	Grid2D<Rgba8> m_cellShading;
+
+	// Font/Digit Appearance
+	Rgba8 m_givenDigitColor		= Rgba8::Black;
+	Rgba8 m_enteredDigitColor	= Rgba8::Cerulean;
+	Rgba8 m_wrongDigitColor		= Rgba8::Red;
+	FontConstants m_bigDigitFontConstants		= FontConstants();
+	FontConstants m_mediumDigitFontConstants	= FontConstants();
+	FontConstants m_littleDigitFontConstants	= FontConstants();
 };
 
 
@@ -45,11 +57,19 @@ public:
 	int GetSelectedCellIndex() const;
 	bool IsCellSelected(int index) const;
 	bool IsGivenDigit(int index) const;
-	void MoveSelectedCell(EDirection direction);
 
-	// Actions that apply to selected cells
-	void ClearCell();
+	// Actions that apply to selected cells and save in the history log
+	void MoveSelectedCell(EDirection direction);
+	void ClearSelectedCells();
 	void EnterCharacter(uint8_t character);
+	void FillSelectedCells(Rgba8 const& tint);
+
+	// Do not save in the history log
+	void SetCellFill(int index, Rgba8 const& tint);
+	void SetCellCharacter(int index, uint8_t character);
+
+	void RevertLastEvent();
+	void RestoreLastEvent();
 
 protected:
 
@@ -61,11 +81,17 @@ protected:
 
 	SudokuGridConfig m_config;
 
-	Grid2D<bool> m_selectedCells;
-	Grid2D<Rgba8> m_cellFill;
+	SudokuHistory m_history;
 
+	Grid2D<bool> m_selectedCells;
+	Grid2D<Rgba8> m_cellShading;
+
+	VertexBuffer* m_cellShadingVerts = nullptr;
 	VertexBuffer* m_staticGridVerts = nullptr;
 	VertexBuffer* m_selectedCellVerts = nullptr;
 	VertexBuffer* m_textVerts = nullptr;
 };
+
+
+
 

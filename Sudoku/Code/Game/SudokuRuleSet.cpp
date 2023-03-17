@@ -1,6 +1,8 @@
 // Bradley Christensen - 2022-2023
 #include "SudokuRuleSet.h"
 
+#include "Engine/Core/EngineCommon.h"
+
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -28,6 +30,7 @@ SudokuRuleSet::~SudokuRuleSet()
 //----------------------------------------------------------------------------------------------------------------------
 bool SudokuRuleRowOnceEach::Evaluate(SudokuGrid const& grid) const
 {
+	UNUSED(grid)
 	return false;
 }
 
@@ -43,6 +46,7 @@ SudokuRule* SudokuRuleRowOnceEach::Clone() const
 //----------------------------------------------------------------------------------------------------------------------
 bool SudokuRuleColumnOnceEach::Evaluate(SudokuGrid const& grid) const
 {
+	UNUSED(grid)
 	return false;
 }
 
@@ -58,6 +62,7 @@ SudokuRule* SudokuRuleColumnOnceEach::Clone() const
 //----------------------------------------------------------------------------------------------------------------------
 bool SudokuRuleBoxOnceEach::Evaluate(SudokuGrid const& grid) const
 {
+	UNUSED(grid)
 	return false;
 }
 

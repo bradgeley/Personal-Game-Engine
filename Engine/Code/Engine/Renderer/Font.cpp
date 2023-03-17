@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Engine/Renderer/Font.h"
+
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -85,11 +87,11 @@ void Font::AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& tex
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Font::AddVertsForTextInBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, Vec2 const& textMaxs,
-	float cellHeight, std::string const& text, Rgba8 const& tint, Vec2 const& alignment)
-{
-	
-}
+//void Font::AddVertsForTextInBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, Vec2 const& textMaxs,
+//	float cellHeight, std::string const& text, Rgba8 const& tint, Vec2 const& alignment)
+//{
+//	
+//}
 
 
 

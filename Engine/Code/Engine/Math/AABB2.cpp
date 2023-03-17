@@ -160,3 +160,11 @@ void AABB2::SetHalfDimsAboutCenter(Vec2 const& newHalfDims)
     mins = center - newHalfDims;
     maxs = center + newHalfDims;
 }
+
+
+
+void AABB2::Squeeze(float squeezeAmount)
+{
+    mins += Vec2(squeezeAmount, squeezeAmount);
+    maxs -= Vec2(squeezeAmount, squeezeAmount);
+}

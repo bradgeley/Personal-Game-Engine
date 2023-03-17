@@ -101,10 +101,9 @@ void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, 
 
 //----------------------------------------------------------------------------------------------------------------------
 // Add lines for columns and rows to create a grid
-// There will be some overlap where lines intersect, but doing it this way will result in fewer total triangles
-// than if I ensured no overlaps.
+// There will be some overlap where lines intersect, but  
 //
-void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint)
+void AddVertsForWireGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
     Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
@@ -126,4 +125,26 @@ void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& bounding
 		Vec2 right = boundingAABB.GetBottomRight() + Vec2(0.f, cellPosY);
 		AddVertsForLine2D(out_verts, left, right, lineThickness, tint);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, Rgba8 const& tint)
+{
+    ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
+
+    Vec2 individualBoxDims = boundingAABB.GetDimensions() / Vec2(dims);
+
+    out_verts.reserve((size_t) dims.x * dims.y * 6);
+    for (int y = 0; y < dims.y; ++y)
+    {
+        for (int x = 0; x < dims.x; ++x)
+        {
+            Vec2 coords = Vec2(x, y);
+            Vec2 boxMins = boundingAABB.mins + individualBoxDims * coords;
+            AABB2 box = AABB2(boxMins, boxMins + individualBoxDims);
+            AddVertsForAABB2(out_verts, box, tint);
+        }
+    }
 }

@@ -192,6 +192,8 @@
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\WindowsApplication.cpp" />
     <ClCompile Include="SudokuGrid.cpp" />
+    <ClCompile Include="SudokuHistory.cpp" />
+    <ClCompile Include="SudokuHistoryEvent.cpp" />
     <ClCompile Include="SudokuPlayer.cpp" />
     <ClCompile Include="SudokuRuleSet.cpp" />
   </ItemGroup>
@@ -201,6 +203,8 @@
     <ClInclude Include="Game\GameCommon.h" />
     <ClInclude Include="Game\WindowsApplication.h" />
     <ClInclude Include="SudokuGrid.h" />
+    <ClInclude Include="SudokuHistory.h" />
+    <ClInclude Include="SudokuHistoryEvent.h" />
     <ClInclude Include="SudokuPlayer.h" />
     <ClInclude Include="SudokuRuleSet.h" />
   </ItemGroup>

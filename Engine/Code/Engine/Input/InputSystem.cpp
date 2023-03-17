@@ -309,5 +309,15 @@ bool InputSystem::HandleMouseWheel(NamedProperties& args)
     }
 	m_frameMouseWheelChange = args.Get("WheelChange", 0);
     m_mouseWheelEvent.Broadcast(args);
+
+    if (m_frameMouseWheelChange > 0)
+    {
+        m_mouseWheelUpEvent.Broadcast(args);
+    }
+    else if (m_frameMouseWheelChange < 0)
+    {
+        m_mouseWheelDownEvent.Broadcast(args);
+    }
+    
     return true;
 }

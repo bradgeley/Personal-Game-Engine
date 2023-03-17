@@ -4,6 +4,10 @@
 
 
 
+struct Rgba8;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 struct CameraConstants
 {
@@ -24,4 +28,22 @@ struct ModelConstants
     
     bool operator==(ModelConstants const& rhs) const;
     bool operator!=(ModelConstants const& rhs) const;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct FontConstants
+{
+    FontConstants() = default;
+    FontConstants(Rgba8 const& tint, float boldness, float antiAlias, float outlineThickness);
+    
+    float m_outlineTint[4]              = { 1.f, 1.f, 1.f, 1.f };
+    float m_boldness                    = 0.5f;
+    float m_antiAliasAmount             = 0.1f;
+    float m_outlineThickness            = 0.f;
+    float pad = -1;
+    
+    bool operator==(FontConstants const& rhs) const;
+    bool operator!=(FontConstants const& rhs) const;
 };

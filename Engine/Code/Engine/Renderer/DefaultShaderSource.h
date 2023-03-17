@@ -33,7 +33,6 @@ cbuffer ModelConstants : register(b3)
     float4 modelTint;
 };
 
-
 v2p_t VertexMain(vs_input_t input)
 {
     v2p_t v2p;

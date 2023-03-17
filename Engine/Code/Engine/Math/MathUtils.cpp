@@ -139,6 +139,42 @@ float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minR
 }
 
 
+int IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
+{
+    ++val;
+    if (val > rangeMax)
+    {
+        if (wrap)
+        {
+            val = rangeMin;
+        }
+        else
+        {
+            val = rangeMax;
+        }
+    }
+    return val;
+}
+
+
+int DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
+{
+    --val;
+    if (val < rangeMin)
+    {
+        if (wrap)
+        {
+            val = rangeMax;
+        }
+        else
+        {
+            val = rangeMin;
+        }
+    }
+    return val;
+}
+
+
 float MinF(float a, float b)
 {
 	return a <= b ? a : b;
@@ -148,4 +184,18 @@ float MinF(float a, float b)
 float MaxF(float a, float b)
 {
 	return a >= b ? a : b;
+}
+
+
+int FloorF(float x)
+{
+    double d = (double) x;
+    return (int) ::floor(d);
+}
+
+
+int CeilingF(float x)
+{
+    double d = (double) x;
+    return (int) ceil(d);
 }

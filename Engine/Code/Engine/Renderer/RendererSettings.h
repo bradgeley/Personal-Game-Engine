@@ -99,6 +99,7 @@ struct RendererSettings
 {
     CameraConstants m_cameraConstants;
     ModelConstants  m_modelConstants;
+    FontConstants   m_fontConstants;
 
     Texture* m_texture                      = nullptr;
     Shader* m_shader                        = nullptr;

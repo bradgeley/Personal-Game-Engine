@@ -20,7 +20,7 @@ typedef std::vector<std::string> Strings;
 //----------------------------------------------------------------------------------------------------------------------
 // Splits a string upon reaching any of the characters inside the delimeters string
 //
-Strings SplitStringOnDelimeter(std::string const& string, std::string const& delimeters);
+//Strings SplitStringOnDelimeter(std::string const& string, std::string const& delimeters);
 bool DoesStringContainChar(std::string const& string, uint8_t character);
 
 

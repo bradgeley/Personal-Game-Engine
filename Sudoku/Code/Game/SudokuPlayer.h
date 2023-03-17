@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2023
 #pragma once
 #include "Engine/Math/Vec2.h"
+#include "Engine/Renderer/Rgba8.h"
 
 
 
@@ -29,10 +30,16 @@ private:
 	
 	void UpdateSelectedCell(float deltaSeconds);
 	void UpdateArrowKeysSelectedCellMovement(float deltaSeconds);
+	void UpdateFill();
+	
 	void SelectCellsInLine(Vec2 const& start, Vec2 const& end) const;
+	void RenderColorPalette() const;
 	
 	bool OnCharDown(NamedProperties& args);
 	bool OnKeyDown(NamedProperties& args);
+	bool OnMouseButtonDown(NamedProperties& args);
+	bool OnMouseWheelUp(NamedProperties& args);
+	bool OnMouseWheelDown(NamedProperties& args);
 	
 public:
 
@@ -41,6 +48,11 @@ public:
 protected:
 
 	SudokuGrid* m_grid = nullptr;
+
+	// Color Palette
+	int m_currentColorPaletteIndex = 0;
+	std::vector<Rgba8> m_colorPalette;
+	
 	Vec2 m_mouseClientRelativePosLastFrame = Vec2(0.5f, 0.5f);
 };
 

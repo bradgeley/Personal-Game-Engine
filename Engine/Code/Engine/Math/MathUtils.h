@@ -65,5 +65,9 @@ float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minR
 //----------------------------------------------------------------------------------------------------------------------
 // Simple Functions
 //
+int IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
+int DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
 float MinF(float a, float b);
 float MaxF(float a, float b);
+int FloorF(float x);
+int CeilingF(float x);

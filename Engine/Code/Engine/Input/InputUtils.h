@@ -14,6 +14,6 @@ enum class KeyCode : int
     ESCAPE = 27, TILDE = 192, SPACE = 32, ENTER = 13, SHIFT = 16, 
     UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39,
     HOME = 36, END = 35, DEL = 46, BACKSPACE = 8,
-    PERIOD = 190, COMMA = 188,
+    PERIOD = 190, COMMA = 188, CTRL = 17,
 };
 //
