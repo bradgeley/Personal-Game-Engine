@@ -9,6 +9,7 @@
 
 
 
+class Camera;
 class VertexBuffer;
 
 
@@ -16,17 +17,28 @@ class VertexBuffer;
 //----------------------------------------------------------------------------------------------------------------------
 struct SudokuGridConfig
 {
-	// Grid and Rules
+	// Rules/Initial Grid State
 	IntVec2 m_dims = IntVec2(9, 9);
 	SudokuRuleSet m_ruleSet;
 	Grid2D<int> m_solution;
 	Grid2D<int> m_startingState;
 	Grid2D<Rgba8> m_cellShading;
 
-	// Font/Digit Appearance
-	Rgba8 m_givenDigitColor		= Rgba8::Black;
-	Rgba8 m_enteredDigitColor	= Rgba8::Cerulean;
-	Rgba8 m_wrongDigitColor		= Rgba8::Red;
+	// Grid Lines
+	float m_regionLineThickness				= 0.05f;
+	float m_gridLineThickness				= 0.025f;
+
+	// Color Palette
+	std::vector<Rgba8> m_colorPalette;
+	float m_colorPaletteScale					= 0.5f;
+	Rgba8 m_backgroundColor						= Rgba8::White;
+	Rgba8 m_smallGridLineColor					= Rgba8::DarkGray;
+	Rgba8 m_bigGridLineColor					= Rgba8::Black;
+	Rgba8 m_givenDigitColor						= Rgba8::Black;
+	Rgba8 m_enteredDigitColor					= Rgba8::Cerulean;
+	Rgba8 m_wrongDigitColor						= Rgba8::Red;
+
+	// Font Settings
 	FontConstants m_bigDigitFontConstants		= FontConstants();
 	FontConstants m_mediumDigitFontConstants	= FontConstants();
 	FontConstants m_littleDigitFontConstants	= FontConstants();
@@ -62,20 +74,24 @@ public:
 	void MoveSelectedCell(EDirection direction);
 	void ClearSelectedCells();
 	void EnterCharacter(uint8_t character);
-	void FillSelectedCells(Rgba8 const& tint);
+	void FillSelectedCells();
 
 	// Do not save in the history log
 	void SetCellFill(int index, Rgba8 const& tint);
 	void SetCellCharacter(int index, uint8_t character);
 
-	void RevertLastEvent();
-	void RestoreLastEvent();
+	void IncrementColorPaletteIndex();
+	void DecrementColorPaletteIndex();
+
+	void UndoEvent();
+	void RedoEvent();
 
 protected:
 
 	void UpdateTextVerts();
 	void UpdateSelectedCellVerts() const;
 	void AddVertsForSelectedCell(int index) const;
+	void RenderColorPalette(Vec2 const& origin) const;
 
 protected:
 
@@ -83,6 +99,8 @@ protected:
 
 	SudokuHistory m_history;
 
+	// Grid state
+	int m_currentColorPaletteIndex = 0;
 	Grid2D<bool> m_selectedCells;
 	Grid2D<Rgba8> m_cellShading;
 
@@ -91,6 +109,7 @@ protected:
 	VertexBuffer* m_selectedCellVerts = nullptr;
 	VertexBuffer* m_textVerts = nullptr;
 };
+
 
 
 

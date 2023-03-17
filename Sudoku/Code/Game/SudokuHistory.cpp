@@ -22,7 +22,7 @@ void SudokuHistory::AddEvent(SudokuEvent const* event)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SudokuHistory::Revert(SudokuGrid* grid, int numStepsToRevert)
+void SudokuHistory::Undo(SudokuGrid* grid, int numStepsToRevert)
 {
 	UNUSED(numStepsToRevert)
     
@@ -40,7 +40,7 @@ void SudokuHistory::Revert(SudokuGrid* grid, int numStepsToRevert)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SudokuHistory::Restore(SudokuGrid* grid, int numStepsToRestore)
+void SudokuHistory::Redo(SudokuGrid* grid, int numStepsToRestore)
 {
 	UNUSED(numStepsToRestore)
     

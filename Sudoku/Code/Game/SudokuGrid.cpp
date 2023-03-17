@@ -8,6 +8,7 @@
 #include "Engine/Renderer/Font.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/Window.h"
 
 
@@ -44,12 +45,18 @@ void SudokuGrid::Startup()
 	AABB2 bounds;
 	bounds.mins = Vec2::ZeroVector;
 	bounds.maxs = Vec2(m_config.m_dims);
-	AddVertsForWireGrid2D(staticGridVerts, bounds, m_config.m_dims, 0.033f, Rgba8::LightGray);
+	AddVertsForWireGrid2D(staticGridVerts, bounds, m_config.m_dims, m_config.m_gridLineThickness, m_config.m_smallGridLineColor);
 	// todo: make boxes a thing?
-	AddVertsForWireGrid2D(staticGridVerts, bounds, IntVec2(3, 3), 0.08f, Rgba8::Black);
+	AddVertsForWireGrid2D(staticGridVerts, bounds, IntVec2(3, 3), m_config.m_regionLineThickness, m_config.m_bigGridLineColor);
 
 	auto& cellShadingVerts = m_cellShadingVerts->GetMutableVerts();
-	AddVertsForGrid2D(cellShadingVerts, bounds, m_config.m_dims, Rgba8::White);
+	AddVertsForGrid2D(cellShadingVerts, bounds, m_config.m_dims);
+
+	// init cell shading from config
+	for (int i = 0; i < m_config.m_cellShading.Size(); ++i)
+	{
+		SetCellFill(i, m_cellShading.Get(i));
+	}
 }
 
 
@@ -65,11 +72,16 @@ void SudokuGrid::Update(float deltaSeconds)
 
 void SudokuGrid::Render() const
 {
+	g_renderer->ClearScreen(m_config.m_backgroundColor);
+	
 	g_renderer->BindShader(nullptr);
 	g_renderer->BindTexture(nullptr);
 	g_renderer->DrawVertexBuffer(m_cellShadingVerts);
 	g_renderer->DrawVertexBuffer(m_staticGridVerts);
 	g_renderer->DrawVertexBuffer(m_selectedCellVerts);
+
+	Vec2 colorPaletteOrigin = Vec2(-m_config.m_colorPaletteScale - 0.1f, 0.f);
+	RenderColorPalette(colorPaletteOrigin);
 
 	auto font = g_renderer->GetDefaultFont();
 	font->SetRendererState();
@@ -241,8 +253,10 @@ void SudokuGrid::EnterCharacter(uint8_t character)
 
 
 
-void SudokuGrid::FillSelectedCells(Rgba8 const& tint)
+void SudokuGrid::FillSelectedCells()
 {
+	Rgba8& tint = m_config.m_colorPalette[m_currentColorPaletteIndex];
+	
 	SudokuEventFillColor* event = new SudokuEventFillColor();
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
 	{
@@ -281,16 +295,61 @@ void SudokuGrid::SetCellCharacter(int index, uint8_t character)
 
 
 
-void SudokuGrid::RevertLastEvent()
+void SudokuGrid::IncrementColorPaletteIndex()
 {
-	m_history.Revert(this);
+	m_currentColorPaletteIndex = IncrementIntInRange(m_currentColorPaletteIndex, 0, (int) m_config.m_colorPalette.size() - 1, true);
 }
 
 
 
-void SudokuGrid::RestoreLastEvent()
+void SudokuGrid::DecrementColorPaletteIndex()
 {
-	m_history.Restore(this);
+	m_currentColorPaletteIndex = DecrementIntInRange(m_currentColorPaletteIndex, 0, (int) m_config.m_colorPalette.size() - 1, true);
+}
+
+
+
+void SudokuGrid::UndoEvent()
+{
+	m_history.Undo(this);
+}
+
+
+
+void SudokuGrid::RedoEvent()
+{
+	m_history.Redo(this);
+}
+
+
+
+void SudokuGrid::UpdateTextVerts()
+{
+	m_textVerts->ClearVerts();
+	auto& verts = m_textVerts->GetMutableVerts();
+	auto font = g_renderer->GetDefaultFont();
+
+	for (int x = 0; x < GetWidth(); ++x)
+	{
+		for (int y = 0; y < GetHeight(); ++y)
+		{
+			int cellIndex = GetIndexForCoords(x, y);
+			uint8_t c = static_cast<uint8_t>(m_data[cellIndex]);
+			if (c == 0)
+			{
+				continue;
+			}
+
+			Vec2 cellBotLeft = Vec2(x, y);
+			std::string asString = StringF("%c", c);
+			auto glyphData = font->GetGlyphData(c);
+			float glyphWidth = glyphData.m_width;
+			float glyphOffsetX = glyphData.a;
+			cellBotLeft.x += (1.f - glyphWidth) * 0.5f - glyphOffsetX;
+			Rgba8 tint = IsGivenDigit(cellIndex) ? m_config.m_givenDigitColor : m_config.m_enteredDigitColor;
+			font->AddVertsForText2D(verts, cellBotLeft, 1.f, asString, tint);
+		}
+	}
 }
 
 
@@ -394,32 +453,35 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 
 
 
-void SudokuGrid::UpdateTextVerts()
+void SudokuGrid::RenderColorPalette(Vec2 const& origin) const
 {
-	m_textVerts->ClearVerts();
-	auto& verts = m_textVerts->GetMutableVerts();
-	auto font = g_renderer->GetDefaultFont();
-
-	for (int x = 0; x < GetWidth(); ++x)
+	VertexBuffer paletteVbo, textVbo;
+	auto& paletteVerts = paletteVbo.GetMutableVerts();
+	
+	for (int i = 0; i < (int) m_config.m_colorPalette.size(); ++i)
 	{
-		for (int y = 0; y < GetHeight(); ++y)
-		{
-			int cellIndex = GetIndexForCoords(x, y);
-			uint8_t c = static_cast<uint8_t>(m_data[cellIndex]);
-			if (c == 0)
-			{
-				continue;
-			}
+		Rgba8 const& tint = m_config.m_colorPalette[i];
+		Vec2 botLeft = origin + Vec2(0.f, (float) i * m_config.m_colorPaletteScale);
+		Vec2 topRight = botLeft + Vec2(m_config.m_colorPaletteScale, m_config.m_colorPaletteScale);
+		AABB2 box(botLeft, topRight);
+		AddVertsForAABB2(paletteVerts, box, tint);
 
-			Vec2 cellBotLeft = Vec2(x, y);
-			std::string asString = StringF("%c", c);
-			auto glyphData = font->GetGlyphData(c);
-			float glyphWidth = glyphData.m_width;
-			float glyphOffsetX = glyphData.a;
-			cellBotLeft.x += (1.f - glyphWidth) * 0.5f - glyphOffsetX;
-			Rgba8 tint = IsGivenDigit(cellIndex) ? m_config.m_givenDigitColor : m_config.m_enteredDigitColor;
-			font->AddVertsForText2D(verts, cellBotLeft, 1.f, asString, tint);
+		if (m_currentColorPaletteIndex == i)
+		{
+			// Draw thick yellow outline
+			box.Squeeze(0.02f);
+			AddVertsForWireBox2D(paletteVerts, box, 0.04f, Rgba8::Yellow);
+		}
+		else
+		{
+			// Draw thin black outline
+			box.Squeeze(0.015f);
+			AddVertsForWireBox2D(paletteVerts, box, 0.03f, Rgba8::Black);
 		}
 	}
+
+	g_renderer->BindShader(nullptr);
+	g_renderer->BindTexture(nullptr);
+	g_renderer->DrawVertexBuffer(&paletteVbo);
 }
 

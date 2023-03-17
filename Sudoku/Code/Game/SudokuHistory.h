@@ -15,8 +15,8 @@ class SudokuHistory
 public:
 
     void AddEvent(SudokuEvent const* event);
-    void Revert(SudokuGrid* grid, int numStepsToRevert = 1);
-    void Restore(SudokuGrid* grid, int numStepsToRestore = 1);
+    void Undo(SudokuGrid* grid, int numStepsToRevert = 1);
+    void Redo(SudokuGrid* grid, int numStepsToRestore = 1);
     void DeleteHistoryAfter(int index);
 
 protected:

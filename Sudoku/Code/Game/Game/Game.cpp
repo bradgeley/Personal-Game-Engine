@@ -21,8 +21,23 @@ void Game::Startup()
     gridConfig.m_startingState = Grid2D(gridConfig.m_dims, 0);
     gridConfig.m_startingState.Set(10, '6');
     gridConfig.m_solution = Grid2D(gridConfig.m_dims, 0);
-    gridConfig.m_cellShading = Grid2D(gridConfig.m_dims, Rgba8::White);
+    gridConfig.m_cellShading = Grid2D(gridConfig.m_dims, Rgba8::LightGray);
     gridConfig.m_bigDigitFontConstants = FontConstants(Rgba8::Black, 0.15f, 0.05f, 0.4f);
+
+    // Setup color palette and font colors
+    gridConfig.m_backgroundColor = Rgba8::LightGray;
+    gridConfig.m_enteredDigitColor = Rgba8::LightBlue;
+    gridConfig.m_givenDigitColor = Rgba8::Cerulean;
+    gridConfig.m_colorPalette.emplace_back(Rgba8(158, 1, 66));
+    gridConfig.m_colorPalette.emplace_back(Rgba8(213, 62, 79));
+    gridConfig.m_colorPalette.emplace_back(Rgba8(244, 109, 67));
+    gridConfig.m_colorPalette.emplace_back(Rgba8(253, 174, 97));
+    gridConfig.m_colorPalette.emplace_back(Rgba8(254, 224, 139));
+    gridConfig.m_colorPalette.emplace_back(Rgba8(230, 245, 152));
+    gridConfig.m_colorPalette.emplace_back(Rgba8(171, 221, 164));
+    gridConfig.m_colorPalette.emplace_back(Rgba8(102, 194, 165));
+    gridConfig.m_colorPalette.emplace_back(Rgba8(94, 79, 162));
+    gridConfig.m_colorPalette.emplace_back(Rgba8::LightGray);
     
     m_grid = new SudokuGrid(gridConfig);
     m_grid->Startup();
@@ -56,11 +71,8 @@ void Game::EndFrame()
 
 void Game::Render() const
 {
-	g_renderer->ClearScreen(Rgba8::White);
-	g_renderer->BeginCamera(*(m_player->m_camera)); // reset renderer state
-
+    m_player->BeginCamera();
     m_grid->Render();
-    m_player->Render();
 }
 
 
