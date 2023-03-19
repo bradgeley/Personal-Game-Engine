@@ -7,6 +7,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Window.h"
 #include "Game.h"
+#include "Engine/Debug/DevConsole.h"
 
 
 
@@ -34,6 +35,11 @@ void WindowsApplication::Startup()
     g_renderer = new Renderer(rendererConfig);
     m_engine->RegisterSubsystem(g_renderer);
 
+    // Dev console before input, so it steals input from the window when active
+    DevConsoleConfig dcConfig;
+    g_devConsole = new DevConsole(dcConfig);
+    m_engine->RegisterSubsystem(g_devConsole);
+    
     InputSystemConfig inputConfig;
     g_input = new InputSystem(inputConfig);
     m_engine->RegisterSubsystem(g_input);

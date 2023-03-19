@@ -53,6 +53,9 @@ float Interpolate(float a, float b, float t);
 float InterpolateClamped(float a, float b, float t);
 int InterpolateInt(int a, int b, float t);
 int InterpolateIntClamped(int a, int b, float t);
+float SmoothStep3(float valZeroToOne);
+float SmoothStart2(float valZeroToOne);
+float SmoothStart3(float valZeroToOne);
 
 
 //----------------------------------------------------------------------------------------------------------------------

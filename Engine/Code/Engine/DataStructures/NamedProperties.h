@@ -132,7 +132,7 @@ struct NamedProperties
     void Set(std::string const& name, T const& value);
     
     template<typename T>
-    T Get(std::string const& name, T const& defaultValue);
+    T Get(std::string const& name, T const& defaultValue) const;
 
     void Clear();
     int Size() const;
@@ -173,7 +173,7 @@ void NamedProperties::Set(std::string const& name, T const& value)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-T NamedProperties::Get(std::string const& name, T const& defaultValue)
+T NamedProperties::Get(std::string const& name, T const& defaultValue) const
 {
     auto maybeExistingProperty = m_properties.find(name);
     if (maybeExistingProperty != m_properties.end())

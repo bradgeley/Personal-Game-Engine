@@ -22,6 +22,9 @@ public:
     void GetAsFloats(float* out_fourFloats) const;
     uint32_t GetAsUint32() const;
 
+    bool operator==(Rgba8 const& other) const;
+    bool operator!=(Rgba8 const& other) const;
+
 public:
     
     static Rgba8 Lerp(Rgba8 const& start, Rgba8 const& end, float t);

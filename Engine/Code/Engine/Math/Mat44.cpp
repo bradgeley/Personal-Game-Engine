@@ -2,6 +2,7 @@
 #include "Mat44.h"
 #include "MathUtils.h"
 #include "Vec2.h"
+#include "Vec3.h"
 #include <cstring>
 
 
@@ -126,6 +127,36 @@ void Mat44::AppendUniformScale3D(float uniformScale)
 
 
 
+void Mat44::SetTranslation(float x, float y, float z, float w)
+{
+	m_values[Tx] = x;
+	m_values[Ty] = y;
+	m_values[Tz] = z;
+	m_values[Tw] = w;
+}
+
+
+
+void Mat44::SetTranslation2D(Vec2 const& translationXY)
+{
+	m_values[Tx] = translationXY.x;
+	m_values[Ty] = translationXY.y;
+	m_values[Tz] = 0.f;
+	m_values[Tw] = 1.f;
+}
+
+
+
+void Mat44::SetTranslation3D(Vec3 const& translationXYZ)
+{
+	m_values[Tx] = translationXYZ.x;
+	m_values[Ty] = translationXYZ.y;
+	m_values[Tz] = translationXYZ.z;
+	m_values[Tw] = 1.f;
+}
+
+
+
 bool Mat44::operator==(Mat44 const& rhs) const
 {
 	for (int i = 0; i < 16; ++i)
@@ -136,6 +167,15 @@ bool Mat44::operator==(Mat44 const& rhs) const
 		}
 	}
 	return true;
+}
+
+
+
+Mat44 Mat44::CreateTranslation(float x, float y, float z)
+{
+	Mat44 result;
+	result.SetTranslation(x, y, z);
+	return result;
 }
 
 

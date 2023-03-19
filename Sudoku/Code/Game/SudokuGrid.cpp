@@ -184,6 +184,13 @@ bool SudokuGrid::IsCellSelected(int index) const
 
 
 
+bool SudokuGrid::IsCellSelected(IntVec2 const& coords) const
+{
+	return IsCellSelected(GetIndexForCoords(coords));
+}
+
+
+
 bool SudokuGrid::IsGivenDigit(int index) const
 {
 	return m_config.m_startingState.Get(index) != 0;
@@ -242,13 +249,23 @@ void SudokuGrid::EnterCharacter(uint8_t character)
 	{
 		if (IsCellSelected(i) && !IsGivenDigit(i))
 		{
-			event->m_indices.push_back((uint8_t)i);
-			event->m_digitsBefore.push_back((uint8_t)Get(i));
-			Set(i, character);
-			event->m_digitsAfter.push_back(character);
+			if (Get(i) != character)
+			{
+				event->m_indices.push_back((uint8_t)i);
+				event->m_digitsBefore.push_back((uint8_t)Get(i));
+				Set(i, character);
+				event->m_digitsAfter.push_back(character);
+			}
 		}
 	}
-	m_history.AddEvent(event);
+	if (!event->m_indices.empty())
+	{
+		m_history.AddEvent(event);
+	}
+	else
+	{
+		delete event;
+	}
 }
 
 
@@ -262,13 +279,23 @@ void SudokuGrid::FillSelectedCells()
 	{
 		if (IsCellSelected(i))
 		{
-			event->m_indices.push_back((uint8_t)i);
-			event->m_tintBefore.push_back(m_cellShading.Get(i));
-			SetCellFill(i, tint);
-			event->m_tintAfter.push_back(tint);
+			if (m_cellShading.Get(i) != tint)
+			{
+				event->m_indices.push_back((uint8_t)i);
+				event->m_tintBefore.push_back(m_cellShading.Get(i));
+				SetCellFill(i, tint);
+				event->m_tintAfter.push_back(tint);
+			}
 		}
 	}
-	m_history.AddEvent(event);
+	if (!event->m_indices.empty())
+	{
+		m_history.AddEvent(event);
+	}
+	else
+	{
+		delete event;
+	}
 }
 
 

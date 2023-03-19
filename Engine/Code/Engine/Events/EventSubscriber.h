@@ -12,7 +12,7 @@ struct NamedProperties;
 struct EventSubscriber
 {
     virtual ~EventSubscriber() = default;
-    virtual void Execute(NamedProperties& args) = 0;
+    virtual bool Execute(NamedProperties& args) = 0;
     virtual bool DoesObjectMatch(void const* objectAddress) const = 0;
     virtual bool DoesFunctionMatch(void const* functionAddress) const = 0;
 };
@@ -30,7 +30,7 @@ struct EventSubscriberFunction : public EventSubscriber
     
     virtual bool DoesObjectMatch(void const* objectAddress) const override;
     virtual bool DoesFunctionMatch(void const* functionAddress) const override;
-    virtual void Execute(NamedProperties& args) override;
+    virtual bool Execute(NamedProperties& args) override;
 
     EventCallbackFunction m_callbackFunc;
 };
@@ -51,7 +51,7 @@ struct EventSubscriberMethod : public EventSubscriber
 
     virtual bool DoesObjectMatch(void const* object) const override;
     virtual bool DoesFunctionMatch(void const* functionAddress) const override;
-    virtual void Execute(NamedProperties& args) override;
+    virtual bool Execute(NamedProperties& args) override;
 
     T* m_object;
     EventCallbackMethod m_method;
@@ -88,10 +88,10 @@ bool EventSubscriberMethod<T>::DoesFunctionMatch(void const* functionAddress) co
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void EventSubscriberMethod<T>::Execute(NamedProperties& args)
+bool EventSubscriberMethod<T>::Execute(NamedProperties& args)
 {
     T& object = *m_object;
-    (object.*m_method)(args);
+    return (object.*m_method)(args);
 }
 
 

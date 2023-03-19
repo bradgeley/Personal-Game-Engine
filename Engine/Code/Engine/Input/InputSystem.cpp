@@ -68,7 +68,12 @@ void InputSystem::EndFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void InputSystem::Shutdown()
 {
-    
+    g_window->m_charInputEvent.UnsubscribeMethod(this, &InputSystem::HandleChar);
+    g_window->m_keyDownEvent.UnsubscribeMethod(this, &InputSystem::HandleKeyDown);
+    g_window->m_keyUpEvent.UnsubscribeMethod(this, &InputSystem::HandleKeyUp);
+    g_window->m_mouseButtonDownEvent.UnsubscribeMethod(this, &InputSystem::HandleMouseButtonDown);
+    g_window->m_mouseButtonUpEvent.UnsubscribeMethod(this, &InputSystem::HandleMouseButtonUp);
+    g_window->m_mouseWheelEvent.UnsubscribeMethod(this, &InputSystem::HandleMouseWheel);
 }
 
 

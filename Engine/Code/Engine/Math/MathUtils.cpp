@@ -123,6 +123,26 @@ int InterpolateIntClamped(int a, int b, float t)
 }
 
 
+float SmoothStep3(float valZeroToOne)
+{
+    // -2*x^3 + 3*x^2
+    float valSquared = valZeroToOne * valZeroToOne;
+    return -2 * valSquared * valZeroToOne + 3 * valSquared;
+}
+
+
+float SmoothStart2(float valZeroToOne)
+{
+    return valZeroToOne * valZeroToOne;
+}
+
+
+float SmoothStart3(float valZeroToOne)
+{
+    return valZeroToOne * valZeroToOne * valZeroToOne;
+}
+
+
 float GetFractionWithin(float val, float min, float max)
 {
     float range = max - min;

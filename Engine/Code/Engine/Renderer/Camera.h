@@ -25,5 +25,5 @@ public:
 private:
     
     Vec3 m_mins = Vec3::ZeroVector;
-    Vec3 m_maxs = Vec3::ZeroVector;
+    Vec3 m_maxs = Vec3(1.f, 1.f, 1.f);
 };

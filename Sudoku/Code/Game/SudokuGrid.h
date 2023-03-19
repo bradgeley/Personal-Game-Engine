@@ -68,6 +68,7 @@ public:
 	int CountSelectedCells() const;
 	int GetSelectedCellIndex() const;
 	bool IsCellSelected(int index) const;
+	bool IsCellSelected(IntVec2 const& coords) const;
 	bool IsGivenDigit(int index) const;
 
 	// Actions that apply to selected cells and save in the history log

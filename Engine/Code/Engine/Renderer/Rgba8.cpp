@@ -57,6 +57,22 @@ uint32_t Rgba8::GetAsUint32() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool Rgba8::operator==(Rgba8 const& other) const
+{
+    return r == other.r && g == other.g && b == other.b && a == other.a;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Rgba8::operator!=(Rgba8 const& other) const
+{
+    return r != other.r || g != other.g || b != other.b || a != other.a;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Rgba8 Rgba8::Lerp(Rgba8 const& start, Rgba8 const& end, float t)
 {
     Rgba8 result;

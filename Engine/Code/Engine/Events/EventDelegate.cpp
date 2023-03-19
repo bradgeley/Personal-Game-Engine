@@ -6,9 +6,14 @@
 //----------------------------------------------------------------------------------------------------------------------
 void EventDelegate::Broadcast(NamedProperties& args) const
 {
+	bool consumed = false;
     for (auto& sub : m_subs)
     {
-        sub->Execute(args);
+        consumed = sub->Execute(args);
+    	if (consumed)
+    	{
+    		return;
+    	}
     }
 }
 

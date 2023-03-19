@@ -32,7 +32,7 @@ private:
 	void UpdateArrowKeysSelectedCellMovement(float deltaSeconds);
 	void UpdateFill();
 	
-	void SelectCellsInLine(Vec2 const& start, Vec2 const& end) const;
+	void SetCellsSelectedInLine(Vec2 const& start, Vec2 const& end, bool isSelected) const;
 	void GetColorPalette() const;
 	
 	bool OnCharDown(NamedProperties& args);
@@ -49,7 +49,8 @@ protected:
 	SudokuGrid* m_grid = nullptr;
 
 	// Color Palette
-	
+
+	bool m_selectMode = true;
 	Vec2 m_mouseClientRelativePosLastFrame = Vec2(0.5f, 0.5f);
 };
 

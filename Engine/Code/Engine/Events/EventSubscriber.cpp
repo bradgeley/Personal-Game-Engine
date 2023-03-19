@@ -29,7 +29,7 @@ bool EventSubscriberFunction::DoesFunctionMatch(void const* functionAddress) con
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void EventSubscriberFunction::Execute(NamedProperties& args)
+bool EventSubscriberFunction::Execute(NamedProperties& args)
 {
-    m_callbackFunc(args);
+    return m_callbackFunc(args);
 }

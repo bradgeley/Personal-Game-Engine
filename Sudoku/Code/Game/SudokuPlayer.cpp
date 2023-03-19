@@ -107,7 +107,7 @@ void SudokuPlayer::UpdateSelectedCell(float deltaSeconds)
 	{
 		if (g_input->WasMouseButtonJustPressed(0))
 		{
-			// clicked outside the grid
+			// clicked outside the grid, clear all
 			m_grid->DeselectAllCells();
 		}
 		return;
@@ -116,18 +116,27 @@ void SudokuPlayer::UpdateSelectedCell(float deltaSeconds)
 	// Update selection
 	if (g_input->WasMouseButtonJustPressed(0))
 	{
+		// deselect cell if it's already selected, then go into deselect mode
+		m_selectMode = !m_grid->IsCellSelected(cellCoords);
 		if (!g_input->IsKeyDown(KeyCode::SHIFT))
 		{
 			m_grid->DeselectAllCells();
 		}
-		m_grid->SelectCell(cellCoords);
+		if (m_selectMode)
+		{
+			m_grid->SelectCell(cellCoords);
+		}
+		else
+		{
+			m_grid->DeselectCell(cellCoords);
+		}
 	}
 
 	// If dragging, select all cells in the line between last frame's mouse pos and this frame's
 	if (isLeftMouseButtonDown)
 	{ 
 		Vec2 clientCellPosLastFrame = m_camera->ScreenToWorldOrtho(m_mouseClientRelativePosLastFrame);
-		SelectCellsInLine(clientCellPos, clientCellPosLastFrame);
+		SetCellsSelectedInLine(clientCellPos, clientCellPosLastFrame, m_selectMode);
 	}
 }
 
@@ -176,7 +185,7 @@ void SudokuPlayer::UpdateFill()
 
 
 
-void SudokuPlayer::SelectCellsInLine(Vec2 const& start, Vec2 const& end) const
+void SudokuPlayer::SetCellsSelectedInLine(Vec2 const& start, Vec2 const& end, bool isSelected) const
 {
 	// Get all cells between last frame's and this frame's mouse positions
 	for (int x = 0; x < m_grid->GetWidth(); ++x)
@@ -186,7 +195,14 @@ void SudokuPlayer::SelectCellsInLine(Vec2 const& start, Vec2 const& end) const
 			AABB2 cellBounds = AABB2((float) x, (float) y, (float) x + 1.f, (float) y + 1.f);
 			if (DoesLineIntersectAABB2(start, end, cellBounds))
 			{
-				m_grid->SelectCell(IntVec2(x, y));
+				if (isSelected)
+				{
+					m_grid->SelectCell(IntVec2(x, y));
+				}
+				else
+				{
+					m_grid->DeselectCell(IntVec2(x, y));
+				}
 			}
 		}
 	}

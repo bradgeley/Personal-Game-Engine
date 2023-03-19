@@ -3,6 +3,7 @@
 
 
 
+struct Vec3;
 struct Vec2;
 
 
@@ -38,10 +39,15 @@ public:
     void AppendUniformScale2D(float uniformScale);
     void AppendUniformScale3D(float uniformScale);
 
+    void SetTranslation(float x, float y = 0.f, float z = 0.f, float w = 1.f);
+    void SetTranslation2D(Vec2 const& translationXY);
+    void SetTranslation3D(Vec3 const& translationXYZ);
+
     bool operator==(Mat44 const& rhs) const;
 
 public:
     
+    static Mat44 CreateTranslation(float x, float y = 0.f, float z = 0.f);
     static Mat44 CreateXRotationDegrees(float rotationDegreesAboutX);
     static Mat44 CreateYRotationDegrees(float rotationDegreesAboutY);
     static Mat44 CreateZRotationDegrees(float rotationDegreesAboutZ);
