@@ -113,6 +113,22 @@ bool Texture::LoadFromImageFile(const char* imageSource, bool createMipMap)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool Texture::IsValid() const
+{
+    return m_textureHandle != nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 Texture::GetDimensions() const
+{
+    return m_dimensions;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Texture::CreateFromSwapChain(IDXGISwapChain* swapChain)
 {
     swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &m_textureHandle);

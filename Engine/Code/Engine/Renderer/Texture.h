@@ -28,6 +28,10 @@ public:
     bool CreateUniformTexture(IntVec2 const& dims, Rgba8 const& tint);
     bool CreateFromImage(Image const& image, bool createMipMap = true);
     bool LoadFromImageFile(const char* imageSource, bool createMipMap = true);
+
+    bool IsValid() const;
+
+    IntVec2 GetDimensions() const;
     
     void ReleaseResources();
     

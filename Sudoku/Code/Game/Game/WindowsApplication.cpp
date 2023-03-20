@@ -8,6 +8,8 @@
 #include "Engine/Renderer/Window.h"
 #include "Game.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/Math/RandomNumberGenerator.h"
+#include "Engine/Multithreading/JobSystem.h"
 
 
 
@@ -21,6 +23,8 @@ WindowsApplication* g_app = nullptr;
 void WindowsApplication::Startup()
 {
     m_engine = new Engine();
+
+    g_rng = new RandomNumberGenerator();
     
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Sudoku";
@@ -37,12 +41,19 @@ void WindowsApplication::Startup()
 
     // Dev console before input, so it steals input from the window when active
     DevConsoleConfig dcConfig;
+    dcConfig.m_backgroundImageSustainSeconds = 0.f;
+    dcConfig.m_backgroundImageFadeSeconds = 0.5f;
+    dcConfig.m_backgroundImages = { "DrStrange.jpg", "Hawkeye.jpg", "Thanos.jpg", "Avengers.png", "IronMan.jpg", "Jack1.jpg", "Jack2.jpg", "Thor.jpg" };
     g_devConsole = new DevConsole(dcConfig);
     m_engine->RegisterSubsystem(g_devConsole);
     
     InputSystemConfig inputConfig;
     g_input = new InputSystem(inputConfig);
     m_engine->RegisterSubsystem(g_input);
+
+    JobSystemConfig jobSysConfig;
+    g_jobSystem = new JobSystem(jobSysConfig);
+    m_engine->RegisterSubsystem(g_jobSystem);
     
     m_engine->Startup();
 
@@ -84,6 +95,8 @@ void WindowsApplication::Shutdown()
 {
     SHUTDOWN_AND_DESTROY(m_game)
     SHUTDOWN_AND_DESTROY(m_engine)
+    delete g_rng;
+    g_rng = nullptr;
 }
 
 

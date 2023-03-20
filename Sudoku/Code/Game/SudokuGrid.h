@@ -29,7 +29,7 @@ struct SudokuGridConfig
 	float m_gridLineThickness				= 0.025f;
 
 	// Color Palette
-	std::vector<Rgba8> m_colorPalette;
+	std::vector<Rgba8> m_cellShadingPalette;
 	float m_colorPaletteScale					= 0.5f;
 	Rgba8 m_backgroundColor						= Rgba8::White;
 	Rgba8 m_smallGridLineColor					= Rgba8::DarkGray;

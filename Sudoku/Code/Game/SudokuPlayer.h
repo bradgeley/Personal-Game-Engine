@@ -1,7 +1,6 @@
 // Bradley Christensen - 2022-2023
 #pragma once
 #include "Engine/Math/Vec2.h"
-#include "Engine/Renderer/Rgba8.h"
 
 
 
@@ -11,6 +10,7 @@ class SudokuGrid;
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 class SudokuPlayer
 {
 public:
@@ -39,6 +39,7 @@ private:
 	bool OnKeyDown(NamedProperties& args);
 	bool OnMouseWheelUp(NamedProperties& args);
 	bool OnMouseWheelDown(NamedProperties& args);
+	bool OnDoubleClick(NamedProperties& args);
 	
 public:
 
@@ -47,8 +48,6 @@ public:
 protected:
 
 	SudokuGrid* m_grid = nullptr;
-
-	// Color Palette
 
 	bool m_selectMode = true;
 	Vec2 m_mouseClientRelativePosLastFrame = Vec2(0.5f, 0.5f);

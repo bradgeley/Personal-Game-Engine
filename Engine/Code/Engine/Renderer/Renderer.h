@@ -133,7 +133,6 @@ private:
     void UpdateTexture(bool force = false);
     void UpdateShader(bool force = false);
 
-
 private:
 
     RendererConfig const m_config;

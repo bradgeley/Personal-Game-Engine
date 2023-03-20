@@ -24,6 +24,12 @@ IntVec2::IntVec2(Vec2 const& fromVec2) : x(static_cast<int>(fromVec2.x)), y(stat
 }
 
 
+float IntVec2::GetAspect() const
+{
+    return (float) x / (float) y;
+}
+
+
 
 bool IntVec2::operator==(const IntVec2& other)
 {

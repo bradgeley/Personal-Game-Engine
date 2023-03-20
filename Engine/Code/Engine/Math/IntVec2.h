@@ -27,6 +27,8 @@ public:
 
 public:
 
+    float GetAspect() const;
+
     // Component-wise const operators
     bool operator==(const IntVec2& other);
     IntVec2 operator-() const;

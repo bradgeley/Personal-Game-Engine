@@ -8,7 +8,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // THE JOB SYSTEM
 //
-JobSystem* g_theJobSystem = nullptr;
+JobSystem* g_jobSystem = nullptr;
 
 
 
@@ -192,7 +192,7 @@ void JobSystem::WaitForAllJobs()
 //----------------------------------------------------------------------------------------------------------------------
 uint32_t JobSystem::GetNextJobUniqueID()
 {
-    return g_theJobSystem->m_nextJobID.fetch_add(1);
+    return g_jobSystem->m_nextJobID.fetch_add(1);
 }
 
 
@@ -209,7 +209,7 @@ void JobSystem::WorkerLoop(JobWorker* worker)
             job->Execute();
 
             // Delete job data
-            int index = job->GetIndex();
+            uint32_t index = job->GetIndex();
             delete job;
             m_jobQueue[index] = nullptr;
 

@@ -28,6 +28,7 @@ float RadiansToDegrees(float radians);
 //----------------------------------------------------------------------------------------------------------------------
 // Utilities
 //
+int ClampInt(int value, int min, int max);
 float ClampF(float value, float min, float max);
 
 

@@ -16,7 +16,7 @@ class Job;
 //----------------------------------------------------------------------------------------------------------------------
 // THE Job System
 //
-extern class JobSystem* g_theJobSystem;
+extern class JobSystem* g_jobSystem;
 
 
 

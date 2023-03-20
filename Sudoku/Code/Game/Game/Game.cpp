@@ -28,16 +28,16 @@ void Game::Startup()
     gridConfig.m_backgroundColor = Rgba8::LightGray;
     gridConfig.m_enteredDigitColor = Rgba8::LightBlue;
     gridConfig.m_givenDigitColor = Rgba8::Cerulean;
-    gridConfig.m_colorPalette.emplace_back(Rgba8(158, 1, 66));
-    gridConfig.m_colorPalette.emplace_back(Rgba8(213, 62, 79));
-    gridConfig.m_colorPalette.emplace_back(Rgba8(244, 109, 67));
-    gridConfig.m_colorPalette.emplace_back(Rgba8(253, 174, 97));
-    gridConfig.m_colorPalette.emplace_back(Rgba8(254, 224, 139));
-    gridConfig.m_colorPalette.emplace_back(Rgba8(230, 245, 152));
-    gridConfig.m_colorPalette.emplace_back(Rgba8(171, 221, 164));
-    gridConfig.m_colorPalette.emplace_back(Rgba8(102, 194, 165));
-    gridConfig.m_colorPalette.emplace_back(Rgba8(94, 79, 162));
-    gridConfig.m_colorPalette.emplace_back(Rgba8::LightGray);
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8(158, 1, 66));
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8(213, 62, 79));
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8(244, 109, 67));
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8(253, 174, 97));
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8(254, 224, 139));
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8(230, 245, 152));
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8(171, 221, 164));
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8(102, 194, 165));
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8(94, 79, 162));
+    gridConfig.m_cellShadingPalette.emplace_back(Rgba8::LightGray);
     
     m_grid = new SudokuGrid(gridConfig);
     m_grid->Startup();
@@ -51,7 +51,7 @@ void Game::Startup()
 void Game::Update(float deltaSeconds)
 {
     UNUSED(deltaSeconds)
-    if (g_input->WasKeyJustReleased(KeyCode::ESCAPE))
+    if (g_input->WasKeyJustReleased(KeyCode::Escape))
     {
         g_app->Quit();
     }

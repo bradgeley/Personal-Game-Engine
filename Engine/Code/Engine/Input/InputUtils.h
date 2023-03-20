@@ -11,9 +11,9 @@ enum class KeyCode : int
 {
     F1 = 112, F2 = 113, F3 = 114, F4 = 115, F5 = 116, F6 = 117, 
     F7 = 118, F8 = 119, F9 = 120, F10 = 121, F11 = 122,
-    ESCAPE = 27, TILDE = 192, SPACE = 32, ENTER = 13, SHIFT = 16, 
-    UP = 38, DOWN = 40, LEFT = 37, RIGHT = 39,
-    HOME = 36, END = 35, DEL = 46, BACKSPACE = 8,
-    PERIOD = 190, COMMA = 188, CTRL = 17,
+    Escape = 27, Tilde = 192, Space = 32, Enter = 13, Shift = 16, 
+    Up = 38, Down = 40, Left = 37, Right = 39,
+    Home = 36, End = 35, Delete = 46, Backspace = 8,
+    Period = 190, Comma = 188, Ctrl = 17,
 };
 //

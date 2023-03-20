@@ -17,6 +17,7 @@ class VertexBuffer;
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 SudokuPlayer::SudokuPlayer()
 {
 	m_camera = new Camera();
@@ -24,6 +25,7 @@ SudokuPlayer::SudokuPlayer()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 SudokuPlayer::~SudokuPlayer()
 {
 	delete m_camera;
@@ -32,6 +34,7 @@ SudokuPlayer::~SudokuPlayer()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::Startup()
 {
 	g_input->m_charInputEvent.SubscribeMethod(this, &SudokuPlayer::OnCharDown);
@@ -42,6 +45,7 @@ void SudokuPlayer::Startup()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::Update(float deltaSeconds)
 {
 	UpdateSelectedCell(deltaSeconds);
@@ -51,6 +55,7 @@ void SudokuPlayer::Update(float deltaSeconds)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::BeginCamera() const
 {
 	g_renderer->BeginCamera(*m_camera);
@@ -58,6 +63,7 @@ void SudokuPlayer::BeginCamera() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::EndFrame()
 {
 	m_mouseClientRelativePosLastFrame = g_input->GetMouseClientRelativePosition();
@@ -65,6 +71,7 @@ void SudokuPlayer::EndFrame()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::Shutdown()
 {
 	g_input->m_charInputEvent.UnsubscribeMethod(this, &SudokuPlayer::OnCharDown);
@@ -73,6 +80,7 @@ void SudokuPlayer::Shutdown()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::BeginGame(SudokuGrid* grid)
 {
 	m_grid = grid;
@@ -83,6 +91,7 @@ void SudokuPlayer::BeginGame(SudokuGrid* grid)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::UpdateSelectedCell(float deltaSeconds)
 {
 	UNUSED(deltaSeconds)
@@ -118,7 +127,7 @@ void SudokuPlayer::UpdateSelectedCell(float deltaSeconds)
 	{
 		// deselect cell if it's already selected, then go into deselect mode
 		m_selectMode = !m_grid->IsCellSelected(cellCoords);
-		if (!g_input->IsKeyDown(KeyCode::SHIFT))
+		if (!g_input->IsKeyDown(KeyCode::Shift))
 		{
 			m_grid->DeselectAllCells();
 		}
@@ -142,6 +151,7 @@ void SudokuPlayer::UpdateSelectedCell(float deltaSeconds)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::UpdateArrowKeysSelectedCellMovement(float deltaSeconds)
 {
 	UNUSED(deltaSeconds)
@@ -150,22 +160,22 @@ void SudokuPlayer::UpdateArrowKeysSelectedCellMovement(float deltaSeconds)
 	static float timeOfLastArrowMove = 0.f;
 	if (GetCurrentTimeSecondsF() - timeOfLastArrowMove > minSecondsBetweenArrowMoves)
 	{
-		if (g_input->IsKeyDown(KeyCode::UP))
+		if (g_input->IsKeyDown(KeyCode::Up))
 		{
 			m_grid->MoveSelectedCell(EDirection::North);
 			timeOfLastArrowMove = GetCurrentTimeSecondsF();
 		}
-		if (g_input->IsKeyDown(KeyCode::DOWN))
+		if (g_input->IsKeyDown(KeyCode::Down))
 		{
 			m_grid->MoveSelectedCell(EDirection::South);
 			timeOfLastArrowMove = GetCurrentTimeSecondsF();
 		}
-		if (g_input->IsKeyDown(KeyCode::LEFT))
+		if (g_input->IsKeyDown(KeyCode::Left))
 		{
 			m_grid->MoveSelectedCell(EDirection::West);
 			timeOfLastArrowMove = GetCurrentTimeSecondsF();
 		}
-		if (g_input->IsKeyDown(KeyCode::RIGHT))
+		if (g_input->IsKeyDown(KeyCode::Right))
 		{
 			m_grid->MoveSelectedCell(EDirection::East);
 			timeOfLastArrowMove = GetCurrentTimeSecondsF();
@@ -175,6 +185,7 @@ void SudokuPlayer::UpdateArrowKeysSelectedCellMovement(float deltaSeconds)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::UpdateFill()
 {
 	if (g_input->WasMouseButtonJustPressed(2))
@@ -185,6 +196,7 @@ void SudokuPlayer::UpdateFill()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::SetCellsSelectedInLine(Vec2 const& start, Vec2 const& end, bool isSelected) const
 {
 	// Get all cells between last frame's and this frame's mouse positions
@@ -210,15 +222,17 @@ void SudokuPlayer::SetCellsSelectedInLine(Vec2 const& start, Vec2 const& end, bo
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuPlayer::GetColorPalette() const
 {
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuPlayer::OnCharDown(NamedProperties& args)
 {
-	if (g_input->IsKeyDown(KeyCode::CTRL))
+	if (g_input->IsKeyDown(KeyCode::Ctrl))
 	{
 		return false;
 	}
@@ -230,18 +244,19 @@ bool SudokuPlayer::OnCharDown(NamedProperties& args)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuPlayer::OnKeyDown(NamedProperties& args)
 {
 	int key = args.Get("Key", -1);
-	if (key == (int) KeyCode::DEL || key == (int) KeyCode::BACKSPACE)
+	if (key == (int) KeyCode::Delete || key == (int) KeyCode::Backspace)
 	{
 		(*m_grid).ClearSelectedCells();
 	}
-	if (key == 'Z' && g_input->IsKeyDown(KeyCode::CTRL))
+	if (key == 'Z' && g_input->IsKeyDown(KeyCode::Ctrl))
 	{
 		m_grid->UndoEvent();
 	}
-	if (key == 'Y' && g_input->IsKeyDown(KeyCode::CTRL))
+	if (key == 'Y' && g_input->IsKeyDown(KeyCode::Ctrl))
 	{
 		m_grid->RedoEvent();
 	}
@@ -250,6 +265,7 @@ bool SudokuPlayer::OnKeyDown(NamedProperties& args)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuPlayer::OnMouseWheelUp(NamedProperties& args)
 {
 	UNUSED(args)
@@ -259,6 +275,7 @@ bool SudokuPlayer::OnMouseWheelUp(NamedProperties& args)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuPlayer::OnMouseWheelDown(NamedProperties& args)
 {
 	UNUSED(args)

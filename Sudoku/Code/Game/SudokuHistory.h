@@ -17,6 +17,9 @@ public:
     void AddEvent(SudokuEvent const* event);
     void Undo(SudokuGrid* grid, int numStepsToRevert = 1);
     void Redo(SudokuGrid* grid, int numStepsToRestore = 1);
+
+protected:
+    
     void DeleteHistoryAfter(int index);
 
 protected:

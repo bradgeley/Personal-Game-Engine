@@ -29,7 +29,6 @@ Vec2 Font::AlignBottomLeft	= Vec2(0.f, 0.f);
 //----------------------------------------------------------------------------------------------------------------------
 void Font::SetRendererState() const
 {
-	g_renderer->SetModelConstants(ModelConstants());
 	g_renderer->SetCullMode(CullMode::None);
 	g_renderer->SetWindingOrder(Winding::CounterClockwise);
 	g_renderer->SetFillMode(FillMode::Solid);
@@ -115,6 +114,20 @@ float Font::GetKerning(uint8_t lhs, uint8_t rhs) const
 		}
 	}
 	return 0.f;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float Font::GetOffsetXOfCharIndex(std::string const& line, int index, float cellHeight, float aspectMultiplier) const
+{
+	float cursorOffsetX = 0.f;
+	for (int i = 0; i < index && i < (int) line.size(); ++i)
+	{
+		char c = line[i];
+		cursorOffsetX += m_glyphData[(uint8_t)c].m_xAdvance * cellHeight * aspectMultiplier;
+	}
+	return cursorOffsetX;
 }
 
 

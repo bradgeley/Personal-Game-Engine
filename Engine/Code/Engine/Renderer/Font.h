@@ -62,6 +62,8 @@ public:
     
     GlyphData const& GetGlyphData(uint8_t glyph) const;
     float GetKerning(uint8_t lhs, uint8_t rhs) const;
+
+    float GetOffsetXOfCharIndex(std::string const& line, int index, float cellHeight, float aspectMultiplier = 1.f) const;
     
     Texture* GetTexture() const;
     Shader* GetShader() const;

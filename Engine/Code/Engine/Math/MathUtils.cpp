@@ -45,6 +45,20 @@ float RadiansToDegrees(float radians)
 }
 
 
+int ClampInt(int value, int min, int max)
+{
+    if (value > max)
+    {
+        return max;
+    }
+    if (value < min)
+    {
+        return min;
+    }
+    return value;
+}
+
+
 float ClampF(float value, float min, float max)
 {
     if (value > max)

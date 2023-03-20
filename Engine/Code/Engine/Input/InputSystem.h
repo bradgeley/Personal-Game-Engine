@@ -90,6 +90,7 @@ private:
     KeyButtonState m_keyStates[MAX_KEYS];
     KeyButtonState m_mouseButtonStates[MAX_MOUSE_BUTTONS];
     int m_frameMouseWheelChange = 0;
+	float m_timeOfLastMouseClick = -1.f;
 };
 
 

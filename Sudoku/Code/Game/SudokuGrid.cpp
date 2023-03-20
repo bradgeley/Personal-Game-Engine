@@ -13,6 +13,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 SudokuGrid::SudokuGrid(SudokuGridConfig const& config) :
 	Grid2D<int>(config.m_startingState),
 	m_config(config),
@@ -24,16 +25,14 @@ SudokuGrid::SudokuGrid(SudokuGridConfig const& config) :
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 SudokuGrid::~SudokuGrid()
 {
-	delete m_staticGridVerts;
-	delete m_textVerts;
-	delete m_selectedCellVerts;
-	delete m_cellShadingVerts;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::Startup()
 {
 	m_textVerts = new VertexBuffer();
@@ -61,6 +60,7 @@ void SudokuGrid::Startup()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::Update(float deltaSeconds)
 {
 	UNUSED(deltaSeconds)
@@ -70,6 +70,7 @@ void SudokuGrid::Update(float deltaSeconds)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::Render() const
 {
 	g_renderer->ClearScreen(m_config.m_backgroundColor);
@@ -92,13 +93,22 @@ void SudokuGrid::Render() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::Shutdown()
 {
-	
+	delete m_staticGridVerts;
+	m_staticGridVerts = nullptr;
+	delete m_textVerts;
+	m_textVerts = nullptr;
+	delete m_selectedCellVerts;
+	m_selectedCellVerts = nullptr;
+	delete m_cellShadingVerts;
+	m_cellShadingVerts = nullptr;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::SelectCell(int index)
 {
 	if (IsValidIndex(index))
@@ -109,6 +119,7 @@ void SudokuGrid::SelectCell(int index)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::SelectCell(IntVec2 const& coords)
 {
 	if (IsValidCoords(coords))
@@ -120,6 +131,7 @@ void SudokuGrid::SelectCell(IntVec2 const& coords)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::DeselectCell(int index)
 {
 	if (IsValidIndex(index))
@@ -130,6 +142,7 @@ void SudokuGrid::DeselectCell(int index)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::DeselectCell(IntVec2 const& coords)
 {
 	if (IsValidCoords(coords))
@@ -141,6 +154,7 @@ void SudokuGrid::DeselectCell(IntVec2 const& coords)
 
  
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::DeselectAllCells()
 {
 	m_selectedCells.SetAll(false);
@@ -148,6 +162,7 @@ void SudokuGrid::DeselectAllCells()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 int SudokuGrid::CountSelectedCells() const
 {
 	int count = 0;
@@ -163,6 +178,7 @@ int SudokuGrid::CountSelectedCells() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 int SudokuGrid::GetSelectedCellIndex() const
 {
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
@@ -177,6 +193,7 @@ int SudokuGrid::GetSelectedCellIndex() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuGrid::IsCellSelected(int index) const
 {
 	return m_selectedCells.Get(index);
@@ -184,6 +201,7 @@ bool SudokuGrid::IsCellSelected(int index) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuGrid::IsCellSelected(IntVec2 const& coords) const
 {
 	return IsCellSelected(GetIndexForCoords(coords));
@@ -191,6 +209,7 @@ bool SudokuGrid::IsCellSelected(IntVec2 const& coords) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool SudokuGrid::IsGivenDigit(int index) const
 {
 	return m_config.m_startingState.Get(index) != 0;
@@ -198,6 +217,7 @@ bool SudokuGrid::IsGivenDigit(int index) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::MoveSelectedCell(EDirection direction)
 {
 	if (CountSelectedCells() != 1)
@@ -235,6 +255,7 @@ void SudokuGrid::MoveSelectedCell(EDirection direction)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::ClearSelectedCells()
 {
 	EnterCharacter(0);
@@ -242,6 +263,7 @@ void SudokuGrid::ClearSelectedCells()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::EnterCharacter(uint8_t character)
 {
 	SudokuEventChangeDigits* event = new SudokuEventChangeDigits();
@@ -270,9 +292,10 @@ void SudokuGrid::EnterCharacter(uint8_t character)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::FillSelectedCells()
 {
-	Rgba8& tint = m_config.m_colorPalette[m_currentColorPaletteIndex];
+	Rgba8& tint = m_config.m_cellShadingPalette[m_currentColorPaletteIndex];
 	
 	SudokuEventFillColor* event = new SudokuEventFillColor();
 	for (int i = 0; i < m_selectedCells.Size(); ++i)
@@ -300,6 +323,7 @@ void SudokuGrid::FillSelectedCells()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::SetCellFill(int index, Rgba8 const& tint)
 {
 	m_cellShading.Set(index, tint);
@@ -315,6 +339,7 @@ void SudokuGrid::SetCellFill(int index, Rgba8 const& tint)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::SetCellCharacter(int index, uint8_t character)
 {
 	Set(index, character);
@@ -322,20 +347,23 @@ void SudokuGrid::SetCellCharacter(int index, uint8_t character)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::IncrementColorPaletteIndex()
 {
-	m_currentColorPaletteIndex = IncrementIntInRange(m_currentColorPaletteIndex, 0, (int) m_config.m_colorPalette.size() - 1, true);
+	m_currentColorPaletteIndex = IncrementIntInRange(m_currentColorPaletteIndex, 0, (int) m_config.m_cellShadingPalette.size() - 1, true);
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::DecrementColorPaletteIndex()
 {
-	m_currentColorPaletteIndex = DecrementIntInRange(m_currentColorPaletteIndex, 0, (int) m_config.m_colorPalette.size() - 1, true);
+	m_currentColorPaletteIndex = DecrementIntInRange(m_currentColorPaletteIndex, 0, (int) m_config.m_cellShadingPalette.size() - 1, true);
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::UndoEvent()
 {
 	m_history.Undo(this);
@@ -343,6 +371,7 @@ void SudokuGrid::UndoEvent()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::RedoEvent()
 {
 	m_history.Redo(this);
@@ -350,6 +379,7 @@ void SudokuGrid::RedoEvent()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::UpdateTextVerts()
 {
 	m_textVerts->ClearVerts();
@@ -381,6 +411,7 @@ void SudokuGrid::UpdateTextVerts()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::UpdateSelectedCellVerts() const
 { 
 	m_selectedCellVerts->ClearVerts();
@@ -396,6 +427,7 @@ void SudokuGrid::UpdateSelectedCellVerts() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::AddVertsForSelectedCell(int index) const
 {
 	IntVec2 coords = GetCoordsForIndex(index);
@@ -480,14 +512,15 @@ void SudokuGrid::AddVertsForSelectedCell(int index) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SudokuGrid::RenderColorPalette(Vec2 const& origin) const
 {
 	VertexBuffer paletteVbo, textVbo;
 	auto& paletteVerts = paletteVbo.GetMutableVerts();
 	
-	for (int i = 0; i < (int) m_config.m_colorPalette.size(); ++i)
+	for (int i = 0; i < (int) m_config.m_cellShadingPalette.size(); ++i)
 	{
-		Rgba8 const& tint = m_config.m_colorPalette[i];
+		Rgba8 const& tint = m_config.m_cellShadingPalette[i];
 		Vec2 botLeft = origin + Vec2(0.f, (float) i * m_config.m_colorPaletteScale);
 		Vec2 topRight = botLeft + Vec2(m_config.m_colorPaletteScale, m_config.m_colorPaletteScale);
 		AABB2 box(botLeft, topRight);
