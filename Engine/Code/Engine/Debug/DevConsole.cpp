@@ -32,18 +32,22 @@ DevConsole::DevConsole(DevConsoleConfig const& config) : m_config(config)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class LoadTextureJob : public Job
+class LoadDevConsoleBackgroundImageJob : public Job
 {
 public:
     
-    LoadTextureJob(DevConsole* console, std::string const& path) : m_console(console), m_path(path) {}
+    LoadDevConsoleBackgroundImageJob(DevConsole* console, std::string const& path) : m_console(console), m_path(path) {}
     
     void Execute() override
     {
         m_texture = new Texture();
         if (m_image.LoadFromFile(m_path.data()))
         {
-            // TODO: Calling renderer functions from another thread is NOT safe
+            g_devConsole->LogSuccess(StringF("Loaded image: %s", m_path.data()));
+        }
+        else
+        {
+            g_devConsole->LogError(StringF("Failed to load image: %s", m_path.data()));
         }
     }
     
@@ -81,12 +85,20 @@ void DevConsole::Startup()
     for (auto& backgroundImage : m_config.m_backgroundImages)
     {
         std::string path = "Data/Images/" + backgroundImage;
-        LoadTextureJob* job = new LoadTextureJob(this, path);
+        LoadDevConsoleBackgroundImageJob* job = new LoadDevConsoleBackgroundImageJob(this, path);
         m_backgroundImageJobs.emplace_back(g_jobSystem->PostJob(job));
     }
 
     // Randomize the starting background image
     PickNextBackgroundImage();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsole::BeginFrame()
+{
+    m_shiftState.OnNextFrame();
 }
 
 
@@ -155,7 +167,32 @@ void DevConsole::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::AddLine(std::string const& line, Rgba8 const& tint)
 {
+    std::unique_lock lock(m_devConsoleMutex);
     m_log.AddLine({ line, tint });
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsole::LogSuccess(std::string const& line)
+{
+    AddLine(line, m_config.m_successTint);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsole::LogWarning(std::string const& line)
+{
+    AddLine(line, m_config.m_warningTint);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsole::LogError(std::string const& line)
+{
+    AddLine(line, m_config.m_errorTint);
 }
 
 
@@ -163,6 +200,7 @@ void DevConsole::AddLine(std::string const& line, Rgba8 const& tint)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::AddBackgroundImage(Texture* backgroundImage)
 {
+    std::unique_lock lock(m_devConsoleMutex);
     m_backgroundImages.emplace_back(backgroundImage);
 }
 
@@ -200,7 +238,11 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
         m_isShowing = !m_isShowing;
         return true;
     }
-    if (key == (uint8_t) KeyCode::Enter)
+    else if (key == (uint8_t) KeyCode::Shift)
+    {
+        m_shiftState.Press();
+    }
+    else if (key == (uint8_t) KeyCode::Enter)
     {
         m_inputLine.Enter();
     }
@@ -212,6 +254,14 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
     {
         m_inputLine.Backspace();
     }
+    else if (key == (uint8_t) KeyCode::Left)
+    {
+        m_inputLine.MoveCaret(-1, m_shiftState.IsPressed());
+    }
+    else if (key == (uint8_t) KeyCode::Right)
+    {
+        m_inputLine.MoveCaret(1, m_shiftState.IsPressed());
+    }
     
     return m_isShowing;
 }
@@ -221,7 +271,11 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool DevConsole::HandleKeyUp(NamedProperties& args)
 {
-    UNUSED(args)
+    int key = args.Get("Key", -1);
+    if (key == (uint8_t) KeyCode::Shift)
+    {
+        m_shiftState.Release();
+    }
     return m_isShowing;
 }
 
@@ -261,7 +315,13 @@ bool DevConsole::HandleMouseWheel(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool DevConsole::HandleCommandEntered(NamedProperties& args)
 {
-    UNUSED(args)
+    std::string command = args.Get<std::string>("Command", "");
+    ToLower(command);
+    TrimWhitespace(command);
+    if (command == "clear")
+    {
+        m_log.Clear();
+    }
     return true;
 }
 
@@ -271,7 +331,15 @@ bool DevConsole::HandleCommandEntered(NamedProperties& args)
 void DevConsole::UpdateBackgroundImage(float deltaSeconds)
 {
     // Try to complete jobs
-    g_jobSystem->CompleteJobs(m_backgroundImageJobs);
+    if (!m_backgroundImageJobs.empty())
+    {
+        g_jobSystem->CompleteJobs(m_backgroundImageJobs);
+    }
+
+    if (m_backgroundImages.size() <= 1)
+    {
+        return;
+    }
     
     m_backgroundAnimationSeconds += deltaSeconds;
     

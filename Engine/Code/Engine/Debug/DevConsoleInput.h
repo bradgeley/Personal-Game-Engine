@@ -21,12 +21,20 @@ public:
     void Update(float deltaSeconds);
     
     void InputChar(uint8_t character);
-    void RenderToBox(AABB2 const& box) const;
 
     void Delete();
     void Backspace();
     void Enter();
+    void MoveCaret(int offset, bool wantsToSelect = false);
+    bool IsSelecting() const;
+    
+    void RenderToBox(AABB2 const& box) const;
+    void RenderSelection(AABB2 const& box) const;
     void RenderCaret(AABB2 const& box) const;
+
+private:
+
+    void DeleteSelection();
 
 public:
 
@@ -36,6 +44,8 @@ protected:
 
     DevConsoleLog* m_outputLog = nullptr;
     int m_caretIndex = 0;
+    int m_selectionStartIndex = -1; // -1 means not selecting anything
     float m_caretAnimationFraction = 0.f;
     DevConsoleLine m_input;
 };
+

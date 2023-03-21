@@ -8,6 +8,8 @@
 #include <string>
 #include <mutex>
 
+#include "Engine/Input/KeyButtonState.h"
+
 
 
 struct JobID;
@@ -32,6 +34,9 @@ struct DevConsoleConfig
 	float m_backgroundImageSustainSeconds = 20.f;
 	float m_backgroundImageFadeSeconds = 1.f;
 	Rgba8 m_backgroundTint = Rgba8(0,0,0,225);
+	Rgba8 m_errorTint = Rgba8::Red;
+	Rgba8 m_warningTint = Rgba8::Yellow;
+	Rgba8 m_successTint = Rgba8::Green;
 	std::vector<std::string> m_backgroundImages;
 };
 
@@ -50,11 +55,15 @@ public:
 	virtual ~DevConsole() override = default;
 
 	void Startup() override;
+	void BeginFrame() override;
 	void Update(float deltaSeconds) override;
 	void Render() const override;
 	void Shutdown() override;
 
 	void AddLine(std::string const& line, Rgba8 const& tint = Rgba8::LightBlue);
+	void LogSuccess(std::string const& line);
+	void LogWarning(std::string const& line);
+	void LogError(std::string const& line);
 	void AddBackgroundImage(Texture* backgroundImage);
 
 protected:
@@ -88,8 +97,13 @@ protected:
 	
 	DevConsoleConfig const m_config;
 
+	std::mutex m_devConsoleMutex;
 	DevConsoleInput m_inputLine;
 	DevConsoleLog m_log;
+
+	// DevConsole completely steals window events, so we need to track our own key button states Otherwise, we'd have
+	// to have another way to disable the input system ONLY for the game but not DevConsole, which is awkward.
+	KeyButtonState m_shiftState; 
 
 	bool m_isShowing = false;
 	Camera m_camera;
@@ -106,3 +120,6 @@ private:
 	std::vector<JobID> m_backgroundImageJobs;
 	float m_backgroundAnimationSeconds = 0.f;
 };
+
+
+

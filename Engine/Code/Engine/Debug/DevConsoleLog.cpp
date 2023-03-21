@@ -35,7 +35,7 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
         AABB2 textBox = AABB2(box.mins.x, box.mins.y + yOffsetBot, box.maxs.x, box.mins.y + yOffsetTop);
         float squeeze = textBox.GetHeight() / 15.f;
         textBox.Squeeze(squeeze);
-        font->AddVertsForText2D(verts, textBox.mins, textBox.GetHeight(), "> " + m_log[lineIndex], m_log[lineIndex].m_tint);
+        font->AddVertsForText2D(verts, textBox.mins, textBox.GetHeight(), "> " + m_log[lineIndex].m_line, m_log[lineIndex].m_tint);
         
         --lineIndex;
         linesRendered += 1.f;
@@ -64,4 +64,13 @@ void DevConsoleLog::Scroll(int scrollAmount)
 void DevConsoleLog::SetNumLines(float numLines)
 {
     m_numLines = numLines;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsoleLog::Clear()
+{
+    m_scrollOffset = 0.f;
+    m_log.clear();
 }

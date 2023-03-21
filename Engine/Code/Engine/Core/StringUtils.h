@@ -14,6 +14,10 @@ typedef std::vector<std::string> Strings;
 //
 // Common functions for using strings
 //
+void ToLower(std::string& out_string);
+void ToUpper(std::string& out_string);
+void TrimWhitespace(std::string& out_string);
+bool IsWhitespace(char c);
 
 
 

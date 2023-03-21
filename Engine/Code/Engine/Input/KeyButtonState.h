@@ -6,8 +6,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct KeyButtonState
 {
-	friend class InputSystem;
-
 	KeyButtonState() = default;
 	~KeyButtonState() = default;
 
@@ -16,11 +14,11 @@ struct KeyButtonState
 	bool WasJustReleased() const;
 	void Reset();
 
-protected:
-
 	void Press();
 	void Release();
 	void OnNextFrame();
+
+protected:
 
 	bool m_isPressed = false;
 	bool m_wasPressedLastFrame = false;

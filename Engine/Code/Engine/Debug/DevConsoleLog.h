@@ -18,6 +18,7 @@ public:
     void RenderToBox(AABB2 const& box) const;
     void Scroll(int scrollAmount);
     void SetNumLines(float numLines);
+    void Clear();
 
 protected:
 

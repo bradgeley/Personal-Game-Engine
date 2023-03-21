@@ -221,6 +221,18 @@ float MaxF(float a, float b)
 }
 
 
+int Min(int a, int b)
+{
+	return a <= b ? a : b;
+}
+
+
+int Max(int a, int b)
+{
+	return a >= b ? a : b;
+}
+
+
 int FloorF(float x)
 {
     double d = (double) x;

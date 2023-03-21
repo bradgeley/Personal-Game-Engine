@@ -73,5 +73,7 @@ int IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
 int DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
 float MinF(float a, float b);
 float MaxF(float a, float b);
+int Min(int a, int b);
+int Max(int a, int b);
 int FloorF(float x);
 int CeilingF(float x);
