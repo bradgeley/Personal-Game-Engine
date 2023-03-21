@@ -40,16 +40,24 @@ public:
     
     void Execute() override
     {
-        Texture* result = new Texture();
-        Image image;
-        if (image.LoadFromFile(m_path.data()))
+        m_texture = new Texture();
+        if (m_image.LoadFromFile(m_path.data()))
         {
             // TODO: Calling renderer functions from another thread is NOT safe
-            //result->CreateFromImage(image);
         }
-        //m_console->AddBackgroundImage(result);
+    }
+    
+    bool NeedsComplete() override { return true; }
+    
+    void Complete() override
+    {
+        // Can only create textures in sync with the main thread
+        m_texture->CreateFromImage(m_image);
+        m_console->AddBackgroundImage(m_texture); 
     }
 
+    Image m_image;
+    Texture* m_texture = nullptr;
     DevConsole* m_console;
     std::string m_path;
 };
@@ -155,7 +163,6 @@ void DevConsole::AddLine(std::string const& line, Rgba8 const& tint)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::AddBackgroundImage(Texture* backgroundImage)
 {
-    std::unique_lock lock(m_backgroundImagesMutex);
     m_backgroundImages.emplace_back(backgroundImage);
 }
 
@@ -263,6 +270,9 @@ bool DevConsole::HandleCommandEntered(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::UpdateBackgroundImage(float deltaSeconds)
 {
+    // Try to complete jobs
+    g_jobSystem->CompleteJobs(m_backgroundImageJobs);
+    
     m_backgroundAnimationSeconds += deltaSeconds;
     
     switch (m_transitionState)
@@ -302,9 +312,6 @@ void DevConsole::DrawBackground() const
     AABB2 backgroundBox = m_camera.GetOrthoBounds2D();
     AddVertsForAABB2(backgroundVerts, backgroundBox, m_config.m_backgroundTint);
     g_renderer->DrawVertexBuffer(&backgroundVbo);
-    
-    // Lock mutex for async loading background images
-    std::unique_lock lock(m_backgroundImagesMutex);
     
     if (m_backgroundImages.empty())
     {
@@ -379,8 +386,6 @@ void DevConsole::DrawText() const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::PickNextBackgroundImage()
 {
-    std::unique_lock lock(m_backgroundImagesMutex);
-    
     if (m_backgroundImages.size() <= 1)
     {
         return;

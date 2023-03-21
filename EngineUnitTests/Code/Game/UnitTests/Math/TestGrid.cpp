@@ -1,37 +1,37 @@
 ﻿// Bradley Christensen - 2022
 #include "gtest/gtest.h"
 #include "Game/UnitTests/TestUtils.h"
-#include "Engine/Math/Grid.h"
+#include "Engine/Math/Grid2D.h"
 
 
 
-TEST(Grid, Construct)
+TEST(Grid2D, Construct)
 {
-    Grid gridOfFloats(5, 5, 1.f);
+    Grid2D gridOfFloats(5, 5, 1.f);
     for (auto& value : gridOfFloats.m_data)
     {
         EXPECT_FLOAT_EQ(value, 1.f);
     }
 
-    Grid gridOfInts(5, 5, 99);
+    Grid2D gridOfInts(5, 5, 99);
     for (auto& value : gridOfInts.m_data)
     {
         EXPECT_EQ(value, 99);
     }
 }
 
-TEST(Grid, Dims)
+TEST(Grid2D, Dims)
 {
-    Grid gridOfFloats(4, 5, 1.f);
+    Grid2D gridOfFloats(4, 5, 1.f);
     IntVec2 dims = gridOfFloats.GetDimensions();
     EXPECT_INTVEC2_EQf(dims, 4, 5);
     EXPECT_EQ(gridOfFloats.GetWidth(), 4);
     EXPECT_EQ(gridOfFloats.GetHeight(), 5);
 }
 
-TEST(Grid, Coords)
+TEST(Grid2D, Coords)
 {
-    Grid grid(420, 69, -69420.f);
+    Grid2D grid(420, 69, -69420.f);
     IntVec2 coords = grid.GetCoordsForIndex(100);
     EXPECT_INTVEC2_EQf(coords, 100, 0);
     IntVec2 coords2 = grid.GetCoordsForIndex(500);

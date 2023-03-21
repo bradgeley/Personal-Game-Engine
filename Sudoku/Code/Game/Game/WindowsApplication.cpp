@@ -41,8 +41,8 @@ void WindowsApplication::Startup()
 
     // Dev console before input, so it steals input from the window when active
     DevConsoleConfig dcConfig;
-    dcConfig.m_backgroundImageSustainSeconds = 0.f;
-    dcConfig.m_backgroundImageFadeSeconds = 0.5f;
+    dcConfig.m_backgroundImageSustainSeconds = 30.f;
+    dcConfig.m_backgroundImageFadeSeconds = 1.f;
     dcConfig.m_backgroundImages = { "DrStrange.jpg", "Hawkeye.jpg", "Thanos.jpg", "Avengers.png", "IronMan.jpg", "Jack1.jpg", "Jack2.jpg", "Thor.jpg" };
     g_devConsole = new DevConsole(dcConfig);
     m_engine->RegisterSubsystem(g_devConsole);

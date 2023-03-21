@@ -42,12 +42,20 @@ void JobSystem::Shutdown()
 {
     EngineSubsystem::Shutdown();
 
-    // Finish the job queue
+    // Finish the job queue, all jobs are now nullptr so no need to do any additional cleanup except the completed queue
     WaitForAllJobs();
 
     // Wake up all idle threads and tell them we aren't running anymore
     m_isRunning = false;
     m_jobPostedCondVar.notify_all();
+
+    // Delete completed jobs that never got claimed
+    for (auto& job : m_completedJobsQueue)
+    {
+        // job->Complete(); jobs should not get completed during shutdown, that's dangerous bc most game/engine state is probably gone by now
+        delete job;
+        job = nullptr;
+    }
     
     // Shut down all workers
     for (int i = 0; i < (int) m_workers.size(); ++i)
@@ -57,22 +65,11 @@ void JobSystem::Shutdown()
         delete worker;
         worker = nullptr;
     }
+    
+    m_completedJobsQueue.clear();
     m_workers.clear();
-
-    // Clear out job statuses
-    m_jobStatuses.clear();
-
-    // Clear out the job queue
-    for (int i = 0; i < (int) m_jobQueue.size(); ++i)
-    {
-        Job*& job = m_jobQueue[i];
-        if (job)
-        {
-            delete job;
-            job = nullptr;
-        }
-    }
     m_jobQueue.clear();
+    m_jobStatuses.clear();
 }
 
 
@@ -190,6 +187,54 @@ void JobSystem::WaitForAllJobs()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::CompleteJob(JobID id)
+{
+    std::unique_lock lock(m_completedJobsMutex);
+    for (int i = 0; i < (int) m_completedJobsQueue.size(); ++i)
+    {
+        auto& job = m_completedJobsQueue[i];
+        if (id == job->m_id)
+        {
+            job->Complete();
+            m_completedJobsQueue.erase(m_completedJobsQueue.begin() + i);
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void JobSystem::CompleteJobs(std::vector<JobID>& in_out_ids)
+{
+    int numCompleted = 0;
+    std::unique_lock lock(m_completedJobsMutex);
+    for (int i = (int) m_completedJobsQueue.size() - 1; i >= 0; --i)
+    {
+        Job*& job = m_completedJobsQueue[i];
+        for (int j = (int) in_out_ids.size() - 1; j >= 0; --j)
+        {
+            JobID& id = in_out_ids[j];
+            if (id == job->m_id)
+            {
+                job->Complete();
+                ++numCompleted;
+
+                delete job;
+                job = nullptr;
+                
+                m_completedJobsQueue.erase(m_completedJobsQueue.begin() + i);
+                in_out_ids.erase(in_out_ids.begin() + j);
+                break;
+            }
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 uint32_t JobSystem::GetNextJobUniqueID()
 {
     return g_jobSystem->m_nextJobID.fetch_add(1);
@@ -207,17 +252,29 @@ void JobSystem::WorkerLoop(JobWorker* worker)
         {
             // Execute the job
             job->Execute();
-
-            // Delete job data
+            
             uint32_t index = job->GetIndex();
-            delete job;
-            m_jobQueue[index] = nullptr;
+
+            bool needsComplete = job->NeedsComplete();
+            if (needsComplete)
+            {
+                // Send the job over to the completed queue to be picked up by the main thread on the next update
+                m_completedJobsMutex.lock();
+                m_completedJobsQueue.emplace_back(job);
+                m_completedJobsMutex.unlock();
+            }
+            else
+            {
+                // Just finish the job now
+                delete m_jobQueue[index];
+                m_jobQueue[index] = nullptr;
+            }
 
             // Open slot in the job queue
             m_jobSystemMutex.lock();
             m_jobStatuses[index] = JobStatus::Null;
             m_jobSystemMutex.unlock();
-        
+
             m_jobCompleteCondVar.notify_all();
         }
         else

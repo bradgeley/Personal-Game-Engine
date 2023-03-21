@@ -100,7 +100,6 @@ private:
 	float m_openCloseAnimationFraction = 1.f;
 	
 	// Background image state
-	mutable std::mutex m_backgroundImagesMutex;
 	EDevConsoleTransitionState m_transitionState = EDevConsoleTransitionState::Sustaining;
 	int m_currentBackgroundImageIndex = 0;
 	std::vector<Texture*> m_backgroundImages;

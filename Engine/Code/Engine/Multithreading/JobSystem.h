@@ -49,6 +49,10 @@ public:
     void WaitForJob(JobID jobID);
     void WaitForAllJobs();
 
+    // Call from the main thread to complete jobs that require it
+    bool CompleteJob(JobID id);
+    void CompleteJobs(std::vector<JobID>& in_out_ids);
+
     JobSystemConfig const m_config;
 
 protected:
@@ -77,6 +81,10 @@ protected:
     // Queued Jobs
     std::vector<Job*>       m_jobQueue;
     int                     m_numJobsReadyToStart = 0;
+
+    // Complete Jobs
+    std::mutex              m_completedJobsMutex;
+    std::vector<Job*>       m_completedJobsQueue;
     
     // Cond var that is notified when jobs are posted
     std::condition_variable m_jobPostedCondVar;
