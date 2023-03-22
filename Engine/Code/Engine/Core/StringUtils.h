@@ -14,6 +14,7 @@ typedef std::vector<std::string> Strings;
 //
 // Common functions for using strings
 //
+std::string GetToLower(std::string const& string);
 void ToLower(std::string& out_string);
 void ToUpper(std::string& out_string);
 void TrimWhitespace(std::string& out_string);

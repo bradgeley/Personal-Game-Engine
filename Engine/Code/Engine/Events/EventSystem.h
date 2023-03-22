@@ -1,9 +1,91 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
+#include "Engine/Core/EngineSubsystem.h"
+#include "EventSubscriber.h"
+#include "EventUtils.h"
+#include "Engine/Core/StringUtils.h"
+#include <unordered_map>
+#include <string>
+
+
+
+
+struct EventSubscriber;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 // THE Event System
 //
-// todo: implement for generic named events, if I want those :)
+extern class EventSystem* g_eventSystem;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct EventSystemConfig
+{
+    
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+class EventSystem : public EngineSubsystem
+{
+public:
+
+    EventSystem(EventSystemConfig config);
+
+    void FireEvent(std::string const& name);
+    void FireEvent(std::string const& name, NamedProperties& args);
+
+    bool IsEventBound(std::string const& name) const;
+
+    void SubscribeFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
+    void UnsubscribeFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
+
+    template<typename T_Object, typename T_Method>
+    void SubscribeMethod(std::string const& eventName, T_Object* object, T_Method method);
+
+    template<typename T_Object, typename T_Method>
+    void UnsubscribeMethod(std::string const& eventName, T_Object* object, T_Method method);
+
+protected:
+
+    EventSystemConfig const m_config;
+
+    std::unordered_map<std::string, std::vector<EventSubscriber*>> m_events;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T_Object, typename T_Method>
+void EventSystem::SubscribeMethod(std::string const& eventName, T_Object* object, T_Method method)
+{
+    std::string lowerName = GetToLower(eventName);
+    auto& subList = m_events[eventName];
+    subList.emplace_back(new EventSubscriberMethod(object, method));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T_Object, typename T_Method>
+void EventSystem::UnsubscribeMethod(std::string const& eventName, T_Object* object, T_Method method)
+{
+    std::string lowerName = GetToLower(eventName);
+    auto& subList = m_events[eventName];
+    for (auto it = subList.begin(); it != subList.end();)
+    {
+        auto& sub = *it;
+        if (sub->DoesObjectMatch(object) && sub->DoesFunctionMatch(&method))
+        {
+            it = subList.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}

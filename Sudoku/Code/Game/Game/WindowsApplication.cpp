@@ -8,6 +8,7 @@
 #include "Engine/Renderer/Window.h"
 #include "Game.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/Events/EventSystem.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
 
@@ -25,6 +26,10 @@ void WindowsApplication::Startup()
     m_engine = new Engine();
 
     g_rng = new RandomNumberGenerator();
+
+    EventSystemConfig eventSysConfig;
+    g_eventSystem = new EventSystem(eventSysConfig);
+    m_engine->RegisterSubsystem(g_eventSystem);
     
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Sudoku";

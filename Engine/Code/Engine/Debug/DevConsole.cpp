@@ -8,6 +8,7 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Events/EventSystem.h"
 #include "Engine/Input/InputUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
@@ -77,6 +78,8 @@ void DevConsole::Startup()
     g_window->m_mouseButtonDownEvent.SubscribeMethod(this, &DevConsole::HandleMouseButtonDown);
     g_window->m_mouseButtonUpEvent.SubscribeMethod(this, &DevConsole::HandleMouseButtonUp);
     g_window->m_mouseWheelEvent.SubscribeMethod(this, &DevConsole::HandleMouseWheel);
+
+    g_eventSystem->SubscribeMethod("clear", this, &DevConsole::Clear);
     
     m_inputLine.SetOutputLog(&m_log);
     m_inputLine.m_commandEntered.SubscribeMethod(this, &DevConsole::HandleCommandEntered);
@@ -150,6 +153,8 @@ void DevConsole::Shutdown()
     g_window->m_mouseButtonDownEvent.UnsubscribeMethod(this, &DevConsole::HandleMouseButtonDown);
     g_window->m_mouseButtonUpEvent.UnsubscribeMethod(this, &DevConsole::HandleMouseButtonUp);
     g_window->m_mouseWheelEvent.UnsubscribeMethod(this, &DevConsole::HandleMouseWheel);
+
+    g_eventSystem->UnsubscribeMethod("clear", this, &DevConsole::Clear);
     
     m_inputLine.m_commandEntered.UnsubscribeMethod(this, &DevConsole::HandleCommandEntered);
 
@@ -160,6 +165,16 @@ void DevConsole::Shutdown()
         bgdTex = nullptr;
     }
     m_backgroundImages.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool DevConsole::Clear(NamedProperties& args)
+{
+    UNUSED(args)
+    m_log.Clear();
+    return true;
 }
 
 
@@ -317,11 +332,7 @@ bool DevConsole::HandleCommandEntered(NamedProperties& args)
 {
     std::string command = args.Get<std::string>("Command", "");
     ToLower(command);
-    TrimWhitespace(command);
-    if (command == "clear")
-    {
-        m_log.Clear();
-    }
+    FireEvent(command);
     return true;
 }
 

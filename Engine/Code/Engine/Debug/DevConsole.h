@@ -60,6 +60,8 @@ public:
 	void Render() const override;
 	void Shutdown() override;
 
+	bool Clear(NamedProperties& args);
+
 	void AddLine(std::string const& line, Rgba8 const& tint = Rgba8::LightBlue);
 	void LogSuccess(std::string const& line);
 	void LogWarning(std::string const& line);
@@ -120,6 +122,8 @@ private:
 	std::vector<JobID> m_backgroundImageJobs;
 	float m_backgroundAnimationSeconds = 0.f;
 };
+
+
 
 
 
