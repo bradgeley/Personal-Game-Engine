@@ -51,6 +51,14 @@ void DevConsoleInput::InputChar(uint8_t character)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void DevConsoleInput::SetLine(std::string const& line)
+{
+    m_input.m_line = line;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::Delete()
 {
     if (IsSelecting())
@@ -84,6 +92,11 @@ void DevConsoleInput::Backspace()
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::Enter()
 {
+    if (m_input.m_line == "")
+    {
+        return;
+    }
+    
     m_outputLog->AddLine(m_input);
     
     NamedProperties args;

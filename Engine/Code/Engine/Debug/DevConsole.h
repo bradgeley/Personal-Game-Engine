@@ -1,19 +1,19 @@
 // Bradley Christensen - 2023
 #pragma once
-#include "DevConsoleInput.h"
-#include "DevConsoleLog.h"
 #include "Engine/Core/EngineSubsystem.h"
+#include "Engine/Input/KeyButtonState.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Rgba8.h"
+#include "DevConsoleCommandHistory.h"
+#include "DevConsoleInput.h"
+#include "DevConsoleLog.h"
 #include <string>
 #include <mutex>
 
-#include "Engine/Input/KeyButtonState.h"
 
 
-
-struct JobID;
 class Texture;
+struct JobID;
 struct NamedProperties;
 
 
@@ -28,6 +28,7 @@ extern class DevConsole* g_devConsole;
 //----------------------------------------------------------------------------------------------------------------------
 struct DevConsoleConfig
 {
+	// All visual toggles for dev console
 	float m_inputLineThickness = 30.f;
 	float m_logNumLines = 40.5f;
 	float m_openCloseAnimationSpeed = 2.f;
@@ -46,6 +47,8 @@ struct DevConsoleConfig
 // Dev Console
 //
 // Debug interface for calling functions in the game and engine.
+//
+// Register as a subsystem after the Window, but before the InputSystem
 //
 class DevConsole : public EngineSubsystem
 {
@@ -70,7 +73,8 @@ public:
 
 protected:
 
-	// Event Handlers - steals input from the game if the dev console is registered as a subsystem BEFORE InputSystem
+	// Event Handlers
+	// - steals input from the game if the dev console is registered as a subsystem BEFORE InputSystem
 	bool HandleChar(NamedProperties& args);
 	bool HandleKeyDown(NamedProperties& args);
 	bool HandleKeyUp(NamedProperties& args);
@@ -84,11 +88,12 @@ private:
 	void UpdateBackgroundImage(float deltaSeconds);
 	void DrawBackground() const;
 	void DrawText() const;
+	void DrawCommandHistory() const;
 	void PickNextBackgroundImage();
 
 private:
 
-	enum class EDevConsoleTransitionState
+	enum class EDevConsoleBGIState // BGI: Background Image
 	{
 		FadingIn,
 		FadingOut,
@@ -102,6 +107,7 @@ protected:
 	std::mutex m_devConsoleMutex;
 	DevConsoleInput m_inputLine;
 	DevConsoleLog m_log;
+	DevConsoleCommandHistory m_commandHistory;
 
 	// DevConsole completely steals window events, so we need to track our own key button states Otherwise, we'd have
 	// to have another way to disable the input system ONLY for the game but not DevConsole, which is awkward.
@@ -116,7 +122,7 @@ private:
 	float m_openCloseAnimationFraction = 1.f;
 	
 	// Background image state
-	EDevConsoleTransitionState m_transitionState = EDevConsoleTransitionState::Sustaining;
+	EDevConsoleBGIState m_transitionState = EDevConsoleBGIState::Sustaining;
 	int m_currentBackgroundImageIndex = 0;
 	std::vector<Texture*> m_backgroundImages;
 	std::vector<JobID> m_backgroundImageJobs;

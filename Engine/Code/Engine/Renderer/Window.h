@@ -39,6 +39,7 @@ public:
     void* GetHWND() const;
     int GetWidth() const;
     int GetHeight() const;
+    float GetAspect() const;
     IntVec2 const& GetDimensions() const;
 
     IntVec2 GetMouseClientPosition(bool originBottomLeft = true) const;

@@ -171,6 +171,7 @@
     <ClCompile Include="DataStructures\ThreadSafeQueue.cpp" />
     <ClCompile Include="Debug\DebugDrawUtils.cpp" />
     <ClCompile Include="Debug\DevConsole.cpp" />
+    <ClCompile Include="Debug\DevConsoleCommandHistory.cpp" />
     <ClCompile Include="Debug\DevConsoleInput.cpp" />
     <ClCompile Include="Debug\DevConsoleLine.cpp" />
     <ClCompile Include="Debug\DevConsoleLog.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="DataStructures\ThreadSafeQueue.h" />
     <ClInclude Include="Debug\DebugDrawUtils.h" />
     <ClInclude Include="Debug\DevConsole.h" />
+    <ClInclude Include="Debug\DevConsoleCommandHistory.h" />
     <ClInclude Include="Debug\DevConsoleInput.h" />
     <ClInclude Include="Debug\DevConsoleLine.h" />
     <ClInclude Include="Debug\DevConsoleLog.h" />

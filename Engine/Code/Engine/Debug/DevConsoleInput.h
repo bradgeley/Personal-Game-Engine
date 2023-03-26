@@ -21,6 +21,7 @@ public:
     void Update(float deltaSeconds);
     
     void InputChar(uint8_t character);
+    void SetLine(std::string const& line);
 
     void Delete();
     void Backspace();

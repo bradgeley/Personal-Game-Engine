@@ -68,6 +68,14 @@ int Window::GetHeight() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float Window::GetAspect() const
+{
+    return (float) GetWidth() / (float) GetHeight();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 IntVec2 const& Window::GetDimensions() const
 {
     return m_dimensions;

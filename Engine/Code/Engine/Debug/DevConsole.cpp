@@ -85,6 +85,8 @@ void DevConsole::Startup()
     m_inputLine.m_commandEntered.SubscribeMethod(this, &DevConsole::HandleCommandEntered);
     m_log.SetNumLines(m_config.m_logNumLines);
 
+    m_camera.SetOrthoBounds(Vec3::ZeroVector, Vec3(g_window->GetAspect(), 1.f, 1.f));
+
     for (auto& backgroundImage : m_config.m_backgroundImages)
     {
         std::string path = "Data/Images/" + backgroundImage;
@@ -140,6 +142,11 @@ void DevConsole::Render() const
 
     DrawBackground();
     DrawText();
+
+    if (m_commandHistory.IsActive())
+    {
+        DrawCommandHistory();
+    }
 }
 
 
@@ -277,6 +284,16 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
     {
         m_inputLine.MoveCaret(1, m_shiftState.IsPressed());
     }
+    else if (key == (uint8_t) KeyCode::Up)
+    {
+        m_commandHistory.ArrowUp();
+        m_inputLine.SetLine(m_commandHistory.GetSelectedCommand());
+    }
+    else if (key == (uint8_t) KeyCode::Down)
+    {
+        m_commandHistory.ArrowDown();
+        m_inputLine.SetLine(m_commandHistory.GetSelectedCommand());
+    }
     
     return m_isShowing;
 }
@@ -331,8 +348,14 @@ bool DevConsole::HandleMouseWheel(NamedProperties& args)
 bool DevConsole::HandleCommandEntered(NamedProperties& args)
 {
     std::string command = args.Get<std::string>("Command", "");
+
+    // Add to command history
+    m_commandHistory.OnCommandEntered(command);
+
+    // Fire the event
     ToLower(command);
     FireEvent(command);
+    
     return true;
 }
 
@@ -356,26 +379,26 @@ void DevConsole::UpdateBackgroundImage(float deltaSeconds)
     
     switch (m_transitionState)
     {
-    case EDevConsoleTransitionState::Sustaining:
+    case EDevConsoleBGIState::Sustaining:
         if (m_backgroundAnimationSeconds > m_config.m_backgroundImageSustainSeconds)
         {
             m_backgroundAnimationSeconds -= m_config.m_backgroundImageSustainSeconds;
-            m_transitionState = EDevConsoleTransitionState::FadingOut;
+            m_transitionState = EDevConsoleBGIState::FadingOut;
         }
         break;
-    case EDevConsoleTransitionState::FadingIn:
+    case EDevConsoleBGIState::FadingIn:
         if (m_backgroundAnimationSeconds > m_config.m_backgroundImageFadeSeconds)
         {
             m_backgroundAnimationSeconds -= m_config.m_backgroundImageFadeSeconds;
-            m_transitionState = EDevConsoleTransitionState::Sustaining;
+            m_transitionState = EDevConsoleBGIState::Sustaining;
         }
         break;
-    case EDevConsoleTransitionState::FadingOut:
+    case EDevConsoleBGIState::FadingOut:
         if (m_backgroundAnimationSeconds > m_config.m_backgroundImageFadeSeconds)
         {
             m_backgroundAnimationSeconds -= m_config.m_backgroundImageFadeSeconds;
             PickNextBackgroundImage();
-            m_transitionState = EDevConsoleTransitionState::FadingIn;
+            m_transitionState = EDevConsoleBGIState::FadingIn;
         }
         break;
     }
@@ -401,10 +424,10 @@ void DevConsole::DrawBackground() const
     float alpha = 1.f;
     switch (m_transitionState)
     {
-    case EDevConsoleTransitionState::FadingIn:
+    case EDevConsoleBGIState::FadingIn:
         alpha = m_backgroundAnimationSeconds / m_config.m_backgroundImageFadeSeconds;
         break;
-    case EDevConsoleTransitionState::FadingOut:
+    case EDevConsoleBGIState::FadingOut:
         alpha = (m_config.m_backgroundImageFadeSeconds - m_backgroundAnimationSeconds) / m_config.m_backgroundImageFadeSeconds;
         break;
     default:
@@ -417,16 +440,17 @@ void DevConsole::DrawBackground() const
         alpha = 1.f;
     }
     
-
     
     VertexBuffer imageVBO;    
     auto& imageVerts = imageVBO.GetMutableVerts();
     auto imageDims = currentBkg->GetDimensions();
     float imageAspect = imageDims.GetAspect();
     AABB2 imageBox = backgroundBox;
-    if (imageAspect < 1.f)
+    
+    float windowAspect = g_window->GetAspect();
+    if (imageAspect < windowAspect)
     {
-        imageBox.mins.x += (1.f - imageAspect);
+        imageBox.mins.x += (windowAspect - imageAspect);
         AABB2 fillerBox = backgroundBox;
         fillerBox.maxs.x = imageBox.mins.x;
         AddVertsForAABB2(imageVerts, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 0.f, 0.f, 1.f));
@@ -434,11 +458,12 @@ void DevConsole::DrawBackground() const
     else
     {
         // high aspect images don't look nearly as good (lame)
-        imageBox.maxs.y += (1.f - imageAspect);
+        imageBox.maxs.y += (windowAspect - imageAspect);
         AABB2 fillerBox = backgroundBox;
         fillerBox.mins.y = imageBox.maxs.y;
         AddVertsForAABB2(imageVerts, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 1.f, 1.f, 1.f));
     }
+    
     AddVertsForAABB2(imageVerts, imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
     g_renderer->BindTexture(currentBkg);
     g_renderer->BindShader(nullptr);
@@ -458,6 +483,19 @@ void DevConsole::DrawText() const
     Vec2 logMaxs = m_camera.GetOrthoBounds2D().maxs;
     AABB2 logBox(logMins, logMaxs);
     m_log.RenderToBox(logBox);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsole::DrawCommandHistory() const
+{
+    float relativeLineThickness = m_config.m_inputLineThickness / (float) g_window->GetHeight();
+    AABB2 inputLineBox(m_camera.GetOrthoBounds2D().mins, m_camera.GetOrthoBounds2D().mins + Vec2(1.f, relativeLineThickness));
+    AABB2 historyBox(inputLineBox.GetTopLeft(), inputLineBox.maxs + Vec2(0.f, 0.3f));
+    historyBox.Squeeze(0.005f);
+    
+    m_commandHistory.RenderToBox(historyBox);
 }
 
 
