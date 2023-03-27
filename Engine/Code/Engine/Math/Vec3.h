@@ -34,6 +34,13 @@ public:
     void Normalize();
     Vec3 GetNormalized() const;
 
+    float GetLowest() const;
+    float GetLowestXY() const;
+    float GetHighest() const;
+    float GetHighestXY() const;
+
+public:
+
     // Component-wise const operators
     Vec3 operator-() const;
 

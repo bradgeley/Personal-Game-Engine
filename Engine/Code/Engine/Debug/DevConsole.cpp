@@ -72,6 +72,8 @@ public:
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::Startup()
 {
+    LoadCommandHistory();
+    
     g_window->m_charInputEvent.SubscribeMethod(this, &DevConsole::HandleChar);
     g_window->m_keyDownEvent.SubscribeMethod(this, &DevConsole::HandleKeyDown);
     g_window->m_keyUpEvent.SubscribeMethod(this, &DevConsole::HandleKeyUp);
@@ -91,7 +93,7 @@ void DevConsole::Startup()
     {
         std::string path = "Data/Images/" + backgroundImage;
         LoadDevConsoleBackgroundImageJob* job = new LoadDevConsoleBackgroundImageJob(this, path);
-        m_backgroundImageJobs.emplace_back(g_jobSystem->PostJob(job));
+        m_backgroundImageLoadingJobs.emplace_back(g_jobSystem->PostJob(job));
     }
 
     // Randomize the starting background image
@@ -154,6 +156,8 @@ void DevConsole::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::Shutdown()
 {
+    SaveCommandHistory();
+    
     g_window->m_charInputEvent.UnsubscribeMethod(this, &DevConsole::HandleChar);
     g_window->m_keyDownEvent.UnsubscribeMethod(this, &DevConsole::HandleKeyDown);
     g_window->m_keyUpEvent.UnsubscribeMethod(this, &DevConsole::HandleKeyUp);
@@ -187,10 +191,29 @@ bool DevConsole::Clear(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool DevConsole::Help(NamedProperties& args)
+{
+    UNUSED(args)
+    
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsole::AddLine(std::string const& line, Rgba8 const& tint)
 {
     std::unique_lock lock(m_devConsoleMutex);
     m_log.AddLine({ line, tint });
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsole::AddBackgroundImage(Texture* backgroundImage)
+{
+    std::unique_lock lock(m_devConsoleMutex);
+    m_backgroundImages.emplace_back(backgroundImage);
 }
 
 
@@ -220,15 +243,6 @@ void DevConsole::LogError(std::string const& line)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void DevConsole::AddBackgroundImage(Texture* backgroundImage)
-{
-    std::unique_lock lock(m_devConsoleMutex);
-    m_backgroundImages.emplace_back(backgroundImage);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 bool DevConsole::HandleChar(NamedProperties& args)
 {
     int character = args.Get("Char", -1);
@@ -239,6 +253,11 @@ bool DevConsole::HandleChar(NamedProperties& args)
 
     if (m_isShowing)
     {
+        if (m_commandHistory.IsActive())
+        {
+            m_commandHistory.Close();
+        }
+        
         // Only let you type these characters
         if (character >= 32 && character <= 126)
         {
@@ -260,13 +279,20 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
         m_isShowing = !m_isShowing;
         return true;
     }
-    else if (key == (uint8_t) KeyCode::Shift)
+
+    if (!m_isShowing)
+    {
+        return false;
+    }
+    
+    if (key == (uint8_t) KeyCode::Shift)
     {
         m_shiftState.Press();
     }
     else if (key == (uint8_t) KeyCode::Enter)
     {
         m_inputLine.Enter();
+        m_commandHistory.Close();
     }
     else if (key == (uint8_t) KeyCode::Delete)
     {
@@ -288,11 +314,22 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
     {
         m_commandHistory.ArrowUp();
         m_inputLine.SetLine(m_commandHistory.GetSelectedCommand());
+        m_inputLine.MoveCaretToEndOfLine();
     }
     else if (key == (uint8_t) KeyCode::Down)
     {
         m_commandHistory.ArrowDown();
         m_inputLine.SetLine(m_commandHistory.GetSelectedCommand());
+        m_inputLine.MoveCaretToEndOfLine();
+    }
+    else if (key == (uint8_t) KeyCode::Tab)
+    {
+        std::string guess = GuessCommandInput(m_inputLine.GetLine());
+        if (!guess.empty())
+        {
+            m_inputLine.SetLine(guess);
+            m_inputLine.MoveCaretToEndOfLine();
+        }
     }
     
     return m_isShowing;
@@ -348,13 +385,19 @@ bool DevConsole::HandleMouseWheel(NamedProperties& args)
 bool DevConsole::HandleCommandEntered(NamedProperties& args)
 {
     std::string command = args.Get<std::string>("Command", "");
+    Strings commandWords = SplitStringOnDelimeter(command, ' ');
 
     // Add to command history
-    m_commandHistory.OnCommandEntered(command);
+    m_commandHistory.AddCommand(command);
 
     // Fire the event
-    ToLower(command);
-    FireEvent(command);
+    std::string eventName = GetToLower(commandWords[0]);
+    int numResponders = FireEvent(eventName);
+    
+    if (numResponders == 0)
+    {
+        LogWarning(StringF("No response to event: %s", eventName.data()));
+    }
     
     return true;
 }
@@ -365,9 +408,9 @@ bool DevConsole::HandleCommandEntered(NamedProperties& args)
 void DevConsole::UpdateBackgroundImage(float deltaSeconds)
 {
     // Try to complete jobs
-    if (!m_backgroundImageJobs.empty())
+    if (!m_backgroundImageLoadingJobs.empty())
     {
-        g_jobSystem->CompleteJobs(m_backgroundImageJobs);
+        g_jobSystem->CompleteJobs(m_backgroundImageLoadingJobs);
     }
 
     if (m_backgroundImages.size() <= 1)
@@ -421,25 +464,7 @@ void DevConsole::DrawBackground() const
     }
 
     Texture* currentBkg = m_backgroundImages[m_currentBackgroundImageIndex];
-    float alpha = 1.f;
-    switch (m_transitionState)
-    {
-    case EDevConsoleBGIState::FadingIn:
-        alpha = m_backgroundAnimationSeconds / m_config.m_backgroundImageFadeSeconds;
-        break;
-    case EDevConsoleBGIState::FadingOut:
-        alpha = (m_config.m_backgroundImageFadeSeconds - m_backgroundAnimationSeconds) / m_config.m_backgroundImageFadeSeconds;
-        break;
-    default:
-        break;
-    }
-
-    if (m_backgroundImages.size() == 1)
-    {
-        // Hammer over animation stuff if there's only one image available
-        alpha = 1.f;
-    }
-    
+    float alpha = GetBackgroundImageAlpha();
     
     VertexBuffer imageVBO;    
     auto& imageVerts = imageVBO.GetMutableVerts();
@@ -513,4 +538,90 @@ void DevConsole::PickNextBackgroundImage()
     {
         m_currentBackgroundImageIndex = g_rng->GetRandomIntInRange(0, (int) m_backgroundImages.size() - 1);
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float DevConsole::GetBackgroundImageAlpha() const
+{
+    float alpha = 1.f;
+    
+    switch (m_transitionState)
+    {
+    case EDevConsoleBGIState::FadingIn:
+        alpha = m_backgroundAnimationSeconds / m_config.m_backgroundImageFadeSeconds;
+        break;
+    case EDevConsoleBGIState::FadingOut:
+        alpha = (m_config.m_backgroundImageFadeSeconds - m_backgroundAnimationSeconds) / m_config.m_backgroundImageFadeSeconds;
+        break;
+    default:
+        break;
+    }
+
+    if (m_backgroundImages.size() == 1)
+    {
+        // Hammer over animation stuff if there's only one image available
+        alpha = 1.f;
+    }
+
+    return alpha;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+std::string DevConsole::GuessCommandInput(std::string const& input) const
+{
+    int bestMatching = 0;
+    std::string bestGuess = "";
+    
+    int numInputChars = (int) input.size();
+
+    std::string inputLower = GetToLower(input);
+    
+    Strings allEvents = g_eventSystem->GetAllEventNames();
+    for (auto& event : allEvents)
+    {
+        int numEventChars = (int) event.size();
+        
+        int numMatchingChars = 0;
+        for (int i = 0; i < Min(numEventChars, numInputChars); ++i)
+        {
+            if (inputLower[i] == event[i])
+            {
+                ++numMatchingChars;
+            }
+            if (numMatchingChars > bestMatching)
+            {
+                bestMatching = numMatchingChars;
+                bestGuess = event;
+            }
+            if (inputLower[i] != event[i])
+            {
+                break;
+            }
+        }
+    }
+    
+    return bestGuess;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsole::LoadCommandHistory()
+{
+    if (m_commandHistory.LoadFrom(m_config.m_commandHistoryFilePath))
+    {
+        LogSuccess("Loaded command history.");
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsole::SaveCommandHistory() const
+{
+    m_commandHistory.SaveTo(m_config.m_commandHistoryFilePath);
 }

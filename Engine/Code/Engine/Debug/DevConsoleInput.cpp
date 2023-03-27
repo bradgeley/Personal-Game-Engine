@@ -51,8 +51,18 @@ void DevConsoleInput::InputChar(uint8_t character)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+std::string DevConsoleInput::GetLine()
+{
+    return m_input.m_line;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::SetLine(std::string const& line)
 {
+    m_caretIndex = 0;
+    m_selectionStartIndex = -1;
     m_input.m_line = line;
 }
 
@@ -160,6 +170,14 @@ void DevConsoleInput::MoveCaret(int offset, bool wantsToSelect)
 bool DevConsoleInput::IsSelecting() const
 {
     return m_selectionStartIndex != -1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsoleInput::MoveCaretToEndOfLine()
+{
+    m_caretIndex = (int) m_input.m_line.size();
 }
 
 

@@ -14,22 +14,27 @@ class DevConsoleCommandHistory
 {
 public:
 
-    void OnCommandEntered(std::string const& command);
+    void AddCommand(std::string const& command);
     std::string GetSelectedCommand() const;
 
+    void Close();
     bool IsActive() const;
     void RenderToBox(AABB2 const& box) const;
     
     void ArrowUp();
     void ArrowDown();
-    void Scroll(int scrollAmount);
-    void SetNumLines(float numLines);
     void Clear();
+
+    bool LoadFrom(std::string const& filepath);
+    bool SaveTo(std::string const& filepath) const;
+
+private:
+
+    bool TryMoveCommandToBottomOfList(std::string const& command);
 
 protected:
 
-    float m_numLines = 10.5f;
-    float m_scrollOffset = 0.f;
-    int m_selectedLineIndex = -1;
     std::vector<std::string> m_log;
+    int8_t m_maxHistorySize = 10;
+    int8_t m_selectedLineIndex = -1;
 };

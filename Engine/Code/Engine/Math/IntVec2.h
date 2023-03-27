@@ -25,6 +25,9 @@ public:
 	explicit IntVec2(int x, int y);
 	explicit IntVec2(Vec2 const& fromVec2);
 
+    int GetLowest() const;
+    int GetHighest() const;
+
 public:
 
     float GetAspect() const;

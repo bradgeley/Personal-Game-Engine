@@ -15,5 +15,5 @@ typedef bool (*EventCallbackFunction)(NamedProperties& args);
 //----------------------------------------------------------------------------------------------------------------------
 void SubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
 void UnsubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
-void FireEvent(std::string const& eventName, NamedProperties& args);
-void FireEvent(std::string const& eventName);
+int FireEvent(std::string const& eventName, NamedProperties& args);
+int FireEvent(std::string const& eventName);

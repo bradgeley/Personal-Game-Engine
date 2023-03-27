@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
+#include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Renderer/EngineConstantBuffers.h"
 #include "Engine/Renderer/RendererSettings.h"
 #include "Engine/Renderer/D3D11Utils.h"
@@ -86,6 +87,11 @@ public:
     
     ID3D11BlendState* CreateBlendState(D3D11_BLEND srcFactor, D3D11_BLEND dstFactor, D3D11_BLEND_OP op);
 
+public:
+
+    // Events
+    bool DebugDrawVertexBuffers(NamedProperties& args);
+
 private:
 
     void Draw(int vertexCount, int vertexOffset);
@@ -133,6 +139,9 @@ private:
     void UpdateTexture(bool force = false);
     void UpdateShader(bool force = false);
 
+    void AddDevConsoleCommands();
+    void RemoveDevConsoleCommands();
+
 private:
 
     RendererConfig const m_config;
@@ -159,10 +168,12 @@ private:
 
     // Renderer Pipeline State
     // todo: add more things to this
+    Camera const* m_currentCamera = nullptr;
     RendererSettings m_settings;
     RendererSettings m_dirtySettings;
 
 #if defined(_DEBUG)
+    bool m_debugDrawVertexBuffers = false;
     void* m_debugModule = nullptr;
     IDXGIDebug* m_debug = nullptr;
 #endif

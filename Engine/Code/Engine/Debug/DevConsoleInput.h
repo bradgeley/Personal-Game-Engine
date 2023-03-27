@@ -1,9 +1,8 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
 #include "Engine/Debug/DevConsoleLine.h"
-#include <string>
-
 #include "Engine/Events/EventDelegate.h"
+#include <string>
 
 
 
@@ -21,6 +20,7 @@ public:
     void Update(float deltaSeconds);
     
     void InputChar(uint8_t character);
+    std::string GetLine();
     void SetLine(std::string const& line);
 
     void Delete();
@@ -28,6 +28,7 @@ public:
     void Enter();
     void MoveCaret(int offset, bool wantsToSelect = false);
     bool IsSelecting() const;
+    void MoveCaretToEndOfLine();
     
     void RenderToBox(AABB2 const& box) const;
     void RenderSelection(AABB2 const& box) const;

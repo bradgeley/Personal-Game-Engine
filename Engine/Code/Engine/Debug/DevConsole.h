@@ -28,6 +28,8 @@ extern class DevConsole* g_devConsole;
 //----------------------------------------------------------------------------------------------------------------------
 struct DevConsoleConfig
 {
+	std::string m_commandHistoryFilePath = "Temp/Debug/DevConsoleCommandHistory.txt";
+	
 	// All visual toggles for dev console
 	float m_inputLineThickness = 30.f;
 	float m_logNumLines = 40.5f;
@@ -55,7 +57,6 @@ class DevConsole : public EngineSubsystem
 public:
 
 	DevConsole(DevConsoleConfig const& config);
-	virtual ~DevConsole() override = default;
 
 	void Startup() override;
 	void BeginFrame() override;
@@ -64,12 +65,21 @@ public:
 	void Shutdown() override;
 
 	bool Clear(NamedProperties& args);
+	bool Help(NamedProperties& args);
 
 	void AddLine(std::string const& line, Rgba8 const& tint = Rgba8::LightBlue);
+	void AddBackgroundImage(Texture* backgroundImage);
+	
 	void LogSuccess(std::string const& line);
 	void LogWarning(std::string const& line);
 	void LogError(std::string const& line);
-	void AddBackgroundImage(Texture* backgroundImage);
+
+	template<typename ...Args>
+	void LogSuccessF(char const* format, Args... args);
+	template<typename ...Args>
+	void LogWarningF(char const* format, Args... args);
+	template<typename ...Args>
+	void LogErrorF(char const* format, Args... args);
 
 protected:
 
@@ -90,6 +100,11 @@ private:
 	void DrawText() const;
 	void DrawCommandHistory() const;
 	void PickNextBackgroundImage();
+	float GetBackgroundImageAlpha() const;
+	std::string GuessCommandInput(std::string const& input) const;
+	
+	void LoadCommandHistory();
+	void SaveCommandHistory() const;
 
 private:
 
@@ -124,10 +139,43 @@ private:
 	// Background image state
 	EDevConsoleBGIState m_transitionState = EDevConsoleBGIState::Sustaining;
 	int m_currentBackgroundImageIndex = 0;
-	std::vector<Texture*> m_backgroundImages;
-	std::vector<JobID> m_backgroundImageJobs;
 	float m_backgroundAnimationSeconds = 0.f;
+	std::vector<Texture*> m_backgroundImages;
+	std::vector<JobID> m_backgroundImageLoadingJobs;
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename ... Args>
+void DevConsole::LogSuccessF(char const* format, Args... args)
+{
+	char buffer[1024];
+	snprintf(buffer, sizeof(buffer), format, args...);
+	AddLine(buffer, m_config.m_successTint);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename ... Args>
+void DevConsole::LogWarningF(char const* format, Args... args)
+{
+	char buffer[1024];
+	snprintf(buffer, sizeof(buffer), format, args...);
+	AddLine(buffer, m_config.m_warningTint);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename ... Args>
+void DevConsole::LogErrorF(char const* format, Args... args)
+{
+	char buffer[1024];
+	snprintf(buffer, sizeof(buffer), format, args...);
+	AddLine(buffer, m_config.m_errorTint);
+}
 
 
 

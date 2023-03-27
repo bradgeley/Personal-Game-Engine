@@ -36,8 +36,9 @@ public:
 
     EventSystem(EventSystemConfig config);
 
-    void FireEvent(std::string const& name);
-    void FireEvent(std::string const& name, NamedProperties& args);
+    // Returns the number of subscribers that responded to the FireEvent call
+    int FireEvent(std::string const& name);
+    int FireEvent(std::string const& name, NamedProperties& args);
 
     bool IsEventBound(std::string const& name) const;
 
@@ -49,6 +50,8 @@ public:
 
     template<typename T_Object, typename T_Method>
     void UnsubscribeMethod(std::string const& eventName, T_Object* object, T_Method method);
+
+    Strings GetAllEventNames() const;
 
 protected:
 
@@ -64,7 +67,7 @@ template <typename T_Object, typename T_Method>
 void EventSystem::SubscribeMethod(std::string const& eventName, T_Object* object, T_Method method)
 {
     std::string lowerName = GetToLower(eventName);
-    auto& subList = m_events[eventName];
+    auto& subList = m_events[lowerName];
     subList.emplace_back(new EventSubscriberMethod(object, method));
 }
 
@@ -75,7 +78,7 @@ template <typename T_Object, typename T_Method>
 void EventSystem::UnsubscribeMethod(std::string const& eventName, T_Object* object, T_Method method)
 {
     std::string lowerName = GetToLower(eventName);
-    auto& subList = m_events[eventName];
+    auto& subList = m_events[lowerName];
     for (auto it = subList.begin(); it != subList.end();)
     {
         auto& sub = *it;

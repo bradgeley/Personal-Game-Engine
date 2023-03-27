@@ -45,6 +45,54 @@ Vec3 Vec3::GetNormalized() const
 }
 
 
+float Vec3::GetLowest() const
+{
+    if (x <= y && x <= z)
+    {
+        return x;
+    }
+    if (y <= x && y <= z)
+    {
+        return y;
+    }
+    return z;
+}
+
+
+float Vec3::GetLowestXY() const
+{
+    if (x <= y)
+    {
+        return x;
+    }
+    return y;
+}
+
+
+float Vec3::GetHighest() const
+{
+    if (x >= y && x >= z)
+    {
+        return x;
+    }
+    if (y >= x && y >= z)
+    {
+        return y;
+    }
+    return z;
+}
+
+
+float Vec3::GetHighestXY() const
+{
+    if (x >= y)
+    {
+        return x;
+    }
+    return y;
+}
+
+
 Vec3 Vec3::operator-() const
 {
     return Vec3(-x, -y, -z);

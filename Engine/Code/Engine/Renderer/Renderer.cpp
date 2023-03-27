@@ -8,11 +8,14 @@
 #include "Window.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "VertexBuffer.h"
-#include <thread>
 #include "Camera.h"
 #include "ConstantBuffer.h"
 #include "Font.h"
 #include "FontShaderSource.h"
+#include "Engine/Debug/DebugDrawUtils.h"
+#include "Engine/Debug/DevConsole.h"
+#include "Engine/Events/EventSystem.h"
+#include <thread>
 
 #if defined(_DEBUG)
 #include <dxgidebug.h>
@@ -50,6 +53,8 @@ void Renderer::Startup()
 	CreateDefaultFont();
 
 	UpdateRenderingPipelineState(true);
+
+	AddDevConsoleCommands();
 }
 
 
@@ -70,6 +75,8 @@ void Renderer::Shutdown()
 
 	ReportLiveObjects();
 	DestroyDebugLayer();
+
+	RemoveDevConsoleCommands();
 }
 
 
@@ -84,6 +91,8 @@ void Renderer::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::EndFrame()
 {
+	m_currentCamera = nullptr;
+	
 	m_swapChain->Present(0, 0);
 
 	// todo: handle fast framerate issues
@@ -95,6 +104,8 @@ void Renderer::EndFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::BeginCamera(Camera const& camera)
 {
+	m_currentCamera = &camera;
+	
 	ResetRenderingPipelineState();
 	
 	BindRenderTarget(m_backbufferTexture);
@@ -152,6 +163,17 @@ void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 		BindVertexBuffer(vbo);
 		Draw(vbo->GetNumVerts(), 0);
 	}
+
+#if defined(_DEBUG)
+	if (m_debugDrawVertexBuffers)
+	{
+		float thickness = m_currentCamera->GetOrthoDimensions().GetLowestXY() / 1000.f;
+		
+		m_debugDrawVertexBuffers = false; // avoid infinite loop
+		DebugDrawMesh2D(vbo->GetVerts(), thickness);
+		m_debugDrawVertexBuffers = true;
+	}
+#endif
 }
 
 
@@ -707,7 +729,23 @@ ID3D11BlendState* Renderer::CreateBlendState(::D3D11_BLEND srcFactor, ::D3D11_BL
 	return blendState;
 }
 
-	
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Renderer::DebugDrawVertexBuffers(NamedProperties& args)
+{
+	UNUSED(args)
+
+#if defined(_DEBUG)
+	m_debugDrawVertexBuffers = !m_debugDrawVertexBuffers;
+	return true;
+#else
+	g_devConsole->LogError("Cannot debug draw vertex buffers in a Release build.");
+	return false;
+#endif
+}
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyBlendStates()
@@ -872,6 +910,28 @@ void Renderer::UpdateShader(bool force)
 		m_deviceContext->VSSetShader(m_settings.m_shader->m_vertexShader, nullptr, 0);
 		m_deviceContext->PSSetShader(m_settings.m_shader->m_pixelShader, nullptr, 0);
 		m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::AddDevConsoleCommands()
+{
+	if (g_eventSystem)
+	{
+		g_eventSystem->SubscribeMethod("DebugDrawVertexBuffers", this, &Renderer::DebugDrawVertexBuffers);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::RemoveDevConsoleCommands()
+{
+	if (g_eventSystem)
+	{
+		g_eventSystem->UnsubscribeMethod("DebugDrawVertexBuffers", this, &Renderer::DebugDrawVertexBuffers);
 	}
 }
 

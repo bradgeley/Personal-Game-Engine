@@ -8,6 +8,10 @@
 
 
 
+const std::string LINE_PREFIX = "> ";
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleLog::AddLine(DevConsoleLine const& line)
 {
@@ -27,7 +31,7 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
     float lineThickness = box.GetHeight() / m_numLines;
 
     float linesRendered = 0.f;
-    int lineIndex = (int) m_log.size() - 1 - m_scrollOffset;
+    int lineIndex = (int) m_log.size() - 1 - (int) m_scrollOffset;
     while (lineIndex >= 0)
     {
         float yOffsetBot = linesRendered * lineThickness;
@@ -35,7 +39,7 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
         AABB2 textBox = AABB2(box.mins.x, box.mins.y + yOffsetBot, box.maxs.x, box.mins.y + yOffsetTop);
         float squeeze = textBox.GetHeight() / 15.f;
         textBox.Squeeze(squeeze);
-        font->AddVertsForText2D(verts, textBox.mins, textBox.GetHeight(), "> " + m_log[lineIndex].m_line, m_log[lineIndex].m_tint);
+        font->AddVertsForText2D(verts, textBox.mins, textBox.GetHeight(), LINE_PREFIX + m_log[lineIndex].m_line, m_log[lineIndex].m_tint);
         
         --lineIndex;
         linesRendered += 1.f;
@@ -54,7 +58,7 @@ void DevConsoleLog::Scroll(int scrollAmount)
     float numLines = (float) m_log.size();
     float maxLines = m_numLines;
     float maxOffset = numLines - maxLines;
-    maxOffset = ClampF(maxOffset, 0, INT_MAX);
+    maxOffset = ClampF(maxOffset, 0, FLT_MAX);
     m_scrollOffset = ClampF(m_scrollOffset, 0, maxOffset);
 }
 

@@ -1,5 +1,8 @@
 ﻿// Bradley Christensen - 2023
 #include "DevConsoleCommandHistory.h"
+
+#include "Engine/Core/FileUtils.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/Font.h"
@@ -10,8 +13,17 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void DevConsoleCommandHistory::OnCommandEntered(std::string const& command)
+void DevConsoleCommandHistory::AddCommand(std::string const& command)
 {
+    if (TryMoveCommandToBottomOfList(command))
+    {
+        return;
+    }
+    
+    if ((int8_t) m_log.size() == m_maxHistorySize)
+    {
+        m_log.erase(m_log.begin());
+    }
     m_log.emplace_back(command);
 }
 
@@ -20,7 +32,7 @@ void DevConsoleCommandHistory::OnCommandEntered(std::string const& command)
 //----------------------------------------------------------------------------------------------------------------------
 std::string DevConsoleCommandHistory::GetSelectedCommand() const
 {
-    if (m_selectedLineIndex == -1)
+    if (m_selectedLineIndex == (int8_t) -1)
     {
         return "";
     }
@@ -30,9 +42,17 @@ std::string DevConsoleCommandHistory::GetSelectedCommand() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void DevConsoleCommandHistory::Close()
+{
+    m_selectedLineIndex = -1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool DevConsoleCommandHistory::IsActive() const
 {
-    return m_selectedLineIndex != -1;
+    return m_selectedLineIndex != (int8_t) -1;
 }
 
 
@@ -57,11 +77,10 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
     VertexBuffer buffer;
     auto& verts = buffer.GetMutableVerts();
 
-    float lineThickness = box.GetHeight() / m_numLines;
+    float lineThickness = box.GetHeight() / (float) m_maxHistorySize;
 
     float linesRendered = 0.f;
-    int lineIndex = (int) m_log.size() - 1 - (int) m_scrollOffset;
-    while (lineIndex >= 0)
+    for (int i = (int) m_log.size() - 1; i >= 0; --i)
     {
         float yOffsetBot = linesRendered * lineThickness;
         float yOffsetTop = (linesRendered + 1.f) * lineThickness;
@@ -69,7 +88,7 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
         float squeeze = textBox.GetHeight() / 15.f;
         textBox.Squeeze(squeeze);
         
-        if (m_selectedLineIndex == lineIndex)
+        if (m_selectedLineIndex == i)
         {
             AddVertsForAABB2(bgVerts, textBox, Rgba8::Cerulean);
             g_renderer->BindShader(nullptr);
@@ -77,9 +96,8 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
             g_renderer->DrawVertexBuffer(&backgroundBuffer);
         }
         
-        font->AddVertsForText2D(verts, textBox.mins, textBox.GetHeight(), "> " + m_log[lineIndex], Rgba8::White);
+        font->AddVertsForText2D(verts, textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
         
-        --lineIndex;
         linesRendered += 1.f;
     }
 
@@ -92,7 +110,8 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleCommandHistory::ArrowUp()
 {
-    m_selectedLineIndex = DecrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
+    // Decrement on arrow up so the index is reversed when rendering
+    m_selectedLineIndex = (int8_t) DecrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
 }
 
 
@@ -100,28 +119,8 @@ void DevConsoleCommandHistory::ArrowUp()
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleCommandHistory::ArrowDown()
 {
-    m_selectedLineIndex = IncrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void DevConsoleCommandHistory::Scroll(int scrollAmount)
-{
-    m_scrollOffset += (float) scrollAmount;
-    float numLines = (float) m_log.size();
-    float maxLines = m_numLines;
-    float maxOffset = numLines - maxLines;
-    maxOffset = ClampF(maxOffset, 0, FLT_MAX);
-    m_scrollOffset = ClampF(m_scrollOffset, 0, maxOffset);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void DevConsoleCommandHistory::SetNumLines(float numLines)
-{
-    m_numLines = numLines;
+    // Decrement on arrow up so the index is reversed when rendering
+    m_selectedLineIndex = (int8_t) IncrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
 }
 
 
@@ -129,6 +128,57 @@ void DevConsoleCommandHistory::SetNumLines(float numLines)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleCommandHistory::Clear()
 {
-    m_scrollOffset = 0.f;
     m_log.clear();
+    m_selectedLineIndex = -1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool DevConsoleCommandHistory::LoadFrom(std::string const& filepath)
+{
+    std::string fileContents;
+    if ((bool) FileReadToString(filepath, fileContents))
+    {
+        Strings strings = SplitStringOnDelimeter(fileContents, '\n');
+        for (std::string const& splitString : strings)
+        {
+            AddCommand(splitString);
+        }
+        return true;
+    }
+
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool DevConsoleCommandHistory::SaveTo(std::string const& filepath) const
+{
+    std::string historyAsOneString;
+    for (auto& line : m_log)
+    {
+        historyAsOneString += line;
+        historyAsOneString += '\n';
+    }
+
+    return (bool) FileWriteFromString(filepath, historyAsOneString);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool DevConsoleCommandHistory::TryMoveCommandToBottomOfList(std::string const& command)
+{
+    for (int i = 0; i < (int) m_log.size(); ++i)
+    {
+        if (m_log[i] == command)
+        {
+            m_log.erase(m_log.begin() + i);
+            m_log.emplace_back(command);
+            return true;
+        }
+    }
+    return false;
 }

@@ -22,15 +22,15 @@ void UnsubscribeEventCallbackFunction(std::string const& eventName, EventCallbac
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void FireEvent(std::string const& eventName, NamedProperties& args)
+int FireEvent(std::string const& eventName, NamedProperties& args)
 {
-    g_eventSystem->FireEvent(eventName, args);
+    return g_eventSystem->FireEvent(eventName, args);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void FireEvent(std::string const& eventName)
+int FireEvent(std::string const& eventName)
 {
-    g_eventSystem->FireEvent(eventName);
+    return g_eventSystem->FireEvent(eventName);
 }

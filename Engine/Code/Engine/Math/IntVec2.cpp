@@ -24,6 +24,26 @@ IntVec2::IntVec2(Vec2 const& fromVec2) : x(static_cast<int>(fromVec2.x)), y(stat
 }
 
 
+int IntVec2::GetLowest() const
+{
+    if (x <= y)
+    {
+        return x;
+    }
+    return y;
+}
+
+
+int IntVec2::GetHighest() const
+{
+    if (x >= y)
+    {
+        return x;
+    }
+    return y;
+}
+
+
 float IntVec2::GetAspect() const
 {
     return (float) x / (float) y;
