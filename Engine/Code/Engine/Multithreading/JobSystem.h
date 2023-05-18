@@ -1,14 +1,17 @@
 ﻿// Bradley Christensen - 2022
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
+#include "JobDependencies.h"
 #include "Job.h"
 #include <vector>
 #include <mutex>
 #include <atomic>
+#include <deque>
 
 
 
 struct JobWorker;
+struct JobGraph;
 class Job;
 
 
@@ -31,7 +34,7 @@ struct JobSystemConfig
 //----------------------------------------------------------------------------------------------------------------------
 // Job System
 //
-// Owns worker threads and runs jobs.
+// Owns worker threads and runs jobs. 
 //
 class JobSystem : public EngineSubsystem
 {
@@ -46,19 +49,28 @@ public:
     virtual void Shutdown() override;
     
     JobID PostJob(Job* job);
+    std::vector<JobID> PostJobs(std::vector<Job*>& jobs, bool autoPrioritize = false);
     void WaitForJob(JobID jobID);
     void WaitForAllJobs();
 
     // Call from the main thread to complete jobs that require it
     bool CompleteJob(JobID id);
     void CompleteJobs(std::vector<JobID>& in_out_ids);
+    
+    bool IsJobValid(JobID id);
 
     JobSystemConfig const m_config;
 
 protected:
 
     void WorkerLoop(JobWorker* worker);
+    bool WorkerLoop_TryDoOneJob();
     Job* ClaimNextJob();
+    
+    // Must have the job system mutex locked to call
+    bool IsJobValid_Locked(JobID id) const;
+    bool CanJobAtIndexRun_Locked(int index) const;
+    void DeleteJob_Locked(JobID id);
 
 protected:
     
@@ -78,20 +90,26 @@ protected:
     // Job Statuses
     std::vector<JobStatus>  m_jobStatuses;
 
+    // Job Dependencies - keeps track of currently running tasks' dependencies, so no tasks with clashing dep's get run at the same time.
+    std::vector<JobDependencies> m_jobDependencies;
+
     // Queued Jobs
     std::vector<Job*>       m_jobQueue;
     int                     m_numJobsReadyToStart = 0;
 
     // Complete Jobs
-    std::mutex              m_completedJobsMutex;
-    std::vector<Job*>       m_completedJobsQueue;
+    //std::mutex              m_completedJobsMutex;
+    //std::vector<Job*>       m_completedJobsQueue;
     
     // Cond var that is notified when jobs are posted
     std::condition_variable m_jobPostedCondVar;
 
-    // Cond var that is notified when jobs are complete
-    std::condition_variable m_jobCompleteCondVar;
+    // Cond var that is notified when jobs are complete - for 
+    std::condition_variable m_jobExecutedCondVar;
 
-    // Task ID Tracker
+    // Unique Job ID Tracker
     std::atomic<uint32_t>   m_nextJobID = 0;
 };
+
+
+

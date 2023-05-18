@@ -29,8 +29,6 @@ int EventSystem::FireEvent(std::string const& name)
 //----------------------------------------------------------------------------------------------------------------------
 int EventSystem::FireEvent(std::string const& name, NamedProperties& args)
 {
-    int numResponders = 0;
-    
     auto it = m_events.find(name);
     if (it != m_events.end())
     {
@@ -38,11 +36,12 @@ int EventSystem::FireEvent(std::string const& name, NamedProperties& args)
         for (EventSubscriber* const& sub : subList)
         {
             sub->Execute(args);
-            ++numResponders;
         }
+
+        return (int) subList.size();
     }
 
-    return numResponders;
+    return 0;
 }
 
 

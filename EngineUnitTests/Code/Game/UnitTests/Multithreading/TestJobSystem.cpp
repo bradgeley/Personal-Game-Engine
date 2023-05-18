@@ -4,6 +4,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, CreateDestroy)
 {
     JobSystemConfig config;
@@ -15,37 +16,51 @@ TEST(JobSystem, CreateDestroy)
 }
 
 
+
 //----------------------------------------------------------------------------------------------------------------------
-// Test Job
-//
 struct IncIntJob : Job
 {
     IncIntJob(std::atomic<int>& numToIncrement) : numToIncrement(numToIncrement) {}
+    
     std::atomic<int>& numToIncrement;
+    
     void Execute() override
     {
         ++numToIncrement;
     }
 };
-struct SimpleRecursiveJob : public Job
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct SimpleRecursiveJob : Job
 {
     SimpleRecursiveJob(std::atomic<int>& numToIncrement) : numToIncrement(numToIncrement) {}
+    
     std::atomic<int>& numToIncrement;
+    
     void Execute() override
     {
-        JobID job = g_jobSystem->PostJob(new IncIntJob(numToIncrement));
-        g_jobSystem->WaitForJob(job);
+        g_jobSystem->PostJob(new IncIntJob(numToIncrement));
     }
 };
-struct SimpleNeedsCompleteJob : public Job
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct SimpleNeedsCompleteJob : Job
 {
     SimpleNeedsCompleteJob(std::atomic<int>& numToIncrement) : numToIncrement(numToIncrement) {}
+    
     std::atomic<int>& numToIncrement;
+    
     void Execute() override
     {
         numToIncrement++;
     }
+    
     bool NeedsComplete() override { return true; }
+    
     void Complete() override
     {
         numToIncrement--;
@@ -54,7 +69,7 @@ struct SimpleNeedsCompleteJob : public Job
 
 
 
-
+//----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, JobID)
 {
     JobSystemConfig config;
@@ -63,11 +78,11 @@ TEST(JobSystem, JobID)
     g_jobSystem->Startup();
 
     std::atomic testInt = 0;
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < 100000; ++i)
     {
         IncIntJob* newJob = new IncIntJob(testInt);
         JobID id = g_jobSystem->PostJob(newJob);
-        EXPECT_EQ((int) id.m_uniqueID, i);
+        EXPECT_EQ((int) id.m_uniqueID, i); 
     }
     
     g_jobSystem->Shutdown();
@@ -77,6 +92,7 @@ TEST(JobSystem, JobID)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleParallel)
 {
     JobSystemConfig config;
@@ -101,6 +117,7 @@ TEST(JobSystem, SimpleParallel)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleRecursive)
 {
     JobSystemConfig config;
@@ -109,14 +126,15 @@ TEST(JobSystem, SimpleRecursive)
     EXPECT_TRUE(g_jobSystem != nullptr);
 
     std::atomic testInt = 0;
-    for (int i = 0; i < 100; ++i)
+    int numJobs = 10000;
+    for (int i = 0; i < numJobs; ++i)
     {
         g_jobSystem->PostJob(new SimpleRecursiveJob(testInt));
     }
     g_jobSystem->WaitForAllJobs();
 
     int value = testInt; 
-    EXPECT_EQ(value, 100);
+    EXPECT_EQ(value, numJobs);
 
     g_jobSystem->Shutdown();
     delete g_jobSystem;
@@ -125,6 +143,7 @@ TEST(JobSystem, SimpleRecursive)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleNeedsComplete)
 {
     JobSystemConfig config;
@@ -133,7 +152,7 @@ TEST(JobSystem, SimpleNeedsComplete)
     EXPECT_TRUE(g_jobSystem != nullptr);
 
     std::atomic testInt = 0;
-    constexpr int numJobs = 100;
+    constexpr int numJobs = 10000;
     std::vector<JobID> ids;
     for (int i = 0; i < numJobs; ++i)
     {

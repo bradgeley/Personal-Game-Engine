@@ -1,15 +1,18 @@
 ﻿// Bradley Christensen - 2022
 #pragma once
 #include "JobID.h"
+#include "JobDependencies.h"
 #include <cstdint>
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 enum class JobStatus : uint8_t
 {
     Null, 
     Posted,
-    Claimed,
+    Running,
+    Executed,
 };
 
 
@@ -29,6 +32,7 @@ public:
     virtual bool NeedsComplete() { return false; }
 
     bool IsValid() const;
+    bool HasDependencies() const;
     uint32_t GetIndex() const;
     uint32_t GetUniqueID() const;
 
@@ -38,11 +42,11 @@ protected:
     // Called from the job system when the main thread asks to complete its JobID
     virtual void Complete() {}
 
-public:
+protected:
     
     JobID m_id                   = JobID::Invalid;
+
+public:
     
-    uint64_t m_frameNumber       = 0;
-    uint64_t m_readDependencies  = 0;
-    uint64_t m_writeDependencies = 0;
+    JobDependencies m_dependencies;
 };
