@@ -38,7 +38,6 @@ public:
 
     bool IsValid() const;
     bool HasDependencies() const;
-    uint32_t GetIndex() const;
     uint32_t GetUniqueID() const;
 
 protected:
@@ -49,6 +48,6 @@ protected:
     virtual void Complete() {}
 
 protected:
-    
-    JobID m_id = JobID::Invalid;
+
+    JobID m_id = 0;
 };

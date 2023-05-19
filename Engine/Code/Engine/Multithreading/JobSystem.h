@@ -7,6 +7,8 @@
 #include <atomic>
 #include <deque>
 
+#include "Engine/DataStructures/ThreadSafeQueue.h"
+
 
 
 struct JobWorker;
@@ -47,38 +49,37 @@ public:
     
     virtual void Startup() override;
     virtual void Shutdown() override;
+
+    void CreateJobWorker(int threadID, std::string const& name = "");
     
     JobID PostJob(Job* job);
     std::vector<JobID> PostJobs(std::vector<Job*>& jobs);
-    void WaitForJob(JobID jobID);
-    void WaitForAllJobs();
+
+    // Completing Jobs: returns true when all jobs in question are complete or don't exist
+    bool CompleteJob(JobID jobID, bool blockAndHelp = true);
+    bool CompleteJobs(std::vector<JobID>& in_out_ids, bool blockAndHelp = true);
+    bool CompleteAllJobs(bool blockAndHelp = true);
     
     void ExecuteJobGraph(JobGraph& jobGraph, bool helpWithTasksOnThisThread = false);
-
-    // Call from the main thread to complete jobs that require it
-    bool CompleteJob(JobID id);
-    void CompleteJobs(std::vector<JobID>& in_out_ids);
-    
-    bool IsJobExecuting(JobID id);
 
     JobSystemConfig const m_config;
 
 protected:
 
     void WorkerLoop(JobWorker* worker);
-    bool WorkerLoop_TryDoOneJob();
+    bool WorkerLoop_TryDoOneJob(bool blocking = true);
     void WorkerLoop_ExecuteJob(Job* job);
-    bool TryDoOneJob_NonBlocking();
-    Job* ClaimNextJob();
-    Job* ClaimNextJob_NonBlocking();
+    Job* ClaimNextJob(bool blocking = true);
 
     void PostAvailableJobGraphTasks(JobGraph& graph);
     void CompleteAvailableJobGraphTasks(JobGraph& graph);
+
+    void AddJobToInProgressQueue(Job* job);
+    Job* RemoveJobFromInProgressQueue(Job* job);
     
-    // Must have the job system mutex locked to call
-    bool IsJobExecuting_Locked(JobID id) const;
-    bool CanJobAtIndexRun_Locked(int index) const;
-    void DeleteJob_Locked(JobID id);
+    void AddJobToCompletedQueue(Job* job);
+    Job* RemoveJobFromCompletedQueue(Job* job);
+    Job* RemoveJobFromCompletedQueue(JobID jobID);
     
     // Must have the completed job mutex locked to call
     bool CompleteJob_Locked(JobID id);
@@ -90,35 +91,25 @@ protected:
     
 protected:
 
-    // Master switch to halt all jobs
     std::atomic<bool>       m_isRunning = true;
 
-    // Worker Threads
     std::vector<JobWorker*> m_workers = {};
 
-    // Job System lock
-    std::mutex              m_jobSystemMutex;
+    std::mutex              m_numIncompleteJobsMutex;
+    std::atomic<int>        m_numIncompleteJobs = 0;
 
-    // Job Statuses
-    std::vector<JobStatus>  m_jobStatuses = {};
-
-    // Queued Jobs
-    std::vector<Job*>       m_jobQueue = {};
-    std::atomic<int>        m_numJobsReadyToStart = 0;
-
-    // Complete Jobs
-    std::mutex              m_completedJobsMutex;
-    std::deque<Job*>        m_completedJobsQueue = {};
+    ThreadSafeQueue<Job>    m_jobQueue = {};
     
-    // Cond var that is notified when jobs are posted
-    std::condition_variable m_jobPostedCondVar;
+    std::mutex              m_inProgressJobsMutex;
+    std::vector<Job*>       m_inProgressJobs = {};
 
-    // Cond var that is notified when jobs are complete
-    std::condition_variable m_jobExecutedCondVar;
+    std::mutex              m_completedJobsMutex;
+    std::vector<Job*>       m_completedJobs = {};
 
-    // Unique Job ID Tracker
     std::atomic<uint32_t>   m_nextJobID = 0;
 };
+
+
 
 
 
