@@ -10,6 +10,7 @@ struct JobID
     friend class Job;
     friend class JobSystem;
 
+    JobID();
     JobID(uint32_t index, uint32_t uniqueID);
 
     bool operator==(JobID const& rhs) const;

@@ -21,6 +21,7 @@ public:
     int Count() const;
     void Push(T const& obj);
     std::optional<T> Pop();
+    void Quit();
     
     std::mutex mutable      m_lock;
     
@@ -44,6 +45,7 @@ bool ThreadSafeQueue<T>::IsEmpty() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 template <typename T>
 int ThreadSafeQueue<T>::Count() const
 {
@@ -54,16 +56,18 @@ int ThreadSafeQueue<T>::Count() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 template <typename T>
 void ThreadSafeQueue<T>::Push(T const& obj)
 {
-    std::unique_lock<std::mutex> uniqueLock(m_lock);
+    std::unique_lock uniqueLock(m_lock);
     std::queue<T>::emplace(obj);
     m_condVar.notify_one();
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 template <typename T>
 std::optional<T> ThreadSafeQueue<T>::Pop()
 {
@@ -80,4 +84,13 @@ std::optional<T> ThreadSafeQueue<T>::Pop()
     }
 
     return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+void ThreadSafeQueue<T>::Quit()
+{
+    m_isQuitting = true;
 }

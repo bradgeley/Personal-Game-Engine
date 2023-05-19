@@ -1,6 +1,9 @@
-﻿// Bradley Christensen - 2022
+// Bradley Christensen - 2022
 #include "Engine/Multithreading/JobSystem.h"
+#include "JobDependencies.h"
+#include "JobGraph.h"
 #include "JobWorker.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 
 
@@ -25,6 +28,9 @@ void JobSystem::Startup()
 {
     EngineSubsystem::Startup();
 
+    m_jobStatuses.reserve(100);
+    m_jobQueue.reserve(100);
+
     // initialize worker threads
     for (int i = 0; i < (int) m_config.m_threadCount; ++i)
     {
@@ -48,25 +54,15 @@ void JobSystem::Shutdown()
     // Wake up all idle threads and tell them we aren't running anymore
     m_isRunning = false;
     m_jobPostedCondVar.notify_all();
-
-    // Delete completed jobs that never got claimed
-    for (auto& job : m_completedJobsQueue)
-    {
-        // job->Complete(); jobs should not get completed during shutdown, that's dangerous bc most game/engine state is probably gone by now
-        delete job;
-        job = nullptr;
-    }
     
     // Shut down all workers
-    for (int i = 0; i < (int) m_workers.size(); ++i)
+    for (auto& worker : m_workers)
     {
-        JobWorker*& worker = m_workers[i];
         worker->Shutdown();
         delete worker;
         worker = nullptr;
     }
     
-    m_completedJobsQueue.clear();
     m_workers.clear();
     m_jobQueue.clear();
     m_jobStatuses.clear();
@@ -83,9 +79,10 @@ JobID JobSystem::PostJob(Job* job)
     }
 
     job->m_id.m_uniqueID = GetNextJobUniqueID();
-    
-    m_jobSystemMutex.lock();
-    
+
+    std::unique_lock lock(m_jobSystemMutex);
+
+    // Find an empty index to put the new job in
     int newJobIndex;
     for (newJobIndex = 0; newJobIndex < (int) m_jobStatuses.size(); ++newJobIndex)
     {
@@ -97,11 +94,13 @@ JobID JobSystem::PostJob(Job* job)
     
     if (newJobIndex == (int) m_jobStatuses.size())
     {
+        // No empty space, grow the vector
         m_jobStatuses.emplace_back(JobStatus::Posted);
         m_jobQueue.emplace_back(job);
     }
     else
     {
+        // Fill the empty space
         m_jobStatuses[newJobIndex] = JobStatus::Posted;
         m_jobQueue[newJobIndex] = job;
     }
@@ -113,10 +112,23 @@ JobID JobSystem::PostJob(Job* job)
     // Increase count so waiting threads know to check for jobs
     m_numJobsReadyToStart++;
     
-    m_jobSystemMutex.unlock();
-
     // Notify waiting threads
     m_jobPostedCondVar.notify_one();
+
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+std::vector<JobID> JobSystem::PostJobs(std::vector<Job*>& jobs)
+{
+    std::vector<JobID> result;
+    result.resize(jobs.size());
+    for (auto& job : jobs)
+    {
+       result.emplace_back(PostJob(job));
+    }
     return result;
 }
 
@@ -125,32 +137,25 @@ JobID JobSystem::PostJob(Job* job)
 //----------------------------------------------------------------------------------------------------------------------
 void JobSystem::WaitForJob(JobID jobID)
 {
-    if (jobID == JobID::Invalid)
-    {
-        return;
-    }
-
-    std::unique_lock jobSystemLock(m_jobSystemMutex);
     while (true)
     {
-        if (m_jobStatuses[jobID.m_index] == JobStatus::Null)
+        if (!IsJobExecuting(jobID))
         {
-            // The job was finished and the slot it was in is now open
             return;
         }
-        Job*& job = m_jobQueue[jobID.m_index];
-        if (!job)
+
+        std::unique_lock lock(m_jobSystemMutex);
+        JobStatus const& status = m_jobStatuses[jobID.m_index];
+        if (status == JobStatus::Null)
         {
-            // the job is done and deleted
             return;
         }
-        if (job->m_id != jobID)
-        {
-            // The job was finished and replaced by another
-            return;
-        }
+        lock.unlock();
         
-        m_jobCompleteCondVar.wait(jobSystemLock);
+        if (!TryDoOneJob_NonBlocking())
+        {
+            std::this_thread::yield();
+        }
     }
 }
 
@@ -161,26 +166,49 @@ void JobSystem::WaitForAllJobs()
 {
     while (m_isRunning)
     {
-        bool isOneJobIncomplete = false;
-        
-        m_jobSystemMutex.lock();
+        bool allJobsExecuted = true;
+
+        std::unique_lock lock(m_jobSystemMutex);
         for (JobStatus& status : m_jobStatuses)
         {
-            if (status != JobStatus::Null)
+            if (status == JobStatus::Posted || status == JobStatus::Running)
             {
-                isOneJobIncomplete = true;
+                allJobsExecuted = false;
                 break;
             }
         }
-        m_jobSystemMutex.unlock();
+        lock.unlock();
 
-        if (!isOneJobIncomplete)
+        if (allJobsExecuted)
         {
-            // not one job is incomplete, so all jobs are complete
             return;
         }
+
+        if (!TryDoOneJob_NonBlocking())
+        {
+            std::this_thread::yield();
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void JobSystem::ExecuteJobGraph(JobGraph& jobGraph, bool helpWithTasksOnThisThread)
+{
+    jobGraph.Initialize();
+    
+    while (!jobGraph.IsComplete())
+    {
+        PostAvailableJobGraphTasks(jobGraph);
+
+        if (helpWithTasksOnThisThread)
+        {
+            TryDoOneJob_NonBlocking(); // todo: may only do jobs in the jobGraph we just posted
+        }
+        else std::this_thread::yield();
         
-        std::this_thread::yield();
+        CompleteAvailableJobGraphTasks(jobGraph);
     }
 }
 
@@ -190,17 +218,7 @@ void JobSystem::WaitForAllJobs()
 bool JobSystem::CompleteJob(JobID id)
 {
     std::unique_lock lock(m_completedJobsMutex);
-    for (int i = 0; i < (int) m_completedJobsQueue.size(); ++i)
-    {
-        auto& job = m_completedJobsQueue[i];
-        if (id == job->m_id)
-        {
-            job->Complete();
-            m_completedJobsQueue.erase(m_completedJobsQueue.begin() + i);
-            return true;
-        }
-    }
-    return false;
+    return CompleteJob_Locked(id);
 }
 
 
@@ -208,28 +226,19 @@ bool JobSystem::CompleteJob(JobID id)
 //----------------------------------------------------------------------------------------------------------------------
 void JobSystem::CompleteJobs(std::vector<JobID>& in_out_ids)
 {
-    int numCompleted = 0;
-    std::unique_lock lock(m_completedJobsMutex);
-    for (int i = (int) m_completedJobsQueue.size() - 1; i >= 0; --i)
+    for (auto& id : in_out_ids)
     {
-        Job*& job = m_completedJobsQueue[i];
-        for (int j = (int) in_out_ids.size() - 1; j >= 0; --j)
-        {
-            JobID& id = in_out_ids[j];
-            if (id == job->m_id)
-            {
-                job->Complete();
-                ++numCompleted;
-
-                delete job;
-                job = nullptr;
-                
-                m_completedJobsQueue.erase(m_completedJobsQueue.begin() + i);
-                in_out_ids.erase(in_out_ids.begin() + j);
-                break;
-            }
-        }
+        CompleteJob(id);
     }
+}
+ 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::IsJobExecuting(JobID id)
+{
+    std::unique_lock lock(m_jobSystemMutex);
+    return IsJobExecuting_Locked(id);
 }
 
 
@@ -247,37 +256,8 @@ void JobSystem::WorkerLoop(JobWorker* worker)
 {
     while (m_isRunning && worker->m_isRunning)
     {
-        Job* job = ClaimNextJob();
-        if (job)
-        {
-            // Execute the job
-            job->Execute();
-            
-            uint32_t index = job->GetIndex();
-
-            bool needsComplete = job->NeedsComplete();
-            if (needsComplete)
-            {
-                // Send the job over to the completed queue to be picked up by the main thread on the next update
-                m_completedJobsMutex.lock();
-                m_completedJobsQueue.emplace_back(job);
-                m_completedJobsMutex.unlock();
-            }
-            else
-            {
-                // Just finish the job now
-                delete m_jobQueue[index];
-                m_jobQueue[index] = nullptr;
-            }
-
-            // Open slot in the job queue
-            m_jobSystemMutex.lock();
-            m_jobStatuses[index] = JobStatus::Null;
-            m_jobSystemMutex.unlock();
-
-            m_jobCompleteCondVar.notify_all();
-        }
-        else
+        //if (!TryDoOneJob_NonBlocking())
+        if (!WorkerLoop_TryDoOneJob())
         {
             std::this_thread::yield();
         }
@@ -287,25 +267,263 @@ void JobSystem::WorkerLoop(JobWorker* worker)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Job* JobSystem::ClaimNextJob()
+bool JobSystem::WorkerLoop_TryDoOneJob()
 {
-    Job* result = nullptr;
-    std::unique_lock uniqueLock(m_jobSystemMutex);
-    while (m_isRunning && m_numJobsReadyToStart == 0)
+    Job* job = ClaimNextJob();
+    if (job)
     {
-        m_jobPostedCondVar.wait(uniqueLock);
+        WorkerLoop_ExecuteJob(job);
+        return true;
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void JobSystem::WorkerLoop_ExecuteJob(Job* job)
+{
+    job->Execute();
+            
+    uint32_t index = job->GetIndex();
+        
+    if (job->NeedsComplete())
+    {
+        std::unique_lock lock(m_completedJobsMutex);
+        m_completedJobsQueue.emplace_back(job);
+    }
+    else
+    {
+        delete m_jobQueue[index];
+        m_jobQueue[index] = nullptr;
     }
     
-    for (int i = 0; i < (int) m_jobStatuses.size(); ++i)
+    std::unique_lock lock(m_jobSystemMutex);
+    m_jobStatuses[index] = JobStatus::Null;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::TryDoOneJob_NonBlocking()
+{
+    Job* job = ClaimNextJob_NonBlocking();
+    if (job)
     {
-        JobStatus& status = m_jobStatuses[i];
-        if (status == JobStatus::Posted)
+        WorkerLoop_ExecuteJob(job);
+        return true;
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Job* JobSystem::ClaimNextJob()
+{
+    std::unique_lock lock(m_jobSystemMutex);
+    
+    while (m_isRunning && m_numJobsReadyToStart == 0)
+    {
+        m_jobPostedCondVar.wait(lock);
+    }
+
+    if (m_numJobsReadyToStart > 0)
+    {
+        for (int jobIndex = 0; jobIndex < (int) m_jobStatuses.size(); ++jobIndex)
         {
-            status = JobStatus::Claimed; // claimed
-            m_numJobsReadyToStart--;
-            result = m_jobQueue[i];
-            break;
+            if (CanJobAtIndexRun_Locked(jobIndex))
+            {
+                m_jobStatuses[jobIndex] = JobStatus::Running; // claimed
+                m_numJobsReadyToStart--;
+                return m_jobQueue[jobIndex];
+            }
         }
     }
-    return result;
+    
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Job* JobSystem::ClaimNextJob_NonBlocking()
+{
+    std::unique_lock lock(m_jobSystemMutex);
+    
+    if (m_isRunning && m_numJobsReadyToStart == 0)
+    {
+        return nullptr;
+    }
+
+    for (int jobIndex = 0; jobIndex < (int) m_jobStatuses.size(); ++jobIndex)
+    {
+        if (CanJobAtIndexRun_Locked(jobIndex))
+        {
+            m_jobStatuses[jobIndex] = JobStatus::Running; // claimed
+            m_numJobsReadyToStart--;
+            return m_jobQueue[jobIndex];
+        }
+    }
+
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void JobSystem::PostAvailableJobGraphTasks(JobGraph& graph)
+{
+    for (int jobIndex = 0; jobIndex < (int) graph.m_jobs.size(); ++jobIndex)
+    {
+        Job*& job = graph.m_jobs[jobIndex];
+        auto& status = graph.m_jobStatuses[jobIndex];
+        auto& deps = graph.m_jobDeps[jobIndex];
+        if (status == JobStatus::Posted || status == JobStatus::Completed)
+        {
+            continue;
+        }
+
+        bool canRun = true;
+        for (int jobBeforeIndex = 0; jobBeforeIndex < jobIndex; ++jobBeforeIndex)
+        {
+            if (graph.m_jobStatuses[jobBeforeIndex] != JobStatus::Completed)
+            {
+                JobDependencies& jobBeforeDeps = graph.m_jobDeps[jobBeforeIndex];
+                if (deps.SharesDependencies(jobBeforeDeps))
+                {
+                    canRun = false;
+                    break;
+                }
+            }
+        }
+
+        if (canRun)
+        {
+            graph.m_jobReceipts[jobIndex] = PostJob(job);
+            graph.m_jobStatuses[jobIndex] = JobStatus::Posted;
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void JobSystem::CompleteAvailableJobGraphTasks(JobGraph& graph)
+{
+    for (int jobIndex = 0; jobIndex < (int) graph.m_jobs.size(); ++jobIndex)
+    {
+        JobID id = graph.m_jobReceipts[jobIndex];
+        JobStatus& status = graph.m_jobStatuses[jobIndex];
+        
+        if (status == JobStatus::Posted)
+        {
+            if (!IsJobExecuting(id))
+            {
+                std::unique_lock lock(m_completedJobsMutex);
+                if (IsJobWaitingForComplete_Locked(id))
+                {
+                    CompleteJob_Locked(id);
+                }
+                status = JobStatus::Completed;
+            }
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Executing means not Null (either posted or running), with a valid index and Job* in the job queue
+//
+bool JobSystem::IsJobExecuting_Locked(JobID id) const
+{
+    uint32_t const& index = id.m_index;
+    if (index < 0 || index >= m_jobQueue.size())
+    {
+        return false;
+    }
+
+    JobStatus const& status = m_jobStatuses[index];
+    if (status == JobStatus::Null)
+    {
+        return false;
+    }
+
+    if (status == JobStatus::Running || status == JobStatus::Posted)
+    {
+        return true;
+    }
+
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Multithreading warning: Only call if the m_jobSystemMutex is locked.
+//
+bool JobSystem::CanJobAtIndexRun_Locked(int index) const
+{
+    if (index < 0 || index >= (int) m_jobStatuses.size())
+    {
+        // index out of bounds - error msg?
+        return false;
+    }
+    
+    JobStatus const& jobStatus = m_jobStatuses[index];
+    if (jobStatus != JobStatus::Posted)
+    {
+        // either null or already claimed
+        return false;
+    }
+    
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void JobSystem::DeleteJob_Locked(JobID id)
+{
+    delete m_jobQueue[id.m_index];
+    m_jobQueue[id.m_index] = nullptr;
+    m_jobStatuses[id.m_index] = JobStatus::Null;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::CompleteJob_Locked(JobID id)
+{
+    for (int completedJobIndex = 0; completedJobIndex < (int) m_completedJobsQueue.size(); ++completedJobIndex)
+    {
+        Job*& job = m_completedJobsQueue[completedJobIndex];
+        if (job->m_id == id)
+        {
+            job->Complete();
+
+            delete job;
+            job = nullptr;
+            
+            m_completedJobsQueue.erase(m_completedJobsQueue.begin() + completedJobIndex);
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::IsJobWaitingForComplete_Locked(JobID id) const
+{
+    for (auto& job : m_completedJobsQueue)
+    {
+        if (job->m_id == id)
+        {
+            return true;
+        }
+    }
+    return false;
 }

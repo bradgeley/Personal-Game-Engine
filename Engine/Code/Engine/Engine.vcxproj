@@ -193,6 +193,7 @@
     <ClCompile Include="Math\Vec2.cpp" />
     <ClCompile Include="Math\Vec3.cpp" />
     <ClCompile Include="Multithreading\Job.cpp" />
+    <ClCompile Include="Multithreading\JobDependencies.cpp" />
     <ClCompile Include="Multithreading\JobGraph.cpp" />
     <ClCompile Include="Multithreading\JobID.cpp" />
     <ClCompile Include="Multithreading\JobSystem.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="Math\Vec2.h" />
     <ClInclude Include="Math\Vec3.h" />
     <ClInclude Include="Multithreading\Job.h" />
+    <ClInclude Include="Multithreading\JobDependencies.h" />
     <ClInclude Include="Multithreading\JobGraph.h" />
     <ClInclude Include="Multithreading\JobID.h" />
     <ClInclude Include="Multithreading\JobSystem.h" />

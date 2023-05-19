@@ -12,6 +12,15 @@ bool Job::IsValid() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool Job::HasDependencies() const
+{
+    JobDependencies deps = GetJobDependencies();
+    return deps.m_readDependencies != 0 || deps.m_writeDependencies != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 uint32_t Job::GetIndex() const
 {
     return m_id.m_index;
