@@ -3,12 +3,12 @@
 
 
 
-JobID JobID::Invalid = { UINT32_MAX, UINT32_MAX };
+JobID JobID::Invalid = { UINT32_MAX };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-JobID::JobID() : m_index(UINT32_MAX), m_uniqueID(UINT32_MAX)
+JobID::JobID() : m_uniqueID(UINT32_MAX)
 {
     
 }
@@ -16,7 +16,7 @@ JobID::JobID() : m_index(UINT32_MAX), m_uniqueID(UINT32_MAX)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-JobID::JobID(uint32_t index, uint32_t uniqueID) : m_index(index), m_uniqueID(uniqueID)
+JobID::JobID(uint32_t uniqueID) : m_uniqueID(uniqueID)
 {
 }
 

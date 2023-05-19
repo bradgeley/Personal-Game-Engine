@@ -11,13 +11,12 @@ struct JobID
     friend class JobSystem;
 
     JobID();
-    JobID(uint32_t index, uint32_t uniqueID);
+    JobID(uint32_t uniqueID);
 
     bool operator==(JobID const& rhs) const;
     bool operator!=(JobID const& rhs) const;
     
-    uint32_t m_index    = 0; // index into the job queue
-    uint32_t m_uniqueID = 0; // unique ID
+    uint32_t m_uniqueID = 0;
 
 public:
 

@@ -2,7 +2,6 @@
 #pragma once
 #include <atomic>
 #include <condition_variable>
-#include <optional>
 #include <queue>
 
 
@@ -13,22 +12,24 @@
 // Thread safe wrapper around std::queue
 //
 template<typename T>
-class ThreadSafeQueue : protected std::queue<T>
+class ThreadSafeQueue
 {
 public:
 
     bool IsEmpty() const;
     int Count() const;
-    void Push(T const& obj);
-    std::optional<T> Pop();
+    void Push(T* obj);
+    T* Pop(bool blocking = true);
     void Quit();
-    
-    std::mutex mutable      m_lock;
+
     
 private:
 
     std::atomic<bool>       m_isQuitting = false;
+    
+    std::mutex mutable      m_lock;
     std::condition_variable m_condVar;
+    std::queue<T*>          m_queue;
 };
 
 
@@ -40,7 +41,8 @@ private:
 template<typename T>
 bool ThreadSafeQueue<T>::IsEmpty() const
 {
-    return Count() == 0;
+    std::unique_lock uniqueLock(m_lock);
+    return m_queue.empty();
 }
 
 
@@ -49,19 +51,19 @@ bool ThreadSafeQueue<T>::IsEmpty() const
 template <typename T>
 int ThreadSafeQueue<T>::Count() const
 {
-    std::unique_lock<std::mutex> uniqueLock(m_lock);
-    int count = (int) std::queue<T>::size();
-    return count;
+    std::unique_lock uniqueLock(m_lock);
+    return (int) m_queue.size();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void ThreadSafeQueue<T>::Push(T const& obj)
+void ThreadSafeQueue<T>::Push(T* obj)
 {
     std::unique_lock uniqueLock(m_lock);
-    std::queue<T>::emplace(obj);
+    m_queue.push(obj);
+    uniqueLock.unlock(); // supposedly faster and still safe to unlock before notifying?
     m_condVar.notify_one();
 }
 
@@ -69,20 +71,27 @@ void ThreadSafeQueue<T>::Push(T const& obj)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-std::optional<T> ThreadSafeQueue<T>::Pop()
+T* ThreadSafeQueue<T>::Pop(bool blocking)
 {
-    std::optional<T> result = std::nullopt;
+    T* result = nullptr;
+    
     std::unique_lock uniqueLock(m_lock);
-    while (std::queue<T>::empty() && !m_isQuitting)
+    
+    while (m_queue.empty() && !m_isQuitting)
     {
-        m_condVar.wait(uniqueLock);
+        if (blocking)
+        {
+            m_condVar.wait(uniqueLock);
+        }
+        else break;
     }
-    if (!std::queue<T>::empty())
+    
+    if (!m_queue.empty())
     {
-        result = std::queue<T>::front();
-        std::queue<T>::pop();
+        result = m_queue.front();
+        m_queue.pop();
     }
-
+ 
     return result;
 }
 
@@ -92,5 +101,9 @@ std::optional<T> ThreadSafeQueue<T>::Pop()
 template <typename T>
 void ThreadSafeQueue<T>::Quit()
 {
+    m_lock.lock();
     m_isQuitting = true;
+    m_lock.unlock();
+    
+    m_condVar.notify_all();
 }
