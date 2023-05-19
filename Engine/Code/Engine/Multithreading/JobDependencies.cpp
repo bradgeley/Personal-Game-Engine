@@ -4,34 +4,29 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool JobDependencies::SharesDependencies(JobDependencies const& other) const
+JobDependencies::JobDependencies(uint64_t const& readDeps, uint64_t const& writeDeps) : m_readDependencies(readDeps), m_writeDependencies(writeDeps)
 {
-    if ((m_writeDependencies | other.m_writeDependencies) != 0)
-    {
-        return true;
-    }
-
-    if ((m_writeDependencies | other.m_readDependencies) != 0)
-    {
-        return true;
-    }
-
-    if ((m_readDependencies | other.m_writeDependencies) != 0)
-    {
-        return true;
-    }
-
-    return false;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool JobDependencies::IsLowerPriorityThan(JobDependencies const& other) const
+bool JobDependencies::SharesDependencies(JobDependencies const& other) const
 {
-    if (m_priority == -1 || other.m_priority == -1)
+    if ((m_writeDependencies & other.m_writeDependencies) != 0)
     {
-        return false;
+        return true;
     }
-    else return m_priority < other.m_priority;
+
+    if ((m_writeDependencies & other.m_readDependencies) != 0)
+    {
+        return true;
+    }
+
+    if ((m_readDependencies & other.m_writeDependencies) != 0)
+    {
+        return true;
+    }
+
+    return false;
 }

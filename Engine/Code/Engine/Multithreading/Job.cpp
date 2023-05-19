@@ -14,7 +14,8 @@ bool Job::IsValid() const
 //----------------------------------------------------------------------------------------------------------------------
 bool Job::HasDependencies() const
 {
-    return m_dependencies.m_readDependencies != 0 || m_dependencies.m_writeDependencies != 0;
+    JobDependencies deps = GetJobDependencies();
+    return deps.m_readDependencies != 0 || deps.m_writeDependencies != 0;
 }
 
 
