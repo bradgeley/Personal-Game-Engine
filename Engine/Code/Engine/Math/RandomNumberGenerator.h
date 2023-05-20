@@ -18,6 +18,7 @@ public:
 
     explicit RandomNumberGenerator(int seed = 0);
 
+    void SetSeed(int seed);
     int Rand();
     int GetRandomIntInRange(int minInclusive, int maxInclusive);
     float GetRandomFloatZeroToOne();

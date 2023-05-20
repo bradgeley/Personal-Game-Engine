@@ -571,6 +571,8 @@
         <AdditionalIncludeDirectories>C:\dev\Personal-Game-Engine\EngineUnitTests\Code/;C:\dev\Personal-Game-Engine\EngineUnitTests\../Engine/Code/;..\include;C:\dev\Personal-Game-Engine\EngineUnitTests\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.6\build\native\include;;</AdditionalIncludeDirectories>
       </ClCompile>
       <ClCompile Include="UnitTests\Math\TestMathUtils.cpp" />
+      <ClCompile Include="UnitTests\Math\TestRNG.cpp" />
+      <ClCompile Include="UnitTests\Math\TestStatistics.cpp" />
       <ClCompile Include="UnitTests\Math\TestVec2.cpp" />
       <ClCompile Include="UnitTests\Math\TestVec3.cpp">
         <AssemblerOutput>NoListing</AssemblerOutput>

@@ -11,6 +11,14 @@ RandomNumberGenerator* g_rng = nullptr;
 //----------------------------------------------------------------------------------------------------------------------
 RandomNumberGenerator::RandomNumberGenerator(int seed) : m_seed(seed)
 {
+    SetSeed(seed);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RandomNumberGenerator::SetSeed(int seed)
+{
     srand(m_seed);
 }
 

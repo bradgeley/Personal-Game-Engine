@@ -5,19 +5,19 @@
 
 
 
-int NUM_THREADS = 32;
-int NUM_JOBS = 1000;
-int NUM_ITERATIONS = 1000;
+int JOBSYSTEM_TEST_NUM_THREADS = 32;
+int JOBSYSTEM_TEST_NUM_JOBS = 1000;
+int JOBSYSTEM_TEST_NUM_ITERATIONS = 1000;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, CreateDestroy)
 {
-    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    for (int t = 0; t < JOBSYSTEM_TEST_NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
-        config.m_threadCount = NUM_THREADS;
+        config.m_threadCount = JOBSYSTEM_TEST_NUM_THREADS;
         g_jobSystem = new JobSystem(config);
         EXPECT_TRUE(g_jobSystem != nullptr);
         delete g_jobSystem;
@@ -32,10 +32,10 @@ TEST(JobSystem, CreateDestroy)
 TEST(JobSystem, StartupShutdown)
 {
     JobSystemConfig config;
-    config.m_threadCount = NUM_THREADS;
+    config.m_threadCount = JOBSYSTEM_TEST_NUM_THREADS;
     g_jobSystem = new JobSystem(config);
     
-    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    for (int t = 0; t < JOBSYSTEM_TEST_NUM_ITERATIONS; ++t)
     {
         g_jobSystem->Startup();
         g_jobSystem->Shutdown();
@@ -140,17 +140,17 @@ struct RecursiveAndNeedsThreeCompletesJob : Job
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, JobID)
 {
-    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    for (int t = 0; t < JOBSYSTEM_TEST_NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
-        config.m_threadCount = NUM_THREADS;
+        config.m_threadCount = JOBSYSTEM_TEST_NUM_THREADS;
         config.m_enableLogging = true;
         g_jobSystem = new JobSystem(config);
         g_jobSystem->Startup();
 
         std::atomic testInt = 0;
     
-        for (int i = 0; i < NUM_JOBS; ++i)
+        for (int i = 0; i < JOBSYSTEM_TEST_NUM_JOBS; ++i)
         {
             IncIntJob* newJob = new IncIntJob(testInt);
             JobID id = g_jobSystem->PostJob(newJob);
@@ -160,7 +160,7 @@ TEST(JobSystem, JobID)
         g_jobSystem->WaitForAllJobs();
     
         int value = testInt;
-        EXPECT_EQ(value, NUM_JOBS);
+        EXPECT_EQ(value, JOBSYSTEM_TEST_NUM_JOBS);
     
         g_jobSystem->Shutdown();
         delete g_jobSystem;
@@ -173,23 +173,23 @@ TEST(JobSystem, JobID)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleParallel)
 {
-    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    for (int t = 0; t < JOBSYSTEM_TEST_NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
-        config.m_threadCount = NUM_THREADS;
+        config.m_threadCount = JOBSYSTEM_TEST_NUM_THREADS;
         g_jobSystem = new JobSystem(config);
         g_jobSystem->Startup();
         EXPECT_TRUE(g_jobSystem != nullptr);
 
         std::atomic testInt = 0;
-        for (int i = 0; i < NUM_JOBS; ++i)
+        for (int i = 0; i < JOBSYSTEM_TEST_NUM_JOBS; ++i)
         {
             g_jobSystem->PostJob(new IncIntJob(testInt));
         }
         g_jobSystem->WaitForAllJobs();
 
         int value = testInt;
-        EXPECT_EQ(value, NUM_JOBS);
+        EXPECT_EQ(value, JOBSYSTEM_TEST_NUM_JOBS);
 
         g_jobSystem->Shutdown();
         delete g_jobSystem;
@@ -202,23 +202,23 @@ TEST(JobSystem, SimpleParallel)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleRecursive)
 {
-    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    for (int t = 0; t < JOBSYSTEM_TEST_NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
-        config.m_threadCount = NUM_THREADS;
+        config.m_threadCount = JOBSYSTEM_TEST_NUM_THREADS;
         g_jobSystem = new JobSystem(config);
         g_jobSystem->Startup();
         EXPECT_TRUE(g_jobSystem != nullptr);
 
         std::atomic testInt = 0;
-        for (int i = 0; i < NUM_JOBS; ++i)
+        for (int i = 0; i < JOBSYSTEM_TEST_NUM_JOBS; ++i)
         {
             g_jobSystem->PostJob(new SimpleRecursiveJob(testInt));
         }
         g_jobSystem->WaitForAllJobs();
 
         int value = testInt; 
-        EXPECT_EQ(value, NUM_JOBS);
+        EXPECT_EQ(value, JOBSYSTEM_TEST_NUM_JOBS);
 
         g_jobSystem->Shutdown();
         delete g_jobSystem;
@@ -231,17 +231,17 @@ TEST(JobSystem, SimpleRecursive)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleNeedsComplete)
 {
-    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    for (int t = 0; t < JOBSYSTEM_TEST_NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
-        config.m_threadCount = NUM_THREADS;
+        config.m_threadCount = JOBSYSTEM_TEST_NUM_THREADS;
         g_jobSystem = new JobSystem(config);
         g_jobSystem->Startup();
         EXPECT_TRUE(g_jobSystem != nullptr);
 
         std::atomic testInt = 0;
         std::vector<JobID> ids;
-        for (int j = 0; j < NUM_JOBS; ++j)
+        for (int j = 0; j < JOBSYSTEM_TEST_NUM_JOBS; ++j)
         {
             ids.emplace_back(g_jobSystem->PostJob(new SimpleNeedsCompleteJob(testInt)));
         }
@@ -262,16 +262,16 @@ TEST(JobSystem, SimpleNeedsComplete)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleRecursiveAndNeedsComplete)
 {
-    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    for (int t = 0; t < JOBSYSTEM_TEST_NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
-        config.m_threadCount = NUM_THREADS;
+        config.m_threadCount = JOBSYSTEM_TEST_NUM_THREADS;
         g_jobSystem = new JobSystem(config);
         g_jobSystem->Startup();
         EXPECT_TRUE(g_jobSystem != nullptr);
 
         std::atomic testInt = 0;
-        for (int i = 0; i < NUM_JOBS; ++i)
+        for (int i = 0; i < JOBSYSTEM_TEST_NUM_JOBS; ++i)
         {
             g_jobSystem->PostJob(new SimpleRecursiveAndNeedsCompleteJob(testInt));
         }
@@ -292,16 +292,16 @@ TEST(JobSystem, SimpleRecursiveAndNeedsComplete)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleRecursiveAndNeedsMultipleCompletes)
 {
-    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    for (int t = 0; t < JOBSYSTEM_TEST_NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
-        config.m_threadCount = NUM_THREADS;
+        config.m_threadCount = JOBSYSTEM_TEST_NUM_THREADS;
         g_jobSystem = new JobSystem(config);
         g_jobSystem->Startup();
         EXPECT_TRUE(g_jobSystem != nullptr);
 
         std::atomic testInt = 0;
-        for (int i = 0; i < NUM_JOBS; ++i)
+        for (int i = 0; i < JOBSYSTEM_TEST_NUM_JOBS; ++i)
         {
             g_jobSystem->PostJob(new RecursiveAndNeedsThreeCompletesJob(testInt));
         }
@@ -386,10 +386,10 @@ struct JobWithDependencies_MultiplyByTwo : Job
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, JobGraph)
 {
-    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    for (int t = 0; t < JOBSYSTEM_TEST_NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
-        config.m_threadCount = NUM_THREADS;
+        config.m_threadCount = JOBSYSTEM_TEST_NUM_THREADS;
         g_jobSystem = new JobSystem(config);
         g_jobSystem->Startup();
         EXPECT_TRUE(g_jobSystem != nullptr);

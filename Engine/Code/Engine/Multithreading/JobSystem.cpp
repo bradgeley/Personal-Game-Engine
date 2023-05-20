@@ -124,7 +124,7 @@ bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp)
         
         if (blockAndHelp)
         {
-            if (!WorkerLoop_TryDoSpecificJob(jobID))
+            if (!TryDoSpecificJob(jobID))
             {
                 std::this_thread::yield();
             }
@@ -157,7 +157,7 @@ bool JobSystem::CompleteJobs(std::vector<JobID>& in_out_ids, bool blockAndHelp)
         
         if (blockAndHelp && !in_out_ids.empty())
         {
-            if (!WorkerLoop_TryDoSpecificJobs(in_out_ids))
+            if (!TryDoSpecificJobs(in_out_ids))
             {
                 std::this_thread::yield();
             }
@@ -201,7 +201,7 @@ void JobSystem::ExecuteJobGraph(JobGraph& jobGraph, bool helpWithTasksOnThisThre
 
         if (helpWithTasksOnThisThread)
         {
-            WorkerLoop_TryDoFirstAvailableJob(false); // todo: may only do jobs in the jobGraph we just posted
+            TryDoSpecificJobs(jobGraph.m_jobReceipts); // todo: may only do jobs in the jobGraph we just posted
         }
         else std::this_thread::yield();
         
@@ -248,64 +248,10 @@ bool JobSystem::WorkerLoop_TryDoFirstAvailableJob(bool blocking)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool JobSystem::WorkerLoop_TryDoSpecificJob(JobID jobToExpedite)
+Job* JobSystem::PopFirstAvailableJob(bool blocking)
 {
-    Job* result = nullptr;
-    
-    m_jobQueue.Lock();
-    for (auto it = m_jobQueue.begin(); it != m_jobQueue.end(); ++it)
-    {
-        Job* job = *it;
-        if (job->m_id == jobToExpedite)
-        {
-            result = job;
-            m_jobQueue.erase(it);
-            break;
-        }
-    }
-    m_jobQueue.Unlock();
-
-    if (result)
-    {
-        WorkerLoop_ExecuteJob(result);
-        return true;
-    }
-    return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool JobSystem::WorkerLoop_TryDoSpecificJobs(std::vector<JobID> const& jobIDs)
-{
-    Job* result = nullptr;
-    
-    m_jobQueue.Lock();
-    for (auto it = m_jobQueue.begin(); it != m_jobQueue.end(); ++it)
-    {
-        Job* job = *it;
-        for (int i = 0; i < (int) jobIDs.size(); ++i)
-        {
-            if (job->m_id == jobIDs[i])
-            {
-                result = job;
-                m_jobQueue.erase(it);
-                break;
-            }
-        }
-        if (result)
-        {
-            break;
-        }
-    }
-    m_jobQueue.Unlock();
-
-    if (result)
-    {
-        WorkerLoop_ExecuteJob(result);
-        return true;
-    }
-    return false;
+    Job* job = m_jobQueue.Pop(blocking);
+    return job;
 }
 
 
@@ -337,10 +283,69 @@ void JobSystem::WorkerLoop_ExecuteJob(Job* job)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Job* JobSystem::PopFirstAvailableJob(bool blocking)
+bool JobSystem::TryDoSpecificJob(JobID jobToExpedite)
 {
-    Job* job = m_jobQueue.Pop(blocking);
-    return job;
+    Job* result = nullptr;
+    
+    m_jobQueue.Lock();
+    for (auto it = m_jobQueue.begin(); it != m_jobQueue.end(); ++it)
+    {
+        Job* job = *it;
+        if (job->m_id == jobToExpedite)
+        {
+            result = job;
+            m_jobQueue.erase(it);
+            break;
+        }
+    }
+    m_jobQueue.Unlock();
+
+    if (result)
+    {
+        WorkerLoop_ExecuteJob(result);
+        return true;
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::TryDoSpecificJobs(std::vector<JobID> const& jobIDs)
+{
+    Job* result = nullptr;
+    
+    m_jobQueue.Lock();
+    for (auto it = m_jobQueue.begin(); it != m_jobQueue.end(); ++it)
+    {
+        Job* job = *it;
+        for (int i = 0; i < (int) jobIDs.size(); ++i)
+        {
+            if (jobIDs[i] == JobID::Invalid)
+            {
+                continue;
+            }
+            
+            if (job->m_id == jobIDs[i])
+            {
+                result = job;
+                m_jobQueue.erase(it);
+                break;
+            }
+        }
+        if (result)
+        {
+            break;
+        }
+    }
+    m_jobQueue.Unlock();
+
+    if (result)
+    {
+        WorkerLoop_ExecuteJob(result);
+        return true;
+    }
+    return false;
 }
 
 

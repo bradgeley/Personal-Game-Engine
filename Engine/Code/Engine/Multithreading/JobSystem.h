@@ -68,10 +68,12 @@ protected:
 
     void WorkerLoop(JobWorker* worker);
     bool WorkerLoop_TryDoFirstAvailableJob(bool blocking = true);
-    bool WorkerLoop_TryDoSpecificJob(JobID jobToExpedite);
-    bool WorkerLoop_TryDoSpecificJobs(std::vector<JobID> const& jobIDs);
-    void WorkerLoop_ExecuteJob(Job* job);
     Job* PopFirstAvailableJob(bool blocking = true);
+    void WorkerLoop_ExecuteJob(Job* job);
+
+    // While waiting to complete jobs, threads can try to complete the jobs they are waiting on, which may recur
+    bool TryDoSpecificJob(JobID jobToExpedite);
+    bool TryDoSpecificJobs(std::vector<JobID> const& jobIDs);
 
     void PostAvailableJobGraphTasks(JobGraph& graph);
     void CompleteAvailableJobGraphTasks(JobGraph& graph);
@@ -97,7 +99,7 @@ protected:
 
     std::vector<JobWorker*> m_workers = {};
 
-    std::mutex              m_numIncompleteJobsMutex;
+    // May need a mutex to guard m_numIncompleteJobs (if having issues with a random job not completing before shutdown look here first?)
     std::atomic<int>        m_numIncompleteJobs = 0;
 
     ThreadSafeQueue<Job>    m_jobQueue = {};
