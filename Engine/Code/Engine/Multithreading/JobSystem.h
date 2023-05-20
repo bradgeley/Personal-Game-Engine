@@ -58,7 +58,7 @@ public:
     // Completing Jobs: returns true when all jobs in question are complete or don't exist
     bool CompleteJob(JobID jobID, bool blockAndHelp = true);
     bool CompleteJobs(std::vector<JobID>& in_out_ids, bool blockAndHelp = true);
-    bool CompleteAllJobs(bool blockAndHelp = true);
+    bool WaitForAllJobs(bool blockAndHelp = true);
     
     void ExecuteJobGraph(JobGraph& jobGraph, bool helpWithTasksOnThisThread = false);
 
@@ -67,15 +67,17 @@ public:
 protected:
 
     void WorkerLoop(JobWorker* worker);
-    bool WorkerLoop_TryDoOneJob(bool blocking = true);
+    bool WorkerLoop_TryDoFirstAvailableJob(bool blocking = true);
+    bool WorkerLoop_TryDoSpecificJob(JobID jobToExpedite);
+    bool WorkerLoop_TryDoSpecificJobs(std::vector<JobID> const& jobIDs);
     void WorkerLoop_ExecuteJob(Job* job);
-    Job* ClaimNextJob(bool blocking = true);
+    Job* PopFirstAvailableJob(bool blocking = true);
 
     void PostAvailableJobGraphTasks(JobGraph& graph);
     void CompleteAvailableJobGraphTasks(JobGraph& graph);
 
     void AddJobToInProgressQueue(Job* job);
-    Job* RemoveJobFromInProgressQueue(Job* job);
+    void RemoveJobFromInProgressQueue(Job* job);
     
     void AddJobToCompletedQueue(Job* job);
     Job* RemoveJobFromCompletedQueue(Job* job);

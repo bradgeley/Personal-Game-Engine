@@ -42,7 +42,7 @@ void JobSystem::Shutdown()
     EngineSubsystem::Shutdown();
 
     // Finish the job queue, all jobs are now nullptr so no need to do any additional cleanup except the completed queue
-    CompleteAllJobs();
+    WaitForAllJobs();
 
     // Wake up all idle threads and tell them we aren't running anymore
     m_isRunning = false;
@@ -124,7 +124,7 @@ bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp)
         
         if (blockAndHelp)
         {
-            if (!WorkerLoop_TryDoOneJob(false))
+            if (!WorkerLoop_TryDoSpecificJob(jobID))
             {
                 std::this_thread::yield();
             }
@@ -157,7 +157,7 @@ bool JobSystem::CompleteJobs(std::vector<JobID>& in_out_ids, bool blockAndHelp)
         
         if (blockAndHelp && !in_out_ids.empty())
         {
-            if (!WorkerLoop_TryDoOneJob(false))
+            if (!WorkerLoop_TryDoSpecificJobs(in_out_ids))
             {
                 std::this_thread::yield();
             }
@@ -171,25 +171,13 @@ bool JobSystem::CompleteJobs(std::vector<JobID>& in_out_ids, bool blockAndHelp)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool JobSystem::CompleteAllJobs(bool blockAndHelp)
+bool JobSystem::WaitForAllJobs(bool blockAndHelp)
 {
     do
     {
-        //m_completedJobsMutex.lock();
-        //for (auto& job : m_completedJobs)
-        //{
-        //    job->Complete();
-        //    --m_numIncompleteJobs;
-        //
-        //    delete job;
-        //}
-        //
-        //m_completedJobs.clear();
-        //m_completedJobsMutex.unlock();
-        
         if (blockAndHelp && m_numIncompleteJobs > 0)
         {
-            if (!WorkerLoop_TryDoOneJob(false))
+            if (!WorkerLoop_TryDoFirstAvailableJob(false))
             {
                 std::this_thread::yield();
             }
@@ -213,7 +201,7 @@ void JobSystem::ExecuteJobGraph(JobGraph& jobGraph, bool helpWithTasksOnThisThre
 
         if (helpWithTasksOnThisThread)
         {
-            WorkerLoop_TryDoOneJob(false); // todo: may only do jobs in the jobGraph we just posted
+            WorkerLoop_TryDoFirstAvailableJob(false); // todo: may only do jobs in the jobGraph we just posted
         }
         else std::this_thread::yield();
         
@@ -236,7 +224,7 @@ void JobSystem::WorkerLoop(JobWorker* worker)
 {
     while (m_isRunning && worker->m_isRunning)
     {
-        if (!WorkerLoop_TryDoOneJob())
+        if (!WorkerLoop_TryDoFirstAvailableJob())
         {
             std::this_thread::yield();
         }
@@ -246,9 +234,9 @@ void JobSystem::WorkerLoop(JobWorker* worker)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool JobSystem::WorkerLoop_TryDoOneJob(bool blocking)
+bool JobSystem::WorkerLoop_TryDoFirstAvailableJob(bool blocking)
 {
-    Job* job = ClaimNextJob(blocking);
+    Job* job = PopFirstAvailableJob(blocking);
     if (job)
     {
         WorkerLoop_ExecuteJob(job);
@@ -257,16 +245,83 @@ bool JobSystem::WorkerLoop_TryDoOneJob(bool blocking)
     return false;
 }
 
- 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::WorkerLoop_TryDoSpecificJob(JobID jobToExpedite)
+{
+    Job* result = nullptr;
+    
+    m_jobQueue.Lock();
+    for (auto it = m_jobQueue.begin(); it != m_jobQueue.end(); ++it)
+    {
+        Job* job = *it;
+        if (job->m_id == jobToExpedite)
+        {
+            result = job;
+            m_jobQueue.erase(it);
+            break;
+        }
+    }
+    m_jobQueue.Unlock();
+
+    if (result)
+    {
+        WorkerLoop_ExecuteJob(result);
+        return true;
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::WorkerLoop_TryDoSpecificJobs(std::vector<JobID> const& jobIDs)
+{
+    Job* result = nullptr;
+    
+    m_jobQueue.Lock();
+    for (auto it = m_jobQueue.begin(); it != m_jobQueue.end(); ++it)
+    {
+        Job* job = *it;
+        for (int i = 0; i < (int) jobIDs.size(); ++i)
+        {
+            if (job->m_id == jobIDs[i])
+            {
+                result = job;
+                m_jobQueue.erase(it);
+                break;
+            }
+        }
+        if (result)
+        {
+            break;
+        }
+    }
+    m_jobQueue.Unlock();
+
+    if (result)
+    {
+        WorkerLoop_ExecuteJob(result);
+        return true;
+    }
+    return false;
+}
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 void JobSystem::WorkerLoop_ExecuteJob(Job* job)
 {
-    AddJobToInProgressQueue(job);
+    #ifdef _DEBUG
+        AddJobToInProgressQueue(job);
+    #endif
     
     job->Execute();
 
-    RemoveJobFromInProgressQueue(job);
+    #ifdef _DEBUG
+        RemoveJobFromInProgressQueue(job);
+    #endif
 
     if (job->NeedsComplete())
     {
@@ -282,7 +337,7 @@ void JobSystem::WorkerLoop_ExecuteJob(Job* job)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Job* JobSystem::ClaimNextJob(bool blocking)
+Job* JobSystem::PopFirstAvailableJob(bool blocking)
 {
     Job* job = m_jobQueue.Pop(blocking);
     return job;
@@ -362,21 +417,18 @@ void JobSystem::AddJobToInProgressQueue(Job* job)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Job* JobSystem::RemoveJobFromInProgressQueue(Job* job)
+void JobSystem::RemoveJobFromInProgressQueue(Job* job)
 {
-    Job* result = nullptr;
     m_inProgressJobsMutex.lock();
     for (int i = 0; i < (int) m_inProgressJobs.size(); ++i)
     {
         if (m_inProgressJobs[i] == job)
         {
-            result = m_inProgressJobs[i];
             m_inProgressJobs.erase(m_inProgressJobs.begin() + i);
             break;
         }
     }
     m_inProgressJobsMutex.unlock();
-    return result;
 }
 
 

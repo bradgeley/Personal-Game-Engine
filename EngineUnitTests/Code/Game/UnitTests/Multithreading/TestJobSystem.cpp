@@ -7,14 +7,14 @@
 
 int NUM_THREADS = 32;
 int NUM_JOBS = 1000;
-int NUM_ITERATIONS = 1;
+int NUM_ITERATIONS = 1000;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, CreateDestroy)
 {
-    for (int t=0;t<NUM_ITERATIONS; ++t)
+    for (int t = 0; t < NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
         config.m_threadCount = NUM_THREADS;
@@ -24,6 +24,25 @@ TEST(JobSystem, CreateDestroy)
         g_jobSystem = nullptr;
         EXPECT_TRUE(g_jobSystem == nullptr);
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+TEST(JobSystem, StartupShutdown)
+{
+    JobSystemConfig config;
+    config.m_threadCount = NUM_THREADS;
+    g_jobSystem = new JobSystem(config);
+    
+    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    {
+        g_jobSystem->Startup();
+        g_jobSystem->Shutdown();
+    }
+    
+    delete g_jobSystem;
+    g_jobSystem = nullptr;
 }
 
 
@@ -99,9 +118,29 @@ struct SimpleRecursiveAndNeedsCompleteJob : Job
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct RecursiveAndNeedsThreeCompletesJob : Job
+{
+    RecursiveAndNeedsThreeCompletesJob(std::atomic<int>& numToIncrement) : numToIncrement(numToIncrement) {}
+    
+    std::atomic<int>& numToIncrement;
+    
+    void Execute() override
+    {
+        std::vector<JobID> jobs;
+        jobs.resize(3);
+        jobs[0] = g_jobSystem->PostJob(new SimpleNeedsCompleteJob(numToIncrement));
+        jobs[1] = g_jobSystem->PostJob(new SimpleNeedsCompleteJob(numToIncrement));
+        jobs[2] = g_jobSystem->PostJob(new SimpleNeedsCompleteJob(numToIncrement));
+        g_jobSystem->CompleteJobs(jobs);
+    }
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, JobID)
 {
-    for (int t=0;t<NUM_ITERATIONS; ++t)
+    for (int t = 0; t < NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
         config.m_threadCount = NUM_THREADS;
@@ -118,7 +157,7 @@ TEST(JobSystem, JobID)
             EXPECT_EQ((int) id.m_uniqueID, i); 
         }
     
-        g_jobSystem->CompleteAllJobs();
+        g_jobSystem->WaitForAllJobs();
     
         int value = testInt;
         EXPECT_EQ(value, NUM_JOBS);
@@ -134,7 +173,7 @@ TEST(JobSystem, JobID)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleParallel)
 {
-    for (int t=0;t<NUM_ITERATIONS; ++t)
+    for (int t = 0; t < NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
         config.m_threadCount = NUM_THREADS;
@@ -147,7 +186,7 @@ TEST(JobSystem, SimpleParallel)
         {
             g_jobSystem->PostJob(new IncIntJob(testInt));
         }
-        g_jobSystem->CompleteAllJobs();
+        g_jobSystem->WaitForAllJobs();
 
         int value = testInt;
         EXPECT_EQ(value, NUM_JOBS);
@@ -163,7 +202,7 @@ TEST(JobSystem, SimpleParallel)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleRecursive)
 {
-    for (int t=0;t<NUM_ITERATIONS; ++t)
+    for (int t = 0; t < NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
         config.m_threadCount = NUM_THREADS;
@@ -176,7 +215,7 @@ TEST(JobSystem, SimpleRecursive)
         {
             g_jobSystem->PostJob(new SimpleRecursiveJob(testInt));
         }
-        g_jobSystem->CompleteAllJobs();
+        g_jobSystem->WaitForAllJobs();
 
         int value = testInt; 
         EXPECT_EQ(value, NUM_JOBS);
@@ -192,7 +231,7 @@ TEST(JobSystem, SimpleRecursive)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleNeedsComplete)
 {
-    for (int t=0;t<NUM_ITERATIONS; ++t)
+    for (int t = 0; t < NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
         config.m_threadCount = NUM_THREADS;
@@ -223,7 +262,7 @@ TEST(JobSystem, SimpleNeedsComplete)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, SimpleRecursiveAndNeedsComplete)
 {
-    for (int t=0;t<NUM_ITERATIONS; ++t)
+    for (int t = 0; t < NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
         config.m_threadCount = NUM_THREADS;
@@ -237,7 +276,37 @@ TEST(JobSystem, SimpleRecursiveAndNeedsComplete)
             g_jobSystem->PostJob(new SimpleRecursiveAndNeedsCompleteJob(testInt));
         }
 
-        g_jobSystem->CompleteAllJobs();
+        g_jobSystem->WaitForAllJobs();
+
+        int value = testInt; 
+        EXPECT_EQ(value, 0);
+
+        g_jobSystem->Shutdown();
+        delete g_jobSystem;
+        g_jobSystem = nullptr;
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+TEST(JobSystem, SimpleRecursiveAndNeedsMultipleCompletes)
+{
+    for (int t = 0; t < NUM_ITERATIONS; ++t)
+    {
+        JobSystemConfig config;
+        config.m_threadCount = NUM_THREADS;
+        g_jobSystem = new JobSystem(config);
+        g_jobSystem->Startup();
+        EXPECT_TRUE(g_jobSystem != nullptr);
+
+        std::atomic testInt = 0;
+        for (int i = 0; i < NUM_JOBS; ++i)
+        {
+            g_jobSystem->PostJob(new RecursiveAndNeedsThreeCompletesJob(testInt));
+        }
+
+        g_jobSystem->WaitForAllJobs();
 
         int value = testInt; 
         EXPECT_EQ(value, 0);
@@ -317,7 +386,7 @@ struct JobWithDependencies_MultiplyByTwo : Job
 //----------------------------------------------------------------------------------------------------------------------
 TEST(JobSystem, JobGraph)
 {
-    for (int t=0;t<NUM_ITERATIONS; ++t)
+    for (int t = 0; t < NUM_ITERATIONS; ++t)
     {
         JobSystemConfig config;
         config.m_threadCount = NUM_THREADS;

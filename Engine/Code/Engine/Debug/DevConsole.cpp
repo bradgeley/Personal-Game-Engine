@@ -410,7 +410,7 @@ void DevConsole::UpdateBackgroundImage(float deltaSeconds)
     // Try to complete jobs
     if (!m_backgroundImageLoadingJobs.empty())
     {
-        g_jobSystem->CompleteJobs(m_backgroundImageLoadingJobs);
+        g_jobSystem->CompleteJobs(m_backgroundImageLoadingJobs, false);
     }
 
     if (m_backgroundImages.size() <= 1)
