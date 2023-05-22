@@ -5,7 +5,7 @@
 
 
 
-int JOBSYSTEM_TEST_NUM_THREADS = 31;
+int JOBSYSTEM_TEST_NUM_THREADS = 32;
 int JOBSYSTEM_TEST_NUM_JOBS = 1000;
 int JOBSYSTEM_TEST_NUM_ITERATIONS = 1000;
 
@@ -54,7 +54,7 @@ struct IncIntJob : Job
     
     std::atomic<int>& numToIncrement;
 
-    bool NeedsCompleteCallback() override { return false; }
+    bool NeedsComplete() override { return false; }
     
     void Execute() override
     {
@@ -70,8 +70,6 @@ struct SimpleRecursiveJob : Job
     SimpleRecursiveJob(std::atomic<int>& numToIncrement) : numToIncrement(numToIncrement) {}
     
     std::atomic<int>& numToIncrement;
-    
-    bool NeedsCompleteCallback() override { return false; }
     
     void Execute() override
     {
@@ -93,7 +91,7 @@ struct SimpleNeedsCompleteJob : Job
         numToIncrement++;
     }
     
-    bool NeedsCompleteCallback() override { return true; }
+    bool NeedsComplete() override { return true; }
     
     void Complete() override
     {
@@ -110,8 +108,6 @@ struct SimpleRecursiveAndNeedsCompleteJob : Job
     
     std::atomic<int>& numToIncrement;
     
-    bool NeedsCompleteCallback() override { return false; }
-    
     void Execute() override
     {
         JobID id = g_jobSystem->PostJob(new SimpleNeedsCompleteJob(numToIncrement));
@@ -127,8 +123,6 @@ struct RecursiveAndNeedsThreeCompletesJob : Job
     RecursiveAndNeedsThreeCompletesJob(std::atomic<int>& numToIncrement) : numToIncrement(numToIncrement) {}
     
     std::atomic<int>& numToIncrement;
-    
-    bool NeedsCompleteCallback() override { return false; } 
     
     void Execute() override
     {
@@ -252,7 +246,7 @@ TEST(JobSystem, SimpleNeedsComplete)
             ids.emplace_back(g_jobSystem->PostJob(new SimpleNeedsCompleteJob(testInt)));
         }
     
-        g_jobSystem->CompleteJobs(ids, false);
+        g_jobSystem->CompleteJobs(ids);
 
         int value = testInt; 
         EXPECT_EQ(value, 0);
@@ -328,10 +322,16 @@ TEST(JobSystem, SimpleRecursiveAndNeedsMultipleCompletes)
 //----------------------------------------------------------------------------------------------------------------------
 struct JobWithDependencies_AddOne : Job
 {
-    JobWithDependencies_AddOne(std::atomic<int>& numToIncrement) : numToIncrement(numToIncrement)
+    JobWithDependencies_AddOne(std::atomic<int>& numToIncrement) : numToIncrement(numToIncrement) {}
+
+    JobDependencies GetJobDependencies() const override
     {
-        m_priority = 1;
-        m_dependencies = { 0, 1 << 0 };
+        return { 0, 1 << 0 };
+    }
+
+    int GetJobPriority() const override
+    {
+        return 1;
     }
     
     std::atomic<int>& numToIncrement;
@@ -341,7 +341,12 @@ struct JobWithDependencies_AddOne : Job
         numToIncrement++;
     }
 
-    bool NeedsCompleteCallback() override { return true; }
+    bool NeedsComplete() override { return true; }
+    
+    void Complete() override
+    {
+        
+    }
 };
 
 
@@ -349,10 +354,16 @@ struct JobWithDependencies_AddOne : Job
 //----------------------------------------------------------------------------------------------------------------------
 struct JobWithDependencies_MultiplyByTwo : Job
 {
-    JobWithDependencies_MultiplyByTwo(std::atomic<int>& num) : num(num) 
+    JobWithDependencies_MultiplyByTwo(std::atomic<int>& num) : num(num) {}
+    
+    JobDependencies GetJobDependencies() const override
     {
-        m_priority = 0;
-        m_dependencies = { 0, 1 << 0 };
+        return { 0, 1 << 0 };
+    }
+
+    int GetJobPriority() const override
+    {
+        return 0;
     }
     
     std::atomic<int>& num;
@@ -362,7 +373,12 @@ struct JobWithDependencies_MultiplyByTwo : Job
         num = num * 2;
     }
 
-    bool NeedsCompleteCallback() override { return true; }
+    bool NeedsComplete() override { return true; }
+    
+    void Complete() override
+    {
+        
+    }
 };
 
 

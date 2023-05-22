@@ -44,12 +44,12 @@ void JobSystem::Shutdown()
     // Finish the job queue, all jobs are now nullptr so no need to do any additional cleanup except the completed queue
     WaitForAllJobs();
 
-    // Wake up all waiting threads and tell them we aren't running anymore
+    // Wake up all idle threads and tell them we aren't running anymore
+    m_isRunning = false;
+    
     m_jobQueue.Quit();
     
     // Shut down all workers
-    m_isRunning = false;
-    
     for (auto& worker : m_workers)
     {
         worker->Shutdown();
@@ -157,7 +157,7 @@ bool JobSystem::CompleteJobs(std::vector<JobID>& in_out_ids, bool blockAndHelp)
         
         if (blockAndHelp && !in_out_ids.empty())
         {
-            if (!TryDoSpecificJobs(in_out_ids)) 
+            if (!TryDoSpecificJobs(in_out_ids))
             {
                 std::this_thread::yield();
             }
@@ -201,7 +201,7 @@ void JobSystem::ExecuteJobGraph(JobGraph& jobGraph, bool helpWithTasksOnThisThre
 
         if (helpWithTasksOnThisThread)
         {
-            TryDoSpecificJobs(jobGraph.m_jobReceipts);
+            TryDoSpecificJobs(jobGraph.m_jobReceipts); // todo: may only do jobs in the jobGraph we just posted
         }
         else std::this_thread::yield();
         
@@ -269,7 +269,7 @@ void JobSystem::WorkerLoop_ExecuteJob(Job* job)
         RemoveJobFromInProgressQueue(job);
     #endif
 
-    if (job->NeedsCompleteCallback())
+    if (job->NeedsComplete())
     {
         AddJobToCompletedQueue(job);
     }
@@ -361,7 +361,7 @@ void JobSystem::PostAvailableJobGraphTasks(JobGraph& graph)
             continue;
         }
 
-        JobDependencies const& jobDeps = graph.m_jobs[jobIndex]->GetJobDependencies();
+        JobDependencies& jobDeps = graph.m_jobDeps[jobIndex];
 
         bool canRun = true;
         for (int jobBeforeIndex = 0; jobBeforeIndex < jobIndex; ++jobBeforeIndex)
@@ -371,7 +371,7 @@ void JobSystem::PostAvailableJobGraphTasks(JobGraph& graph)
                 continue;
             }
             
-            JobDependencies const& jobBeforeDeps = graph.m_jobs[jobBeforeIndex]->GetJobDependencies();
+            JobDependencies& jobBeforeDeps = graph.m_jobDeps[jobBeforeIndex];
             if (jobDeps.SharesDependencies(jobBeforeDeps))
             {
                 canRun = false;

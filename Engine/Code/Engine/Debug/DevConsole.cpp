@@ -52,7 +52,7 @@ public:
         }
     }
     
-    bool NeedsCompleteCallback() override { return true; }
+    bool NeedsComplete() override { return true; }
     
     void Complete() override
     {
