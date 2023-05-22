@@ -52,8 +52,6 @@ public:
         }
     }
     
-    bool NeedsComplete() override { return true; }
-    
     void Complete() override
     {
         // Can only create textures in sync with the main thread

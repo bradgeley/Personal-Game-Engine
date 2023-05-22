@@ -9,6 +9,9 @@ void JobGraph::AddJob(Job* job)
 {
     m_jobs.push_back(job);
     SortByPriority();
+
+    job->m_needsComplete = true; // all jobs in a job graph must be completed
+    job->m_deleteAfterCompletion = false; // job graphs may be recurring, so don't delete the jobs
 }
 
 
@@ -31,13 +34,12 @@ bool JobGraph::IsComplete() const
 //----------------------------------------------------------------------------------------------------------------------
 void JobGraph::Initialize()
 {
-    m_jobReceipts.resize(m_jobs.size());
-    m_jobStatuses.resize(m_jobs.size());
+    m_jobReceipts.clear();
+    m_jobStatuses.clear();
+    m_jobDeps.clear();
     
-    for (auto& status : m_jobStatuses)
-    {
-        status = JobStatus::Null;
-    }
+    m_jobReceipts.resize(m_jobs.size(), JobID::Invalid);
+    m_jobStatuses.resize(m_jobs.size(), JobStatus::Null);
     
     for (auto& job : m_jobs)
     {

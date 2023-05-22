@@ -23,6 +23,14 @@ JobID::JobID(uint32_t uniqueID) : m_uniqueID(uniqueID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool JobID::operator<(JobID const& rhs) const
+{
+    return (m_uniqueID < rhs.m_uniqueID);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool JobID::operator==(JobID const& rhs) const
 {
     return (m_uniqueID == rhs.m_uniqueID);

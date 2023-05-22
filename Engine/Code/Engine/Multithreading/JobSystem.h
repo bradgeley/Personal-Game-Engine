@@ -82,12 +82,7 @@ protected:
     void RemoveJobFromInProgressQueue(Job* job);
     
     void AddJobToCompletedQueue(Job* job);
-    Job* RemoveJobFromCompletedQueue(Job* job);
     Job* RemoveJobFromCompletedQueue(JobID jobID);
-    
-    // Must have the completed job mutex locked to call
-    bool CompleteJob_Locked(JobID id);
-    bool IsJobWaitingForComplete_Locked(JobID id) const;
 
 protected:
     

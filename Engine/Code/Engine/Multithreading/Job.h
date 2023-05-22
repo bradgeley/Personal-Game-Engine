@@ -31,10 +31,10 @@ public:
     
     virtual ~Job() = default;
     
-    virtual void Execute() {}
-    virtual bool NeedsComplete() { return false; }
-    virtual JobDependencies GetJobDependencies() const { return {}; }
-    virtual int GetJobPriority() const { return -1; }
+    bool NeedsComplete() const { return m_needsComplete; }
+    bool DeleteAfterCompletion() const { return m_deleteAfterCompletion; }
+    JobDependencies const& GetJobDependencies() const { return m_jobDependencies; }
+    int GetJobPriority() const { return m_priority; }
 
     bool IsValid() const;
     bool HasDependencies() const;
@@ -44,8 +44,15 @@ protected:
     
     friend class JobSystem;
 
-    // Called from the job system when the main thread asks to complete its JobID
+    virtual void Execute() {}
     virtual void Complete() {}
+
+public:
+
+    bool m_needsComplete = true;
+    bool m_deleteAfterCompletion = true;
+    JobDependencies m_jobDependencies;
+    int m_priority = -1;
 
 protected:
 

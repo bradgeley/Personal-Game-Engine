@@ -13,6 +13,7 @@ struct JobID
     JobID();
     JobID(uint32_t uniqueID);
 
+    bool operator<(JobID const& rhs) const;
     bool operator==(JobID const& rhs) const;
     bool operator!=(JobID const& rhs) const;
     

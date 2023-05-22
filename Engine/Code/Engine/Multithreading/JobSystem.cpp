@@ -116,8 +116,11 @@ bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp)
         {
             job->Complete();
             --m_numIncompleteJobs;
-            
-            delete job;
+
+            if (job->DeleteAfterCompletion())
+            {
+                delete job;
+            }
             
             return true;
         }
@@ -275,7 +278,10 @@ void JobSystem::WorkerLoop_ExecuteJob(Job* job)
     }
     else
     {
-        delete job;
+        if (job->DeleteAfterCompletion())
+        {
+            delete job;
+        }
         m_numIncompleteJobs--;
     }
 }
@@ -449,14 +455,6 @@ void JobSystem::AddJobToCompletedQueue(Job* job)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Job* JobSystem::RemoveJobFromCompletedQueue(Job* job)
-{
-    return RemoveJobFromCompletedQueue(job->m_id);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 Job* JobSystem::RemoveJobFromCompletedQueue(JobID jobID)
 {
     Job* result = nullptr;
@@ -472,41 +470,4 @@ Job* JobSystem::RemoveJobFromCompletedQueue(JobID jobID)
     }
     m_completedJobsMutex.unlock();
     return result;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool JobSystem::CompleteJob_Locked(JobID id)
-{
-    for (int completedJobIndex = 0; completedJobIndex < (int) m_completedJobs.size(); ++completedJobIndex)
-    {
-        Job*& job = m_completedJobs[completedJobIndex];
-        if (job->m_id == id)
-        {
-            job->Complete();
-
-            delete job;
-            job = nullptr;
-            
-            m_completedJobs.erase(m_completedJobs.begin() + completedJobIndex);
-            return true;
-        }
-    }
-    return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool JobSystem::IsJobWaitingForComplete_Locked(JobID id) const
-{
-    for (auto& job : m_completedJobs)
-    {
-        if (job->m_id == id)
-        {
-            return true;
-        }
-    }
-    return false;
 }
