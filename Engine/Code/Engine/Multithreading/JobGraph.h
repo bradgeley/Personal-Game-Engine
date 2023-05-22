@@ -30,5 +30,4 @@ protected:
     std::vector<Job*> m_jobs;
     std::vector<JobID> m_jobReceipts;
     std::vector<JobStatus> m_jobStatuses;
-    std::vector<JobDependencies> m_jobDeps;
 };

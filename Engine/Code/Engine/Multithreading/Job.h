@@ -27,26 +27,32 @@ enum class JobStatus : uint8_t
 //
 class Job
 {
+    friend class JobSystem;
+    
 public:
     
     virtual ~Job() = default;
     
-    virtual void Execute() {}
-    virtual bool NeedsComplete() { return false; }
-    virtual JobDependencies GetJobDependencies() const { return {}; }
-    virtual int GetJobPriority() const { return -1; }
+    virtual bool NeedsCompleteCallback() { return m_needsComplete; } // The norm is probably to have jobs that need a complete callback
+    virtual JobDependencies const& GetJobDependencies() const { return m_dependencies; }
+    virtual int GetJobPriority() const { return m_priority; }
 
     bool IsValid() const;
     bool HasDependencies() const;
     uint32_t GetUniqueID() const;
 
 protected:
-    
-    friend class JobSystem;
 
-    // Called from the job system when the main thread asks to complete its JobID
+    virtual void Execute() {}
     virtual void Complete() {}
 
+public:
+
+    bool m_needsComplete = true;
+    bool m_isRecurringJob = false;
+    int m_priority = -1;
+    JobDependencies m_dependencies;
+    
 protected:
 
     JobID m_id = 0;

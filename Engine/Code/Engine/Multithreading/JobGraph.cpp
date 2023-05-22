@@ -9,6 +9,9 @@ void JobGraph::AddJob(Job* job)
 {
     m_jobs.push_back(job);
     SortByPriority();
+
+    // all jobs in job graph need complete
+    job->m_needsComplete = true;
 }
 
 
@@ -31,18 +34,11 @@ bool JobGraph::IsComplete() const
 //----------------------------------------------------------------------------------------------------------------------
 void JobGraph::Initialize()
 {
-    m_jobReceipts.resize(m_jobs.size());
-    m_jobStatuses.resize(m_jobs.size());
+    m_jobReceipts.clear();
+    m_jobStatuses.clear();
     
-    for (auto& status : m_jobStatuses)
-    {
-        status = JobStatus::Null;
-    }
-    
-    for (auto& job : m_jobs)
-    {
-        m_jobDeps.push_back(job->GetJobDependencies());
-    }
+    m_jobReceipts.resize(m_jobs.size(), JobID::Invalid);
+    m_jobStatuses.resize(m_jobs.size(), JobStatus::Null);
 }
 
 

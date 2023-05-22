@@ -71,7 +71,7 @@ protected:
     Job* PopFirstAvailableJob(bool blocking = true);
     void WorkerLoop_ExecuteJob(Job* job);
 
-    // While waiting to complete jobs, threads can try to complete the jobs they are waiting on, which may recur
+    // While waiting to complete jobs, threads can try to complete the jobs they are waiting on, which may recur.
     bool TryDoSpecificJob(JobID jobToExpedite);
     bool TryDoSpecificJobs(std::vector<JobID> const& jobIDs);
 
