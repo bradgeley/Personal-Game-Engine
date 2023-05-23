@@ -19,15 +19,18 @@ public:
 
     void AddJob(Job* job);
     bool IsComplete() const;
+    void Shutdown();
     
 protected:
     
-    void Initialize();
+    void Reset();
     void SortByPriority();
     
 protected:
     
     std::vector<Job*> m_jobs;
+
+    // Transient data
     std::vector<JobID> m_jobReceipts;
     std::vector<JobStatus> m_jobStatuses;
     std::vector<JobDependencies> m_jobDeps;

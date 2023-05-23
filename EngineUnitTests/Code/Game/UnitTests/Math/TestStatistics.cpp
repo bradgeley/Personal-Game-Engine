@@ -13,13 +13,13 @@ int STATISTICS_TEST_NUM_ITERATIONS = 100000;
 TEST(Statistics, Average)
 {
     std::vector ints = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    float averageInt = StatisticsUtils::GetAverage(ints.data(), ints.size());
-    EXPECT_FLOAT_EQ(averageInt, 5);
+    double averageInt = StatisticsUtils::GetAverage(ints.data(), ints.size());
+    EXPECT_DOUBLE_EQ(averageInt, 5);
 
     
     std::vector floats = { -0.f, -1.f, -2.f, -3.f, -4.f, -5.f, -6.f, -7.f, -8.f, -9.f, -10.f };
-    float averageFloat = StatisticsUtils::GetAverage(floats.data(), ints.size());
-    EXPECT_FLOAT_EQ(averageFloat, -5.f);
+    double averageFloat = StatisticsUtils::GetAverage(floats.data(), ints.size());
+    EXPECT_DOUBLE_EQ(averageFloat, -5.f);
 }
 
 

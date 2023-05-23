@@ -167,6 +167,7 @@
     <ClCompile Include="Core\Image.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
     <ClCompile Include="Core\Time.cpp" />
+    <ClCompile Include="DataStructures\BitArray.cpp" />
     <ClCompile Include="DataStructures\NamedProperties.cpp" />
     <ClCompile Include="DataStructures\ThreadSafeQueue.cpp" />
     <ClCompile Include="Debug\DebugDrawUtils.cpp" />
@@ -175,6 +176,14 @@
     <ClCompile Include="Debug\DevConsoleInput.cpp" />
     <ClCompile Include="Debug\DevConsoleLine.cpp" />
     <ClCompile Include="Debug\DevConsoleLog.cpp" />
+    <ClCompile Include="ECS\AdminSystem.cpp" />
+    <ClCompile Include="ECS\ComponentStorage.cpp" />
+    <ClCompile Include="ECS\Config.cpp" />
+    <ClCompile Include="ECS\EntityID.cpp" />
+    <ClCompile Include="ECS\GroupIter.cpp" />
+    <ClCompile Include="ECS\System.cpp" />
+    <ClCompile Include="ECS\SystemContext.cpp" />
+    <ClCompile Include="ECS\SystemScheduler.cpp" />
     <ClCompile Include="Events\EventDelegate.cpp" />
     <ClCompile Include="Events\EventSubscriber.cpp" />
     <ClCompile Include="Events\EventSystem.cpp" />
@@ -225,6 +234,7 @@
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Core\Time.h" />
     <ClInclude Include="Core\XmlUtils.h" />
+    <ClInclude Include="DataStructures\BitArray.h" />
     <ClInclude Include="DataStructures\NamedProperties.h" />
     <ClInclude Include="DataStructures\ThreadSafeQueue.h" />
     <ClInclude Include="Debug\DebugDrawUtils.h" />
@@ -233,6 +243,14 @@
     <ClInclude Include="Debug\DevConsoleInput.h" />
     <ClInclude Include="Debug\DevConsoleLine.h" />
     <ClInclude Include="Debug\DevConsoleLog.h" />
+    <ClInclude Include="ECS\AdminSystem.h" />
+    <ClInclude Include="ECS\ComponentStorage.h" />
+    <ClInclude Include="ECS\Config.h" />
+    <ClInclude Include="ECS\EntityID.h" />
+    <ClInclude Include="ECS\GroupIter.h" />
+    <ClInclude Include="ECS\System.h" />
+    <ClInclude Include="ECS\SystemContext.h" />
+    <ClInclude Include="ECS\SystemScheduler.h" />
     <ClInclude Include="Events\EventDelegate.h" />
     <ClInclude Include="Events\EventSubscriber.h" />
     <ClInclude Include="Events\EventSystem.h" />

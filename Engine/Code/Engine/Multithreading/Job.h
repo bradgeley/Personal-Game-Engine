@@ -31,9 +31,9 @@ public:
     
     virtual ~Job() = default;
     
+    JobDependencies const& GetJobDependencies() const { return m_jobDependencies; }
     bool NeedsComplete() const { return m_needsComplete; }
     bool DeleteAfterCompletion() const { return m_deleteAfterCompletion; }
-    JobDependencies const& GetJobDependencies() const { return m_jobDependencies; }
     int GetJobPriority() const { return m_priority; }
 
     bool IsValid() const;
@@ -49,12 +49,12 @@ protected:
 
 public:
 
-    bool m_needsComplete = true;
-    bool m_deleteAfterCompletion = true;
-    JobDependencies m_jobDependencies;
-    int m_priority = -1;
+    JobDependencies     m_jobDependencies;
+    bool                m_needsComplete             = true;
+    bool                m_deleteAfterCompletion     = true;
+    int                 m_priority                  = -1;
 
 protected:
 
-    JobID m_id = 0;
+    JobID               m_id                        = 0;
 };

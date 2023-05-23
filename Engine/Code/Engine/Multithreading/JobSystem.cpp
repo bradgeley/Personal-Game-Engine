@@ -84,7 +84,7 @@ JobID JobSystem::PostJob(Job* job)
     JobID id = GetNextJobUniqueID();
     job->m_id = id;
     
-    m_numIncompleteJobs++;
+    ++m_numIncompleteJobs;
     m_jobQueue.Push(job);
 
     return id;
@@ -148,7 +148,7 @@ bool JobSystem::CompleteJobs(std::vector<JobID>& in_out_ids, bool blockAndHelp)
         for (auto it = in_out_ids.begin(); it != in_out_ids.end();)
         {
             JobID& jobID = *it;
-            if (CompleteJob(jobID, false)) // false here so we can complete in any order instead of blocking for each one
+            if (CompleteJob(jobID, false)) // non blocking here so we can complete in any order instead of blocking for each one in order
             {
                 it = in_out_ids.erase(it);
             }
@@ -196,7 +196,7 @@ bool JobSystem::WaitForAllJobs(bool blockAndHelp)
 //----------------------------------------------------------------------------------------------------------------------
 void JobSystem::ExecuteJobGraph(JobGraph& jobGraph, bool helpWithTasksOnThisThread)
 {
-    jobGraph.Initialize();
+    jobGraph.Reset();
     
     while (!jobGraph.IsComplete())
     {
@@ -282,7 +282,7 @@ void JobSystem::WorkerLoop_ExecuteJob(Job* job)
         {
             delete job;
         }
-        m_numIncompleteJobs--;
+        --m_numIncompleteJobs;
     }
 }
 

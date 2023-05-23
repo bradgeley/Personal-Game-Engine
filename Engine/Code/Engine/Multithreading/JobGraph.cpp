@@ -32,7 +32,18 @@ bool JobGraph::IsComplete() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobGraph::Initialize()
+void JobGraph::Shutdown()
+{
+    m_jobReceipts.clear();
+    m_jobStatuses.clear();
+    m_jobDeps.clear();
+    m_jobs.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void JobGraph::Reset()
 {
     m_jobReceipts.clear();
     m_jobStatuses.clear();

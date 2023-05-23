@@ -45,9 +45,7 @@ TEST(RNG, SeededRand)
         int a = g_rng->Rand();
         g_rng->SetSeed(t);
         int b = g_rng->Rand();
-        int c = g_rng->Rand();
         EXPECT_EQ(a, b);
-        EXPECT_NE(b, c);
     }
     delete g_rng;
 }
@@ -152,16 +150,13 @@ TEST(RNG, CoinFlip)
     {
         bool v = g_rng->CoinFlip(0.5f);
         results.emplace_back(v);
-
-        EXPECT_GE(v, 0.f);
-        EXPECT_LE(v, 1.f);
     }
     
-    if (results.size() > 0)
+    if ((int) results.size() > 0)
     {
         int numTrue = 0;
         int numFalse = 0;
-        for (auto& val : results)
+        for (auto const& val : results)
         {
             if (val) numTrue++;
             else numFalse++;

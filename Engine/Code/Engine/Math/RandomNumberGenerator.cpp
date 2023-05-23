@@ -19,6 +19,7 @@ RandomNumberGenerator::RandomNumberGenerator(int seed) : m_seed(seed)
 //----------------------------------------------------------------------------------------------------------------------
 void RandomNumberGenerator::SetSeed(int seed)
 {
+    m_seed = seed;
     srand(m_seed);
 }
 

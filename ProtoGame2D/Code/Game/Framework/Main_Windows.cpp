@@ -16,12 +16,12 @@
 //
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-   g_theApp = new WindowsApplication();
-   g_theApp->Startup();
-   g_theApp->Run();
-   g_theApp->Shutdown();
-   delete g_theApp;
-   g_theApp = nullptr;
+   g_app = new WindowsApplication();
+   g_app->Startup();
+   g_app->Run();
+   g_app->Shutdown();
+   delete g_app;
+   g_app = nullptr;
    
    return 0;
 }

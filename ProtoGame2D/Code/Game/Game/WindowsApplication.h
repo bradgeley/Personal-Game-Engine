@@ -3,7 +3,7 @@
 
 
 
-extern class WindowsApplication* g_theApp;
+extern class WindowsApplication* g_app;
 
 
 
