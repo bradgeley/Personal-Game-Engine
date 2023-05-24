@@ -32,12 +32,25 @@ bool JobGraph::IsComplete() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobGraph::Shutdown()
+void JobGraph::Cleanup()
 {
     m_jobReceipts.clear();
     m_jobStatuses.clear();
     m_jobDeps.clear();
+
+    for (auto& job : m_jobs)
+    {
+        delete job;
+    }
     m_jobs.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void JobGraph::Reserve(size_t numExpectedJobs)
+{
+    m_jobs.reserve(numExpectedJobs);
 }
 
 

@@ -6,6 +6,9 @@
 #include "Engine/Math/Vec2.h"
 #include "Engine/Math/MathUtils.h"
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(MathUtils, Trig)
 {
     constexpr float ALLOWABLE_ERROR = 0.00001f;
@@ -19,6 +22,9 @@ TEST(MathUtils, Trig)
     EXPECT_NEAR(RadiansToDegrees(static_cast<float>(M_PI) * 2.f), 360.f, ALLOWABLE_ERROR);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(MathUtils, Clamp)
 {
     float value = 4.f;
@@ -30,6 +36,9 @@ TEST(MathUtils, Clamp)
     EXPECT_FLOAT_EQ(value, 3.f);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(MathUtils, Lerp)
 {
     EXPECT_FLOAT_EQ(Interpolate(2.f, 10.f, -1.f), -6.f);
@@ -57,6 +66,9 @@ TEST(MathUtils, Lerp)
     EXPECT_EQ(InterpolateIntClamped(2, 10, 11.f), 10);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(MathUtils, GetLength2D)
 {
     Vec2 vec(1.f, 0.f);
@@ -69,6 +81,9 @@ TEST(MathUtils, GetLength2D)
     EXPECT_FLOAT_EQ(GetLength2D(vec3), 5.f);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(MathUtils, NormalizeVector2D)
 {
     Vec2 vecZero(0.f, 0.f);
@@ -92,6 +107,9 @@ TEST(MathUtils, NormalizeVector2D)
     EXPECT_FLOAT_EQ(GetLength2D(vec3), 1.f);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(MathUtils, DotProduct2D)
 {
     Vec2 forward(1.f, 0.f);

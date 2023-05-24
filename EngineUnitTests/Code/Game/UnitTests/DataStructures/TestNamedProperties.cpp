@@ -4,6 +4,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(NamedProperties, Usage)
 {
     std::string name = "Brad";
@@ -31,6 +32,7 @@ TEST(NamedProperties, Usage)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(NamedProperties, OverwriteValue)
 {
     NamedProperties props;
@@ -44,6 +46,7 @@ TEST(NamedProperties, OverwriteValue)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(NamedProperties, OverwriteType)
 {
     int originalVal = 69;
@@ -61,6 +64,7 @@ TEST(NamedProperties, OverwriteType)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(NamedProperties, OtherFuncs)
 {
     NamedProperties props;

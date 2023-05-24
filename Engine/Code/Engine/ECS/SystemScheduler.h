@@ -1,6 +1,7 @@
 // Bradley Christensen - 2023
 #pragma once
 #include "Engine/Multithreading/JobGraph.h"
+#include "SystemSubgraph.h"
 #include <vector>
 
 
@@ -15,20 +16,25 @@ class SystemScheduler
 {
 public:
 
-	SystemScheduler(AdminSystem* admin);
-	~SystemScheduler() = default;
+	explicit SystemScheduler(AdminSystem* admin);
 
-	void Schedule(std::vector<System*> const& systems);
-	void RunMultithreaded(float deltaSeconds);
-	void RunSinglethreaded(float deltaSeconds) const;
+	void ScheduleFrame(std::vector<SystemSubgraph> const& systems);
+	void RunFrame(float deltaSeconds);
+	void RunSubgraph(SystemSubgraph const& subgraph, float deltaSeconds) const;
 
 private:
 
+	void RunFrame_AutoMultithreaded(float deltaSeconds);
+	void RunFrame_Singlethreaded(float deltaSeconds);
+
+	// Runs a system 0+ times based on its time step params
+	void TryRunSubgraph(SystemSubgraph& subgraph, float deltaSeconds, bool multithreaded) const;
+	
+	void RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph, float deltaSeconds) const;
+	void RunSubgraph_AutoMultithreaded(SystemSubgraph const& subgraph, float deltaSeconds) const;
+	
 	void Cleanup();
 
 	AdminSystem* m_admin = nullptr;
-	std::vector<System*> m_frameSystemsInOrder;
-	JobGraph m_jobGraph;
+	std::vector<SystemSubgraph> m_systemSubgraphs;
 };
-
-

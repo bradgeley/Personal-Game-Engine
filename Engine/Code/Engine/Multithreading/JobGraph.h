@@ -19,7 +19,8 @@ public:
 
     void AddJob(Job* job);
     bool IsComplete() const;
-    void Shutdown();
+    void Cleanup();
+    void Reserve(size_t numExpectedJobs);
     
 protected:
     

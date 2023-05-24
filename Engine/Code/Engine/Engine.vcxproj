@@ -184,6 +184,7 @@
     <ClCompile Include="ECS\System.cpp" />
     <ClCompile Include="ECS\SystemContext.cpp" />
     <ClCompile Include="ECS\SystemScheduler.cpp" />
+    <ClCompile Include="ECS\SystemSubgraph.cpp" />
     <ClCompile Include="Events\EventDelegate.cpp" />
     <ClCompile Include="Events\EventSubscriber.cpp" />
     <ClCompile Include="Events\EventSystem.cpp" />
@@ -251,6 +252,7 @@
     <ClInclude Include="ECS\System.h" />
     <ClInclude Include="ECS\SystemContext.h" />
     <ClInclude Include="ECS\SystemScheduler.h" />
+    <ClInclude Include="ECS\SystemSubgraph.h" />
     <ClInclude Include="Events\EventDelegate.h" />
     <ClInclude Include="Events\EventSubscriber.h" />
     <ClInclude Include="Events\EventSystem.h" />

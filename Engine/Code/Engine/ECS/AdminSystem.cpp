@@ -28,32 +28,37 @@ void AdminSystem::Startup()
 {
 	m_systemScheduler = new SystemScheduler(this);
 
-	for (System* s : m_systems)
+	for (auto& s : m_systemSubgraphs)
 	{
-		s->Startup();
+		s.Startup();
 	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AdminSystem::RunSystems(float deltaSeconds) const
+void AdminSystem::RunFrame(float deltaSeconds) const
 {
-	if (deltaSeconds > m_config.m_maxDeltaSeconds)
+	if (m_config.m_maxDeltaSeconds > 0.f && deltaSeconds > m_config.m_maxDeltaSeconds)
 	{
 		deltaSeconds = m_config.m_maxDeltaSeconds;
 	}
 
-	m_systemScheduler->Schedule(m_systems);
-	
-	if (IsAutoMultithreadingActive())
+	m_systemScheduler->ScheduleFrame(m_systemSubgraphs);
+	m_systemScheduler->RunFrame(deltaSeconds);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AdminSystem::RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeconds) const
+{
+	if (m_config.m_maxDeltaSeconds > 0.f && deltaSeconds > m_config.m_maxDeltaSeconds)
 	{
-		m_systemScheduler->RunMultithreaded(deltaSeconds);
+		deltaSeconds = m_config.m_maxDeltaSeconds;
 	}
-	else
-	{
-		m_systemScheduler->RunSinglethreaded(deltaSeconds);
-	}
+
+	m_systemScheduler->RunSubgraph(m_systemSubgraphs[subgraphID], deltaSeconds);
 }
 
 
@@ -61,18 +66,24 @@ void AdminSystem::RunSystems(float deltaSeconds) const
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::Shutdown()
 {
-	for (System* s : m_systems)
+	for (auto& s : m_systemSubgraphs)
 	{
-		s->Shutdown();
-		delete s;
+		s.Shutdown();
+		s.Cleanup();
 	}
+
+	m_systemSubgraphs.clear();
 
 	for (auto it = m_componentStorage.begin(); it != m_componentStorage.end(); ++it)
 	{
 		delete it->second;
 	}
+
+	m_componentStorage.clear();
+	m_componentBitMasks.clear();
 	
 	delete m_systemScheduler;
+	m_systemScheduler = nullptr;
 }
 
 
@@ -101,9 +112,15 @@ int AdminSystem::NumEntities() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::vector<System*> const& AdminSystem::GetSystems() const
+std::vector<System*> AdminSystem::GetSystems() const
 {
-	return m_systems;
+	std::vector<System*> result;
+	result.reserve(100);
+	for (auto& subgraph : m_systemSubgraphs)
+	{
+		result.insert(result.end(), subgraph.m_systems.begin(), subgraph.m_systems.end());
+	}
+	return result;
 }
 
 
@@ -111,44 +128,17 @@ std::vector<System*> const& AdminSystem::GetSystems() const
 //----------------------------------------------------------------------------------------------------------------------
 System* AdminSystem::GetSystemByName(std::string const& name) const
 {
-	for (auto& s : m_systems)
+	for (auto& subgraph : m_systemSubgraphs)
 	{
-		if (s->GetName() == name)
+		for (auto& system : subgraph.m_systems)
 		{
-			return s;
+			if (system->GetName() == name)
+			{
+				return system;
+			}
 		}
 	}
 	return nullptr;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-std::vector<System*> AdminSystem::GetSystemsByPriority() const
-{
-	std::vector<System*> result;
-	result.resize(m_systems.size());
-	int ignorePrio = -1;
-	int lowestPrio = INT_MAX;
-	System* lowestPrioSystem = nullptr;
-
-	for (int i = 0; i < (int) m_systems.size(); ++i)
-	{
-		for (auto s : m_systems)
-		{
-			int prio = s->GetPriority();
-			if (prio < lowestPrio && prio > ignorePrio)
-			{
-				lowestPrio = prio;
-				lowestPrioSystem = s;
-			}
-		}
-		result[i] = lowestPrioSystem;
-		ignorePrio = lowestPrio;
-		lowestPrio = INT_MAX;
-	}
-
-	return result;
 }
 
 
@@ -234,14 +224,21 @@ void AdminSystem::SetAutoMultithreadingThreshold(int newThreshold)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AdminSystem::RegisterSystem(System* s)
+void AdminSystem::RegisterSystem(System* s, SystemSubgraphID subgraphID)
 {
 	s->m_admin = this;
+	
+	if (subgraphID >= m_systemSubgraphs.size())
+	{
+		m_systemSubgraphs.resize(subgraphID + 1);
+	}
+
 	if (s->GetPriority() == -1)
 	{
-		s->SetRunPrio((int) m_systems.size());
+		s->SetRunPrio((int) m_systemSubgraphs[subgraphID].m_systems.size());
 	}
-	m_systems.push_back(s);
+	
+	m_systemSubgraphs[subgraphID].m_systems.emplace_back(s);
 }
 
 
@@ -249,14 +246,20 @@ void AdminSystem::RegisterSystem(System* s)
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::SetSystemActive(std::string const& sysName, bool isActive) const
 {
-	for (auto& s : m_systems)
+	System* s = GetSystemByName(sysName);
+	s->SetActive(isActive);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+SystemSubgraph& AdminSystem::GetSystemSubgraph(SystemSubgraphID subgraphID)
+{
+	if (subgraphID >= m_systemSubgraphs.size())
 	{
-		if (s->GetName() == sysName)
-		{
-			s->SetActive(isActive);
-			return;
-		}
+		m_systemSubgraphs.resize(subgraphID + 1);
 	}
+	return m_systemSubgraphs[subgraphID];
 }
 
 

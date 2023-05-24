@@ -4,22 +4,29 @@
 #include "Engine/Multithreading/JobSystem.h"
 #include "AdminSystem.h"
 #include "Config.h"
+#include "SystemSubgraph.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void RunSystem(SystemContext const& context);
+void SplitSystem(SystemContext const& context, int numJobs);
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// System Update Task
+// Calls PreRun, Run (or splits system into multiple RunSystemJob), and PostRun on a system
 //
-struct MultithreadedSystemUpdateJob : public Job
+struct AutoMultithreadedRunSystemJob : public Job
 {
 public:
 
-	explicit MultithreadedSystemUpdateJob(SystemContext const& context) : m_context(context) {}
+	explicit AutoMultithreadedRunSystemJob(SystemContext const& context) : m_context(context)
+	{
+		m_priority = context.m_system->GetPriority();
+		m_jobDependencies.m_readDependencies = context.m_system->GetReadDependencies();
+		m_jobDependencies.m_writeDependencies = context.m_system->GetWriteDependencies();
+	}
 
 	virtual void Execute() override
 	{
@@ -34,16 +41,27 @@ protected:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct RunSystemJob : public MultithreadedSystemUpdateJob
+// Calls Run on a system
+//
+struct SplitSystemJob : public Job
 {
 public:
 
-	explicit RunSystemJob(SystemContext const& context) : MultithreadedSystemUpdateJob(context) {}
+	explicit SplitSystemJob(SystemContext const& context) : m_context(context)
+	{
+		m_priority = context.m_system->GetPriority();
+		m_jobDependencies.m_readDependencies = context.m_system->GetReadDependencies();
+		m_jobDependencies.m_writeDependencies = context.m_system->GetWriteDependencies();
+	}
 
 	virtual void Execute() override
 	{
 		m_context.m_system->Run(m_context);
 	}
+
+protected:
+
+	SystemContext m_context;
 };
 
 
@@ -65,49 +83,96 @@ static bool SystemPriorityComparator(System* a, System* b)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SystemScheduler::Schedule(std::vector<System*> const& systems)
+void SystemScheduler::ScheduleFrame(std::vector<SystemSubgraph> const& systems)
 {
 	Cleanup();
 
-	for (System* const& s : systems)
+	// Make a local copy of all the subgraphs
+	m_systemSubgraphs.insert(m_systemSubgraphs.end(), systems.begin(), systems.end());
+	
+	// Within each subgraph sort by system priority
+	for (auto& subgraph : m_systemSubgraphs)
 	{
-		if (s->IsActive())
+		std::sort(subgraph.m_systems.begin(), subgraph.m_systems.end(), SystemPriorityComparator);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SystemScheduler::RunFrame(float deltaSeconds)
+{
+	if (g_jobSystem && m_admin->IsAutoMultithreadingActive())
+	{
+		RunFrame_AutoMultithreaded(deltaSeconds);
+	}
+	else
+	{
+		RunFrame_Singlethreaded(deltaSeconds);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SystemScheduler::RunSubgraph(SystemSubgraph const& subgraph, float deltaSeconds) const
+{
+	SystemSubgraph copy = subgraph;
+	std::sort(copy.m_systems.begin(), copy.m_systems.end(), SystemPriorityComparator);
+	
+	bool multithreaded = g_jobSystem && m_admin->IsAutoMultithreadingActive();
+	TryRunSubgraph(copy, deltaSeconds, multithreaded);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SystemScheduler::RunFrame_AutoMultithreaded(float deltaSeconds)
+{
+	for (auto& subgraph : m_systemSubgraphs)
+	{
+		TryRunSubgraph(subgraph, deltaSeconds, true);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SystemScheduler::RunFrame_Singlethreaded(float deltaSeconds)
+{
+	for (auto& subgraph : m_systemSubgraphs)
+	{
+		TryRunSubgraph(subgraph, deltaSeconds, false);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SystemScheduler::TryRunSubgraph(SystemSubgraph& subgraph, float deltaSeconds, bool multithreaded) const
+{
+	if (subgraph.m_timeStep >= SYSTEM_MIN_TIME_STEP)
+	{
+		subgraph.m_accumulatedTime += deltaSeconds;
+		while (subgraph.m_accumulatedTime > subgraph.m_timeStep)
 		{
-			m_frameSystemsInOrder.push_back(s);
+			subgraph.m_accumulatedTime -= subgraph.m_timeStep;
+
+			if (multithreaded)
+			{
+				RunSubgraph_AutoMultithreaded(subgraph, subgraph.m_timeStep);
+			}
+			else RunSubgraph_Singlethreaded(subgraph, subgraph.m_timeStep);
 		}
 	}
-
-	// need to sort by priority just in case user rearranges priority in the system window
-	// or registers systems not in the order of their priority
-	std::sort(m_frameSystemsInOrder.begin(), m_frameSystemsInOrder.end(), SystemPriorityComparator);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SystemScheduler::RunMultithreaded(float deltaSeconds)
-{
-	for (System* const& system : m_frameSystemsInOrder)
+	else
 	{
-		// If system splitting is active, this task will spawn multiple tasks and collect them before completing
-		SystemContext context(m_admin, system, deltaSeconds);
-		context.m_systemSplittingEnabled = m_admin->IsSystemSplittingActive();
-		m_jobGraph.AddJob(new MultithreadedSystemUpdateJob(context));
-	}
-	
-	g_jobSystem->ExecuteJobGraph(m_jobGraph);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SystemScheduler::RunSinglethreaded(float deltaSeconds) const
-{
-	for (System* const& system : m_frameSystemsInOrder)
-	{
-		SystemContext context(m_admin, system, deltaSeconds);
-		context.m_systemSplittingEnabled = m_admin->IsSystemSplittingActive();
-		RunSystem(context);
+		// Just call using deltaSeconds
+		if (multithreaded)
+		{
+			RunSubgraph_AutoMultithreaded(subgraph, deltaSeconds);
+		}
+		else RunSubgraph_Singlethreaded(subgraph, deltaSeconds);
 	}
 }
 
@@ -116,31 +181,77 @@ void SystemScheduler::RunSinglethreaded(float deltaSeconds) const
 //----------------------------------------------------------------------------------------------------------------------
 void RunSystem(SystemContext const& context)
 {
-	int systemSplittingNumJobs = context.m_system->GetSystemSplittingNumJobs();
-
 	context.m_system->PreRun();
 	
-	if (!context.m_systemSplittingEnabled || systemSplittingNumJobs == 1)
+	int systemSplittingNumJobs = context.m_system->GetSystemSplittingNumJobs();
+	if (context.m_admin->IsSystemSplittingActive() && systemSplittingNumJobs > 1)
 	{
-		context.m_system->Run(context);
+		SplitSystem(context, systemSplittingNumJobs);
 	}
 	else
 	{
-		std::vector<JobID> jobReceipts(systemSplittingNumJobs);
+		context.m_system->Run(context);
+	}
+	
+	context.m_system->PostRun();
+}
 
-		for (int systemSplittingJobID = 0; systemSplittingJobID < systemSplittingNumJobs; ++systemSplittingJobID)
-		{
-			SystemContext splitContext = context;
-			splitContext.SetSystemSplittingParams(systemSplittingJobID, systemSplittingNumJobs);
-			
-			Job* job = new RunSystemJob(splitContext);
-			jobReceipts[systemSplittingJobID] = g_jobSystem->PostJob(job);
-		}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SplitSystem(SystemContext const& context, int numJobs)
+{
+	// Split system into multiple run jobs (this can be significantly slower than single threaded if the entity count is low
+	std::vector<JobID> jobReceipts(numJobs);
+
+	for (int systemSplittingJobID = 0; systemSplittingJobID < numJobs; ++systemSplittingJobID)
+	{
+		// Copy the context, but split the entities amongst them
+		SystemContext splitContext = context;
+		splitContext.SplitEntities(systemSplittingJobID, numJobs);
 		
-		g_jobSystem->CompleteJobs(jobReceipts);
+		Job* job = new SplitSystemJob(splitContext);
+		jobReceipts[systemSplittingJobID] = g_jobSystem->PostJob(job);
 	}
 
-	context.m_system->PostRun();
+	// Block until all the split jobs are complete
+	g_jobSystem->CompleteJobs(jobReceipts);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// No job graph, just run each system (allowing splitting) one by one
+//
+void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph, float deltaSeconds) const
+{
+	for (auto& system : subgraph.m_systems)
+	{
+		SystemContext context(m_admin, system, deltaSeconds);
+		RunSystem(context);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Uses a job graph to run a single system subgraph
+// - so system calls within that subgraph can happen simultaneously
+//
+void SystemScheduler::RunSubgraph_AutoMultithreaded(SystemSubgraph const& subgraph, float deltaSeconds) const
+{
+	JobGraph jobGraph;
+	jobGraph.Reserve(subgraph.m_systems.size());
+	
+	for (System* const& system : subgraph.m_systems)
+	{
+		SystemContext context(m_admin, system, deltaSeconds);
+		Job* job = new AutoMultithreadedRunSystemJob(context);
+		jobGraph.AddJob(job);
+	}
+	g_jobSystem->ExecuteJobGraph(jobGraph);
+
+	jobGraph.Cleanup();
 }
 
 
@@ -148,6 +259,5 @@ void RunSystem(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::Cleanup()
 {
-	m_frameSystemsInOrder.clear();
-	m_jobGraph.Shutdown();
+	m_systemSubgraphs.clear();
 }

@@ -79,6 +79,12 @@ float GetLength2D(const Vec2& vec)
 }
 
 
+float GetLengthSquared2D(const Vec2& vec)
+{
+    return vec.x * vec.x + vec.y * vec.y;
+}
+
+
 void NormalizeVector2D(Vec2& vec)
 {
     float length = GetLength2D(vec);

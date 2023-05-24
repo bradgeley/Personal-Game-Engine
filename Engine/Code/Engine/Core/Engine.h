@@ -14,11 +14,14 @@ class EngineSubsystem;
 // A group of engine subsystems that run each frame
 // The order of registration determines the run order.
 //
-// Startup: forward
-// BeginFrame: forward
-// Render: forward
-// EndFrame: forward
-// Shutdown: backward
+// Run in forward order:
+// - Startup     
+// - BeginFrame  
+// - Render      
+// - EndFrame
+//
+// Run in backward order:
+// - Shutdown    
 //
 class Engine
 {

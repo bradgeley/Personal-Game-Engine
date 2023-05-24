@@ -31,6 +31,7 @@ public:
 public:
     
     float GetLength() const;
+    float GetLengthSquared() const;
     void Normalize();
     Vec2 GetNormalized() const;
     Vec2 GetRotated90() const;
@@ -38,6 +39,7 @@ public:
     
     void Rotate90();
     void RotateMinus90();
+    void ClampLength(float newMaxLength);
 
     // Component-wise const operators
     Vec2 operator-() const;
@@ -60,6 +62,7 @@ public:
     void operator/=(float divisor);
     
     bool operator==(Vec2 const& rhs) const;
+    bool operator!=(Vec2 const& rhs) const;
 
 public:
     

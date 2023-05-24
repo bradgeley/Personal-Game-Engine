@@ -405,7 +405,7 @@ TEST(JobSystem, JobGraph)
         EXPECT_EQ(value, 18);
     }
 
-    graph.Shutdown();
+    graph.Cleanup();
 
     g_jobSystem->Shutdown();
     delete g_jobSystem;

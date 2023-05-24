@@ -2,36 +2,23 @@
 #include "BitArray.h"
 
 
-//----------------------------------------------------------------------------------------------------------------------
-// 
-const int bitArray_tab64[64] = {
-	63,  0, 58,  1, 59, 47, 53,  2,
-	60, 39, 48, 27, 54, 33, 42,  3,
-	61, 51, 37, 40, 49, 18, 28, 20,
-	55, 30, 34, 11, 43, 14, 22,  4,
-	62, 57, 46, 52, 38, 26, 32, 41,
-	50, 36, 17, 19, 29, 10, 13, 21,
-	56, 45, 25, 31, 35, 16,  9, 12,
-	44, 24, 15,  8, 23,  7,  6,  5 };
-
 
 //----------------------------------------------------------------------------------------------------------------------
-// 
-int BitArray_log2_64(uint64_t value)
+int BitArray_GetRightMostUnsetBitIndex(uint64_t t)
 {
-	value |= value >> 1;
-	value |= value >> 2;
-	value |= value >> 4;
-	value |= value >> 8;
-	value |= value >> 16;
-	value |= value >> 32;
-	return bitArray_tab64[((uint64_t) ((value - (value >> 1)) * 0x07EDD5E59A4E28C2)) >> 58];
-}
+	// All bits are full - no need to iterate 64 times
+	if (t == SIZE_MAX)
+	{
+		return -1;
+	}
 
-
-//----------------------------------------------------------------------------------------------------------------------
-int BitArray_GetRightMostUnsetBit(uint64_t t)
-{
-	if (t == SIZE_MAX) return -1;
-	return BitArray_log2_64((~t) & (t + 1));
+	for (int i = 0; i < BIT_ARRAY_NUM_BITS_PER_ROW; ++i)
+	{
+		if ((t & 0x0000'0000'0000'0001) != 1)
+		{
+			return i;
+		}
+		t >>= 1;
+	}
+	return -1;
 }

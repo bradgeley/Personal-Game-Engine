@@ -153,27 +153,13 @@ int BitArray<t_size>::GetFirstUnsetIndex() const
 template<unsigned int t_size>
 int BitArray<t_size>::GetFirstSetIndex() const
 {
-	if (m_data[0] & 1i64)
-	{
-		return 0;
-	}
-	else
-	{
-		return GetNextSetIndex(0);
-	}
+	return GetNextSetIndex(0);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// black magic
-int BitArray_log2_64(uint64_t value);
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// black magic
-int BitArray_GetRightMostUnsetBit(uint64_t t);
+int BitArray_GetRightMostUnsetBitIndex(uint64_t t);
 
 
 
@@ -194,11 +180,11 @@ int BitArray<t_size>::GetNextUnsetIndex(int queryIndex) const
 			if (currentRowIndex == firstRowIndex)
 			{
 				uint64_t tExcludingOffsetBits = row | (~(SIZE_MAX << firstQueryOffset));
-				nextUnsetRowOffset = BitArray_GetRightMostUnsetBit(tExcludingOffsetBits);
+				nextUnsetRowOffset = BitArray_GetRightMostUnsetBitIndex(tExcludingOffsetBits);
 			}
 			else
 			{
-				nextUnsetRowOffset = BitArray_GetRightMostUnsetBit(row);
+				nextUnsetRowOffset = BitArray_GetRightMostUnsetBitIndex(row);
 			}
 			if (nextUnsetRowOffset == -1) continue;
 
@@ -216,11 +202,11 @@ int BitArray<t_size>::GetNextUnsetIndex(int queryIndex) const
 template <unsigned int t_size>
 int BitArray<t_size>::SetNextUnsetIndex(int queryIndex)
 {
-	size_t numRows = GetNumRows();
+	int numRows = GetNumRows();
 	int firstRowIndex = GetRowNumber(queryIndex);
 	int firstQueryOffset = queryIndex - BIT_ARRAY_NUM_BITS_PER_ROW * firstRowIndex;
 
-	for (int currentRowIndex = firstRowIndex; currentRowIndex < (int) numRows; ++currentRowIndex)
+	for (int currentRowIndex = firstRowIndex; currentRowIndex < numRows; ++currentRowIndex)
 	{
 		size_t const& row = m_data[currentRowIndex];
 		if (row != SIZE_MAX)
@@ -229,11 +215,11 @@ int BitArray<t_size>::SetNextUnsetIndex(int queryIndex)
 			if (currentRowIndex == firstRowIndex)
 			{
 				uint64_t tExcludingOffsetBits = row | (~(SIZE_MAX << firstQueryOffset));
-				nextUnsetRowOffset = BitArray_GetRightMostUnsetBit(tExcludingOffsetBits);
+				nextUnsetRowOffset = BitArray_GetRightMostUnsetBitIndex(tExcludingOffsetBits);
 			}
 			else
 			{
-				nextUnsetRowOffset = BitArray_GetRightMostUnsetBit(row);
+				nextUnsetRowOffset = BitArray_GetRightMostUnsetBitIndex(row);
 			}
 			if (nextUnsetRowOffset == -1) continue;
 
@@ -253,11 +239,11 @@ int BitArray<t_size>::SetNextUnsetIndex(int queryIndex)
 template<unsigned int t_size>
 int BitArray<t_size>::GetNextSetIndex(int queryIndex) const
 {
-	queryIndex++;
+	//queryIndex++;
 	int currentLocalBitIndex = queryIndex & BIT_ARRAY_BYTE_MASK_LOWER_BITS;
-	size_t numRows = GetNumRows();
+	int numRows = GetNumRows();
 
-	for (int currentRowIndex = GetRowNumber(queryIndex); currentRowIndex < (int) numRows; ++currentRowIndex)
+	for (int currentRowIndex = GetRowNumber(queryIndex); currentRowIndex < numRows; ++currentRowIndex)
 	{
 		size_t const& row = m_data[currentRowIndex];
 		if (row == 0i64) continue;

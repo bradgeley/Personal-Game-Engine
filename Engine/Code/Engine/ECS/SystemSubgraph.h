@@ -1,0 +1,40 @@
+﻿// Bradley Christensen - 2023
+#pragma once
+#include <vector>
+
+
+
+class System;
+
+
+
+typedef uint32_t SystemSubgraphID;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// System Sub-graph
+//
+// A list of systems that always run together, in priority order between each other - or in a job graph with auto multi-
+// threading enabled.
+//
+class SystemSubgraph
+{
+    friend class SystemScheduler;
+
+public:
+
+    void Startup() const;
+    void Shutdown() const;
+    void Cleanup();
+     
+public:
+
+    std::vector<System*> m_systems;
+    
+    float m_timeStep            = 0.f; // if time step < SYSTEM_MIN_TIME_STEP, run once only, 0.002 means run this subgraph every 0.002 seconds of accumulated time
+
+protected:
+    
+    float m_accumulatedTime     = 0.f;
+};

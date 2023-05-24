@@ -3,6 +3,7 @@
 #include "IntVec2.h"
 #include "Vec3.h"
 #include "MathUtils.h"
+#include "Engine/Core/ErrorUtils.h"
 
 
 
@@ -34,6 +35,12 @@ Vec2::Vec2(Vec3 const& fromVec3) : x(fromVec3.x), y(fromVec3.y)
 float Vec2::GetLength() const
 {
     return GetLength2D(*this);
+}
+
+
+float Vec2::GetLengthSquared() const
+{
+    return GetLengthSquared2D(*this);
 }
 
 
@@ -76,6 +83,21 @@ void Vec2::RotateMinus90()
     float X = x;
     x = y;
     y = -X;
+}
+
+
+void Vec2::ClampLength(float newMaxLength)
+{
+    ASSERT_OR_DIE(newMaxLength >= 0.f, "Cannot clamp vector to negative length.")
+    
+    float currentLength = GetLength();
+    if (currentLength > newMaxLength)
+    {
+        float ratio = currentLength / newMaxLength;
+        float oneOverRatio = 1.f / ratio;
+        x *= oneOverRatio;
+        y *= oneOverRatio;
+    }
 }
 
 
@@ -168,4 +190,10 @@ void Vec2::operator/=(float divisor)
 bool Vec2::operator==(Vec2 const& rhs) const
 {
     return (x == rhs.x) && (y == rhs.y);
+}
+
+
+bool Vec2::operator!=(Vec2 const& rhs) const
+{
+    return (x != rhs.x) || (y != rhs.y);
 }

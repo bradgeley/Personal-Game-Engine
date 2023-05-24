@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Engine.h"
-
 #include "EngineCommon.h"
 #include "EngineSubsystem.h"
 
@@ -11,7 +10,7 @@ void Engine::Startup()
 {
     for (EngineSubsystem*& subsystem : m_subsystems)
     {
-        if (subsystem && subsystem->IsEnabled())
+        if (subsystem)
         {
             subsystem->Startup();
         }

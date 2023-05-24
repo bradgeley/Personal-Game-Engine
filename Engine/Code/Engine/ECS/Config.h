@@ -6,11 +6,17 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 // Max entities is required for array storage, as they are preallocated
+// todo: move to EngineBuildPreferences.h
 #ifdef _DEBUG
-constexpr uint32_t MAX_ENTITIES = 1000;
+constexpr uint32_t MAX_ENTITIES = 1'000;
 #else
-constexpr uint32_t MAX_ENTITIES = 200'000;
+constexpr uint32_t MAX_ENTITIES = 100'000;
 #endif
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Minimum time step. If you try to make system time step lower than this it'll likely cause infinite loops, etc.
+constexpr float SYSTEM_MIN_TIME_STEP = 0.001f;
 
 
 //----------------------------------------------------------------------------------------------------------------------

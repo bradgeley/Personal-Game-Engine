@@ -44,7 +44,7 @@ class JobSystem : public EngineSubsystem
     
 public:
     
-    JobSystem(JobSystemConfig const& config);
+    JobSystem(JobSystemConfig const& config = JobSystemConfig());
     virtual ~JobSystem() override = default;
     
     virtual void Startup() override;

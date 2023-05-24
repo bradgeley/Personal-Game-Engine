@@ -11,10 +11,11 @@ SystemContext::SystemContext(AdminSystem* admin, System* system, float deltaSeco
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SystemContext::SetSystemSplittingParams(int systemSplittingJobID, int systemSplittingNumJobs)
+void SystemContext::SplitEntities(int systemSplittingJobID, int systemSplittingNumJobs)
 {
-    m_systemSplittingEnabled = true;
+    m_didSystemSplit = true;
     m_systemSplittingJobID = systemSplittingJobID;
+    m_systemSplittingNumJobs = systemSplittingNumJobs;
     
     int startIndex = (int) MAX_ENTITIES * systemSplittingJobID / systemSplittingNumJobs;
     int endIndex = (int) MAX_ENTITIES * (systemSplittingJobID + 1) / systemSplittingNumJobs - 1;

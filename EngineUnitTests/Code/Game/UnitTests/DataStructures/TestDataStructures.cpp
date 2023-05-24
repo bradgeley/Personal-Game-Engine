@@ -5,6 +5,10 @@
 
 
 
+int TEST_BIT_ARRAY_NUM_ITERATIONS = 1;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 TEST(DataStructures, ThreadSafeQueue)
 {
@@ -28,6 +32,7 @@ TEST(DataStructures, BitArray10)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(DataStructures, BitArray64)
 {
     BitArray<64> b;
@@ -36,6 +41,7 @@ TEST(DataStructures, BitArray64)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(DataStructures, BitArray128)
 {
     BitArray<128> b;
@@ -44,6 +50,7 @@ TEST(DataStructures, BitArray128)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(DataStructures, BitArray100)
 {
     BitArray<100> b;
@@ -52,6 +59,7 @@ TEST(DataStructures, BitArray100)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(DataStructures, BitArray1000000)
 {
     BitArray<1'000'000> b;
@@ -60,6 +68,60 @@ TEST(DataStructures, BitArray1000000)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+TEST(DataStructures, BitArrayStressTest)
+{
+    BitArray<100'000> b;
+    
+    for (int t = 0; t < TEST_BIT_ARRAY_NUM_ITERATIONS; ++t)
+    {
+        for (int i = 0; i < b.Size(); ++i)
+        {
+            b.Set(i);
+        }
+
+        for (int i = 0; i < b.Size(); ++i)
+        {
+            b.Unset(i);
+        }
+
+        for (int i = 0; i < b.Size(); ++i)
+        {
+            b.SetNextUnsetIndex(i);
+        }
+        
+        b.SetAll(false);
+        b.SetAll(true);
+
+        for (int i = 0; i < b.Size(); ++i)
+        {
+            if (i % 1000 == 0)
+            {
+                b.Unset(i);
+            }
+        }
+
+        for (int i = 0; i < b.Size(); ++i)
+        {
+            int result = b.SetNextUnsetIndex(0);
+            if (result == -1)
+            {
+                // no more things to set
+                break;
+            }
+        }
+
+        b.SetAll(false);
+        for (int i = 0; i < b.Size(); ++i)
+        {
+            b.SetNextUnsetIndex(0);
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 template<unsigned int t_size>
 void BitArrayUnitTests(BitArray<t_size>& b)
 {
@@ -143,8 +205,8 @@ void BitArrayUnitTests(BitArray<t_size>& b)
     
     // GetNextSetIndex
     b.SetAll(true);
-    EXPECT_EQ(b.GetNextSetIndex(0), 1);
-    EXPECT_EQ(b.GetNextSetIndex(5), 6);
+    EXPECT_EQ(b.GetNextSetIndex(0), 0);
+    EXPECT_EQ(b.GetNextSetIndex(5), 5);
     EXPECT_EQ(b.GetNextSetIndex(b.Size()), -1);
     
     // CountSetBits

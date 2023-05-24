@@ -13,27 +13,15 @@ System::System(std::string const&& name) : m_name(name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool System::DoDependenciesCollideWith(System* otherSystem) const
+BitMask const& System::GetReadDependencies() const
 {
-	if (m_readDependenciesBitMask & otherSystem->m_writeDependenciesBitMask)
-	{
-		return true;
-	}
-	if (m_writeDependenciesBitMask & otherSystem->m_readDependenciesBitMask)
-	{
-		return true;
-	}
-	if (m_writeDependenciesBitMask & otherSystem->m_writeDependenciesBitMask)
-	{
-		return true;
-	}
-	return false;
+	return m_readDependenciesBitMask;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-BitMask System::GetComponentBit(HashCode componentTypeHash) const
+BitMask const& System::GetWriteDependencies() const
 {
-	return m_admin->GetComponentBit(componentTypeHash);
+	return m_writeDependenciesBitMask;
 }

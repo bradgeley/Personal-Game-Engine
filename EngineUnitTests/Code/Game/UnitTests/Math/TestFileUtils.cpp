@@ -3,6 +3,8 @@
 #include "Engine/Core/FileUtils.h"
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 static std::string filePath = "../../Temporary/TestFileUtilsBasicReadWrite.txt";
 static std::string fileContents =
     "Hello, SoBali Sai\r"
@@ -11,6 +13,8 @@ static std::string fileContents =
     " \"!#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHI\0JKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'";
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(FileUtils, StringReadWrite)
 {
     // Create or write the file
@@ -25,6 +29,9 @@ TEST(FileUtils, StringReadWrite)
     EXPECT_STREQ(fileContents.data(), readFromDisk.data());
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(FileUtils, ByteVectorReadWrite)
 {
     // Create or write the file

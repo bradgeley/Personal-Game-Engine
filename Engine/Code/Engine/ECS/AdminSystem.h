@@ -6,6 +6,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "SystemSubgraph.h"
+
 
 
 class System;
@@ -17,10 +19,10 @@ class SystemScheduler;
 //----------------------------------------------------------------------------------------------------------------------
 struct AdminSystemConfig
 {
-	float m_maxDeltaSeconds					= 0.1f;
-	bool m_enableMultithreading				= false;
-	int m_autoMultithreadingEntityThreshold = 0;
-	int m_systemSplittingEntityThreshold	= 0;
+	float	m_maxDeltaSeconds						= -1.f; // Anything <= 0 means no cap
+	bool	m_enableMultithreading					= false;
+	int		m_autoMultithreadingEntityThreshold		= 0;
+	int		m_systemSplittingEntityThreshold		= 0;
 };
 
 
@@ -43,7 +45,8 @@ public:
 public:
 
 	void Startup();
-	void RunSystems(float deltaSeconds) const;
+	void RunFrame(float deltaSeconds) const;
+	void RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeconds) const;
 	void Shutdown();
 
 
@@ -53,8 +56,13 @@ public:
 //
 public:
 
-	void RegisterSystem(System* s);
+	void RegisterSystem(System* s, SystemSubgraphID subgraphID);
+
+	template<typename T>
+	void RegisterSystem(SystemSubgraphID id = 0);
+	
 	void SetSystemActive(std::string const& sysName, bool isActive) const;
+	SystemSubgraph& GetSystemSubgraph(SystemSubgraphID subgraphID);
 
 	template <typename CType>
 	void RegisterComponent(ComponentStorageType storageType = ComponentStorageType::ARRAY);
@@ -160,9 +168,8 @@ public:
 //
 public:
 
-	std::vector<System*> const& GetSystems() const;
+	std::vector<System*> GetSystems() const;
 	System* GetSystemByName(std::string const& name) const;
-	std::vector<System*> GetSystemsByPriority() const;
 
 	AdminSystemConfig const& GetConfig() const;
 	bool IsMultithreadingActive() const;
@@ -182,13 +189,13 @@ public:
 //
 protected:
 
-	AdminSystemConfig		m_config;
+	AdminSystemConfig				m_config;
 
-	std::vector<System*>	m_systems;
-	SystemScheduler*		m_systemScheduler = nullptr;
+	std::vector<SystemSubgraph>		m_systemSubgraphs;
+	SystemScheduler*				m_systemScheduler = nullptr;
 
-	BitArray<MAX_ENTITIES>	m_entities;
-	BitMask					m_entityComposition[MAX_ENTITIES] = { 0 };
+	BitArray<MAX_ENTITIES>			m_entities;
+	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 };
 
 	std::unordered_map<HashCode, BaseStorage*>	m_componentStorage;
 	std::unordered_map<HashCode, BitMask>		m_componentBitMasks;
@@ -199,6 +206,16 @@ protected:
 //----------------------------------------------------------------------------------------------------------------------
 // TEMPLATE FUNCTION IMPLEMENTATIONS																				  //
 //----------------------------------------------------------------------------------------------------------------------
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+void AdminSystem::RegisterSystem(SystemSubgraphID id)
+{
+	System* s = new T();
+	RegisterSystem(s, id);
+}
 
 
 

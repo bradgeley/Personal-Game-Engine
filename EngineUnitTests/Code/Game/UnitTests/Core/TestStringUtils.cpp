@@ -4,6 +4,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 static char const* testString = "Hello, World!";
 static char const* testStringFormattedString = "Test String: %s";
 static char const* testStringFormattedStringResult = "Test String: Hello, World!";
@@ -16,6 +17,7 @@ static char const* testFloatFormattedStringResult = "Test Float: 4.0";
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 TEST(StringUtils, StringF)
 {
     std::string test1 = StringF(testString);

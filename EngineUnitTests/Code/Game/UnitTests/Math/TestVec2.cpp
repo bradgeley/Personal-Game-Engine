@@ -4,6 +4,8 @@
 #include "Engine/Math/Vec2.h"
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(Vec2, Construct)
 {
     // Construction
@@ -23,6 +25,9 @@ TEST(Vec2, Construct)
     EXPECT_VEC2_EQf(vec4, -5, 5.f);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(Vec2, Equality)
 {
     // Construction
@@ -31,12 +36,18 @@ TEST(Vec2, Equality)
     EXPECT_TRUE(vec == vec2);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(Vec2, Statics)
 {
     EXPECT_VEC2_EQf(Vec2::ZeroVector, 0.f, 0.f);
     EXPECT_VEC2_EQf(Vec2::ZeroToOne, 0.f, 1.f);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(Vec2, Add)
 {
     // Vec + Vec 
@@ -50,6 +61,9 @@ TEST(Vec2, Add)
     EXPECT_VEC2_EQf(vec3, 35.f, -17.f);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(Vec2, Subtract)
 {
     // Vec - Vec
@@ -63,6 +77,9 @@ TEST(Vec2, Subtract)
     EXPECT_VEC2_EQf(vec3, -25.f, 7.f);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(Vec2, Multiply)
 {
     // Vec * Vec
@@ -84,6 +101,9 @@ TEST(Vec2, Multiply)
     EXPECT_VEC2_EQf(vec3, -40.f, -72.f);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(Vec2, Divide)
 {
     // Vec / Vec
@@ -105,6 +125,9 @@ TEST(Vec2, Divide)
     EXPECT_VEC2_EQf(vec, 10.f, -40.5f);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TEST(Vec2, Normalize)
 {
     Vec2 ez(3.f, 4.f);
@@ -114,4 +137,24 @@ TEST(Vec2, Normalize)
 
     ez.Normalize();
     EXPECT_FLOAT_EQ(ez.GetLength(), 1.f);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+TEST(Vec2, ClampLength)
+{
+    Vec2 ez(3.f, 4.f);
+    EXPECT_FLOAT_EQ(ez.GetLength(), 5.f);
+    ez.ClampLength(1.f);
+    EXPECT_FLOAT_EQ(ez.GetLength(), 1.f);
+    ez.ClampLength(0.000000001f);
+    EXPECT_FLOAT_EQ(ez.GetLength(), 0.000000001f);
+    ez.ClampLength(0.f);
+    EXPECT_FLOAT_EQ(ez.GetLength(), 0.f);
+    
+    Vec2 zero;
+    EXPECT_FLOAT_EQ(zero.GetLength(), 0.f);
+    zero.ClampLength(1.f);
+    EXPECT_FLOAT_EQ(zero.GetLength(), 0.f);
 }

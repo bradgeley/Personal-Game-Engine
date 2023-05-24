@@ -115,20 +115,20 @@ public:
 
 	virtual CType*			Get(EntityID eid)						override
 	{
-		auto& result = m_data.find(eid);
+		auto result = m_data.find(eid);
 		if (result != m_data.end())
 		{
-			return *result;
+			return &(result->second);
 		}
 		return nullptr;
 	}
 	
 	virtual CType const*	Get(EntityID eid)						const override
 	{
-		auto& result = m_data.find(eid);
+		auto result = m_data.find(eid);
 		if (result != m_data.end())
 		{
-			return *result;
+			return &(result->second);
 		}
 		return nullptr;
 	}
@@ -152,6 +152,7 @@ public:
 			m_data.erase(eid);
 		}
 	}
+	
 	virtual void			Clear()									override
 	{
 		m_data.clear();

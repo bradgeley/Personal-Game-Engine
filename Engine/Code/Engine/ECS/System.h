@@ -41,17 +41,16 @@ public:
 	virtual void PostRun()											{}
 	virtual void Shutdown()											{}
 
-	inline bool  IsActive() const							{ return m_isActive; }
-	inline void  SetActive(bool isActive)					{ m_isActive = isActive; }
-	inline void  SetRunPrio(int prio)						{ m_priority = prio; }
-	inline int   GetPriority() const						{ return m_priority; }
-	inline int	 GetSystemSplittingNumJobs() const			{ return m_systemSplittingNumJobs; }
-	inline void	 SetSystemSplittingNumJobs(int numThreads)	{ m_systemSplittingNumJobs = numThreads; }
-	inline std::string GetName() const						{ return m_name; }
+	inline bool  IsActive() const									{ return m_isActive; }
+	inline void  SetActive(bool isActive)							{ m_isActive = isActive; }
+	inline void  SetRunPrio(int prio)								{ m_priority = prio; }
+	inline int   GetPriority() const								{ return m_priority; }
+	inline int	 GetSystemSplittingNumJobs() const					{ return m_systemSplittingNumJobs; }
+	inline void	 SetSystemSplittingNumJobs(int numThreads)			{ m_systemSplittingNumJobs = numThreads; }
+	inline std::string GetName() const								{ return m_name; }
 
-	bool DoDependenciesCollideWith(System* otherSystem) const;
-
-	BitMask GetComponentBit(HashCode componentTypeHash) const;
+	BitMask const& GetReadDependencies() const; 
+	BitMask const& GetWriteDependencies() const;
 
 protected:
 
