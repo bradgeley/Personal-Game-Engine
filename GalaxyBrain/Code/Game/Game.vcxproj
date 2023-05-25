@@ -189,13 +189,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Framework\Main_Windows.cpp" />
+    <ClCompile Include="Game\Components\CCamera.cpp" />
+    <ClCompile Include="Game\Components\CRender.cpp" />
+    <ClCompile Include="Game\Components\CTransform.cpp" />
     <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\Systems\SRender.cpp" />
     <ClCompile Include="Game\WindowsApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
+    <ClInclude Include="Game\AllComponents.h" />
+    <ClInclude Include="Game\Components\CCamera.h" />
+    <ClInclude Include="Game\Components\CRender.h" />
+    <ClInclude Include="Game\Components\CTransform.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameCommon.h" />
+    <ClInclude Include="Game\Systems\SRender.h" />
     <ClInclude Include="Game\WindowsApplication.h" />
   </ItemGroup>
   <ItemGroup>
@@ -204,8 +213,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="GalaxyBrain\Gameplay\Components" />
-    <Folder Include="GalaxyBrain\Gameplay\Systems" />
+    <ClInclude Include="Game\AllSystems.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -73,7 +73,11 @@ TEST(ECS, RegisterSystems)
 //----------------------------------------------------------------------------------------------------------------------
 TEST(ECS, SystemSubgraphs)
 {
+    g_jobSystem = new JobSystem();
+    g_jobSystem->Startup();
+    
     AdminSystemConfig config;
+    config.m_enableMultithreading = true;
     AdminSystem* ecs = new AdminSystem(config);
 
     ecs->RegisterComponent<CTransform2D>(ComponentStorageType::ARRAY);
@@ -111,7 +115,7 @@ TEST(ECS, SystemSubgraphs)
         
         transform->m_screenPosition = Vec2(100.f, 100.f);
         movement->m_frameMoveDirection = Vec2(1.f, 0.f);
-        movement->m_frameMoveStrength = 1.f;
+        movement->m_frameMoveStrength = 1.f; 
         movement->m_movementSpeed = 100.f;
     }
     
@@ -130,6 +134,10 @@ TEST(ECS, SystemSubgraphs)
     
     delete ecs;
     ecs = nullptr;
+    
+    g_jobSystem->Shutdown();
+    delete g_jobSystem;
+    g_jobSystem = nullptr;
 }
 
 

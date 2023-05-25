@@ -1,18 +1,21 @@
 #include "SMovement.h"
 #include "Game/UnitTests/ECS/Components/CMovement.h"
 #include "Game/UnitTests/ECS/Components/CPhysics.h"
+#include <thread>
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SMovement::Startup()
 {
 	AddWriteDependencies<CPhysics, CMovement>();
 
-	m_systemSplittingNumJobs = 32;
+	m_systemSplittingNumJobs = (int) std::thread::hardware_concurrency() - 1;
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void UpdateEntity(CPhysics& physics, CMovement& movement)
 {
 	if (movement.m_frameMoveDirection.GetLengthSquared() > 0.f)
@@ -39,6 +42,7 @@ void UpdateEntity(CPhysics& physics, CMovement& movement)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void SMovement::Run(SystemContext const& context)
 {
 	auto& physicsStorage = m_admin->GetArrayStorage<CPhysics>();

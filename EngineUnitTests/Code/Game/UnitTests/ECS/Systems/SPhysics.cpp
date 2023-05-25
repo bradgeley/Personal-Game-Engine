@@ -2,6 +2,7 @@
 #include "SPhysics.h"
 #include "Game/UnitTests/ECS/Components/CPhysics.h"
 #include "Game/UnitTests/ECS/Components/CTransform2D.h"
+#include <thread>
 
 
 
@@ -10,7 +11,7 @@ void SPhysics::Startup()
 {
 	AddWriteDependencies<CPhysics, CTransform2D>();
 
-	m_systemSplittingNumJobs = 32;
+	m_systemSplittingNumJobs = (int) std::thread::hardware_concurrency() - 1;
 }
 
 

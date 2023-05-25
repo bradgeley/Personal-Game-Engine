@@ -6,11 +6,12 @@
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Window.h"
-#include "Game.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/ECS/AdminSystem.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
+#include "Game.h"
 
 
 
@@ -47,8 +48,6 @@ void WindowsApplication::Startup()
 
     // Dev console before input, so it steals input from the window when active
     DevConsoleConfig dcConfig;
-    dcConfig.m_backgroundImageSustainSeconds = 30.f;
-    dcConfig.m_backgroundImageFadeSeconds = 1.f;
     dcConfig.m_backgroundImages = { "DrStrange.jpg" , "Thanos.jpg", "IronMan.jpg", "Thor.jpg" };
     g_devConsole = new DevConsole(dcConfig);
     m_engine->RegisterSubsystem(g_devConsole);

@@ -14,8 +14,8 @@ Camera::Camera(Vec3 const& bottomLeft, Vec3 const& topRight) : m_mins(bottomLeft
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetOrthoBounds(Vec3 const& mins, Vec3 const& maxs)
 {
-	m_maxs = maxs;
 	m_mins = mins;
+	m_maxs = maxs;
 }
 
 

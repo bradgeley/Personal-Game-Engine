@@ -25,6 +25,8 @@ public:
 
 	bool IsValid() const;
 	void Next();
+
+	void operator++();
 	
 public:
 

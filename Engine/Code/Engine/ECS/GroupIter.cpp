@@ -33,3 +33,11 @@ void GroupIter::Next()
 	}
 	while (m_currentIndex <= m_context.m_endEntityID);
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void GroupIter::operator++()
+{
+	Next();
+}

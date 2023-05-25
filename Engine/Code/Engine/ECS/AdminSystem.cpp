@@ -8,6 +8,13 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+// THE ecs
+//
+AdminSystem* g_ecs = nullptr;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AdminSystem::AdminSystem(AdminSystemConfig const& config) : m_config(config), m_entities(false)
 {
 
@@ -16,7 +23,7 @@ AdminSystem::AdminSystem(AdminSystemConfig const& config) : m_config(config), m_
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AdminSystem::AdminSystem() : m_config(), m_entities(false)
+AdminSystem::AdminSystem() : m_entities(false)
 {
 
 }
@@ -32,6 +39,31 @@ void AdminSystem::Startup()
 	{
 		s.Startup();
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AdminSystem::Shutdown()
+{
+	for (auto& s : m_systemSubgraphs)
+	{
+		s.Shutdown();
+		s.Cleanup();
+	}
+
+	m_systemSubgraphs.clear();
+
+	for (auto it = m_componentStorage.begin(); it != m_componentStorage.end(); ++it)
+	{
+		delete it->second;
+	}
+
+	m_componentStorage.clear();
+	m_componentBitMasks.clear();
+	
+	delete m_systemScheduler;
+	m_systemScheduler = nullptr;
 }
 
 
@@ -59,31 +91,6 @@ void AdminSystem::RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeco
 	}
 
 	m_systemScheduler->RunSubgraph(m_systemSubgraphs[subgraphID], deltaSeconds);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void AdminSystem::Shutdown()
-{
-	for (auto& s : m_systemSubgraphs)
-	{
-		s.Shutdown();
-		s.Cleanup();
-	}
-
-	m_systemSubgraphs.clear();
-
-	for (auto it = m_componentStorage.begin(); it != m_componentStorage.end(); ++it)
-	{
-		delete it->second;
-	}
-
-	m_componentStorage.clear();
-	m_componentBitMasks.clear();
-	
-	delete m_systemScheduler;
-	m_systemScheduler = nullptr;
 }
 
 
@@ -267,6 +274,12 @@ SystemSubgraph& AdminSystem::GetSystemSubgraph(SystemSubgraphID subgraphID)
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::RegisterComponentBit(HashCode typeHash)
 {
+	if (m_componentBitMasks.find(typeHash) != m_componentBitMasks.end())
+	{
+		// Already registered
+		return;
+	}
+	
 	ASSERT_OR_DIE(m_componentBitMasks.size() < 64, "Max number of components reached.")
 
 	size_t componentIndex = m_componentBitMasks.size();

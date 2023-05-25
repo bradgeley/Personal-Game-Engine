@@ -3,16 +3,22 @@
 #include "ComponentStorage.h"
 #include "GroupIter.h"
 #include "EntityID.h"
+#include "SystemSubgraph.h"
 #include <vector>
 #include <unordered_map>
-
-#include "SystemSubgraph.h"
 
 
 
 class System;
 class TaskSystem;
 class SystemScheduler;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// THE ecs
+//
+extern class AdminSystem* g_ecs;
 
 
 
@@ -44,10 +50,11 @@ public:
 //
 public:
 
-	void Startup();
+	virtual void Startup();
+	virtual void Shutdown();
+	
 	void RunFrame(float deltaSeconds) const;
 	void RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeconds) const;
-	void Shutdown();
 
 
 
@@ -59,13 +66,16 @@ public:
 	void RegisterSystem(System* s, SystemSubgraphID subgraphID);
 
 	template<typename T>
-	void RegisterSystem(SystemSubgraphID id = 0);
+	void RegisterSystem(SystemSubgraphID subgraphID = 0);
 	
 	void SetSystemActive(std::string const& sysName, bool isActive) const;
 	SystemSubgraph& GetSystemSubgraph(SystemSubgraphID subgraphID);
 
 	template <typename CType>
 	void RegisterComponent(ComponentStorageType storageType = ComponentStorageType::ARRAY);
+
+	template <typename CType>
+	void RegisterResourceByType();
 
 	template <typename CType>
 	void RegisterSingletonComponent();
@@ -154,7 +164,7 @@ public:
 public:
 
 	template <typename...CTypes>
-	GroupIter GroupIterBegin(SystemContext const& context) const;
+	GroupIter Iterate(SystemContext const& context) const;
 
 	template <typename...CTypes>
 	BitMask GetComponentBitMask() const;
@@ -211,10 +221,10 @@ protected:
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void AdminSystem::RegisterSystem(SystemSubgraphID id)
+void AdminSystem::RegisterSystem(SystemSubgraphID subgraphID)
 {
 	System* s = new T();
-	RegisterSystem(s, id);
+	RegisterSystem(s, subgraphID);
 }
 
 
@@ -243,6 +253,16 @@ void AdminSystem::RegisterComponent(ComponentStorageType storageType /*= Compone
 		}
 		RegisterComponentBit(typeHash);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename CType>
+void AdminSystem::RegisterResourceByType()
+{
+	HashCode typeHash = typeid(CType).hash_code();
+	RegisterComponentBit(typeHash);
 }
 
 
@@ -345,7 +365,7 @@ void AdminSystem::RemoveComponent(EntityID entityID)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename...CTypes>
-GroupIter AdminSystem::GroupIterBegin(SystemContext const& context) const
+GroupIter AdminSystem::Iterate(SystemContext const& context) const
 {
 	GroupIter result(context);
 

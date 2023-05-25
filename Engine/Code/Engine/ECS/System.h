@@ -41,13 +41,13 @@ public:
 	virtual void PostRun()											{}
 	virtual void Shutdown()											{}
 
-	inline bool  IsActive() const									{ return m_isActive; }
-	inline void  SetActive(bool isActive)							{ m_isActive = isActive; }
-	inline void  SetRunPrio(int prio)								{ m_priority = prio; }
-	inline int   GetPriority() const								{ return m_priority; }
-	inline int	 GetSystemSplittingNumJobs() const					{ return m_systemSplittingNumJobs; }
-	inline void	 SetSystemSplittingNumJobs(int numThreads)			{ m_systemSplittingNumJobs = numThreads; }
-	inline std::string GetName() const								{ return m_name; }
+	bool IsActive() const											{ return m_isActive; }
+	void SetActive(bool isActive)									{ m_isActive = isActive; }
+	void SetRunPrio(int prio)										{ m_priority = prio; }
+	int	 GetPriority() const										{ return m_priority; }
+	int	 GetSystemSplittingNumJobs() const							{ return m_systemSplittingNumJobs; }
+	void SetSystemSplittingNumJobs(int numThreads)					{ m_systemSplittingNumJobs = numThreads; }
+	std::string const& GetName() const								{ return m_name; }
 
 	BitMask const& GetReadDependencies() const; 
 	BitMask const& GetWriteDependencies() const;
@@ -66,14 +66,14 @@ protected:
 
 protected:
 
-	std::string const	m_name							= "Unnamed System";
-	AdminSystem*		m_admin							= nullptr;
-	bool				m_isActive						= true;
-	int					m_systemSplittingNumJobs		= 1; // 1 means do not split the system
+	std::string const	m_name						= "Unnamed System";
+	AdminSystem*		m_admin						= nullptr;
+	bool				m_isActive					= true;
+	int					m_systemSplittingNumJobs	= 1; // 0-1 means do not split the system
 
-	int					m_priority						= -1;
-	BitMask				m_readDependenciesBitMask		= 0;
-	BitMask				m_writeDependenciesBitMask		= 0;
+	int					m_priority					= -1;
+	BitMask				m_readDependenciesBitMask	= 0;
+	BitMask				m_writeDependenciesBitMask	= 0;
 };
 
 
@@ -83,7 +83,7 @@ template<typename CType>
 void System::AddResourceDependency(AccessType access)
 {
 	HashCode typeHash = typeid(CType).hash_code();
-	BitMask componentBit = GetComponentBit(typeHash); // all used components must be registered before this...
+	BitMask componentBit = m_admin->GetComponentBit(typeHash); // all used components must be registered before this...
 
 	if (access == AccessType::WRITE)
 	{

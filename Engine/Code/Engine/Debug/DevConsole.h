@@ -31,15 +31,15 @@ struct DevConsoleConfig
 	std::string m_commandHistoryFilePath = "Temp/Debug/DevConsoleCommandHistory.txt";
 	
 	// All visual toggles for dev console
-	float m_inputLineThickness = 30.f;
-	float m_logNumLines = 40.5f;
-	float m_openCloseAnimationSpeed = 2.f;
-	float m_backgroundImageSustainSeconds = 20.f;
-	float m_backgroundImageFadeSeconds = 1.f;
-	Rgba8 m_backgroundTint = Rgba8(0,0,0,225);
-	Rgba8 m_errorTint = Rgba8::Red;
-	Rgba8 m_warningTint = Rgba8::Yellow;
-	Rgba8 m_successTint = Rgba8::Green;
+	float m_inputLineThickness				= 30.f;
+	float m_logNumLines						= 40.5f;
+	float m_openCloseAnimationSpeed			= 2.f;
+	float m_backgroundImageSustainSeconds	= 30.f;
+	float m_backgroundImageFadeSeconds		= 1.f;
+	Rgba8 m_backgroundTint					= Rgba8(0,0,0,225);
+	Rgba8 m_errorTint						= Rgba8::Red;
+	Rgba8 m_warningTint						= Rgba8::Yellow;
+	Rgba8 m_successTint						= Rgba8::Green;
 	std::vector<std::string> m_backgroundImages;
 };
 
