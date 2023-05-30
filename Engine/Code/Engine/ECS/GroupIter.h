@@ -17,8 +17,6 @@ class AdminSystem;
 //
 struct GroupIter
 {
-	friend class AdminSystem;
-
 public:
 
 	explicit GroupIter(SystemContext const& context);
@@ -31,9 +29,7 @@ public:
 public:
 
 	EntityID m_currentIndex		= UINT_MAX;
-
-protected:
-
+	
 	SystemContext m_context;
 	BitMask m_groupMask			= 0;
 };

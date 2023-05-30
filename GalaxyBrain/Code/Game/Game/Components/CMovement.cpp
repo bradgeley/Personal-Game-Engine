@@ -1,12 +1,12 @@
 ﻿// Bradley Christensen - 2023
-#include "CRender.h"
+#include "CMovement.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Component* CRender::DeepCopy() const
+Component* CMovement::DeepCopy() const
 {
-    auto copy = new CRender;
+    auto copy = new CMovement;
     *copy = *this;
     return copy;
 }

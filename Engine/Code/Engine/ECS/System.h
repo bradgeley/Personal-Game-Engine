@@ -49,6 +49,9 @@ public:
 	void SetSystemSplittingNumJobs(int numThreads)					{ m_systemSplittingNumJobs = numThreads; }
 	std::string const& GetName() const								{ return m_name; }
 
+	template<typename...CTypes>
+	GroupIter Iterate(SystemContext const& context) const;
+
 	BitMask const& GetReadDependencies() const; 
 	BitMask const& GetWriteDependencies() const;
 
@@ -75,6 +78,15 @@ protected:
 	BitMask				m_readDependenciesBitMask	= 0;
 	BitMask				m_writeDependenciesBitMask	= 0;
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename ... CTypes>
+GroupIter System::Iterate(SystemContext const& context) const
+{
+	return m_admin->Iterate<CTypes...>(context);
+}
 
 
 

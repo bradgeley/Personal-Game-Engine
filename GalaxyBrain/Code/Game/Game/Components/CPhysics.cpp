@@ -1,12 +1,12 @@
 ﻿// Bradley Christensen - 2023
-#include "CRender.h"
+#include "CPhysics.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Component* CRender::DeepCopy() const
+Component* CPhysics::DeepCopy() const
 {
-    auto copy = new CRender;
+    auto copy = new CPhysics;
     *copy = *this;
     return copy;
 }

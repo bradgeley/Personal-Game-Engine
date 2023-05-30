@@ -101,6 +101,20 @@ float DotProduct2D(const Vec2& vecA, const Vec2& vecB)
 }
 
 
+float GetDistance2D(Vec2 const& vecA, Vec2 const& vecB)
+{
+    Vec2 aToB = vecA - vecB;
+    return aToB.GetLength();
+}
+
+
+float GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB)
+{
+    Vec2 aToB = vecA - vecB;
+    return aToB.GetLengthSquared();
+}
+
+
 float GetLength3D(const Vec3& vec) 
 {
     return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);

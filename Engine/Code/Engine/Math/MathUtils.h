@@ -2,6 +2,11 @@
 #pragma once
 
 
+struct IntVec2;
+struct Vec2;
+struct Vec3;
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // MathUtils
@@ -9,10 +14,6 @@
 // Common math operations
 //
 
-
-struct IntVec2;
-struct Vec2;
-struct Vec3;
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -36,10 +37,12 @@ float ClampF(float value, float min, float max);
 //----------------------------------------------------------------------------------------------------------------------
 // 2D Vector
 //
-float GetLength2D(const Vec2& vec);
-float GetLengthSquared2D(const Vec2& vec);
+float GetLength2D(Vec2 const& vec);
+float GetLengthSquared2D(Vec2 const& vec);
 void  NormalizeVector2D(Vec2& vec);
-float DotProduct2D(const Vec2& vecA, const Vec2& vecB);
+float DotProduct2D(Vec2 const& vecA, Vec2 const& vecB);
+float GetDistance2D(Vec2 const& vecA, Vec2 const& vecB);
+float GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB);
 
 
 //----------------------------------------------------------------------------------------------------------------------

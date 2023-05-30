@@ -4,6 +4,7 @@
 #include "GroupIter.h"
 #include "EntityID.h"
 #include "SystemSubgraph.h"
+#include "EntityDefinition.h"
 #include <vector>
 #include <unordered_map>
 
@@ -50,8 +51,8 @@ public:
 //
 public:
 
-	virtual void Startup();
-	virtual void Shutdown();
+	void Startup();
+	void Shutdown();
 	
 	void RunFrame(float deltaSeconds) const;
 	void RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeconds) const;
@@ -85,6 +86,15 @@ private:
 	void RegisterComponentBit(HashCode typeHash);
 
 
+	
+//----------------------------------------------------------------------------------------------------------------------
+// ENTITY DEFINITION
+//
+public:
+
+	EntityDefinition NewEntityDef() const;
+
+	
 
 //----------------------------------------------------------------------------------------------------------------------
 // CREATING/DESTROYING ENTITIES
@@ -93,6 +103,7 @@ public:
 
 	EntityID CreateEntity(int searchBeginEntityID = 0);
 	EntityID CreateEntityInPlace(int entityID);
+	EntityID CreateEntityFromDef(EntityDefinition const& def);
 	void ClearEntities();
 	bool DestroyEntity(EntityID entityID);
 
@@ -206,6 +217,7 @@ protected:
 
 	BitArray<MAX_ENTITIES>			m_entities;
 	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 };
+	EntityDefinition				m_entityDefinition; 
 
 	std::unordered_map<HashCode, BaseStorage*>	m_componentStorage;
 	std::unordered_map<HashCode, BitMask>		m_componentBitMasks;
@@ -252,6 +264,12 @@ void AdminSystem::RegisterComponent(ComponentStorageType storageType /*= Compone
 			break;
 		}
 		RegisterComponentBit(typeHash);
+
+		// Add to entity definition
+		if (storageType == ComponentStorageType::ARRAY || storageType == ComponentStorageType::MAP)
+		{
+			m_entityDefinition.m_components.emplace_back(new CType());
+		}
 	}
 }
 

@@ -13,6 +13,16 @@ CTransform2D::CTransform2D(CTransform2D const& other)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Component* CTransform2D::DeepCopy() const
+{
+    CTransform2D* newComp = new CTransform2D;
+    *newComp = *this;
+    return newComp;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 CTransform2D::CTransform2D(Vec2 const& v, float orientationDegrees) : m_screenPosition(v), m_orientationDegrees(orientationDegrees)
 {
 

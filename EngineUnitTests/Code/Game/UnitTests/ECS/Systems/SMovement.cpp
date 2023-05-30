@@ -48,7 +48,7 @@ void SMovement::Run(SystemContext const& context)
 	auto& physicsStorage = m_admin->GetArrayStorage<CPhysics>();
 	auto& movementStorage = m_admin->GetArrayStorage<CMovement>();
 
-	for (auto it = m_admin->GroupIterBegin<CPhysics, CMovement>(context); it.IsValid(); it.Next())
+	for (auto it = m_admin->Iterate<CPhysics, CMovement>(context); it.IsValid(); it.Next())
 	{
 		auto& ent = it.m_currentIndex;
 

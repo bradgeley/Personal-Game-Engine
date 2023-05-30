@@ -22,7 +22,7 @@ void SPhysics::Run(SystemContext const& context)
 	auto& physicsStorage = m_admin->GetArrayStorage<CPhysics>();
 	auto& transformStorage = m_admin->GetArrayStorage<CTransform2D>();
 
-	for (auto it = m_admin->GroupIterBegin<CPhysics, CTransform2D>(context); it.IsValid(); it.Next())
+	for (auto it = m_admin->Iterate<CPhysics, CTransform2D>(context); it.IsValid(); it.Next())
 	{
 		auto ent = it.m_currentIndex;
 		CPhysics& p = physicsStorage[ent];

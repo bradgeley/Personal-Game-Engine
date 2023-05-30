@@ -13,6 +13,16 @@ CMovement::CMovement( CMovement const& other )
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Component* CMovement::DeepCopy() const
+{
+	CMovement* newComp = new CMovement;
+	*newComp = *this;
+	return newComp;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 CMovement::CMovement( float movementSpeed )
 {
 	m_movementSpeed = movementSpeed;

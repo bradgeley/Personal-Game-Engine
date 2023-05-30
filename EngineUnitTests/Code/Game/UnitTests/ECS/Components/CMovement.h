@@ -1,6 +1,7 @@
 // Bradley Christensen - 2023
 #pragma once
 #include "Engine/Math/Vec2.h"
+#include "Engine/ECS/Component.h"
 #include <cstdint>
 
 
@@ -15,13 +16,15 @@ enum class MovementFlag : uint8_t
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct CMovement
+struct CMovement : Component
 {
 public:
 
 	CMovement() = default;
 	CMovement(float movementSpeed);
 	CMovement(CMovement const& other);
+
+	Component* DeepCopy() const override;
 
 	Vec2 m_frameMoveDirection		= Vec2::ZeroVector;
 	float m_frameMoveStrength		= 0.f;

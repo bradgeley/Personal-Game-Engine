@@ -1,18 +1,16 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
-#include "CTransform.h"
 #include "Engine/ECS/Component.h"
-#include "Engine/Renderer/EngineConstantBuffers.h"
-#include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Math/Vec2.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct CRender : Component
+struct CPhysics : Component
 {
     Component* DeepCopy() const override;
     
-    CTransform m_renderTransform;
-    VertexBuffer m_vertexBuffer;
-    ModelConstants m_modelConstants;
+    float m_gravityStrength = 0.f;
+    Vec2 m_frameAcceleration;
+    Vec2 m_velocity;
 };

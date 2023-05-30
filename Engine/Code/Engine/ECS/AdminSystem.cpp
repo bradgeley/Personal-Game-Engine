@@ -2,6 +2,7 @@
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "AdminSystem.h"
+#include "Component.h"
 #include "SystemScheduler.h"
 #include "System.h"
 
@@ -46,6 +47,8 @@ void AdminSystem::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::Shutdown()
 {
+	m_entityDefinition.Cleanup();
+	
 	for (auto& s : m_systemSubgraphs)
 	{
 		s.Shutdown();
@@ -85,6 +88,11 @@ void AdminSystem::RunFrame(float deltaSeconds) const
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeconds) const
 {
+	if ((int) subgraphID >= (int) m_systemSubgraphs.size() || (int)subgraphID < 0)
+	{
+		return;
+	}
+	
 	if (m_config.m_maxDeltaSeconds > 0.f && deltaSeconds > m_config.m_maxDeltaSeconds)
 	{
 		deltaSeconds = m_config.m_maxDeltaSeconds;
@@ -290,6 +298,19 @@ void AdminSystem::RegisterComponentBit(HashCode typeHash)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+EntityDefinition AdminSystem::NewEntityDef() const
+{
+	EntityDefinition def;
+	for (auto& c : m_entityDefinition.m_components)
+	{
+		def.m_components.emplace_back(c->DeepCopy());
+	}
+	return def;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::RemoveComponent(EntityID entityID, BitMask componentBit)
 {
 	BitMask& entityComp = m_entityComposition[entityID];
@@ -352,6 +373,25 @@ EntityID AdminSystem::CreateEntityInPlace(int entityID)
 	m_entities.Set(entityID);
 
 	return (EntityID) entityID;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EntityID AdminSystem::CreateEntityFromDef(EntityDefinition const& def)
+{
+	EntityID eid = CreateEntity();
+	for (auto& c : def.m_components)
+	{
+		HashCode hash = typeid(*c).hash_code();
+		auto storage = m_componentStorage.at(hash);
+		storage->NewAdd(eid, c);
+
+		BitMask& componentBitMask = m_componentBitMasks.at(hash);
+		BitMask& entityComp = m_entityComposition[eid];
+		entityComp |= (componentBitMask);
+	}
+	return eid;
 }
 
 

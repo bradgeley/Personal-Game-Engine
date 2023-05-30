@@ -1,12 +1,11 @@
 ﻿// Bradley Christensen - 2023
-#include "CRender.h"
+#pragma once
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Component* CRender::DeepCopy() const
+struct Component
 {
-    auto copy = new CRender;
-    *copy = *this;
-    return copy;
-}
+    virtual ~Component() = default;
+    virtual Component* DeepCopy() const { return nullptr; }
+};

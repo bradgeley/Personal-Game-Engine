@@ -5,3 +5,8 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 #include "Systems/SRender.h"
+#include "Systems/SPhysics.h"
+#include "Systems/SMovement.h"
+#include "Systems/SInput.h"
+#include "Systems/SGravity.h"
+#include "Systems/SEntityFactory.h"

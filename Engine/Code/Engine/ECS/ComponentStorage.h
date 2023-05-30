@@ -6,6 +6,10 @@
 
 
 
+struct Component;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 // Base Storage - Abstract base class for all storage types
 //
@@ -15,8 +19,9 @@ public:
 
 	virtual ~BaseStorage() = default;
 
-	virtual void Destroy(EntityID index)		= 0;
-	virtual void Clear()						= 0;
+	virtual void Destroy(EntityID index)						= 0;
+	virtual void Clear()										= 0;
+	virtual void NewAdd(EntityID [[maybe_unused]] index, Component const* [[maybe_unused]] copy) {}
 };
 
 
@@ -40,10 +45,10 @@ public:
 
 	virtual ~TypedBaseStorage() override = default;
 
-	virtual CType*			Get(EntityID eid)						= 0;
-	virtual CType const*	Get(EntityID eid) const					= 0;
-	virtual CType*			Add(EntityID eid)						= 0;
-	virtual CType*			Add(EntityID eid, CType const& copy)	= 0;
+	virtual CType*			Get(EntityID eid)							= 0;
+	virtual CType const*	Get(EntityID eid) const						= 0;
+	virtual CType*			Add(EntityID eid)							= 0;
+	virtual CType*			Add(EntityID eid, CType const& copy)		= 0;
 
 	// Not virtual on purpose for performance reasons - this is the most called function in the ECS
 	CType& operator [](EntityID id) { return *Get(id); } 
@@ -81,6 +86,12 @@ public:
 	{
 		m_data[eid] = copy;
 		return &m_data[eid];
+	}
+
+	
+	virtual void			NewAdd(EntityID eid, Component const* copy)	override
+	{
+		m_data[eid] = *reinterpret_cast<CType const*>(copy);
 	}
 
 	virtual void			Destroy(EntityID)						override
@@ -143,6 +154,11 @@ public:
 	{
 		m_data[eid] = copy;
 		return &m_data[eid];
+	}
+
+	virtual void			NewAdd(EntityID eid, Component const* copy)	override
+	{
+		m_data[eid] = *reinterpret_cast<CType const*>(copy);
 	}
 	
 	virtual void			Destroy(EntityID eid)					override

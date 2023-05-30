@@ -1,12 +1,9 @@
-// Bradley Christensen - 2023
+﻿// Bradley Christensen - 2022-2023
 #pragma once
-#include "Engine/ECS/Component.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct SCWorld : Component
-{
-public:
-
-};
+// Physics
+//
+constexpr double GRAV_CONSTANT = 0.000'000'000'066'743;

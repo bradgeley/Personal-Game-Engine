@@ -177,8 +177,10 @@
     <ClCompile Include="Debug\DevConsoleLine.cpp" />
     <ClCompile Include="Debug\DevConsoleLog.cpp" />
     <ClCompile Include="ECS\AdminSystem.cpp" />
+    <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\ComponentStorage.cpp" />
     <ClCompile Include="ECS\Config.cpp" />
+    <ClCompile Include="ECS\EntityDefinition.cpp" />
     <ClCompile Include="ECS\EntityID.cpp" />
     <ClCompile Include="ECS\GroupIter.cpp" />
     <ClCompile Include="ECS\System.cpp" />
@@ -245,8 +247,10 @@
     <ClInclude Include="Debug\DevConsoleLine.h" />
     <ClInclude Include="Debug\DevConsoleLog.h" />
     <ClInclude Include="ECS\AdminSystem.h" />
+    <ClInclude Include="ECS\Component.h" />
     <ClInclude Include="ECS\ComponentStorage.h" />
     <ClInclude Include="ECS\Config.h" />
+    <ClInclude Include="ECS\EntityDefinition.h" />
     <ClInclude Include="ECS\EntityID.h" />
     <ClInclude Include="ECS\GroupIter.h" />
     <ClInclude Include="ECS\System.h" />
@@ -261,6 +265,7 @@
     <ClInclude Include="Input\InputUtils.h" />
     <ClInclude Include="Input\KeyButtonState.h" />
     <ClInclude Include="Math\AABB2.h" />
+    <ClInclude Include="Math\Constants.h" />
     <ClInclude Include="Math\GeometryUtils.h" />
     <ClInclude Include="Math\Grid2D.h" />
     <ClInclude Include="Math\IntVec2.h" />

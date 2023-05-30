@@ -31,6 +31,7 @@ public:
     float const* GetAsFloatArray() const;
     float& operator[](int index);
 
+    void Reset();
     void Append(Mat44 const& appendThis);
     Mat44 GetAppended(Mat44 const& appendThis) const;
     void AppendXRotation(float degreesRotationAboutX);

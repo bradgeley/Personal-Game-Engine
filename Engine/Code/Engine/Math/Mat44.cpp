@@ -53,6 +53,13 @@ float& Mat44::operator[](int index)
 
 
 
+void Mat44::Reset()
+{
+	*this = Identity;
+}
+
+
+
 void Mat44::Append(Mat44 const& appendThis)
 {
     float const* append = appendThis.GetAsFloatArray();

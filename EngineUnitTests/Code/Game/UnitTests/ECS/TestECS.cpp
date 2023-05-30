@@ -311,3 +311,33 @@ TEST(ECS, ECSFrameSystemSplitting)
     delete g_jobSystem;
     g_jobSystem = nullptr;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+TEST(ECS, EntityDefinition)
+{
+    AdminSystemConfig config;
+    AdminSystem* ecs = new AdminSystem(config);
+
+    ecs->RegisterComponent<CTransform2D>(ComponentStorageType::ARRAY);
+    ecs->RegisterComponent<CPhysics>(ComponentStorageType::MAP);
+    ecs->RegisterComponent<CMovement>(ComponentStorageType::TAG);
+    ecs->RegisterComponent<SCWorld>(ComponentStorageType::SINGLETON);
+
+    EntityDefinition newDef = ecs->NewEntityDef();
+    auto transform = newDef.GetComponentDef<CTransform2D>();
+    auto physics = newDef.GetComponentDef<CPhysics>();
+    auto movement = newDef.GetComponentDef<CMovement>();
+    auto world = newDef.GetComponentDef<SCWorld>();
+
+    // Should exist
+    EXPECT_NE(transform, nullptr);
+    EXPECT_NE(physics, nullptr);
+
+    // Should not exist (tag, singleton)
+    EXPECT_EQ(movement, nullptr);
+    EXPECT_EQ(world, nullptr);
+
+    newDef.Cleanup();
+}

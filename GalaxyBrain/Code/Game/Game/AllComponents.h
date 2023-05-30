@@ -4,6 +4,15 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+// Components
 #include "Components/CTransform.h"
 #include "Components/CRender.h"
 #include "Components/CCamera.h"
+#include "Components/CPhysics.h"
+#include "Components/CMovement.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Singletons
+#include "Singletons/SCEntityFactory.h"

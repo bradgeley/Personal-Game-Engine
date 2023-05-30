@@ -1,14 +1,14 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
-#include "Engine/ECS/Component.h"
-#include "Engine/Renderer/Camera.h"
+#include "Engine/ECS/System.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct CCamera : Component
+class SMovement : public System
 {
-    Component* DeepCopy() const override;
-    
-    Camera m_camera;
+public:
+
+    void Startup() override;
+    void Run(SystemContext const& context) override;
 };
