@@ -1,15 +1,14 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
-#include "Engine/Math/Vec2.h"
+#include "Engine/ECS/System.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct CMovement
+class SCamera : public System
 {
-    CMovement() = default;
-    CMovement(void const* xmlElement);
+public:
+
+    void Run(SystemContext const& context) override;
     
-    Vec2 m_frameMoveDir;
-    float m_movementSpeed = 0.f;
 };

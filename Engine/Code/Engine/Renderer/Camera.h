@@ -15,11 +15,17 @@ public:
     Camera() = default;
 	explicit Camera(Vec3 const& bottomLeft, Vec3 const& topRight);
     
+    void SetOrthoDims(Vec3 const& dims);
+    void SetOrthoDims2D(Vec2 const& dims2D);
     void SetOrthoBounds(Vec3 const& mins, Vec3 const& maxs);
+    void SetOrthoCenter(Vec3 const& center);
+    void SetOrthoCenter2D(Vec2 const& center);
 
+    Vec3  GetOrthoCenter() const;
     AABB2 GetOrthoBounds2D() const;
     Mat44 GetOrthoProjectionMatrix() const;
     Vec3 GetOrthoDimensions() const;
+    Vec3 GetOrthoHalfDimensions() const;
     Vec2 ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const;
 
 private:

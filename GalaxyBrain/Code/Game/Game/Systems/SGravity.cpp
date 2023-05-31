@@ -17,10 +17,10 @@ void SGravity::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SGravity::Run(SystemContext const& context)
 {
-    auto& physStorage = m_admin->GetArrayStorage<CPhysics>();
-    auto& transforms = m_admin->GetArrayStorage<CTransform>();
+    auto& physStorage = g_ecs->GetArrayStorage<CPhysics>();
+    auto& transforms = g_ecs->GetArrayStorage<CTransform>();
     
-    for (auto itA = Iterate<CTransform, CPhysics>(context); itA.IsValid(); ++itA)
+    for (auto itA = g_ecs->Iterate<CTransform, CPhysics>(context); itA.IsValid(); ++itA)
     {
         EntityID& entA = itA.m_currentIndex;
         auto& physA = physStorage[entA];
@@ -31,7 +31,7 @@ void SGravity::Run(SystemContext const& context)
         
         auto& transA = transforms[entA];
 
-        for (auto itB = Iterate<CTransform, CPhysics>(context); itB.IsValid(); ++itB)
+        for (auto itB = g_ecs->Iterate<CTransform, CPhysics>(context); itB.IsValid(); ++itB)
         {
             EntityID& entB = itB.m_currentIndex;
             if (entA == entB)

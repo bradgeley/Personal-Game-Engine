@@ -16,9 +16,9 @@ void SMovement::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SMovement::Run(SystemContext const& context)
 {
-    auto& physStorage = m_admin->GetArrayStorage<CPhysics>();
-    auto& moveStorage = m_admin->GetArrayStorage<CMovement>();
-    for (auto it = Iterate<CMovement, CPhysics>(context); it.IsValid(); ++it)
+    auto& physStorage = g_ecs->GetArrayStorage<CPhysics>();
+    auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
+    for (auto it = g_ecs->Iterate<CMovement, CPhysics>(context); it.IsValid(); ++it)
     {
         EntityID& ent = it.m_currentIndex;
         auto& phys = physStorage[ent];

@@ -194,8 +194,12 @@
     <ClCompile Include="Game\Components\CPhysics.cpp" />
     <ClCompile Include="Game\Components\CRender.cpp" />
     <ClCompile Include="Game\Components\CTransform.cpp" />
+    <ClCompile Include="Game\EntityDef.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\Singletons\SCEntityFactory.cpp" />
+    <ClCompile Include="Game\Singletons\SCRenderer.cpp" />
+    <ClCompile Include="Game\Systems\SCamera.cpp" />
+    <ClCompile Include="Game\Systems\SDebugKeys.cpp" />
     <ClCompile Include="Game\Systems\SEntityFactory.cpp" />
     <ClCompile Include="Game\Systems\SGravity.cpp" />
     <ClCompile Include="Game\Systems\SInput.cpp" />
@@ -212,9 +216,13 @@
     <ClInclude Include="Game\Components\CPhysics.h" />
     <ClInclude Include="Game\Components\CRender.h" />
     <ClInclude Include="Game\Components\CTransform.h" />
+    <ClInclude Include="Game\EntityDef.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameCommon.h" />
     <ClInclude Include="Game\Singletons\SCEntityFactory.h" />
+    <ClInclude Include="Game\Singletons\SCRenderer.h" />
+    <ClInclude Include="Game\Systems\SCamera.h" />
+    <ClInclude Include="Game\Systems\SDebugKeys.h" />
     <ClInclude Include="Game\Systems\SEntityFactory.h" />
     <ClInclude Include="Game\Systems\SGravity.h" />
     <ClInclude Include="Game\Systems\SInput.h" />

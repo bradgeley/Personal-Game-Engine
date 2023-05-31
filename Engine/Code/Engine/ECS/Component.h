@@ -7,5 +7,4 @@
 struct Component
 {
     virtual ~Component() = default;
-    virtual Component* DeepCopy() const { return nullptr; }
 };

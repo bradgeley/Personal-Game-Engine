@@ -16,3 +16,4 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Singletons
 #include "Singletons/SCEntityFactory.h"
+#include "Singletons/SCRenderer.h"

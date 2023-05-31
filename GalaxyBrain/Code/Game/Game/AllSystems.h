@@ -10,3 +10,5 @@
 #include "Systems/SInput.h"
 #include "Systems/SGravity.h"
 #include "Systems/SEntityFactory.h"
+#include "Systems/SDebugKeys.h"
+#include "Systems/SCamera.h"

@@ -35,6 +35,6 @@ private:
 	
 	void Cleanup();
 
-	AdminSystem* m_admin = nullptr;
+	AdminSystem* g_ecs = nullptr;
 	std::vector<SystemSubgraph> m_systemSubgraphs;
 };

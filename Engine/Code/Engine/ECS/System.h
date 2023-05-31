@@ -49,9 +49,6 @@ public:
 	void SetSystemSplittingNumJobs(int numThreads)					{ m_systemSplittingNumJobs = numThreads; }
 	std::string const& GetName() const								{ return m_name; }
 
-	template<typename...CTypes>
-	GroupIter Iterate(SystemContext const& context) const;
-
 	BitMask const& GetReadDependencies() const; 
 	BitMask const& GetWriteDependencies() const;
 
@@ -70,7 +67,6 @@ protected:
 protected:
 
 	std::string const	m_name						= "Unnamed System";
-	AdminSystem*		m_admin						= nullptr;
 	bool				m_isActive					= true;
 	int					m_systemSplittingNumJobs	= 1; // 0-1 means do not split the system
 
@@ -82,20 +78,11 @@ protected:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-template <typename ... CTypes>
-GroupIter System::Iterate(SystemContext const& context) const
-{
-	return m_admin->Iterate<CTypes...>(context);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 template<typename CType>
 void System::AddResourceDependency(AccessType access)
 {
 	HashCode typeHash = typeid(CType).hash_code();
-	BitMask componentBit = m_admin->GetComponentBit(typeHash); // all used components must be registered before this...
+	BitMask componentBit = g_ecs->GetComponentBit(typeHash); // all used components must be registered before this...
 
 	if (access == AccessType::WRITE)
 	{
@@ -113,7 +100,7 @@ void System::AddResourceDependency(AccessType access)
 template<typename...CTypes>
 void System::AddWriteDependencies()
 {
-	m_writeDependenciesBitMask |= m_admin->GetComponentBitMask<CTypes...>();
+	m_writeDependenciesBitMask |= g_ecs->GetComponentBitMask<CTypes...>();
 }
 
 
@@ -122,5 +109,5 @@ void System::AddWriteDependencies()
 template<typename...CTypes>
 void System::AddReadDependencies()
 {
-	m_readDependenciesBitMask |= m_admin->GetComponentBitMask<CTypes...>();
+	m_readDependenciesBitMask |= g_ecs->GetComponentBitMask<CTypes...>();
 }

@@ -167,6 +167,7 @@
     <ClCompile Include="Core\Image.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
     <ClCompile Include="Core\Time.cpp" />
+    <ClCompile Include="Core\XmlUtils.cpp" />
     <ClCompile Include="DataStructures\BitArray.cpp" />
     <ClCompile Include="DataStructures\NamedProperties.cpp" />
     <ClCompile Include="DataStructures\ThreadSafeQueue.cpp" />
@@ -180,7 +181,6 @@
     <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\ComponentStorage.cpp" />
     <ClCompile Include="ECS\Config.cpp" />
-    <ClCompile Include="ECS\EntityDefinition.cpp" />
     <ClCompile Include="ECS\EntityID.cpp" />
     <ClCompile Include="ECS\GroupIter.cpp" />
     <ClCompile Include="ECS\System.cpp" />
@@ -250,7 +250,6 @@
     <ClInclude Include="ECS\Component.h" />
     <ClInclude Include="ECS\ComponentStorage.h" />
     <ClInclude Include="ECS\Config.h" />
-    <ClInclude Include="ECS\EntityDefinition.h" />
     <ClInclude Include="ECS\EntityID.h" />
     <ClInclude Include="ECS\GroupIter.h" />
     <ClInclude Include="ECS\System.h" />

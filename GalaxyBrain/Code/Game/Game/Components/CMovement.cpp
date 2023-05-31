@@ -1,12 +1,12 @@
 ﻿// Bradley Christensen - 2023
 #include "CMovement.h"
+#include "Engine/Core/XmlUtils.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Component* CMovement::DeepCopy() const
+CMovement::CMovement(void const* xmlElement)
 {
-    auto copy = new CMovement;
-    *copy = *this;
-    return copy;
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_movementSpeed = ParseXmlAttribute(elem, "speed", m_movementSpeed);
 }

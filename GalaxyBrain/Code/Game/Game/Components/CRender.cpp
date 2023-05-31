@@ -1,12 +1,13 @@
 ﻿// Bradley Christensen - 2023
 #include "CRender.h"
 
+#include "Engine/Core/XmlUtils.h"
+
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Component* CRender::DeepCopy() const
+CRender::CRender(void const* xmlElement)
 {
-    auto copy = new CRender;
-    *copy = *this;
-    return copy;
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_vboIndex = ParseXmlAttribute(elem, "vboIndex", m_vboIndex);
 }

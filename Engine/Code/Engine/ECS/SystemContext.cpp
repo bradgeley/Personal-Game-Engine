@@ -4,7 +4,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-SystemContext::SystemContext(AdminSystem* admin, System* system, float deltaSeconds) : m_admin(admin), m_system(system), m_deltaSeconds(deltaSeconds)
+SystemContext::SystemContext(System* system, float deltaSeconds) : m_system(system), m_deltaSeconds(deltaSeconds)
 {
 }
 

@@ -1,12 +1,12 @@
 ﻿// Bradley Christensen - 2023
 #include "CCamera.h"
+#include "Engine/Core/XmlUtils.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Component* CCamera::DeepCopy() const
+CCamera::CCamera(void const* xmlElement)
 {
-    auto copy = new CCamera;
-    *copy = *this;
-    return copy;
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_baseDims = ParseXmlAttribute(elem, "dims", m_baseDims);
 }

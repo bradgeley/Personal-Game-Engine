@@ -17,8 +17,8 @@ void SInput::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SInput::Run(SystemContext const& context)
 {
-    auto& moveStorage = m_admin->GetArrayStorage<CMovement>();
-    for (auto it = Iterate<CMovement>(context); it.IsValid(); ++it)
+    auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
+    for (auto it = g_ecs->Iterate<CMovement>(context); it.IsValid(); ++it)
     {
         EntityID& ent = it.m_currentIndex;
         auto& move = moveStorage[ent];

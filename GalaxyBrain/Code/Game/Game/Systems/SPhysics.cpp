@@ -16,9 +16,10 @@ void SPhysics::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SPhysics::Run(SystemContext const& context)
 {
-    auto& physStorage = m_admin->GetArrayStorage<CPhysics>();
-    auto& transforms = m_admin->GetArrayStorage<CTransform>();
-    for (auto it = Iterate<CTransform, CPhysics>(context); it.IsValid(); ++it)
+    auto& physStorage = g_ecs->GetArrayStorage<CPhysics>();
+    auto& transforms = g_ecs->GetArrayStorage<CTransform>();
+    
+    for (auto it = g_ecs->Iterate<CTransform, CPhysics>(context); it.IsValid(); ++it)
     {
         EntityID& ent = it.m_currentIndex;
         auto& phys = physStorage[ent];

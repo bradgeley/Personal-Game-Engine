@@ -1,18 +1,17 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
 #include "CTransform.h"
-#include "Engine/ECS/Component.h"
 #include "Engine/Renderer/EngineConstantBuffers.h"
-#include "Engine/Renderer/VertexBuffer.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct CRender : Component
+struct CRender
 {
-    Component* DeepCopy() const override;
+    CRender() = default;
+    CRender(void const* xmlElement);
     
     CTransform m_renderTransform;
-    VertexBuffer m_vertexBuffer;
     ModelConstants m_modelConstants;
+    int m_vboIndex = -1;
 };

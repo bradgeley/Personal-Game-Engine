@@ -21,7 +21,6 @@ public:
 
 	virtual void Destroy(EntityID index)						= 0;
 	virtual void Clear()										= 0;
-	virtual void NewAdd(EntityID [[maybe_unused]] index, Component const* [[maybe_unused]] copy) {}
 };
 
 
@@ -88,12 +87,6 @@ public:
 		return &m_data[eid];
 	}
 
-	
-	virtual void			NewAdd(EntityID eid, Component const* copy)	override
-	{
-		m_data[eid] = *reinterpret_cast<CType const*>(copy);
-	}
-
 	virtual void			Destroy(EntityID)						override
 	{
 		// pretend it doesn't exist (from admin side)
@@ -154,11 +147,6 @@ public:
 	{
 		m_data[eid] = copy;
 		return &m_data[eid];
-	}
-
-	virtual void			NewAdd(EntityID eid, Component const* copy)	override
-	{
-		m_data[eid] = *reinterpret_cast<CType const*>(copy);
 	}
 	
 	virtual void			Destroy(EntityID eid)					override

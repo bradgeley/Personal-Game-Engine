@@ -4,7 +4,6 @@
 #include "GroupIter.h"
 #include "EntityID.h"
 #include "SystemSubgraph.h"
-#include "EntityDefinition.h"
 #include <vector>
 #include <unordered_map>
 
@@ -77,22 +76,22 @@ public:
 
 	template <typename CType>
 	void RegisterResourceByType();
+	
+	template <typename CType>
+	void RegisterComponentArray();
+	
+	template <typename CType>
+	void RegisterComponentMap();
+	
+	template <typename CType>
+	void RegisterTag();
 
 	template <typename CType>
-	void RegisterSingletonComponent();
+	void RegisterComponentSingleton();
 
 private:
 
 	void RegisterComponentBit(HashCode typeHash);
-
-
-	
-//----------------------------------------------------------------------------------------------------------------------
-// ENTITY DEFINITION
-//
-public:
-
-	EntityDefinition NewEntityDef() const;
 
 	
 
@@ -103,7 +102,6 @@ public:
 
 	EntityID CreateEntity(int searchBeginEntityID = 0);
 	EntityID CreateEntityInPlace(int entityID);
-	EntityID CreateEntityFromDef(EntityDefinition const& def);
 	void ClearEntities();
 	bool DestroyEntity(EntityID entityID);
 
@@ -217,7 +215,6 @@ protected:
 
 	BitArray<MAX_ENTITIES>			m_entities;
 	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 };
-	EntityDefinition				m_entityDefinition; 
 
 	std::unordered_map<HashCode, BaseStorage*>	m_componentStorage;
 	std::unordered_map<HashCode, BitMask>		m_componentBitMasks;
@@ -264,12 +261,6 @@ void AdminSystem::RegisterComponent(ComponentStorageType storageType /*= Compone
 			break;
 		}
 		RegisterComponentBit(typeHash);
-
-		// Add to entity definition
-		if (storageType == ComponentStorageType::ARRAY || storageType == ComponentStorageType::MAP)
-		{
-			m_entityDefinition.m_components.emplace_back(new CType());
-		}
 	}
 }
 
@@ -287,7 +278,49 @@ void AdminSystem::RegisterResourceByType()
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename CType>
-void AdminSystem::RegisterSingletonComponent()
+void AdminSystem::RegisterComponentArray()
+{
+	HashCode typeHash = typeid(CType).hash_code();
+	if (m_componentStorage.find(typeHash) == m_componentStorage.end())
+	{
+		m_componentStorage.emplace(typeHash, new ArrayStorage<CType>());
+		RegisterComponentBit(typeHash);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename CType>
+void AdminSystem::RegisterComponentMap()
+{
+	HashCode typeHash = typeid(CType).hash_code();
+	if (m_componentStorage.find(typeHash) == m_componentStorage.end())
+	{
+		m_componentStorage.emplace(typeHash, new MapStorage<CType>());
+		RegisterComponentBit(typeHash);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename CType>
+void AdminSystem::RegisterTag()
+{
+	HashCode typeHash = typeid(CType).hash_code();
+	if (m_componentStorage.find(typeHash) == m_componentStorage.end())
+	{
+		m_componentStorage.emplace(typeHash, new TagStorage<CType>());
+		RegisterComponentBit(typeHash);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename CType>
+void AdminSystem::RegisterComponentSingleton()
 {
 	HashCode typeHash = typeid(CType).hash_code();
 	if (m_componentStorage.find(typeHash) == m_componentStorage.end())
@@ -305,16 +338,19 @@ CType* AdminSystem::AddComponent(EntityID entityID, Args const& ...args)
 {
 	HashCode typeHash = typeid(CType).hash_code();
 	BitMask& componentBitMask = m_componentBitMasks.at(typeHash);
-	BitMask& entityComp = m_entityComposition[entityID];
+	
+	m_entityComposition[entityID] |= (componentBitMask);
 
 	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeHash));
-	entityComp |= (componentBitMask);
 	return typedStorage->Add(entityID, CType(args...));
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
+// Slow (RTTI + work that can be pulled out of iterator loops).
+// Use GetXXXStorage + the result's operator[] for maximum performance
+//
 template <typename CType>
 CType* AdminSystem::GetComponent(EntityID entityID /*= ENTITY_ID_SINGLETON*/) const
 {

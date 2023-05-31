@@ -1,0 +1,13 @@
+<EntityDefs>
+    
+    <Entity name = "Player">
+        <Transform/>
+        <Camera/>
+        <Movement moveSpeed="8"/>
+        <PlayerController/>
+        <Render vboIndex="0"/>
+        <Physics/>
+        <Collision radius="0.5"/>
+    </Entity>
+    
+</EntityDefs>

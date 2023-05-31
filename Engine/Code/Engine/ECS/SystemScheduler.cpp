@@ -67,7 +67,7 @@ protected:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-SystemScheduler::SystemScheduler(AdminSystem* admin) : m_admin(admin)
+SystemScheduler::SystemScheduler(AdminSystem* admin) : g_ecs(admin)
 {
 
 }
@@ -102,7 +102,7 @@ void SystemScheduler::ScheduleFrame(std::vector<SystemSubgraph> const& systems)
 //----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::RunFrame(float deltaSeconds)
 {
-	if (g_jobSystem && m_admin->IsAutoMultithreadingActive())
+	if (g_jobSystem && g_ecs->IsAutoMultithreadingActive())
 	{
 		RunFrame_AutoMultithreaded(deltaSeconds);
 	}
@@ -120,7 +120,7 @@ void SystemScheduler::RunSubgraph(SystemSubgraph const& subgraph, float deltaSec
 	SystemSubgraph copy = subgraph;
 	std::sort(copy.m_systems.begin(), copy.m_systems.end(), SystemPriorityComparator);
 	
-	bool multithreaded = g_jobSystem && m_admin->IsAutoMultithreadingActive();
+	bool multithreaded = g_jobSystem && g_ecs->IsAutoMultithreadingActive();
 	TryRunSubgraph(copy, deltaSeconds, multithreaded);
 }
 
@@ -184,7 +184,7 @@ void RunSystem(SystemContext const& context)
 	context.m_system->PreRun();
 	
 	int systemSplittingNumJobs = context.m_system->GetSystemSplittingNumJobs();
-	if (context.m_admin->IsSystemSplittingActive() && systemSplittingNumJobs > 1)
+	if (g_ecs->IsSystemSplittingActive() && systemSplittingNumJobs > 1)
 	{
 		SplitSystem(context, systemSplittingNumJobs);
 	}
@@ -227,7 +227,7 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 {
 	for (auto& system : subgraph.m_systems)
 	{
-		SystemContext context(m_admin, system, deltaSeconds);
+		SystemContext context(system, deltaSeconds);
 		RunSystem(context);
 	}
 }
@@ -245,7 +245,7 @@ void SystemScheduler::RunSubgraph_AutoMultithreaded(SystemSubgraph const& subgra
 	
 	for (System* const& system : subgraph.m_systems)
 	{
-		SystemContext context(m_admin, system, deltaSeconds);
+		SystemContext context(system, deltaSeconds);
 		Job* job = new AutoMultithreadedRunSystemJob(context);
 		jobGraph.AddJob(job);
 	}

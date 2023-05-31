@@ -26,7 +26,7 @@ void GroupIter::Next()
 	do
 	{
 		++m_currentIndex;
-		if ((m_context.m_admin->m_entityComposition[m_currentIndex] & m_groupMask) == m_groupMask)
+		if ((g_ecs->m_entityComposition[m_currentIndex] & m_groupMask) == m_groupMask)
 		{
 			return;
 		}

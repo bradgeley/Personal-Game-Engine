@@ -47,8 +47,6 @@ void AdminSystem::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::Shutdown()
 {
-	m_entityDefinition.Cleanup();
-	
 	for (auto& s : m_systemSubgraphs)
 	{
 		s.Shutdown();
@@ -241,8 +239,6 @@ void AdminSystem::SetAutoMultithreadingThreshold(int newThreshold)
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::RegisterSystem(System* s, SystemSubgraphID subgraphID)
 {
-	s->m_admin = this;
-	
 	if (subgraphID >= m_systemSubgraphs.size())
 	{
 		m_systemSubgraphs.resize(subgraphID + 1);
@@ -293,19 +289,6 @@ void AdminSystem::RegisterComponentBit(HashCode typeHash)
 	size_t componentIndex = m_componentBitMasks.size();
 	BitMask bitMask = (1i64 << componentIndex);
 	m_componentBitMasks.emplace(typeHash, bitMask);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-EntityDefinition AdminSystem::NewEntityDef() const
-{
-	EntityDefinition def;
-	for (auto& c : m_entityDefinition.m_components)
-	{
-		def.m_components.emplace_back(c->DeepCopy());
-	}
-	return def;
 }
 
 
@@ -373,25 +356,6 @@ EntityID AdminSystem::CreateEntityInPlace(int entityID)
 	m_entities.Set(entityID);
 
 	return (EntityID) entityID;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-EntityID AdminSystem::CreateEntityFromDef(EntityDefinition const& def)
-{
-	EntityID eid = CreateEntity();
-	for (auto& c : def.m_components)
-	{
-		HashCode hash = typeid(*c).hash_code();
-		auto storage = m_componentStorage.at(hash);
-		storage->NewAdd(eid, c);
-
-		BitMask& componentBitMask = m_componentBitMasks.at(hash);
-		BitMask& entityComp = m_entityComposition[eid];
-		entityComp |= (componentBitMask);
-	}
-	return eid;
 }
 
 

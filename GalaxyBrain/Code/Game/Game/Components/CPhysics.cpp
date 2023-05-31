@@ -1,12 +1,11 @@
 ﻿// Bradley Christensen - 2023
 #include "CPhysics.h"
+#include "Engine/Core/XmlUtils.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Component* CPhysics::DeepCopy() const
+CPhysics::CPhysics(void const* xmlElement)
 {
-    auto copy = new CPhysics;
-    *copy = *this;
-    return copy;
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 }
