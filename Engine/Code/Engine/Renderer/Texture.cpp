@@ -3,8 +3,11 @@
 #include "Renderer.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/Image.h"
-#include "Engine/Renderer/RendererInternal.h" 
-#include <cmath>
+#include "Engine/Renderer/RendererInternal.h"
+
+#ifdef _DEBUG 
+#include "Engine/Core/StringUtils.h"
+#endif
 
 
 
@@ -93,6 +96,11 @@ bool Texture::CreateFromImage(Image const& image, bool createMipMap)
         DX_SAFE_RELEASE(m_textureHandle)
         m_textureHandle = mipTextureHandle;
     }
+
+    #ifdef _DEBUG
+        std::string name = StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+    #endif
     
     return SUCCEEDED(result);
 }
@@ -175,6 +183,7 @@ Texture* Texture::CreateDepthBuffer(IntVec2 const& texelSize)
 
     HRESULT result = g_renderer->GetDevice()->CreateTexture2D(&desc, nullptr, &texture->m_textureHandle);
     ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth buffer")
+    
     return texture;
 }
 
@@ -187,6 +196,11 @@ ID3D11DepthStencilView* Texture::CreateOrGetDepthStencilView()
     {
         HRESULT result = g_renderer->GetDevice()->CreateDepthStencilView(m_textureHandle, nullptr, &m_depthStencilView);
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth stencil view")
+
+        #ifdef _DEBUG
+            std::string name = StringF("Texture (Depth Stencil View). Source Image: %s", m_sourceImagePath.c_str());
+            m_depthStencilView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+        #endif
     }
 
     return m_depthStencilView;
@@ -201,6 +215,11 @@ ID3D11RenderTargetView* Texture::CreateOrGetRenderTargetView()
     {
         HRESULT result = g_renderer->GetDevice()->CreateRenderTargetView(m_textureHandle, nullptr, &m_renderTargetView);
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create rtv")
+
+        #ifdef _DEBUG
+            std::string name = StringF("Texture (Render Target View). Source Image: %s", m_sourceImagePath.c_str());
+            m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());  
+        #endif
     }
 
     return m_renderTargetView;
@@ -216,6 +235,11 @@ ID3D11ShaderResourceView* Texture::CreateOrGetShaderResourceView()
         ID3D11Device* device = g_renderer->GetDevice();
         HRESULT result = device->CreateShaderResourceView(m_textureHandle, nullptr, &m_shaderResourceView);
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create srv")
+
+        #ifdef _DEBUG
+            std::string name = StringF("Texture (Shader Resource View). Source Image: %s", m_sourceImagePath.c_str());
+            m_shaderResourceView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+        #endif
     }
 
     return m_shaderResourceView;

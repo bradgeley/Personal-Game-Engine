@@ -133,6 +133,7 @@ void DevConsole::Render() const
     float devConsoleOffset = SmoothStart3(m_openCloseAnimationFraction);
 
     // Sets camera and renderer pipeline state
+    g_renderer->BeginWindow(g_window);
     g_renderer->BeginCamera(m_camera);
 
     // Translate by the animation fraction

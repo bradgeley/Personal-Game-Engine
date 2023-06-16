@@ -1,13 +1,11 @@
 ﻿// Bradley Christensen - 2022
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
+#include "Engine/DataStructures/ThreadSafeQueue.h"
 #include "Job.h"
 #include <vector>
 #include <mutex>
 #include <atomic>
-#include <deque>
-
-#include "Engine/DataStructures/ThreadSafeQueue.h"
 
 
 
@@ -27,7 +25,6 @@ extern class JobSystem* g_jobSystem;
 //----------------------------------------------------------------------------------------------------------------------
 struct JobSystemConfig
 {
-    bool m_enableLogging = false;
     uint32_t m_threadCount = std::thread::hardware_concurrency();
 };
 

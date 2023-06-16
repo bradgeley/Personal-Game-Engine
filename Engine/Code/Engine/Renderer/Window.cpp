@@ -1,15 +1,17 @@
 ﻿// Bradley Christensen - 2022-2023
+#define WIN32_LEAN_AND_MEAN
+#include "Windows.h"
+
 #include "Window.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/DataStructures/NamedProperties.h"
+#include "Texture.h"
 
-#define WIN32_LEAN_AND_MEAN
-#include "Windows.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// THE Window (for now)
+// The main game window
 //
 Window* g_window = nullptr;
 
@@ -39,6 +41,14 @@ void Window::Startup()
 void Window::BeginFrame()
 {
     RunMessagePump();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::Shutdown()
+{
+    
 }
 
 
@@ -135,8 +145,8 @@ void Window::CreateMainWindow()
     wcex.hIconSm        = LoadIcon(wcex.hInstance, IDI_APPLICATION); 
     RegisterClassEx(&wcex);
     
-    const DWORD windowStyleFlags = WS_CAPTION | WS_BORDER | WS_SYSMENU | WS_OVERLAPPED;
-    const DWORD windowStyleExFlags = WS_EX_APPWINDOW;
+    DWORD const windowStyleFlags = WS_CAPTION | WS_BORDER | WS_SYSMENU | WS_OVERLAPPED;
+    DWORD const windowStyleExFlags = WS_EX_APPWINDOW;
 
     RECT desktopRect;
     HWND desktopWindowHandle = GetDesktopWindow();
@@ -184,10 +194,10 @@ void Window::CreateMainWindow()
         windowRect.top,
         windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top,
-        NULL,
-        NULL,
+        nullptr,
+        nullptr,
         wcex.hInstance,
-        NULL);
+        nullptr);
 
     ShowWindow(hwnd, SW_SHOW);
     SetForegroundWindow(hwnd);
@@ -205,7 +215,7 @@ void Window::RunMessagePump()
    MSG queuedMessage;
    for (;;)
    {
-      const BOOL wasMessagePresent = PeekMessage(&queuedMessage, NULL, 0, 0, PM_REMOVE);
+      const BOOL wasMessagePresent = PeekMessage(&queuedMessage, nullptr, 0, 0, PM_REMOVE);
       if (!wasMessagePresent)
       {
          break;

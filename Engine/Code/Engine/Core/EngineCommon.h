@@ -10,4 +10,4 @@
 //
 
 #define UNUSED(x) (void) (x);
-#define SHUTDOWN_AND_DESTROY(x){ if ((x)) { (x)->Shutdown(); delete (x); } (x) = nullptr; }
+#define SHUTDOWN_AND_DESTROY(x) { if ((x)) { (x)->Shutdown(); delete (x); } (x) = nullptr; }

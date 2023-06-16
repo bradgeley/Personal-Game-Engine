@@ -48,13 +48,20 @@ void Renderer::Startup()
 	CreateDefaultTexture();
 	CreateBlendStates();
 	CreateRasterizerState();
-	CreateDepthBuffer();
 	CreateConstantBuffers();
 	CreateDefaultFont();
 
 	UpdateRenderingPipelineState(true);
 
 	AddDevConsoleCommands();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::Render() const
+{
+
 }
 
 
@@ -67,11 +74,11 @@ void Renderer::Shutdown()
 	DestroyDefaultTexture();
 	DestroyBlendStates();
 	DestroyRasterizerState();
-	DestroyDepthBuffer();
 	DestroyConstantBuffers();
 	DestroySamplerStates();
 	DestroyDepthStencilState();
-	DestroyRenderContext();
+	DestroyWindowRenderContexts();
+	DestroyDevice();
 
 	ReportLiveObjects();
 	DestroyDebugLayer();
@@ -83,7 +90,7 @@ void Renderer::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::BeginFrame()
 {
-	ClearDepth(1.f);
+	
 }
 
 
@@ -93,10 +100,31 @@ void Renderer::EndFrame()
 {
 	m_currentCamera = nullptr;
 	
-	m_swapChain->Present(0, 0);
-
-	// todo: handle fast framerate issues
+	BeginWindow(g_window);
+	Present();
 	std::this_thread::sleep_for(std::chrono::milliseconds(8));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::BeginWindow(Window const* window)
+{
+	if (window && (m_windowRenderContexts.find(window) != m_windowRenderContexts.end()))
+	{
+		m_currentWindow = window;
+		Texture*& texture = m_windowRenderContexts.at(m_currentWindow).m_backbufferTexture;
+		BindRenderTarget(texture);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::EndWindow(Window const* window)
+{
+	UNUSED(window)
+	m_currentWindow = nullptr;
 }
 
 
@@ -107,8 +135,6 @@ void Renderer::BeginCamera(Camera const& camera)
 	m_currentCamera = &camera;
 	
 	ResetRenderingPipelineState();
-	
-	BindRenderTarget(m_backbufferTexture);
 
 	// Fill Camera Constants
 	m_dirtySettings.m_cameraConstants.m_cameraToClip = camera.GetOrthoProjectionMatrix();
@@ -134,6 +160,15 @@ void Renderer::BeginCamera(Camera const& camera)
 void Renderer::EndCamera(Camera const& camera)
 {
 	UNUSED(camera)
+	m_currentCamera = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::Present() const
+{
+	m_windowRenderContexts.at(m_currentWindow).m_swapChain->Present(0, 0);
 }
 
 
@@ -143,8 +178,8 @@ void Renderer::ClearScreen(Rgba8 const& tint)
 {
 	float colorAsFloats[4] = {};
 	tint.GetAsFloats(&colorAsFloats[0]);
-	BindRenderTarget(m_backbufferTexture);
-	ID3D11RenderTargetView* const renderTargetView = m_backbufferTexture->CreateOrGetRenderTargetView();
+	//BindRenderTarget(m_backbufferTexture);
+	ID3D11RenderTargetView* const renderTargetView = GetCurrentWindowRenderContext().m_backbufferTexture->CreateOrGetRenderTargetView();
 	m_deviceContext->ClearRenderTargetView(renderTargetView, colorAsFloats);
 }
 
@@ -289,7 +324,7 @@ void Renderer::BindShader(Shader* shader)
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::BindRenderTarget(Texture* texture)
 {
-	ID3D11DepthStencilView* dsv = m_depthBuffer->CreateOrGetDepthStencilView();
+	ID3D11DepthStencilView* dsv = GetCurrentWindowRenderContext().m_depthBuffer->CreateOrGetDepthStencilView();
 	ID3D11RenderTargetView* rtv = texture->CreateOrGetRenderTargetView();
 	m_deviceContext->OMSetRenderTargets(1, &rtv, dsv);
 }
@@ -315,7 +350,7 @@ ID3D11DeviceContext* Renderer::GetContext() const
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::ClearDepth(float depth)
 {
-	ID3D11DepthStencilView* view = m_depthBuffer->CreateOrGetDepthStencilView();
+	ID3D11DepthStencilView* view = GetCurrentWindowRenderContext().m_depthBuffer->CreateOrGetDepthStencilView();
 	m_deviceContext->ClearDepthStencilView(view, D3D11_CLEAR_DEPTH, depth, 0);
 }
 
@@ -471,6 +506,8 @@ void Renderer::CreateRenderContext()
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.SampleDesc.Count = 1;
 
+	WindowRenderContext& mainWindowContext = m_windowRenderContexts[g_window];
+
 	HRESULT result = D3D11CreateDeviceAndSwapChain(
 		nullptr,					
 		D3D_DRIVER_TYPE_HARDWARE,	
@@ -480,7 +517,7 @@ void Renderer::CreateRenderContext()
 		0,							
 		D3D11_SDK_VERSION,
 		&swapChainDesc,
-		&m_swapChain,
+		(IDXGISwapChain**) &mainWindowContext.m_swapChain,
 		&m_device,
 		nullptr,
 		&m_deviceContext
@@ -488,8 +525,88 @@ void Renderer::CreateRenderContext()
 
 	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create device and swap chain")
 
-	m_backbufferTexture = new Texture();
-	m_backbufferTexture->CreateFromSwapChain(m_swapChain);
+	mainWindowContext.m_backbufferTexture = new Texture();
+	mainWindowContext.m_backbufferTexture->CreateFromSwapChain(mainWindowContext.m_swapChain);
+
+	mainWindowContext.m_depthBuffer = Texture::CreateDepthBuffer(g_window->GetDimensions());
+
+	#ifdef _DEBUG
+		std::string deviceName = StringF("Device (THE Renderer)");
+		m_device->SetPrivateData(WKPDID_D3DDebugObjectName, (int) deviceName.size(), deviceName.data());
+		std::string contextName = StringF("Device Context (THE Renderer)");
+		m_deviceContext->SetPrivateData(WKPDID_D3DDebugObjectName, (int) contextName.size(), contextName.data());
+	
+		std::string backbufferName = StringF("Render Target Texture (%s)", g_window->m_config.m_windowTitle.c_str());
+		mainWindowContext.m_backbufferTexture->m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) backbufferName.size(), backbufferName.data());
+		std::string depthbufferName = StringF("Render Target Depth Buffer (%s)", g_window->m_config.m_windowTitle.c_str());
+		mainWindowContext.m_depthBuffer->m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) depthbufferName.size(), depthbufferName.data());
+	#endif
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::CreateWindowRenderContext(Window* window)
+{
+	if (m_windowRenderContexts.find(window) != m_windowRenderContexts.end())
+	{
+		g_devConsole->LogErrorF("Tried to create duplicate render context for window: %s", window->m_config.m_windowTitle.c_str());
+		return;
+	}
+	
+	IDXGIDevice* device;
+	m_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&device);
+	
+	IDXGIAdapter* adapter;
+	device->GetParent(__uuidof(IDXGIAdapter), (void**)&adapter);
+	
+	IDXGIFactory* factory;
+	adapter->GetParent(__uuidof(IDXGIFactory), (void**)&factory);
+	
+	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.Height = window->GetHeight();
+	swapChainDesc.BufferDesc.Width = window->GetWidth();
+	swapChainDesc.Windowed = TRUE;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	swapChainDesc.Flags = 0;
+	swapChainDesc.BufferCount = 2;
+	swapChainDesc.OutputWindow = (HWND) window->GetHWND();
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.SampleDesc.Count = 1;
+
+	WindowRenderContext& windowRenderContext = m_windowRenderContexts[window];
+	
+	HRESULT result = factory->CreateSwapChain(m_device, &swapChainDesc, &windowRenderContext.m_swapChain);
+	if (!SUCCEEDED(result))
+	{
+		g_devConsole->LogError("Renderer::CreateRenderContextForWindow: Failed to create swap chain");
+	}
+
+	DX_SAFE_RELEASE(factory)
+	DX_SAFE_RELEASE(adapter)
+	DX_SAFE_RELEASE(device)
+	
+	windowRenderContext.m_backbufferTexture = new Texture();
+	windowRenderContext.m_backbufferTexture->CreateFromSwapChain(windowRenderContext.m_swapChain);
+	
+	windowRenderContext.m_depthBuffer = Texture::CreateDepthBuffer(window->GetDimensions());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+WindowRenderContext& Renderer::GetCurrentWindowRenderContext()
+{
+	return m_windowRenderContexts.at(m_currentWindow);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+WindowRenderContext& Renderer::GetWindowRenderContext(Window* window)
+{
+	return m_windowRenderContexts.at(window);
 }
 
 
@@ -590,25 +707,6 @@ void Renderer::DestroyRasterizerState()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::CreateDepthBuffer()
-{
-	Window* window = g_window;
-	m_depthBuffer = Texture::CreateDepthBuffer(window->GetDimensions());
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Renderer::DestroyDepthBuffer()
-{
-	m_depthBuffer->ReleaseResources();
-	delete m_depthBuffer;
-	m_depthBuffer = nullptr;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyDepthStencilState()
 {
 	DX_SAFE_RELEASE(m_depthStencilState)
@@ -674,6 +772,15 @@ void Renderer::CreateBlendStates()
 	m_blendStateByMode[(int) BlendMode::Opaque] = CreateBlendState(D3D11_BLEND_ONE, D3D11_BLEND_ZERO, D3D11_BLEND_OP_ADD);
 	m_blendStateByMode[(int) BlendMode::Alpha] = CreateBlendState(D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD);
 	m_blendStateByMode[(int) BlendMode::Additive] = CreateBlendState(D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD);
+
+	#ifdef _DEBUG
+		std::string opaqueName = StringF("Blend State (Opaque)");
+		m_blendStateByMode[(int) BlendMode::Opaque]->SetPrivateData(WKPDID_D3DDebugObjectName, (int) opaqueName.size(), opaqueName.data());
+		std::string alphaName = StringF("Blend State (Alpha)");
+		m_blendStateByMode[(int) BlendMode::Alpha]->SetPrivateData(WKPDID_D3DDebugObjectName, (int) alphaName.size(), alphaName.data());
+		std::string additiveName = StringF("Blend State (Additive)");
+		m_blendStateByMode[(int) BlendMode::Additive]->SetPrivateData(WKPDID_D3DDebugObjectName, (int) additiveName.size(), additiveName.data());
+	#endif
 	
 	// Default Blend Mode, move to separate default settings function?
 	SetBlendMode(BlendMode::Alpha);
@@ -682,21 +789,40 @@ void Renderer::CreateBlendStates()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::DestroyRenderContext()
+void Renderer::DestroyDevice()
 {
 	m_deviceContext->ClearState();
 	m_deviceContext->Flush();
 	
-	if (m_backbufferTexture)
-	{
-		m_backbufferTexture->ReleaseResources();
-	}
-	delete m_backbufferTexture;
-	m_backbufferTexture = nullptr;
-	
-	DX_SAFE_RELEASE(m_swapChain)
 	DX_SAFE_RELEASE(m_deviceContext)
 	DX_SAFE_RELEASE(m_device)
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::DestroyWindowRenderContexts()
+{
+	for (auto& pair : m_windowRenderContexts)
+	{
+		WindowRenderContext& context = pair.second;
+
+		if (context.m_backbufferTexture)
+		{
+			context.m_backbufferTexture->ReleaseResources();
+			delete context.m_backbufferTexture;
+			context.m_backbufferTexture = nullptr;
+		}
+
+		if (context.m_depthBuffer)
+		{
+			context.m_depthBuffer->ReleaseResources();
+			delete context.m_depthBuffer;
+			context.m_depthBuffer = nullptr;
+		}
+	
+		DX_SAFE_RELEASE(context.m_swapChain)
+	}
 }
 
 

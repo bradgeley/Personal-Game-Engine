@@ -210,6 +210,7 @@
     <ClCompile Include="Multithreading\JobGraph.cpp" />
     <ClCompile Include="Multithreading\JobID.cpp" />
     <ClCompile Include="Multithreading\JobSystem.cpp" />
+    <ClCompile Include="Multithreading\JobSystemDebug.cpp" />
     <ClCompile Include="Multithreading\JobWorker.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\ConstantBuffer.cpp" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Renderer\VertexUtils.cpp" />
     <ClCompile Include="Renderer\Vertex_PCU.cpp" />
     <ClCompile Include="Renderer\Window.cpp" />
+    <ClCompile Include="Renderer\WindowRenderContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ThirdParty\stb\stb_image.h" />
@@ -280,6 +282,7 @@
     <ClInclude Include="Multithreading\JobGraph.h" />
     <ClInclude Include="Multithreading\JobID.h" />
     <ClInclude Include="Multithreading\JobSystem.h" />
+    <ClInclude Include="Multithreading\JobSystemDebug.h" />
     <ClInclude Include="Multithreading\JobWorker.h" />
     <ClInclude Include="Renderer\Camera.h" />
     <ClInclude Include="Renderer\ConstantBuffer.h" />
@@ -298,6 +301,7 @@
     <ClInclude Include="Renderer\VertexUtils.h" />
     <ClInclude Include="Renderer\Vertex_PCU.h" />
     <ClInclude Include="Renderer\Window.h" />
+    <ClInclude Include="Renderer\WindowRenderContext.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,6 +8,13 @@
 
 
 
+class Texture;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// The main game window
+//
 extern class Window* g_window;
 
 
@@ -15,7 +22,7 @@ extern class Window* g_window;
 //----------------------------------------------------------------------------------------------------------------------
 struct WindowConfig
 {
-    std::string		m_windowTitle = "Untitled App";
+    std::string		m_windowTitle = "Untitled Window";
     float			m_clientAspect = 2.f;
     float           m_windowScale = 1.f;
 };
@@ -35,6 +42,7 @@ public:
     
     virtual void Startup() override;
     virtual void BeginFrame() override;
+    virtual void Shutdown() override;
 
     void* GetHWND() const;
     int GetWidth() const;
@@ -60,12 +68,15 @@ public:
     EventDelegate m_keyDownEvent;
     EventDelegate m_keyUpEvent;
     EventDelegate m_mouseWheelEvent;
+    
+public:
+    
+    WindowConfig const m_config;
 
-private:
+protected:
     
-    WindowConfig const  m_config;
     IntVec2 m_dimensions;
-    
-    void* m_windowHandle   = nullptr; // HWND
-    void* m_displayContext = nullptr; // HDC
+
+    void* m_windowHandle            = nullptr; // HWND
+    void* m_displayContext          = nullptr; // HDC
 };

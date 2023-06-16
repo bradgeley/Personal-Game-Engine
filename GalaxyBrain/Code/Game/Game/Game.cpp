@@ -57,19 +57,6 @@ void Game::Startup()
     g_ecs->RegisterSystem<SRender>((int) FramePhase::Render);
     
     g_ecs->Startup();
-    
-    // Set up player
-    //EntityDefinition playerDef = g_ecs->NewEntityDef();
-    //CPhysics& phys = *playerDef.GetComponentDef<CPhysics>();
-    //phys.m_gravityStrength = 1.f;
-    //CMovement& move = *playerDef.GetComponentDef<CMovement>();
-    //move.m_movementSpeed = 10.f;
-    //CRender& render = *playerDef.GetComponentDef<CRender>();
-    //CCamera& camera = *playerDef.GetComponentDef<CCamera>();
-    //camera.m_camera.SetOrthoBounds(Vec3(0.f,0.f,0.f), Vec3(100.f, 50.f, 1.f));
-    //
-    //auto factory = g_ecs->GetComponent<SCEntityFactory>();
-    //factory->m_entityDefinitions["Player"] = playerDef;
 }
 
 
@@ -83,7 +70,7 @@ void Game::Update(float deltaSeconds)
         g_app->Quit();
     }
 
-
+    // g_ecs->RunFrame(deltaSeconds);
     g_ecs->RunSystemSubgraph((int) FramePhase::PrePhysics, deltaSeconds);
     g_ecs->RunSystemSubgraph((int) FramePhase::Physics, deltaSeconds);
     g_ecs->RunSystemSubgraph((int) FramePhase::PostPhysics, deltaSeconds);

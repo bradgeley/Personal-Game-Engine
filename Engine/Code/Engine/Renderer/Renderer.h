@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
+#include "WindowRenderContext.h"
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Renderer/EngineConstantBuffers.h"
@@ -24,13 +25,14 @@ class Camera;
 class Texture;
 class VertexBuffer;
 class ConstantBuffer;
+class Window;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 struct RendererConfig
 {
-    
+
 };
 
 
@@ -50,12 +52,18 @@ public:
     Renderer(RendererConfig const& config);
     
     virtual void Startup() override;
+    virtual void Render() const override;
     virtual void Shutdown() override;
     virtual void BeginFrame() override;
     virtual void EndFrame() override;
     
+    void BeginWindow(Window const* window);
+    void EndWindow(Window const* window);
+    
     void BeginCamera(Camera const& camera);
     void EndCamera(Camera const& camera);
+
+    void Present() const;
 
     void ClearScreen(Rgba8 const& tint);
     void DrawVertexBuffer(VertexBuffer* vbo);
@@ -86,6 +94,10 @@ public:
     ID3D11DeviceContext* GetContext() const;
     
     ID3D11BlendState* CreateBlendState(D3D11_BLEND srcFactor, D3D11_BLEND dstFactor, D3D11_BLEND_OP op);
+    
+    void CreateWindowRenderContext(Window* window);
+    WindowRenderContext& GetCurrentWindowRenderContext();
+    WindowRenderContext& GetWindowRenderContext(Window* window);
 
 public:
 
@@ -104,7 +116,8 @@ private:
     void DestroySamplerStates();
     
     void CreateRenderContext();
-    void DestroyRenderContext();
+    void DestroyDevice();
+    void DestroyWindowRenderContexts();
     
     void CreateConstantBuffers();
     void DestroyConstantBuffers();
@@ -124,8 +137,6 @@ private:
     void CreateRasterizerState();
     void DestroyRasterizerState();
     
-    void CreateDepthBuffer();
-    void DestroyDepthBuffer();
     void DestroyDepthStencilState();
 
     void UpdateRenderingPipelineState(bool force = false);
@@ -149,8 +160,6 @@ private:
     Shader* m_defaultShader = nullptr;
     Texture* m_defaultTexture = nullptr;
     Font* m_defaultFont = nullptr;
-    Texture* m_backbufferTexture = nullptr;
-	Texture* m_depthBuffer = nullptr;
 
     // Constant Buffers
     ConstantBuffer* m_cameraConstantsGPU = nullptr;
@@ -160,14 +169,17 @@ private:
     // D3D11 Things
     ID3D11Device* m_device = nullptr;
     ID3D11DeviceContext* m_deviceContext = nullptr;
-    IDXGISwapChain* m_swapChain = nullptr;
     ID3D11BlendState* m_blendStateByMode[(size_t) BlendMode::Count] = {};
 	ID3D11SamplerState* m_samplerState = nullptr;
     ID3D11RasterizerState* m_rasterizerState = nullptr;
 	ID3D11DepthStencilState* m_depthStencilState = nullptr;
 
+    // Render Context per Window (Stored here to keep Window clean of renderer specific classes)
+    std::unordered_map<Window const*, WindowRenderContext> m_windowRenderContexts;
+
     // Renderer Pipeline State
     // todo: add more things to this
+    Window const* m_currentWindow = nullptr;
     Camera const* m_currentCamera = nullptr;
     RendererSettings m_settings;
     RendererSettings m_dirtySettings;
@@ -178,3 +190,4 @@ private:
     IDXGIDebug* m_debug = nullptr;
 #endif
 };
+

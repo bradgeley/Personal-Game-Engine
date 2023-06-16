@@ -12,6 +12,7 @@
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
 #include "Game.h"
+#include "Engine/Multithreading/JobSystemDebug.h"
 
 
 
@@ -59,6 +60,10 @@ void WindowsApplication::Startup()
     JobSystemConfig jobSysConfig;
     g_jobSystem = new JobSystem(jobSysConfig);
     m_engine->RegisterSubsystem(g_jobSystem);
+
+    JobSystemDebugConfig jobSysDebugConfig;
+    g_jobSystemDebug = new JobSystemDebug(jobSysDebugConfig);
+    m_engine->RegisterSubsystem(g_jobSystemDebug);
     
     m_engine->Startup();
 

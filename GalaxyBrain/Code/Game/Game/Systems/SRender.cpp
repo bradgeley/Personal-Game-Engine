@@ -3,6 +3,7 @@
 #include "Game/Game/Components/CRender.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/Window.h"
 #include "Game/Game/Components/CCamera.h"
 #include "Game/Game/Singletons/SCRenderer.h"
 
@@ -15,7 +16,7 @@ void SRender::Startup()
 
     auto& scRender = *g_ecs->GetComponent<SCRenderer>();
 
-    VertexBuffer& vbo1 = scRender.m_vbos[(int) GameVboIndex::Player];
+    VertexBuffer& vbo1 = scRender.m_vbos[(int) GameVboIndex::Sprite];
     AddVertsForRect2D(vbo1.GetMutableVerts(), Vec2(-5.f, -10.f), Vec2(5.f, 10.f));
 }
 
@@ -24,7 +25,9 @@ void SRender::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRender::Run(SystemContext const& context)
 {
-    g_renderer->ClearScreen(Rgba8::Black);
+    g_renderer->BeginWindow(g_window);
+	g_renderer->ClearDepth(1.f);
+    g_renderer->ClearScreen(Rgba8::Magenta);
     
     auto& scRender = *g_ecs->GetComponent<SCRenderer>();
     
@@ -45,9 +48,11 @@ void SRender::Run(SystemContext const& context)
 
     for (auto camIt = g_ecs->Iterate<CCamera>(context); camIt.IsValid(); ++camIt)
     {
+        // For each camera
         CCamera& camera = *cameraStorage.Get(camIt.m_currentIndex);
         g_renderer->BeginCamera(camera.m_camera);
-        
+
+        // Render all things
         for (auto renderIt = g_ecs->Iterate<CRender>(context); renderIt.IsValid(); ++renderIt)
         {
             CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
@@ -55,5 +60,4 @@ void SRender::Run(SystemContext const& context)
             g_renderer->DrawVertexBuffer(&scRender.m_vbos[render.m_vboIndex]);
         }
     }
-
 }
