@@ -15,7 +15,8 @@
 struct JobWorker
 {
     void Shutdown();
-    
+
+    int                     m_threadID      = -1;
     std::atomic<bool>       m_isRunning     = true;
     std::string             m_name          = "Unnamed Worker";
     std::thread             m_thread;

@@ -64,9 +64,9 @@ public:
 protected:
 
     void WorkerLoop(JobWorker* worker);
-    bool WorkerLoop_TryDoFirstAvailableJob(bool blocking = true);
+    bool WorkerLoop_TryDoFirstAvailableJob(JobWorker* worker, bool blocking = true);
     Job* PopFirstAvailableJob(bool blocking = true);
-    void WorkerLoop_ExecuteJob(Job* job);
+    void WorkerLoop_ExecuteJob(JobWorker* worker, Job* job);
 
     // While waiting to complete jobs, threads can try to complete the jobs they are waiting on, which may recur
     bool TryDoSpecificJob(JobID jobToExpedite);

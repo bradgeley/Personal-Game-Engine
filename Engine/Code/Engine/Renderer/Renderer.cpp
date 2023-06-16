@@ -140,7 +140,7 @@ void Renderer::BeginCamera(Camera const& camera)
 	m_dirtySettings.m_cameraConstants.m_cameraToClip = camera.GetOrthoProjectionMatrix();
 	
 	// Set viewport
-	IntVec2 windowDims = g_window->GetDimensions();
+	IntVec2 windowDims = m_currentWindow->GetDimensions();
 	Vec2 botLeft = Vec2::ZeroVector;
 	Vec2 topRight = Vec2(windowDims.x, windowDims.y);
 	
@@ -178,7 +178,6 @@ void Renderer::ClearScreen(Rgba8 const& tint)
 {
 	float colorAsFloats[4] = {};
 	tint.GetAsFloats(&colorAsFloats[0]);
-	//BindRenderTarget(m_backbufferTexture);
 	ID3D11RenderTargetView* const renderTargetView = GetCurrentWindowRenderContext().m_backbufferTexture->CreateOrGetRenderTargetView();
 	m_deviceContext->ClearRenderTargetView(renderTargetView, colorAsFloats);
 }

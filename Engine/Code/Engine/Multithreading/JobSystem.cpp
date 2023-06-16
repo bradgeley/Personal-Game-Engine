@@ -2,9 +2,11 @@
 #include "Engine/Multithreading/JobSystem.h"
 #include "JobDependencies.h"
 #include "JobGraph.h"
+#include "JobSystemDebug.h"
 #include "JobWorker.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Core/Time.h"
 
 
 
@@ -66,8 +68,9 @@ void JobSystem::Shutdown()
 void JobSystem::CreateJobWorker(int threadID, std::string const& name)
 {
     JobWorker* worker = new JobWorker();
-    worker->m_thread = std::thread(&JobSystem::WorkerLoop, this, worker );
-    worker->m_name = (name != "") ? name : StringF("JobSystemWorker: %i", threadID);
+    worker->m_threadID = threadID;
+    worker->m_thread = std::thread(&JobSystem::WorkerLoop, this, worker);
+    worker->m_name = (!name.empty()) ? name : StringF("JobSystemWorker: %i", threadID);
     m_workers.emplace_back( worker );
 }
 
@@ -180,7 +183,7 @@ bool JobSystem::WaitForAllJobs(bool blockAndHelp)
     {
         if (blockAndHelp && m_numIncompleteJobs > 0)
         {
-            if (!WorkerLoop_TryDoFirstAvailableJob(false))
+            if (!WorkerLoop_TryDoFirstAvailableJob(nullptr, false))
             {
                 std::this_thread::yield();
             }
@@ -227,7 +230,7 @@ void JobSystem::WorkerLoop(JobWorker* worker)
 {
     while (m_isRunning && worker->m_isRunning)
     {
-        if (!WorkerLoop_TryDoFirstAvailableJob())
+        if (!WorkerLoop_TryDoFirstAvailableJob(worker))
         {
             std::this_thread::yield();
         }
@@ -237,12 +240,12 @@ void JobSystem::WorkerLoop(JobWorker* worker)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool JobSystem::WorkerLoop_TryDoFirstAvailableJob(bool blocking)
+bool JobSystem::WorkerLoop_TryDoFirstAvailableJob(JobWorker* worker, bool blocking)
 {
     Job* job = PopFirstAvailableJob(blocking);
     if (job)
     {
-        WorkerLoop_ExecuteJob(job);
+        WorkerLoop_ExecuteJob(worker, job);
         return true;
     }
     return false;
@@ -260,13 +263,18 @@ Job* JobSystem::PopFirstAvailableJob(bool blocking)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystem::WorkerLoop_ExecuteJob(Job* job)
+void JobSystem::WorkerLoop_ExecuteJob(JobWorker* worker, Job* job)
 {
     #ifdef _DEBUG
         AddJobToInProgressQueue(job);
     #endif
-    
+
+    float beforeTime = GetCurrentTimeSecondsF();
     job->Execute();
+    float afterTime = GetCurrentTimeSecondsF();
+
+    JobDebugInfo jobDebugInfo = { worker->m_threadID, beforeTime, afterTime };
+    g_jobSystemDebug->Log(jobDebugInfo);
 
     #ifdef _DEBUG
         RemoveJobFromInProgressQueue(job);
@@ -308,7 +316,7 @@ bool JobSystem::TryDoSpecificJob(JobID jobToExpedite)
 
     if (result)
     {
-        WorkerLoop_ExecuteJob(result);
+        WorkerLoop_ExecuteJob(nullptr, result);
         return true;
     }
     return false;
@@ -348,7 +356,7 @@ bool JobSystem::TryDoSpecificJobs(std::vector<JobID> const& jobIDs)
 
     if (result)
     {
-        WorkerLoop_ExecuteJob(result);
+        WorkerLoop_ExecuteJob(nullptr, result);
         return true;
     }
     return false;

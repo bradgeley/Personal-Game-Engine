@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
+#include <mutex>
+#include <vector>
 #include "Engine/Core/EngineSubsystem.h"
 
 
@@ -25,6 +27,16 @@ struct JobSystemDebugConfig
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct JobDebugInfo
+{
+    int     m_threadID      = -1;
+    float   m_startTime     = 0.f;
+    float   m_endTime       = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 class JobSystemDebug : public EngineSubsystem
 {
 public:
@@ -38,9 +50,14 @@ public:
     void EndFrame() override;
     void Shutdown() override;
 
+    void Log(JobDebugInfo& info);
+
 protected:
 
     JobSystemDebugConfig m_config;
+
+    std::mutex m_logMutex;
+    std::vector<JobDebugInfo> m_frameDebugInfo;
 
     Window* m_window = nullptr;
     Camera* m_camera = nullptr;

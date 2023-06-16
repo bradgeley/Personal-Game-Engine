@@ -46,7 +46,7 @@ void Font::AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& tex
 	float penPosition = 0.f;
 	for (int glyphIndex = 0; glyphIndex < (int) text.size(); ++glyphIndex)
 	{
-		uint8_t currentChar = text[glyphIndex];
+		uint8_t const& currentChar = text[glyphIndex];
 		GlyphData& charData = m_glyphData[currentChar];
 		
 		float a = charData.a * cellHeight;
@@ -71,16 +71,64 @@ void Font::AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& tex
 		AddVertsForAABB2(out_verts, bounds, tint, UVs);
 		
 		penPosition += glyphWidth;
-		penPosition += c;
+		penPosition += c; // todo: don't add c for final character? seems right... maybe
 
 		if (glyphIndex < (int) text.size() - 1)
 		{
 			uint8_t nextChar = text[glyphIndex + 1];
 			float kerning = GetKerning(currentChar, nextChar);
-			float scaledKerning = float(kerning) * cellHeight;
+			float scaledKerning = kerning * cellHeight;
 			penPosition += scaledKerning;
 		}
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float Font::GetTextWidth(float cellHeight, std::string const& text)
+{
+	float penPosition = 0.f;
+	for (int glyphIndex = 0; glyphIndex < (int) text.size(); ++glyphIndex)
+	{
+		uint8_t const& currentChar = text[glyphIndex];
+		GlyphData& charData = m_glyphData[currentChar];
+		
+		float a = charData.a * cellHeight;
+		float glyphWidth = cellHeight * m_glyphData[currentChar].m_width;
+		float c = charData.c * cellHeight;
+		
+		penPosition += a;
+		penPosition += glyphWidth;
+		penPosition += c; // todo: don't add c for final character? seems right... maybe
+
+		if (glyphIndex < (int) text.size() - 1)
+		{
+			
+			uint8_t nextChar = text[glyphIndex + 1];
+			float kerning = GetKerning(currentChar, nextChar);
+			float scaledKerning = kerning * cellHeight;
+			penPosition += scaledKerning;
+		}
+	}
+	return penPosition;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Font::AddVertsForAlignedText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& pivot, Vec2 const& alignment,
+	float cellHeight, std::string const& text, Rgba8 const& tint)
+{
+	float width = GetTextWidth(cellHeight, text);
+	float left = pivot.x - (width * 0.5f);
+	float alignmentOffsetX = width * (alignment.x - 0.5f);
+
+	float bottom = pivot.y - (cellHeight * 0.5f);
+	float alignmentOffsetY = cellHeight * (alignment.y - 0.5f);
+
+	Vec2 textMins = Vec2(left + alignmentOffsetX, bottom + alignmentOffsetY);
+	AddVertsForText2D(out_verts, textMins, cellHeight, text, tint);
 }
 
 
