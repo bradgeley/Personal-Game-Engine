@@ -9,6 +9,7 @@ class SCamera : public System
 {
 public:
 
+    void Startup() override;
     void Run(SystemContext const& context) override;
     
 };

@@ -48,7 +48,24 @@ void Window::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Window::Shutdown()
 {
-    
+    if (IsValid())
+    {
+        DestroyWindow((HWND) m_windowHandle);
+        m_windowHandle = nullptr;
+        m_displayContext = nullptr;
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Window::IsValid() const
+{
+    if (m_windowHandle != nullptr && m_displayContext != nullptr)
+    {
+        return IsWindow((HWND) m_windowHandle);
+    }
+    return false;
 }
 
 

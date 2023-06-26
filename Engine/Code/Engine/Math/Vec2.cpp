@@ -101,6 +101,15 @@ void Vec2::ClampLength(float newMaxLength)
 }
 
 
+Vec2 Vec2::MakeFromUnitCircleDegrees(float theta)
+{
+    Vec2 result;
+    result.x = CosDegrees(theta);
+    result.y = SinDegrees(theta);
+    return result;
+}
+
+
 Vec2 Vec2::operator-() const
 {
     return Vec2(-x, -y);

@@ -10,11 +10,13 @@
 struct EntityDef
 {
     explicit EntityDef(XmlElement const* xmlElement);
+    void Cleanup();
 
     // Components
-    std::optional<CTransform>   m_transform;
-    std::optional<CCamera>      m_camera;
-    std::optional<CMovement>    m_movement;
-    std::optional<CPhysics>     m_physics;
-    std::optional<CRender>      m_render;
+    std::optional<CTransform>           m_transform;
+    std::optional<CCamera>              m_camera;
+    std::optional<CMovement>            m_movement;
+    std::optional<CPhysics>             m_physics;
+    std::optional<CPlayerController>    m_playerController;
+    std::optional<CRender>              m_render;
 };

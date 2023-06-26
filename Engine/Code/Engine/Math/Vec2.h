@@ -41,6 +41,8 @@ public:
     void RotateMinus90();
     void ClampLength(float newMaxLength);
 
+    static Vec2 MakeFromUnitCircleDegrees(float theta);
+
     // Component-wise const operators
     Vec2 operator-() const;
 

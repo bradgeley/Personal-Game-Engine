@@ -10,6 +10,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+constexpr int MAX_Z_LAYERS = 2;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SRender::Startup()
 {
     AddWriteDependencies<CRender, Renderer>();
@@ -18,6 +23,9 @@ void SRender::Startup()
 
     VertexBuffer& vbo1 = scRender.m_vbos[(int) GameVboIndex::Sprite];
     AddVertsForRect2D(vbo1.GetMutableVerts(), Vec2(-5.f, -10.f), Vec2(5.f, 10.f));
+
+    VertexBuffer& vbo2 = scRender.m_vbos[(int)GameVboIndex::Sphere];
+    AddVertsForDisc2D(vbo2.GetMutableVerts(), Vec2(0.f, 0.f), 100.f, 64, Rgba8::Blue);
 }
 
 
@@ -53,11 +61,30 @@ void SRender::Run(SystemContext const& context)
         g_renderer->BeginCamera(camera.m_camera);
 
         // Render all things
-        for (auto renderIt = g_ecs->Iterate<CRender>(context); renderIt.IsValid(); ++renderIt)
+        for (int i = 0; i < MAX_Z_LAYERS; ++i)
         {
-            CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
-            g_renderer->SetModelConstants(render.m_modelConstants);
-            g_renderer->DrawVertexBuffer(&scRender.m_vbos[render.m_vboIndex]);
+            for (auto renderIt = g_ecs->Iterate<CRender>(context); renderIt.IsValid(); ++renderIt)
+            {
+                CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
+
+                if (render.m_layer == i)
+                {
+                    g_renderer->SetModelConstants(render.m_modelConstants);
+                    g_renderer->BindTexture(render.m_texture);
+                    g_renderer->DrawVertexBuffer(&scRender.m_vbos[render.m_vboIndex]);
+                }
+            }
         }
+
     }
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SRender::Shutdown()
+{
+
+}
+
+

@@ -29,11 +29,17 @@ void Game::Startup()
     ecsConfig.m_maxDeltaSeconds = 0.1f;
     g_ecs = new AdminSystem(ecsConfig);
     
+    // Array components
     g_ecs->RegisterComponentArray<CTransform>();
     g_ecs->RegisterComponentArray<CMovement>();
     g_ecs->RegisterComponentArray<CPhysics>();
     g_ecs->RegisterComponentArray<CRender>();
+
+    // Map components
     g_ecs->RegisterComponentMap<CCamera>();
+    g_ecs->RegisterComponentMap<CPlayerController>();
+
+    // Singleton components
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
     g_ecs->RegisterComponentSingleton<SCRenderer>();
     g_ecs->RegisterResourceByType<InputSystem>();
@@ -47,11 +53,12 @@ void Game::Startup()
     // Physics
     SystemSubgraph& physics = g_ecs->GetSystemSubgraph((int) FramePhase::Physics);
     physics.m_timeStep = 0.00833f;
+    g_ecs->RegisterSystem<SGravity>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SCamera>((int) FramePhase::Physics); // Camera is here because it does framerate dependent things
     
     // Post Physics
-    g_ecs->RegisterSystem<SCamera>((int) FramePhase::PostPhysics);
     
     // Render
     g_ecs->RegisterSystem<SRender>((int) FramePhase::Render);

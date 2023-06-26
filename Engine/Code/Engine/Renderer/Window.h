@@ -44,6 +44,8 @@ public:
     virtual void BeginFrame() override;
     virtual void Shutdown() override;
 
+    bool IsValid() const;
+
     void* GetHWND() const;
     int GetWidth() const;
     int GetHeight() const;

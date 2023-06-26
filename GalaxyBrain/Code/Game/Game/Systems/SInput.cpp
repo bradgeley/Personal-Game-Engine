@@ -2,6 +2,7 @@
 #include "SInput.h"
 #include "Engine/Input/InputSystem.h"
 #include "Game/Game/Components/CMovement.h"
+#include "Game/Game/Components/CPlayerController.h"
 
 
 
@@ -9,7 +10,7 @@
 void SInput::Startup()
 {
     AddWriteDependencies<CMovement>();
-    AddReadDependencies<InputSystem>();
+    AddReadDependencies<InputSystem, CPlayerController>();
 }
 
 
@@ -18,7 +19,7 @@ void SInput::Startup()
 void SInput::Run(SystemContext const& context)
 {
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
-    for (auto it = g_ecs->Iterate<CMovement>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CMovement, CPlayerController>(context); it.IsValid(); ++it)
     {
         EntityID& ent = it.m_currentIndex;
         auto& move = moveStorage[ent];

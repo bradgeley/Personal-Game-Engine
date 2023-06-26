@@ -269,12 +269,18 @@ void JobSystem::WorkerLoop_ExecuteJob(JobWorker* worker, Job* job)
         AddJobToInProgressQueue(job);
     #endif
 
-    float beforeTime = GetCurrentTimeSecondsF();
-    job->Execute();
-    float afterTime = GetCurrentTimeSecondsF();
-
-    JobDebugInfo jobDebugInfo = { worker->m_threadID, beforeTime, afterTime };
-    g_jobSystemDebug->Log(jobDebugInfo);
+    if (g_jobSystemDebug)
+    {
+        float beforeTime = GetCurrentTimeSecondsF();
+        job->Execute();
+        float afterTime = GetCurrentTimeSecondsF();
+        JobDebugInfo jobDebugInfo = { worker->m_threadID, beforeTime, afterTime };
+        g_jobSystemDebug->Log(jobDebugInfo);
+    }
+    else
+    {
+        job->Execute();
+    }
 
     #ifdef _DEBUG
         RemoveJobFromInProgressQueue(job);

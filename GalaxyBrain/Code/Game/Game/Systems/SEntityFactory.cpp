@@ -12,6 +12,7 @@
 void SEntityFactory::Startup()
 {
     AddWriteDependencies<SCEntityFactory>();
+    AddReadDependencies<CTransform>();
     
     LoadFromXml("Data/Definitions/EntityDefs.xml");
 }
@@ -49,7 +50,17 @@ void SEntityFactory::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SEntityFactory::Shutdown()
 {
+    auto factory = g_ecs->GetComponent<SCEntityFactory>();
 
+    for (auto& def : factory->m_entityDefinitions)
+    {
+        if (def.second)
+        {
+            def.second->Cleanup();
+        }
+    }
+
+    factory->m_entityDefinitions.clear();
 }
 
 
@@ -60,11 +71,12 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def) const
     EntityID result = g_ecs->CreateEntity();
 
     // Add components that exist in the def
-    if (def->m_transform.has_value())   g_ecs->AddComponent<CTransform>(result);
-    if (def->m_camera.has_value())      g_ecs->AddComponent<CCamera>(result, *def->m_camera);
-    if (def->m_movement.has_value())    g_ecs->AddComponent<CMovement>(result, *def->m_movement);
-    if (def->m_physics.has_value())     g_ecs->AddComponent<CPhysics>(result, *def->m_physics);
-    if (def->m_render.has_value())      g_ecs->AddComponent<CRender>(result, *def->m_render);
+    if (def->m_transform.has_value())           g_ecs->AddComponent<CTransform>(result);
+    if (def->m_camera.has_value())              g_ecs->AddComponent<CCamera>(result, *def->m_camera);
+    if (def->m_movement.has_value())            g_ecs->AddComponent<CMovement>(result, *def->m_movement);
+    if (def->m_physics.has_value())             g_ecs->AddComponent<CPhysics>(result, *def->m_physics);
+    if (def->m_render.has_value())              g_ecs->AddComponent<CRender>(result, *def->m_render);
+    if (def->m_playerController.has_value())    g_ecs->AddComponent<CPlayerController>(result, *def->m_playerController);
 
     return result;
 }

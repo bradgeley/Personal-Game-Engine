@@ -3,11 +3,19 @@
     <Entity name = "Player">
         <Transform/>
         <Camera/>
-        <Movement moveSpeed="8"/>
+        <Movement speed="8"/>
         <PlayerController/>
-        <Render vboIndex="0"/>
-        <Physics/>
+        <Render vboIndex="0" layer="1"/>
+        <Physics mass="1"/>
         <Collision radius="0.5"/>
+    </Entity>
+  
+    <Entity name = "Earth">
+      <Transform/>
+      <Movement speed="0"/>
+      <Render vboIndex="1" texture="Data/Images/TestUV.png"/>
+      <Physics mass="100"/>
+      <Collision radius="100"/>
     </Entity>
     
 </EntityDefs>

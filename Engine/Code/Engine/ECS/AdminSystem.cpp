@@ -361,7 +361,7 @@ EntityID AdminSystem::CreateEntityInPlace(int entityID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AdminSystem::ClearEntities()
+void AdminSystem::DestroyAllEntities()
 {
 	m_entities.SetAll(false);
 	for (auto& entityComp : m_entityComposition)

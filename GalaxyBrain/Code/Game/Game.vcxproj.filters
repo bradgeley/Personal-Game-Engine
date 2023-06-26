@@ -10,6 +10,57 @@
     <ClCompile Include="Game\WindowsApplication.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Components\CCamera.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Components\CMovement.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Components\CPhysics.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Components\CRender.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Components\CTransform.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SDebugKeys.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SEntityFactory.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SGravity.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SInput.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SMovement.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SPhysics.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SRender.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Singletons\SCEntityFactory.cpp">
+      <Filter>Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Singletons\SCRenderer.cpp">
+      <Filter>Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EntityDef.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Components\CPlayerController.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SCamera.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -24,6 +75,59 @@
     <ClInclude Include="Game\WindowsApplication.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="Game\AllComponents.h" />
+    <ClInclude Include="Game\AllSystems.h" />
+    <ClInclude Include="Game\Components\CTransform.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Components\CCamera.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Components\CMovement.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Components\CPhysics.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Components\CRender.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SRender.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SDebugKeys.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SEntityFactory.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SGravity.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SInput.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SMovement.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SPhysics.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Singletons\SCEntityFactory.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Singletons\SCRenderer.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EntityDef.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Components\CPlayerController.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SCamera.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -32,5 +136,22 @@
     <Filter Include="Game">
       <UniqueIdentifier>{6c46eb85-7209-4657-98f4-0f55a327cad0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{fa8a2708-afd2-4832-9900-ac54fcbcdf16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{bbb7f16c-e27c-46fb-99d8-124aab27868d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems">
+      <UniqueIdentifier>{f0c03aa9-4ecf-4ad7-b63e-5a6fd9ca7e82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singletons">
+      <UniqueIdentifier>{072fda14-dc14-42af-94e1-622aa8399a09}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml">
+      <Filter>Data</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

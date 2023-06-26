@@ -191,6 +191,14 @@ bool InputSystem::WasMouseButtonJustReleased(int mouseButton)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int InputSystem::GetMouseWheelChange()
+{
+    return m_frameMouseWheelChange;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 IntVec2 InputSystem::GetMouseClientPosition(bool originBottomLeft) const
 {
     return g_window->GetMouseClientPosition(originBottomLeft);

@@ -8,6 +8,7 @@
 enum class GameVboIndex
 {
     Sprite,
+    Sphere,
     Num,
 };
 

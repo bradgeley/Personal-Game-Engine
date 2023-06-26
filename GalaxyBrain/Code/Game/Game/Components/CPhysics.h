@@ -10,7 +10,7 @@ struct CPhysics
     CPhysics() = default;
     CPhysics(void const* xmlElement);
     
-    float m_gravityStrength = 0.f;
+    float m_mass = 0.f;
     Vec2 m_frameAcceleration;
     Vec2 m_velocity;
 };

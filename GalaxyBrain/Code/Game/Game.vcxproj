@@ -192,6 +192,7 @@
     <ClCompile Include="Game\Components\CCamera.cpp" />
     <ClCompile Include="Game\Components\CMovement.cpp" />
     <ClCompile Include="Game\Components\CPhysics.cpp" />
+    <ClCompile Include="Game\Components\CPlayerController.cpp" />
     <ClCompile Include="Game\Components\CRender.cpp" />
     <ClCompile Include="Game\Components\CTransform.cpp" />
     <ClCompile Include="Game\EntityDef.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="Game\Components\CCamera.h" />
     <ClInclude Include="Game\Components\CMovement.h" />
     <ClInclude Include="Game\Components\CPhysics.h" />
+    <ClInclude Include="Game\Components\CPlayerController.h" />
     <ClInclude Include="Game\Components\CRender.h" />
     <ClInclude Include="Game\Components\CTransform.h" />
     <ClInclude Include="Game\EntityDef.h" />
@@ -238,6 +240,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\AllSystems.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

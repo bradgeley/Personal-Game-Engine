@@ -22,6 +22,7 @@ public:
     void SetOrthoCenter2D(Vec2 const& center);
 
     Vec3  GetOrthoCenter() const;
+    Vec2  GetOrthoCenter2D() const;
     AABB2 GetOrthoBounds2D() const;
     Mat44 GetOrthoProjectionMatrix() const;
     Vec3 GetOrthoDimensions() const;

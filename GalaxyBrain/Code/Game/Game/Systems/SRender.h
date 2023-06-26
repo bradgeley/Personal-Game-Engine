@@ -11,4 +11,5 @@ public:
 
     void Startup() override;
     void Run(SystemContext const& context) override;
+    void Shutdown() override;
 };

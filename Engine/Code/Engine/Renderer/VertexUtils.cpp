@@ -2,7 +2,8 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/IntVec2.h"
-#include <Engine\Core\ErrorUtils.h>
+#include "Engine\Core\ErrorUtils.h"
+#include "Engine\Core\StringUtils.h"
 
 
 
@@ -146,5 +147,37 @@ void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& bounding
             AABB2 box = AABB2(boxMins, boxMins + individualBoxDims);
             AddVertsForAABB2(out_verts, box, tint);
         }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AddVertsForDisc2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint, AABB2 const& UVs)
+{
+    ASSERT_OR_DIE(radius > 0.f && numSides >= 3, StringF("Cannot add verts for a disc with: radius=%f numSides=%i", radius, numSides))
+
+    out_verts.reserve((size_t) 3 * numSides); // 3 Verts per side, each set of 3 making a pie slice
+
+    Vec2 uvCenter = UVs.GetCenter();
+
+    float thetaStepSize = 360.f / (float) numSides;
+    for (int i = 0; i < numSides; ++i)
+    {
+        float theta1 = i * thetaStepSize;
+        float theta2 = (i + 1) * thetaStepSize;
+
+        Vec2 unitCirclePos1 = Vec2::MakeFromUnitCircleDegrees(theta1);
+        Vec2 unitCirclePos2 = Vec2::MakeFromUnitCircleDegrees(theta2);
+
+        Vec2 cornerPt1 = center + unitCirclePos1 * radius;
+        Vec2 cornerPt2 = center + unitCirclePos2 * radius;
+
+        Vec2 uv1 = uvCenter + unitCirclePos1 * 0.5f;
+        Vec2 uv2 = uvCenter + unitCirclePos2 * 0.5f;
+
+        out_verts.emplace_back(center, tint, uvCenter);
+        out_verts.emplace_back(cornerPt1, tint, uv1);
+        out_verts.emplace_back(cornerPt2, tint, uv2);
     }
 }

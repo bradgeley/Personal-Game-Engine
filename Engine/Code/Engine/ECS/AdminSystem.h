@@ -102,7 +102,7 @@ public:
 
 	EntityID CreateEntity(int searchBeginEntityID = 0);
 	EntityID CreateEntityInPlace(int entityID);
-	void ClearEntities();
+	void DestroyAllEntities();
 	bool DestroyEntity(EntityID entityID);
 
 

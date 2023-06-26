@@ -24,6 +24,6 @@ void SMovement::Run(SystemContext const& context)
         auto& phys = physStorage[ent];
         auto& move = moveStorage[ent];
 
-        phys.m_frameAcceleration = move.m_frameMoveDir * move.m_movementSpeed * 10.f;
+        phys.m_frameAcceleration += move.m_frameMoveDir * move.m_movementSpeed * 10.f;
     }
 }
