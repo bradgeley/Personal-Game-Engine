@@ -13,7 +13,7 @@
     <Entity name = "Earth">
       <Transform/>
       <Movement speed="0"/>
-      <Render vboIndex="1" texture="Data/Images/TestUV.png"/>
+      <Render vboIndex="1" texture="Data/Images/Planet.png"/>
       <Physics mass="100"/>
       <Collision radius="100"/>
     </Entity>

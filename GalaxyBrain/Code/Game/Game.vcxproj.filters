@@ -61,6 +61,15 @@
     <ClCompile Include="Game\Systems\SCamera.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Singletons\SCUniverse.cpp">
+      <Filter>Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SUniverse.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SBackgroundStar.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -126,6 +135,15 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Game\Systems\SCamera.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Singletons\SCUniverse.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SUniverse.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SBackgroundStar.h">
       <Filter>Systems</Filter>
     </ClInclude>
   </ItemGroup>

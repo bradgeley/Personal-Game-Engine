@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -199,6 +199,8 @@
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\Singletons\SCEntityFactory.cpp" />
     <ClCompile Include="Game\Singletons\SCRenderer.cpp" />
+    <ClCompile Include="Game\Singletons\SCUniverse.cpp" />
+    <ClCompile Include="Game\Systems\SBackgroundStar.cpp" />
     <ClCompile Include="Game\Systems\SCamera.cpp" />
     <ClCompile Include="Game\Systems\SDebugKeys.cpp" />
     <ClCompile Include="Game\Systems\SEntityFactory.cpp" />
@@ -207,6 +209,7 @@
     <ClCompile Include="Game\Systems\SMovement.cpp" />
     <ClCompile Include="Game\Systems\SPhysics.cpp" />
     <ClCompile Include="Game\Systems\SRender.cpp" />
+    <ClCompile Include="Game\Systems\SUniverse.cpp" />
     <ClCompile Include="Game\WindowsApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +226,8 @@
     <ClInclude Include="Game\GameCommon.h" />
     <ClInclude Include="Game\Singletons\SCEntityFactory.h" />
     <ClInclude Include="Game\Singletons\SCRenderer.h" />
+    <ClInclude Include="Game\Singletons\SCUniverse.h" />
+    <ClInclude Include="Game\Systems\SBackgroundStar.h" />
     <ClInclude Include="Game\Systems\SCamera.h" />
     <ClInclude Include="Game\Systems\SDebugKeys.h" />
     <ClInclude Include="Game\Systems\SEntityFactory.h" />
@@ -231,6 +236,7 @@
     <ClInclude Include="Game\Systems\SMovement.h" />
     <ClInclude Include="Game\Systems\SPhysics.h" />
     <ClInclude Include="Game\Systems\SRender.h" />
+    <ClInclude Include="Game\Systems\SUniverse.h" />
     <ClInclude Include="Game\WindowsApplication.h" />
   </ItemGroup>
   <ItemGroup>

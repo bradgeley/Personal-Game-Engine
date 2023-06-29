@@ -25,7 +25,7 @@ void SRender::Startup()
     AddVertsForRect2D(vbo1.GetMutableVerts(), Vec2(-5.f, -10.f), Vec2(5.f, 10.f));
 
     VertexBuffer& vbo2 = scRender.m_vbos[(int)GameVboIndex::Sphere];
-    AddVertsForDisc2D(vbo2.GetMutableVerts(), Vec2(0.f, 0.f), 100.f, 64, Rgba8::Blue);
+    AddVertsForDisc2D(vbo2.GetMutableVerts(), Vec2(0.f, 0.f), 100.f, 64);
 }
 
 
@@ -35,7 +35,7 @@ void SRender::Run(SystemContext const& context)
 {
     g_renderer->BeginWindow(g_window);
 	g_renderer->ClearDepth(1.f);
-    g_renderer->ClearScreen(Rgba8::Magenta);
+    g_renderer->ClearScreen(Rgba8::Black);
     
     auto& scRender = *g_ecs->GetComponent<SCRenderer>();
     

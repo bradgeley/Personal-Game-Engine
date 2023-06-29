@@ -30,4 +30,4 @@ void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& box, 
 void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, Vec2 const& maxs, float lineThickness, Rgba8 const& tint = Rgba8::White);
 void AddVertsForWireGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint = Rgba8::White);
 void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, Rgba8 const& tint = Rgba8::Black);
-void AddVertsForDisc2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint = Rgba8::Black, AABB2 const& UVs = AABB2::ZeroToOne);
+void AddVertsForDisc2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint = Rgba8::White, AABB2 const& UVs = AABB2::ZeroToOne);

@@ -64,6 +64,13 @@ void Game::Startup()
     g_ecs->RegisterSystem<SRender>((int) FramePhase::Render);
     
     g_ecs->Startup();
+
+
+
+
+    // TEST
+
+     
 }
 
 

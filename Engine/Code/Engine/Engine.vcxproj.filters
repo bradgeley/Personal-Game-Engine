@@ -46,9 +46,6 @@
     <ClCompile Include="Renderer\D3D11Utils.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\DebugDrawUtils.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\EngineConstantBuffers.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
@@ -133,6 +130,81 @@
     <ClCompile Include="Debug\DevConsole.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Math\Noise.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\DebugDrawUtils.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\DevConsoleCommandHistory.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\DevConsoleInput.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\DevConsoleLine.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\DevConsoleLog.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Multithreading\JobDependencies.cpp">
+      <Filter>Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="Multithreading\JobSystemDebug.cpp">
+      <Filter>Multithreading</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\GroupIter.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\AdminSystem.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStructures\BitArray.cpp">
+      <Filter>DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\EntityID.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\GeometryUtils.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\Config.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\Component.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\ComponentStorage.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Plane2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\StatisticsUtils.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\System.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\SystemContext.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\SystemScheduler.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\SystemSubgraph.cpp">
+      <Filter>ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\RandomNumberGenerator.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\XmlUtils.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\WindowRenderContext.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -184,9 +256,6 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\D3D11Utils.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\DebugDrawUtils.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\DefaultShaderSource.h">
@@ -273,9 +342,6 @@
     <ClInclude Include="Input\InputUtils.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="Input\KeyButtonState.hpp">
-      <Filter>Input</Filter>
-    </ClInclude>
     <ClInclude Include="..\ThirdParty\tinyxml2\tinyxml2.h">
       <Filter>ThirdParty\tinyxml</Filter>
     </ClInclude>
@@ -287,6 +353,84 @@
     </ClInclude>
     <ClInclude Include="Debug\DevConsole.h">
       <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Noise.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug\DebugDrawUtils.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug\DevConsoleCommandHistory.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug\DevConsoleInput.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug\DevConsoleLine.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug\DevConsoleLog.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Multithreading\JobDependencies.h">
+      <Filter>Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="Multithreading\JobSystemDebug.h">
+      <Filter>Multithreading</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\GroupIter.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\AdminSystem.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructures\BitArray.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\EntityID.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\GeometryUtils.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Config.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Component.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\ComponentStorage.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\KeyButtonState.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Constants.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Plane2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\StatisticsUtils.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\SystemSubgraph.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\System.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\SystemContext.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\SystemScheduler.h">
+      <Filter>ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\RandomNumberGenerator.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\WindowRenderContext.h">
+      <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +466,9 @@
     </Filter>
     <Filter Include="Debug">
       <UniqueIdentifier>{eeef522a-392d-403f-9b30-389d4b7ffc63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ECS">
+      <UniqueIdentifier>{76ab0b3c-d83a-44c1-9711-d4957db81c90}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
