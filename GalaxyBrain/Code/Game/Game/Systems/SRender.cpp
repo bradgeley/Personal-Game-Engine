@@ -33,10 +33,6 @@ void SRender::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRender::Run(SystemContext const& context)
 {
-    g_renderer->BeginWindow(g_window);
-	g_renderer->ClearDepth(1.f);
-    g_renderer->ClearScreen(Rgba8::Black);
-    
     auto& scRender = *g_ecs->GetComponent<SCRenderer>();
     
     auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();

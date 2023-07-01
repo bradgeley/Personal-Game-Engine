@@ -26,7 +26,8 @@ public:
     void Set(IntVec2 const& coords, T const& value);
     void Set(int x, int y, T const& value);
     void SetAll(T const& value);
-    T Get(int index) const;
+	T Get(int index) const;
+	T Get(int x, int y) const;
     T Get(IntVec2 const& coords) const;
 
     int GetIndexEastOf(int index, bool wrap = false) const;
@@ -147,6 +148,16 @@ template <typename T>
 T Grid2D<T>::Get(int index) const
 {
     return m_data[index];
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+T Grid2D<T>::Get(int x, int y) const
+{
+    int index = GetIndexForCoords(x, y);
+	return m_data[index];
 }
 
 

@@ -14,7 +14,7 @@
       <Transform/>
       <Movement speed="0"/>
       <Render vboIndex="1" texture="Data/Images/Planet.png"/>
-      <Physics mass="100"/>
+      <Physics mass="1000"/>
       <Collision radius="100"/>
     </Entity>
     

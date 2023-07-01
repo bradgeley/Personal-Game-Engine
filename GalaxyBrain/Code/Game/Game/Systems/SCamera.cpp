@@ -26,7 +26,7 @@ void SCamera::Run(SystemContext const& context)
 
         // Zoom
         int mouseWheelChange = g_input->GetMouseWheelChange();
-        camera.m_zoom += -1.f * mouseWheelChange * 0.1f;
+        camera.m_zoom += -1.f * mouseWheelChange * 1.f;
         camera.m_camera.SetOrthoDims2D(camera.m_baseDims * camera.m_zoom);
 
         // Position
