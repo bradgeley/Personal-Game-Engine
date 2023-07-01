@@ -114,6 +114,10 @@ private:
 		FadingOut,
 		Sustaining,
 	};
+
+public:
+
+	EventDelegate m_helpDelegate;
 	
 protected:
 	

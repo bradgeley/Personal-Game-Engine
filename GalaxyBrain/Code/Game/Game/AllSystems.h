@@ -12,3 +12,4 @@
 #include "Systems/SEntityFactory.h"
 #include "Systems/SDebugKeys.h"
 #include "Systems/SCamera.h"
+#include "Systems/SBackgroundStar.h"

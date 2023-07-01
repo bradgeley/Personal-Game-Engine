@@ -42,6 +42,9 @@ void Game::Startup()
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
     g_ecs->RegisterComponentSingleton<SCRenderer>();
+    g_ecs->RegisterComponentSingleton<SCUniverse>();
+
+    // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();
     g_ecs->RegisterResourceByType<Renderer>();
 
@@ -61,16 +64,10 @@ void Game::Startup()
     // Post Physics
     
     // Render
+    g_ecs->RegisterSystem<SBackgroundStar>((int) FramePhase::Physics); // Camera is here because it does framerate dependent things
     g_ecs->RegisterSystem<SRender>((int) FramePhase::Render);
     
     g_ecs->Startup();
-
-
-
-
-    // TEST
-
-     
 }
 
 

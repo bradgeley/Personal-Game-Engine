@@ -20,8 +20,11 @@ public:
     explicit Grid2D(IntVec2 const& dimensions, T const& initialValue);
     explicit Grid2D(int width, int height, T const& initialValue);
 
+    void Initialize(IntVec2 const& dimensions, T const& initialValue);
+
     void Set(int index, T const& value);
     void Set(IntVec2 const& coords, T const& value);
+    void Set(int x, int y, T const& value);
     void SetAll(T const& value);
     T Get(int index) const;
     T Get(IntVec2 const& coords) const;
@@ -40,7 +43,8 @@ public:
     int GetWidth() const;
     int GetHeight() const;
     int Size() const;
-    void* GetRawData() const;
+    T* GetRawData();
+    T const* GetRawData() const;
 
 public:
 
@@ -84,6 +88,21 @@ Grid2D<T>::Grid2D(int width, int height, T const& initialValue) : Grid2D(IntVec2
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
+void Grid2D<T>::Initialize(IntVec2 const& dimensions, T const& initialValue)
+{
+    m_dimensions = dimensions;
+    m_data.resize((size_t) dimensions.x * dimensions.y);
+
+    for (int i = 0; i < dimensions.x * dimensions.y; ++i)
+    {
+        m_data[i] = initialValue;
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
 void Grid2D<T>::Set(int index, T const& value)
 {
     m_data[index] = value;
@@ -96,6 +115,16 @@ template <typename T>
 void Grid2D<T>::Set(IntVec2 const& coords, T const& value)
 {
     int index = GetIndexForCoords(coords);
+    m_data[index] = value;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+void Grid2D<T>::Set(int x, int y, T const& value)
+{
+    int index = GetIndexForCoords(x, y);
     m_data[index] = value;
 }
 
@@ -328,7 +357,16 @@ int Grid2D<T>::Size() const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void* Grid2D<T>::GetRawData() const
+T* Grid2D<T>::GetRawData()
 {
-    return (void*) m_data.data();
+    return m_data.data();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+T const* Grid2D<T>::GetRawData() const
+{
+    return m_data.data();
 }

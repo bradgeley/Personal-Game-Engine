@@ -193,7 +193,7 @@ void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 	}
 	if (vbo->GetNumVerts() > 0)
 	{
-		// Only bother binding it if there are verts to draw
+		// Only bother drawing it if there are verts to draw
 		BindVertexBuffer(vbo);
 		Draw(vbo->GetNumVerts(), 0);
 	}
@@ -203,7 +203,7 @@ void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 	{
 		float thickness = m_currentCamera->GetOrthoDimensions().GetLowestXY() / 1000.f;
 		
-		m_debugDrawVertexBuffers = false; // avoid infinite loop
+		m_debugDrawVertexBuffers = false; // avoid infinite recursion
 		DebugDrawMesh2D(vbo->GetVerts(), thickness);
 		m_debugDrawVertexBuffers = true;
 	}

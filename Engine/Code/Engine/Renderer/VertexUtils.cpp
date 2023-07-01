@@ -4,6 +4,7 @@
 #include "Engine/Math/IntVec2.h"
 #include "Engine\Core\ErrorUtils.h"
 #include "Engine\Core\StringUtils.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -109,6 +110,8 @@ void AddVertsForWireGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boun
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
     Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
 
+    out_verts.reserve(out_verts.size() + (size_t) dims.x * 6 + (size_t) dims.y * 6);
+
     // Add lines for columns
     for (int x = 0; x <= dims.x; ++x)
     {
@@ -135,18 +138,46 @@ void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& bounding
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
 
-    Vec2 individualBoxDims = boundingAABB.GetDimensions() / Vec2(dims);
+    Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
 
-    out_verts.reserve((size_t) dims.x * dims.y * 6);
+    out_verts.reserve(out_verts.size() + (size_t) dims.x * dims.y * 6);
     for (int y = 0; y < dims.y; ++y)
     {
         for (int x = 0; x < dims.x; ++x)
         {
             Vec2 coords = Vec2(x, y);
-            Vec2 boxMins = boundingAABB.mins + individualBoxDims * coords;
-            AABB2 box = AABB2(boxMins, boxMins + individualBoxDims);
+            Vec2 boxMins = boundingAABB.mins + cellDims * coords;
+            AABB2 box = AABB2(boxMins, boxMins + cellDims);
             AddVertsForAABB2(out_verts, box, tint);
         }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, Rgba8 const* colorsRowMajor, IntVec2 const& dims, Rgba8 const& gridLinesTint)
+{
+    ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
+
+    Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
+    float lineThickness = 0.1f * MinF(cellDims.x, cellDims.y);
+
+    out_verts.reserve(out_verts.size() + (size_t) dims.x * dims.y * 6);
+    for (int y = 0; y < dims.y; ++y)
+    {
+        for (int x = 0; x < dims.x; ++x)
+        {
+            Vec2 coords = Vec2(x, y);
+            Vec2 boxMins = boundingAABB.mins + cellDims * coords;
+            AABB2 box = AABB2(boxMins, boxMins + cellDims);
+            AddVertsForAABB2(out_verts, box, colorsRowMajor[y * dims.x + x]);
+        }
+    }
+
+    if (gridLinesTint.a > 0)
+    {
+        AddVertsForWireGrid2D(out_verts, boundingAABB, dims, lineThickness, gridLinesTint);
     }
 }
 

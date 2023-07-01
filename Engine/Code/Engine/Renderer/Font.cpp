@@ -122,10 +122,12 @@ void Font::AddVertsForAlignedText2D(std::vector<Vertex_PCU>& out_verts, Vec2 con
 {
 	float width = GetTextWidth(cellHeight, text);
 	float left = pivot.x - (width * 0.5f);
-	float alignmentOffsetX = width * (alignment.x - 0.5f);
+	float halfWidth = width * 0.5f;
+	float alignmentOffsetX = alignment.x * halfWidth;
 
 	float bottom = pivot.y - (cellHeight * 0.5f);
-	float alignmentOffsetY = cellHeight * (alignment.y - 0.5f);
+	float halfHeight = cellHeight * 0.5f;
+	float alignmentOffsetY = alignment.y * halfHeight;
 
 	Vec2 textMins = Vec2(left + alignmentOffsetX, bottom + alignmentOffsetY);
 	AddVertsForText2D(out_verts, textMins, cellHeight, text, tint);

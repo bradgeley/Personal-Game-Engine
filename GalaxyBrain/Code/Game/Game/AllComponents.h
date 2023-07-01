@@ -29,3 +29,4 @@
 // Singletons
 #include "Singletons/SCEntityFactory.h"
 #include "Singletons/SCRenderer.h"
+#include "Singletons/SCUniverse.h"

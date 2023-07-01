@@ -80,6 +80,7 @@ void DevConsole::Startup()
     g_window->m_mouseWheelEvent.SubscribeMethod(this, &DevConsole::HandleMouseWheel);
 
     g_eventSystem->SubscribeMethod("clear", this, &DevConsole::Clear);
+    g_eventSystem->SubscribeMethod("help", this, &DevConsole::Help);
     
     m_inputLine.SetOutputLog(&m_log);
     m_inputLine.m_commandEntered.SubscribeMethod(this, &DevConsole::HandleCommandEntered);
@@ -192,8 +193,7 @@ bool DevConsole::Clear(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool DevConsole::Help(NamedProperties& args)
 {
-    UNUSED(args)
-    
+    m_helpDelegate.Broadcast(args);
     return true;
 }
 
@@ -500,7 +500,9 @@ void DevConsole::DrawBackground() const
 void DevConsole::DrawText() const
 {
     float relativeLineThickness = m_config.m_inputLineThickness / (float) g_window->GetHeight();
-    AABB2 inputLineBox(m_camera.GetOrthoBounds2D().mins, m_camera.GetOrthoBounds2D().mins + Vec2(1.f, relativeLineThickness));
+    Vec2 inputLineMins = m_camera.GetOrthoBounds2D().mins;
+    Vec2 inputLineMaxs = Vec2(m_camera.GetOrthoDimensions().x, relativeLineThickness);
+    AABB2 inputLineBox(inputLineMins, inputLineMaxs);
     m_inputLine.RenderToBox(inputLineBox);
 
     Vec2 logMins = inputLineBox.mins + Vec2(0.f, relativeLineThickness);

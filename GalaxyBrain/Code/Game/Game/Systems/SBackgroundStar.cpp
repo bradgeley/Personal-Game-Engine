@@ -2,6 +2,7 @@
 #include "SBackgroundStar.h"
 #include "Game/Game/Singletons/SCUniverse.h"
 #include "Engine/ECS/AdminSystem.h"
+#include "Engine/Math/Noise.h"
 
 
 
@@ -18,7 +19,14 @@ void SBackgroundStar::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SBackgroundStar::Run(SystemContext const& context)
 {
+	// noise test?
 
+	float result = 0;
+	for (int i = 0; i < 10; ++i)
+	{
+		float noise = GetFractalNoise1D(i);
+		result += noise;
+	}
 }
 
 
@@ -28,3 +36,4 @@ void SBackgroundStar::Shutdown()
 {
 
 }
+ 
