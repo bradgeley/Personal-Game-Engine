@@ -8,7 +8,7 @@
 //
 // Update:
 //  1. Write constructor that takes an xml element
-//  2. EntityDef header and constructor
+//  2. EntityDef header and constructor (EntityDef::EntityDef)
 //	3. SEntityFactory::CreateEntityFromDef
 //  4. Register component in Game.cpp
 
@@ -31,3 +31,4 @@
 #include "Singletons/SCEntityFactory.h"
 #include "Singletons/SCRenderer.h"
 #include "Singletons/SCUniverse.h"
+#include "Singletons/SCDebug.h"

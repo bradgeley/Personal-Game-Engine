@@ -36,6 +36,13 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_physics = CPhysics(elem);
     }
 
+    // CCollision
+    elem = xmlElement->FirstChildElement("Collision");
+    if (elem)
+    {
+        m_collision = CCollision(elem);
+    }
+
     // CRender
     elem = xmlElement->FirstChildElement("Render");
     if (elem)

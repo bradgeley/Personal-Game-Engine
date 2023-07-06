@@ -5,17 +5,33 @@
       <Camera/>
       <Movement speed="8"/>
       <PlayerController/>
-      <Render vboIndex="0" layer="1"/>
+      <Render vboIndex="0" layer="1" scale="3"/>
       <Physics mass="1"/>
-      <Collision radius="0.5"/>
+      <Collision radius="3" type="mobile"/>
+    </Entity>
+
+    <Entity name = "Asteroid">
+      <Transform/>
+      <Movement speed="8"/>
+      <Render vboIndex="1" texture="Data/Images/Planet.png" layer="1" scale="5"/>
+      <Physics mass="1"/>
+      <Collision radius="5" type="mobile"/>
     </Entity>
   
     <Entity name = "Earth">
       <Transform/>
       <Movement speed="0"/>
-      <Render vboIndex="1" texture="Data/Images/Planet.png"/>
-      <Physics mass="1000"/>
-      <Collision radius="100"/>
+      <Render vboIndex="1" texture="Data/Images/Planet.png" scale="100"/>
+      <Physics mass= "1000"/>
+      <Collision radius="100" type="mobile"/>
     </Entity>
-    
+  
+    <Entity name = "Sun">
+      <Transform/>
+      <Movement speed="0"/>
+      <Render vboIndex="1" texture="Data/Images/Sun.png" scale="1000"/>
+      <Physics mass= "1000000"/>
+      <Collision radius="1000" type="mobile"/>
+    </Entity>
+  
 </EntityDefs>

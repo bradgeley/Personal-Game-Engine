@@ -12,6 +12,6 @@ struct CCamera
 
     Vec2 m_baseDims = Vec2(100.f, 50.f);
     float m_zoom = 1.f;
-    float m_snappiness = 5.f;
+    float m_snappiness = 10.f;
     Camera m_camera;
 };

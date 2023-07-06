@@ -14,3 +14,4 @@
 #include "Systems/SCamera.h"
 #include "Systems/SBackgroundStar.h"
 #include "Systems/SCollision.h"
+#include "Systems/SRenderDebug.h"

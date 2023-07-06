@@ -4,6 +4,7 @@
 #include "GroupIter.h"
 #include "EntityID.h"
 #include "SystemSubgraph.h"
+#include "SystemContext.h"
 #include <vector>
 #include <unordered_map>
 
@@ -93,7 +94,7 @@ private:
 
 	void RegisterComponentBit(HashCode typeHash);
 
-	
+
 
 //----------------------------------------------------------------------------------------------------------------------
 // CREATING/DESTROYING ENTITIES

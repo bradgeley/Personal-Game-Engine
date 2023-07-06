@@ -198,6 +198,7 @@
     <ClCompile Include="Game\Components\CTransform.cpp" />
     <ClCompile Include="Game\EntityDef.cpp" />
     <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\Singletons\SCDebug.cpp" />
     <ClCompile Include="Game\Singletons\SCEntityFactory.cpp" />
     <ClCompile Include="Game\Singletons\SCRenderer.cpp" />
     <ClCompile Include="Game\Singletons\SCUniverse.cpp" />
@@ -211,6 +212,7 @@
     <ClCompile Include="Game\Systems\SMovement.cpp" />
     <ClCompile Include="Game\Systems\SPhysics.cpp" />
     <ClCompile Include="Game\Systems\SRender.cpp" />
+    <ClCompile Include="Game\Systems\SRenderDebug.cpp" />
     <ClCompile Include="Game\Systems\SUniverse.cpp" />
     <ClCompile Include="Game\WindowsApplication.cpp" />
   </ItemGroup>
@@ -227,6 +229,7 @@
     <ClInclude Include="Game\EntityDef.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameCommon.h" />
+    <ClInclude Include="Game\Singletons\SCDebug.h" />
     <ClInclude Include="Game\Singletons\SCEntityFactory.h" />
     <ClInclude Include="Game\Singletons\SCRenderer.h" />
     <ClInclude Include="Game\Singletons\SCUniverse.h" />
@@ -240,6 +243,7 @@
     <ClInclude Include="Game\Systems\SMovement.h" />
     <ClInclude Include="Game\Systems\SPhysics.h" />
     <ClInclude Include="Game\Systems\SRender.h" />
+    <ClInclude Include="Game\Systems\SRenderDebug.h" />
     <ClInclude Include="Game\Systems\SUniverse.h" />
     <ClInclude Include="Game\WindowsApplication.h" />
   </ItemGroup>

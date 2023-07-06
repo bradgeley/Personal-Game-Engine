@@ -86,17 +86,47 @@ void Vec2::RotateMinus90()
 }
 
 
-void Vec2::ClampLength(float newMaxLength)
+void Vec2::SetLength(float length)
 {
-    ASSERT_OR_DIE(newMaxLength >= 0.f, "Cannot clamp vector to negative length.")
-    
-    float currentLength = GetLength();
-    if (currentLength > newMaxLength)
+    Normalize();
+    *this *= length;
+}
+
+
+void Vec2::ClampLength(float maxLength)
+{
+    float length = GetLength();
+    if (length > maxLength)
     {
-        float ratio = currentLength / newMaxLength;
-        float oneOverRatio = 1.f / ratio;
-        x *= oneOverRatio;
-        y *= oneOverRatio;
+        *this /= length; // Normalize
+        *this *= maxLength; // Set length to new max
+    }
+}
+
+
+void Vec2::ClampLengthMin(float minLength)
+{
+    float length = GetLength();
+    if (length < minLength)
+    {
+        *this /= length; // Normalize
+        *this *= minLength; // Set length to new min
+    }
+}
+
+
+void Vec2::ClampLength(float minLength, float maxLength)
+{
+    float length = GetLength();
+    if (length > maxLength)
+    {
+        *this /= length; // Normalize
+        *this *= maxLength; // Set length to new max
+    }
+    else if (length < minLength)
+    {
+        *this /= length; // Normalize
+        *this *= minLength; // Set length to new min
     }
 }
 

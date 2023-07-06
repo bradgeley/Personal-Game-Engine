@@ -17,6 +17,7 @@ struct CRender
     
     int m_layer = 0;
     CTransform m_renderTransform;
+    float m_scale = 1.f;
     ModelConstants m_modelConstants;
     Texture* m_texture = nullptr;
     int m_vboIndex = -1;

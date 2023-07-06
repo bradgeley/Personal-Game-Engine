@@ -1,7 +1,75 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "GeometryUtils.h"
+#include "MathUtils.h"
+#include "Constants.h"
 #include "AABB2.h"
 #include "Plane2.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position2, float radius2)
+{
+    float distanceSquared = GetDistanceSquared2D(position1, position2);
+    float combinedRadii = (radius1 + radius2);
+    float combinedRadiiSquared = combinedRadii * combinedRadii;
+    if (distanceSquared >= combinedRadiiSquared)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius)
+{
+    Vec2 toMobileDisc = mobileDiscPos - staticDiscPos;
+    float distanceSquared = toMobileDisc.GetLengthSquared();
+    float combinedRadii = (mobileDiscRadius + staticDiscRadius);
+    float combinedRadiiSquared = combinedRadii * combinedRadii;
+    if (distanceSquared < combinedRadiiSquared)
+    {
+        float distance = SqrtF(distanceSquared);
+        toMobileDisc /= distance;      // Normalize
+        toMobileDisc *= combinedRadii; // Set length to combined radii
+        mobileDiscPos = staticDiscPos + toMobileDisc;
+        return true;
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB)
+{
+    Vec2 AtoB = discPosB - discPosA;
+    float distanceSquared = AtoB.GetLengthSquared();
+    float combinedRadii = (discRadiusA + discRadiusB);
+    float combinedRadiiSquared = combinedRadii * combinedRadii;
+    if (distanceSquared < combinedRadiiSquared)
+    {
+        float distance = SqrtF(distanceSquared);
+        float overlapAmount = combinedRadii - distance;
+
+        AtoB /= distance; // Normalize
+
+        float weightA = discRadiusB / combinedRadii;
+        float weightB = 1.f - weightA;
+
+        Vec2 displacementA = AtoB * -1.f * overlapAmount * weightA;
+        Vec2 displacementB = AtoB * overlapAmount * weightB;
+
+        discPosA += displacementA;
+        discPosB += displacementB;
+
+        return true;
+    }
+    return false;
+}
 
 
 

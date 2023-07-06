@@ -32,7 +32,7 @@ void SEntityFactory::Run(SystemContext const& context)
     factory->m_entitiesToDestroy.clear();
 
     // Spawn second
-    for (auto& spawnInfo : factory->m_entitiesToSpawn)
+    for (SpawnInfo& spawnInfo : factory->m_entitiesToSpawn)
     {
         EntityID id = CreateEntityFromDef(spawnInfo.m_def);
         CTransform* transform = g_ecs->GetComponent<CTransform>(id);
@@ -40,6 +40,11 @@ void SEntityFactory::Run(SystemContext const& context)
         {
             transform->m_pos = spawnInfo.m_spawnPos;
             transform->m_orientation = spawnInfo.m_spawnOrientation;
+        }
+        CPhysics* phys = g_ecs->GetComponent<CPhysics>(id);
+        if (phys)
+        {
+            phys->m_velocity = spawnInfo.m_spawnVelocity;
         }
     }
     factory->m_entitiesToSpawn.clear();

@@ -6,6 +6,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Noise Functions
 //
+// Credit: Squirrel Eiserloh
+//
 unsigned int GetRawNoise1D(int x, int seed);
 unsigned int GetRawNoise2D(int x, int y, int seed);
 

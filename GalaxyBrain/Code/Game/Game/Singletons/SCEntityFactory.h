@@ -16,6 +16,7 @@ struct SpawnInfo
 {
     Vec2 m_spawnPos;
     float m_spawnOrientation = 0.f;
+    Vec2 m_spawnVelocity = Vec2::ZeroVector;
     EntityDef const* m_def = nullptr;
 };
 

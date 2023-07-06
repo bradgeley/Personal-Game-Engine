@@ -1,12 +1,12 @@
 // Bradley Christensen - 2023
 #pragma once
 #include "EntityID.h"
-#include "SystemContext.h"
 #include <climits>
 
 
 
 class AdminSystem;
+struct SystemContext;
 
 
 
@@ -28,8 +28,7 @@ public:
 	
 public:
 
-	EntityID m_currentIndex		= UINT_MAX;
-	
-	SystemContext m_context;
-	BitMask m_groupMask			= 0;
+	SystemContext const*	m_context			= nullptr;
+	EntityID				m_currentIndex		= UINT_MAX;
+	BitMask					m_groupMask			= 0;
 };

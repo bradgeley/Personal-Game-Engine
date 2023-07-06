@@ -253,15 +253,21 @@ int Max(int a, int b)
 }
 
 
-int FloorF(float x)
+int FloorF(float val)
 {
-    double d = (double) x;
-    return (int) ::floor(d);
+    double d = (double) val;
+    return (int) floor(d);
 }
 
 
-int CeilingF(float x)
+int CeilingF(float val)
 {
-    double d = (double) x;
+    double d = (double) val;
     return (int) ceil(d);
+}
+
+
+float SqrtF(float val)
+{
+    return sqrtf(val);
 }

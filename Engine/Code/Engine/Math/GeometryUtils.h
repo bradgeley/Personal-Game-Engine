@@ -11,10 +11,17 @@ struct AABB2;
 //----------------------------------------------------------------------------------------------------------------------
 // GeometryUtils
 //
-// Common geometric queries
+// Common geometric queries and utility functions
 //
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
+// 2D Collision
+//
+bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position2, float radius2);
+bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius);
+bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Line Intersection

@@ -1,11 +1,12 @@
 // Bradley Christensen - 2023
 #include "GroupIter.h"
 #include "AdminSystem.h"
+#include "SystemContext.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-GroupIter::GroupIter(SystemContext const& context) : m_context(context)
+GroupIter::GroupIter(SystemContext const& context) : m_context(&context)
 {
 
 }
@@ -15,7 +16,7 @@ GroupIter::GroupIter(SystemContext const& context) : m_context(context)
 //----------------------------------------------------------------------------------------------------------------------
 bool GroupIter::IsValid() const
 {
-	return m_currentIndex <= m_context.m_endEntityID;
+	return m_currentIndex <= m_context->m_endEntityID;
 }
 
 
@@ -31,7 +32,7 @@ void GroupIter::Next()
 			return;
 		}
 	}
-	while (m_currentIndex <= m_context.m_endEntityID);
+	while (m_currentIndex <= m_context->m_endEntityID);
 }
 
 

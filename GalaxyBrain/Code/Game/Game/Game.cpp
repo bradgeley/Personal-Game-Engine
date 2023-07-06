@@ -34,6 +34,7 @@ void Game::Startup()
     g_ecs->RegisterComponentArray<CMovement>();
     g_ecs->RegisterComponentArray<CPhysics>();
     g_ecs->RegisterComponentArray<CRender>();
+    g_ecs->RegisterComponentArray<CCollision>();
 
     // Map components
     g_ecs->RegisterComponentMap<CCamera>();
@@ -43,6 +44,7 @@ void Game::Startup()
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
     g_ecs->RegisterComponentSingleton<SCRenderer>();
     g_ecs->RegisterComponentSingleton<SCUniverse>();
+    g_ecs->RegisterComponentSingleton<SCDebug>();
 
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();
@@ -59,13 +61,15 @@ void Game::Startup()
     g_ecs->RegisterSystem<SGravity>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCamera>((int) FramePhase::Physics); // Camera is here because it does framerate dependent things
     
     // Post Physics
     
     // Render
-    g_ecs->RegisterSystem<SBackgroundStar>((int) FramePhase::Physics); // Camera is here because it does framerate dependent things
+    g_ecs->RegisterSystem<SBackgroundStar>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SRender>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderDebug>((int) FramePhase::Render);
     
     g_ecs->Startup();
 }

@@ -76,6 +76,12 @@
     <ClCompile Include="Game\Components\CCollision.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Singletons\SCDebug.cpp">
+      <Filter>Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\SRenderDebug.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -157,6 +163,12 @@
     </ClInclude>
     <ClInclude Include="Game\Components\CCollision.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Singletons\SCDebug.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SRenderDebug.h">
+      <Filter>Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

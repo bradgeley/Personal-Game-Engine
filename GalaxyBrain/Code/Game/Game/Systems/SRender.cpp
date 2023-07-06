@@ -22,10 +22,10 @@ void SRender::Startup()
     auto& scRender = *g_ecs->GetComponent<SCRenderer>();
 
     VertexBuffer& vbo1 = scRender.m_vbos[(int) GameVboIndex::Sprite];
-    AddVertsForRect2D(vbo1.GetMutableVerts(), Vec2(-5.f, -10.f), Vec2(5.f, 10.f));
+    AddVertsForRect2D(vbo1.GetMutableVerts(), Vec2(-0.5f, -0.5f), Vec2(0.5f, 0.5f));
 
     VertexBuffer& vbo2 = scRender.m_vbos[(int)GameVboIndex::Sphere];
-    AddVertsForDisc2D(vbo2.GetMutableVerts(), Vec2(0.f, 0.f), 100.f, 64);
+    AddVertsForDisc2D(vbo2.GetMutableVerts(), Vec2(0.f, 0.f), 1.f, 64);
 }
 
 
@@ -47,6 +47,7 @@ void SRender::Run(SystemContext const& context)
         render.m_renderTransform.m_pos = trans.m_pos;
         render.m_modelConstants.m_modelMatrix.Reset();
         render.m_modelConstants.m_modelMatrix.AppendZRotation(render.m_renderTransform.m_orientation);
+        render.m_modelConstants.m_modelMatrix.AppendUniformScale2D(render.m_scale);
         render.m_modelConstants.m_modelMatrix.SetTranslation2D(render.m_renderTransform.m_pos);
     }
 

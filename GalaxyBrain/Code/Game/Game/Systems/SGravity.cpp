@@ -59,7 +59,6 @@ void SGravity::Run(SystemContext const& context)
             
             auto& physB = physStorage[entB];
             physB.m_frameAcceleration += (bToA * GRAVITATIONAL_CONSTANT * physA.m_mass) / distanceSquared;
-            physB.m_frameAcceleration = physB.m_frameAcceleration;
         }
     }
 }

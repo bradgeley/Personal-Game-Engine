@@ -39,7 +39,10 @@ public:
     
     void Rotate90();
     void RotateMinus90();
-    void ClampLength(float newMaxLength);
+    void SetLength(float length);
+    void ClampLength(float maxLength);
+    void ClampLengthMin(float minLength);
+    void ClampLength(float minLength, float maxLength);
 
     static Vec2 MakeFromUnitCircleDegrees(float theta);
 

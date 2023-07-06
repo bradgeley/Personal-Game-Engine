@@ -18,10 +18,14 @@ void SystemContext::SplitEntities(int systemSplittingJobID, int systemSplittingN
     m_systemSplittingNumJobs = systemSplittingNumJobs;
     
     int startIndex = (int) MAX_ENTITIES * systemSplittingJobID / systemSplittingNumJobs;
-    int endIndex = (int) MAX_ENTITIES * (systemSplittingJobID + 1) / systemSplittingNumJobs - 1;
+    int endIndex;
     if (systemSplittingJobID == systemSplittingNumJobs - 1)
     {
         endIndex = MAX_ENTITIES - 1;
+    }
+    else
+    {
+        endIndex = ((int) MAX_ENTITIES * (systemSplittingJobID + 1) / systemSplittingNumJobs) - 1;
     }
     
     m_startEntityID = startIndex;
