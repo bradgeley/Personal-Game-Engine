@@ -39,72 +39,7 @@ void SBackgroundStar::Run(SystemContext const& context)
 	{
 		CCamera* camera = g_ecs->GetComponent<CCamera>(it.m_currentIndex);
 
-		AABB2 cameraBounds = camera->m_camera.GetOrthoBounds2D();
-		Vec2 cameraDims = cameraBounds.GetDimensions();
-
-		Grid2D<float> noiseValues((int) cameraDims.x, (int) cameraDims.y, 0.f);
-		for (int x = 0; x < (int) cameraDims.x; ++x)
-		{
-			for (int y = 0; y < (int) cameraDims.y; ++y)
-			{
-				float noise = GetPerlinNoise2D(x, y, STAR_NOISE_SCALE, 1, 0.5f, 2.f, false);
-				noiseValues.Set(x, y, noise);
-			}
-		}
-
-		for (int x = 0; x < (int) cameraDims.x; ++x)
-		{
-			for (int y = 0; y < (int) cameraDims.y; ++y)
-			{
-				float noise = noiseValues.Get(x, y);
-
-				int indexNorth = noiseValues.GetIndexForCoords(x, y + 1);
-				if (noiseValues.IsValidIndex(indexNorth))
-				{
-					float noiseNorth = noiseValues.Get(indexNorth);
-					if (noiseNorth > noise)
-					{
-						continue;
-					}
-				}
-
-				int indexSouth = noiseValues.GetIndexForCoords(x, y - 1);
-				if (noiseValues.IsValidIndex(indexSouth))
-				{
-					float noiseSouth = noiseValues.Get(indexSouth);
-					if (noiseSouth > noise)
-					{
-						continue;
-					}
-				}
-
-				int indexEast = noiseValues.GetIndexForCoords(x + 1, y);
-				if (noiseValues.IsValidIndex(indexEast))
-				{
-					float noiseEast = noiseValues.Get(indexEast);
-					if (noiseEast > noise)
-					{
-						continue;
-					}
-				}
-
-				int indexWest = noiseValues.GetIndexForCoords(x - 1, y);
-				if (noiseValues.IsValidIndex(indexWest))
-				{
-					float noiseWest = noiseValues.Get(indexWest);
-					if (noiseWest > noise)
-					{
-						continue;
-					}
-				}
-
-				// This x, y is a local maxima - draw a star
-				Star newStar;
-				newStar.m_pos = cameraBounds.mins + Vec2(x, y);
-				newStar.m_size = 1.f / camera->m_zoom;
-				univ.m_parallaxStarsClose.emplace_back(newStar);
-			}
-		}
+		
 	}
 
 	VertexBuffer starsBuffer;

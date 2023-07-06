@@ -70,6 +70,12 @@
     <ClCompile Include="Game\Systems\SBackgroundStar.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Systems\SCollision.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Components\CCollision.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -145,6 +151,12 @@
     </ClInclude>
     <ClInclude Include="Game\Systems\SBackgroundStar.h">
       <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\SCollision.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Components\CCollision.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

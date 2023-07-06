@@ -22,6 +22,7 @@
 #include "Components/CPhysics.h"
 #include "Components/CMovement.h"
 #include "Components/CPlayerController.h"
+#include "Components/CCollision.h"
 
 
 

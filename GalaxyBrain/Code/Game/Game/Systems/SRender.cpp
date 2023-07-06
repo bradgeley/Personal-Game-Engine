@@ -66,6 +66,7 @@ void SRender::Run(SystemContext const& context)
                 if (render.m_layer == i)
                 {
                     g_renderer->SetModelConstants(render.m_modelConstants);
+                    g_renderer->BindShader(nullptr);
                     g_renderer->BindTexture(render.m_texture);
                     g_renderer->DrawVertexBuffer(&scRender.m_vbos[render.m_vboIndex]);
                 }

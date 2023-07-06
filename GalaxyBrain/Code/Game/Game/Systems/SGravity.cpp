@@ -47,7 +47,7 @@ void SGravity::Run(SystemContext const& context)
             auto& transB = transforms[entB];
             Vec2 bToA = transA.m_pos - transB.m_pos;
             float distanceSquared = bToA.GetLengthSquared();
-            if (distanceSquared == 0.f)
+            if (distanceSquared <= 0.001f)
             {
                 continue;
             }

@@ -76,7 +76,8 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def) const
     if (def->m_movement.has_value())            g_ecs->AddComponent<CMovement>(result, *def->m_movement);
     if (def->m_physics.has_value())             g_ecs->AddComponent<CPhysics>(result, *def->m_physics);
     if (def->m_render.has_value())              g_ecs->AddComponent<CRender>(result, *def->m_render);
-    if (def->m_playerController.has_value())    g_ecs->AddComponent<CPlayerController>(result, *def->m_playerController);
+	if (def->m_playerController.has_value())    g_ecs->AddComponent<CPlayerController>(result, *def->m_playerController);
+	if (def->m_collision.has_value())           g_ecs->AddComponent<CCollision>(result, *def->m_collision);
 
     return result;
 }

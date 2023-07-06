@@ -190,6 +190,7 @@
   <ItemGroup>
     <ClCompile Include="Framework\Main_Windows.cpp" />
     <ClCompile Include="Game\Components\CCamera.cpp" />
+    <ClCompile Include="Game\Components\CCollision.cpp" />
     <ClCompile Include="Game\Components\CMovement.cpp" />
     <ClCompile Include="Game\Components\CPhysics.cpp" />
     <ClCompile Include="Game\Components\CPlayerController.cpp" />
@@ -202,6 +203,7 @@
     <ClCompile Include="Game\Singletons\SCUniverse.cpp" />
     <ClCompile Include="Game\Systems\SBackgroundStar.cpp" />
     <ClCompile Include="Game\Systems\SCamera.cpp" />
+    <ClCompile Include="Game\Systems\SCollision.cpp" />
     <ClCompile Include="Game\Systems\SDebugKeys.cpp" />
     <ClCompile Include="Game\Systems\SEntityFactory.cpp" />
     <ClCompile Include="Game\Systems\SGravity.cpp" />
@@ -216,6 +218,7 @@
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
     <ClInclude Include="Game\AllComponents.h" />
     <ClInclude Include="Game\Components\CCamera.h" />
+    <ClInclude Include="Game\Components\CCollision.h" />
     <ClInclude Include="Game\Components\CMovement.h" />
     <ClInclude Include="Game\Components\CPhysics.h" />
     <ClInclude Include="Game\Components\CPlayerController.h" />
@@ -229,6 +232,7 @@
     <ClInclude Include="Game\Singletons\SCUniverse.h" />
     <ClInclude Include="Game\Systems\SBackgroundStar.h" />
     <ClInclude Include="Game\Systems\SCamera.h" />
+    <ClInclude Include="Game\Systems\SCollision.h" />
     <ClInclude Include="Game\Systems\SDebugKeys.h" />
     <ClInclude Include="Game\Systems\SEntityFactory.h" />
     <ClInclude Include="Game\Systems\SGravity.h" />

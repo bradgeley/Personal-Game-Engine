@@ -18,5 +18,6 @@ struct EntityDef
     std::optional<CMovement>            m_movement;
     std::optional<CPhysics>             m_physics;
     std::optional<CPlayerController>    m_playerController;
-    std::optional<CRender>              m_render;
+	std::optional<CRender>              m_render;
+	std::optional<CCollision>           m_collision;
 };
