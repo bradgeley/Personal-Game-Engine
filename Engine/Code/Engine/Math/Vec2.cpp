@@ -70,6 +70,20 @@ Vec2 Vec2::GetRotatedMinus90() const
 }
 
 
+Vec2 Vec2::GetProjectedOntoNormal(Vec2 const& normal) const
+{
+    return normal * DotProduct2D(*this, normal);
+}
+
+
+Vec2 Vec2::GetProjectedOnto(Vec2 const& vector) const
+{
+    float magnitudeInProjDir = DotProduct2D(*this, vector);
+    return magnitudeInProjDir * vector / GetLengthSquared();
+
+}
+
+
 void Vec2::Rotate90()
 {
     float X = x;
@@ -146,25 +160,25 @@ Vec2 Vec2::operator-() const
 }
 
 
-Vec2 Vec2::operator+(const Vec2& other) const
+Vec2 Vec2::operator+(Vec2 const& other) const
 {
     return Vec2(x + other.x, y + other.y);
 }
 
 
-Vec2 Vec2::operator-(const Vec2& other) const
+Vec2 Vec2::operator-(Vec2 const& other) const
 {
     return Vec2(x - other.x, y - other.y);
 }
 
 
-Vec2 Vec2::operator*(const Vec2& other) const
+Vec2 Vec2::operator*(Vec2 const& other) const
 {
     return Vec2(x * other.x, y * other.y);
 }
 
 
-Vec2 Vec2::operator/(const Vec2& other) const
+Vec2 Vec2::operator/(Vec2 const& other) const
 {
     return Vec2(x / other.x, y / other.y);
 }
@@ -183,28 +197,28 @@ Vec2 Vec2::operator/(float divisor) const
 }
 
 
-void Vec2::operator+=(const Vec2& other)
+void Vec2::operator+=(Vec2 const& other)
 {
     x += other.x;
     y += other.y;
 }
 
 
-void Vec2::operator-=(const Vec2& other)
+void Vec2::operator-=(Vec2 const& other)
 {
     x -= other.x;
     y -= other.y;
 }
 
 
-void Vec2::operator*=(const Vec2& other)
+void Vec2::operator*=(Vec2 const& other)
 {
     x *= other.x;
     y *= other.y;
 }
 
 
-void Vec2::operator/=(const Vec2& other)
+void Vec2::operator/=(Vec2 const& other)
 {
     x /= other.x;
     y /= other.y;
@@ -235,4 +249,10 @@ bool Vec2::operator==(Vec2 const& rhs) const
 bool Vec2::operator!=(Vec2 const& rhs) const
 {
     return (x != rhs.x) || (y != rhs.y);
+}
+
+
+Vec2 const operator*(float uniformScale, Vec2 const& vecToScale)
+{
+    return vecToScale * uniformScale;
 }

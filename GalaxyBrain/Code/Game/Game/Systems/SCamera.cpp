@@ -30,11 +30,24 @@ void SCamera::Run(SystemContext const& context)
         {
             camera.m_zoom *= 0.75f;
             --mouseWheelChange;
+
+            if (camera.m_zoom < camera.m_minZoom)
+            {
+                camera.m_zoom = camera.m_minZoom;
+                break;
+            }
         }
+
         while (mouseWheelChange < 0)
         {
             camera.m_zoom *= 1.25f;
             ++mouseWheelChange;
+
+            if (camera.m_zoom > camera.m_maxZoom)
+            {
+                camera.m_zoom = camera.m_maxZoom;
+                break;
+            }
         }
 
         camera.m_camera.SetOrthoDims2D(camera.m_baseDims * camera.m_zoom);
@@ -52,6 +65,12 @@ void SCamera::Run(SystemContext const& context)
         {
             camPos += toGoal * camera.m_snappiness * context.m_deltaSeconds;
         }
+
+        // Clamp camera to a shorter distance at lower zoom levels
+        Vec2 toCamera = camPos - transform.m_pos;
+        float maxDistance = 5.f * (camera.m_zoom);
+        toCamera.ClampLength(maxDistance);
+        camPos = transform.m_pos + toCamera;
 
         camera.m_camera.SetOrthoCenter2D(camPos);
     }

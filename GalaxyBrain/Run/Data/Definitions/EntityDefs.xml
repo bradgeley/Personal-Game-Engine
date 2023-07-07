@@ -2,7 +2,7 @@
     
     <Entity name = "Player">
       <Transform/>
-      <Camera/>
+      <Camera snap="2"/>
       <Movement speed="8"/>
       <PlayerController/>
       <Render vboIndex="0" layer="1" scale="3"/>
@@ -29,9 +29,9 @@
     <Entity name = "Sun">
       <Transform/>
       <Movement speed="0"/>
-      <Render vboIndex="1" texture="Data/Images/Sun.png" scale="1000"/>
+      <Render vboIndex="1" texture="Data/Images/Sun.png" scale="10000"/>
       <Physics mass= "1000000"/>
-      <Collision radius="1000" type="mobile"/>
+      <Collision radius="10000" type="mobile"/>
     </Entity>
   
 </EntityDefs>

@@ -17,6 +17,15 @@ struct Vec3;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+// Quadratic Equation
+//
+// Returns the number of real roots that were found and passed back out of the function (through out_root1 and out_root2)
+//
+int QuadraticEquation(float a, float b, float c, float& out_root1, float& out_root2);
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 // Trig
 //
 float SinDegrees(float degrees);

@@ -12,6 +12,8 @@
 void SCollision::Startup()
 {
     AddWriteDependencies<CTransform, CPhysics, CCollision>();
+
+    m_systemSplittingNumJobs = 1;
 }
 
 
@@ -30,6 +32,7 @@ void SCollision::Run(SystemContext const& context)
     {
         Vec2& posA = transStorage.Get(itA.m_currentIndex)->m_pos;
         CCollision& collA = *collStorage.Get(itA.m_currentIndex);
+        CPhysics* physA = physStorage.Get(itA.m_currentIndex); // optional
         float& radiusA = collA.m_radius;
 
         // Start iterator B at one entity after iterator A (without copying a bunch of data each iteration by calling itB = itA;
@@ -45,22 +48,25 @@ void SCollision::Run(SystemContext const& context)
 
             Vec2& posB = transStorage.Get(itB.m_currentIndex)->m_pos;
             CCollision& collB = *collStorage.Get(itB.m_currentIndex);
+            CPhysics* physB = physStorage.Get(itB.m_currentIndex); // optional
             float& radiusB = collB.m_radius;
 
             bool ACanPushB = (collA.m_type == CollisionType::Static && collB.m_type == CollisionType::Mobile);
             bool BCanPushA = (collA.m_type == CollisionType::Mobile && collB.m_type == CollisionType::Static);
             bool PushEachOther = (collA.m_type == CollisionType::Mobile && collB.m_type == CollisionType::Mobile);
+
+            bool didPush = false;
             if (ACanPushB)
             {
-                PushDiscOutOfDisc2D(posB, radiusB, posA, radiusA);
+                didPush = PushDiscOutOfDisc2D(posB, radiusB, posA, radiusA);
             }
             else if (BCanPushA)
             {
-                PushDiscOutOfDisc2D(posA, radiusA, posB, radiusB);
+                didPush = PushDiscOutOfDisc2D(posA, radiusA, posB, radiusB);
             }
             else if (PushEachOther)
             {
-                PushDiscsOutOfEachOther2D(posA, radiusA, posB, radiusB);
+                didPush = PushDiscsOutOfEachOther2D(posA, radiusA, posB, radiusB);
             }
         }
     }

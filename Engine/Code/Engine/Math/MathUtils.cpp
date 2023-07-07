@@ -7,6 +7,30 @@
 #include "cmath"
 
 
+int QuadraticEquation(float a, float b, float c, float& out_root1, float& out_root2)
+{
+    float descriminant = b * b - 4 * a * c;
+    if (descriminant < 0.f)
+    {
+        return 0;
+    }
+
+    if (descriminant == 0.f)
+    {
+        out_root1 = -b / (2.f * a);
+        return 1;
+    }
+    else
+    {
+        float sqrtDesc = SqrtF(descriminant);
+        float oneOverTwoA = 1.f / (2.f * a);
+        out_root1 = (-b + sqrtDesc) * oneOverTwoA;
+        out_root2 = (-b - sqrtDesc) * oneOverTwoA;
+        return 2;
+    }
+}
+
+
 float SinDegrees(float degrees)
 {
     float radians = DegreesToRadians(degrees);

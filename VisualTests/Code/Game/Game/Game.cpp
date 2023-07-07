@@ -8,6 +8,7 @@
 #include "Engine/Math/MathUtils.h"
 #include "Game/Game/NoiseTest.h"
 #include "Game/Game/Noise2DTest.h"
+#include "Game/Game/Disc2DCollisionTest.h"
 
 
 
@@ -16,6 +17,7 @@ void Game::Startup()
 {
     m_testModes.push_back(new NoiseTest());
     m_testModes.push_back(new Noise2DTest());
+    m_testModes.push_back(new Disc2DCollisionTest());
 
     m_testModes[m_currentTestMode]->Startup();
 

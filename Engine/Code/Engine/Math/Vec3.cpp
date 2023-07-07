@@ -99,25 +99,25 @@ Vec3 Vec3::operator-() const
 }
 
 
-Vec3 Vec3::operator+(const Vec3& other) const
+Vec3 Vec3::operator+(Vec3 const& other) const
 {
     return Vec3(x + other.x, y + other.y, z + other.z);
 }
 
 
-Vec3 Vec3::operator-(const Vec3& other) const
+Vec3 Vec3::operator-(Vec3 const& other) const
 {
     return Vec3(x - other.x, y - other.y, z - other.z);
 }
 
 
-Vec3 Vec3::operator*(const Vec3& other) const
+Vec3 Vec3::operator*(Vec3 const& other) const
 {
     return Vec3(x * other.x, y * other.y, z * other.z);
 }
 
 
-Vec3 Vec3::operator/(const Vec3& other) const
+Vec3 Vec3::operator/(Vec3 const& other) const
 {
     return Vec3(x / other.x, y / other.y, z / other.z);
 }
@@ -136,15 +136,15 @@ Vec3 Vec3::operator/(float divisor) const
 }
 
 
-void Vec3::operator+=(const Vec3& other)
-{
-    x += other.x;
-    y += other.y;
+void Vec3::operator+=(Vec3 const& other)
+{                     
+    x += other.x;     
+    y += other.y;     
     z += other.z;
 }
 
 
-void Vec3::operator-=(const Vec3& other)
+void Vec3::operator-=(Vec3 const& other)
 {
     x -= other.x;
     y -= other.y;
@@ -152,7 +152,7 @@ void Vec3::operator-=(const Vec3& other)
 }
 
 
-void Vec3::operator*=(const Vec3& other)
+void Vec3::operator*=(Vec3 const& other)
 {
     x *= other.x;
     y *= other.y;
@@ -160,7 +160,7 @@ void Vec3::operator*=(const Vec3& other)
 }
 
 
-void Vec3::operator/=(const Vec3& other)
+void Vec3::operator/=(Vec3 const& other)
 {
     x /= other.x;
     y /= other.y;

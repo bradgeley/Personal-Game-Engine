@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "AABB2.h"
 #include "Plane2.h"
+#include "Engine/Core/ErrorUtils.h"
 
 
 
@@ -67,6 +68,127 @@ bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB
         discPosB += displacementB;
 
         return true;
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA, Vec2& discPosB, float discRadiusB, Vec2& discVelB, float elasticity)
+{
+    Vec2 AtoB = discPosB - discPosA;
+    float distanceSquared = AtoB.GetLengthSquared();
+    float combinedRadii = (discRadiusA + discRadiusB);
+    float combinedRadiiSquared = combinedRadii * combinedRadii;
+    if (distanceSquared < combinedRadiiSquared)
+    {
+        // Push discs out of each other first (no prediction yet)
+        float distance = SqrtF(distanceSquared);
+        float overlapAmount = combinedRadii - distance;
+
+        AtoB /= distance; // Normalize
+
+        float weightA = discRadiusB / combinedRadii;
+        float weightB = 1.f - weightA;
+
+        Vec2 displacementA = AtoB * -1.f * overlapAmount * weightA;
+        Vec2 displacementB = AtoB * overlapAmount * weightB;
+
+        discPosA += displacementA;
+        discPosB += displacementB;
+
+        // Put everything in terms of Va = 0
+        Vec2 relativeVelA = Vec2::ZeroVector;
+        Vec2 relativeVelB = discVelB - discVelA;
+
+        // Bounce B off of A
+        float dotB = DotProduct2D(relativeVelB, AtoB);
+        if (dotB > 0.f)
+        {
+            // B's velocity dot's positive with AToB, so they are moving apart and we shouldn't bounce them
+            return false;
+        }
+
+        Vec2 projectedVelB = AtoB * dotB;
+        Vec2 remainingVelB = relativeVelB - projectedVelB;
+
+        Vec2 velocityTransfer = projectedVelB * elasticity;
+
+        relativeVelB -= velocityTransfer;
+        relativeVelA += velocityTransfer;
+
+        // Add back what was lost before
+        discVelB = relativeVelB + discVelA;
+        discVelA = relativeVelA + discVelA;
+
+        // Add back what we originally took away
+
+        // Todo: prediction
+        
+        // Determine the real time of collision by assuming where the disc was last frame, using the quadratic equation
+
+        // a = (Vx^2 + Vy^2)
+        
+
+        return true;
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA, float massA, Vec2& discPosB, float discRadiusB, Vec2& discVelB, float massB, float elasticity)
+{
+    Vec2 AtoB = discPosB - discPosA;
+    float distanceSquared = AtoB.GetLengthSquared();
+    float combinedRadii = (discRadiusA + discRadiusB);
+    float combinedRadiiSquared = combinedRadii * combinedRadii;
+    if (distanceSquared < combinedRadiiSquared)
+    {
+        // Push discs out of each other first (no prediction yet)
+        float distance = SqrtF(distanceSquared);
+        float overlapAmount = combinedRadii - distance;
+
+        AtoB /= distance; // Normalize
+        Vec2& collisionNormal = AtoB;
+
+        // Use mass to determine who pushes who out the most
+        float oneOverCombinedMass = 1.f / (massA + massB);
+        float weightA = massB * oneOverCombinedMass;
+        float weightB = 1.f - weightA;
+
+        Vec2 displacementA = AtoB * -1.f * overlapAmount * weightA;
+        Vec2 displacementB = AtoB * overlapAmount * weightB;
+
+        discPosA += displacementA;
+        discPosB += displacementB;
+
+        // CONSERVATION OF MOMENTUM EQUATIONS
+        // vAf = ((mA - mB)*vAi + 2*mB*vB) / (mA + mB)
+        // vBf = ((mB - mA)*vBi + 2*mA*vA) / (mA + mB)
+        
+        float A_speedNorm = DotProduct2D(discVelA, collisionNormal);
+        float B_speedNorm = DotProduct2D(discVelB, collisionNormal);
+        if (A_speedNorm - B_speedNorm > 0.f)
+        {
+            Vec2 velA_i = A_speedNorm * collisionNormal;
+            Vec2 velB_i = B_speedNorm * collisionNormal;
+            Vec2 velA_j = discVelA - velA_i;
+            Vec2 velB_j = discVelB - velB_i;
+
+            float A_speedNormF = ((massA - massB) * A_speedNorm + 2.f * massB * B_speedNorm) * oneOverCombinedMass;
+            float B_speedNormF = ((massB - massA) * B_speedNorm + 2.f * massA * A_speedNorm) * oneOverCombinedMass;
+
+            A_speedNormF *= elasticity;
+            B_speedNormF *= elasticity;
+
+            discVelA = A_speedNormF * collisionNormal + velA_j;
+            discVelB = B_speedNormF * collisionNormal + velB_j;
+
+            return true;
+        }
     }
     return false;
 }

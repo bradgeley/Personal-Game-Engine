@@ -23,6 +23,16 @@ bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position
 bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius);
 bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB);
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// 2D Physics
+//
+bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA, Vec2& discPosB, float discRadiusB, Vec2& discVelB, float elasticity);
+bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA, float massA, Vec2& discPosB, float discRadiusB, Vec2& discVelB, float massB, float elasticity);
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 // Line Intersection
 //

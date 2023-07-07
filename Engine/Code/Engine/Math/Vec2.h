@@ -36,6 +36,8 @@ public:
     Vec2 GetNormalized() const;
     Vec2 GetRotated90() const;
     Vec2 GetRotatedMinus90() const;
+    Vec2 GetProjectedOntoNormal(Vec2 const& normal) const;
+    Vec2 GetProjectedOnto(Vec2 const& vector) const;
     
     void Rotate90();
     void RotateMinus90();
@@ -49,25 +51,27 @@ public:
     // Component-wise const operators
     Vec2 operator-() const;
 
-    Vec2 operator+(const Vec2& other) const;
-    Vec2 operator-(const Vec2& other) const;
-    Vec2 operator*(const Vec2& other) const;
-    Vec2 operator/(const Vec2& other) const;
+    Vec2 operator+(Vec2 const& other) const;
+    Vec2 operator-(Vec2 const& other) const;
+    Vec2 operator*(Vec2 const& other) const;
+    Vec2 operator/(Vec2 const& other) const;
 
     Vec2 operator*(float multiplier) const;
     Vec2 operator/(float divisor) const;
 
     // Component-wise self changing operators
-    void operator+=(const Vec2& other);
-    void operator-=(const Vec2& other);
-    void operator*=(const Vec2& other);
-    void operator/=(const Vec2& other);
+    void operator+=(Vec2 const& other);
+    void operator-=(Vec2 const& other);
+    void operator*=(Vec2 const& other);
+    void operator/=(Vec2 const& other);
 
     void operator*=(float multiplier);
     void operator/=(float divisor);
     
     bool operator==(Vec2 const& rhs) const;
     bool operator!=(Vec2 const& rhs) const;
+
+    friend Vec2 const operator*(float uniformScale, Vec2 const& vecToScale);
 
 public:
     

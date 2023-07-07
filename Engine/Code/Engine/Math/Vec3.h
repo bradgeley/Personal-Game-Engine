@@ -44,19 +44,19 @@ public:
     // Component-wise const operators
     Vec3 operator-() const;
 
-    Vec3 operator+(const Vec3& other) const;
-    Vec3 operator-(const Vec3& other) const;
-    Vec3 operator*(const Vec3& other) const;
-    Vec3 operator/(const Vec3& other) const;
+    Vec3 operator+(Vec3 const& other) const;
+    Vec3 operator-(Vec3 const& other) const;
+    Vec3 operator*(Vec3 const& other) const;
+    Vec3 operator/(Vec3 const& other) const;
 
     Vec3 operator*(float multiplier) const;
     Vec3 operator/(float divisor) const;
 
     // Component-wise self changing operators
-    void operator+=(const Vec3& other);
-    void operator-=(const Vec3& other);
-    void operator*=(const Vec3& other);
-    void operator/=(const Vec3& other);
+    void operator+=(Vec3 const& other);
+    void operator-=(Vec3 const& other);
+    void operator*=(Vec3 const& other);
+    void operator/=(Vec3 const& other);
 
     void operator*=(float multiplier);
     void operator/=(float divisor);

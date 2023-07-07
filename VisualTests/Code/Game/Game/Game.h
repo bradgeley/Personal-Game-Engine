@@ -24,6 +24,6 @@ public:
 
     bool Help(NamedProperties& args);
 
-    int m_currentTestMode = 1;
+    int m_currentTestMode = 2;
     std::vector<VisualTest*> m_testModes;
 };
