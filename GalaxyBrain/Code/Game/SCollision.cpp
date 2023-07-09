@@ -1,8 +1,8 @@
 ﻿// Bradley Christensen - 2023
 #include "SCollision.h"
-#include "Game/Game/Components/CCollision.h"
-#include "Game/Game/Components/CTransform.h"
-#include "Game/Game/Components/CPhysics.h"
+#include "Game/CCollision.h"
+#include "Game/CTransform.h"
+#include "Game/CPhysics.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Math/GeometryUtils.h"
 
@@ -66,7 +66,7 @@ void SCollision::Run(SystemContext const& context)
             }
             else if (PushEachOther)
             {
-                didPush = PushDiscsOutOfEachOther2D(posA, radiusA, posB, radiusB);
+                didPush = BounceDiscsOffEachOther2D(posA, radiusA, physA->m_velocity, physA->m_mass, posB, radiusB, physB->m_velocity, physB->m_mass, 0.f);
             }
         }
     }

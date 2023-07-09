@@ -25,3 +25,11 @@ BitMask const& System::GetWriteDependencies() const
 {
 	return m_writeDependenciesBitMask;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void System::AddWriteAllDependencies()
+{
+	m_writeDependenciesBitMask = SIZE_MAX;
+}

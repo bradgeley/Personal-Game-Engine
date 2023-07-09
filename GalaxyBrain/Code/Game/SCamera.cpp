@@ -1,8 +1,8 @@
 ﻿// Bradley Christensen - 2023
 #include "SCamera.h"
-#include "Game/Game/Components/CCamera.h"
-#include "Game/Game/Components/CTransform.h"
-#include "Game/Game/Components/CPhysics.h"
+#include "Game/CCamera.h"
+#include "Game/CTransform.h"
+#include "Game/CPhysics.h"
 #include "Engine/Input/InputSystem.h"
 
 

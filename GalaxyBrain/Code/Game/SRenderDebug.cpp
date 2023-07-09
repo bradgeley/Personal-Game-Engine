@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2023
 #include "SRenderDebug.h"
-#include "Game/Game/Singletons/SCDebug.h"
+#include "Game/SCDebug.h"
 #include "Engine/Renderer/Renderer.h"
 
 

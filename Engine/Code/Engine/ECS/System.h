@@ -37,7 +37,7 @@ public:
 
 	virtual void Startup()											{}
 	virtual void PreRun()											{}
-	virtual void Run(SystemContext const& [[maybe_unused]] context)	{}
+	virtual void Run(SystemContext const&)							{}
 	virtual void PostRun()											{}
 	virtual void Shutdown()											{}
 
@@ -63,6 +63,8 @@ protected:
 
 	template<typename...CTypes>
 	void AddReadDependencies();
+
+	void AddWriteAllDependencies();
 
 protected:
 

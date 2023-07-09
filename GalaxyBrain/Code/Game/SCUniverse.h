@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Math/Vec2.h"
 #include "Engine/Math/IntVec2.h"
+#include "Engine/Renderer/Rgba8.h"
 #include <vector>
 
 
@@ -9,8 +10,11 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct Star
 {
+	void Randomize();
+
 	Vec2 m_pos;
-	float m_size;
+	float m_distance;
+	Rgba8 m_tint;
 };
 
 
@@ -20,7 +24,5 @@ struct SCUniverse
 {
 public:
 
-	std::vector<Star> m_parallaxStarsClose;
-	std::vector<Star> m_parallaxStarsMid;
-	std::vector<Star> m_parallaxStarsFar;
+	std::vector<Star> m_parallaxStars;
 };

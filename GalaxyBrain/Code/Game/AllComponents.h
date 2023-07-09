@@ -16,19 +16,19 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 // Components
-#include "Components/CTransform.h"
-#include "Components/CRender.h"
-#include "Components/CCamera.h"
-#include "Components/CPhysics.h"
-#include "Components/CMovement.h"
-#include "Components/CPlayerController.h"
-#include "Components/CCollision.h"
+#include "CTransform.h"
+#include "CRender.h"
+#include "CCamera.h"
+#include "CPhysics.h"
+#include "CMovement.h"
+#include "CPlayerController.h"
+#include "CCollision.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 // Singletons
-#include "Singletons/SCEntityFactory.h"
-#include "Singletons/SCRenderer.h"
-#include "Singletons/SCUniverse.h"
-#include "Singletons/SCDebug.h"
+#include "SCEntityFactory.h"
+#include "SCRenderer.h"
+#include "SCUniverse.h"
+#include "SCDebug.h"

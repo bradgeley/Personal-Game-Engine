@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2023
 #include "SMovement.h"
-#include "Game/Game/Components/CMovement.h"
-#include "Game/Game/Components/CPhysics.h"
+#include "Game/CMovement.h"
+#include "Game/CPhysics.h"
 
 
 

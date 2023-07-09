@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2023
 #include "SGravity.h"
-#include "Game/Game/Components/CPhysics.h"
-#include "Game/Game/Components/CTransform.h"
+#include "Game/CPhysics.h"
+#include "Game/CTransform.h"
 
 
 

@@ -2,17 +2,16 @@
 #include "SEntityFactory.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsole.h"
-#include "Game/Game/EntityDef.h"
-#include "Game/Game/Components/CTransform.h"
-#include "Game/Game/Singletons/SCEntityFactory.h"
+#include "Game/EntityDef.h"
+#include "Game/CTransform.h"
+#include "Game/SCEntityFactory.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SEntityFactory::Startup()
 {
-    AddWriteDependencies<SCEntityFactory>();
-    AddReadDependencies<CTransform>();
+    AddWriteAllDependencies();
     
     LoadFromXml("Data/Definitions/EntityDefs.xml");
 }
@@ -71,7 +70,7 @@ void SEntityFactory::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def) const
+EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
 {
     EntityID result = g_ecs->CreateEntity();
 

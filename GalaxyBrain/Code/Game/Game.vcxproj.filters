@@ -1,174 +1,180 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Framework\Main_Windows.cpp">
+    <ClCompile Include="CCamera.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CCollision.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CMovement.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CPhysics.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CPlayerController.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CRender.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="CTransform.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Main_Windows.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Game.cpp">
+    <ClCompile Include="PlanetGenerator.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\WindowsApplication.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Components\CCamera.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Components\CMovement.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Components\CPhysics.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Components\CRender.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Components\CTransform.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Systems\SDebugKeys.cpp">
+    <ClCompile Include="SGravity.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Systems\SEntityFactory.cpp">
+    <ClCompile Include="SInput.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Systems\SGravity.cpp">
+    <ClCompile Include="SMovement.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Systems\SInput.cpp">
+    <ClCompile Include="SPhysics.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Systems\SMovement.cpp">
+    <ClCompile Include="SRender.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Systems\SPhysics.cpp">
+    <ClCompile Include="SRenderDebug.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Systems\SRender.cpp">
+    <ClCompile Include="SUniverse.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Singletons\SCEntityFactory.cpp">
-      <Filter>Singletons</Filter>
+    <ClCompile Include="SBackgroundStar.cpp">
+      <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Singletons\SCRenderer.cpp">
-      <Filter>Singletons</Filter>
+    <ClCompile Include="SCamera.cpp">
+      <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\EntityDef.cpp">
+    <ClCompile Include="SCollision.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="SDebugKeys.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="SEntityFactory.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsApplication.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityDef.cpp">
       <Filter>Data</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Components\CPlayerController.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Systems\SCamera.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Singletons\SCUniverse.cpp">
+    <ClCompile Include="SCDebug.cpp">
       <Filter>Singletons</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Systems\SUniverse.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Systems\SBackgroundStar.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Systems\SCollision.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Components\CCollision.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Singletons\SCDebug.cpp">
+    <ClCompile Include="SCEntityFactory.cpp">
       <Filter>Singletons</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Systems\SRenderDebug.cpp">
-      <Filter>Systems</Filter>
+    <ClCompile Include="SCUniverse.cpp">
+      <Filter>Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="SCRenderer.cpp">
+      <Filter>Singletons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Framework\EngineBuildPreferences.h">
+    <ClInclude Include="AllComponents.h" />
+    <ClInclude Include="AllSystems.h" />
+    <ClInclude Include="CCamera.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CCollision.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CMovement.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CPhysics.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CPlayerController.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CRender.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CTransform.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBuildPreferences.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Game.h">
+    <ClInclude Include="Game.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\GameCommon.h">
+    <ClInclude Include="GameCommon.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\WindowsApplication.h">
+    <ClInclude Include="PlanetGenerator.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\AllComponents.h" />
-    <ClInclude Include="Game\AllSystems.h" />
-    <ClInclude Include="Game\Components\CTransform.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Components\CCamera.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Components\CMovement.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Components\CPhysics.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Components\CRender.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Systems\SRender.h">
+    <ClInclude Include="SEntityFactory.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Systems\SDebugKeys.h">
+    <ClInclude Include="SGravity.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Systems\SEntityFactory.h">
+    <ClInclude Include="SInput.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Systems\SGravity.h">
+    <ClInclude Include="SMovement.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Systems\SInput.h">
+    <ClInclude Include="SPhysics.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Systems\SMovement.h">
+    <ClInclude Include="SRender.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Systems\SPhysics.h">
+    <ClInclude Include="SRenderDebug.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Singletons\SCEntityFactory.h">
-      <Filter>Singletons</Filter>
+    <ClInclude Include="SUniverse.h">
+      <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Singletons\SCRenderer.h">
-      <Filter>Singletons</Filter>
+    <ClInclude Include="SBackgroundStar.h">
+      <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\EntityDef.h">
+    <ClInclude Include="SCamera.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="SCollision.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="SDebugKeys.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsApplication.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityDef.h">
       <Filter>Data</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Components\CPlayerController.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Systems\SCamera.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Singletons\SCUniverse.h">
+    <ClInclude Include="SCDebug.h">
       <Filter>Singletons</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Systems\SUniverse.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Systems\SBackgroundStar.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Systems\SCollision.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Components\CCollision.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Singletons\SCDebug.h">
+    <ClInclude Include="SCEntityFactory.h">
       <Filter>Singletons</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Systems\SRenderDebug.h">
-      <Filter>Systems</Filter>
+    <ClInclude Include="SCUniverse.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="SCRenderer.h">
+      <Filter>Singletons</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -184,11 +190,11 @@
     <Filter Include="Components">
       <UniqueIdentifier>{bbb7f16c-e27c-46fb-99d8-124aab27868d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Systems">
-      <UniqueIdentifier>{f0c03aa9-4ecf-4ad7-b63e-5a6fd9ca7e82}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Singletons">
       <UniqueIdentifier>{072fda14-dc14-42af-94e1-622aa8399a09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems">
+      <UniqueIdentifier>{d01b1190-606d-4f42-b40e-2d805a8928ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

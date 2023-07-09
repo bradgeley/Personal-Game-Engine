@@ -1,8 +1,8 @@
 ﻿// Bradley Christensen - 2023
 #include "SDebugKeys.h"
 #include "Engine/Input/InputSystem.h"
-#include "Game/Game/Singletons/SCEntityFactory.h"
-#include "Game/Game/Singletons/SCDebug.h"
+#include "Game/SCEntityFactory.h"
+#include "Game/SCDebug.h"
 #include "Engine/Multithreading/JobSystemDebug.h"
 
 
@@ -60,13 +60,13 @@ void SDebugKeys::Run(SystemContext const& context)
         factory->m_entitiesToSpawn.emplace_back(asteroidInfo);
 
         SpawnInfo earthInfo;
-        earthInfo.m_spawnPos = Vec2(-150.f, 0.f);
-        earthInfo.m_spawnVelocity = Vec2(0.f, 2000.f);
+        earthInfo.m_spawnPos = Vec2(-2500.f, 0.f);
+        earthInfo.m_spawnVelocity = Vec2(0.f, 3000.f);
         earthInfo.m_def = factory->GetEntityDef("Earth");
         factory->m_entitiesToSpawn.emplace_back(earthInfo);
 
-        earthInfo.m_spawnPos = Vec2(150.f, 0.f);
-        earthInfo.m_spawnVelocity = Vec2(0.f, 2000.f - 150.f);
+        earthInfo.m_spawnPos = Vec2(2500.f, 0.f);
+        earthInfo.m_spawnVelocity = Vec2(0.f, 2500.f);
         factory->m_entitiesToSpawn.emplace_back(earthInfo);
 
         SpawnInfo sunInfo;

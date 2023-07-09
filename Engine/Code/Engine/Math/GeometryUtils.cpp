@@ -165,28 +165,43 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
         discPosA += displacementA;
         discPosB += displacementB;
 
-        // CONSERVATION OF MOMENTUM EQUATIONS
-        // vAf = ((mA - mB)*vAi + 2*mB*vB) / (mA + mB)
-        // vBf = ((mB - mA)*vBi + 2*mA*vA) / (mA + mB)
         
         float A_speedNorm = DotProduct2D(discVelA, collisionNormal);
         float B_speedNorm = DotProduct2D(discVelB, collisionNormal);
-        if (A_speedNorm - B_speedNorm > 0.f)
+        float speedDiffInitial = A_speedNorm - B_speedNorm;
+        if (speedDiffInitial > 0.f)
         {
             Vec2 velA_i = A_speedNorm * collisionNormal;
             Vec2 velB_i = B_speedNorm * collisionNormal;
-            Vec2 velA_j = discVelA - velA_i;
-            Vec2 velB_j = discVelB - velB_i;
+            Vec2 velA_j = discVelA - velA_i; // Tangent velocity, which is not lost after collision no matter what (todo: friction)
+            Vec2 velB_j = discVelB - velB_i; // Tangent velocity, which is not lost after collision no matter what (todo: friction)
 
-            float A_speedNormF = ((massA - massB) * A_speedNorm + 2.f * massB * B_speedNorm) * oneOverCombinedMass;
-            float B_speedNormF = ((massB - massA) * B_speedNorm + 2.f * massA * A_speedNorm) * oneOverCombinedMass;
+            if (elasticity == 1.f)
+            {
+                // Conservation of Momentum:
+                // vAf = ((mA - mB)*vAi + 2*mB*vB) / (mA + mB)
+                // vBf = ((mB - mA)*vBi + 2*mA*vA) / (mA + mB)
+                float A_speedNormF = ((massA - massB) * A_speedNorm + 2.f * massB * B_speedNorm) * oneOverCombinedMass;
+                float B_speedNormF = ((massB - massA) * B_speedNorm + 2.f * massA * A_speedNorm) * oneOverCombinedMass;
 
-            A_speedNormF *= elasticity;
-            B_speedNormF *= elasticity;
+                discVelA = A_speedNormF * collisionNormal + velA_j;
+                discVelB = B_speedNormF * collisionNormal + velB_j;
+            }
+            else
+            {
+                // Inelastic collision: 
+                // v_rel_final = e * v_rel_initial
+                // vf = (m1 * v1 + m2 * v2) / (m1 + m2)
+                // v1f = vf + (1/2) * v_rel_final
+                // v2f = vf - (1/2) * v_rel_final
+                float halfSpeedDiffFinal = (0.5f) * elasticity * speedDiffInitial;
+                float finalVelocity = (massA + A_speedNorm + massB * B_speedNorm) * oneOverCombinedMass;
+                float A_speedNormF = finalVelocity - halfSpeedDiffFinal;
+                float B_speedNormF = finalVelocity + halfSpeedDiffFinal;
 
-            discVelA = A_speedNormF * collisionNormal + velA_j;
-            discVelB = B_speedNormF * collisionNormal + velB_j;
-
+                discVelA = A_speedNormF * collisionNormal + velA_j;
+                discVelB = B_speedNormF * collisionNormal + velB_j;
+            }
             return true;
         }
     }

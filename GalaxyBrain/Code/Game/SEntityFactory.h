@@ -17,8 +17,9 @@ public:
     void Run(SystemContext const& context) override;
     void Shutdown() override;
 
+    static EntityID CreateEntityFromDef(EntityDef const* def);
+
 private:
 
-    EntityID CreateEntityFromDef(EntityDef const* def) const;
     void LoadFromXml(char const* filename) const;
 };

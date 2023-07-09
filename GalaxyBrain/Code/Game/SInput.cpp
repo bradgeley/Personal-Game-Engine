@@ -1,8 +1,8 @@
 ﻿// Bradley Christensen - 2023
 #include "SInput.h"
 #include "Engine/Input/InputSystem.h"
-#include "Game/Game/Components/CMovement.h"
-#include "Game/Game/Components/CPlayerController.h"
+#include "Game/CMovement.h"
+#include "Game/CPlayerController.h"
 
 
 

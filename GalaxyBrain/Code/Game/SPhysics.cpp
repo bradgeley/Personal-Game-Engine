@@ -1,8 +1,8 @@
 ﻿// Bradley Christensen - 2023
 #include "SPhysics.h"
-#include "Game/Game/Components/CPhysics.h"
-#include "Game/Game/Components/CTransform.h"
-#include "Game/Game/Singletons/SCDebug.h"
+#include "Game/CPhysics.h"
+#include "Game/CTransform.h"
+#include "Game/SCDebug.h"
 #include "Engine/Renderer/VertexUtils.h"
 
 

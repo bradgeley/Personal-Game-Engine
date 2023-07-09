@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2023
 #include "SUniverse.h"
-#include "Game/Game/Singletons/SCUniverse.h"
+#include "Game/SCUniverse.h"
 #include "Engine/ECS/AdminSystem.h"
 
 

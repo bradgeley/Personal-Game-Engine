@@ -63,11 +63,5 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 void EntityDef::Cleanup()
 {
-    // Render
-    if (m_render.has_value() && m_render->m_texture)
-    {
-        m_render->m_texture->ReleaseResources();
-        delete m_render->m_texture;
-        m_render->m_texture = nullptr;
-    }
+
 }
