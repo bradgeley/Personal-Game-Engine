@@ -9,6 +9,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct EntityDef
 {
+    EntityDef() = default;
     explicit EntityDef(XmlElement const* xmlElement);
     void Cleanup();
 

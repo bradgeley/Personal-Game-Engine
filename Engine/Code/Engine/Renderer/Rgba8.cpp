@@ -7,8 +7,11 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 Rgba8 const Rgba8::Red(255, 0, 0);
+Rgba8 const Rgba8::DarkBlue(0, 0, 150);
+Rgba8 const Rgba8::DarkOceanBlue(6, 66, 115);
 Rgba8 const Rgba8::Blue(0, 0, 255);
 Rgba8 const Rgba8::LightBlue(51,255,255);
+Rgba8 const Rgba8::LightOceanBlue(29, 162, 216);
 Rgba8 const Rgba8::Cerulean(0,171,240);
 Rgba8 const Rgba8::Green(0, 255, 0);
 Rgba8 const Rgba8::Cyan(0, 255, 255);

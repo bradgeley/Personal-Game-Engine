@@ -8,6 +8,7 @@
 struct SCDebug
 {
 	bool m_physicsDebugDraw = false;
+	bool m_fpsCounter = true;
 
 	VertexBuffer m_debugDrawVerts;
 };

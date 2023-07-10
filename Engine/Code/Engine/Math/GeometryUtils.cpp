@@ -164,7 +164,6 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
 
         discPosA += displacementA;
         discPosB += displacementB;
-
         
         float A_speedNorm = DotProduct2D(discVelA, collisionNormal);
         float B_speedNorm = DotProduct2D(discVelB, collisionNormal);
@@ -195,7 +194,7 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
                 // v1f = vf + (1/2) * v_rel_final
                 // v2f = vf - (1/2) * v_rel_final
                 float halfSpeedDiffFinal = (0.5f) * elasticity * speedDiffInitial;
-                float finalVelocity = (massA + A_speedNorm + massB * B_speedNorm) * oneOverCombinedMass;
+                float finalVelocity = (massA * A_speedNorm + massB * B_speedNorm) * oneOverCombinedMass;
                 float A_speedNormF = finalVelocity - halfSpeedDiffFinal;
                 float B_speedNormF = finalVelocity + halfSpeedDiffFinal;
 

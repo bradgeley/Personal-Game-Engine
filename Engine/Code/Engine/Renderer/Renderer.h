@@ -59,9 +59,11 @@ public:
     
     void BeginWindow(Window const* window);
     void EndWindow(Window const* window);
+    Window const* GetCurrentWindow() const;
     
     void BeginCamera(Camera const& camera);
     void EndCamera(Camera const& camera);
+    Camera const* GetCurrentCamera() const;
 
     void Present() const;
 

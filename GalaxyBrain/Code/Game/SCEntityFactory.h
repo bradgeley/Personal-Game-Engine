@@ -29,10 +29,5 @@ struct SCEntityFactory
     
     std::vector<SpawnInfo> m_entitiesToSpawn;
     std::vector<EntityID> m_entitiesToDestroy;
-
-protected:
-
-    friend class SEntityFactory;
-    
     std::unordered_map<std::string, EntityDef*> m_entityDefinitions;
 };

@@ -32,8 +32,11 @@ public:
 public:
     
     static Rgba8 const Red;
+    static Rgba8 const DarkBlue;
+    static Rgba8 const DarkOceanBlue;
     static Rgba8 const Blue;
     static Rgba8 const LightBlue;
+    static Rgba8 const LightOceanBlue;
     static Rgba8 const Cerulean;
     static Rgba8 const Green;
     static Rgba8 const Cyan;

@@ -85,6 +85,11 @@ void Game::Update(float deltaSeconds)
         g_app->Quit();
     }
 
+    if (g_input->IsKeyDown('T'))
+    {
+        deltaSeconds *= 10.f;
+    }
+
     // g_ecs->RunFrame(deltaSeconds);
     g_ecs->RunSystemSubgraph((int) FramePhase::PrePhysics, deltaSeconds);
     g_ecs->RunSystemSubgraph((int) FramePhase::Physics, deltaSeconds);

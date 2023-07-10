@@ -4,6 +4,7 @@
 #include "Game/SCEntityFactory.h"
 #include "Game/SCDebug.h"
 #include "Engine/Multithreading/JobSystemDebug.h"
+#include "PlanetGenerator.h"
 
 
 
@@ -48,29 +49,41 @@ void SDebugKeys::Run(SystemContext const& context)
         SCEntityFactory* factory = g_ecs->GetComponent<SCEntityFactory>();
 
         SpawnInfo playerInfo;
-        playerInfo.m_spawnPos = Vec2(50.f, 25.f);
+        playerInfo.m_spawnPos = Vec2(5000.f, 2500.f);
         playerInfo.m_def = factory->GetEntityDef("Player");
         playerInfo.m_spawnVelocity = Vec2(0.f, 2000.f);
         factory->m_entitiesToSpawn.emplace_back(playerInfo);
 
-        SpawnInfo asteroidInfo;
-        asteroidInfo.m_spawnPos = Vec2(55.f, 30.f);
-        asteroidInfo.m_def = factory->GetEntityDef("Asteroid");
-        asteroidInfo.m_spawnVelocity = Vec2(0.f, 2000.f);
-        factory->m_entitiesToSpawn.emplace_back(asteroidInfo);
+        // SpawnInfo asteroidInfo;
+        // asteroidInfo.m_spawnPos = Vec2(55.f, 30.f);
+        // asteroidInfo.m_def = factory->GetEntityDef("Asteroid");
+        // asteroidInfo.m_spawnVelocity = Vec2(0.f, 2000.f);
+        // factory->m_entitiesToSpawn.emplace_back(asteroidInfo);
 
         SpawnInfo earthInfo;
-        earthInfo.m_spawnPos = Vec2(-2500.f, 0.f);
-        earthInfo.m_spawnVelocity = Vec2(0.f, 3000.f);
+        earthInfo.m_spawnPos = Vec2(-105'000.f, 0.f);
+        earthInfo.m_spawnVelocity = Vec2(0.f, 5000.f);
         earthInfo.m_def = factory->GetEntityDef("Earth");
         factory->m_entitiesToSpawn.emplace_back(earthInfo);
 
-        earthInfo.m_spawnPos = Vec2(2500.f, 0.f);
-        earthInfo.m_spawnVelocity = Vec2(0.f, 2500.f);
-        factory->m_entitiesToSpawn.emplace_back(earthInfo);
+        SpawnInfo genPlanetInfo;
+        genPlanetInfo.m_def = PlanetGenerator::Generate(0);
+        genPlanetInfo.m_spawnPos = Vec2(10'000.f, 0.f);
+        genPlanetInfo.m_spawnVelocity = Vec2(0.f, 5000.f);
+        factory->m_entitiesToSpawn.emplace_back(genPlanetInfo);
+
+        genPlanetInfo.m_def = PlanetGenerator::Generate(1);
+        genPlanetInfo.m_spawnPos = Vec2(0.f, 5'000.f);
+        genPlanetInfo.m_spawnVelocity = Vec2(5000.f, 0.f);
+        factory->m_entitiesToSpawn.emplace_back(genPlanetInfo);
+
+        genPlanetInfo.m_def = PlanetGenerator::Generate(2);
+        genPlanetInfo.m_spawnPos = Vec2(3000.f, -10'000.f);
+        genPlanetInfo.m_spawnVelocity = Vec2(-5000.f, 0.f);
+        factory->m_entitiesToSpawn.emplace_back(genPlanetInfo);
 
         SpawnInfo sunInfo;
-        sunInfo.m_spawnPos = Vec2(100000.f, 0.f);
+        sunInfo.m_spawnPos = Vec2(0.f, 0.f);
         sunInfo.m_spawnVelocity = Vec2(0.f, 0.f);
         sunInfo.m_def = factory->GetEntityDef("Sun");
         factory->m_entitiesToSpawn.emplace_back(sunInfo);

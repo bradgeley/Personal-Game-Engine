@@ -130,6 +130,14 @@ void Renderer::EndWindow(Window const* window)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Window const* Renderer::GetCurrentWindow() const
+{
+	return m_currentWindow;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::BeginCamera(Camera const& camera)
 {
 	m_currentCamera = &camera;
@@ -161,6 +169,14 @@ void Renderer::EndCamera(Camera const& camera)
 {
 	UNUSED(camera)
 	m_currentCamera = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Camera const* Renderer::GetCurrentCamera() const
+{
+	return m_currentCamera;
 }
 
 

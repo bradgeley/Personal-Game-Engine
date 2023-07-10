@@ -15,7 +15,7 @@
 
 
 // Todo: name star "Sonali Ah La La"
-constexpr int STAR_COUNT = 150;
+constexpr int STAR_COUNT = 250;
 
 
 
@@ -60,7 +60,7 @@ void SBackgroundStar::Run(SystemContext const& context)
 
 			bool wentOffScreen = true;
 			if (star.m_pos.x > g_window->GetAspect()) star.m_pos.x -= g_window->GetAspect();
-			else if (star.m_pos.x < 0.f) star.m_pos.x += 1.f;
+			else if (star.m_pos.x < 0.f) star.m_pos.x += g_window->GetAspect();
 			else if (star.m_pos.y > 1.f) star.m_pos.y -= 1.f;
 			else if (star.m_pos.y < 0.f) star.m_pos.y += 1.f;
 			else wentOffScreen = false;
