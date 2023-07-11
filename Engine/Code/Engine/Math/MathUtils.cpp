@@ -295,3 +295,9 @@ float SqrtF(float val)
 {
     return sqrtf(val);
 }
+
+
+float AbsF(float val)
+{
+    return fabsf(val);
+}

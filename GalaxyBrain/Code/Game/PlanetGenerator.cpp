@@ -38,8 +38,9 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 
 	// Randomize other planet factors
 	float seaLevel = (GetPerlinNoise1D(seed) + 1.f) * 0.5f; // [0,1]
-	float snowcapLevel = GetPerlinNoise1D(seed); // [0,1]
+	float snowcapLevel = (GetPerlinNoise1D(seed + 1) + 1.f) * 0.5f; // [0,1]
 	snowcapLevel = RangeMap(snowcapLevel, -1.f, 1.f, seaLevel, 1.f); // [seaLevel, 1.f]
+	float cloudiness = (GetPerlinNoise1D(seed + 2) + 1.f) * 0.5f; // [0,1]
 
 	// Generate unique planet background texture
 	Image image;
@@ -48,23 +49,37 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 	{
 		for (int x = 0; x < image.GetWidth(); ++x)
 		{
-			float terrainHeight = (GetPerlinNoise2D(x, y, terrainNoiseSize, 5, 0.5f, 2.f, true, seed) + 1.f) * 0.5f; // [0,1]
-			Rgba8 tint;
+			float terrainHeight = (GetPerlinNoise2D(x, y, terrainNoiseSize, 8, 0.5f, 2.f, true, seed + 10) + 1.f) * 0.5f; // [0,1]
+			terrainHeight = SmoothStep3(terrainHeight);
+
+			Rgba8 terrainTint;
 			if (terrainHeight < seaLevel)
 			{
 				float seaDepth = RangeMap(terrainHeight, 0.f, 1.f, 0.f, terrainHeight);
-				tint = Rgba8::Lerp(Rgba8::DarkOceanBlue, Rgba8::LightOceanBlue, seaDepth);
+				terrainTint = Rgba8::Lerp(Rgba8::DarkOceanBlue, Rgba8::LightOceanBlue, seaDepth);
 			}
 			else
 			{
 				float mountainHeight = RangeMap(terrainHeight, 0.f, 1.f, terrainHeight, 1.f);
-				tint = Rgba8::Lerp(Rgba8::Rgba8::Green, Rgba8::DarkGray, mountainHeight);
+				terrainTint = Rgba8::Lerp(Rgba8::Rgba8::Green, Rgba8::DarkGray, mountainHeight);
 			}
 			if (terrainHeight > snowcapLevel)
 			{
-				tint = Rgba8::White;
+				terrainTint = Rgba8::White;
 			}
-			image.Set(x, y, tint);
+
+			Rgba8 finalTint = terrainTint;
+
+			float clouds = AbsF(GetPerlinNoise2D(x, y, terrainNoiseSize, 8, 0.5f, 2.5f, true, seed + 11)); // [0,1]
+			Rgba8 cloudTint = Rgba8::TransparentWhite;
+			float cloudThreshold = 0.35f;
+			if (clouds > cloudThreshold)
+			{
+				cloudTint.a = RangeMap(clouds, cloudThreshold, 1.f, 0.f, 255.f);
+				finalTint = Rgba8::Blend(cloudTint, terrainTint);
+			}
+
+			image.Set(x, y, finalTint);
 		}
 	}
 

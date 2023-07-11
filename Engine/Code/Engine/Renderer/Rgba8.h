@@ -28,6 +28,7 @@ public:
 public:
     
     static Rgba8 Lerp(Rgba8 const& start, Rgba8 const& end, float t);
+    static Rgba8 Blend(Rgba8 const& a, Rgba8 const& b);
     
 public:
     
@@ -42,10 +43,12 @@ public:
     static Rgba8 const Cyan;
     static Rgba8 const DarkGreen;
     static Rgba8 const Black;
+    static Rgba8 const TransparentBlack;
     static Rgba8 const LightGray;
     static Rgba8 const Gray;
     static Rgba8 const DarkGray;
     static Rgba8 const White;
+    static Rgba8 const TransparentWhite;
     static Rgba8 const Gold;
     static Rgba8 const Orange;
     static Rgba8 const Yellow;

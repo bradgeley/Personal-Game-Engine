@@ -92,3 +92,4 @@ int   Max(int a, int b);
 int   FloorF(float val);
 int   CeilingF(float val);
 float SqrtF(float val);
+float AbsF(float val);

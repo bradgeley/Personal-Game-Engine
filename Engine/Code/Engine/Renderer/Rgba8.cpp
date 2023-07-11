@@ -17,10 +17,12 @@ Rgba8 const Rgba8::Green(0, 255, 0);
 Rgba8 const Rgba8::Cyan(0, 255, 255);
 Rgba8 const Rgba8::DarkGreen(0, 127, 0);
 Rgba8 const Rgba8::Black(0, 0, 0);
+Rgba8 const Rgba8::TransparentBlack(0, 0, 0, 0);
 Rgba8 const Rgba8::LightGray(150, 150, 150);
 Rgba8 const Rgba8::DarkGray(50, 50, 50);
 Rgba8 const Rgba8::Gray(100, 100, 100, 255);
 Rgba8 const Rgba8::White(255, 255, 255);
+Rgba8 const Rgba8::TransparentWhite(255, 255, 255, 0);
 Rgba8 const Rgba8::Gold(255, 127, 0);
 Rgba8 const Rgba8::Yellow(255, 255, 0);
 Rgba8 const Rgba8::Orange(255, 165, 0);
@@ -83,5 +85,18 @@ Rgba8 Rgba8::Lerp(Rgba8 const& start, Rgba8 const& end, float t)
     result.g = static_cast<uint8_t>(InterpolateInt(start.g, end.g, t));
     result.b = static_cast<uint8_t>(InterpolateInt(start.b, end.b, t));
     result.a = static_cast<uint8_t>(InterpolateInt(start.a, end.a, t));
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Rgba8 Rgba8::Blend(Rgba8 const& a, Rgba8 const& b)
+{
+    Rgba8 result;
+    result.r = (uint8_t) (float)((a.r + b.r) * 0.5f);
+    result.g = (uint8_t) (float)((a.g + b.g) * 0.5f);
+    result.b = (uint8_t) (float)((a.b + b.b) * 0.5f);
+    result.a = (uint8_t) (float)((a.a + b.a) * 0.5f);
     return result;
 }
