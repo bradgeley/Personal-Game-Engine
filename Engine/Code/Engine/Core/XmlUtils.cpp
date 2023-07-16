@@ -42,6 +42,18 @@ float ParseXmlAttribute(XmlElement const& element, char const* attributeName, fl
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool ParseXmlAttribute(XmlElement const& element, char const* attributeName, bool defaultValue)
+{
+    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    {
+        return attrib->BoolValue();
+    }
+    return defaultValue;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 int ParseXmlAttribute(XmlElement const& element, char const* attributeName, int defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
