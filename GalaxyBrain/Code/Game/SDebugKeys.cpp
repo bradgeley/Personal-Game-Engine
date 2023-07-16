@@ -43,15 +43,16 @@ void SDebugKeys::Run(SystemContext const& context)
     }
 
     if (g_input->WasKeyJustReleased(' '))
-    {
+    { 
+        // Todo: move to game modes
         g_ecs->DestroyAllEntities();
 
         SCEntityFactory* factory = g_ecs->GetComponent<SCEntityFactory>();
 
         SpawnInfo playerInfo;
-        playerInfo.m_spawnPos = Vec2(5000.f, 2500.f);
+        playerInfo.m_spawnPos = Vec2(105'000.f, 0.f);
         playerInfo.m_def = factory->GetEntityDef("Player");
-        playerInfo.m_spawnVelocity = Vec2(0.f, 2000.f);
+        playerInfo.m_spawnVelocity = Vec2(0.f, 5000.f);
         factory->m_entitiesToSpawn.emplace_back(playerInfo);
 
         // SpawnInfo asteroidInfo;
@@ -60,26 +61,10 @@ void SDebugKeys::Run(SystemContext const& context)
         // asteroidInfo.m_spawnVelocity = Vec2(0.f, 2000.f);
         // factory->m_entitiesToSpawn.emplace_back(asteroidInfo);
 
-        SpawnInfo earthInfo;
-        earthInfo.m_spawnPos = Vec2(-105'000.f, 0.f);
-        earthInfo.m_spawnVelocity = Vec2(0.f, 5000.f);
-        earthInfo.m_def = factory->GetEntityDef("Earth");
-        factory->m_entitiesToSpawn.emplace_back(earthInfo);
-
         SpawnInfo genPlanetInfo;
         genPlanetInfo.m_def = PlanetGenerator::Generate(0);
-        genPlanetInfo.m_spawnPos = Vec2(10'000.f, 0.f);
+        genPlanetInfo.m_spawnPos = Vec2(100'000.f, 0.f);
         genPlanetInfo.m_spawnVelocity = Vec2(0.f, 5000.f);
-        factory->m_entitiesToSpawn.emplace_back(genPlanetInfo);
-
-        genPlanetInfo.m_def = PlanetGenerator::Generate(1);
-        genPlanetInfo.m_spawnPos = Vec2(0.f, 5'000.f);
-        genPlanetInfo.m_spawnVelocity = Vec2(5000.f, 0.f);
-        factory->m_entitiesToSpawn.emplace_back(genPlanetInfo);
-
-        genPlanetInfo.m_def = PlanetGenerator::Generate(2);
-        genPlanetInfo.m_spawnPos = Vec2(3000.f, -10'000.f);
-        genPlanetInfo.m_spawnVelocity = Vec2(-5000.f, 0.f);
         factory->m_entitiesToSpawn.emplace_back(genPlanetInfo);
 
         SpawnInfo sunInfo;

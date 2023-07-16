@@ -37,10 +37,10 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 	float terrainNoiseSize = 500.f;
 
 	// Randomize other planet factors
-	float seaLevel = (GetPerlinNoise1D(seed) + 1.f) * 0.5f; // [0,1]
-	float snowcapLevel = (GetPerlinNoise1D(seed + 1) + 1.f) * 0.5f; // [0,1]
-	snowcapLevel = RangeMap(snowcapLevel, -1.f, 1.f, seaLevel, 1.f); // [seaLevel, 1.f]
-	float cloudiness = (GetPerlinNoise1D(seed + 2) + 1.f) * 0.5f; // [0,1]
+	float seaLevel		= (GetPerlinNoise1D(seed) + 1.f) * 0.5f; // [0,1]
+	float snowcapLevel	= (GetPerlinNoise1D(seed + 1) + 1.f) * 0.5f; // [0,1]
+	snowcapLevel		= RangeMap(snowcapLevel, -1.f, 1.f, seaLevel, 1.f); // [seaLevel, 1.f]
+	float cloudiness	= (GetPerlinNoise1D(seed + 2) + 1.f) * 0.5f; // [0,1]
 
 	// Generate unique planet background texture
 	Image image;

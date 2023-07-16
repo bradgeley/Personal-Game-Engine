@@ -10,7 +10,5 @@
 //
 using EntityID = uint32_t;
 
-
-
-constexpr uint32_t ENTITY_ID_SINGLETON = 0;
-constexpr uint32_t ENTITY_ID_INVALID = MAX_ENTITIES;
+constexpr EntityID ENTITY_ID_SINGLETON	= 0;
+constexpr EntityID ENTITY_ID_INVALID	= MAX_ENTITIES;

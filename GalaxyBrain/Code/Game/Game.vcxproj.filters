@@ -28,9 +28,6 @@
     <ClCompile Include="Main_Windows.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="PlanetGenerator.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="SGravity.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
@@ -83,6 +80,9 @@
       <Filter>Singletons</Filter>
     </ClCompile>
     <ClCompile Include="SCRenderer.cpp">
+      <Filter>Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="PlanetGenerator.cpp">
       <Filter>Singletons</Filter>
     </ClCompile>
   </ItemGroup>

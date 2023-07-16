@@ -100,8 +100,6 @@ void WindowsApplication::Shutdown()
 {
     SHUTDOWN_AND_DESTROY(m_game)
     SHUTDOWN_AND_DESTROY(m_engine)
-    delete g_rng;
-    g_rng = nullptr;
 }
 
 
