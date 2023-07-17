@@ -10,14 +10,9 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-constexpr int MAX_Z_LAYERS = 2;
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void SRenderDebug::Startup()
 {
-
+    AddWriteDependencies<SCDebug, Renderer>();
 }
 
 
@@ -26,7 +21,8 @@ void SRenderDebug::Startup()
 void SRenderDebug::Run(SystemContext const& context)
 {
     auto& scDebug = g_ecs->GetSingleton<SCDebug>();
-
+    
+    // Render the verts we pushed these verts in place
     g_renderer->SetModelConstants(ModelConstants());
     g_renderer->BindShader(0);
     g_renderer->BindTexture(0);

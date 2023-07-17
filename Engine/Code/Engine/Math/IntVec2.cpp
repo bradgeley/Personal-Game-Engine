@@ -50,6 +50,11 @@ float IntVec2::GetAspect() const
 }
 
 
+IntVec2 IntVec2::GetCenter() const
+{
+    return IntVec2(x / 2, y / 2);
+}
+
 
 bool IntVec2::operator==(const IntVec2& other)
 {

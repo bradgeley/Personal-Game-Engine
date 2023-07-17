@@ -39,6 +39,7 @@ void SRender::Run(SystemContext const& context)
     {
         CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
         CTransform& trans = *transStorage.Get(renderIt.m_currentIndex);
+
         render.m_modelConstants.m_modelMatrix.Reset();
         render.m_modelConstants.m_modelMatrix.AppendZRotation(trans.m_orientation);
         render.m_modelConstants.m_modelMatrix.AppendUniformScale2D(render.m_scale);

@@ -30,10 +30,12 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 
 	// Randomize size of planet
 	g_rng->SetSeed(seed);
-	float radius = GetNoiseZeroToOne1D(0, seed) * 10'000.f + 1000.f;
+	float radius = 100'000.f;
+	float radiusSquared = radius * radius;
 	result->m_collision->m_radius = radius;
 	result->m_render->m_scale = radius;
-	result->m_physics->m_mass = radius * radius;
+	result->m_physics->m_mass = radius;
+	result->m_physics->m_angularVelocity = g_rng->PlusOrMinus() * g_rng->GetRandomFloatInRange(5.f, 10.f);
 	float terrainNoiseSize = 500.f;
 
 	// Randomize other planet factors
@@ -44,11 +46,22 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 
 	// Generate unique planet background texture
 	Image image;
-	image.Initialize(IntVec2(1024, 1024), Rgba8::White);
+	IntVec2 imageDims = IntVec2(1024, 1024);
+	Vec2 imageCenter = Vec2(imageDims.x * 0.5f, imageDims.y * 0.5f);
+	float radiusInImagePixels = imageCenter.x;
+	float radiusInImagePixelsSquared = radiusInImagePixels * radiusInImagePixels;
+	image.Initialize(IntVec2(1024, 1024), Rgba8::TransparentBlack);
 	for (int y = 0; y < image.GetHeight(); ++y)
 	{
 		for (int x = 0; x < image.GetWidth(); ++x)
 		{
+			float distSquared = (Vec2(x, y) - imageCenter).GetLengthSquared();
+			if (distSquared > radiusInImagePixelsSquared)
+			{
+				// Don't bother generating noise for the edges of the texture
+				continue;
+			}
+
 			float terrainHeight = (GetPerlinNoise2D(x, y, terrainNoiseSize, 8, 0.5f, 2.f, true, seed + 10) + 1.f) * 0.5f; // [0,1]
 			terrainHeight = SmoothStep3(terrainHeight);
 
@@ -69,16 +82,6 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 			}
 
 			Rgba8 finalTint = terrainTint;
-
-			float clouds = AbsF(GetPerlinNoise2D(x, y, terrainNoiseSize, 8, 0.5f, 2.5f, true, seed + 11)); // [0,1]
-			Rgba8 cloudTint = Rgba8::TransparentWhite;
-			float cloudThreshold = 0.35f;
-			if (clouds > cloudThreshold)
-			{
-				cloudTint.a = RangeMap(clouds, cloudThreshold, 1.f, 0.f, 255.f);
-				finalTint = Rgba8::Blend(cloudTint, terrainTint);
-			}
-
 			image.Set(x, y, finalTint);
 		}
 	}

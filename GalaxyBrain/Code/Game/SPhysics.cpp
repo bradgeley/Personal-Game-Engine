@@ -4,6 +4,7 @@
 #include "Game/CTransform.h"
 #include "Game/SCDebug.h"
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -35,12 +36,23 @@ void SPhysics::Run(SystemContext const& context)
         // Velocity -> Position
         transform.m_pos += phys.m_velocity * context.m_deltaSeconds;
 
-        // Todo: Orientation
+        // Angular Velocity -> Orientation
+        transform.m_orientation += phys.m_angularVelocity * context.m_deltaSeconds;
 
+        // Polar Coords (if attached to an actor)
+        if (transform.m_attachedToEntity != ENTITY_ID_INVALID)
+        {
+            transform.m_polarCoords += phys.m_polarVelocity * context.m_deltaSeconds;
+            CTransform const& attachedToTransform = transforms[transform.m_attachedToEntity];
+            float totalOrientation = transform.m_polarCoords.x + attachedToTransform.m_orientation;
+            transform.m_pos = attachedToTransform.m_pos + Vec2::MakeFromPolarCoords(totalOrientation, transform.m_polarCoords.y);
+        }
+
+        // Debug Draw
         if (scDebug.m_physicsDebugDraw)
         {
-            AddVertsForLine2D(scDebug.m_debugDrawVerts.GetMutableVerts(), transform.m_pos, transform.m_pos + phys.m_velocity, 1.f, Rgba8::Yellow);
-            AddVertsForLine2D(scDebug.m_debugDrawVerts.GetMutableVerts(), transform.m_pos, transform.m_pos + phys.m_frameAcceleration, 1.f, Rgba8::Orange);
+            AddVertsForLine2D(scDebug.m_debugDrawVerts.GetMutableVerts(), transform.m_pos, transform.m_pos + phys.m_velocity, 5.f, Rgba8::Yellow);
+            AddVertsForLine2D(scDebug.m_debugDrawVerts.GetMutableVerts(), transform.m_pos, transform.m_pos + phys.m_frameAcceleration, 5.f, Rgba8::Orange);
         }
 
         // Reset for next frame

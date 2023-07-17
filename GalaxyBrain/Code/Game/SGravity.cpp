@@ -35,6 +35,11 @@ void SGravity::Run(SystemContext const& context)
         }
         
         auto& transA = transforms[entA];
+        if (transA.m_attachedToEntity != ENTITY_ID_INVALID)
+        {
+            // Ignore gravity altogether if attached (the attaching actor will move with gravity and that will affect the attached)
+            continue;
+        }
 
         for (auto itB = g_ecs->Iterate<CTransform, CPhysics>(context); itB.IsValid(); ++itB)
         {
@@ -45,6 +50,12 @@ void SGravity::Run(SystemContext const& context)
             }
             
             auto& transB = transforms[entB];
+            if (transB.m_attachedToEntity != ENTITY_ID_INVALID)
+            {
+                // Ignore gravity altogether if attached (the attaching actor will move with gravity and that will affect the attached)
+                continue;
+            }
+
             Vec2 bToA = transA.m_pos - transB.m_pos;
             float distanceSquared = bToA.GetLengthSquared();
             if (distanceSquared <= 0.001f)

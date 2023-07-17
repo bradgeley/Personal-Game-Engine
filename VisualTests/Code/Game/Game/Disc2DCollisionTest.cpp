@@ -12,8 +12,8 @@
 
 
 
-constexpr float MIN_ELAS = 0.f;
-constexpr float MAX_ELAS = 0.5f;
+constexpr float MIN_ELAS = 1.f;
+constexpr float MAX_ELAS = 1.f;
 constexpr float MIN_RADIUS = 0.25f;
 constexpr float MAX_RADIUS = 4.f;
 Vec2 const GRAVITY = Vec2(0.f, -20.f);

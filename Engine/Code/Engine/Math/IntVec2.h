@@ -28,9 +28,10 @@ public:
     int GetLowest() const;
     int GetHighest() const;
 
-public:
-
     float GetAspect() const;
+    IntVec2 GetCenter() const;
+
+public:
 
     // Component-wise const operators
     bool operator==(const IntVec2& other);

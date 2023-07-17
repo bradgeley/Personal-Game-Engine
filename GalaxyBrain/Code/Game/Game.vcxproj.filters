@@ -82,8 +82,11 @@
     <ClCompile Include="SCRenderer.cpp">
       <Filter>Singletons</Filter>
     </ClCompile>
-    <ClCompile Include="PlanetGenerator.cpp">
+    <ClCompile Include="SCCollision.cpp">
       <Filter>Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="PlanetGenerator.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +177,9 @@
       <Filter>Singletons</Filter>
     </ClInclude>
     <ClInclude Include="SCRenderer.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="SCCollision.h">
       <Filter>Singletons</Filter>
     </ClInclude>
   </ItemGroup>

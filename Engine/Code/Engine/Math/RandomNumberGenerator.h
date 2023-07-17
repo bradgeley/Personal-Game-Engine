@@ -20,10 +20,11 @@ public:
 
     void SetSeed(int seed);
     int Rand();
+    int PlusOrMinus(float oddsPlus = 0.5f);
     int GetRandomIntInRange(int minInclusive, int maxInclusive);
     float GetRandomFloatZeroToOne();
     float GetRandomFloatInRange(float minInclusive, float maxInclusive);
-    bool CoinFlip(float odds);
+    bool CoinFlip(float oddsTrue = 0.5f);
     
 private:
 

@@ -14,6 +14,16 @@ enum class CollisionType
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class AttachmentType
+{
+    None,
+    CanAttach,
+    CanHaveAttachedEntities,
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct CCollision
 {
     CCollision() = default;
@@ -21,4 +31,5 @@ struct CCollision
     
     float m_radius = 0.f;
     CollisionType m_type = CollisionType::Static;
+    AttachmentType m_attachType = AttachmentType::None;
 };

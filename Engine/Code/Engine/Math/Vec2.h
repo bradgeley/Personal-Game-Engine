@@ -32,6 +32,7 @@ public:
     
     float GetLength() const;
     float GetLengthSquared() const;
+    float GetAngleDegrees() const;
     void Normalize();
     Vec2 GetNormalized() const;
     Vec2 GetRotated90() const;
@@ -46,7 +47,8 @@ public:
     void ClampLengthMin(float minLength);
     void ClampLength(float minLength, float maxLength);
 
-    static Vec2 MakeFromUnitCircleDegrees(float theta);
+    static Vec2 MakeFromUnitCircleDegrees(float angleDegrees);
+    static Vec2 MakeFromPolarCoords(float angleDegrees, float radius);
 
     // Component-wise const operators
     Vec2 operator-() const;

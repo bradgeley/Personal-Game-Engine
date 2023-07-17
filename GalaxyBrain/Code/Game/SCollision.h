@@ -11,5 +11,6 @@ public:
 
     void Startup() override;
     void Run(SystemContext const& context) override;
-    
+
+    void DetachEntities(EntityID a, EntityID b) const;
 };

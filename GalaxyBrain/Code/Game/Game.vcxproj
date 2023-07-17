@@ -201,6 +201,7 @@
     <ClCompile Include="PlanetGenerator.cpp" />
     <ClCompile Include="SBackgroundStar.cpp" />
     <ClCompile Include="SCamera.cpp" />
+    <ClCompile Include="SCCollision.cpp" />
     <ClCompile Include="SCDebug.cpp" />
     <ClCompile Include="SCEntityFactory.cpp" />
     <ClCompile Include="SCollision.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="PlanetGenerator.h" />
     <ClInclude Include="SBackgroundStar.h" />
     <ClInclude Include="SCamera.h" />
+    <ClInclude Include="SCCollision.h" />
     <ClInclude Include="SCDebug.h" />
     <ClInclude Include="SCEntityFactory.h" />
     <ClInclude Include="SCollision.h" />

@@ -35,6 +35,14 @@ int RandomNumberGenerator::Rand()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int RandomNumberGenerator::PlusOrMinus(float oddsPlus)
+{
+    return CoinFlip(oddsPlus) ? 1 : -1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 int RandomNumberGenerator::GetRandomIntInRange(int minInclusive, int maxInclusive)
 {
     int range = maxInclusive - minInclusive + 1; //overflow?
@@ -61,7 +69,7 @@ float RandomNumberGenerator::GetRandomFloatInRange(float minInclusive, float max
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool RandomNumberGenerator::CoinFlip(float odds)
+bool RandomNumberGenerator::CoinFlip(float oddsTrue)
 {
-    return GetRandomFloatZeroToOne() <= odds;
+    return GetRandomFloatZeroToOne() <= oddsTrue;
 }

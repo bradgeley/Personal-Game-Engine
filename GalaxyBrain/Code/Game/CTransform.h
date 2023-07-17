@@ -10,7 +10,9 @@ struct CTransform
 {
     CTransform() = default;
     
-    EntityID    m_attachedToEntity      = ENTITY_ID_INVALID;
     Vec2        m_pos                   = Vec2::ZeroVector;
     float       m_orientation           = 0.f;
+
+    EntityID    m_attachedToEntity      = ENTITY_ID_INVALID;
+    Vec2        m_polarCoords           = Vec2::ZeroVector;
 };

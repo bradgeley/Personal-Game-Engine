@@ -20,4 +20,14 @@ CCollision::CCollision(void const* xmlElement)
     {
         m_type = CollisionType::Mobile;
     }
+
+    std::string attachType = ParseXmlAttribute(elem, "attachType", "");
+    if (attachType == "canAttach")
+    {
+        m_attachType = AttachmentType::CanAttach;
+    }
+    else if (attachType == "canHaveAttachedEntities")
+    {
+        m_attachType = AttachmentType::CanHaveAttachedEntities;
+    }
 }

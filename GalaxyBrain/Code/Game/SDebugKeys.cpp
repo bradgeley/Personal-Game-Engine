@@ -50,7 +50,7 @@ void SDebugKeys::Run(SystemContext const& context)
         SCEntityFactory* factory = g_ecs->GetComponent<SCEntityFactory>();
 
         SpawnInfo playerInfo;
-        playerInfo.m_spawnPos = Vec2(105'000.f, 0.f);
+        playerInfo.m_spawnPos = Vec2(205'000.f, 0.f);
         playerInfo.m_def = factory->GetEntityDef("Player");
         playerInfo.m_spawnVelocity = Vec2(0.f, 5000.f);
         factory->m_entitiesToSpawn.emplace_back(playerInfo);
@@ -63,7 +63,7 @@ void SDebugKeys::Run(SystemContext const& context)
 
         SpawnInfo genPlanetInfo;
         genPlanetInfo.m_def = PlanetGenerator::Generate(0);
-        genPlanetInfo.m_spawnPos = Vec2(100'000.f, 0.f);
+        genPlanetInfo.m_spawnPos = Vec2(200'000.f, 0.f);
         genPlanetInfo.m_spawnVelocity = Vec2(0.f, 5000.f);
         factory->m_entitiesToSpawn.emplace_back(genPlanetInfo);
 

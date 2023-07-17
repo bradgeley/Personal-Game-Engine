@@ -44,6 +44,12 @@ float Vec2::GetLengthSquared() const
 }
 
 
+float Vec2::GetAngleDegrees() const
+{
+    return RadiansToDegrees(atan2f(y, x));
+}
+
+
 void Vec2::Normalize()
 {
     NormalizeVector2D(*this);
@@ -145,12 +151,18 @@ void Vec2::ClampLength(float minLength, float maxLength)
 }
 
 
-Vec2 Vec2::MakeFromUnitCircleDegrees(float theta)
+Vec2 Vec2::MakeFromUnitCircleDegrees(float angleDegrees)
 {
     Vec2 result;
-    result.x = CosDegrees(theta);
-    result.y = SinDegrees(theta);
+    result.x = CosDegrees(angleDegrees);
+    result.y = SinDegrees(angleDegrees);
     return result;
+}
+
+
+Vec2 Vec2::MakeFromPolarCoords(float angleDegrees, float radius)
+{
+    return MakeFromUnitCircleDegrees(angleDegrees) * radius;
 }
 
 
