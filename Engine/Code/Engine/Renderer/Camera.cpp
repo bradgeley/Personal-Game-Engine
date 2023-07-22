@@ -210,9 +210,9 @@ void Camera::UpdateViewMatrix() const
 { 
     if (m_viewMatrixDirty)
     {
-        m_cameraConstants.m_worldToCamera = Mat44::CreateZRotationDegrees(m_rotation2D);
-        m_cameraConstants.m_worldToCamera.SetTranslation3D(m_position);
-        m_cameraConstants.m_worldToCamera = m_cameraConstants.m_worldToCamera.GetOrthoNormalInverse();
+        Mat44 cameraToWorld = Mat44::CreateZRotationDegrees(m_rotation2D);
+        cameraToWorld.SetTranslation3D(m_position);
+        m_cameraConstants.m_worldToCamera = cameraToWorld.GetOrthoNormalInverse();
         m_viewMatrixDirty = false;
     }
 }

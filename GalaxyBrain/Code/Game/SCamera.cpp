@@ -25,7 +25,15 @@ void SCamera::Run(SystemContext const& context)
         CCamera& camera = *g_ecs->GetComponent<CCamera>(it.m_currentIndex);
 
         camera.m_camera.SetPosition(Vec3(transform.m_pos));
-        camera.m_camera.SetRotation2D(transform.m_orientation);
+
+        if (transform.m_attachedToEntity != ENTITY_ID_INVALID)
+        {
+            camera.m_camera.SetRotation2D(transform.m_polarCoords.x);
+        }
+        else
+        {
+            camera.m_camera.SetRotation2D(0.f);
+        }
 
         // Zoom
         int mouseWheelChange = g_input->GetMouseWheelChange();

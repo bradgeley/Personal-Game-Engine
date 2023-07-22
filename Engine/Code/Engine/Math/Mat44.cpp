@@ -129,7 +129,7 @@ void Mat44::InvertOrthoNormal()
 	Vec3 translation = GetTranslation3D();
 	SetTranslation3D(Vec3::ZeroVector);
 	Transpose(); // Inverse of a pure rotation matrix is the transpose
-	SetTranslation3D(-translation); // Inverse of a pure translation is -
+	AppendTranslation3D(-translation); // Inverse of a pure translation is -
 }
 
 
@@ -140,7 +140,8 @@ Mat44 Mat44::GetOrthoNormalInverse() const
 	Mat44 copy = *this;
 	copy.SetTranslation3D(Vec3::ZeroVector);
 	copy.Transpose(); // Inverse of a pure rotation matrix is the transpose
-	copy.SetTranslation3D(-GetTranslation3D()); // Inverse of a pure translation is -
+	Vec3 inverseTranslation = -GetTranslation3D(); // Inverse of a pure translation is -
+	copy.AppendTranslation3D(inverseTranslation);
 	return copy;
 }
 
@@ -190,6 +191,14 @@ void Mat44::AppendUniformScale2D(float uniformScale)
 void Mat44::AppendUniformScale3D(float uniformScale)
 {
 	Append(CreateUniformScale3D(uniformScale));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Mat44::AppendTranslation3D(Vec3 const& translation)
+{
+	Append(CreateTranslation3D(translation));
 }
 
 
@@ -264,10 +273,20 @@ bool Mat44::operator==(Mat44 const& rhs) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Mat44 Mat44::CreateTranslation(float x, float y, float z)
+Mat44 Mat44::CreateTranslation3D(float x, float y, float z)
 {
 	Mat44 result;
 	result.SetTranslation(x, y, z);
+	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Mat44 Mat44::CreateTranslation3D(Vec3 const& translation)
+{
+	Mat44 result;
+	result.SetTranslation3D(translation);
 	return result;
 }
 

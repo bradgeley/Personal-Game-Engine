@@ -139,7 +139,7 @@ void DevConsole::Render() const
 
     // Translate by the animation fraction
     Mat44 modelMatrix;
-    modelMatrix.Append(Mat44::CreateTranslation(0.f, devConsoleOffset));
+    modelMatrix.Append(Mat44::CreateTranslation3D(0.f, devConsoleOffset));
     g_renderer->SetModelMatrix(modelMatrix);
 
     DrawBackground();
