@@ -144,8 +144,8 @@ void Renderer::BeginCamera(Camera const& camera)
 	
 	ResetRenderingPipelineState();
 
-	// Fill Camera Constants
-	m_dirtySettings.m_cameraConstants.m_cameraToClip = camera.GetOrthoProjectionMatrix();
+	// Fill Camera Constants, may need to recalculate matrices if camera moved
+	m_dirtySettings.m_cameraConstants = camera.GetCameraConstants();
 	
 	// Set viewport
 	IntVec2 windowDims = m_currentWindow->GetDimensions();

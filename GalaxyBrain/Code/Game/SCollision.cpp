@@ -88,7 +88,7 @@ void SCollision::Run(SystemContext const& context)
                     transA.m_attachedToEntity = itB.m_currentIndex;
                     Vec2 toCenter = (transA.m_pos - transB.m_pos);
                     float relativeAngle = toCenter.GetAngleDegrees() - transB.m_orientation;
-                    transA.m_polarCoords = Vec2(relativeAngle, toCenter.GetLength());
+                    transA.m_polarCoords = Vec2(relativeAngle, toCenter.GetLength() * 0.9999f); // Move in just a bit to prevent skating along the edge
                     physA.m_velocity = Vec2::ZeroVector;
                 }
                 bool BCanAttachToA = (collA.m_attachType == AttachmentType::CanHaveAttachedEntities && collB.m_attachType == AttachmentType::CanAttach);
@@ -127,7 +127,7 @@ void SCollision::DetachEntities(EntityID a, EntityID b) const
         float radius = toCenter.GetLength();
         toCenter /= radius;
         float speedAtRadius = DegreesToRadians(physB.m_angularVelocity) * radius;
-        physA.m_velocity += speedAtRadius * toCenter.GetRotated90();
+        physA.m_velocity = physB.m_velocity + speedAtRadius * toCenter.GetRotated90();
     }
 
     if (transB.m_attachedToEntity == a)
@@ -138,6 +138,6 @@ void SCollision::DetachEntities(EntityID a, EntityID b) const
         float radius = toCenter.GetLength();
         toCenter /= radius;
         float speedAtRadius = DegreesToRadians(physA.m_angularVelocity) * radius;
-        physB.m_velocity += speedAtRadius * toCenter.GetRotated90();
+        physB.m_velocity = physA.m_velocity + speedAtRadius * toCenter.GetRotated90();
     }
 }

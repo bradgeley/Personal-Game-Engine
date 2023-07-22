@@ -11,6 +11,7 @@ const Mat44 Mat44::Identity = Mat44();
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44::Mat44() : m_values{ 1, 0, 0, 0,  
                            0, 1, 0, 0,  
                            0, 0, 1, 0,  
@@ -21,6 +22,7 @@ Mat44::Mat44() : m_values{ 1, 0, 0, 0,
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44::Mat44(Vec2 const& iBasis2D, Vec2 const& jBasis2D, Vec2 const& translation2D)
     : m_values { iBasis2D.x,        iBasis2D.y,         0.f,    0.f,
                  jBasis2D.x,        jBasis2D.y,         0.f,    0.f,
@@ -32,6 +34,7 @@ Mat44::Mat44(Vec2 const& iBasis2D, Vec2 const& jBasis2D, Vec2 const& translation
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 float* Mat44::GetAsFloatArray()
 {
 	return m_values;
@@ -39,6 +42,7 @@ float* Mat44::GetAsFloatArray()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 float const* Mat44::GetAsFloatArray() const
 {
 	return m_values;
@@ -46,6 +50,7 @@ float const* Mat44::GetAsFloatArray() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 float& Mat44::operator[](int index)
 {
 	return m_values[index];
@@ -53,6 +58,7 @@ float& Mat44::operator[](int index)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::Reset()
 {
 	*this = Identity;
@@ -60,6 +66,7 @@ void Mat44::Reset()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::Append(Mat44 const& appendThis)
 {
     float const* append = appendThis.GetAsFloatArray();
@@ -90,6 +97,7 @@ void Mat44::Append(Mat44 const& appendThis)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44 Mat44::GetAppended(Mat44 const& appendThis) const
 {
 	Mat44 copy = Mat44(*this);
@@ -99,6 +107,54 @@ Mat44 Mat44::GetAppended(Mat44 const& appendThis) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+void Mat44::Transpose()
+{
+	// Simply swap values along the diagonal
+	SwapF(m_values[Iy], m_values[Jx]);
+	SwapF(m_values[Iz], m_values[Kx]);
+	SwapF(m_values[Iw], m_values[Tx]);
+
+	SwapF(m_values[Jz], m_values[Ky]);
+	SwapF(m_values[Jw], m_values[Ty]);
+
+	SwapF(m_values[Kw], m_values[Tz]);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Mat44::InvertOrthoNormal()
+{
+	Vec3 translation = GetTranslation3D();
+	SetTranslation3D(Vec3::ZeroVector);
+	Transpose(); // Inverse of a pure rotation matrix is the transpose
+	SetTranslation3D(-translation); // Inverse of a pure translation is -
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Mat44 Mat44::GetOrthoNormalInverse() const
+{
+	Mat44 copy = *this;
+	copy.SetTranslation3D(Vec3::ZeroVector);
+	copy.Transpose(); // Inverse of a pure rotation matrix is the transpose
+	copy.SetTranslation3D(-GetTranslation3D()); // Inverse of a pure translation is -
+	return copy;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec3 Mat44::GetTranslation3D() const
+{
+	return Vec3(m_values[Tx], m_values[Ty], m_values[Tz]);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::AppendXRotation(float degreesRotationAboutX)
 {
 	Append(CreateXRotationDegrees(degreesRotationAboutX));
@@ -106,6 +162,7 @@ void Mat44::AppendXRotation(float degreesRotationAboutX)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::AppendYRotation(float degreesRotationAboutY)
 {
 	Append(CreateYRotationDegrees(degreesRotationAboutY));
@@ -113,6 +170,7 @@ void Mat44::AppendYRotation(float degreesRotationAboutY)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::AppendZRotation(float degreesRotationAboutZ)
 {
 	Append(CreateZRotationDegrees(degreesRotationAboutZ));
@@ -120,6 +178,7 @@ void Mat44::AppendZRotation(float degreesRotationAboutZ)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::AppendUniformScale2D(float uniformScale)
 {
 	Append(CreateUniformScale2D(uniformScale));
@@ -127,6 +186,7 @@ void Mat44::AppendUniformScale2D(float uniformScale)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::AppendUniformScale3D(float uniformScale)
 {
 	Append(CreateUniformScale3D(uniformScale));
@@ -134,6 +194,7 @@ void Mat44::AppendUniformScale3D(float uniformScale)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::SetTranslation(float x, float y, float z, float w)
 {
 	m_values[Tx] = x;
@@ -144,6 +205,7 @@ void Mat44::SetTranslation(float x, float y, float z, float w)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::SetTranslation2D(Vec2 const& translationXY)
 {
 	m_values[Tx] = translationXY.x;
@@ -154,6 +216,7 @@ void Mat44::SetTranslation2D(Vec2 const& translationXY)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::SetTranslation3D(Vec3 const& translationXYZ)
 {
 	m_values[Tx] = translationXYZ.x;
@@ -164,6 +227,28 @@ void Mat44::SetTranslation3D(Vec3 const& translationXYZ)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+void Mat44::SetIJK(Vec3 const& i, Vec3 const& j, Vec3 const& k)
+{
+	m_values[Ix] = i.x;
+	m_values[Iy] = i.y;
+	m_values[Iz] = i.z;
+	m_values[Iw] = 0.f;
+
+	m_values[Jx] = j.x;
+	m_values[Jy] = j.y;
+	m_values[Jz] = j.z;
+	m_values[Jw] = 0.f;
+
+	m_values[Kx] = k.x;
+	m_values[Ky] = k.y;
+	m_values[Kz] = k.z;
+	m_values[Kw] = 0.f;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Mat44::operator==(Mat44 const& rhs) const
 {
 	for (int i = 0; i < 16; ++i)
@@ -178,6 +263,7 @@ bool Mat44::operator==(Mat44 const& rhs) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44 Mat44::CreateTranslation(float x, float y, float z)
 {
 	Mat44 result;
@@ -187,6 +273,7 @@ Mat44 Mat44::CreateTranslation(float x, float y, float z)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44 Mat44::CreateXRotationDegrees(float rotationDegreesAboutX)
 {
 	Mat44 xRotationMatrix;
@@ -205,6 +292,7 @@ Mat44 Mat44::CreateXRotationDegrees(float rotationDegreesAboutX)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44 Mat44::CreateYRotationDegrees(float rotationDegreesAboutY)
 {
 	Mat44 yRotationMatrix;
@@ -223,6 +311,7 @@ Mat44 Mat44::CreateYRotationDegrees(float rotationDegreesAboutY)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44 Mat44::CreateZRotationDegrees(float rotationDegreesAboutZ)
 {
 	Mat44 zRotationMatrix;
@@ -241,6 +330,7 @@ Mat44 Mat44::CreateZRotationDegrees(float rotationDegreesAboutZ)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44 Mat44::CreateUniformScale2D(float uniformScale)
 {
 	Mat44 result;
@@ -251,6 +341,7 @@ Mat44 Mat44::CreateUniformScale2D(float uniformScale)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44 Mat44::CreateUniformScale3D(float uniformScale)
 {
 	Mat44 result;
@@ -262,6 +353,7 @@ Mat44 Mat44::CreateUniformScale3D(float uniformScale)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Mat44 Mat44::CreateOrthoProjection(float left, float right, float bottom, float top, float zNear, float zFar)
 {
 	Mat44 result;

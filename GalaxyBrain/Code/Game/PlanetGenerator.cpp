@@ -30,7 +30,7 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 
 	// Randomize size of planet
 	g_rng->SetSeed(seed);
-	float radius = 100'000.f;
+	float radius = 10'000.f;
 	float radiusSquared = radius * radius;
 	result->m_collision->m_radius = radius;
 	result->m_render->m_scale = radius;
@@ -49,7 +49,7 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 	IntVec2 imageDims = IntVec2(1024, 1024);
 	Vec2 imageCenter = Vec2(imageDims.x * 0.5f, imageDims.y * 0.5f);
 	float radiusInImagePixels = imageCenter.x;
-	float radiusInImagePixelsSquared = radiusInImagePixels * radiusInImagePixels;
+	float radiusInImagePixelsSquared = (radiusInImagePixels + 1) * (radiusInImagePixels + 1); // Add 1 for buffer so we don't see transparent black pixels on edges
 	image.Initialize(IntVec2(1024, 1024), Rgba8::TransparentBlack);
 	for (int y = 0; y < image.GetHeight(); ++y)
 	{

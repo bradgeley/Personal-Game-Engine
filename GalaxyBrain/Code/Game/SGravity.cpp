@@ -6,7 +6,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-constexpr float GRAVITATIONAL_CONSTANT = 10.f;
+constexpr float GRAVITATIONAL_CONSTANT = 100.f;
 
 
 

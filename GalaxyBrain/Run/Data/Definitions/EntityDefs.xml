@@ -21,7 +21,7 @@
     <Entity name = "BasePlanet">
       <Transform/>
       <Movement speed="0"/>
-      <Render vbo="sphere_64" scale="100"/>
+      <Render vbo="sphere_640" scale="100"/>
       <Physics mass= "1000"/>
       <Collision radius="100" type="mobile" attachType="canHaveAttachedEntities"/>
     </Entity>

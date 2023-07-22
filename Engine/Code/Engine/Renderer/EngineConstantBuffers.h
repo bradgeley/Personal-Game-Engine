@@ -11,6 +11,7 @@ struct Rgba8;
 //----------------------------------------------------------------------------------------------------------------------
 struct CameraConstants
 {
+    Mat44 m_gameToRender    = Mat44();  // Game to Render Matrix (Simple axis transpose so user can define game axes)
     Mat44 m_worldToCamera   = Mat44();  // View Matrix
     Mat44 m_cameraToClip    = Mat44();  // Projection Matrix
     

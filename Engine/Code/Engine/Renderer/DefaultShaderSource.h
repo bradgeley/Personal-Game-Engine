@@ -23,6 +23,7 @@ struct v2p_t
 
 cbuffer CameraConstants : register(b2)
 {
+    float4x4 gameToRender;
     float4x4 worldToCamera;
     float4x4 cameraToClip;
 };
@@ -37,12 +38,13 @@ v2p_t VertexMain(vs_input_t input)
 {
     v2p_t v2p;
 
-    float4 localPosition = float4(input.position, 1.0);
-    float4 worldPosition = mul(localToWorld, localPosition);
-    float4 cameraPosition = mul(worldToCamera, worldPosition);
-    float4 clipPosition = mul(cameraToClip, cameraPosition);
+    float4 position = float4(input.position, 1.0);
+    position = mul(gameToRender,  position);
+    position = mul(localToWorld,  position);
+    position = mul(worldToCamera, position);
+    position = mul(cameraToClip,  position);
 
-    v2p.position = clipPosition;
+    v2p.position = position;
     v2p.tint = input.tint * modelTint;
     v2p.uvs = input.uvs;
 

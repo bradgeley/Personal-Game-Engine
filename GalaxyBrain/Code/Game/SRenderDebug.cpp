@@ -13,6 +13,10 @@
 void SRenderDebug::Startup()
 {
     AddWriteDependencies<SCDebug, Renderer>();
+
+    auto& scDebug = g_ecs->GetSingleton<SCDebug>();
+    float windowAspect = g_window->GetAspect();
+    scDebug.debugCamera = Camera(Vec3(0.f, 0.f, 0.f), Vec3(windowAspect, 1.f, 1.f));
 }
 
 
@@ -30,10 +34,9 @@ void SRenderDebug::Run(SystemContext const& context)
 
     scDebug.m_debugDrawVerts.ClearVerts();
 
-    float windowAspect = g_window->GetAspect();
-    Camera debugCamera(Vec3(0.f, 0.f, 0.f), Vec3(windowAspect, 1.f, 1.f));
+    
     g_renderer->BeginWindow(g_window);
-    g_renderer->BeginCamera(debugCamera);
+    g_renderer->BeginCamera(scDebug.debugCamera);
 
     VertexBuffer textVerts;
     auto font = g_renderer->GetDefaultFont();

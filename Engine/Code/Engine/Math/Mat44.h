@@ -34,6 +34,12 @@ public:
     void Reset();
     void Append(Mat44 const& appendThis);
     Mat44 GetAppended(Mat44 const& appendThis) const;
+    void Transpose();
+    void InvertOrthoNormal();
+    Mat44 GetOrthoNormalInverse() const;
+
+    Vec3 GetTranslation3D() const;
+
     void AppendXRotation(float degreesRotationAboutX);
     void AppendYRotation(float degreesRotationAboutY);
     void AppendZRotation(float degreesRotationAboutZ);
@@ -43,6 +49,7 @@ public:
     void SetTranslation(float x, float y = 0.f, float z = 0.f, float w = 1.f);
     void SetTranslation2D(Vec2 const& translationXY);
     void SetTranslation3D(Vec3 const& translationXYZ);
+    void SetIJK(Vec3 const& i, Vec3 const& j, Vec3 const& k);
 
     bool operator==(Mat44 const& rhs) const;
 

@@ -301,3 +301,11 @@ float AbsF(float val)
 {
     return fabsf(val);
 }
+
+
+void SwapF(float& a, float& b)
+{
+    float a_copy = a;
+    a = b;
+    b = a_copy;
+}

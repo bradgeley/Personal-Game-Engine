@@ -40,8 +40,15 @@ void SRender::Run(SystemContext const& context)
         CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
         CTransform& trans = *transStorage.Get(renderIt.m_currentIndex);
 
+        float rotation = trans.m_orientation;
+        if (trans.m_attachedToEntity != ENTITY_ID_INVALID)
+        {
+            CTransform& attachedToTrans = *transStorage.Get(trans.m_attachedToEntity);
+            rotation = attachedToTrans.m_orientation + trans.m_polarCoords.x + 90.f;
+        }
+
         render.m_modelConstants.m_modelMatrix.Reset();
-        render.m_modelConstants.m_modelMatrix.AppendZRotation(trans.m_orientation);
+        render.m_modelConstants.m_modelMatrix.AppendZRotation(rotation);
         render.m_modelConstants.m_modelMatrix.AppendUniformScale2D(render.m_scale);
         render.m_modelConstants.m_modelMatrix.SetTranslation2D(trans.m_pos);
     }

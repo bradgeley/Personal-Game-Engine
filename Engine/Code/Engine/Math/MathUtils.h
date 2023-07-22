@@ -93,3 +93,4 @@ int   FloorF(float val);
 int   CeilingF(float val);
 float SqrtF(float val);
 float AbsF(float val);
+void  SwapF(float& a, float& b);
