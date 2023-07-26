@@ -258,7 +258,10 @@ void AdminSystem::RegisterSystem(System* s, SystemSubgraphID subgraphID)
 void AdminSystem::SetSystemActive(std::string const& sysName, bool isActive) const
 {
 	System* s = GetSystemByName(sysName);
-	s->SetActive(isActive);
+	if (s)
+	{
+		s->SetActive(isActive);
+	}
 }
 
 

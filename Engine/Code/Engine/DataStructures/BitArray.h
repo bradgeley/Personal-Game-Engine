@@ -292,7 +292,7 @@ bool BitArray<t_size>::operator[](int index) const
 template<unsigned int t_size>
 int BitArray<t_size>::GetHammingWeight(size_t row)
 {
-	if (row == 0 ) return 0;
+	if (row == 0) return 0;
 	if (row == SIZE_MAX) return BIT_ARRAY_NUM_BITS_PER_ROW;
 	
 	int count = 0;

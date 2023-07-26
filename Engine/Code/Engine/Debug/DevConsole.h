@@ -5,6 +5,7 @@
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Rgba8.h"
 #include "DevConsoleCommandHistory.h"
+#include "DevConsoleCommandInfo.h"
 #include "DevConsoleInput.h"
 #include "DevConsoleLog.h"
 #include <string>
@@ -69,6 +70,9 @@ public:
 
 	void AddLine(std::string const& line, Rgba8 const& tint = Rgba8::LightBlue);
 	void AddBackgroundImage(Texture* backgroundImage);
+
+	void AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info);
+	DevConsoleCommandInfo const* GetDevConsoleCommandInfo(std::string const& name) const;
 	
 	void LogSuccess(std::string const& line);
 	void LogWarning(std::string const& line);
@@ -127,9 +131,11 @@ protected:
 	DevConsoleInput m_inputLine;
 	DevConsoleLog m_log;
 	DevConsoleCommandHistory m_commandHistory;
+	std::vector<DevConsoleCommandInfo> m_commandInfos;
 
 	// DevConsole completely steals window events, so we need to track our own key button states Otherwise, we'd have
-	// to have another way to disable the input system ONLY for the game but not DevConsole, which is awkward.
+	// to have another way to disable the input system ONLY for the game but not DevConsole, which is awkward. Yay for events...
+	// todo: fix this
 	KeyButtonState m_shiftState; 
 
 	bool m_isShowing = false;

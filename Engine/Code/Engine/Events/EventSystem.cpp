@@ -29,7 +29,8 @@ int EventSystem::FireEvent(std::string const& name)
 //----------------------------------------------------------------------------------------------------------------------
 int EventSystem::FireEvent(std::string const& name, NamedProperties& args)
 {
-    auto it = m_events.find(name);
+    std::string lowerName = GetToLower(name);
+    auto it = m_events.find(lowerName);
     if (it != m_events.end())
     {
         std::vector<EventSubscriber*> const& subList = it->second;
@@ -49,7 +50,8 @@ int EventSystem::FireEvent(std::string const& name, NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool EventSystem::IsEventBound(std::string const& name) const
 {
-    return (m_events.find(name) != m_events.end());
+    std::string lowerName = GetToLower(name);
+    return (m_events.find(lowerName) != m_events.end());
 }
 
 
@@ -58,7 +60,7 @@ bool EventSystem::IsEventBound(std::string const& name) const
 void EventSystem::SubscribeFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
 {
     std::string lowerName = GetToLower(eventName);
-    auto& subList = m_events[eventName];
+    auto& subList = m_events[lowerName];
     subList.emplace_back(new EventSubscriberFunction(callbackFunc));
 }
 
@@ -68,7 +70,7 @@ void EventSystem::SubscribeFunction(std::string const& eventName, EventCallbackF
 void EventSystem::UnsubscribeFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
 {
     std::string lowerName = GetToLower(eventName);
-    auto& subList = m_events[eventName];
+    auto& subList = m_events[lowerName];
     for (auto it = subList.begin(); it != subList.end();)
     {
         auto& sub = *it;

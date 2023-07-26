@@ -205,6 +205,10 @@
     <ClCompile Include="Renderer\WindowRenderContext.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="DevConsoleCommandInfo.cpp" />
+    <ClCompile Include="Debug\DevConsoleCommandInfo.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -431,6 +435,10 @@
     </ClInclude>
     <ClInclude Include="Renderer\WindowRenderContext.h">
       <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="DevConsoleCommandInfo.h" />
+    <ClInclude Include="Debug\DevConsoleCommandInfo.h">
+      <Filter>Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

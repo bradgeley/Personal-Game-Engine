@@ -20,7 +20,7 @@
 #if defined(_DEBUG)
 #include <dxgidebug.h>
 #endif
-#pragma comment( lib, "dxguid.lib")
+#pragma comment(lib, "dxguid.lib")
 
 
 

@@ -9,7 +9,7 @@ class SInput : public System
 {
 public:
 
-    SInput([[maybe_unused]] std::string const& name = "Input") {};
+    SInput(std::string const& name = "Input") : System(name) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 };

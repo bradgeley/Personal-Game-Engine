@@ -9,7 +9,7 @@ class SMovement : public System
 {
 public:
 
-    SMovement([[maybe_unused]] std::string const& name = "Movement") {};
+    SMovement(std::string const& name = "Movement") : System(name) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 };

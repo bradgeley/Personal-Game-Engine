@@ -9,7 +9,7 @@ class SPhysics : public System
 {
 public:
 
-    SPhysics([[maybe_unused]] std::string const& name = "Physics") {};
+    SPhysics(std::string const& name = "Physics") : System(name) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 };

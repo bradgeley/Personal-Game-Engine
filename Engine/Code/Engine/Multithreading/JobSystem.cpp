@@ -71,7 +71,7 @@ void JobSystem::CreateJobWorker(int threadID, std::string const& name)
     worker->m_threadID = threadID;
     worker->m_thread = std::thread(&JobSystem::WorkerLoop, this, worker);
     worker->m_name = (!name.empty()) ? name : StringF("JobSystemWorker: %i", threadID);
-    m_workers.emplace_back( worker );
+    m_workers.emplace_back(worker);
 }
 
 

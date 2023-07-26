@@ -9,7 +9,7 @@ class SBackgroundStar : public System
 {
 public:
 
-    SBackgroundStar([[maybe_unused]] std::string const& name = "BackgroundStar") {};
+    SBackgroundStar(std::string const& name = "BackgroundStar") : System(name) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

@@ -32,7 +32,7 @@ class System
 
 public:
 
-	explicit System(std::string const&& name = "Unnamed System");
+	explicit System(std::string const& name = "Unnamed System");
 	virtual ~System() = default;
 
 	virtual void Startup()											{}

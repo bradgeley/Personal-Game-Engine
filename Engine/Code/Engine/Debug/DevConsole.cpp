@@ -217,6 +217,29 @@ void DevConsole::AddBackgroundImage(Texture* backgroundImage)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void DevConsole::AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info)
+{
+    m_commandInfos.emplace_back(info);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+DevConsoleCommandInfo const* DevConsole::GetDevConsoleCommandInfo(std::string const& name) const
+{
+    for (auto& info : m_commandInfos)
+    {
+        if (info.m_commandName == name)
+        {
+            return &info;
+        }
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsole::LogSuccess(std::string const& line)
 {
     AddLine(line, m_config.m_successTint);
@@ -396,6 +419,16 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
         return true;
     }
 
+    DevConsoleCommandInfo const* info = GetDevConsoleCommandInfo(eventName);
+    if (info)
+    {
+        g_devConsole->LogSuccess("Command info found.");
+    }
+    else
+    {
+        g_devConsole->LogWarning("Command info not found");
+    }
+
     NamedProperties eventProperties;
 
     // Start at arg index 1 because index 0 is the command name
@@ -403,13 +436,38 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     {
         auto& fragment = commandFragments[i];
         Strings keyValue = SplitStringOnDelimeter(fragment, '=');
+        std::string argName = keyValue[0];
+        ToLower(argName);
         if (keyValue.size() == 2)
         {
-            eventProperties.Set(keyValue[0], keyValue[1]);
+            std::string const& argValue = keyValue[1];
+            if (info)
+            {
+                SupportedDevConsoleArgType type = info->GetArgType(argName);
+                switch (type)
+                {
+                    case SupportedDevConsoleArgType::Float:
+                        eventProperties.Set(argName, StringToFloat(argValue));
+                        break;
+                    case SupportedDevConsoleArgType::Int:
+                        eventProperties.Set(argName, StringToInt(argValue));
+                        break;
+                    case SupportedDevConsoleArgType::Bool:
+                        eventProperties.Set(argName, StringToBool(argValue));
+                        break;
+                    default:
+                        eventProperties.Set(argName, argValue);
+                        break;
+                }
+            }
+            else
+            {
+                eventProperties.Set(argName, argValue);
+            }
         }
         else
         {
-            LogErrorF("Invalid arg: %s - Proper use: \"%s=X\"", keyValue[0].data(), keyValue[0].data());
+            LogErrorF("Invalid arg: %s - Proper use: \"%s=X\"", argName.data(), argName.data());
         }
     }
 

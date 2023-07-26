@@ -9,7 +9,7 @@ class SCamera : public System
 {
 public:
 
-    SCamera([[maybe_unused]] std::string const& name = "Camera") {};
+    SCamera(std::string const& name = "Camera") : System(name) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     

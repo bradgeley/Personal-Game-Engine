@@ -5,7 +5,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-System::System(std::string const&& name) : m_name(name)
+System::System(std::string const& name) : m_name(name)
 {
 
 }

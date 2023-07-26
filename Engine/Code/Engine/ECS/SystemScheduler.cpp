@@ -227,6 +227,11 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 {
 	for (auto& system : subgraph.m_systems)
 	{
+		if (!system->IsActive())
+		{
+			continue;
+		}
+
 		SystemContext context(system, deltaSeconds);
 		RunSystem(context);
 	}
@@ -245,6 +250,11 @@ void SystemScheduler::RunSubgraph_AutoMultithreaded(SystemSubgraph const& subgra
 	
 	for (System* const& system : subgraph.m_systems)
 	{
+		if (!system->IsActive())
+		{
+			continue;
+		}
+
 		SystemContext context(system, deltaSeconds);
 		Job* job = new AutoMultithreadedRunSystemJob(context);
 		jobGraph.AddJob(job);

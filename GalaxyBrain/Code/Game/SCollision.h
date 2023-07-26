@@ -9,7 +9,7 @@ class SCollision : public System
 {
 public:
 
-    SCollision([[maybe_unused]] std::string const& name = "Collision") {};
+    SCollision(std::string const& name = "Collision") : System(name) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 

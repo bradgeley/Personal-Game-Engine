@@ -9,7 +9,7 @@ class SGravity : public System
 {
 public:
 
-    SGravity([[maybe_unused]] std::string const& name = "Gravity") {};
+    SGravity(std::string const& name = "Gravity") : System(name) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 };
