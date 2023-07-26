@@ -13,7 +13,7 @@
     <Entity name = "Asteroid">
       <Transform/>
       <Movement speed="8"/>
-      <Render vbo="sphere_5" texture="Data/Images/Planet.png" layer="1" scale="5"/>
+      <Render vbo="disc_5" texture="Data/Images/Planet.png" layer="1" scale="5"/>
       <Physics mass="1"/>
       <Collision radius="5" type="mobile" attachType="canHaveAttachedEntities"/>
     </Entity>
@@ -21,7 +21,7 @@
     <Entity name = "BasePlanet">
       <Transform/>
       <Movement speed="0"/>
-      <Render vbo="sphere_640" scale="100"/>
+      <Render vbo="disc_640" scale="100"/>
       <Physics mass= "1000"/>
       <Collision radius="100" type="mobile" attachType="canHaveAttachedEntities"/>
     </Entity>
@@ -29,7 +29,7 @@
     <Entity name = "Earth">
       <Transform/>
       <Movement speed="0"/>
-      <Render vbo="sphere_64" texture="Data/Images/Planet.png" scale="2000"/>
+      <Render vbo="disc_64" texture="Data/Images/Planet.png" scale="2000"/>
       <Physics mass= "10000"/>
       <Collision radius="2000" type="mobile" attachType="canHaveAttachedEntities"/>
     </Entity>
@@ -37,8 +37,8 @@
     <Entity name = "Sun">
       <Transform/>
       <Movement speed="0"/>
-      <Render vbo="sphere_64" texture="Data/Images/Sun.png" scale="10000"/>
-      <Physics mass= "1000000"/>
+      <Render vbo="disc_640" texture="Data/Images/Sun.png" scale="10000"/>
+      <Physics mass= "10000"/>
       <Collision radius="10000" type="mobile" attachType="canHaveAttachedEntities"/>
     </Entity>
   

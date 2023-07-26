@@ -9,6 +9,7 @@ class SRenderDebug : public System
 {
 public:
 
+    SRenderDebug([[maybe_unused]] std::string const& name = "RenderDebug") {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 };

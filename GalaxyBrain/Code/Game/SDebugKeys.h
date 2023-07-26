@@ -9,6 +9,7 @@ class SDebugKeys : public System
 {
 public:
 
+    SDebugKeys([[maybe_unused]] std::string const& name = "DebugKeys") {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override; 

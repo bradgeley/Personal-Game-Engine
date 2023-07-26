@@ -371,7 +371,7 @@ CType& AdminSystem::GetSingleton() const
 {
 	HashCode typeHash = typeid(CType).hash_code();
 	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeHash));
-	return *typedStorage->Get(0);
+	return *typedStorage->Get(ENTITY_ID_SINGLETON);
 }
 
 

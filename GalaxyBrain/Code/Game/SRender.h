@@ -14,6 +14,7 @@ class SRender : public System
 {
 public:
 
+    SRender([[maybe_unused]] std::string const& name = "Render") {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

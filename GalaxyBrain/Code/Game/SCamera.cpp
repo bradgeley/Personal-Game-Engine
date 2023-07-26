@@ -28,7 +28,8 @@ void SCamera::Run(SystemContext const& context)
 
         if (transform.m_attachedToEntity != ENTITY_ID_INVALID)
         {
-            camera.m_camera.SetRotation2D(transform.m_polarCoords.x);
+            CTransform& attachedToTransform = *g_ecs->GetComponent<CTransform>(transform.m_attachedToEntity);
+            camera.m_camera.SetRotation2D(transform.m_polarCoords.x + attachedToTransform.m_orientation - 90.f);
         }
         else
         {

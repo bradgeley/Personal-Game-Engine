@@ -120,9 +120,13 @@ VertexBuffer* SRender::CreateOrGetVbo(std::string const& name)
     if (vbo == nullptr)
     {
         vbo = new VertexBuffer();
-        if (strings[0] == "sphere")
+        if (strings[0] == "disc")
         {
-            int numSides = StringToInt(strings[1]);
+            int numSides = 64; 
+            if (strings.size() > 1)
+            {
+                numSides = StringToInt(strings[1]);
+            }
             AddVertsForDisc2D(vbo->GetMutableVerts(), Vec2(0.f, 0.f), 1.f, numSides);
         }
         else if (strings[0] == "sprite")

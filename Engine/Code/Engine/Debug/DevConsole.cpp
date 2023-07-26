@@ -83,7 +83,7 @@ void DevConsole::Startup()
     g_eventSystem->SubscribeMethod("help", this, &DevConsole::Help);
     
     m_inputLine.SetOutputLog(&m_log);
-    m_inputLine.m_commandEntered.SubscribeMethod(this, &DevConsole::HandleCommandEntered);
+    m_inputLine.m_commandEntered.SubscribeMethod(this, &DevConsole::OnCommandEnteredEvent);
     m_log.SetNumLines(m_config.m_logNumLines);
 
     m_camera.SetOrthoBounds(Vec3::ZeroVector, Vec3(g_window->GetAspect(), 1.f, 1.f));
@@ -138,8 +138,7 @@ void DevConsole::Render() const
     g_renderer->BeginCamera(m_camera);
 
     // Translate by the animation fraction
-    Mat44 modelMatrix;
-    modelMatrix.Append(Mat44::CreateTranslation3D(0.f, devConsoleOffset));
+    Mat44 modelMatrix = Mat44::CreateTranslation3D(0.f, devConsoleOffset);
     g_renderer->SetModelMatrix(modelMatrix);
 
     DrawBackground();
@@ -167,7 +166,7 @@ void DevConsole::Shutdown()
 
     g_eventSystem->UnsubscribeMethod("clear", this, &DevConsole::Clear);
     
-    m_inputLine.m_commandEntered.UnsubscribeMethod(this, &DevConsole::HandleCommandEntered);
+    m_inputLine.m_commandEntered.UnsubscribeMethod(this, &DevConsole::OnCommandEnteredEvent);
 
     for (auto& bgdTex : m_backgroundImages)
     {
@@ -381,17 +380,40 @@ bool DevConsole::HandleMouseWheel(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DevConsole::HandleCommandEntered(NamedProperties& args)
+bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
 {
     std::string command = args.Get<std::string>("Command", "");
-    Strings commandWords = SplitStringOnDelimeter(command, ' ');
+    Strings commandFragments = SplitStringOnDelimeter(command, ' ');
 
     // Add to command history
     m_commandHistory.AddCommand(command);
 
     // Fire the event
-    std::string eventName = GetToLower(commandWords[0]);
-    int numResponders = FireEvent(eventName);
+    std::string eventName = GetToLower(commandFragments[0]);
+    if (!g_eventSystem->IsEventBound(eventName))
+    {
+        g_devConsole->LogWarning("No events bound to that command.");
+        return true;
+    }
+
+    NamedProperties eventProperties;
+
+    // Start at arg index 1 because index 0 is the command name
+    for (int i = 1; i < commandFragments.size(); ++i)
+    {
+        auto& fragment = commandFragments[i];
+        Strings keyValue = SplitStringOnDelimeter(fragment, '=');
+        if (keyValue.size() == 2)
+        {
+            eventProperties.Set(keyValue[0], keyValue[1]);
+        }
+        else
+        {
+            LogErrorF("Invalid arg: %s - Proper use: \"%s=X\"", keyValue[0].data(), keyValue[0].data());
+        }
+    }
+
+    int numResponders = FireEvent(eventName, eventProperties);
     
     if (numResponders == 0)
     {

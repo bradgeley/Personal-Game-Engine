@@ -58,7 +58,7 @@ void SMovement::Run(SystemContext const& context)
 
                 float radius = (attachedToTransform.m_pos - transform.m_pos).GetLength();
                 float arcLengthPerSecondMoveSpeed = move.m_movementSpeed;
-                float degreesPerSecondMoveSpeed = RadiansToDegrees(arcLengthPerSecondMoveSpeed / radius);
+                float degreesPerSecondMoveSpeed = -1.f * RadiansToDegrees(arcLengthPerSecondMoveSpeed / radius);
                 phys.m_polarVelocity = move.m_frameMoveDir * Vec2(degreesPerSecondMoveSpeed, move.m_movementSpeed);
                 break;
             }

@@ -91,7 +91,7 @@ protected:
 	bool HandleMouseButtonDown(NamedProperties& args);
 	bool HandleMouseButtonUp(NamedProperties& args);
 	bool HandleMouseWheel(NamedProperties& args);
-	bool HandleCommandEntered(NamedProperties& args);
+	bool OnCommandEnteredEvent(NamedProperties& args);
 
 private:
 

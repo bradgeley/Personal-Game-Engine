@@ -4,6 +4,8 @@
 #include "WindowsApplication.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Core/EngineCommon.h"
+#include "Engine/Debug/DevConsole.h"
+#include "Engine/Events/EventSystem.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/Renderer/Renderer.h"
 #include "AllComponents.h"
@@ -72,6 +74,8 @@ void Game::Startup()
     g_ecs->RegisterSystem<SRenderDebug>((int) FramePhase::Render);
     
     g_ecs->Startup();
+
+    RegisterDevConsoleCommands();
 }
 
 
@@ -118,5 +122,32 @@ void Game::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void Game::Shutdown()
 {
+    UnRegisterDevConsoleCommands();
     g_ecs->Shutdown();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Game::RegisterDevConsoleCommands() const
+{
+    SubscribeEventCallbackFunction("SystemActive", Game::OnSystemActiveCommand);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Game::UnRegisterDevConsoleCommands() const
+{
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Game::OnSystemActiveCommand(NamedProperties& eventArgs)
+{
+    std::string name = eventArgs.Get<std::string>("name", "");
+    bool active = eventArgs.Get("on", true);
+    g_ecs->SetSystemActive(name, active);
+    return true;
 }

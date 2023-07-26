@@ -4,6 +4,10 @@
 
 
 
+struct NamedProperties;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 class Game : public EngineSubsystem
 {
@@ -14,4 +18,11 @@ public:
     void EndFrame() override;
     void Render() const override;
     void Shutdown() override;
+
+private:
+
+    void RegisterDevConsoleCommands() const;
+    void UnRegisterDevConsoleCommands() const;
+
+    static bool OnSystemActiveCommand(NamedProperties& eventArgs);
 };

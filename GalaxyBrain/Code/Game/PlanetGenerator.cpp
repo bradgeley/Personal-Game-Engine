@@ -35,7 +35,7 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 	result->m_collision->m_radius = radius;
 	result->m_render->m_scale = radius;
 	result->m_physics->m_mass = radius;
-	result->m_physics->m_angularVelocity = g_rng->PlusOrMinus() * g_rng->GetRandomFloatInRange(5.f, 10.f);
+	result->m_physics->m_angularVelocity = 0.f; // g_rng->PlusOrMinus()* g_rng->GetRandomFloatInRange(5.f, 10.f);
 	float terrainNoiseSize = 500.f;
 
 	// Randomize other planet factors
@@ -49,7 +49,7 @@ EntityDef const* PlanetGenerator::Generate(int seed)
 	IntVec2 imageDims = IntVec2(1024, 1024);
 	Vec2 imageCenter = Vec2(imageDims.x * 0.5f, imageDims.y * 0.5f);
 	float radiusInImagePixels = imageCenter.x;
-	float radiusInImagePixelsSquared = (radiusInImagePixels + 1) * (radiusInImagePixels + 1); // Add 1 for buffer so we don't see transparent black pixels on edges
+	float radiusInImagePixelsSquared = (radiusInImagePixels * 1.01f + 1) * (radiusInImagePixels * 1.01f + 1); // Add buffer so we don't see transparent black pixels on edges
 	image.Initialize(IntVec2(1024, 1024), Rgba8::TransparentBlack);
 	for (int y = 0; y < image.GetHeight(); ++y)
 	{

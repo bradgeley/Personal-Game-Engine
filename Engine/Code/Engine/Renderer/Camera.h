@@ -37,20 +37,20 @@ public:
     Vec3  GetOrthoHalfDimensions() const;
     Vec2  ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const;
 
-    // These functions may recalculate the view and projection matrices
+    // Const Warning: These functions may recalculate the view and projection matrices
     CameraConstants const& GetCameraConstants() const;
     Mat44 GetViewMatrix() const;
     Mat44 GetOrthoProjectionMatrix() const;
 
 private:
 
-    // Const because called in Renderer::BeginCamera
+    // Const Warning: Const because called in Renderer::BeginCamera, but they update m_cameraConstants
     void  UpdateViewMatrix() const;
     void  UpdateProjMatrix() const;
 
 private:
     
-    // Mutable because it needs to be updated if need be in BeginCamera
+    // Const Warning: Mutable because it needs to be updated if dirty in BeginCamera
     mutable bool m_viewMatrixDirty = true;
     mutable bool m_projMatrixDirty = true;
     mutable CameraConstants m_cameraConstants;
