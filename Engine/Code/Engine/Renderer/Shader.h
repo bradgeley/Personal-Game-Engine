@@ -52,4 +52,6 @@ protected:
 	ID3D11PixelShader* m_pixelShader  = nullptr;
     
     std::vector<uint8_t> m_vertexByteCode;
+
+    static Shader const* const NullShader;
 };

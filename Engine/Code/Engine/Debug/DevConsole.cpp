@@ -4,6 +4,7 @@
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/Image.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -86,7 +87,7 @@ void DevConsole::Startup()
     m_inputLine.m_commandEntered.SubscribeMethod(this, &DevConsole::OnCommandEnteredEvent);
     m_log.SetNumLines(m_config.m_logNumLines);
 
-    m_camera.SetOrthoBounds(Vec3::ZeroVector, Vec3(g_window->GetAspect(), 1.f, 1.f));
+    m_camera = new Camera(Vec3::ZeroVector, Vec3(g_window->GetAspect(), 1.f, 1.f));
 
     for (auto& backgroundImage : m_config.m_backgroundImages)
     {
@@ -134,8 +135,7 @@ void DevConsole::Render() const
     float devConsoleOffset = SmoothStart3(m_openCloseAnimationFraction);
 
     // Sets camera and renderer pipeline state
-    g_renderer->BeginWindow(g_window);
-    g_renderer->BeginCamera(m_camera);
+    g_renderer->BeginCameraAndWindow(m_camera, g_window);
 
     // Translate by the animation fraction
     Mat44 modelMatrix = Mat44::CreateTranslation3D(0.f, devConsoleOffset);
@@ -148,6 +148,8 @@ void DevConsole::Render() const
     {
         DrawCommandHistory();
     }
+
+    g_renderer->EndCameraAndWindow(m_camera, g_window);
 }
 
 
@@ -175,6 +177,9 @@ void DevConsole::Shutdown()
         bgdTex = nullptr;
     }
     m_backgroundImages.clear();
+
+    delete m_camera;
+    m_camera = nullptr;
 }
 
 
@@ -533,7 +538,7 @@ void DevConsole::DrawBackground() const
 {
     VertexBuffer backgroundVbo;
     auto& backgroundVerts = backgroundVbo.GetMutableVerts();
-    AABB2 backgroundBox = m_camera.GetOrthoBounds2D();
+    AABB2 backgroundBox = m_camera->GetOrthoBounds2D();
     AddVertsForAABB2(backgroundVerts, backgroundBox, m_config.m_backgroundTint);
     g_renderer->DrawVertexBuffer(&backgroundVbo);
     
@@ -580,13 +585,13 @@ void DevConsole::DrawBackground() const
 void DevConsole::DrawText() const
 {
     float relativeLineThickness = m_config.m_inputLineThickness / (float) g_window->GetHeight();
-    Vec2 inputLineMins = m_camera.GetOrthoBounds2D().mins;
-    Vec2 inputLineMaxs = Vec2(m_camera.GetOrthoDimensions().x, relativeLineThickness);
+    Vec2 inputLineMins = m_camera->GetOrthoBounds2D().mins;
+    Vec2 inputLineMaxs = Vec2(m_camera->GetOrthoDimensions().x, relativeLineThickness);
     AABB2 inputLineBox(inputLineMins, inputLineMaxs);
     m_inputLine.RenderToBox(inputLineBox);
 
     Vec2 logMins = inputLineBox.mins + Vec2(0.f, relativeLineThickness);
-    Vec2 logMaxs = m_camera.GetOrthoBounds2D().maxs;
+    Vec2 logMaxs = m_camera->GetOrthoBounds2D().maxs;
     AABB2 logBox(logMins, logMaxs);
     m_log.RenderToBox(logBox);
 }
@@ -597,7 +602,7 @@ void DevConsole::DrawText() const
 void DevConsole::DrawCommandHistory() const
 {
     float relativeLineThickness = m_config.m_inputLineThickness / (float) g_window->GetHeight();
-    AABB2 inputLineBox(m_camera.GetOrthoBounds2D().mins, m_camera.GetOrthoBounds2D().mins + Vec2(1.f, relativeLineThickness));
+    AABB2 inputLineBox(m_camera->GetOrthoBounds2D().mins, m_camera->GetOrthoBounds2D().mins + Vec2(1.f, relativeLineThickness));
     AABB2 historyBox(inputLineBox.GetTopLeft(), inputLineBox.maxs + Vec2(0.f, 0.3f));
     historyBox.Squeeze(0.005f);
     

@@ -7,6 +7,7 @@
 
 
 Vec3 Vec3::ZeroVector = Vec3(0.f, 0.f, 0.f);
+Vec3 Vec3::OneVector = Vec3(1.f, 1.f, 1.f);
 
 
 

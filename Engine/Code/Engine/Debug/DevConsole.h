@@ -2,7 +2,6 @@
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/Input/KeyButtonState.h"
-#include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Rgba8.h"
 #include "DevConsoleCommandHistory.h"
 #include "DevConsoleCommandInfo.h"
@@ -13,6 +12,7 @@
 
 
 
+class Camera;
 class Texture;
 struct JobID;
 struct NamedProperties;
@@ -139,7 +139,7 @@ protected:
 	KeyButtonState m_shiftState; 
 
 	bool m_isShowing = false;
-	Camera m_camera;
+	Camera* m_camera = nullptr;
 
 private:
 

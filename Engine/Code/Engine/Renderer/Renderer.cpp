@@ -98,9 +98,6 @@ void Renderer::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::EndFrame()
 {
-	m_currentCamera = nullptr;
-	
-	BeginWindow(g_window);
 	Present();
 	std::this_thread::sleep_for(std::chrono::milliseconds(8));
 }
@@ -110,7 +107,10 @@ void Renderer::EndFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::BeginWindow(Window const* window)
 {
-	if (window && (m_windowRenderContexts.find(window) != m_windowRenderContexts.end()))
+	ASSERT_OR_DIE(window, "Renderer::BeginWindow - trying to begin a null window.");
+	ASSERT_OR_DIE(m_currentWindow == nullptr, "Renderer::BeginWindow - m_currentWindow is not null, call EndWindow on it first.");
+
+	if (m_windowRenderContexts.find(window) != m_windowRenderContexts.end())
 	{
 		m_currentWindow = window;
 		Texture*& texture = m_windowRenderContexts.at(m_currentWindow).m_backbufferTexture;
@@ -123,7 +123,9 @@ void Renderer::BeginWindow(Window const* window)
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::EndWindow(Window const* window)
 {
-	UNUSED(window)
+	ASSERT_OR_DIE(window, "Renderer::EndWindow - trying to end a null window.");
+	ASSERT_OR_DIE(window == m_currentWindow, "Renderer::EndWindow - window does not match m_currentWindow");
+
 	m_currentWindow = nullptr;
 }
 
@@ -138,14 +140,19 @@ Window const* Renderer::GetCurrentWindow() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::BeginCamera(Camera const& camera)
+void Renderer::BeginCamera(Camera const* camera)
 {
-	m_currentCamera = &camera;
+	ASSERT_OR_DIE(camera, "Renderer::BeginCamera - trying to begin a null camera.");
+	ASSERT_OR_DIE(m_currentCamera == nullptr, "Renderer::BeginCamera - m_currentCamera is not null, call EndCamera on it first.");
+	ASSERT_OR_DIE(m_currentWindow, "Renderer::BeginCamera - m_currentWindow is null, call BeginWindow first or BeginCameraAndWindow");
+	ASSERT_OR_DIE(m_deviceContext, "Renderer::BeginCamera - m_deviceContext is null");
+
+	m_currentCamera = camera;
 	
 	ResetRenderingPipelineState();
 
 	// Fill Camera Constants, may need to recalculate matrices if camera moved
-	m_dirtySettings.m_cameraConstants = camera.GetCameraConstants();
+	m_dirtySettings.m_cameraConstants = camera->GetCameraConstants();
 	
 	// Set viewport
 	IntVec2 windowDims = m_currentWindow->GetDimensions();
@@ -165,9 +172,11 @@ void Renderer::BeginCamera(Camera const& camera)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::EndCamera(Camera const& camera)
+void Renderer::EndCamera(Camera const* camera)
 {
-	UNUSED(camera)
+	ASSERT_OR_DIE(camera, "Renderer::EndCamera - trying to end null camera.");
+	ASSERT_OR_DIE(camera == m_currentCamera, "Renderer::EndCamera - camera is not equal to m_currentCamera.");
+
 	m_currentCamera = nullptr;
 }
 
@@ -182,9 +191,32 @@ Camera const* Renderer::GetCurrentCamera() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Renderer::BeginCameraAndWindow(Camera const* camera, Window const* window)
+{
+	BeginWindow(window);
+	BeginCamera(camera);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::EndCameraAndWindow(Camera const* camera, Window const* window)
+{
+	EndCamera(camera);
+	EndWindow(window);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::Present() const
 {
-	m_windowRenderContexts.at(m_currentWindow).m_swapChain->Present(0, 0);
+	// If multiple windows, just present them all
+	for (auto window : m_windowRenderContexts)
+	{
+		ASSERT_OR_DIE(window.first, "Renderer::Present - at least one Window is null")
+		window.second.m_swapChain->Present(0, 0);
+	}
 }
 
 

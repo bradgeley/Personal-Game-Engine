@@ -67,4 +67,5 @@ public:
     
     // Commonly used Vec3's
     static Vec3 ZeroVector;
+    static Vec3 OneVector;
 };
