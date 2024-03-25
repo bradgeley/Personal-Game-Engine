@@ -1,9 +1,12 @@
 // Bradley Christensen - 2022-2023
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
+#include <vector>
 
 
 
+class Guest;
+class GuestList;
 class Camera;
 class SeatingChart;
 class SeatingChartGenerator;
@@ -23,10 +26,8 @@ public:
 
 private:
 
-    void SaveGuestList();
-    void LoadGuestList();
-
     Camera* m_camera;
+    GuestList* m_guestList;
     SeatingChart* m_seatingChart;
     SeatingChartGenerator* m_generator;
 };

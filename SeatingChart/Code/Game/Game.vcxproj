@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -191,12 +191,22 @@
     <ClCompile Include="Framework\Main_Windows.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\WindowsApplication.cpp" />
+    <ClCompile Include="Guest.cpp" />
+    <ClCompile Include="GuestList.cpp" />
+    <ClCompile Include="SeatingChart.cpp" />
+    <ClCompile Include="SeatingChartGenerator.cpp" />
+    <ClCompile Include="Table.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameCommon.h" />
     <ClInclude Include="Game\WindowsApplication.h" />
+    <ClInclude Include="Guest.h" />
+    <ClInclude Include="GuestList.h" />
+    <ClInclude Include="SeatingChart.h" />
+    <ClInclude Include="SeatingChartGenerator.h" />
+    <ClInclude Include="Table.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Engine\Code\Engine\Engine.vcxproj">

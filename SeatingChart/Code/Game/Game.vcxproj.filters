@@ -10,6 +10,11 @@
     <ClCompile Include="Game\WindowsApplication.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Guest.cpp" />
+    <ClCompile Include="SeatingChart.cpp" />
+    <ClCompile Include="SeatingChartGenerator.cpp" />
+    <ClCompile Include="Table.cpp" />
+    <ClCompile Include="GuestList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -24,6 +29,11 @@
     <ClInclude Include="Game\WindowsApplication.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="Guest.h" />
+    <ClInclude Include="SeatingChart.h" />
+    <ClInclude Include="SeatingChartGenerator.h" />
+    <ClInclude Include="Table.h" />
+    <ClInclude Include="GuestList.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
