@@ -3,6 +3,7 @@
 #include "DebugDrawUtils.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/Image.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Renderer.h"
@@ -197,6 +198,16 @@ bool DevConsole::Clear(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool DevConsole::Help(NamedProperties& args)
 {
+    AddLine("Commands:");
+    for (auto& m_commandInfo : m_commandInfos)
+    {
+        AddLine(m_commandInfo.ToString(), Rgba8::Yellow);
+    }
+    AddLine("Events:");
+    for (auto& event : g_eventSystem->GetAllEventNames())
+    {
+        AddLine(event, Rgba8::DarkGreen);
+    }
     m_helpDelegate.Broadcast(args);
     return true;
 }
@@ -422,16 +433,12 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     {
         g_devConsole->LogWarning("No events bound to that command.");
         return true;
-    }
+    }  
 
     DevConsoleCommandInfo const* info = GetDevConsoleCommandInfo(eventName);
     if (info)
     {
         g_devConsole->LogSuccess("Command info found.");
-    }
-    else
-    {
-        g_devConsole->LogWarning("Command info not found");
     }
 
     NamedProperties eventProperties;
@@ -448,16 +455,16 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
             std::string const& argValue = keyValue[1];
             if (info)
             {
-                SupportedDevConsoleArgType type = info->GetArgType(argName);
+                DevConsoleArgType type = info->GetArgType(argName);
                 switch (type)
                 {
-                    case SupportedDevConsoleArgType::Float:
+                    case DevConsoleArgType::Float:
                         eventProperties.Set(argName, StringToFloat(argValue));
                         break;
-                    case SupportedDevConsoleArgType::Int:
+                    case DevConsoleArgType::Int:
                         eventProperties.Set(argName, StringToInt(argValue));
                         break;
-                    case SupportedDevConsoleArgType::Bool:
+                    case DevConsoleArgType::Bool:
                         eventProperties.Set(argName, StringToBool(argValue));
                         break;
                     default:
@@ -709,5 +716,5 @@ void DevConsole::LoadCommandHistory()
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::SaveCommandHistory() const
 {
-    m_commandHistory.SaveTo(m_config.m_commandHistoryFilePath);
+    ASSERT_OR_DIE(m_commandHistory.SaveTo(m_config.m_commandHistoryFilePath), "Failed to save dev console command history");
 }

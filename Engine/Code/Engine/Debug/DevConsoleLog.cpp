@@ -2,6 +2,7 @@
 #include "DevConsoleLog.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
@@ -15,7 +16,15 @@ const std::string LINE_PREFIX = "> ";
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleLog::AddLine(DevConsoleLine const& line)
 {
-    m_log.emplace_back(line);
+    Strings lines = SplitStringOnDelimeter(line.m_line, '\n');
+    for (auto& splitLine : lines)
+    {
+        if (splitLine == "")
+        {
+            continue;
+        }
+        m_log.emplace_back(splitLine, line.m_tint);
+    }
 }
 
 

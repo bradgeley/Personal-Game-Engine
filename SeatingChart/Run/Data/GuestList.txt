@@ -1,5 +1,126 @@
-Sonali: Bradley
+Aafreen: Desmond, James, Emil, Abin, Amreen, Danny, Brady
+Aaron: 
+Abin: Desmond, James, Emil, Aafreen, Amreen, Danny, Brady
+Alex: Nick, Natalie, Deisy, Max, Jackson D, Alyssa, Bear
+Alex Clay: Kristian, Lillian, Ted, Gracia, Connor, Chris
+Alisha: Shefali, Rohit, Sameer, Sneha, Preethi, Ridah, Sumana
+Alyssa: Nick, Natalie, Alex, Deisy, Max, Jackson D, Bear
+Amanda: 
+Amreen: Desmond, James, Emil, Abin, Aafreen, Danny, Brady
+Andrew C: Kirstin, Maisie, Owen, Rebecca, Vincent, Lara, Brad
+Andrew K: Manny, Ropa, Isabel, Melanie
+Angela: Wygene, Max, Lenni, Tiffany, Brian, Nicole N, Blanca, Pedro
+Arjun: Kam, Dylan, Valentina, Daniel, Nooka, Manav, Timothy, Jonathan
+Barry: Leslie, John C, Frank, Elizabeth, Kim, Dan, Kathleen, Lisa, Ed
+Bear: Nick, Natalie, Alex, Deisy, Max, Jackson D, Alyssa
+Blanca: Wygene, Max, Lenni, Angela, Tiffany, Brian, Nicole N, Pedro
+Bob: Usha, Vishal, Patti, Thatha, Vimala Maasi, Zainab, Sumita
+Brad: Andrew C, Kirstin, Maisie, Owen, Rebecca, Vincent, Lara
 Bradley: Sonali
-Thomas: Nicole, Matt
-Nicole: Thomas, Matt
-Matt: Thomas, Nicole
+Brady: Desmond, James, Emil, Abin, Aafreen, Amreen, Danny
+Brian: Wygene, Max, Lenni, Angela, Tiffany, Nicole N, Blanca, Pedro
+Bryce: Ziga, Lexi, Charlotte, Thomas, Nicole R, Matt, Demetria
+Carol: Gigi, Mark, Suzy, John M, Jean
+Carson: Krista, Jeff, Curt, Ida, Reid
+Charlotte: Ziga, Lexi, Bryce, Thomas, Nicole R, Matt, Demetria
+Chris: Kristian, Lillian, Ted, Gracia, Alex Clay, Connor
+Connor: Kristian, Lillian, Ted, Gracia, Alex Clay, Chris
+Curt: Krista, Jeff, Ida, Carson, Reid
+Dan: Leslie, John C, Frank, Elizabeth, Kim, Barry, Kathleen, Lisa, Ed
+Daniel: Kam, Dylan, Valentina, Nooka, Arjun, Manav, Timothy, Jonathan
+Danny: Desmond, James, Emil, Abin, Aafreen, Amreen, Brady
+David: Jackson F, Katie, Natalie Le, Rooshna, Salman, Gerardo, Mariam
+Deisy: Nick, Natalie, Alex, Max, Jackson D, Alyssa, Bear
+Demetria: Ziga, Lexi, Bryce, Charlotte, Thomas, Nicole R, Matt
+Desmond: James, Emil, Abin, Aafreen, Amreen, Danny, Brady
+Dumbor: Mario, Tricia, Tendai, Sanjiv, Shauna, Hemendra
+Dylan: Kam, Valentina, Daniel, Nooka, Arjun, Manav, Timothy, Jonathan
+Ed: Leslie, John C, Frank, Elizabeth, Kim, Dan, Barry, Kathleen, Lisa
+Elizabeth: Leslie, John C, Frank, Kim, Dan, Barry, Kathleen, Lisa, Ed
+Elyse: 
+Emil: Desmond, James, Abin, Aafreen, Amreen, Danny, Brady
+Frank: Leslie, John C, Elizabeth, Kim, Dan, Barry, Kathleen, Lisa, Ed
+Gerardo: Jackson F, Katie, Natalie Le, Rooshna, Salman, David, Mariam
+Gigi: Carol, Mark, Suzy, John M, Jean
+Gracia: Kristian, Lillian, Ted, Alex Clay, Connor, Chris
+Hemendra: Mario, Tricia, Tendai, Dumbor, Sanjiv, Shauna
+Ida: Krista, Jeff, Curt, Carson, Reid
+Isabel: Manny, Ropa, Andrew K, Melanie
+Jack: 
+Jackson D: Nick, Natalie, Alex, Deisy, Max, Alyssa, Bear
+Jackson F: Katie, Natalie Le, Rooshna, Salman, David, Gerardo, Mariam
+James: Desmond, Emil, Abin, Aafreen, Amreen, Danny, Brady
+Jean: Gigi, Carol, Mark, Suzy, John M
+Jeff: Krista, Curt, Ida, Carson, Reid
+John C: Leslie, Frank, Elizabeth, Kim, Dan, Barry, Kathleen, Lisa, Ed
+John M: Gigi, Carol, Mark, Suzy, Jean
+Jonathan: Kam, Dylan, Valentina, Daniel, Nooka, Arjun, Manav, Timothy
+Kam: Dylan, Valentina, Daniel, Nooka, Arjun, Manav, Timothy, Jonathan
+Kathleen: Leslie, John C, Frank, Elizabeth, Kim, Dan, Barry, Lisa, Ed
+Katie: Jackson F, Natalie Le, Rooshna, Salman, David, Gerardo, Mariam
+Kim: Leslie, John C, Frank, Elizabeth, Dan, Barry, Kathleen, Lisa, Ed
+Kirstin: Andrew C, Maisie, Owen, Rebecca, Vincent, Lara, Brad
+Krista: Jeff, Curt, Ida, Carson, Reid
+Kristian: Lillian, Ted, Gracia, Alex Clay, Connor, Chris
+Lara: Andrew C, Kirstin, Maisie, Owen, Rebecca, Vincent, Brad
+Lenni: Wygene, Max, Angela, Tiffany, Brian, Nicole N, Blanca, Pedro
+Leslie: John C, Frank, Elizabeth, Kim, Dan, Barry, Kathleen, Lisa, Ed
+Lexi: Ziga, Bryce, Charlotte, Thomas, Nicole R, Matt, Demetria
+Lillian: Kristian, Ted, Gracia, Alex Clay, Connor, Chris
+Lisa: Leslie, John C, Frank, Elizabeth, Kim, Dan, Barry, Kathleen, Ed
+Madhu: Parin, Nadirshah, Sheebu
+Maisie: Andrew C, Kirstin, Owen, Rebecca, Vincent, Lara, Brad
+Manav: Kam, Dylan, Valentina, Daniel, Nooka, Arjun, Timothy, Jonathan
+Manny: Ropa, Andrew K, Isabel, Melanie
+Mariam: Jackson F, Katie, Natalie Le, Rooshna, Salman, David, Gerardo
+Mario: Tricia, Tendai, Dumbor, Sanjiv, Shauna, Hemendra
+Mark: Gigi, Carol, Suzy, John M, Jean
+Matt: Ziga, Lexi, Bryce, Charlotte, Thomas, Nicole R, Demetria
+Max: Nick, Natalie, Alex, Deisy, Jackson D, Alyssa, Bear
+Maxwell: 
+Melanie: Manny, Ropa, Andrew K, Isabel
+Nadirshah: Parin, Madhu, Sheebu
+Natalie: Nick, Alex, Deisy, Max, Jackson D, Alyssa, Bear
+Natalie Le: Jackson F, Katie, Rooshna, Salman, David, Gerardo, Mariam
+Nick: Natalie, Alex, Deisy, Max, Jackson D, Alyssa, Bear
+Nicole N: Wygene, Max, Lenni, Angela, Tiffany, Brian, Blanca, Pedro
+Nicole R: Ziga, Lexi, Bryce, Charlotte, Thomas, Matt, Demetria
+Nooka: Kam, Dylan, Valentina, Daniel, Arjun, Manav, Timothy, Jonathan
+Owen: Andrew C, Kirstin, Maisie, Rebecca, Vincent, Lara, Brad
+Parin: Nadirshah, Madhu, Sheebu
+Patricia: 
+Patti: Usha, Vishal, Thatha, Vimala Maasi, Zainab, Bob, Sumita
+Pedro: Wygene, Max, Lenni, Angela, Tiffany, Brian, Nicole N, Blanca
+Preethi: Alisha, Shefali, Rohit, Sameer, Sneha, Ridah, Sumana
+Rebecca: Andrew C, Kirstin, Maisie, Owen, Vincent, Lara, Brad
+Reid: Krista, Jeff, Curt, Ida, Carson
+Ridah: Alisha, Shefali, Rohit, Sameer, Sneha, Preethi, Sumana
+Rohit: Alisha, Shefali, Sameer, Sneha, Preethi, Ridah, Sumana
+Rooshna: Jackson F, Katie, Natalie Le, Salman, David, Gerardo, Mariam
+Ropa: Manny, Andrew K, Isabel, Melanie
+Salman: Jackson F, Katie, Natalie Le, Rooshna, David, Gerardo, Mariam
+Sameer: Alisha, Shefali, Rohit, Sneha, Preethi, Ridah, Sumana
+Sanjiv: Mario, Tricia, Tendai, Dumbor, Shauna, Hemendra
+Shauna: Mario, Tricia, Tendai, Dumbor, Sanjiv, Hemendra
+Sheebu: Parin, Nadirshah, Madhu
+Shefali: Alisha, Rohit, Sameer, Sneha, Preethi, Ridah, Sumana
+Sneha: Alisha, Shefali, Rohit, Sameer, Preethi, Ridah, Sumana
+Sonali: Bradley
+Sumana: Alisha, Shefali, Rohit, Sameer, Sneha, Preethi, Ridah
+Sumita: Usha, Vishal, Patti, Thatha, Vimala Maasi, Zainab, Bob
+Suzy: Gigi, Carol, Mark, John M, Jean
+Ted: Kristian, Lillian, Gracia, Alex Clay, Connor, Chris
+Tendai: Mario, Tricia, Dumbor, Sanjiv, Shauna, Hemendra
+Thatha: Usha, Vishal, Patti, Vimala Maasi, Zainab, Bob, Sumita
+Thomas: Ziga, Lexi, Bryce, Charlotte, Nicole R, Matt, Demetria
+Tiffany: Wygene, Max, Lenni, Angela, Brian, Nicole N, Blanca, Pedro
+Timothy: Kam, Dylan, Valentina, Daniel, Nooka, Arjun, Manav, Jonathan
+Tricia: Mario, Tendai, Dumbor, Sanjiv, Shauna, Hemendra
+Usha: Vishal, Patti, Thatha, Vimala Maasi, Zainab, Bob, Sumita
+Valentina: Kam, Dylan, Daniel, Nooka, Arjun, Manav, Timothy, Jonathan
+Vimala Maasi: Usha, Vishal, Patti, Thatha, Zainab, Bob, Sumita
+Vincent: Andrew C, Kirstin, Maisie, Owen, Rebecca, Lara, Brad
+Vishal: Usha, Patti, Thatha, Vimala Maasi, Zainab, Bob, Sumita
+Wygene: Max, Lenni, Angela, Tiffany, Brian, Nicole N, Blanca, Pedro
+Zainab: Usha, Vishal, Patti, Thatha, Vimala Maasi, Bob, Sumita
+Ziga: Lexi, Bryce, Charlotte, Thomas, Nicole R, Matt, Demetria

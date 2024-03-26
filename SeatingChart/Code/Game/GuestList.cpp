@@ -1,9 +1,12 @@
 // Bradley Christensen - 2022-2024
 #include "GuestList.h"
 #include "Guest.h"
+#include "SeatingChart.h"
 #include "Engine/Core/FileUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Debug/DevConsole.h"
+#include <algorithm>
 
 
 
@@ -29,6 +32,8 @@ bool GuestList::LoadFromFile(std::string const& filepath)
         guest->ImportFromString(guestString);
         m_guests.push_back(guest);
     }
+
+    CheckForDuplicates();
 
     return true;
 }
@@ -93,4 +98,65 @@ bool GuestList::CanSitAtTableTogether(std::string const& guest, std::string cons
         }
     }
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void GuestList::CheckForDuplicates()
+{
+    int numGuests = (int) m_guests.size();
+    for (int i = 0; i < numGuests; ++i)
+    {
+        auto& guestA = m_guests[i];
+        for (int j = i + 1; j < numGuests; ++j)
+        {
+            auto& guestB = m_guests[j];
+            if (GetToLower(guestA->m_name) == GetToLower(guestB->m_name))
+            {
+                g_devConsole->LogErrorF("Duplicate guest: %s at indices %i and %i", guestA->m_name.c_str(), i, j);
+            }
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CompareGuests(Guest* a, const Guest* b)
+{
+    return (a->m_name < b->m_name);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void GuestList::Alphebetize()
+{
+    std::sort(m_guests.begin(), m_guests.end(), CompareGuests);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void GuestList::PopulateFriendsFromSeatingChart(SeatingChart* chart)
+{
+    for (auto& guest : m_guests)
+    {
+        int tableId = chart->GetTableForGuest(guest->m_name);
+        if (tableId == -1)
+        {
+            // Not seated in the seating chart
+            continue;
+        }
+
+        Strings friends = chart->GetGuestsAtTable(tableId);
+        for (auto& person : friends)
+        {
+            if (!person.empty() && !(person == guest->m_name))
+            {
+                guest->AddFriend(person);
+            }
+        }
+    }
 }

@@ -19,18 +19,33 @@ bool Guest::IsValid() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Guest::AddFriend(std::string const& person)
+{
+	for (auto& otherGuest : m_knownOtherGuests)
+	{
+		if (otherGuest == person)
+		{
+			return;
+		}
+	}
+	m_knownOtherGuests.push_back(person);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 std::string Guest::ToString() const
 {
-	std::string result = StringF("%s:", m_name.c_str());
+	std::string result = StringF("%s: ", m_name.c_str());
 
 	for (int i = 0; i < m_knownOtherGuests.size(); ++i)
 	{
 		auto& otherGuest = m_knownOtherGuests[i];
 		result.append(otherGuest);
 
-		if (i < m_knownOtherGuests.size() - 1)
+		if (i != 0 && i < m_knownOtherGuests.size() - 1)
 		{
-			result.append(",");
+			result.append(", ");
 		}
 	}
 
@@ -43,16 +58,21 @@ std::string Guest::ToString() const
 void Guest::ImportFromString(std::string const& string)
 {
 	Strings nameToGuestListPair = SplitStringOnDelimeter(string, ':');
-	ASSERT_OR_DIE(nameToGuestListPair.size() == 2, "nameToGuestListPair size was not 2");
+	ASSERT_OR_DIE(nameToGuestListPair.size() >= 1, "nameToGuestListPair size was 0");
 
 	m_name = nameToGuestListPair[0];
-	TrimWhitespace(m_name);
+	TrimEdgeWhitespace(m_name);
+
+	if (nameToGuestListPair.size() <= 1)
+	{
+		return;
+	}
 
 	std::string& otherGuestsCSV = nameToGuestListPair[1];
 	Strings otherGuests = SplitStringOnDelimeter(otherGuestsCSV, ',');
 	for (auto& otherGuest : otherGuests)
 	{
-		TrimWhitespace(otherGuest);
+		TrimEdgeWhitespace(otherGuest);
 		m_knownOtherGuests.emplace_back(otherGuest);
 	}
 }

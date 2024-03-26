@@ -16,6 +16,8 @@ public:
 
 	bool IsValid() const;
 
+	void AddFriend(std::string const& person);
+
 	std::string ToString() const;
 	void ImportFromString(std::string const& string);
 

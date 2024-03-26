@@ -1,7 +1,7 @@
 // Bradley Christensen - 2022-2024
 #pragma once
+#include "Engine/Core/StringUtils.h"
 #include <vector>
-#include <string>
 
 
 
@@ -28,13 +28,17 @@ public:
 
 	SeatingChart(SeatingChartDefinition const& def);
 
-	bool PlaceGuest(int tableIndex, int seatIndex, std::string const& guestName);
+	bool PlaceGuest(int seatIndex, std::string const& guestName);
+	int GetTableForGuest(std::string const& guest) const;
+	Strings GetGuestsAtTable(int tableId) const;
 
 	std::string ToString() const;
 	void WriteToFile(std::string const& filepath) const;
 	void ReadFromFile(std::string const& filepath);
 
 	SeatingChartDefinition m_def;
-	std::vector<Table*> m_tables;
+	
+	// Tables 1 is index 0-10, etc
+	std::vector<std::string> m_seats;
 };
 

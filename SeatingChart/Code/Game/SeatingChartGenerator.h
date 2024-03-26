@@ -13,7 +13,6 @@ class SeatingChart;
 // Data structure for generating wavefunctions for each seat and collapsing them
 struct Seat
 {
-	int m_tableIndex = -1;
 	int m_seatIndex = -1;
 	std::vector<std::string> m_possibleGuests;
 };

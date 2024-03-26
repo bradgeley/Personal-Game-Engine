@@ -20,7 +20,11 @@ std::string GetToLower(std::string const& string);
 void ToLower(std::string& out_string);
 void ToUpper(std::string& out_string);
 void TrimWhitespace(std::string& out_string);
+void TrimEdgeWhitespace(std::string& out_string); // Only trims on left and right of string, not central whitespace
+void TrimLeadingWhitespace(std::string& out_string); // Only trims on left of string, not central whitespace
+void TrimTrailingWhitespace(std::string& out_string); // Only trims on right of string, not central whitespace
 bool IsWhitespace(char c);
+bool DoesStringContain(std::string const& string, char c);
 
 
 
@@ -40,6 +44,7 @@ Strings StringToStrings(std::string const& stringsAsString);
 //----------------------------------------------------------------------------------------------------------------------
 // Splits a string upon reaching any of the characters inside the delimeters string
 //
+Strings SplitStringOnAnyDelimeter(std::string const& string, std::string const& delimiters);
 Strings SplitStringOnDelimeter(std::string const& string, char delimeter);
 bool DoesStringContainChar(std::string const& string, uint8_t character);
 

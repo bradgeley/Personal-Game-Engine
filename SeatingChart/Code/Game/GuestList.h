@@ -6,6 +6,7 @@
 
 
 class Guest;
+class SeatingChart;
 
 
 
@@ -21,6 +22,10 @@ public:
 
 	Guest* FindGuest(std::string const& guestName) const;
 	bool CanSitAtTableTogether(std::string const& guest, std::string const& otherGuest) const;
+
+	void CheckForDuplicates();
+	void Alphebetize();
+	void PopulateFriendsFromSeatingChart(SeatingChart* chart);
 
 	std::vector<Guest*> m_guests;
 };

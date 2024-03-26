@@ -1,12 +1,24 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "FileUtils.h"
+#include "StringUtils.h"
+#include "ErrorUtils.h"
 #include <fstream>
+#include <filesystem>
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize)
+int FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize, bool makeDirs)
 {
+    ASSERT_OR_DIE(!filepath.empty(), "Trying to write to empty filepath");
+    ASSERT_OR_DIE(bufferSize > 0, "Trying to write a file of size 0");
+    ASSERT_OR_DIE(bufferData, "Trying to write from a null buffer");
+
+    if (makeDirs)
+    {
+        FileMakeDirsInPath(filepath);
+    }
+
     int fileMode = std::ios::out | std::ios::binary;
     std::fstream filestream(filepath.data(), fileMode);
     if (filestream.is_open())
@@ -22,17 +34,17 @@ int FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FileWriteFromBuffer(const std::string& filepath, const std::vector<uint8_t>& buffer)
+int FileWriteFromBuffer(const std::string& filepath, const std::vector<uint8_t>& buffer, bool makeDirs)
 {
-    return FileWriteFromBuffer(filepath, buffer.data(), buffer.size());
+    return FileWriteFromBuffer(filepath, buffer.data(), buffer.size(), makeDirs);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FileWriteFromString(const std::string& filepath, const std::string& string)
+int FileWriteFromString(const std::string& filepath, const std::string& string, bool makeDirs)
 {
-    return FileWriteFromBuffer(filepath, reinterpret_cast<const uint8_t*>(string.data()), string.size());
+    return FileWriteFromBuffer(filepath, reinterpret_cast<const uint8_t*>(string.data()), string.size(), makeDirs);
 }
 
 
@@ -98,4 +110,33 @@ int GetFileSize(const std::string& filepath)
         return static_cast<int>(filestream.tellg());
     }
     return 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool FileMakeDirsInPath(const std::string& filepath)
+{
+    Strings pathSections = SplitStringOnDelimeter(filepath, '.');
+    if (pathSections.size() == 2)
+    {
+        // Has an extension, lop it off and the last string 
+        Strings pathSectionsNoFileOrExt = SplitStringOnAnyDelimeter(pathSections[0], "/\\");
+        if (pathSectionsNoFileOrExt.size() >= 2)
+        {
+            pathSectionsNoFileOrExt.erase(pathSectionsNoFileOrExt.begin() + pathSectionsNoFileOrExt.size() - 1);
+            pathSections = pathSectionsNoFileOrExt;
+        }
+    }
+
+    bool madeAtLeastOnePath = false;
+    std::string currentPath;
+    for (auto& pathSection : pathSections)
+    {
+        currentPath.append(pathSection);
+        currentPath.push_back('/');
+        bool success = std::filesystem::create_directory(currentPath);
+        madeAtLeastOnePath = success ? true : false;
+    }
+    return madeAtLeastOnePath;
 }

@@ -195,7 +195,6 @@
     <ClCompile Include="GuestList.cpp" />
     <ClCompile Include="SeatingChart.cpp" />
     <ClCompile Include="SeatingChartGenerator.cpp" />
-    <ClCompile Include="Table.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
@@ -206,7 +205,6 @@
     <ClInclude Include="GuestList.h" />
     <ClInclude Include="SeatingChart.h" />
     <ClInclude Include="SeatingChartGenerator.h" />
-    <ClInclude Include="Table.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Engine\Code\Engine\Engine.vcxproj">

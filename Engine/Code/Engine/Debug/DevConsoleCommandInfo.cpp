@@ -13,7 +13,27 @@ DevConsoleCommandInfo::DevConsoleCommandInfo(std::string const& commandName) : m
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void DevConsoleCommandInfo::AddArg(std::string const& argName, SupportedDevConsoleArgType argType)
+std::string DevConsoleCommandInfo::ToString() const
+{
+	std::string result = StringF("%s ", m_commandName.c_str());
+	for (int argIndex = 0; argIndex < m_argNames.size(); ++argIndex)
+	{
+		std::string const& argName = m_argNames[argIndex];
+		DevConsoleArgType argType = m_argTypes[argIndex];
+		result.append(StringF("%s=%s", argName.c_str(), ArgTypeToString(argType).c_str()));
+
+		if (argIndex < m_argNames.size() - 1)
+		{
+			result.append(", ");
+		}
+	}
+	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsoleCommandInfo::AddArg(std::string const& argName, DevConsoleArgType argType)
 {
 	std::string lowerArgName = argName;
 	ToLower(lowerArgName);
@@ -24,7 +44,7 @@ void DevConsoleCommandInfo::AddArg(std::string const& argName, SupportedDevConso
 
 
 //----------------------------------------------------------------------------------------------------------------------
-SupportedDevConsoleArgType DevConsoleCommandInfo::GetArgType(std::string const& argName) const
+DevConsoleArgType DevConsoleCommandInfo::GetArgType(std::string const& argName) const
 {
 	for (int i = 0; i < (int) m_argNames.size(); ++i)
 	{
@@ -33,5 +53,30 @@ SupportedDevConsoleArgType DevConsoleCommandInfo::GetArgType(std::string const& 
 			return m_argTypes[i];
 		}
 	}
-	return SupportedDevConsoleArgType::None;
+	return DevConsoleArgType::None;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+std::string DevConsoleCommandInfo::ArgTypeToString(DevConsoleArgType argType)
+{
+	switch (argType)
+	{
+		case DevConsoleArgType::Int:
+			return "Int";
+			break;
+		case DevConsoleArgType::Float:
+			return "Float";
+			break;
+		case DevConsoleArgType::Bool:
+			return "Bool";
+			break;
+		case DevConsoleArgType::String:
+			return "String";
+			break;
+		default:
+			break;
+	}
+	return "";
 }

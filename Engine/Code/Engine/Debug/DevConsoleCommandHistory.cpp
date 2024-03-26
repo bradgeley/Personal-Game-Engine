@@ -163,7 +163,13 @@ bool DevConsoleCommandHistory::SaveTo(std::string const& filepath) const
         historyAsOneString += '\n';
     }
 
-    return (bool) FileWriteFromString(filepath, historyAsOneString);
+    if (!historyAsOneString.empty())
+    {
+        return (bool) FileWriteFromString(filepath, historyAsOneString);
+    }
+
+    // No history to write = succeeded
+    return true;
 }
 
 

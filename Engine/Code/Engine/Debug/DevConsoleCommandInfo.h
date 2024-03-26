@@ -6,7 +6,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-enum class SupportedDevConsoleArgType
+enum class DevConsoleArgType
 {
 	None,
 	Int,
@@ -24,10 +24,13 @@ enum class SupportedDevConsoleArgType
 struct DevConsoleCommandInfo
 {
 	DevConsoleCommandInfo(std::string const& commandName);
-	void AddArg(std::string const& argName, SupportedDevConsoleArgType argType);
-	SupportedDevConsoleArgType GetArgType(std::string const& argName) const;
+
+	std::string ToString() const;
+	void AddArg(std::string const& argName, DevConsoleArgType argType);
+	DevConsoleArgType GetArgType(std::string const& argName) const;
+	static std::string ArgTypeToString(DevConsoleArgType argType);
 
 	std::string m_commandName;
 	std::vector<std::string> m_argNames;
-	std::vector<SupportedDevConsoleArgType> m_argTypes;
+	std::vector<DevConsoleArgType> m_argTypes;
 };

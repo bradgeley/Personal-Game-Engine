@@ -9,6 +9,32 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Strings SplitStringOnAnyDelimeter(std::string const& string, std::string const& delimiters)
+{
+    Strings result;
+
+    std::string line = "";
+    line.reserve(32);
+
+    for (auto& c : string)
+    {
+        if (DoesStringContain(delimiters, c))
+        {
+            result.emplace_back(line);
+            line.clear();
+            continue;
+        }
+        line += c;
+    }
+
+    result.emplace_back(line);
+
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Strings SplitStringOnDelimeter(std::string const& string, char delimeter)
 {
     Strings result;
@@ -100,9 +126,69 @@ void TrimWhitespace(std::string& out_string)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void TrimEdgeWhitespace(std::string& out_string)
+{
+    TrimLeadingWhitespace(out_string);
+    TrimTrailingWhitespace(out_string);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void TrimLeadingWhitespace(std::string& out_string)
+{
+    int numLeadingWhitespace = 0;
+    for (int i = 0; i < (int) out_string.size(); ++i)
+    {
+        char& c = out_string[i];
+        if (!IsWhitespace(c))
+        {
+            numLeadingWhitespace = i;
+            break;
+        }
+    }
+    out_string.erase(out_string.begin(), out_string.begin() + numLeadingWhitespace);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void TrimTrailingWhitespace(std::string& out_string)
+{
+    int numTrailingWhitespace = 0;
+    for (int i = (int) out_string.size() - 1; i >= 0; --i)
+    {
+        char& c = out_string[i];
+        if (IsWhitespace(c))
+        {
+            numTrailingWhitespace++;
+        }
+        else break;
+    }
+    out_string.erase(out_string.end() - numTrailingWhitespace, out_string.end());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool IsWhitespace(char c)
 {
     return (c == ' ') || (c == '\r') || (c == '\t') || (c == '\n') || (c == '\f');
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool DoesStringContain(std::string const& string, char c)
+{
+    for (auto& character : string)
+    {
+        if (character == c)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 

@@ -10,6 +10,7 @@ class GuestList;
 class Camera;
 class SeatingChart;
 class SeatingChartGenerator;
+struct NamedProperties;
 
 
 
@@ -23,6 +24,8 @@ public:
     void EndFrame() override;
     void Render() const override;
     void Shutdown() override;
+
+    bool OnExportGuestList(NamedProperties& args);
 
 private:
 
