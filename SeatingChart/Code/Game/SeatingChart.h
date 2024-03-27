@@ -17,6 +17,7 @@ struct SeatingChartDefinition
 	int m_maxNumTables = 16;
 	int m_maxGuestsPerTable = 10;
 	std::string m_saveFilepath = "Data/SeatingChart.txt";
+	std::string m_seatBlockedTag = "-Empty Seat-";
 };
 
 
@@ -29,12 +30,15 @@ public:
 	SeatingChart(SeatingChartDefinition const& def);
 
 	bool PlaceGuest(int seatIndex, std::string const& guestName);
+	bool RemoveGuest(int seatIndex);
 	int GetTableForGuest(std::string const& guest) const;
 	Strings GetGuestsAtTable(int tableId) const;
+	void BlockRemainingSeatsAtTable(int tableId);
+	bool CombineTables(int tableA, int tableB);
 
 	std::string ToString() const;
 	void WriteToFile(std::string const& filepath) const;
-	void ReadFromFile(std::string const& filepath);
+	void ReadFromFile(std::string const& filepath, bool onlyFinishedTables);
 
 	SeatingChartDefinition m_def;
 	

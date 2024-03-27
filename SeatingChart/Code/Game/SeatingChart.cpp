@@ -31,6 +31,20 @@ bool SeatingChart::PlaceGuest(int seatIndex, std::string const& guestName)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SeatingChart::RemoveGuest(int seatIndex)
+{
+	bool wasGuest = m_seats[seatIndex] != "" && m_seats[seatIndex] != m_def.m_seatBlockedTag;
+	if (wasGuest)
+	{
+		m_seats[seatIndex] = "";
+		return true;
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 int SeatingChart::GetTableForGuest(std::string const& guest) const
 {
 	for (int i = 0; i < (int) m_seats.size(); ++i)
@@ -49,8 +63,10 @@ int SeatingChart::GetTableForGuest(std::string const& guest) const
 Strings SeatingChart::GetGuestsAtTable(int tableId) const
 {
 	Strings result;
-	int firstSeatAtTable = tableId * m_def.m_maxGuestsPerTable;
-	int lastSeatAtTable = (tableId + 1) * m_def.m_maxGuestsPerTable;
+	int maxGuestsPerTable = m_def.m_maxGuestsPerTable;
+	int firstSeatAtTable = tableId * maxGuestsPerTable;
+	int lastSeatAtTable = (tableId + 1) * maxGuestsPerTable;
+
 	for (int i = firstSeatAtTable; i < lastSeatAtTable; ++i)
 	{
 		if (!m_seats[i].empty())
@@ -59,6 +75,54 @@ Strings SeatingChart::GetGuestsAtTable(int tableId) const
 		}
 	}
 	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SeatingChart::BlockRemainingSeatsAtTable(int tableId)
+{
+	int maxGuestsPerTable = m_def.m_maxGuestsPerTable;
+	int firstSeatAtTable = tableId * maxGuestsPerTable;
+	int lastSeatAtTable = (tableId + 1) * maxGuestsPerTable;
+
+	for (int seatIndex = firstSeatAtTable; seatIndex < lastSeatAtTable; ++seatIndex)
+	{
+		if (m_seats[seatIndex].empty())
+		{
+			m_seats[seatIndex] = m_def.m_seatBlockedTag;
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SeatingChart::CombineTables(int tableA, int tableB)
+{
+	int maxGuestsPerTable = m_def.m_maxGuestsPerTable;
+	int firstSeatAtTableA = tableA * maxGuestsPerTable;
+	int lastSeatAtTableA = (tableA + 1) * maxGuestsPerTable;
+	int firstSeatAtTableB = tableB * maxGuestsPerTable;
+	int lastSeatAtTableB = (tableB + 1) * maxGuestsPerTable;
+
+	for (int seatIndexA = firstSeatAtTableA; seatIndexA < lastSeatAtTableA; ++seatIndexA)
+	{
+		if (m_seats[seatIndexA].empty())
+		{
+			// Find a person from B and place them
+			for (int seatIndexB = firstSeatAtTableB; seatIndexB < lastSeatAtTableB; ++seatIndexB)
+			{
+				if (!m_seats[seatIndexB].empty())
+				{
+					PlaceGuest(seatIndexA, m_seats[seatIndexB]);
+					RemoveGuest(seatIndexB);
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 
@@ -76,7 +140,7 @@ std::string SeatingChart::ToString() const
 			// New table starting
 			result.append(StringF("\nTable %i:\n", seatIndex / maxGuestsPerTable));
 		}
-		if (seat.empty())
+		if (!seat.empty() && seat != m_def.m_seatBlockedTag)
 		{
 			result.append(StringF("%s\n", seat.c_str()));
 		}
@@ -96,7 +160,7 @@ void SeatingChart::WriteToFile(std::string const& filepath) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SeatingChart::ReadFromFile(std::string const& filepath)
+void SeatingChart::ReadFromFile(std::string const& filepath, bool onlyFinishedTables)
 {
 	std::string fileString;
 	FileReadToString(filepath, fileString);
@@ -122,18 +186,32 @@ void SeatingChart::ReadFromFile(std::string const& filepath)
 	{
 		if (line.find("Table") != std::string::npos)
 		{
+			if (isFinishedTable)
+			{
+				// Just reaching a new table after the previous finished table. We need to mark those seats as taken.
+				BlockRemainingSeatsAtTable(currentTable);
+			}
 			isFinishedTable = line[0] == '*';
 			currentTable++;
 			currentSeatIndex = maxGuestsAtTable * currentTable; // reset seats to beginning of table
 			continue;
 		}
 
-		std::string guest = line;
-		TrimEdgeWhitespace(guest);
-		ASSERT_OR_DIE(currentSeatIndex < m_seats.size(), StringF("Guest %s cannot fit into table %i", guest.c_str(), currentTable));
+		if (onlyFinishedTables && isFinishedTable)
+		{
+			std::string guest = line;
+			TrimEdgeWhitespace(guest);
+			ASSERT_OR_DIE(currentSeatIndex < m_seats.size(), StringF("Guest %s cannot fit into table %i", guest.c_str(), currentTable));
+			m_seats[currentSeatIndex] = guest;
+		}
 
-		m_seats[currentSeatIndex] = guest;
 		currentSeatIndex++;
+	}
+
+	if (isFinishedTable)
+	{
+		// Block remaining seats at last table
+		BlockRemainingSeatsAtTable(currentTable);
 	}
 
 	// Verify that those guests are in the guest list
@@ -144,7 +222,7 @@ void SeatingChart::ReadFromFile(std::string const& filepath)
 			continue;
 		}
 
-		if (!m_def.m_guestList->FindGuest(seat))
+		if (!m_def.m_guestList->FindGuest(seat) && seat != m_def.m_seatBlockedTag)
 		{
 			g_devConsole->LogErrorF("Guest %s not found in guest list", seat.c_str());
 		}

@@ -38,7 +38,7 @@ void Game::Startup()
     scDef.m_maxGuestsPerTable = 10;
     scDef.m_maxNumTables = 17; // 15 for guests, 1 for sonali/brad
     m_seatingChart = new SeatingChart(scDef);
-    m_seatingChart->ReadFromFile(manualSeatingChartFilepath);
+    m_seatingChart->ReadFromFile(manualSeatingChartFilepath, true);
 
     SeatingChartGeneratorDefinition scGenDef;
     scGenDef.m_seatingChart = m_seatingChart;
@@ -51,7 +51,7 @@ void Game::Startup()
     g_eventSystem->SubscribeMethod("ExportGuestList", this, &Game::OnExportGuestList);
 
     // TODO: FIX GENERATION
-    //m_generator->Generate();
+    m_generator->Generate();
 }
 
 

@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2024
 #include "SeatingChartGenerator.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Debug/DevConsole.h"
 #include "SeatingChart.h"
 #include "Guest.h"
 #include "GuestList.h"
@@ -24,33 +25,127 @@ void SeatingChartGenerator::Generate()
 
 	SeatingChartDefinition const& chartDef = chart->m_def;
 	GuestList const* guestList = chartDef.m_guestList;
+	int numGuests = (int) guestList->m_guests.size();
 
 	// Set the tables
 	int maxTables = chartDef.m_maxNumTables;
 	int maxGuestsPerTable = chartDef.m_maxGuestsPerTable;
 	int maxSeats = maxTables * maxGuestsPerTable;
 
-	// Generate wavefunctions for every seat
+	// Figure out which guests are already seated
+	std::vector<bool> isGuestAlreadySeated;
+	isGuestAlreadySeated.resize(numGuests);
+
+	for (int guestIndex = 0; guestIndex < numGuests; ++guestIndex)
+	{
+		std::string const& guestName = guestList->m_guests[guestIndex]->m_name;
+		ASSERT_OR_DIE(!guestName.empty(), "Empty guest name");
+		bool isSeated = (chart->GetTableForGuest(guestName) != -1);
+		isGuestAlreadySeated[guestIndex] = isSeated;
+	}
+
+	// Generate wavefunctions for every seat, excluding ones that have already been seated
 	for (int seatIndex = 0; seatIndex < maxSeats; ++seatIndex)
 	{
 		Seat seat;
 		seat.m_seatIndex = seatIndex;
-		for (Guest* guest : guestList->m_guests)
+		for (int guestIndex = 0; guestIndex < numGuests; ++guestIndex)
 		{
-			seat.m_possibleGuests.push_back(guest->m_name);
+			std::string const& guest = guestList->m_guests[guestIndex]->m_name;
+			if (!isGuestAlreadySeated[guestIndex])
+			{
+				seat.m_possibleGuests.push_back(guest);
+			}
 		}
 		m_seats.emplace_back(seat);
 	}
 
-	// Collapse a single seat
 	int numGuestsSeated = 0;
-	int numGuests = (int) guestList->m_guests.size();
 	while (numGuestsSeated < numGuests)
 	{
+		// Collapse a single seat
 		Seat* seat = GetLowestEntropySeat();
-		CollapseSeat(seat);
-		numGuestsSeated++;
+		if (seat)
+		{
+			CollapseSeat(seat);
+			numGuestsSeated++;
+		}
+		else break;
 	}
+
+	// Combine smallest tables into tables that can fit them
+	for (int i = 0; i < maxTables; ++i)
+	{
+		int numGuestsAtTable_i = chart->GetGuestsAtTable(i).size();
+		if (numGuestsAtTable_i == 0)
+		{
+			continue;
+		}
+		int bestFitTableIndex = -1;
+		int bestFitDifference = 999;
+		for (int j = i + 1; j < maxTables; ++j)
+		{
+			int numGuestsAtTable_j = chart->GetGuestsAtTable(j).size();
+			if (numGuestsAtTable_j == 0)
+			{
+				continue;
+			}
+			int combinedGuests = numGuestsAtTable_i + numGuestsAtTable_j;
+			int combinedDifference = maxGuestsPerTable - combinedGuests;
+			if (combinedDifference >= 0 && combinedDifference < bestFitDifference)
+			{
+				bestFitDifference = combinedDifference;
+				bestFitTableIndex = j;
+			}
+		}
+		if (bestFitTableIndex != -1)
+		{
+			chart->CombineTables(i, bestFitTableIndex);
+		}
+	}
+
+	// Sort tables from most full to least full
+
+	std::vector<std::string> sortedTables;
+	sortedTables.resize(maxGuestsPerTable * maxTables);
+
+	// Set threshold to max, if any tables have that number, put them next in the list, then lower threshold and repeat
+	// Preserves table order.
+	int numGuestsThreshold = maxGuestsPerTable;
+	int currentSortedTableIndex = 0;
+	while (numGuestsThreshold > 0)
+	{
+		for (int i = 0; i < maxTables; ++i)
+		{
+			int numGuestsAtTable = chart->GetGuestsAtTable(i).size();
+			if (numGuestsAtTable == numGuestsThreshold)
+			{
+				for (int j = i * maxGuestsPerTable; j < (i + 1) * maxGuestsPerTable; ++j)
+				{
+					int indexInSortedList = (j % maxGuestsPerTable) + (maxGuestsPerTable * currentSortedTableIndex);
+					sortedTables[indexInSortedList] = chart->m_seats[j];
+				}
+				++currentSortedTableIndex;
+			}
+		}
+		--numGuestsThreshold;
+	}
+
+	chart->m_seats = sortedTables;
+
+	// Error check
+	if (numGuestsSeated < numGuests)
+	{
+		g_devConsole->LogErrorF("%i out of %i total guests seated", numGuestsSeated, numGuests);
+		for (auto& guest : guestList->m_guests)
+		{
+			if (chart->GetTableForGuest(guest->m_name) == -1)
+			{
+				g_devConsole->LogErrorF("%s could not be seated", guest->m_name.c_str());
+			}
+		}
+	}
+
 	m_def.m_seatingChart->WriteToFile(chartDef.m_saveFilepath);
 }
 
@@ -75,6 +170,12 @@ Seat* SeatingChartGenerator::GetLowestEntropySeat(bool getRandomIfTie)
 			lowestIndex = seatIndex;
 			lowestEntropy = entropy;
 		}
+	}
+
+	if (lowestIndex == -1)
+	{
+		// Failed
+		return nullptr;
 	}
 
 	Seat* result = &m_seats[lowestIndex];
@@ -124,10 +225,13 @@ bool SeatingChartGenerator::CollapseSeat(Seat* seat)
 	int numGuestsPerTable = chart->m_def.m_maxGuestsPerTable;
 	GuestList* guestList = chart->m_def.m_guestList;
 
-	std::string placedGuest = seat->m_possibleGuests[randomIndex];
-
 	// Place the guest on the chart
-	chart->PlaceGuest(seat->m_seatIndex, placedGuest);
+	std::string placedGuest = seat->m_possibleGuests[randomIndex];
+	bool placed = chart->PlaceGuest(seat->m_seatIndex, placedGuest);
+	if (!placed)
+	{
+		return false;
+	}
 
 	// Clear out all possible guests for this seat, bc its already filled
 	seat->m_possibleGuests.clear();
@@ -156,7 +260,7 @@ bool SeatingChartGenerator::CollapseSeat(Seat* seat)
 		{
 			continue;
 		}
-
+	
 		for (int possibleGuestIndex = (int) seatToCheck->m_possibleGuests.size() - 1; possibleGuestIndex >= 0; --possibleGuestIndex)
 		{
 			auto& possibleGuest = seatToCheck->m_possibleGuests[possibleGuestIndex];
