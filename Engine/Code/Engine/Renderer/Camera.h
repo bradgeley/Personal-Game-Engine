@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2023
+﻿// Bradley Christensen - 2022-2024
 #pragma once
 #include "Engine/Renderer/EngineConstantBuffers.h"
 #include "Engine/Math/Mat44.h"
@@ -15,6 +15,8 @@ public:
 
     Camera() = default;
 	explicit Camera(Vec3 const& bottomLeft, Vec3 const& topRight);
+    explicit Camera(float minX, float minY, float maxX, float maxY);
+    explicit Camera(float minX, float minY, float minZ, float maxX, float maxY, float maxZ);
 
     void DefineGameSpace(Vec3 const& gameForward, Vec3 const& gameLeft, Vec3 const& gameUp);
 
@@ -30,12 +32,12 @@ public:
 
     Vec3 const& GetPosition() const;
     float GetRotation2D() const;
-    Vec3  GetOrthoCenter() const;
-    Vec2  GetOrthoCenter2D() const;
+    Vec3 GetOrthoCenter() const;
+    Vec2 GetOrthoCenter2D() const;
     AABB2 GetOrthoBounds2D() const;
-    Vec3  GetOrthoDimensions() const;
-    Vec3  GetOrthoHalfDimensions() const;
-    Vec2  ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const;
+    Vec3 GetOrthoDimensions() const;
+    Vec3 GetOrthoHalfDimensions() const;
+    Vec2 ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const;
 
     // Const Warning: These functions may recalculate the view and projection matrices
     CameraConstants const& GetCameraConstants() const;
@@ -45,8 +47,8 @@ public:
 private:
 
     // Const Warning: Const because called in Renderer::BeginCamera, but they update m_cameraConstants
-    void  UpdateViewMatrix() const;
-    void  UpdateProjMatrix() const;
+    void UpdateViewMatrix() const;
+    void UpdateProjMatrix() const;
 
 private:
     

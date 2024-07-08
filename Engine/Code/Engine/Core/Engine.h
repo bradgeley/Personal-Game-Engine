@@ -8,7 +8,7 @@ class EngineSubsystem;
 
 
 
-
+extern class Engine* g_engine;
 
 
 
@@ -45,6 +45,7 @@ public:
     
 private:
     
+    bool m_isActive = false;
     std::vector<EngineSubsystem*> m_subsystems;
 };
 

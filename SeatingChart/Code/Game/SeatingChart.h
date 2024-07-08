@@ -35,6 +35,7 @@ public:
 	Strings GetGuestsAtTable(int tableId) const;
 	void BlockRemainingSeatsAtTable(int tableId);
 	bool CombineTables(int tableA, int tableB);
+	bool VerifyAllGuestsAreSeated() const;
 
 	std::string ToString() const;
 	void WriteToFile(std::string const& filepath) const;

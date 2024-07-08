@@ -40,8 +40,10 @@ void SBackgroundStar::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SBackgroundStar::Run(SystemContext const& context)
 {
+	Camera renderCamera(Vec3(0.f, 0.f, 0.f), Vec3(g_window->GetAspect(), 1.f, 1000.f));
+	g_renderer->BeginCameraAndWindow(&renderCamera, g_window);
+
 	// Render portion
-	g_renderer->BeginWindow(g_window);
 	g_renderer->ClearDepth(1.f);
 	g_renderer->ClearScreen(Rgba8::Black);
 
@@ -81,11 +83,12 @@ void SBackgroundStar::Run(SystemContext const& context)
 			AddVertsForDisc2D(starsBuffer.GetMutableVerts(), star.m_pos, size, 16, star.m_tint);
 		}
 
-		g_renderer->BeginCamera(Camera(Vec3(0.f, 0.f, 0.f), Vec3(g_window->GetAspect(), 1.f, 1000.f)));
 		g_renderer->BindShader(0);
 		g_renderer->BindTexture(0);
 		g_renderer->DrawVertexBuffer(&starsBuffer);
 	}
+
+	g_renderer->EndCameraAndWindow(&renderCamera, g_window);
 }
 
 

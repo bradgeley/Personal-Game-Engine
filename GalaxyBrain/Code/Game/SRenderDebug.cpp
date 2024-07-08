@@ -35,8 +35,7 @@ void SRenderDebug::Run(SystemContext const& context)
     scDebug.m_debugDrawVerts.ClearVerts();
 
     
-    g_renderer->BeginWindow(g_window);
-    g_renderer->BeginCamera(scDebug.debugCamera);
+    g_renderer->BeginCameraAndWindow(&scDebug.debugCamera, g_window);
 
     VertexBuffer textVerts;
     auto font = g_renderer->GetDefaultFont();
@@ -45,4 +44,6 @@ void SRenderDebug::Run(SystemContext const& context)
 
     font->SetRendererState();
     g_renderer->DrawVertexBuffer(&textVerts);
+
+    g_renderer->EndCameraAndWindow(&scDebug.debugCamera, g_window);
 }

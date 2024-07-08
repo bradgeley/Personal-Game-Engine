@@ -1,4 +1,4 @@
-Aafreen: Desmond, James, Emil, Abin, Amreen, Danny, Brady, Mariam, Natalie Le, Preethi, Ridah, Rooshna
+Aafreen: Desmond, James, Emil, Abin, Amreen, Danny, Brady
 Aaron: Amanda
 Abin: Desmond, James, Emil, Aafreen, Amreen, Danny, Brady
 Alex: Nick, Natalie, Deisy, Max, Jackson D, Alyssa, Bear
@@ -6,7 +6,7 @@ Alex Clay: Kristian, Lillian, Ted, Gracia, Connor, Chris
 Alisha: Shefali, Rohit, Sameer, Sneha, Preethi, Ridah, Sumana
 Alyssa: Nick, Natalie, Alex, Deisy, Max, Jackson D, Bear
 Amanda: Aaron
-Amreen: Aafreen
+Amreen: Desmond, James, Emil, Abin, Aafreen, Danny, Brady
 Andrew C: Kirstin, Maisie, Owen, Rebecca, Vincent, Lara, Brad
 Andrew K: Manny, Ropa, Isabel, Melanie
 Angela: Wygene, Max, Lenni, Tiffany, Brian, Nicole N, Blanca, Pedro
@@ -39,7 +39,7 @@ Ed: Leslie, John C, Frank, Elizabeth, Kim, Dan, Barry, Kathleen, Lisa
 Elizabeth: Leslie, John C, Frank, Kim, Dan, Barry, Kathleen, Lisa, Ed
 Emil: Desmond, James, Abin, Aafreen, Amreen, Danny, Brady
 Frank: Leslie, John C, Elizabeth, Kim, Dan, Barry, Kathleen, Lisa, Ed
-Gerardo: David
+Gerardo: Jackson F, Katie, Natalie Le, Rooshna, Salman, David, Mariam
 Gigi: Carol, Mark, Suzy, John M, Jean
 Gracia: Kristian, Lillian, Ted, Alex Clay, Connor, Chris
 Hemendra: Mario, Tricia, Tendai, Dumbor, Sanjiv, Shauna

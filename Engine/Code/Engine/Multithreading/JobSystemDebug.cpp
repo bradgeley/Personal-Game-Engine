@@ -72,7 +72,7 @@ void JobSystemDebug::Update(float deltaSeconds)
 void JobSystemDebug::Render() const
 {
     g_renderer->BeginWindow(m_window);
-    g_renderer->BeginCamera(m_camera);
+    g_renderer->BeginCameraAndWindow(m_camera, g_window);
     g_renderer->ClearScreen(Rgba8::LightGray);
 
     VertexBuffer buffer;

@@ -6,8 +6,20 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+// THE ENGINE
+//
+Engine* g_engine = nullptr;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Engine::Startup()
 {
+    if (m_isActive)
+    {
+        return;
+    }
+
     for (EngineSubsystem*& subsystem : m_subsystems)
     {
         if (subsystem)
@@ -15,6 +27,8 @@ void Engine::Startup()
             subsystem->Startup();
         }
     }
+
+    m_isActive = true;
 }
 
 
@@ -50,8 +64,9 @@ void Engine::Update(float deltaSeconds)
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::Render() const
 {
-    for (auto& subsystem : m_subsystems)
+    for (int i = (int) m_subsystems.size() - 1; i >= 0; --i)
     {
+        EngineSubsystem* const& subsystem = m_subsystems[i];
         if (subsystem && subsystem->IsEnabled())
         {
             subsystem->Render();
@@ -64,8 +79,9 @@ void Engine::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::EndFrame()
 {
-    for (auto& subsystem : m_subsystems)
+    for (int i = (int) m_subsystems.size() - 1; i >= 0; --i)
     {
+        EngineSubsystem*& subsystem = m_subsystems[i];
         if (subsystem && subsystem->IsEnabled())
         {
             subsystem->EndFrame();
@@ -94,5 +110,10 @@ void Engine::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::RegisterSubsystem(EngineSubsystem* system)
 {
+    if (m_isActive)
+    {
+        return;
+    }
+
     m_subsystems.push_back(system);
 }

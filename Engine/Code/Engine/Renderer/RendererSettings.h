@@ -98,8 +98,8 @@ enum class DepthTest : uint8_t
 struct RendererSettings
 {
     CameraConstants m_cameraConstants;
-    ModelConstants  m_modelConstants;
-    FontConstants   m_fontConstants;
+    ModelConstants m_modelConstants;
+    FontConstants m_fontConstants;
 
     Texture* m_texture                      = nullptr;
     Shader* m_shader                        = nullptr;

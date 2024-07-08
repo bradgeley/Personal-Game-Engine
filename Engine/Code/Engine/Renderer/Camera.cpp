@@ -12,11 +12,27 @@ Camera::Camera(Vec3 const& bottomLeft, Vec3 const& topRight) : m_mins(bottomLeft
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Camera::Camera(float minX, float minY, float maxX, float maxY) : Camera(minX, minY, 0.f, maxX, maxY, 0.f)
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Camera::Camera(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) : m_mins(minX, minY, minZ), m_maxs(maxX, maxY, maxZ)
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Camera::DefineGameSpace(Vec3 const& gameForward, Vec3 const& gameLeft, Vec3 const& gameUp)
 {
     // D3D11 is x-right y-up z-forward
     // If we want x to be forward, we need to create a matrix that transforms x values into z values.
-    // We do this by creating a matrix where the Z (forward) vector is our new X vector, and get the inverse by transposing it.
+    // We do this by creating a matrix where the Z (forward) vector is our new X vector, and get the inverse by transposing it (all 3 inputs must be orthonormal)
     // Then any points we pass through this matrix will be transformed from X forward to Z forward for rendering.
     m_cameraConstants.m_gameToRender.SetIJK(-gameLeft, gameUp, gameForward);
     m_cameraConstants.m_gameToRender.Transpose();
@@ -105,6 +121,8 @@ void Camera::SetOrthoCenter2D(Vec2 const& center)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetCameraConstants(CameraConstants const& cc)
 {
+    m_projMatrixDirty = true;
+    m_viewMatrixDirty = true;
     m_cameraConstants = cc;
 }
 

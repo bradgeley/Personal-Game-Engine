@@ -53,11 +53,13 @@ void SRender::Run(SystemContext const& context)
         render.m_modelConstants.m_modelMatrix.SetTranslation2D(trans.m_pos);
     }
 
+    g_renderer->BeginWindow(g_window);
+
     for (auto camIt = g_ecs->Iterate<CCamera>(context); camIt.IsValid(); ++camIt)
     {
         // For each camera
         CCamera& camera = *cameraStorage.Get(camIt.m_currentIndex);
-        g_renderer->BeginCamera(camera.m_camera);
+        g_renderer->BeginCamera(&camera.m_camera);
 
         // Render all things
         for (int i = 0; i < MAX_Z_LAYERS; ++i)
@@ -76,7 +78,10 @@ void SRender::Run(SystemContext const& context)
             }
         }
 
+        g_renderer->EndCamera(&camera.m_camera);
     }
+
+    g_renderer->EndWindow(g_window);
 }
 
 

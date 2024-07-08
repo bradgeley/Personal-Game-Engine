@@ -134,17 +134,7 @@ void SeatingChartGenerator::Generate()
 	chart->m_seats = sortedTables;
 
 	// Error check
-	if (numGuestsSeated < numGuests)
-	{
-		g_devConsole->LogErrorF("%i out of %i total guests seated", numGuestsSeated, numGuests);
-		for (auto& guest : guestList->m_guests)
-		{
-			if (chart->GetTableForGuest(guest->m_name) == -1)
-			{
-				g_devConsole->LogErrorF("%s could not be seated", guest->m_name.c_str());
-			}
-		}
-	}
+	chart->VerifyAllGuestsAreSeated();
 
 	m_def.m_seatingChart->WriteToFile(chartDef.m_saveFilepath);
 }

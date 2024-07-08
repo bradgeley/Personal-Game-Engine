@@ -5,6 +5,7 @@
 #include "Engine/Debug/DevConsole.h"
 #include "SeatingChart.h"
 #include "GuestList.h"
+#include "Guest.h"
 
 
 
@@ -117,12 +118,45 @@ bool SeatingChart::CombineTables(int tableA, int tableB)
 				{
 					PlaceGuest(seatIndexA, m_seats[seatIndexB]);
 					RemoveGuest(seatIndexB);
+					break;
 				}
 			}
 		}
 	}
 
 	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SeatingChart::VerifyAllGuestsAreSeated() const
+{
+	int i = 0;
+	for (auto& guest : m_def.m_guestList->m_guests)
+	{
+		if (GetTableForGuest(guest->m_name))
+		{
+			++i;
+		}
+		else
+		{
+			g_devConsole->LogErrorF("%s could not be seated", guest->m_name.c_str());
+		}
+	}
+
+	int numGuests = m_def.m_guestList->m_guests.size();
+	std::string msgFmt = "%i out of %i guests were seated.";
+	if (i < numGuests)
+	{
+		g_devConsole->LogErrorF(msgFmt.c_str(), i, numGuests);
+		return false;
+	}
+	else
+	{
+		g_devConsole->LogSuccessF(msgFmt.c_str(), i, numGuests);
+		return true;
+	}
 }
 
 
@@ -162,6 +196,9 @@ void SeatingChart::WriteToFile(std::string const& filepath) const
 //----------------------------------------------------------------------------------------------------------------------
 void SeatingChart::ReadFromFile(std::string const& filepath, bool onlyFinishedTables)
 {
+	m_seats.clear();
+	m_seats.resize(m_def.m_maxNumTables * m_def.m_maxGuestsPerTable);
+
 	std::string fileString;
 	FileReadToString(filepath, fileString);
 	Strings lines = SplitStringOnAnyDelimeter(fileString, "\n\r");

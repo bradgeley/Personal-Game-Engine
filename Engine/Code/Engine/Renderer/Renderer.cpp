@@ -107,8 +107,18 @@ void Renderer::EndFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::BeginWindow(Window const* window)
 {
+	if (!window)
+	{
+		// Assume g_window if not specified
+		window = g_window;
+	}
+
 	ASSERT_OR_DIE(window, "Renderer::BeginWindow - trying to begin a null window.");
-	ASSERT_OR_DIE(m_currentWindow == nullptr, "Renderer::BeginWindow - m_currentWindow is not null, call EndWindow on it first.");
+
+	if (m_currentWindow && m_currentWindow != window)
+	{
+		EndWindow(m_currentWindow);
+	}
 
 	if (m_windowRenderContexts.find(window) != m_windowRenderContexts.end())
 	{
@@ -143,15 +153,23 @@ Window const* Renderer::GetCurrentWindow() const
 void Renderer::BeginCamera(Camera const* camera)
 {
 	ASSERT_OR_DIE(camera, "Renderer::BeginCamera - trying to begin a null camera.");
-	ASSERT_OR_DIE(m_currentCamera == nullptr, "Renderer::BeginCamera - m_currentCamera is not null, call EndCamera on it first.");
-	ASSERT_OR_DIE(m_currentWindow, "Renderer::BeginCamera - m_currentWindow is null, call BeginWindow first or BeginCameraAndWindow");
 	ASSERT_OR_DIE(m_deviceContext, "Renderer::BeginCamera - m_deviceContext is null");
+
+	if (m_currentCamera && m_currentCamera != camera)
+	{
+		EndCamera(m_currentCamera);
+	}
+
+	if (!m_currentWindow)
+	{
+		BeginWindow(g_window);
+	}
 
 	m_currentCamera = camera;
 	
 	ResetRenderingPipelineState();
 
-	// Fill Camera Constants, may need to recalculate matrices if camera moved
+	// Fill Camera Constants
 	m_dirtySettings.m_cameraConstants = camera->GetCameraConstants();
 	
 	// Set viewport

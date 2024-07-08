@@ -26,6 +26,7 @@ public:
     void Shutdown() override;
 
     bool OnExportGuestList(NamedProperties& args);
+    bool OnVerifySeatingChart(NamedProperties& args);
 
 private:
 

@@ -43,7 +43,7 @@ struct FontConstants
     float m_boldness                    = 0.5f;
     float m_antiAliasAmount             = 0.1f;
     float m_outlineThickness            = 0.f;
-    float pad = -1;
+    float pad = (float) 0xFFFFFFFF;
     
     bool operator==(FontConstants const& rhs) const;
     bool operator!=(FontConstants const& rhs) const;

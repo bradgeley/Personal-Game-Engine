@@ -22,6 +22,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 std::string guestListFilepath = "Data/GuestList.txt";
+std::string seatingChartFilepath = "Data/SeatingChart.txt";
 std::string manualSeatingChartFilepath = "Data/ManualSeatingChart.txt";
 
 
@@ -48,7 +49,11 @@ void Game::Startup()
     exportGuestListCmd.AddArg("withManualData", DevConsoleArgType::Bool);
     g_devConsole->AddDevConsoleCommandInfo(exportGuestListCmd);
 
+    DevConsoleCommandInfo verifySeatingChartCmd("VerifySeatingChart");
+    g_devConsole->AddDevConsoleCommandInfo(verifySeatingChartCmd);
+
     g_eventSystem->SubscribeMethod("ExportGuestList", this, &Game::OnExportGuestList);
+    g_eventSystem->SubscribeMethod("VerifySeatingChart", this, &Game::OnVerifySeatingChart);
 
     // TODO: FIX GENERATION
     m_generator->Generate();
@@ -107,4 +112,13 @@ bool Game::OnExportGuestList(NamedProperties& args)
         m_guestList->PopulateFriendsFromSeatingChart(m_seatingChart);
     }
     return m_guestList->SaveToFile(guestListFilepath);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Game::OnVerifySeatingChart(NamedProperties& args)
+{
+    m_seatingChart->ReadFromFile(seatingChartFilepath, false);
+    return m_seatingChart->VerifyAllGuestsAreSeated();
 }

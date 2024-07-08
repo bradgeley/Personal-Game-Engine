@@ -4,15 +4,22 @@
 
 
 
+class Engine;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 class Game : public EngineSubsystem
 {
 public:
 
     void Startup() override;
+    void BeginFrame() override;
     void Update(float deltaSeconds) override;
     void EndFrame() override;
     void Render() const override;
     void Shutdown() override;
+
+    void ConfigureEngine(Engine* engine) const;
 
 };

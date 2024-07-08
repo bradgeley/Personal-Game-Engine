@@ -133,7 +133,7 @@ void Game::RegisterDevConsoleCommands() const
 {
     SubscribeEventCallbackFunction("SystemActive", Game::OnSystemActiveCommand);
     DevConsoleCommandInfo systemActiveInfo("SystemActive");
-    systemActiveInfo.AddArg("on", SupportedDevConsoleArgType::Bool);
+    systemActiveInfo.AddArg("on", DevConsoleArgType::Bool);
     g_devConsole->AddDevConsoleCommandInfo(systemActiveInfo);
 }
 
