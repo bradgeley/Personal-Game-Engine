@@ -52,6 +52,16 @@ int RandomNumberGenerator::GetRandomIntInRange(int minInclusive, int maxInclusiv
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Vec2 RandomNumberGenerator::GetRandomVecInRange2D(Vec2 minInclusive, Vec2 maxInclusive)
+{
+    float randomX = GetRandomFloatInRange(minInclusive.x, maxInclusive.x);
+    float randomY = GetRandomFloatInRange(minInclusive.y, maxInclusive.y);
+    return Vec2(randomX, randomY);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float RandomNumberGenerator::GetRandomFloatZeroToOne()
 {
     return static_cast<float>(Rand()) / static_cast<float>(RAND_MAX);

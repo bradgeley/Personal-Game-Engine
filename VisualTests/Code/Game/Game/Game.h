@@ -6,6 +6,7 @@
 
 
 
+class Engine;
 class VisualTest;
 
 
@@ -23,6 +24,8 @@ public:
     void Shutdown() override;
 
     bool Help(NamedProperties& args);
+
+    void ConfigureEngine(Engine* engine) const;
 
     int m_currentTestMode = 2;
     std::vector<VisualTest*> m_testModes;

@@ -50,6 +50,25 @@ void Camera::SetPosition(Vec3 const& position)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Camera::Translate(Vec3 const& deltaPos)
+{
+    m_viewMatrixDirty = true;
+    m_position += deltaPos;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Camera::Translate2D(Vec2 const& deltaPos)
+{
+    m_viewMatrixDirty = true;
+    m_position += Vec3(deltaPos, 0.f);
+}
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Camera::SetRotation2D(float rotation)
 {
     m_viewMatrixDirty = true;
@@ -95,6 +114,18 @@ void Camera::SetOrthoBounds(Vec3 const& mins, Vec3 const& maxs)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Camera::SetOrthoBounds2D(AABB2 const& orthoBounds)
+{
+    m_projMatrixDirty = true;
+    m_mins.x = orthoBounds.mins.x;
+    m_mins.y = orthoBounds.mins.y;
+    m_maxs.x = orthoBounds.maxs.x;
+    m_maxs.y = orthoBounds.maxs.y;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Camera::SetOrthoCenter(Vec3 const& center)
 {
     m_projMatrixDirty = true;
@@ -114,6 +145,21 @@ void Camera::SetOrthoCenter2D(Vec2 const& center)
     m_maxs.y = center.y + halfDims.y;
     m_mins.x = center.x - halfDims.x;
     m_mins.y = center.y - halfDims.y;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Camera::ZoomAroundCenter2D(float zoomRatio, Vec2 const& center)
+{
+    m_projMatrixDirty = true;
+    Vec3 center3D = Vec3(center);
+    m_mins -= center3D;
+    m_maxs -= center3D;
+    m_mins *= zoomRatio;
+    m_maxs *= zoomRatio;
+    m_mins += center3D;
+    m_maxs += center3D;
 }
 
 

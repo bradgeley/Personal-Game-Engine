@@ -26,45 +26,16 @@ WindowsApplication* g_app = nullptr;
 //----------------------------------------------------------------------------------------------------------------------
 void WindowsApplication::Startup()
 {
-    m_engine = new Engine();
+    g_engine = new Engine();
+    m_game = new Game();
 
-    g_rng = new RandomNumberGenerator();
+    m_game->ConfigureEngine(g_engine); // Adds subsystems to engine that the game uses
 
-    EventSystemConfig eventSysConfig;
-    g_eventSystem = new EventSystem(eventSysConfig);
-    m_engine->RegisterSubsystem(g_eventSystem);
-    
-    WindowConfig windowConfig;
-    windowConfig.m_windowTitle = "Galaxy Brain";
-    windowConfig.m_clientAspect = 2.f;
-    windowConfig.m_windowScale = 0.95f;
-    g_window = new Window(windowConfig);
-    m_engine->RegisterSubsystem(g_window);
+    g_engine->RegisterSubsystem(m_game); // Add the game itself as the final subsystem
+
+    g_engine->Startup(); // Start up the configured Engine with the game registered as the final subsystem
 
     g_window->m_quit.SubscribeMethod(this, &WindowsApplication::HandleQuit);
-
-    RendererConfig rendererConfig;
-    g_renderer = new Renderer(rendererConfig);
-    m_engine->RegisterSubsystem(g_renderer);
-
-    // Dev console before input, so it steals input from the window when active
-    DevConsoleConfig dcConfig;
-    dcConfig.m_backgroundImages = { "DrStrange.jpg" , "Thanos.jpg", "IronMan.jpg", "Thor.jpg" };
-    g_devConsole = new DevConsole(dcConfig);
-    m_engine->RegisterSubsystem(g_devConsole);
-    
-    InputSystemConfig inputConfig;
-    g_input = new InputSystem(inputConfig);
-    m_engine->RegisterSubsystem(g_input);
-
-    JobSystemConfig jobSysConfig;
-    g_jobSystem = new JobSystem(jobSysConfig);
-    m_engine->RegisterSubsystem(g_jobSystem);
-    
-    m_engine->Startup();
-
-    m_game = new Game();
-    m_game->Startup();
 }
 
 
@@ -82,17 +53,10 @@ void WindowsApplication::Run()
         timeThen = timeNow;
         //
         
-        m_engine->BeginFrame();
-        m_game->BeginFrame();
-        
-        m_engine->Update(deltaSeconds);
-        m_game->Update(deltaSeconds);
-        
-        m_game->Render();
-        m_engine->Render();
-        
-        m_game->EndFrame();
-        m_engine->EndFrame();
+        g_engine->BeginFrame();
+        g_engine->Update(deltaSeconds);
+        g_engine->Render();
+        g_engine->EndFrame();
     }
 }
 
@@ -101,10 +65,7 @@ void WindowsApplication::Run()
 //----------------------------------------------------------------------------------------------------------------------
 void WindowsApplication::Shutdown()
 {
-    SHUTDOWN_AND_DESTROY(m_game)
-    SHUTDOWN_AND_DESTROY(m_engine)
-    delete g_rng;
-    g_rng = nullptr;
+    SHUTDOWN_AND_DESTROY(g_engine)
 }
 
 

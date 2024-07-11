@@ -5,6 +5,7 @@
 
 
 struct NamedProperties;
+class Engine;
 
 
 
@@ -18,6 +19,8 @@ public:
     void EndFrame() override;
     void Render() const override;
     void Shutdown() override;
+
+    void ConfigureEngine(Engine* engine) const;
 
 private:
 

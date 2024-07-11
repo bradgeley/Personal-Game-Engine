@@ -107,12 +107,6 @@ void Renderer::EndFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::BeginWindow(Window const* window)
 {
-	if (!window)
-	{
-		// Assume g_window if not specified
-		window = g_window;
-	}
-
 	ASSERT_OR_DIE(window, "Renderer::BeginWindow - trying to begin a null window.");
 
 	if (m_currentWindow && m_currentWindow != window)

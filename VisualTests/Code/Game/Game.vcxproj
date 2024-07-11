@@ -190,6 +190,7 @@
   <ItemGroup>
     <ClCompile Include="Framework\Main_Windows.cpp" />
     <ClCompile Include="Game\Disc2DCollisionTest.cpp" />
+    <ClCompile Include="Game\FormationMovementTest.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\Noise2DTest.cpp" />
     <ClCompile Include="Game\NoiseTest.cpp" />
@@ -199,6 +200,7 @@
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
     <ClInclude Include="Game\Disc2DCollisionTest.h" />
+    <ClInclude Include="Game\FormationMovementTest.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameCommon.h" />
     <ClInclude Include="Game\Noise2DTest.h" />

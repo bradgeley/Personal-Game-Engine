@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/Renderer/Camera.h"
+#include "Engine/Math/RandomNumberGenerator.h"
 
 
 
@@ -14,6 +15,8 @@ public:
 
 	virtual void DisplayHelpMessage() const;
 
+	std::string m_name = "Unnamed Visual Test";
+	RandomNumberGenerator m_rng;
 	Camera m_camera;
 };
 

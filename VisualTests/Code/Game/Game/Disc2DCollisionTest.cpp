@@ -25,7 +25,7 @@ void Disc2DCollisionTest::Startup()
 {
 	m_camera.SetOrthoBounds(Vec3(0.f, 0.f, 0.f), Vec3(100.f, 50.f, 1.f));
 
-	g_rng = new RandomNumberGenerator();
+	m_rng.SetSeed(0);
 }
 
 
@@ -135,7 +135,7 @@ void Disc2DCollisionTest::Update(float deltaSeconds)
 void Disc2DCollisionTest::Render() const
 {
 	g_renderer->BeginWindow(g_window);
-	g_renderer->BeginCamera(m_camera);
+	g_renderer->BeginCamera(&m_camera);
 	g_renderer->ClearScreen(Rgba8::DarkGray);
 
 	// Set up text rendering
@@ -166,7 +166,7 @@ void Disc2DCollisionTest::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void Disc2DCollisionTest::Shutdown()
 {
-	delete g_rng;
+
 }
 
 

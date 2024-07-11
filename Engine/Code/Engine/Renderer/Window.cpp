@@ -115,7 +115,7 @@ IntVec2 Window::GetMouseClientPosition(bool originBottomLeft) const
 {
     POINT origin = { 0, 0 };
     ::ClientToScreen((HWND) m_windowHandle, &origin);
-
+    
     POINT mousePos;
     ::GetCursorPos(&mousePos);
     IntVec2 result = IntVec2(mousePos.x - origin.x, mousePos.y - origin.y);

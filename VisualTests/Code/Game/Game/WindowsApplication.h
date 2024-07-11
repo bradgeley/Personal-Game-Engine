@@ -30,12 +30,11 @@ public:
     void Quit();
     bool HandleQuit(NamedProperties& args);
     bool IsQuitting() const;
-    
+
 private:
 
     bool m_isQuitting = false;
 
-    Engine* m_engine = nullptr;
     Game* m_game = nullptr;
 };
 

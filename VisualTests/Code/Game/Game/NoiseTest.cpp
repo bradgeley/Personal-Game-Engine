@@ -14,9 +14,9 @@ void NoiseTest::Startup()
 {
 	m_camera.SetOrthoBounds(Vec3(0.f, 0.f, 0.f), Vec3(100.f, 50.f, 1.f));
 
+	m_seed = 0;
+
 	GenerateNoise(m_seed);
-
-
 }
 
 
@@ -33,8 +33,6 @@ void NoiseTest::Update(float deltaSeconds)
 		m_seed++;
 
 		GenerateNoise(m_seed);
-
-
 	}
 }
 
@@ -44,7 +42,7 @@ void NoiseTest::Update(float deltaSeconds)
 void NoiseTest::Render() const
 {
 	g_renderer->BeginWindow(g_window);
-	g_renderer->BeginCamera(m_camera);
+	g_renderer->BeginCamera(&m_camera);
 	g_renderer->ClearScreen(Rgba8::DarkGray);
 
 	// Set up text rendering
@@ -117,7 +115,7 @@ void NoiseTest::GenerateNoise(int seed)
 	m_perlinNoise1D.clear();
 	for (float i = 0.f; i < 100.f; i += 0.25f)
 	{
-		m_rawNoise1D.emplace_back(GetNoiseZeroToOne1D(i, seed));
+		m_rawNoise1D.emplace_back(GetNoiseZeroToOne1D((int) i, seed));
 		m_fractalNoise1D.emplace_back(GetFractalNoise1D(i, 5.f, 5, 0.5f, 2.f, true, seed));
 		m_perlinNoise1D.emplace_back(GetPerlinNoise1D(i, 5.f, 5, 0.5f, 2.f, true, seed));
 	}

@@ -9,8 +9,9 @@
 
 
 
-const IntVec2 DIMS = IntVec2{ 500, 500 };
+const IntVec2 DIMS = IntVec2{ 100, 100 };
 const Vec2 GRID_SIZE = Vec2{ 20.f, 20.f };
+constexpr float SCALE = 20.f;
 
 
 
@@ -19,7 +20,9 @@ void Noise2DTest::Startup()
 {
 	m_camera.SetOrthoBounds(Vec3(0.f, 0.f, 0.f), Vec3(100.f, 50.f, 1.f));
 
-	GenerateNoise(m_seed);
+	m_seed = 0;
+
+	GenerateNoise(m_seed); 
 }
 
 
@@ -45,7 +48,7 @@ void Noise2DTest::Update(float deltaSeconds)
 void Noise2DTest::Render() const
 {
 	g_renderer->BeginWindow(g_window);
-	g_renderer->BeginCamera(m_camera);
+	g_renderer->BeginCamera(&m_camera);
 	g_renderer->ClearScreen(Rgba8::DarkGray);
 
 	// Set up text rendering
@@ -99,20 +102,22 @@ void Noise2DTest::GenerateNoise(int seed)
 	m_fractalNoise2D.Initialize(DIMS, Rgba8::White);
 	m_perlinNoise2D.Initialize(DIMS, Rgba8::White);
 
-	float pos = 0.1f;
 	for (int y = 0; y < DIMS.y; ++y)
 	{
 		for (int x = 0; x < DIMS.x; ++x)
 		{
+			float fx = (float) x;
+			float fy = (float) y;
+
 			float noise = GetNoiseZeroToOne2D(x, y, seed);
 			Rgba8 color = GetColorForNoise(noise);
 			m_rawNoise2D.Set(x, y, color);
 
-			float fractalNoise = GetFractalNoise2D(x, y, 200.f, 3, 0.5f, 2.f, true, seed);
+			float fractalNoise = GetFractalNoise2D(fx, fy, SCALE, 3, 0.5f, 2.f, true, seed);
 			color = GetColorForNoise(fractalNoise);
 			m_fractalNoise2D.Set(x, y, color);
 
-			float perlinNoise = GetPerlinNoise2D(x, y, 200.f, 8, 0.5f, 2.f, true, seed);
+			float perlinNoise = GetPerlinNoise2D(fx, fy, SCALE, 8, 0.5f, 2.f, true, seed);
 			color = GetColorForNoise(perlinNoise);
 			m_perlinNoise2D.Set(x, y, color);
 		}

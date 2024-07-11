@@ -13,6 +13,8 @@ class Noise2DTest : public VisualTest
 {
 public:
 
+	Noise2DTest() { m_name = "Noise2D Test"; }
+
 	void Startup() override;
 	void Update(float deltaSeconds) override;
 	void Render() const override;

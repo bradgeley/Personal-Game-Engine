@@ -21,12 +21,16 @@ public:
     void DefineGameSpace(Vec3 const& gameForward, Vec3 const& gameLeft, Vec3 const& gameUp);
 
     void SetPosition(Vec3 const& position);
+    void Translate(Vec3 const& deltaPos);
+    void Translate2D(Vec2 const& deltaPos);
     void SetRotation2D(float rotation);
     void SetOrthoDims(Vec3 const& dims);
     void SetOrthoDims2D(Vec2 const& dims2D);
     void SetOrthoBounds(Vec3 const& mins, Vec3 const& maxs);
+    void SetOrthoBounds2D(AABB2 const& orthoBounds);
     void SetOrthoCenter(Vec3 const& center);
     void SetOrthoCenter2D(Vec2 const& center);
+    void ZoomAroundCenter2D(float zoomRatio, Vec2 const& center);
 
     void SetCameraConstants(CameraConstants const& cc);
 

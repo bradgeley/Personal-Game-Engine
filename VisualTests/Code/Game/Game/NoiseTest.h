@@ -12,6 +12,8 @@ class NoiseTest : public VisualTest
 {
 public:
 
+	NoiseTest() { m_name = "Noise Test"; }
+
 	void Startup() override;
 	void Update(float deltaSeconds) override;
 	void Render() const override;

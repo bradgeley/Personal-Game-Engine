@@ -25,6 +25,8 @@ class Disc2DCollisionTest : public VisualTest
 {
 public:
 
+	Disc2DCollisionTest() { m_name = "Disc2D Collision Test"; }
+
 	void Startup() override;
 	void Update(float deltaSeconds) override;
 	void Render() const override;

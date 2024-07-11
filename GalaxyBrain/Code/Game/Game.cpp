@@ -8,6 +8,10 @@
 #include "Engine/Events/EventSystem.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Math/RandomNumberGenerator.h"
+#include "Engine/Multithreading/JobSystem.h"
+#include "Engine/Renderer/Window.h"
+#include "Engine/Core/Engine.h"
 #include "AllComponents.h"
 #include "AllSystems.h"
 
@@ -27,6 +31,8 @@ enum class FramePhase : int
 //----------------------------------------------------------------------------------------------------------------------
 void Game::Startup()
 {
+    g_rng = new RandomNumberGenerator();
+
     AdminSystemConfig ecsConfig;
     ecsConfig.m_maxDeltaSeconds = 0.1f;
     g_ecs = new AdminSystem(ecsConfig);
@@ -124,6 +130,44 @@ void Game::Shutdown()
 {
     UnRegisterDevConsoleCommands();
     g_ecs->Shutdown();
+
+    delete g_rng;
+    g_rng = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Game::ConfigureEngine(Engine* engine) const
+{
+    EventSystemConfig eventSysConfig;
+    g_eventSystem = new EventSystem(eventSysConfig);
+    engine->RegisterSubsystem(g_eventSystem);
+
+    WindowConfig windowConfig;
+    windowConfig.m_windowTitle = "Galaxy Brain";
+    windowConfig.m_clientAspect = 2.f;
+    windowConfig.m_windowScale = 0.95f;
+    g_window = new Window(windowConfig);
+    engine->RegisterSubsystem(g_window);
+
+    RendererConfig rendererConfig;
+    g_renderer = new Renderer(rendererConfig);
+    engine->RegisterSubsystem(g_renderer);
+
+    // Dev console before input, so it steals input from the window when active
+    DevConsoleConfig dcConfig;
+    dcConfig.m_backgroundImages = { "DrStrange.jpg" , "Thanos.jpg", "IronMan.jpg", "Thor.jpg" };
+    g_devConsole = new DevConsole(dcConfig);
+    engine->RegisterSubsystem(g_devConsole);
+
+    InputSystemConfig inputConfig;
+    g_input = new InputSystem(inputConfig);
+    engine->RegisterSubsystem(g_input);
+
+    JobSystemConfig jobSysConfig;
+    g_jobSystem = new JobSystem(jobSysConfig);
+    engine->RegisterSubsystem(g_jobSystem);
 }
 
 

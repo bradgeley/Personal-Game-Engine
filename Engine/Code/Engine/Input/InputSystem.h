@@ -59,6 +59,7 @@ public:
     
     IntVec2	GetMouseClientPosition(bool originBottomLeft = true) const;
     Vec2 GetMouseClientRelativePosition(bool originBottomLeft = true) const;
+    Vec2 GetMouseClientCenterRelativePosition(bool originBottomLeft = true) const;
 
 private:
 

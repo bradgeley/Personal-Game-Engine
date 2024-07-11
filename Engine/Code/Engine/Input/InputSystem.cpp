@@ -3,6 +3,7 @@
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Renderer/Window.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -210,6 +211,18 @@ IntVec2 InputSystem::GetMouseClientPosition(bool originBottomLeft) const
 Vec2 InputSystem::GetMouseClientRelativePosition(bool originBottomLeft) const
 {
     return g_window->GetMouseClientRelativePosition(originBottomLeft);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 InputSystem::GetMouseClientCenterRelativePosition(bool originBottomLeft) const
+{
+    Vec2 clientRelativePosition = GetMouseClientRelativePosition(originBottomLeft);
+    Vec2 clientCenterRelativePosition;
+    clientCenterRelativePosition.x = RangeMap(clientRelativePosition.x, 0.f, 1.f, -1.f, 1.f);
+    clientCenterRelativePosition.y = RangeMap(clientRelativePosition.y, 0.f, 1.f, -1.f, 1.f);
+    return clientCenterRelativePosition;
 }
 
 

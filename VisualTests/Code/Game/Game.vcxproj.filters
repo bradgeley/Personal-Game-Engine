@@ -22,6 +22,9 @@
     <ClCompile Include="Game\Disc2DCollisionTest.cpp">
       <Filter>Game\Tests</Filter>
     </ClCompile>
+    <ClCompile Include="Game\FormationMovementTest.cpp">
+      <Filter>Game\Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -46,6 +49,9 @@
       <Filter>Game\Tests</Filter>
     </ClInclude>
     <ClInclude Include="Game\Disc2DCollisionTest.h">
+      <Filter>Game\Tests</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\FormationMovementTest.h">
       <Filter>Game\Tests</Filter>
     </ClInclude>
   </ItemGroup>

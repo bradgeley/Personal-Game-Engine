@@ -15,6 +15,8 @@ struct ID3D11Buffer;
 // Storage for cpu verts and their connection to a gpu buffer
 // Add verts via GetMutableVerts or AddVerts
 // When the buffer is drawn, it will first update the gpu buffer if dirty.
+// 
+// TODO: Make templated based on vertex type? if that's possible
 //
 class VertexBuffer
 {
