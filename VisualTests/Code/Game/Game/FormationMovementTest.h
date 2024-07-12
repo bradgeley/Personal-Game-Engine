@@ -24,7 +24,10 @@ struct Unit
 
 struct Formation
 {
+	Vec2 m_pos = Vec2::ZeroVector;
+	float m_orientation = 0.f;
 	std::vector<Unit*> m_units;
+	std::vector<Vec2> m_localFormationOffsets;
 };
 
 
@@ -48,4 +51,5 @@ public:
 	Camera m_camera;
 	AABB2 m_worldBounds;
 	std::vector<Formation*> m_formations;
+	std::vector<Unit*> m_units;
 };
