@@ -75,6 +75,13 @@ Vec2 Vec2::GetRotatedMinus90() const
     return Vec2(y, -x);
 }
 
+Vec2 Vec2::GetRotated(float degrees) const
+{
+    Vec2 result = *this;
+    result.Rotate(degrees);
+    return result;
+}
+
 
 Vec2 Vec2::GetProjectedOntoNormal(Vec2 const& normal) const
 {
@@ -103,6 +110,16 @@ void Vec2::RotateMinus90()
     float X = x;
     x = y;
     y = -X;
+}
+
+
+void Vec2::Rotate(float degrees)
+{
+    float angle = GetAngleDegrees();
+    float length = GetLength();
+    angle += degrees;
+    x = CosDegrees(angle) * length;
+    y = SinDegrees(angle) * length;
 }
 
 
