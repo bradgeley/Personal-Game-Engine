@@ -14,6 +14,23 @@ const std::string LINE_PREFIX = "> ";
 
 
 //----------------------------------------------------------------------------------------------------------------------
+DevConsoleLog::DevConsoleLog()
+{
+    m_vertexBuffer = new VertexBuffer();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+DevConsoleLog::~DevConsoleLog()
+{
+    delete m_vertexBuffer;
+    m_vertexBuffer = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsoleLog::AddLine(DevConsoleLine const& line)
 {
     Strings lines = SplitStringOnDelimeter(line.m_line, '\n');
@@ -34,14 +51,15 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
 {
     Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
 
-    VertexBuffer buffer;
-    auto& verts = buffer.GetMutableVerts();
+    std::vector<Vertex_PCU>& verts = m_vertexBuffer->GetMutableVerts();
+    verts.clear();
 
     float lineThickness = box.GetHeight() / m_numLines;
+    float maxLinesOnScreen = box.GetHeight() / lineThickness;
 
     float linesRendered = 0.f;
     int lineIndex = (int) m_log.size() - 1 - (int) m_scrollOffset;
-    while (lineIndex >= 0)
+    while (linesRendered < maxLinesOnScreen && lineIndex >= 0)
     {
         float yOffsetBot = linesRendered * lineThickness;
         float yOffsetTop = (linesRendered + 1.f) * lineThickness;
@@ -55,7 +73,7 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
     }
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(&buffer);
+    g_renderer->DrawVertexBuffer(m_vertexBuffer);
 }
 
 

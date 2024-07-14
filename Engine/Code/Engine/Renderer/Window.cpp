@@ -23,7 +23,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Window::Window(WindowConfig const& config) : m_config(config)
+Window::Window(WindowConfig const& config) : EngineSubsystem("Window"), m_config(config)
 {
 }
 

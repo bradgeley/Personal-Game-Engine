@@ -30,10 +30,10 @@ public:
 	T Get(int x, int y) const;
     T Get(IntVec2 const& coords) const;
 
-    int GetIndexEastOf(int index, bool wrap = false) const;
-    int GetIndexWestOf(int index, bool wrap = false) const;
-    int GetIndexNorthOf(int index, bool wrap = false) const;
-    int GetIndexSouthOf(int index, bool wrap = false) const;
+    int GetIndexEastOf(int index, bool wrap = false) const; // +x
+    int GetIndexWestOf(int index, bool wrap = false) const; // -x
+    int GetIndexNorthOf(int index, bool wrap = false) const; // +y
+    int GetIndexSouthOf(int index, bool wrap = false) const; // -y
 
     bool IsValidIndex(int index) const;
     bool IsValidCoords(IntVec2 const& coords) const;
@@ -46,6 +46,11 @@ public:
     int Size() const;
     T* GetRawData();
     T const* GetRawData() const;
+
+    auto begin() { return m_data.begin(); }
+    auto begin() const { return m_data.begin(); }
+    auto end() { return m_data.end(); }
+    auto end() const { return m_data.end(); }
 
 public:
 

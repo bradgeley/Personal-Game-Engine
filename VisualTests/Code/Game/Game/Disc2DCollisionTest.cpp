@@ -143,12 +143,22 @@ void Disc2DCollisionTest::Render() const
 
 	VertexBuffer textVerts;
 	VertexBuffer verts;
+	
+	constexpr int NUM_TRIANGLES_PER_DISC = 16;
+	constexpr int NUM_VERTS_PER_DISC = NUM_TRIANGLES_PER_DISC * 6;
+	verts.GetMutableVerts().reserve(NUM_VERTS_PER_DISC * m_discs.size());
 
 	AddVertsForLine2D(verts.GetMutableVerts(), m_spawnPos, m_targetPos, 0.1f, Rgba8::Yellow);
 
 	for (auto& disc : m_discs)
 	{
-		AddVertsForDisc2D(verts.GetMutableVerts(), disc.pos, disc.radius, 16, Rgba8::Lerp(Rgba8::Blue, Rgba8::White, disc.elasticity));
+		Rgba8 tint = Rgba8::White;
+		auto mouseWorldPos = m_camera.ScreenToWorldOrtho(g_window->GetMouseClientRelativePosition());
+		if (IsPointInsideDisc2D(mouseWorldPos, disc.pos, disc.radius))
+		{
+			tint = Rgba8::LightGray;
+		}
+		AddVertsForDisc2D(verts.GetMutableVerts(), disc.pos, disc.radius, NUM_TRIANGLES_PER_DISC, Rgba8::Lerp(Rgba8::Blue, tint, disc.elasticity));
 	}
 
 	// Render all text

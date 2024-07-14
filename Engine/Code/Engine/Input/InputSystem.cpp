@@ -15,7 +15,7 @@ InputSystem* g_input = nullptr;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-InputSystem::InputSystem(InputSystemConfig const& config) : m_config(config)
+InputSystem::InputSystem(InputSystemConfig const& config) : EngineSubsystem("InputSystem"), m_config(config)
 {
 }
 

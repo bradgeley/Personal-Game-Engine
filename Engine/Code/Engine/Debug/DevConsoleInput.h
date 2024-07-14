@@ -7,6 +7,7 @@
 
 
 class DevConsoleLog;
+class VertexBuffer;
 struct AABB2;
 
 
@@ -15,6 +16,9 @@ struct AABB2;
 class DevConsoleInput
 {
 public:
+
+    DevConsoleInput();
+    ~DevConsoleInput();
 
     void SetOutputLog(DevConsoleLog* log);
     void Update(float deltaSeconds);
@@ -31,6 +35,8 @@ public:
     void MoveCaretToEndOfLine();
     
     void RenderToBox(AABB2 const& box) const;
+    void RenderBackground(AABB2 const& box) const;
+    void RenderText(AABB2 const& box) const;
     void RenderSelection(AABB2 const& box) const;
     void RenderCaret(AABB2 const& box) const;
 
@@ -49,5 +55,6 @@ protected:
     int m_selectionStartIndex = -1; // -1 means not selecting anything
     float m_caretAnimationFraction = 0.f;
     DevConsoleLine m_input;
+    VertexBuffer* m_vertexBuffer;
 };
 

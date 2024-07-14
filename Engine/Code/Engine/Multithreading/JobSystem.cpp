@@ -18,7 +18,7 @@ JobSystem* g_jobSystem = nullptr;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-JobSystem::JobSystem(JobSystemConfig const& config) : m_config(config)
+JobSystem::JobSystem(JobSystemConfig const& config) : EngineSubsystem("JobSystem"), m_config(config)
 {
 
 }

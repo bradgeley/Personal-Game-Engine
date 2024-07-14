@@ -9,6 +9,19 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool IsPointInsideDisc2D(Vec2 const& point, Vec2 const& discCenter, float discRadius)
+{
+    float distSquared = (point - discCenter).GetLengthSquared();
+    if (distSquared > discRadius * discRadius)
+    {
+        return false;
+    }
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position2, float radius2)
 {
     float distanceSquared = GetDistanceSquared2D(position1, position2);
@@ -25,21 +38,33 @@ bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius)
+bool PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point)
 {
-    Vec2 toMobileDisc = mobileDiscPos - staticDiscPos;
-    float distanceSquared = toMobileDisc.GetLengthSquared();
-    float combinedRadii = (mobileDiscRadius + staticDiscRadius);
-    float combinedRadiiSquared = combinedRadii * combinedRadii;
-    if (distanceSquared < combinedRadiiSquared)
+    Vec2 pointToDisc = (discPos - point);
+    float distSquared = pointToDisc.GetLengthSquared();
+    if (distSquared == 0.f)
     {
-        float distance = SqrtF(distanceSquared);
-        toMobileDisc /= distance;      // Normalize
-        toMobileDisc *= combinedRadii; // Set length to combined radii
-        mobileDiscPos = staticDiscPos + toMobileDisc;
+        // Can't determine which direction to push
+        return false;
+    }
+
+    if (distSquared < (radius * radius))
+    {
+        float distance = SqrtF(distSquared);
+        Vec2 pointToDiscNormal = pointToDisc / distance;
+        discPos = point + pointToDiscNormal * radius;
         return true;
     }
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius)
+{
+    float combinedRadii = (mobileDiscRadius + staticDiscRadius);
+    return PushDiscOutOfPoint2D(mobileDiscPos, combinedRadii, staticDiscPos);
 }
 
 
@@ -75,6 +100,28 @@ bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool PushDiscOutOfAABB2D(Vec2& discPos, float discRadius, AABB2 const& aabb)
+{
+    AABB2 discBounds = AABB2(discPos, discRadius, discRadius);
+    if (!discBounds.IsOverlapping(aabb))
+    {
+        return false;
+    }
+
+    Vec2 nearestPointOnAABB = aabb.GetNearestPoint(discPos);
+    if (!IsPointInsideDisc2D(nearestPointOnAABB, discPos, discRadius))
+    {
+        return false;
+    }
+
+    PushDiscOutOfPoint2D(discPos, discRadius, nearestPointOnAABB);
+
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA, Vec2& discPosB, float discRadiusB, Vec2& discVelB, float elasticity)
 {
     Vec2 AtoB = discPosB - discPosA;
@@ -83,7 +130,7 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
     float combinedRadiiSquared = combinedRadii * combinedRadii;
     if (distanceSquared < combinedRadiiSquared)
     {
-        // Push discs out of each other first (no prediction yet)
+        // Push discs out of each other first
         float distance = SqrtF(distanceSquared);
         float overlapAmount = combinedRadii - distance;
 
@@ -121,15 +168,6 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
         // Add back what was lost before
         discVelB = relativeVelB + discVelA;
         discVelA = relativeVelA + discVelA;
-
-        // Add back what we originally took away
-
-        // Todo: prediction
-        
-        // Determine the real time of collision by assuming where the disc was last frame, using the quadratic equation
-
-        // a = (Vx^2 + Vy^2)
-        
 
         return true;
     }
@@ -177,11 +215,11 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
 
             float halfSpeedDiffFinal = (0.5f) * elasticity * speedDiffInitial;
             float finalVelocity = (massA * A_speedNorm + massB * B_speedNorm) * oneOverCombinedMass;
-            float A_speedNormF = finalVelocity - halfSpeedDiffFinal;
-            float B_speedNormF = finalVelocity + halfSpeedDiffFinal;
+            float A_speedNormFinal = finalVelocity - halfSpeedDiffFinal;
+            float B_speedNormFinal = finalVelocity + halfSpeedDiffFinal;
 
-            discVelA = A_speedNormF * collisionNormal + velA_j;
-            discVelB = B_speedNormF * collisionNormal + velB_j;
+            discVelA = A_speedNormFinal * collisionNormal + velA_j;
+            discVelB = B_speedNormFinal * collisionNormal + velB_j;
 
             return true;
         }

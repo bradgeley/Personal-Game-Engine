@@ -43,7 +43,7 @@ public:
     void SetCenter(Vec2 const& newCenter);
     void SetDimsAboutCenter(Vec2 const& newDims);
     void SetHalfDimsAboutCenter(Vec2 const& newHalfDims);
-    void Squeeze(float squeezeAmount);
+    void Squeeze(float flatSqueezeAmount);
 
 public:
     

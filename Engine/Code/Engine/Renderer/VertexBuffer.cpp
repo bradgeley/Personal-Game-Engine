@@ -140,7 +140,7 @@ void VertexBuffer::UpdateGPUBuffer()
     
 	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to map vertex buffer to gpu buffer");
     
-	memcpy(mapping.pData, m_verts.data(), m_gpuBufferByteWidth);
+	memcpy(mapping.pData, m_verts.data(), bytesNeeded);
 
     deviceContext->Unmap(gpuBuffer, 0);
 }

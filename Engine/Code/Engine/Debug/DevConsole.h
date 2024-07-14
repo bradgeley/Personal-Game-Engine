@@ -186,8 +186,3 @@ void DevConsole::LogErrorF(char const* format, Args... args)
 	snprintf(buffer, sizeof(buffer), format, args...);
 	AddLine(buffer, m_config.m_errorTint);
 }
-
-
-
-
-

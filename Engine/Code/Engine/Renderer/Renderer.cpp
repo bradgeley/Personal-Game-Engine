@@ -32,7 +32,7 @@ Renderer* g_renderer = nullptr;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Renderer::Renderer(RendererConfig const& config) : m_config(config)
+Renderer::Renderer(RendererConfig const& config) : EngineSubsystem("Renderer"), m_config(config)
 {
     
 }
