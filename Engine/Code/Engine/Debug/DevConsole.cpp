@@ -17,6 +17,7 @@
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Window.h"
+#include "Engine/Performance/ScopedTimer.h"
 
 
 
@@ -28,7 +29,7 @@ DevConsole* g_devConsole = nullptr;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-DevConsole::DevConsole(DevConsoleConfig const& config) : m_config(config)
+DevConsole::DevConsole(DevConsoleConfig const& config) : EngineSubsystem("DevConsole"), m_config(config)
 {
 }
 
@@ -543,6 +544,7 @@ void DevConsole::UpdateBackgroundImage(float deltaSeconds)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::DrawBackground() const
 {
+    ScopedTimer t("DrawBackground");
     VertexBuffer backgroundVbo;
     auto& backgroundVerts = backgroundVbo.GetMutableVerts();
     AABB2 backgroundBox = m_camera->GetOrthoBounds2D();

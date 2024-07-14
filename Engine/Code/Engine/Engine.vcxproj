@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -197,7 +197,6 @@
     <ClCompile Include="Input\KeyButtonState.cpp" />
     <ClCompile Include="Math\AABB2.cpp" />
     <ClCompile Include="Math\GeometryUtils.cpp" />
-    <ClCompile Include="Math\Grid2D.cpp" />
     <ClCompile Include="Math\IntVec2.cpp" />
     <ClCompile Include="Math\Mat44.cpp" />
     <ClCompile Include="Math\MathUtils.cpp" />
@@ -214,6 +213,7 @@
     <ClCompile Include="Multithreading\JobSystem.cpp" />
     <ClCompile Include="Multithreading\JobSystemDebug.cpp" />
     <ClCompile Include="Multithreading\JobWorker.cpp" />
+    <ClCompile Include="Performance\ScopedTimer.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\ConstantBuffer.cpp" />
     <ClCompile Include="Renderer\D3D11Utils.cpp" />
@@ -288,6 +288,7 @@
     <ClInclude Include="Multithreading\JobSystem.h" />
     <ClInclude Include="Multithreading\JobSystemDebug.h" />
     <ClInclude Include="Multithreading\JobWorker.h" />
+    <ClInclude Include="Performance\ScopedTimer.h" />
     <ClInclude Include="Renderer\Camera.h" />
     <ClInclude Include="Renderer\ConstantBuffer.h" />
     <ClInclude Include="Renderer\D3D11Utils.h" />

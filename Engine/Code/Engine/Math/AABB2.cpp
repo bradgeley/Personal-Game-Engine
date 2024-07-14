@@ -165,6 +165,17 @@ void AABB2::SetHalfDimsAboutCenter(Vec2 const& newHalfDims)
 
 void AABB2::Squeeze(float squeezeAmount)
 {
-    mins += Vec2(squeezeAmount, squeezeAmount);
-    maxs -= Vec2(squeezeAmount, squeezeAmount);
+    Vec2 newMins = mins + Vec2(squeezeAmount, squeezeAmount);
+    Vec2 newMaxs = maxs - Vec2(squeezeAmount, squeezeAmount);
+    if (newMins.x > newMaxs.x || newMins.y > newMaxs.y)
+    {
+        Vec2 avg = (mins + maxs) / 2;
+        mins = avg;
+        maxs = avg;
+    }
+    else
+    {
+        mins = newMins;
+        maxs = newMaxs;
+    }
 }

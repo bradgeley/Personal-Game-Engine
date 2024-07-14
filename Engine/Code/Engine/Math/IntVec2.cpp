@@ -68,6 +68,12 @@ IntVec2 IntVec2::operator-() const
 }
 
 
+IntVec2 IntVec2::operator/(int divisor) const
+{
+    return IntVec2(x / divisor, y / divisor);
+}
+
+
 IntVec2 IntVec2::operator+(const IntVec2& other) const
 {
     return IntVec2(x + other.x, y + other.y);

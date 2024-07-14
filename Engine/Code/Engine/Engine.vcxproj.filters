@@ -124,9 +124,6 @@
     <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp">
       <Filter>ThirdParty\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="Math\Grid2D.cpp">
-      <Filter>Math</Filter>
-    </ClCompile>
     <ClCompile Include="Debug\DevConsole.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
@@ -205,7 +202,6 @@
     <ClCompile Include="Renderer\WindowRenderContext.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="DevConsoleCommandInfo.cpp" />
     <ClCompile Include="Debug\DevConsoleCommandInfo.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
@@ -436,7 +432,6 @@
     <ClInclude Include="Renderer\WindowRenderContext.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="DevConsoleCommandInfo.h" />
     <ClInclude Include="Debug\DevConsoleCommandInfo.h">
       <Filter>Debug</Filter>
     </ClInclude>

@@ -153,13 +153,16 @@ void Camera::SetOrthoCenter2D(Vec2 const& center)
 void Camera::ZoomAroundCenter2D(float zoomRatio, Vec2 const& center)
 {
     m_projMatrixDirty = true;
-    Vec3 center3D = Vec3(center);
-    m_mins -= center3D;
-    m_maxs -= center3D;
-    m_mins *= zoomRatio;
-    m_maxs *= zoomRatio;
-    m_mins += center3D;
-    m_maxs += center3D;
+    Vec2 mins2D = Vec2(m_mins);
+    Vec2 maxs2D = Vec2(m_maxs);
+    mins2D -= center;
+    maxs2D -= center;
+    mins2D *= zoomRatio;
+    maxs2D *= zoomRatio;
+    mins2D += center;
+    maxs2D += center;
+    m_mins = Vec3(mins2D, m_mins.z);
+    m_maxs = Vec3(maxs2D, m_maxs.z);
 }
 
 

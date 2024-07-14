@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
+#include <string>
 
 
 
@@ -12,6 +13,7 @@ class EngineSubsystem
 {
 public:
     
+    EngineSubsystem(std::string const& name = "Unnamed Subsystem");
     virtual ~EngineSubsystem() = default;
     
     virtual void Startup()                                      {}
@@ -21,6 +23,8 @@ public:
     virtual void EndFrame()                                     {}
     virtual void Shutdown()                                     {}
 
+    std::string const& GetName();
+
     bool IsEnabled() const;
     void SetEnabled(bool isEnabled);
     virtual void OnSetEnabled([[maybe_unused]] bool isEnabled)  {}
@@ -28,4 +32,5 @@ public:
 protected:
 
     bool m_isEnabled = true;
+    std::string m_name;
 };

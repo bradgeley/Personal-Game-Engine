@@ -11,7 +11,7 @@ EventSystem* g_eventSystem = nullptr;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-EventSystem::EventSystem(EventSystemConfig config) : m_config(config)
+EventSystem::EventSystem(EventSystemConfig config) : EngineSubsystem("EventSystem"), m_config(config)
 {
 }
 

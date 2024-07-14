@@ -18,6 +18,23 @@ const std::string LINE_PREFIX = " > ";
 
 
 //----------------------------------------------------------------------------------------------------------------------
+DevConsoleInput::DevConsoleInput()
+{
+    m_vertexBuffer = new VertexBuffer();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+DevConsoleInput::~DevConsoleInput()
+{
+    delete m_vertexBuffer;
+    m_vertexBuffer = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::SetOutputLog(DevConsoleLog* log)
 {
     m_outputLog = log;
@@ -185,38 +202,42 @@ void DevConsoleInput::MoveCaretToEndOfLine()
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::RenderToBox(AABB2 const& box) const
 {
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
-
-    // Draw Background
-    VertexBuffer backgroundBuffer;
-    auto& bgVerts = backgroundBuffer.GetMutableVerts();
-    AddVertsForAABB2(bgVerts, box, Rgba8::DarkGray);
-
-    g_renderer->BindShader(nullptr);
-    g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(&backgroundBuffer);
-    //
+    RenderBackground(box);
     
-    // Draw Input line text
-    float squeeze = box.GetHeight() / 15.f;
+    // Draw Input line selection and text
+    float squeezeAmount = box.GetHeight() / 15.f;
     AABB2 textBox = box;
-    textBox.Squeeze(squeeze);
+    textBox.Squeeze(squeezeAmount);
     
     RenderSelection(textBox);
-    
-    VertexBuffer textBuffer;
-    auto& verts = textBuffer.GetMutableVerts();
-    font->AddVertsForText2D(verts, textBox.mins, textBox.GetHeight(), LINE_PREFIX + m_input.m_line, Rgba8::White);
-    
-    font->SetRendererState();
-    g_renderer->DrawVertexBuffer(&textBuffer);
-    //
+    RenderText(textBox);
+    RenderCaret(textBox);
+}
 
-    // Draw Caret
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsoleInput::RenderBackground(AABB2 const& box) const
+{
+    AddVertsForAABB2(m_vertexBuffer->GetMutableVerts(), box, Rgba8::DarkGray);
+
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
-    RenderCaret(textBox);
-    //
+    g_renderer->DrawVertexBuffer(m_vertexBuffer);
+    m_vertexBuffer->ClearVerts();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsoleInput::RenderText(AABB2 const& box) const
+{
+    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    font->AddVertsForText2D(m_vertexBuffer->GetMutableVerts(), box.mins, box.GetHeight(), LINE_PREFIX + m_input.m_line, Rgba8::White);
+
+    font->SetRendererState();
+    g_renderer->DrawVertexBuffer(m_vertexBuffer);
+    m_vertexBuffer->ClearVerts();
 }
 
 
@@ -244,10 +265,9 @@ void DevConsoleInput::RenderSelection(AABB2 const& box) const
     selectionBox.maxs.y = box.maxs.y;
     selectionBox.maxs.x += caretOffsetX + caretThickness;
     
-    VertexBuffer buffer;
-    auto& verts = buffer.GetMutableVerts();
-    AddVertsForAABB2(verts, selectionBox, Rgba8(0,171,240, 100));
-    g_renderer->DrawVertexBuffer(&buffer);
+    AddVertsForAABB2(m_vertexBuffer->GetMutableVerts(), selectionBox, Rgba8(0,171,240, 100));
+    g_renderer->DrawVertexBuffer(m_vertexBuffer);
+    m_vertexBuffer->ClearVerts();
 }
 
 
@@ -269,10 +289,11 @@ void DevConsoleInput::RenderCaret(AABB2 const& box) const
     caretBox.maxs.y = box.maxs.y;
     caretBox.maxs.x += caretOffsetX + caretThickness;
     
-    VertexBuffer buffer;
-    auto& verts = buffer.GetMutableVerts();
-    AddVertsForAABB2(verts, caretBox, caretTint);
-    g_renderer->DrawVertexBuffer(&buffer);
+    AddVertsForAABB2(m_vertexBuffer->GetMutableVerts(), caretBox, caretTint);
+    g_renderer->BindShader(nullptr);
+    g_renderer->BindTexture(nullptr);
+    g_renderer->DrawVertexBuffer(m_vertexBuffer);
+    m_vertexBuffer->ClearVerts();
 }
 
 
