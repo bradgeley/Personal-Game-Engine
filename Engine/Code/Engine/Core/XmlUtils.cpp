@@ -75,12 +75,54 @@ Vec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec
         if (strings.size() != 2)
         {
             g_devConsole->LogErrorF("Vec2 ParseXmlAttribute Error: %s - value: %s - (e.g. -40,30.5)", attributeName, attrib->Value());
+            return defaultValue;
         }
         Vec2 result;
         tinyxml2::XMLUtil::ToFloat(strings[0].c_str(), &result.x);
         tinyxml2::XMLUtil::ToFloat(strings[1].c_str(), &result.y);
         return result;
-        
     }
     return defaultValue; 
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Rgba8 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Rgba8 const& defaultValue)
+{
+    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    {
+        std::string value = attrib->Value();
+        Strings strings = SplitStringOnDelimeter(value, ',');
+        if (strings.size() < 3 || strings.size() > 4)
+        {
+            g_devConsole->LogErrorF("Rgba8 ParseXmlAttribute Error: %s - value: %s - (e.g. 40,30,255 or 255,255,255,255)", attributeName, attrib->Value());
+            return defaultValue;
+        }
+
+        Rgba8 result;
+        uint32_t r, g, b, a;
+
+        // Red
+        tinyxml2::XMLUtil::ToUnsigned(strings[0].c_str(), &r);
+        result.r = (uint8_t) r;
+
+        // Green
+        tinyxml2::XMLUtil::ToUnsigned(strings[1].c_str(), &g);
+        result.g = (uint8_t) g;
+
+        // Blue
+        tinyxml2::XMLUtil::ToUnsigned(strings[2].c_str(), &b);
+        result.b = (uint8_t) b;
+
+        // Alpha
+        if (strings.size() > 3)
+        {
+            tinyxml2::XMLUtil::ToUnsigned(strings[3].c_str(), &a);
+            result.a = (uint8_t) a;
+        }
+
+        return result;
+    }
+    return defaultValue;
 }

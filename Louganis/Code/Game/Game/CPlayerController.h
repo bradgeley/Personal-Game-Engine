@@ -1,14 +1,12 @@
-// Bradley Christensen - 2024
+// Bradley Christensen - 2023
 #pragma once
-#include <vector>
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class TileWorld
+struct CPlayerController
 {
-
-
-	std::vector<uint8_t> m_tileIds;
+    CPlayerController() = default;
+    CPlayerController(void const* xmlElement);
 };
 

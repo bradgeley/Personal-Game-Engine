@@ -1,8 +1,8 @@
 ﻿// Bradley Christensen - 2022-2023
-#include "Engine/Renderer/VertexBuffer.h"
+#include "VertexBuffer.h"
+#include "RendererInternal.h"
 #include "Renderer.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Renderer/RendererInternal.h"
 
 
 
@@ -17,10 +17,14 @@ VertexBuffer::~VertexBuffer()
 //----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::Initialize(int numExpectedVerts)
 {
-    // Release for reinitialization if already initialized
     DX_SAFE_RELEASE(m_handle)
-    
+
+    // Release for reinitialization if already initialized
+    ASSERT_OR_DIE(numExpectedVerts > 0, "Cannot initialize vbo with 0 or fewer verts");
+
     ID3D11Device* device = g_renderer->GetDevice();
+    ASSERT_OR_DIE(device, "Renderer device is null, has Renderer called Startup yet?");
+
     uint32_t byteWidth = numExpectedVerts * GetStride();
     
     D3D11_BUFFER_DESC desc;
@@ -87,7 +91,7 @@ void VertexBuffer::ClearVerts()
 //----------------------------------------------------------------------------------------------------------------------
 int VertexBuffer::GetStride() const
 {
-    return sizeof(Vertex_PCU);
+    return sizeof(Vertex_PCU); // todo: templatize for different vert layouts?
 }
 
 

@@ -22,7 +22,6 @@ enum class FramePhase : int
 {
     PrePhysics,
     Physics,
-    PostPhysics,
     Render,
 };
 

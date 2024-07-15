@@ -1,24 +1,23 @@
-// Bradley Christensen - 2022-2023
+// Bradley Christensen - 2024
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
-
-
-
-class Engine;
+#include "Engine/Math/Grid2D.h"
+#include "TileDef.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class Game : public EngineSubsystem
+class SCWorld : public EngineSubsystem
 {
 public:
 
     void Startup() override;
-    void BeginFrame() override;
     void Update(float deltaSeconds) override;
-    void EndFrame() override;
     void Render() const override;
     void Shutdown() override;
 
-    void ConfigureEngine(Engine* engine) const;
+protected:
+
+	Grid2D<TileID> m_tileIds;
 };
+

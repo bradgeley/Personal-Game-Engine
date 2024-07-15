@@ -50,6 +50,15 @@ void Camera::SetPosition(Vec3 const& position)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Camera::SetPosition2D(Vec2 const& position)
+{
+    m_viewMatrixDirty = true;
+    m_position = Vec3(position, 0.f);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Camera::Translate(Vec3 const& deltaPos)
 {
     m_viewMatrixDirty = true;

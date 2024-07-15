@@ -1,0 +1,133 @@
+﻿// Bradley Christensen - 2023
+#include "EntityDef.h"
+#include "Engine/Debug/DevConsole.h"
+#include "Engine/Renderer/Texture.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+const char* s_entityDefsFilePath = "Data/Definitions/EntityDefs.xml";
+std::vector<EntityDef> EntityDef::s_entityDefs;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void EntityDef::LoadFromXML()
+{
+    XmlDocument doc;
+    doc.LoadFile(s_entityDefsFilePath);
+    auto root = doc.RootElement();
+    if (!root)
+    {
+        g_devConsole->LogErrorF("SEntityFactory::LoadFromXml - Could not load file: %s", s_entityDefsFilePath);
+        return;
+    }
+
+    XmlElement* entityDefElem = root->FirstChildElement("Entity");
+    while (entityDefElem)
+    {
+        std::string name = ParseXmlAttribute(*entityDefElem, "name", "Unnamed Entity Def");
+        if (GetEntityDefID(name) != 0)
+        {
+            g_devConsole->LogErrorF("Duplicate Entity Def: %s", name.c_str());
+        }
+
+        // Emplace new definition using the constructor that takes an Xml Element
+        s_entityDefs.emplace_back(entityDefElem);
+
+        entityDefElem = entityDefElem->NextSiblingElement("Entity");
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EntityDef const* EntityDef::GetEntityDef(uint8_t id)
+{
+    size_t index = static_cast<size_t>(id);
+    return &s_entityDefs[index];
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EntityDef const* EntityDef::GetEntityDef(std::string const& name)
+{
+    for (size_t i = 0; i < s_entityDefs.size(); i++)
+    {
+        EntityDef const* def = &s_entityDefs[i];
+        if (def->m_name == name)
+        {
+            return def;
+        }
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+uint8_t EntityDef::GetEntityDefID(std::string const& name)
+{
+    for (size_t i = 0; i < s_entityDefs.size(); i++)
+    {
+        EntityDef const* def = &s_entityDefs[i];
+        if (def->m_name == name)
+        {
+            return (uint8_t) i;
+        }
+    }
+    return 255;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EntityDef::EntityDef(XmlElement const* xmlElement)
+{
+    m_name = ParseXmlAttribute(*xmlElement, "name", m_name);
+
+    //tinyxml2::XMLElement const* elem;
+
+    // CCamera
+    auto elem = xmlElement->FirstChildElement("Camera");
+    if (elem)
+    {
+        m_camera = CCamera(elem);
+    }
+
+    // CCollision
+    elem = xmlElement->FirstChildElement("Collision");
+    if (elem)
+    {
+        m_collision = CCollision(elem);
+    }
+
+    // CMovement
+    elem = xmlElement->FirstChildElement("Movement");
+    if (elem)
+    {
+        m_movement = CMovement(elem);
+    }
+
+    // CPlayerController
+    elem = xmlElement->FirstChildElement("PlayerController");
+    if (elem)
+    {
+        m_playerController = CPlayerController(elem);
+    }
+
+    // CRender
+    elem = xmlElement->FirstChildElement("Render");
+    if (elem)
+    {
+        m_render = CRender(elem);
+    }
+
+    // CTransform
+    elem = xmlElement->FirstChildElement("Transform");
+    if (elem)
+    {
+        m_transform.emplace(CTransform());
+    }
+}

@@ -45,6 +45,7 @@ public:
     void AppendZRotation(float degreesRotationAboutZ);
     void AppendUniformScale2D(float uniformScale);
     void AppendUniformScale3D(float uniformScale);
+    void AppendTranslation2D(Vec2 const& translation);
     void AppendTranslation3D(Vec3 const& translation);
 
     void SetTranslation(float x, float y = 0.f, float z = 0.f, float w = 1.f);
@@ -55,7 +56,7 @@ public:
     bool operator==(Mat44 const& rhs) const;
 
 public:
-    
+
     static Mat44 CreateTranslation3D(float x, float y = 0.f, float z = 0.f);
     static Mat44 CreateTranslation3D(Vec3 const& translation);
     static Mat44 CreateXRotationDegrees(float rotationDegreesAboutX);

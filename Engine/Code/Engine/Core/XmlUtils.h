@@ -1,8 +1,9 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
 #include "ThirdParty/tinyxml2/tinyxml2.h"
-#include <string>
 #include "Engine/Math/Vec2.h"
+#include "Engine/Renderer/Rgba8.h"
+#include <string>
 
 
 
@@ -25,3 +26,4 @@ float ParseXmlAttribute(XmlElement const& element, char const* attributeName, fl
 bool ParseXmlAttribute(XmlElement const& element, char const* attributeName, bool defaultValue);
 int ParseXmlAttribute(XmlElement const& element, char const* attributeName, int defaultValue);
 Vec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec2 const& defaultValue);
+Rgba8 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Rgba8 const& defaultValue);

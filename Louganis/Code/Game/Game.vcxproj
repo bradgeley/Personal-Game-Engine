@@ -189,23 +189,59 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Framework\Main_Windows.cpp" />
+    <ClCompile Include="Game\CCamera.cpp" />
+    <ClCompile Include="Game\CCollision.cpp" />
+    <ClCompile Include="Game\CMovement.cpp" />
+    <ClCompile Include="Game\CPlayerController.cpp" />
+    <ClCompile Include="Game\CRender.cpp" />
+    <ClCompile Include="Game\EntityDef.cpp" />
     <ClCompile Include="Game\Game.cpp" />
-    <ClCompile Include="Game\TileDefinition.cpp" />
-    <ClCompile Include="Game\TileWorld.cpp" />
+    <ClCompile Include="Game\SCamera.cpp" />
+    <ClCompile Include="Game\SCollision.cpp" />
+    <ClCompile Include="Game\SEntityFactory.cpp" />
+    <ClCompile Include="Game\SInput.cpp" />
+    <ClCompile Include="Game\SMovement.cpp" />
+    <ClCompile Include="Game\SPreRender.cpp" />
+    <ClCompile Include="Game\SRenderEntities.cpp" />
+    <ClCompile Include="Game\SRenderWorld.cpp" />
+    <ClCompile Include="Game\TileDef.cpp" />
+    <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\WindowsApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
+    <ClInclude Include="Game\AllComponents.h" />
+    <ClInclude Include="Game\AllSystems.h" />
+    <ClInclude Include="Game\CCamera.h" />
+    <ClInclude Include="Game\CCollision.h" />
+    <ClInclude Include="Game\CMovement.h" />
+    <ClInclude Include="Game\CPlayerController.h" />
+    <ClInclude Include="Game\CRender.h" />
+    <ClInclude Include="Game\CTransform.h" />
+    <ClInclude Include="Game\EntityDef.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameCommon.h" />
-    <ClInclude Include="Game\TileDefinition.h" />
-    <ClInclude Include="Game\TileWorld.h" />
+    <ClInclude Include="Game\SCamera.h" />
+    <ClInclude Include="Game\SCEntityFactory.h" />
+    <ClInclude Include="Game\SCollision.h" />
+    <ClInclude Include="Game\SEntityFactory.h" />
+    <ClInclude Include="Game\SInput.h" />
+    <ClInclude Include="Game\SMovement.h" />
+    <ClInclude Include="Game\SPreRender.h" />
+    <ClInclude Include="Game\SRenderEntities.h" />
+    <ClInclude Include="Game\SRenderWorld.h" />
+    <ClInclude Include="Game\TileDef.h" />
+    <ClInclude Include="Game\SCWorld.h" />
     <ClInclude Include="Game\WindowsApplication.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Engine\Code\Engine\Engine.vcxproj">
       <Project>{4b0fe23e-6e3b-45b1-9d7b-e516b2f43d51}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

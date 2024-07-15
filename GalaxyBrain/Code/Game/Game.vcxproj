@@ -24,7 +24,7 @@
     <ProjectGuid>{90c669da-98f2-4cd6-a348-a1c75e3880ff}</ProjectGuid>
     <RootNamespace>Game</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>ProtoGame2D</ProjectName>
+    <ProjectName>GalaxyBrain</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

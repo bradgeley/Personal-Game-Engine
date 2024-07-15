@@ -14,6 +14,7 @@
 
 class Camera;
 class Texture;
+class VertexBuffer;
 struct JobID;
 struct NamedProperties;
 
@@ -41,6 +42,7 @@ struct DevConsoleConfig
 	Rgba8 m_errorTint						= Rgba8::Red;
 	Rgba8 m_warningTint						= Rgba8::Yellow;
 	Rgba8 m_successTint						= Rgba8::Green;
+	float m_devConsoleTabSize				= 1.f; // 0 to disable
 	std::vector<std::string> m_backgroundImages;
 };
 
@@ -101,6 +103,7 @@ private:
 
 	void UpdateBackgroundImage(float deltaSeconds);
 	void DrawBackground() const;
+	void DrawTab() const;
 	void DrawText() const;
 	void DrawCommandHistory() const;
 	void PickNextBackgroundImage();
@@ -152,6 +155,9 @@ private:
 	float m_backgroundAnimationSeconds = 0.f;
 	std::vector<Texture*> m_backgroundImages;
 	std::vector<JobID> m_backgroundImageLoadingJobs;
+
+	// Vertex Buffers
+	VertexBuffer* m_vbo = nullptr;
 };
 
 

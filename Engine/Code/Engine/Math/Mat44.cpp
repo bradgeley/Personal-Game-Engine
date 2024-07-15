@@ -196,6 +196,14 @@ void Mat44::AppendUniformScale3D(float uniformScale)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Mat44::AppendTranslation2D(Vec2 const& translation)
+{
+	Append(CreateTranslation3D(translation.x, translation.y));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Mat44::AppendTranslation3D(Vec3 const& translation)
 {
 	Append(CreateTranslation3D(translation));

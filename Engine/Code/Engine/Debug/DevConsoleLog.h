@@ -29,5 +29,5 @@ protected:
     float m_numLines = 20.5f;
     float m_scrollOffset = 0.f;
     std::vector<DevConsoleLine> m_log;
-    VertexBuffer* m_vertexBuffer;
+    VertexBuffer* m_vbo;
 };

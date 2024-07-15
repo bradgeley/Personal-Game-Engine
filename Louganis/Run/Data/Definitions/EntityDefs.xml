@@ -1,0 +1,9 @@
+<EntityDefs>
+  
+  <EntityDef name = "PlayerController">
+    <Transform></Transform>
+    <Movement moveSpeed="10"></Movement>
+    <Camera>tileHeight=100</Camera>
+  </EntityDef>
+  
+</EntityDefs>

@@ -10,6 +10,54 @@
     <ClCompile Include="Game\WindowsApplication.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SInput.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SMovement.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRenderEntities.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\CCamera.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\CCollision.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\CMovement.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\CPlayerController.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\CRender.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SPreRender.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRenderWorld.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCamera.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCollision.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SEntityFactory.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EntityDef.cpp">
+      <Filter>Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\TileDef.cpp">
+      <Filter>Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCWorld.cpp">
+      <Filter>Singletons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -24,6 +72,66 @@
     <ClInclude Include="Game\WindowsApplication.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="Game\SRenderEntities.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SInput.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SMovement.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CCamera.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CCollision.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CMovement.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CPlayerController.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CRender.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CTransform.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AllComponents.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AllSystems.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SPreRender.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderWorld.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCollision.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCamera.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SEntityFactory.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCEntityFactory.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EntityDef.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TileDef.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCWorld.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -32,5 +140,28 @@
     <Filter Include="Game">
       <UniqueIdentifier>{6c46eb85-7209-4657-98f4-0f55a327cad0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{7072960a-5034-4920-a325-a519d3340ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems">
+      <UniqueIdentifier>{84232929-3a96-485a-93da-e45214eddc50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{3be9bf36-aec5-4d30-bfd8-84a52a6b67b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singletons">
+      <UniqueIdentifier>{c89d6add-ec65-4452-92b1-911569480227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Definitions">
+      <UniqueIdentifier>{62ba0adb-68f9-4153-bce2-71dc00fc7f3c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml">
+      <Filter>Data</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

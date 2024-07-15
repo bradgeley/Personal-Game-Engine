@@ -21,6 +21,7 @@ public:
     void DefineGameSpace(Vec3 const& gameForward, Vec3 const& gameLeft, Vec3 const& gameUp);
 
     void SetPosition(Vec3 const& position);
+    void SetPosition2D(Vec2 const& position);
     void Translate(Vec3 const& deltaPos);
     void Translate2D(Vec2 const& deltaPos);
     void SetRotation2D(float rotation);

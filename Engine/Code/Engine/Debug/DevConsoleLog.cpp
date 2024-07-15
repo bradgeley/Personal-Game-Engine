@@ -16,7 +16,7 @@ const std::string LINE_PREFIX = "> ";
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleLog::DevConsoleLog()
 {
-    m_vertexBuffer = new VertexBuffer();
+    m_vbo = new VertexBuffer();
 }
 
 
@@ -24,8 +24,8 @@ DevConsoleLog::DevConsoleLog()
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleLog::~DevConsoleLog()
 {
-    delete m_vertexBuffer;
-    m_vertexBuffer = nullptr;
+    delete m_vbo;
+    m_vbo = nullptr;
 }
 
 
@@ -51,9 +51,6 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
 {
     Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
 
-    std::vector<Vertex_PCU>& verts = m_vertexBuffer->GetMutableVerts();
-    verts.clear();
-
     float lineThickness = box.GetHeight() / m_numLines;
     float maxLinesOnScreen = box.GetHeight() / lineThickness;
 
@@ -66,14 +63,15 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
         AABB2 textBox = AABB2(box.mins.x, box.mins.y + yOffsetBot, box.maxs.x, box.mins.y + yOffsetTop);
         float squeeze = textBox.GetHeight() / 15.f;
         textBox.Squeeze(squeeze);
-        font->AddVertsForText2D(verts, textBox.mins, textBox.GetHeight(), LINE_PREFIX + m_log[lineIndex].m_line, m_log[lineIndex].m_tint);
+        font->AddVertsForText2D(m_vbo->GetMutableVerts(), textBox.mins, textBox.GetHeight(), LINE_PREFIX + m_log[lineIndex].m_line, m_log[lineIndex].m_tint);
         
         --lineIndex;
         linesRendered += 1.f;
     }
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(m_vertexBuffer);
+    g_renderer->DrawVertexBuffer(m_vbo);
+    m_vbo->ClearVerts();
 }
 
 

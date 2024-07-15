@@ -20,7 +20,7 @@ const std::string LINE_PREFIX = " > ";
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleInput::DevConsoleInput()
 {
-    m_vertexBuffer = new VertexBuffer();
+    m_vbo = new VertexBuffer();
 }
 
 
@@ -28,8 +28,8 @@ DevConsoleInput::DevConsoleInput()
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleInput::~DevConsoleInput()
 {
-    delete m_vertexBuffer;
-    m_vertexBuffer = nullptr;
+    delete m_vbo;
+    m_vbo = nullptr;
 }
 
 
@@ -219,12 +219,12 @@ void DevConsoleInput::RenderToBox(AABB2 const& box) const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::RenderBackground(AABB2 const& box) const
 {
-    AddVertsForAABB2(m_vertexBuffer->GetMutableVerts(), box, Rgba8::DarkGray);
+    AddVertsForAABB2(m_vbo->GetMutableVerts(), box, Rgba8::DarkGray);
 
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(m_vertexBuffer);
-    m_vertexBuffer->ClearVerts();
+    g_renderer->DrawVertexBuffer(m_vbo);
+    m_vbo->ClearVerts();
 }
 
 
@@ -233,11 +233,11 @@ void DevConsoleInput::RenderBackground(AABB2 const& box) const
 void DevConsoleInput::RenderText(AABB2 const& box) const
 {
     Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
-    font->AddVertsForText2D(m_vertexBuffer->GetMutableVerts(), box.mins, box.GetHeight(), LINE_PREFIX + m_input.m_line, Rgba8::White);
+    font->AddVertsForText2D(m_vbo->GetMutableVerts(), box.mins, box.GetHeight(), LINE_PREFIX + m_input.m_line, Rgba8::White);
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(m_vertexBuffer);
-    m_vertexBuffer->ClearVerts();
+    g_renderer->DrawVertexBuffer(m_vbo);
+    m_vbo->ClearVerts();
 }
 
 
@@ -265,9 +265,9 @@ void DevConsoleInput::RenderSelection(AABB2 const& box) const
     selectionBox.maxs.y = box.maxs.y;
     selectionBox.maxs.x += caretOffsetX + caretThickness;
     
-    AddVertsForAABB2(m_vertexBuffer->GetMutableVerts(), selectionBox, Rgba8(0,171,240, 100));
-    g_renderer->DrawVertexBuffer(m_vertexBuffer);
-    m_vertexBuffer->ClearVerts();
+    AddVertsForAABB2(m_vbo->GetMutableVerts(), selectionBox, Rgba8(0,171,240, 100));
+    g_renderer->DrawVertexBuffer(m_vbo);
+    m_vbo->ClearVerts();
 }
 
 
@@ -289,11 +289,11 @@ void DevConsoleInput::RenderCaret(AABB2 const& box) const
     caretBox.maxs.y = box.maxs.y;
     caretBox.maxs.x += caretOffsetX + caretThickness;
     
-    AddVertsForAABB2(m_vertexBuffer->GetMutableVerts(), caretBox, caretTint);
+    AddVertsForAABB2(m_vbo->GetMutableVerts(), caretBox, caretTint);
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(m_vertexBuffer);
-    m_vertexBuffer->ClearVerts();
+    g_renderer->DrawVertexBuffer(m_vbo);
+    m_vbo->ClearVerts();
 }
 
 
