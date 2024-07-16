@@ -42,6 +42,7 @@ public:
 	int GetNumVerts() const;
 
     bool IsDirty() const;
+    bool IsEmpty() const;
 
 protected:
 

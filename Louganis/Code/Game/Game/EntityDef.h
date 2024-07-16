@@ -17,7 +17,7 @@ public:
     static void LoadFromXML();
     static EntityDef const* GetEntityDef(uint8_t id);
     static EntityDef const* GetEntityDef(std::string const& name);
-    static uint8_t GetEntityDefID(std::string const& name);
+    static int GetEntityDefID(std::string const& name);
 
 private:
 

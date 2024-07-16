@@ -70,7 +70,7 @@ public:
 	void RegisterSystem(SystemSubgraphID subgraphID = 0);
 	
 	void SetSystemActive(std::string const& sysName, bool isActive) const;
-	SystemSubgraph& GetSystemSubgraph(SystemSubgraphID subgraphID);
+	SystemSubgraph& CreateOrGetSystemSubgraph(SystemSubgraphID subgraphID);
 
 	template <typename CType>
 	void RegisterComponent(ComponentStorageType storageType = ComponentStorageType::ARRAY);

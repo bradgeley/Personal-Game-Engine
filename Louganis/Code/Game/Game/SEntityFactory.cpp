@@ -12,6 +12,8 @@
 void SEntityFactory::Startup()
 {
     AddWriteAllDependencies();
+
+    EntityDef::LoadFromXML();
 }
 
 

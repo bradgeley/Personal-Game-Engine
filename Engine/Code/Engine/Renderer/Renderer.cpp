@@ -98,6 +98,16 @@ void Renderer::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::EndFrame()
 {
+	if (m_currentCamera)
+	{
+		EndCamera(m_currentCamera);
+	}
+
+	if (m_currentWindow)
+	{
+		EndWindow(m_currentWindow);
+	}
+
 	Present();
 	std::this_thread::sleep_for(std::chrono::milliseconds(8));
 }

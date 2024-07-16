@@ -23,11 +23,11 @@ void EntityDef::LoadFromXML()
         return;
     }
 
-    XmlElement* entityDefElem = root->FirstChildElement("Entity");
+    XmlElement* entityDefElem = root->FirstChildElement("EntityDef");
     while (entityDefElem)
     {
         std::string name = ParseXmlAttribute(*entityDefElem, "name", "Unnamed Entity Def");
-        if (GetEntityDefID(name) != 0)
+        if (GetEntityDefID(name) != -1)
         {
             g_devConsole->LogErrorF("Duplicate Entity Def: %s", name.c_str());
         }
@@ -35,7 +35,7 @@ void EntityDef::LoadFromXML()
         // Emplace new definition using the constructor that takes an Xml Element
         s_entityDefs.emplace_back(entityDefElem);
 
-        entityDefElem = entityDefElem->NextSiblingElement("Entity");
+        entityDefElem = entityDefElem->NextSiblingElement("EntityDef");
     }
 }
 
@@ -67,17 +67,17 @@ EntityDef const* EntityDef::GetEntityDef(std::string const& name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-uint8_t EntityDef::GetEntityDefID(std::string const& name)
+int EntityDef::GetEntityDefID(std::string const& name)
 {
     for (size_t i = 0; i < s_entityDefs.size(); i++)
     {
         EntityDef const* def = &s_entityDefs[i];
         if (def->m_name == name)
         {
-            return (uint8_t) i;
+            return (int) i;
         }
     }
-    return 255;
+    return -1;
 }
 
 

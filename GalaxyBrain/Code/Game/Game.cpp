@@ -63,7 +63,7 @@ void Game::Startup()
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
     
     // Physics
-    SystemSubgraph& physics = g_ecs->GetSystemSubgraph((int) FramePhase::Physics);
+    SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
     physics.m_timeStep = 0.00833f;
     g_ecs->RegisterSystem<SGravity>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
@@ -99,11 +99,7 @@ void Game::Update(float deltaSeconds)
         deltaSeconds *= 10.f;
     }
 
-    // g_ecs->RunFrame(deltaSeconds);
-    g_ecs->RunSystemSubgraph((int) FramePhase::PrePhysics, deltaSeconds);
-    g_ecs->RunSystemSubgraph((int) FramePhase::Physics, deltaSeconds);
-    g_ecs->RunSystemSubgraph((int) FramePhase::PostPhysics, deltaSeconds);
-    g_ecs->RunSystemSubgraph((int) FramePhase::Render, deltaSeconds);
+    g_ecs->RunFrame(deltaSeconds);
 }
 
 

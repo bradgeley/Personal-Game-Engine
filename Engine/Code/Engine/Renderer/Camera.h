@@ -33,8 +33,6 @@ public:
     void SetOrthoCenter2D(Vec2 const& center);
     void ZoomAroundCenter2D(float zoomRatio, Vec2 const& center);
 
-    void SetCameraConstants(CameraConstants const& cc);
-
     Vec3 const& GetPosition() const;
     float GetRotation2D() const;
     Vec3 GetOrthoCenter() const;
@@ -44,26 +42,16 @@ public:
     Vec3 GetOrthoHalfDimensions() const;
     Vec2 ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const;
 
-    // Const Warning: These functions may recalculate the view and projection matrices
-    CameraConstants const& GetCameraConstants() const;
-    Mat44 GetViewMatrix() const;
-    Mat44 GetOrthoProjectionMatrix() const;
+    CameraConstants GetCameraConstants() const;
+
+    Mat44 CalculateViewMatrix() const;
+    Mat44 CalculateOrthoProjectionMatrix() const;
 
 private:
-
-    // Const Warning: Const because called in Renderer::BeginCamera, but they update m_cameraConstants
-    void UpdateViewMatrix() const;
-    void UpdateProjMatrix() const;
-
-private:
-    
-    // Const Warning: Mutable because it needs to be updated if dirty in BeginCamera
-    mutable bool m_viewMatrixDirty = true;
-    mutable bool m_projMatrixDirty = true;
-    mutable CameraConstants m_cameraConstants;
 
     Vec3 m_mins             = Vec3::ZeroVector;
     Vec3 m_maxs             = Vec3(1.f, 1.f, 1.f);
     Vec3 m_position         = Vec3::ZeroVector;
     float m_rotation2D      = 0.f; // todo: Euler Angles or Quat
+    Mat44 m_gameToRenderTransform;
 };

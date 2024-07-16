@@ -19,8 +19,8 @@ public:
 
 	virtual ~BaseStorage() = default;
 
-	virtual void Destroy(EntityID index)						= 0;
-	virtual void Clear()										= 0;
+	virtual void Destroy(EntityID index)							= 0;
+	virtual void Clear()											= 0;
 };
 
 
@@ -28,9 +28,9 @@ public:
 //----------------------------------------------------------------------------------------------------------------------
 enum class ComponentStorageType
 {
-	ARRAY,
-	MAP,
-	SINGLETON,
+	Array,
+	Map,
+	Singleton,
 	TAG,
 };
 
@@ -44,10 +44,10 @@ public:
 
 	virtual ~TypedBaseStorage() override = default;
 
-	virtual CType*			Get(EntityID eid)							= 0;
-	virtual CType const*	Get(EntityID eid) const						= 0;
-	virtual CType*			Add(EntityID eid)							= 0;
-	virtual CType*			Add(EntityID eid, CType const& copy)		= 0;
+	virtual CType*			Get(EntityID eid)						= 0;
+	virtual CType const*	Get(EntityID eid) const					= 0;
+	virtual CType*			Add(EntityID eid)						= 0;
+	virtual CType*			Add(EntityID eid, CType const& copy)	= 0;
 
 	// Not virtual on purpose for performance reasons - this is the most called function in the ECS
 	CType& operator [](EntityID id) { return *Get(id); } 
@@ -97,7 +97,6 @@ public:
 		// pretend it doesn't exist (from admin side)
 	}
 
-	// Not virtual on purpose for performance reasons - this is the most called function in the ECS
 	CType& operator [](EntityID id) { return m_data[id]; }
 
 public:
@@ -151,9 +150,10 @@ public:
 	
 	virtual void			Destroy(EntityID eid)					override
 	{
-		if (m_data.find(eid) != m_data.end())
+		auto result = m_data.find(eid);
+		if (result != m_data.end())
 		{
-			m_data.erase(eid);
+			m_data.erase(result);
 		}
 	}
 	
@@ -162,7 +162,6 @@ public:
 		m_data.clear();
 	}
 
-	// Not virtual on purpose for performance reasons - this is the most called function in the ECS
 	CType& operator [](EntityID id) { return m_data[id]; }
 
 public:
@@ -215,7 +214,6 @@ public:
 		// not relevant to singleton
 	}
 	
-	// Not virtual on purpose for performance reasons - this is the most called function in the ECS
 	CType& operator [](EntityID [[maybe_unused]] id) { return m_data; }
 
 public:
@@ -269,7 +267,6 @@ public:
 		m_tags.SetAll(false);
 	}
 
-	// Not virtual on purpose for performance reasons - this is the most called function in the ECS
 	bool operator[](EntityID id) { return m_tags.Get(id); }
 
 public:

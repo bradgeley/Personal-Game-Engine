@@ -34,8 +34,8 @@ void Camera::DefineGameSpace(Vec3 const& gameForward, Vec3 const& gameLeft, Vec3
     // If we want x to be forward, we need to create a matrix that transforms x values into z values.
     // We do this by creating a matrix where the Z (forward) vector is our new X vector, and get the inverse by transposing it (all 3 inputs must be orthonormal)
     // Then any points we pass through this matrix will be transformed from X forward to Z forward for rendering.
-    m_cameraConstants.m_gameToRender.SetIJK(-gameLeft, gameUp, gameForward);
-    m_cameraConstants.m_gameToRender.Transpose();
+    m_gameToRenderTransform.SetIJK(-gameLeft, gameUp, gameForward);
+    m_gameToRenderTransform.Transpose();
 }
 
 
@@ -43,7 +43,6 @@ void Camera::DefineGameSpace(Vec3 const& gameForward, Vec3 const& gameLeft, Vec3
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetPosition(Vec3 const& position)
 {
-    m_viewMatrixDirty = true;
     m_position = position;
 }
 
@@ -52,7 +51,6 @@ void Camera::SetPosition(Vec3 const& position)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetPosition2D(Vec2 const& position)
 {
-    m_viewMatrixDirty = true;
     m_position = Vec3(position, 0.f);
 }
 
@@ -61,7 +59,6 @@ void Camera::SetPosition2D(Vec2 const& position)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::Translate(Vec3 const& deltaPos)
 {
-    m_viewMatrixDirty = true;
     m_position += deltaPos;
 }
 
@@ -70,7 +67,6 @@ void Camera::Translate(Vec3 const& deltaPos)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::Translate2D(Vec2 const& deltaPos)
 {
-    m_viewMatrixDirty = true;
     m_position += Vec3(deltaPos, 0.f);
 }
 
@@ -80,7 +76,6 @@ void Camera::Translate2D(Vec2 const& deltaPos)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetRotation2D(float rotation)
 {
-    m_viewMatrixDirty = true;
     m_rotation2D = rotation;
 }
 
@@ -89,7 +84,6 @@ void Camera::SetRotation2D(float rotation)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetOrthoDims(Vec3 const& dims)
 {
-    m_projMatrixDirty = true;
     Vec3 center = GetOrthoCenter();
     Vec3 halfDims = dims * 0.5f;
     m_maxs = center + halfDims;
@@ -101,7 +95,6 @@ void Camera::SetOrthoDims(Vec3 const& dims)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetOrthoDims2D(Vec2 const& dims2D)
 {
-    m_projMatrixDirty = true;
     Vec3 center = GetOrthoCenter();
     Vec2 halfDims = dims2D * 0.5f;
     m_maxs.x = center.x + halfDims.x;
@@ -115,7 +108,6 @@ void Camera::SetOrthoDims2D(Vec2 const& dims2D)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetOrthoBounds(Vec3 const& mins, Vec3 const& maxs)
 {
-    m_projMatrixDirty = true;
 	m_mins = mins;
 	m_maxs = maxs;
 }
@@ -125,7 +117,6 @@ void Camera::SetOrthoBounds(Vec3 const& mins, Vec3 const& maxs)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetOrthoBounds2D(AABB2 const& orthoBounds)
 {
-    m_projMatrixDirty = true;
     m_mins.x = orthoBounds.mins.x;
     m_mins.y = orthoBounds.mins.y;
     m_maxs.x = orthoBounds.maxs.x;
@@ -137,7 +128,6 @@ void Camera::SetOrthoBounds2D(AABB2 const& orthoBounds)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetOrthoCenter(Vec3 const& center)
 {
-    m_projMatrixDirty = true;
     Vec3 halfDims = GetOrthoHalfDimensions();
     m_maxs = center + halfDims;
     m_maxs = center - halfDims;
@@ -148,7 +138,6 @@ void Camera::SetOrthoCenter(Vec3 const& center)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::SetOrthoCenter2D(Vec2 const& center)
 {
-    m_projMatrixDirty = true;
     Vec3 halfDims = GetOrthoHalfDimensions();
     m_maxs.x = center.x + halfDims.x;
     m_maxs.y = center.y + halfDims.y;
@@ -161,7 +150,6 @@ void Camera::SetOrthoCenter2D(Vec2 const& center)
 //----------------------------------------------------------------------------------------------------------------------
 void Camera::ZoomAroundCenter2D(float zoomRatio, Vec2 const& center)
 {
-    m_projMatrixDirty = true;
     Vec2 mins2D = Vec2(m_mins);
     Vec2 maxs2D = Vec2(m_maxs);
     mins2D -= center;
@@ -172,16 +160,6 @@ void Camera::ZoomAroundCenter2D(float zoomRatio, Vec2 const& center)
     maxs2D += center;
     m_mins = Vec3(mins2D, m_mins.z);
     m_maxs = Vec3(maxs2D, m_maxs.z);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Camera::SetCameraConstants(CameraConstants const& cc)
-{
-    m_projMatrixDirty = true;
-    m_viewMatrixDirty = true;
-    m_cameraConstants = cc;
 }
 
 
@@ -254,53 +232,28 @@ Vec2 Camera::ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-CameraConstants const& Camera::GetCameraConstants() const
+CameraConstants Camera::GetCameraConstants() const
 {
-    UpdateViewMatrix();
-    UpdateProjMatrix();
-    return m_cameraConstants;
+    CameraConstants result;
+    result.m_worldToCamera = CalculateViewMatrix();
+    result.m_cameraToClip = CalculateOrthoProjectionMatrix();
+    return result;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Mat44 Camera::GetViewMatrix() const
-{
-    UpdateViewMatrix();
-    return m_cameraConstants.m_worldToCamera;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Mat44 Camera::GetOrthoProjectionMatrix() const
-{
-    UpdateProjMatrix();
-    return m_cameraConstants.m_cameraToClip;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Camera::UpdateViewMatrix() const
+Mat44 Camera::CalculateViewMatrix() const
 { 
-    if (m_viewMatrixDirty)
-    {
-        Mat44 cameraToWorld = Mat44::CreateZRotationDegrees(m_rotation2D);
-        cameraToWorld.SetTranslation3D(m_position);
-        m_cameraConstants.m_worldToCamera = cameraToWorld.GetOrthoNormalInverse();
-        m_viewMatrixDirty = false;
-    }
+    Mat44 cameraToWorld = Mat44::CreateZRotationDegrees(m_rotation2D);
+    cameraToWorld.SetTranslation3D(m_position);
+    return cameraToWorld.GetOrthoNormalInverse();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Camera::UpdateProjMatrix() const
+Mat44 Camera::CalculateOrthoProjectionMatrix() const
 {
-    if (m_projMatrixDirty)
-    {
-        m_cameraConstants.m_cameraToClip = Mat44::CreateOrthoProjection(m_mins.x, m_maxs.x, m_mins.y, m_maxs.y, m_mins.z, m_maxs.z);
-        m_projMatrixDirty = false;
-    }
+    return Mat44::CreateOrthoProjection(m_mins.x, m_maxs.x, m_mins.y, m_maxs.y, m_mins.z, m_maxs.z);
 }

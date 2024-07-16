@@ -267,7 +267,7 @@ void AdminSystem::SetSystemActive(std::string const& sysName, bool isActive) con
 
 
 //----------------------------------------------------------------------------------------------------------------------
-SystemSubgraph& AdminSystem::GetSystemSubgraph(SystemSubgraphID subgraphID)
+SystemSubgraph& AdminSystem::CreateOrGetSystemSubgraph(SystemSubgraphID subgraphID)
 {
 	if (subgraphID >= m_systemSubgraphs.size())
 	{

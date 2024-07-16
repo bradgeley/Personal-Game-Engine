@@ -13,6 +13,8 @@
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/ECS/AdminSystem.h"
+#include "EntityDef.h"
+#include "TileDef.h"
 #include "AllComponents.h"
 #include "AllSystems.h"
 
@@ -49,24 +51,23 @@ void Game::Startup()
 
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCWorld>();
+    g_ecs->RegisterComponentSingleton<SCEntityFactory>();
 
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();
     g_ecs->RegisterResourceByType<Renderer>();
 
     // Pre Physics
-    //g_ecs->RegisterSystem<SDebugKeys>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
 
     // Physics
-    SystemSubgraph& physics = g_ecs->GetSystemSubgraph((int) FramePhase::Physics);
+    SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
     physics.m_timeStep = 0.00833f;
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SCamera>((int) FramePhase::Physics); // Camera is here because it does framerate dependent things
-
-    // Post Physics
+    g_ecs->RegisterSystem<SCamera>((int) FramePhase::Physics);
 
     // Render
     g_ecs->RegisterSystem<SPreRender>((int) FramePhase::Render);
@@ -94,6 +95,8 @@ void Game::Update(float deltaSeconds)
     {
         g_app->Quit();
     }
+
+    g_ecs->RunFrame(deltaSeconds);
 }
 
 
@@ -117,6 +120,8 @@ void Game::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void Game::Shutdown()
 {
+    g_ecs->Shutdown();
+
     delete g_rng;
     g_rng = nullptr;
 }

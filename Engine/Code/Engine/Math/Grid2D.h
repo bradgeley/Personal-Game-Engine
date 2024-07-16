@@ -21,11 +21,14 @@ public:
     explicit Grid2D(int width, int height, T const& initialValue);
 
     void Initialize(IntVec2 const& dimensions, T const& initialValue);
+    void Clear();
 
     void Set(int index, T const& value);
     void Set(IntVec2 const& coords, T const& value);
     void Set(int x, int y, T const& value);
     void SetAll(T const& value);
+    void SetEdges(T const& value); // All tiles along the 4 edges
+
 	T Get(int index) const;
 	T Get(int x, int y) const;
     T Get(IntVec2 const& coords) const;
@@ -34,6 +37,7 @@ public:
     int GetIndexWestOf(int index, bool wrap = false) const; // -x
     int GetIndexNorthOf(int index, bool wrap = false) const; // +y
     int GetIndexSouthOf(int index, bool wrap = false) const; // -y
+    int GetLastIndex() const;
 
     bool IsValidIndex(int index) const;
     bool IsValidCoords(IntVec2 const& coords) const;
@@ -44,6 +48,7 @@ public:
     int GetWidth() const;
     int GetHeight() const;
     int Size() const;
+
     T* GetRawData();
     T const* GetRawData() const;
 
@@ -109,6 +114,16 @@ void Grid2D<T>::Initialize(IntVec2 const& dimensions, T const& initialValue)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
+void Grid2D<T>::Clear()
+{
+    m_data.clear();
+    m_dimensions = IntVec2::ZeroVector;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
 void Grid2D<T>::Set(int index, T const& value)
 {
     m_data[index] = value;
@@ -141,6 +156,44 @@ template <typename T>
 void Grid2D<T>::SetAll(T const& value)
 {
     for (int i = 0; i < m_data.size(); ++i)
+    {
+        m_data[i] = value;
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+void Grid2D<T>::SetEdges(T const& value)
+{
+    // First row
+    for (int x = 0; x < m_dimensions.x; ++x)
+    {
+        m_data[x] = value;
+    }
+
+    // Last row
+    int width = GetWidth();
+    int lastRowFirstIndex = Size() - width;
+    int lastIndex = GetLastIndex();
+    for (int x = lastRowFirstIndex; x <= lastIndex; ++x)
+    {
+        m_data[x] = value;
+    }
+
+    // Left Column (excluding first and last item)
+    int secondRowFirstIndex = width;
+    int secondToLastRowFirstIndex = lastRowFirstIndex - width;
+    for (int i = secondRowFirstIndex; i <= secondToLastRowFirstIndex; i += width)
+    {
+        m_data[i] = value;
+    }
+
+    // Right Column (excluding first and last item)
+    int secondRowLastIndex = 2 * width - 1;
+    int secondToLastRowLastIndex = lastIndex - width;
+    for (int i = secondRowLastIndex; i <= secondToLastRowLastIndex; i += width)
     {
         m_data[i] = value;
     }
@@ -283,6 +336,15 @@ int Grid2D<T>::GetIndexSouthOf(int index, bool wrap) const
     }
     // We're at the edge
     return -1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+int Grid2D<T>::GetLastIndex() const
+{
+    return (int) m_data.size() - 1;
 }
 
 
