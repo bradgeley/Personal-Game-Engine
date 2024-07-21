@@ -217,6 +217,12 @@ float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minR
 }
 
 
+float RangeMapClamped(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
+{
+    return ClampF(RangeMap(valueInRangeA, minRangeA, maxRangeA, minRangeB, maxRangeB), minRangeB, maxRangeB);
+}
+
+
 int IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
 {
     ++val;

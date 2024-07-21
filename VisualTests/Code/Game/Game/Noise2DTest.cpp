@@ -1,6 +1,7 @@
 // Bradley Christensen - 2023
 #include "Noise2DTest.h"
 #include "Engine/Math/Noise.h"
+#include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Renderer.h"
@@ -117,7 +118,7 @@ void Noise2DTest::GenerateNoise(int seed)
 			color = GetColorForNoise(fractalNoise);
 			m_fractalNoise2D.Set(x, y, color);
 
-			float perlinNoise = GetPerlinNoise2D(fx, fy, SCALE, 8, 0.5f, 2.f, true, seed);
+			float perlinNoise = GetPerlinNoise2D(fx, fy, SCALE, 1, 0.5f, 2.f, true, seed);
 			color = GetColorForNoise(perlinNoise);
 			m_perlinNoise2D.Set(x, y, color);
 		}
@@ -129,6 +130,6 @@ void Noise2DTest::GenerateNoise(int seed)
 //----------------------------------------------------------------------------------------------------------------------
 Rgba8 Noise2DTest::GetColorForNoise(float noiseValue)
 {
-	float zeroToOne = (noiseValue / 2.f) + 0.5f;
+	float zeroToOne = RangeMapClamped(noiseValue, -1.f, 1.f, 0.f, 1.f);
 	return Rgba8::Lerp(Rgba8::White, Rgba8::Black, zeroToOne);
 }

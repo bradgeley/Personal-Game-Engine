@@ -3,6 +3,7 @@
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Math/IntVec2.h"
+#include "Engine/Math/AABB2.h"
 
 
 
@@ -32,7 +33,7 @@ unsigned int GetRawNoise1D(int x, int seed)
 //----------------------------------------------------------------------------------------------------------------------
 unsigned int GetRawNoise2D(int x, int y, int seed)
 {
-	int PRIME_NUMBER = 10007; // todo: test different primes
+	int PRIME_NUMBER = 198491317; // todo: test different primes?
 	return GetRawNoise1D(x + (PRIME_NUMBER * y), seed);
 }
 
@@ -246,51 +247,65 @@ float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, f
 		Vec2(+0.923879533f, -0.382683432f)  // 337.5 degrees (ESE)
 	};
 
-	Vec2 position = Vec2(x, y) * (1.f / scale);
+	Vec2 sampleLocation = Vec2(x, y) * (1.f / scale);
 	float totalNoise = 0.f;
 	float persistence = 1.f;
 	float maxAmplitude = 0.f; // Each octave adds some theoretical max amplitude, usually starts at 1 then 1.5 then 1.75, for 3 octaves, etc.
 
 	for (unsigned int octaveIndex = 0; octaveIndex < numOctaves; ++octaveIndex)
 	{
-		IntVec2 southWest = IntVec2(FloorF(position.x), FloorF(position.y));
-		IntVec2 northEast = southWest + IntVec2(1, 1);
+		AABB2 cell;
+		cell.mins = sampleLocation.GetFloor();
+		cell.maxs = cell.mins + Vec2(1.f, 1.f);
+		Vec2 cellTopLeft = cell.GetTopLeft();
+		Vec2 cellBotRight = cell.GetBottomRight();
 
-		unsigned int noiseSW = GetRawNoise2D(southWest.x, southWest.y, seed);
-		unsigned int noiseSE = GetRawNoise2D(northEast.x, southWest.y, seed);
-		unsigned int noiseNW = GetRawNoise2D(southWest.x, northEast.y, seed);
-		unsigned int noiseNE = GetRawNoise2D(northEast.x, northEast.y, seed);
+		unsigned int noiseBotLeft = GetRawNoise2D(cell.mins.x, cell.mins.y, seed);
+		unsigned int noiseTopLeft = GetRawNoise2D(cellTopLeft.x, cellTopLeft.y, seed);
+		unsigned int noiseTopRight = GetRawNoise2D(cell.maxs.x, cell.maxs.y, seed);
+		unsigned int noiseBotRight = GetRawNoise2D(cellBotRight.x, cellBotRight.y, seed);
 
-		Vec2 fromSouthWest = Vec2(position.x - southWest.x, position.y - southWest.y);
-		Vec2 fromSouthEast = Vec2(position.x - northEast.x, position.y - southWest.y);
-		Vec2 fromNorthWest = Vec2(position.x - southWest.x, position.y - northEast.y);
-		Vec2 fromNorthEast = Vec2(position.x - northEast.x, position.y - northEast.y);
+		Vec2 botLeftToSample = sampleLocation - cell.mins;
+		Vec2 topLeftToSample = sampleLocation - cellTopLeft;
+		Vec2 topRightToSample = sampleLocation - cell.maxs;
+		Vec2 botRightToSample = sampleLocation - cellBotRight;
 
-		float weightEast = SmoothStep3(fromSouthWest.x);
-		float weightNorth = SmoothStep3(fromSouthWest.y);
-		float weightWest = 1.f - weightEast;
-		float weightSouth = 1.f - weightNorth;
+		// The greater the distance to the left, the greater the weight of the right, and so on
+		// Use bot left because its displacements are guaranteed to be between 0 and 1 (non negative)
+		float weightRight = SmoothStep3(botLeftToSample.x);
+		float weightTop = SmoothStep3(botLeftToSample.y);
+		float weightLeft = 1.f - weightRight;
+		float weightBot = 1.f - weightTop;
 
-		Vec2 const& gradientSW = gradients[noiseSW & 0x0000'0007];
-		Vec2 const& gradientSE = gradients[noiseSE & 0x0000'0007];
-		Vec2 const& gradientNW = gradients[noiseNW & 0x0000'0007];
-		Vec2 const& gradientNE = gradients[noiseNE & 0x0000'0007];
+		// Pick a random facing vector from the list by using noise to randomly index into the gradient array
+		int botLeftRandomIndex = noiseBotLeft & 0x0000'0007;
+		int topLeftRandomIndex = noiseTopLeft & 0x0000'0007;
+		int topRightRandomIndex = noiseTopRight & 0x0000'0007;
+		int botRightRandomIndex = noiseBotRight & 0x0000'0007;
 
-		float dotSouthWest = DotProduct2D(fromSouthWest, gradientSW);
-		float dotSouthEast = DotProduct2D(fromSouthEast, gradientSE);
-		float dotNorthWest = DotProduct2D(fromNorthWest, gradientNW);
-		float dotNorthEast = DotProduct2D(fromNorthEast, gradientNE);
+		Vec2 const& botLeftGradient = gradients[botLeftRandomIndex];
+		Vec2 const& topLeftGradient = gradients[topLeftRandomIndex];
+		Vec2 const& topRightGradient = gradients[topRightRandomIndex];
+		Vec2 const& botRightGradient = gradients[botRightRandomIndex];
 
-		float blendSouth = (weightEast * dotSouthEast) + (weightWest * dotSouthWest);
-		float blendNorth = (weightEast * dotNorthEast) + (weightWest * dotNorthWest);
-		float blendTotal = weightNorth * blendNorth + weightSouth * blendSouth;
+		float dotBotLeft = DotProduct2D(botLeftToSample, botLeftGradient);
+		float dotTopLeft = DotProduct2D(topLeftToSample, topLeftGradient);
+		float dotTopRight = DotProduct2D(topRightToSample, topRightGradient);
+		float dotBotRight = DotProduct2D(botRightToSample, botRightGradient);
+
+		float blendBot = (weightLeft * dotBotLeft) + (weightRight * dotBotRight);
+		float blendTop = (weightLeft * dotTopLeft) + (weightRight* dotTopRight);
+		float blendTotal = weightTop * blendTop + weightBot * blendBot;
 		float noiseThisOctave = blendTotal * (1.f / 0.662578106f); // 2D Perlin is in [-.662578106,.662578106]; map to ~[-1,1]
 
 		// Diminish by the octave persistence
 		noiseThisOctave *= persistence;
+
+		// Add persistence to the max amplitude - if all octaves were to add their max value at a single sample location, 
+		// what would the value be there? (1 + 0.5 + 0.25 ...)
 		maxAmplitude += persistence;
 
-		position *= octaveScale;
+		sampleLocation *= octaveScale;
 
 		totalNoise += noiseThisOctave;
 
@@ -299,7 +314,7 @@ float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, f
 		++seed;
 	}
 
-	if (renormalize)
+	if (renormalize && maxAmplitude > 0)
 	{
 		totalNoise /= maxAmplitude; // Get back into range -1,1 from the range -A,A (where A = max amplitude from octaves)
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to 0,1 for smooth step
