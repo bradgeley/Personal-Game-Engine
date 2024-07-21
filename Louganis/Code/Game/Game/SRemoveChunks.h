@@ -5,11 +5,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SPreRender : public System
+class SRemoveChunks : public System
 {
 public:
 
-    SPreRender(std::string const& name = "PreRender") : System(name) {};
+    SRemoveChunks(std::string const& name = "Remove Chunks") : System(name) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

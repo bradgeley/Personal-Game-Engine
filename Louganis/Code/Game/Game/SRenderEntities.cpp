@@ -5,7 +5,6 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "CRender.h"
 #include "CCamera.h"
-#include "CTransform.h"
 
 
 
@@ -13,7 +12,7 @@
 void SRenderEntities::Startup()
 {
     AddWriteDependencies<CRender, Renderer>();
-    AddReadDependencies<CTransform, CCamera>();
+    AddReadDependencies<CCamera>();
 }
 
 
@@ -23,7 +22,6 @@ void SRenderEntities::Run(SystemContext const& context)
 {
     auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-    auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
 
     VertexBuffer vbo;
     AddVertsForAABB2(vbo.GetMutableVerts(), AABB2(-0.5, -0.5, 0.5, 0.5));
@@ -49,8 +47,6 @@ void SRenderEntities::Run(SystemContext const& context)
             g_renderer->BindTexture(nullptr);
             g_renderer->DrawVertexBuffer(&vbo);
         }
-
-        g_renderer->EndCamera(&camera.m_camera);
     }
 }
 

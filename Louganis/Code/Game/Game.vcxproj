@@ -191,6 +191,7 @@
     <ClCompile Include="Framework\Main_Windows.cpp" />
     <ClCompile Include="Game\CCamera.cpp" />
     <ClCompile Include="Game\CCollision.cpp" />
+    <ClCompile Include="Game\Chunk.cpp" />
     <ClCompile Include="Game\CMovement.cpp" />
     <ClCompile Include="Game\CPlayerController.cpp" />
     <ClCompile Include="Game\CRender.cpp" />
@@ -198,16 +199,20 @@
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\SCamera.cpp" />
     <ClCompile Include="Game\SCollision.cpp" />
+    <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\SEntityFactory.cpp" />
+    <ClCompile Include="Game\SInitView.cpp" />
     <ClCompile Include="Game\SInput.cpp" />
+    <ClCompile Include="Game\SLoadChunks.cpp" />
     <ClCompile Include="Game\SMovement.cpp" />
-    <ClCompile Include="Game\SPreRender.cpp" />
+    <ClCompile Include="Game\SCopyTransform.cpp" />
+    <ClCompile Include="Game\SRemoveChunks.cpp" />
     <ClCompile Include="Game\SRenderEntities.cpp" />
     <ClCompile Include="Game\SRenderWorld.cpp" />
     <ClCompile Include="Game\SWorld.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
-    <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\WindowsApplication.cpp" />
+    <ClCompile Include="Game\WorldSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
@@ -215,6 +220,7 @@
     <ClInclude Include="Game\AllSystems.h" />
     <ClInclude Include="Game\CCamera.h" />
     <ClInclude Include="Game\CCollision.h" />
+    <ClInclude Include="Game\Chunk.h" />
     <ClInclude Include="Game\CMovement.h" />
     <ClInclude Include="Game\CPlayerController.h" />
     <ClInclude Include="Game\CRender.h" />
@@ -223,18 +229,23 @@
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameCommon.h" />
     <ClInclude Include="Game\SCamera.h" />
+    <ClInclude Include="Game\SCDebug.h" />
     <ClInclude Include="Game\SCEntityFactory.h" />
     <ClInclude Include="Game\SCollision.h" />
     <ClInclude Include="Game\SEntityFactory.h" />
+    <ClInclude Include="Game\SInitView.h" />
     <ClInclude Include="Game\SInput.h" />
+    <ClInclude Include="Game\SLoadChunks.h" />
     <ClInclude Include="Game\SMovement.h" />
-    <ClInclude Include="Game\SPreRender.h" />
+    <ClInclude Include="Game\SCopyTransform.h" />
+    <ClInclude Include="Game\SRemoveChunks.h" />
     <ClInclude Include="Game\SRenderEntities.h" />
     <ClInclude Include="Game\SRenderWorld.h" />
     <ClInclude Include="Game\SWorld.h" />
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
     <ClInclude Include="Game\WindowsApplication.h" />
+    <ClInclude Include="Game\WorldSettings.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Engine\Code\Engine\Engine.vcxproj">

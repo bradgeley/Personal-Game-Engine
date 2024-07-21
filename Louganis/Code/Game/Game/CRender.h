@@ -16,4 +16,5 @@ struct CRender
     float m_orientation = 0.f;
     float m_scale = 1.f;
     Rgba8 m_tint = Rgba8::White;
+    uint8_t m_shouldRenderThisFrame = 0; // TODO: bit flags?
 };

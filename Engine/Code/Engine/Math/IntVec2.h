@@ -34,16 +34,18 @@ public:
 public:
 
     // Component-wise const operators
-    bool operator==(const IntVec2& other);
+    bool operator==(IntVec2 const& other);
+    bool operator<(IntVec2 const& other) const;
+
     IntVec2 operator-() const;
     IntVec2 operator/(int divisor) const;
 
-    IntVec2 operator+(const IntVec2& other) const;
-    IntVec2 operator-(const IntVec2& other) const;
+    IntVec2 operator+(IntVec2 const& other) const;
+    IntVec2 operator-(IntVec2 const& other) const;
 
     // Component-wise self changing operators
-    void operator+=(const IntVec2& other);
-    void operator-=(const IntVec2& other);
+    void operator+=(IntVec2 const& other);
+    void operator-=(IntVec2 const& other);
 
 public:
     

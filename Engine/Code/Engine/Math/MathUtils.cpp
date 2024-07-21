@@ -277,6 +277,18 @@ int Max(int a, int b)
 }
 
 
+int Pow(int base, int exp)
+{
+    return static_cast<int>(pow(base, exp));
+}
+
+
+float PowF(float base, float exp)
+{
+    return powf(base, exp);
+}
+
+
 int FloorF(float val)
 {
     double d = (double) val;

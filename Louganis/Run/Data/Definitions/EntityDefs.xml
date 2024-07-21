@@ -3,8 +3,9 @@
   <EntityDef name = "Player">
     <Transform></Transform>
     <Movement moveSpeed="10"></Movement>
-    <Camera>tileHeight=10</Camera>
+    <Camera tileHeight="10"></Camera>
     <PlayerController></PlayerController>
+    <Render></Render>
   </EntityDef>
   
 </EntityDefs>

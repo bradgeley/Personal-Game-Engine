@@ -3,4 +3,6 @@
   <TileDef name="open" visible="true" solid="false" tint="0,255,0" />
   <TileDef name="wall" visible="true" solid="true"  tint="255,0,0" />
 
+  <TileDef name="error" visible="true" solid="true"  tint="255,0,255" />
+  
 </TileDefs>

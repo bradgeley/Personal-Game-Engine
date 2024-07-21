@@ -97,6 +97,26 @@ Vec2 Vec2::GetProjectedOnto(Vec2 const& vector) const
 }
 
 
+Vec2 Vec2::GetFloor() const
+{
+    Vec2 result = *this;
+    result.Floor();
+    return result;
+}
+
+
+float Vec2::GetDistanceTo(Vec2 const& other) const
+{
+    return GetDistance2D(*this, other);
+}
+
+
+float Vec2::GetDistanceSquaredTo(Vec2 const& other) const
+{
+    return GetDistanceSquared2D(*this, other);
+}
+
+
 void Vec2::Rotate90()
 {
     float X = x;
@@ -165,6 +185,13 @@ void Vec2::ClampLength(float minLength, float maxLength)
         *this /= length; // Normalize
         *this *= minLength; // Set length to new min
     }
+}
+
+
+void Vec2::Floor()
+{
+    x = static_cast<float>(FloorF(x));
+    y = static_cast<float>(FloorF(y));
 }
 
 

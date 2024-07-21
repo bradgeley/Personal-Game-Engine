@@ -40,6 +40,9 @@ public:
     Vec2 GetRotated(float degrees) const;
     Vec2 GetProjectedOntoNormal(Vec2 const& normal) const;
     Vec2 GetProjectedOnto(Vec2 const& vector) const;
+    Vec2 GetFloor() const;
+    float GetDistanceTo(Vec2 const& other) const;
+    float GetDistanceSquaredTo(Vec2 const& other) const;
     
     void Rotate90();
     void RotateMinus90();
@@ -48,6 +51,7 @@ public:
     void ClampLength(float maxLength);
     void ClampLengthMin(float minLength);
     void ClampLength(float minLength, float maxLength);
+    void Floor();
 
     static Vec2 MakeFromUnitCircleDegrees(float angleDegrees);
     static Vec2 MakeFromPolarCoords(float angleDegrees, float radius);

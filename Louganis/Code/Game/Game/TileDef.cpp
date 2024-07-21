@@ -59,7 +59,11 @@ void TileDef::LoadFromXML()
 TileDef const* TileDef::GetTileDef(uint8_t tileID)
 {
 	size_t index = static_cast<size_t>(tileID);
-	return &s_tileDefs[index];
+	if (index >= 0 && index <= s_tileDefs.size() - 1)
+	{
+		return &s_tileDefs[index];
+	}
+	return nullptr;
 }
 
 

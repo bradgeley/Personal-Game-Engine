@@ -26,6 +26,7 @@ void SMovement::Run(SystemContext const& context)
         CMovement& move = moveStorage[ent];
         CTransform& transform = transStorage[ent];
 
-        transform.m_pos += move.m_frameMoveDir * move.m_movementSpeed;
+        Vec2 frameMovement = move.m_frameMoveDir * move.m_movementSpeed * context.m_deltaSeconds;
+        transform.m_pos += frameMovement;
     }
 }

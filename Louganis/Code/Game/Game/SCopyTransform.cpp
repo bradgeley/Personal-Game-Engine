@@ -1,5 +1,5 @@
 ﻿// Bradley Christensen - 2023
-#include "SPreRender.h"
+#include "SCopyTransform.h"
 #include "CRender.h"
 #include "CTransform.h"
 
@@ -11,7 +11,7 @@ constexpr int MAX_Z_LAYERS = 2;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SPreRender::Startup()
+void SCopyTransform::Startup()
 {
     AddWriteDependencies<CRender>();
     AddReadDependencies<CTransform>();
@@ -20,7 +20,7 @@ void SPreRender::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SPreRender::Run(SystemContext const& context)
+void SCopyTransform::Run(SystemContext const& context)
 {
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
@@ -39,7 +39,7 @@ void SPreRender::Run(SystemContext const& context)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SPreRender::Shutdown()
+void SCopyTransform::Shutdown()
 {
 
 }

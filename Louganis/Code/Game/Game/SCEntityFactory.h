@@ -24,6 +24,8 @@ struct SpawnInfo
 //----------------------------------------------------------------------------------------------------------------------
 struct SCEntityFactory
 {
+public:
+
     std::vector<SpawnInfo> m_entitiesToSpawn;
     std::vector<EntityID> m_entitiesToDestroy;
 };

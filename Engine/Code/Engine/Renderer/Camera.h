@@ -34,6 +34,7 @@ public:
     void ZoomAroundCenter2D(float zoomRatio, Vec2 const& center);
 
     Vec3 const& GetPosition() const;
+    Vec2 GetPosition2D() const;
     float GetRotation2D() const;
     Vec3 GetOrthoCenter() const;
     Vec2 GetOrthoCenter2D() const;

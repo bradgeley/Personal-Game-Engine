@@ -89,6 +89,8 @@ float MinF(float a, float b);
 float MaxF(float a, float b);
 int   Min(int a, int b);
 int   Max(int a, int b);
+int   Pow(int base, int exp);
+float PowF(float base, float exp);
 int   FloorF(float val);
 int   CeilingF(float val);
 float SqrtF(float val);

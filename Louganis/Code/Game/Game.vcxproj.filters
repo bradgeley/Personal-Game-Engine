@@ -34,7 +34,7 @@
     <ClCompile Include="Game\CRender.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SPreRender.cpp">
+    <ClCompile Include="Game\SCopyTransform.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
     <ClCompile Include="Game\SRenderWorld.cpp">
@@ -55,10 +55,25 @@
     <ClCompile Include="Game\TileDef.cpp">
       <Filter>Definitions</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SWorld.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Chunk.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\WorldSettings.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SLoadChunks.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
     <ClCompile Include="Game\SCWorld.cpp">
       <Filter>Singletons</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SWorld.cpp">
+    <ClCompile Include="Game\SInitView.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRemoveChunks.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
   </ItemGroup>
@@ -108,7 +123,7 @@
     <ClInclude Include="Game\AllSystems.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SPreRender.h">
+    <ClInclude Include="Game\SCopyTransform.h">
       <Filter>Systems</Filter>
     </ClInclude>
     <ClInclude Include="Game\SRenderWorld.h">
@@ -136,6 +151,24 @@
       <Filter>Singletons</Filter>
     </ClInclude>
     <ClInclude Include="Game\SWorld.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Chunk.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WorldSettings.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCDebug.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SLoadChunks.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SInitView.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRemoveChunks.h">
       <Filter>Systems</Filter>
     </ClInclude>
   </ItemGroup>

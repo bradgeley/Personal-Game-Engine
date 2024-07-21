@@ -78,14 +78,14 @@ enum class SamplerFilter : uint8_t
 //------------------------------------------------------------------------------------------------------------
 enum class DepthTest : uint8_t
 {
-    ALWAYS,
-    NEVER,
-    EQUAL,
-    NOT_EQUAL,
-    LESS,
-    LESS_EQUAL,
-    GREATER,
-    GREATER_EQUAL,
+    Always,
+    Never,
+    Equal,
+    NotEqual,
+    Less,
+    LessOrEqual,
+    Greater,
+    GreaterOrEqual,
 };
 
 
@@ -110,6 +110,6 @@ struct RendererSettings
     CullMode m_cullMode                     = CullMode::None;
     SamplerFilter m_samplerFilter           = SamplerFilter::Point;
     SamplerAddressMode m_samplerAddressMode = SamplerAddressMode::Clamp;
-    DepthTest m_depthTest                   = DepthTest::LESS_EQUAL;
+    DepthTest m_depthTest                   = DepthTest::LessOrEqual;
     bool m_writeDepth                       = false;
 };

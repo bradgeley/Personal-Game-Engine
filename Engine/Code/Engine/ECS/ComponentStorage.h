@@ -2,6 +2,7 @@
 #pragma once
 #include <unordered_map>
 #include "EntityID.h"
+#include "GroupIter.h"
 #include "Engine/DataStructures/BitArray.h"
 
 
@@ -44,6 +45,8 @@ public:
 
 	virtual ~TypedBaseStorage() override = default;
 
+	virtual CType*			Get(GroupIter const& it)				= 0;
+	virtual CType const*	Get(GroupIter const& it) const			= 0;
 	virtual CType*			Get(EntityID eid)						= 0;
 	virtual CType const*	Get(EntityID eid) const					= 0;
 	virtual CType*			Add(EntityID eid)						= 0;
@@ -64,6 +67,16 @@ class ArrayStorage : public TypedBaseStorage<CType>
 public:
 
 	virtual ~ArrayStorage() override = default;
+
+	virtual CType*			Get(GroupIter const& it)				override
+	{
+		return &m_data[it.m_currentIndex];
+	}
+
+	virtual CType const*	Get(GroupIter const& it)				const override
+	{
+		return &m_data[it.m_currentIndex];
+	}
 
 	virtual CType*			Get(EntityID eid)						override
 	{
@@ -135,6 +148,26 @@ public:
 		}
 		return nullptr;
 	}
+
+	virtual CType*			Get(GroupIter const& it)				override
+	{
+		auto result = m_data.find(it.m_currentIndex);
+		if (result != m_data.end())
+		{
+			return &(result->second);
+		}
+		return nullptr;
+	}
+
+	virtual CType const*	Get(GroupIter const& it)				const override
+	{
+		auto result = m_data.find(it.m_currentIndex);
+		if (result != m_data.end())
+		{
+			return &(result->second);
+		}
+		return nullptr;
+	}
 	
 	virtual CType*			Add(EntityID eid)						override
 	{
@@ -191,6 +224,16 @@ public:
 	{
 		return &m_data;
 	}
+
+	virtual CType*			Get(GroupIter const&)					override
+	{
+		return &m_data;
+	}
+
+	virtual CType const*	Get(GroupIter const&)					const override
+	{
+		return &m_data;
+	}
 	
 	virtual CType*			Add(EntityID)							override
 	{
@@ -243,6 +286,16 @@ public:
 	virtual CType const*	Get(EntityID eid)						const override
 	{
 		return (CType const*) m_tags.Get(eid);
+	}
+
+	virtual CType*			Get(GroupIter const& it)				override
+	{
+		return (CType*) m_tags.Get(it.m_currentIndex);
+	}
+
+	virtual CType const*	Get(GroupIter const& it)				const override
+	{
+		return (CType const*) m_tags.Get(it.m_currentIndex);
 	}
 	
 	virtual CType*			Add(EntityID eid)						override

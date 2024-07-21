@@ -61,6 +61,8 @@ void Game::Startup()
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SLoadChunks>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SRemoveChunks>((int) FramePhase::PrePhysics);
 
     // Physics
     SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
@@ -70,7 +72,7 @@ void Game::Startup()
     g_ecs->RegisterSystem<SCamera>((int) FramePhase::Physics);
 
     // Render
-    g_ecs->RegisterSystem<SPreRender>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
 

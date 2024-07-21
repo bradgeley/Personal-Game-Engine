@@ -56,9 +56,25 @@ IntVec2 IntVec2::GetCenter() const
 }
 
 
-bool IntVec2::operator==(const IntVec2& other)
+bool IntVec2::operator==(IntVec2 const& other)
 {
     return x == other.x && y == other.y;
+}
+
+
+bool IntVec2::operator<(IntVec2 const& other) const
+{
+    if (y < other.y)
+    {
+        return true;
+    }
+
+    if (y > other.y)
+    {
+        return false;
+    }
+
+    return x < other.x;
 }
 
 
@@ -74,26 +90,26 @@ IntVec2 IntVec2::operator/(int divisor) const
 }
 
 
-IntVec2 IntVec2::operator+(const IntVec2& other) const
+IntVec2 IntVec2::operator+(IntVec2 const& other) const
 {
     return IntVec2(x + other.x, y + other.y);
 }
 
 
-IntVec2 IntVec2::operator-(const IntVec2& other) const
+IntVec2 IntVec2::operator-(IntVec2 const& other) const
 {
     return IntVec2(x - other.x, y - other.y);
 }
 
 
-void IntVec2::operator+=(const IntVec2& other)
+void IntVec2::operator+=(IntVec2 const& other)
 {
     x += other.x;
     y += other.y;
 }
 
 
-void IntVec2::operator-=(const IntVec2& other)
+void IntVec2::operator-=(IntVec2 const& other)
 {
     x -= other.x;
     y -= other.y;

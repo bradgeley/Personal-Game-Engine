@@ -40,6 +40,8 @@ void VertexBuffer::Initialize(int numExpectedVerts)
     ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create gpu vertex buffer")
 
     m_gpuBufferByteWidth = (size_t) byteWidth;
+
+    m_verts.reserve(numExpectedVerts);
 }
 
 
