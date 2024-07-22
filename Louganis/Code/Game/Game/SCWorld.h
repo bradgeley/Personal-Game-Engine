@@ -20,7 +20,12 @@ public:
 
     Chunk* GetActiveChunk(IntVec2 const& coords) const;
     Chunk* GetActiveChunk(int x, int y) const;
+    Chunk* GetActiveChunkAtLocation(Vec2 const& worldLocation) const;
+    IntVec2 GetChunkCoordsAtLocation(Vec2 const& worldLocation) const;
+    IntVec2 GetWorldTileCoordsAtLocation(Vec2 const& worldLocation) const;
+    IntVec2 GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const;
     AABB2 CalculateChunkBounds(int x, int y) const;
+    AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos) const;
     
     Chunk* GetOrCreateActiveChunk(int x, int y);
     void RemoveActiveChunk(IntVec2 const& coords);
@@ -30,6 +35,7 @@ public:
 
     int GetNumTilesInRow() const;
     float GetChunkUnloadRadius() const;
+    float GetChunkWidth() const;
 
 public:
 

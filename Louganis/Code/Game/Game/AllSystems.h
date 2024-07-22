@@ -7,6 +7,7 @@
 #include "SCamera.h"
 #include "SCollision.h"
 #include "SCopyTransform.h" 
+#include "SDebugRender.h"
 #include "SEntityFactory.h"
 #include "SInput.h"
 #include "SLoadChunks.h"

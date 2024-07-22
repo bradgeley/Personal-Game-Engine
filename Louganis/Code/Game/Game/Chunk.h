@@ -18,6 +18,8 @@ public:
 	void Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings);
 	void Destroy();
 
+	bool IsTileSolid(IntVec2 const& localTileCoords) const;
+
 public:
 
 	IntVec2 m_chunkCoords;

@@ -234,7 +234,11 @@ Vec3 Camera::GetOrthoHalfDimensions() const
 //----------------------------------------------------------------------------------------------------------------------
 Vec2 Camera::ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const
 {
-    return Vec2(m_mins + Vec3(relativeScreenPos) * GetOrthoDimensions());
+    Vec3 dims = GetOrthoDimensions();
+    Vec3 pos = GetPosition();
+    Vec3 worldScreenPos = Vec3(relativeScreenPos) * dims;
+    Vec3 minsInWorldSpace = m_mins + pos;
+    return Vec2(minsInWorldSpace + worldScreenPos);
 }
 
 

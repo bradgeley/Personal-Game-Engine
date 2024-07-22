@@ -39,6 +39,7 @@ public:
 
     IntVec2 operator-() const;
     IntVec2 operator/(int divisor) const;
+    IntVec2 operator*(int multiplier) const;
 
     IntVec2 operator+(IntVec2 const& other) const;
     IntVec2 operator-(IntVec2 const& other) const;

@@ -97,3 +97,5 @@ int   CeilingF(float val);
 float SqrtF(float val);
 float AbsF(float val);
 void  SwapF(float& a, float& b);
+int	  Sign(int val);
+float SignF(float val);

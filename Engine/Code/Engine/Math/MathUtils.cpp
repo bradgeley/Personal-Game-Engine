@@ -327,3 +327,23 @@ void SwapF(float& a, float& b)
     a = b;
     b = a_copy;
 }
+
+
+int Sign(int val)
+{
+    if (val >= 0)
+    {
+        return 1;
+    }
+    return -1;
+}
+
+
+float SignF(float val)
+{
+    if (val >= 0.f)
+    {
+        return 1.f;
+    }
+    return -1.f;
+}

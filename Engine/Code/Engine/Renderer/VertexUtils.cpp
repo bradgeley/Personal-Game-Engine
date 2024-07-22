@@ -35,6 +35,46 @@ void AddVertsForLine2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start, Ve
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AddVertsForArrow2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
+{
+    float halfThickness = thickness * 0.5f;
+    Vec2 lineDir = (end - start).GetNormalized();
+    Vec2 lineRotated90 = lineDir.GetRotated90();
+
+    float tipThickness = thickness * 0.866f; // ~root(3) / 2
+    float oneOverRootThree = 0.57735026f; // ~ 1 / root(3)
+
+    // Could be rotated but using an upright line as example for naming
+    Vec2 topMiddlePoint = end - lineDir * tipThickness;
+    Vec2 botLeftCorner = start + lineRotated90 * halfThickness;
+    Vec2 botRightCorner = start - lineRotated90 * halfThickness;
+    Vec2 topRightCorner = topMiddlePoint - lineRotated90 * halfThickness;
+    Vec2 topLeftCorner = topMiddlePoint + lineRotated90 * halfThickness;
+
+    float tipLength = 2.5f * thickness;
+    float baseThickness = tipLength * oneOverRootThree;
+    Vec2 leftWingTip = end - lineDir * tipLength + lineRotated90 * baseThickness;
+    Vec2 rightWingTip = end - lineDir * tipLength - lineRotated90 * baseThickness;
+
+    // Push some verts
+    out_verts.reserve(out_verts.size() + 9);
+
+    out_verts.emplace_back(Vec3(end), tint);
+    out_verts.emplace_back(Vec3(leftWingTip), tint);
+    out_verts.emplace_back(Vec3(rightWingTip), tint);
+
+    out_verts.emplace_back(Vec3(botLeftCorner), tint);
+    out_verts.emplace_back(Vec3(botRightCorner), tint);
+    out_verts.emplace_back(Vec3(topRightCorner), tint);
+
+    out_verts.emplace_back(Vec3(topRightCorner), tint);
+    out_verts.emplace_back(Vec3(topLeftCorner), tint);
+    out_verts.emplace_back(Vec3(botLeftCorner), tint);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AddVertsForAABB2(std::vector<Vertex_PCU>& out_verts, AABB2 const& square, Rgba8 const& tint, AABB2 const& UVs)
 {
     AddVertsForRect2D(out_verts, square.mins, square.maxs, tint, UVs);

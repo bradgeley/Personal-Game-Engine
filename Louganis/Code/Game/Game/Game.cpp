@@ -25,6 +25,7 @@ enum class FramePhase : int
 {
     PrePhysics,
     Physics,
+    PostPhysics,
     Render,
 };
 
@@ -75,6 +76,7 @@ void Game::Startup()
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 
     g_ecs->Startup();
 }

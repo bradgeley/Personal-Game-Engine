@@ -24,7 +24,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	TileDef const* errorTileDef = TileDef::GetTileDef("error");
 
 	// Generate tile IDs
-	m_tileIDs.Initialize(IntVec2(numTilesInRow, numTilesInRow), grassTileDef);
+	m_tileIDs.Initialize(IntVec2(numTilesInRow, numTilesInRow), (uint8_t) grassTileDef);
 
 	Vec2 chunkMinsTileCoords = Vec2(chunkCoords) * (float) numTilesInRow;
 
@@ -40,7 +40,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			float wallNoise = GetPerlinNoise2D(worldTileCoords.x, worldTileCoords.y, 100.f, 8, 0.5f, 2.f, true, worldSettings.m_worldSeed);
 			if (wallNoise > 0.f)
 			{
-				m_tileIDs.Set(index, wallTileDef);
+				m_tileIDs.Set(index, (uint8_t) wallTileDef);
 			}
 		}
 	}
@@ -80,4 +80,18 @@ void Chunk::Destroy()
 {
 	m_tileIDs.Clear();
 	m_vbo.ClearVerts();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Chunk::IsTileSolid(IntVec2 const& localTileCoords) const
+{
+	uint8_t tileID = m_tileIDs.Get(localTileCoords);
+	TileDef const* tileDef = TileDef::GetTileDef(tileID);
+	if (tileDef)
+	{
+		return tileDef->IsSolid();
+	}
+	return false;
 }
