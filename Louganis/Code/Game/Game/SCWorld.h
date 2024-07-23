@@ -24,8 +24,11 @@ public:
     IntVec2 GetChunkCoordsAtLocation(Vec2 const& worldLocation) const;
     IntVec2 GetWorldTileCoordsAtLocation(Vec2 const& worldLocation) const;
     IntVec2 GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const;
+    IntVec2 GetLocalTileCoordsAtOffset(IntVec2 const& localTileCoords, IntVec2 const& offset, IntVec2& out_chunkCoordsOffset) const;
     AABB2 CalculateChunkBounds(int x, int y) const;
     AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos) const;
+    AABB2 GetTileBounds(IntVec2 const& chunkCoords, IntVec2 const& localTileCoords) const;
+    AABB2 GetTileBounds(IntVec2 const& worldTileCoords) const;
     
     Chunk* GetOrCreateActiveChunk(int x, int y);
     void RemoveActiveChunk(IntVec2 const& coords);

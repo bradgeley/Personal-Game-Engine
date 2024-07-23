@@ -9,6 +9,7 @@
 #include "SCopyTransform.h" 
 #include "SDebugRender.h"
 #include "SEntityFactory.h"
+#include "SFlowField.h"
 #include "SInput.h"
 #include "SLoadChunks.h"
 #include "SMovement.h"

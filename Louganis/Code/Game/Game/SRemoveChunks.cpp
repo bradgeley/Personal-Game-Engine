@@ -25,32 +25,39 @@ void SRemoveChunks::Run(SystemContext const& context)
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	WorldSettings const& worldSettings = world.m_worldSettings;
 
-	auto transformStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	float unloadRadius = world.GetChunkUnloadRadius();
 	float unloadRadiusSquared = unloadRadius * unloadRadius;
 	
 	std::vector<IntVec2> chunksToRemove;
 	chunksToRemove.reserve(world.m_activeChunks.size());
 
-	for (auto& it : world.m_activeChunks)
+	for (auto& chunkIt : world.m_activeChunks)
 	{
-		IntVec2 const& dims = it.first;
-		Chunk* chunk = it.second;
+		IntVec2 const& chunkCoords = chunkIt.first;
+		Chunk* chunk = chunkIt.second;
 
-		AABB2 chunkBounds = world.CalculateChunkBounds(dims.x, dims.y);
+		AABB2 chunkBounds = world.CalculateChunkBounds(chunkCoords.x, chunkCoords.y);
+
+		bool isChunkInRangeOfAtLeastOnePlayer = false;
 		for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
 		{
 			CTransform& playerTransform = *transformStorage.Get(it);
 			float distanceSquared = chunkBounds.GetCenter().GetDistanceSquaredTo(playerTransform.m_pos);
 
-			if (distanceSquared > unloadRadiusSquared)
+			if (distanceSquared < unloadRadiusSquared)
 			{
-				Chunk* chunk = world.GetActiveChunk(dims);
-				if (chunk)
+				if (world.GetActiveChunk(chunkCoords))
 				{
-					chunksToRemove.push_back(dims);
+					isChunkInRangeOfAtLeastOnePlayer = true;
+					break;
 				}
 			}
+		}
+
+		if (!isChunkInRangeOfAtLeastOnePlayer)
+		{
+			chunksToRemove.push_back(chunkCoords);
 		}
 	}
 

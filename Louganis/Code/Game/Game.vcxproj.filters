@@ -61,9 +61,6 @@
     <ClCompile Include="Game\Chunk.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\WorldSettings.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SLoadChunks.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
@@ -81,6 +78,15 @@
     </ClCompile>
     <ClCompile Include="Game\SDebugRender.cpp">
       <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SFlowField.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\FlowFieldChunk.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCFlowField.cpp">
+      <Filter>Singletons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,9 +127,6 @@
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Game\CTransform.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\AllComponents.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Game\AllSystems.h">
@@ -182,6 +185,18 @@
     </ClInclude>
     <ClInclude Include="Game\SDebugRender.h">
       <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SFlowField.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCFlowField.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\FlowFieldChunk.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AllComponents.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

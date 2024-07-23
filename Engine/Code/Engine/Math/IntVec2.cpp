@@ -56,9 +56,15 @@ IntVec2 IntVec2::GetCenter() const
 }
 
 
-bool IntVec2::operator==(IntVec2 const& other)
+bool IntVec2::operator==(IntVec2 const& other) const
 {
     return x == other.x && y == other.y;
+}
+
+
+bool IntVec2::operator!=(IntVec2 const& other) const
+{
+    return x != other.x || y != other.y;
 }
 
 

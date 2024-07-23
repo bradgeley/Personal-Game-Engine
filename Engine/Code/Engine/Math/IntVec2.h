@@ -34,7 +34,8 @@ public:
 public:
 
     // Component-wise const operators
-    bool operator==(IntVec2 const& other);
+    bool operator==(IntVec2 const& other) const;
+    bool operator!=(IntVec2 const& other) const;
     bool operator<(IntVec2 const& other) const;
 
     IntVec2 operator-() const;

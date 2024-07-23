@@ -63,7 +63,45 @@ IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const
 	Vec2 relativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * GetChunkWidth());
 	Vec2 tileSpaceLocation = relativeLocation / m_worldSettings.m_tileWidth;
 	IntVec2 localTileCoords = IntVec2(tileSpaceLocation.GetFloor());
+	localTileCoords.x = ClampInt(localTileCoords.x, 0, GetNumTilesInRow() - 1);
+	localTileCoords.y = ClampInt(localTileCoords.y, 0, GetNumTilesInRow() - 1);
 	return localTileCoords;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 SCWorld::GetLocalTileCoordsAtOffset(IntVec2 const& localTileCoords, IntVec2 const& offset, IntVec2& out_chunkCoordsOffset) const
+{
+	IntVec2 newTileCoords = localTileCoords + offset;
+	int numTilesPerRow = GetNumTilesInRow();
+
+	// Check north movement
+	while (newTileCoords.y >= numTilesPerRow)
+	{
+		newTileCoords.y -= numTilesPerRow;
+		out_chunkCoordsOffset.y++;
+	}
+	// Check south movement
+	while (newTileCoords.y < 0)
+	{
+		newTileCoords.y += numTilesPerRow;
+		out_chunkCoordsOffset.y--;
+	}
+	// Check east movement
+	while (newTileCoords.x >= numTilesPerRow)
+	{
+		newTileCoords.x -= numTilesPerRow;
+		out_chunkCoordsOffset.x++;
+	}
+	// Check west movement
+	while (newTileCoords.x < 0)
+	{
+		newTileCoords.x += numTilesPerRow;
+		out_chunkCoordsOffset.x--;
+	}
+
+	return newTileCoords;
 }
 
 
@@ -85,6 +123,30 @@ AABB2 SCWorld::CalculateChunkBounds(int x, int y) const
 AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos) const
 {
 	IntVec2 worldTileCoords = GetWorldTileCoordsAtLocation(worldPos);
+	AABB2 tileBounds;
+	tileBounds.mins = Vec2(worldTileCoords) * m_worldSettings.m_tileWidth;
+	tileBounds.maxs = tileBounds.mins + Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);
+	return tileBounds;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 SCWorld::GetTileBounds(IntVec2 const& chunkCoords, IntVec2 const& localTileCoords) const
+{
+	Vec2 chunkMins = Vec2(chunkCoords) * GetChunkWidth();
+	
+	AABB2 tileBounds;
+	tileBounds.mins = chunkMins + Vec2(localTileCoords) * m_worldSettings.m_tileWidth;
+	tileBounds.maxs = tileBounds.mins + Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);
+	return tileBounds;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 SCWorld::GetTileBounds(IntVec2 const& worldTileCoords) const
+{
 	AABB2 tileBounds;
 	tileBounds.mins = Vec2(worldTileCoords) * m_worldSettings.m_tileWidth;
 	tileBounds.maxs = tileBounds.mins + Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);

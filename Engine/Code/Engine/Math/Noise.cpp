@@ -260,10 +260,10 @@ float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, f
 		Vec2 cellTopLeft = cell.GetTopLeft();
 		Vec2 cellBotRight = cell.GetBottomRight();
 
-		unsigned int noiseBotLeft = GetRawNoise2D(cell.mins.x, cell.mins.y, seed);
-		unsigned int noiseTopLeft = GetRawNoise2D(cellTopLeft.x, cellTopLeft.y, seed);
-		unsigned int noiseTopRight = GetRawNoise2D(cell.maxs.x, cell.maxs.y, seed);
-		unsigned int noiseBotRight = GetRawNoise2D(cellBotRight.x, cellBotRight.y, seed);
+		unsigned int noiseBotLeft = GetRawNoise2D((int) cell.mins.x, (int) cell.mins.y, seed);
+		unsigned int noiseTopLeft = GetRawNoise2D((int) cellTopLeft.x, (int) cellTopLeft.y, seed);
+		unsigned int noiseTopRight = GetRawNoise2D((int) cell.maxs.x, (int) cell.maxs.y, seed);
+		unsigned int noiseBotRight = GetRawNoise2D((int) cellBotRight.x, (int) cellBotRight.y, seed);
 
 		Vec2 botLeftToSample = sampleLocation - cell.mins;
 		Vec2 topLeftToSample = sampleLocation - cellTopLeft;

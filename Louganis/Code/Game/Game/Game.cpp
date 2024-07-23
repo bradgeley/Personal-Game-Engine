@@ -53,6 +53,7 @@ void Game::Startup()
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCWorld>();
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
+    g_ecs->RegisterComponentSingleton<SCFlowField>();
 
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();
@@ -64,6 +65,7 @@ void Game::Startup()
     g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLoadChunks>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SRemoveChunks>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SFlowField>((int) FramePhase::PrePhysics);
 
     // Physics
     SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);

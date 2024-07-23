@@ -48,6 +48,7 @@ public:
     int GetWidth() const;
     int GetHeight() const;
     int Size() const;
+    int Count() const;
 
     T* GetRawData();
     T const* GetRawData() const;
@@ -427,6 +428,15 @@ int Grid2D<T>::GetHeight() const
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
 int Grid2D<T>::Size() const
+{
+    return (int) m_data.size();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+int Grid2D<T>::Count() const
 {
     return (int) m_data.size();
 }

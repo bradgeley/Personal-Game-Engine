@@ -38,7 +38,7 @@ void SLoadChunks::Run(SystemContext const& context)
 		chunkUnloadRadiusSquared = chunkLoadRadiusSquared;
 	}
 
-	auto transformStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
 	{
 		CTransform& playerTransform = *transformStorage.Get(it);

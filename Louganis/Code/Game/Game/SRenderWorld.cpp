@@ -50,18 +50,18 @@ void SRenderWorld::Run(SystemContext const& context)
 {
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 
-    for (auto it = g_ecs->Iterate<CCamera>(context); it.IsValid(); ++it)
+    for (auto cameraIt = g_ecs->Iterate<CCamera>(context); cameraIt.IsValid(); ++cameraIt)
     {
-        CCamera* cameraComponent = g_ecs->GetComponent<CCamera>(it.m_currentIndex);
+        CCamera* cameraComponent = g_ecs->GetComponent<CCamera>(cameraIt.m_currentIndex);
         AABB2 cameraOrthoBounds2D = cameraComponent->m_camera.GetOrthoBounds2D();
         cameraOrthoBounds2D.Translate(cameraComponent->m_camera.GetPosition2D());
 
-        g_renderer->BeginCameraAndWindow(&cameraComponent->m_camera, g_window);
+        g_renderer->BeginCamera(&cameraComponent->m_camera);
         g_renderer->ClearScreen(Rgba8::White);
 
-        for (auto& it : world.m_activeChunks)
+        for (auto& chunkIt : world.m_activeChunks)
         {
-            Chunk* chunk = it.second;
+            Chunk* chunk = chunkIt.second;
             if (chunk->m_chunkBounds.IsOverlapping(cameraOrthoBounds2D))
             {
                 DrawChunk(chunk);
