@@ -41,6 +41,7 @@ public:
 
     bool IsValidIndex(int index) const;
     bool IsValidCoords(IntVec2 const& coords) const;
+    bool IsOnEdge(IntVec2 const& coords) const;
 	int GetIndexForCoords(int x, int y) const;
     int GetIndexForCoords(IntVec2 const& coords) const;
     IntVec2 GetCoordsForIndex(int index) const;
@@ -367,6 +368,15 @@ bool Grid2D<T>::IsValidCoords(IntVec2 const& coords) const
             coords.y < m_dimensions.y   && 
             coords.x >= 0               && 
             coords.y >= 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+bool Grid2D<T>::IsOnEdge(IntVec2 const& coords) const
+{
+    return (coords.x == 0) || (coords.y == 0) || (coords.x == GetWidth() - 1) || (coords.y == GetHeight() - 1);
 }
 
 

@@ -82,13 +82,13 @@ void SDebugRender::Run(SystemContext const& context)
         FlowFieldChunk* ffChunk = it.second;
     
         ffChunk->m_debugVBO.ClearVerts();
-        for (int y = 0; y < ffChunk->m_flowField.GetHeight(); ++y)
+        for (int y = 0; y < ffChunk->m_distanceField.GetHeight(); ++y)
         {
-            for (int x = 0; x < ffChunk->m_flowField.GetWidth(); ++x)
+            for (int x = 0; x < ffChunk->m_distanceField.GetWidth(); ++x)
             {
                 IntVec2 localTileCoords(x, y);
                 AABB2 tileBounds = world.GetTileBounds(ffChunk->m_chunk->m_chunkCoords, localTileCoords);
-                float distance = ffChunk->m_flowField.Get(x, y);
+                float distance = ffChunk->m_distanceField.Get(x, y);
     
                 float t = RangeMapClamped(distance, 0.f, 10.f, 0.f, 1.f);
                 Rgba8 const& tint = Rgba8::Lerp(Rgba8::Green, Rgba8::Red, t);
@@ -108,9 +108,9 @@ void SDebugRender::Run(SystemContext const& context)
         FlowFieldChunk* ffChunk = it.second;
     
         ffChunk->m_debugVBO.ClearVerts();
-        for (int y = 0; y < ffChunk->m_flowField.GetHeight(); ++y)
+        for (int y = 0; y < ffChunk->m_distanceField.GetHeight(); ++y)
         {
-            for (int x = 0; x < ffChunk->m_flowField.GetWidth(); ++x)
+            for (int x = 0; x < ffChunk->m_distanceField.GetWidth(); ++x)
             {
                 IntVec2 localTileCoords(x, y);
                 AABB2 tileBounds = world.GetTileBounds(ffChunk->m_chunk->m_chunkCoords, localTileCoords);

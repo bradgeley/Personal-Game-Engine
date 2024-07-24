@@ -25,7 +25,7 @@ void SCFlowField::Reset()
 		auto chunk = it.second;
 		chunk->m_consideredNodes.SetAll(false);
 		chunk->m_costField.SetAll(0);
-		chunk->m_flowField.SetAll(0.f);
+		chunk->m_distanceField.SetAll(0.f);
 		chunk->m_gradient.SetAll(Vec2());
 		chunk->m_debugVBO.ClearVerts();
 	}

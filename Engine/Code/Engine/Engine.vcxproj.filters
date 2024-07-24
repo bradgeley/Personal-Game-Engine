@@ -205,6 +205,9 @@
     <ClCompile Include="Debug\DevConsoleCommandInfo.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Performance\ScopedTimer.cpp">
+      <Filter>Performance</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -435,6 +438,9 @@
     <ClInclude Include="Debug\DevConsoleCommandInfo.h">
       <Filter>Debug</Filter>
     </ClInclude>
+    <ClInclude Include="Performance\ScopedTimer.h">
+      <Filter>Performance</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">
@@ -472,6 +478,9 @@
     </Filter>
     <Filter Include="ECS">
       <UniqueIdentifier>{76ab0b3c-d83a-44c1-9711-d4957db81c90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Performance">
+      <UniqueIdentifier>{d08b2afe-9022-4777-80cd-423aad5f2a4a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
