@@ -66,6 +66,23 @@ int ParseXmlAttribute(XmlElement const& element, char const* attributeName, int 
 
 
 //----------------------------------------------------------------------------------------------------------------------
+uint8_t ParseXmlAttribute(XmlElement const& element, char const* attributeName, uint8_t defaultValue)
+{
+    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    {
+        int intVal = attrib->IntValue();
+        if (intVal < 0)
+        {
+            g_devConsole->LogError("uint8_t ParseXmlAttribute Error: value is negative, but type is unsigned.");
+        }
+        return static_cast<uint8_t>(intVal);
+    }
+    return defaultValue;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec2 const& defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))

@@ -58,9 +58,6 @@
     <ClCompile Include="Game\SWorld.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Chunk.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SLoadChunks.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
@@ -73,20 +70,32 @@
     <ClCompile Include="Game\SRemoveChunks.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\WorldRaycast.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SDebugRender.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
     <ClCompile Include="Game\SFlowField.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\FlowFieldChunk.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SCFlowField.cpp">
       <Filter>Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\FlowFieldChunk.cpp">
+      <Filter>Game\FlowField</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\FlowGenerationCoords.cpp">
+      <Filter>Game\FlowField</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\FlowField.cpp">
+      <Filter>Game\FlowField</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Chunk.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\WorldRaycast.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\WorldCoords.cpp">
+      <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -162,12 +171,6 @@
     <ClInclude Include="Game\SWorld.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Chunk.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\WorldSettings.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SCDebug.h">
       <Filter>Singletons</Filter>
     </ClInclude>
@@ -180,9 +183,6 @@
     <ClInclude Include="Game\SRemoveChunks.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\WorldRaycast.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SDebugRender.h">
       <Filter>Systems</Filter>
     </ClInclude>
@@ -192,11 +192,29 @@
     <ClInclude Include="Game\SCFlowField.h">
       <Filter>Singletons</Filter>
     </ClInclude>
-    <ClInclude Include="Game\FlowFieldChunk.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\AllComponents.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\FlowFieldChunk.h">
+      <Filter>Game\FlowField</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\FlowGenerationCoords.h">
+      <Filter>Game\FlowField</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\FlowField.h">
+      <Filter>Game\FlowField</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Chunk.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WorldRaycast.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WorldSettings.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WorldCoords.h">
+      <Filter>Game\World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +238,12 @@
     </Filter>
     <Filter Include="Definitions">
       <UniqueIdentifier>{62ba0adb-68f9-4153-bce2-71dc00fc7f3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\FlowField">
+      <UniqueIdentifier>{5173e0f0-f779-4703-814e-5351ad9e0663}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\World">
+      <UniqueIdentifier>{f3245d75-7210-4e1c-b305-d73cfed64571}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

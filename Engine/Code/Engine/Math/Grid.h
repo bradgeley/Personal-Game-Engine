@@ -6,19 +6,19 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// Grid2D
+// Grid
 //
 // A 2D grid, row-major
 //
 template<typename T>
-class Grid2D
+class Grid
 {
 public:
 
-    Grid2D() = default;
-    explicit Grid2D(Grid2D<T> const& copy);
-    explicit Grid2D(IntVec2 const& dimensions, T const& initialValue);
-    explicit Grid2D(int width, int height, T const& initialValue);
+    Grid() = default;
+    explicit Grid(Grid<T> const& copy);
+    explicit Grid(IntVec2 const& dimensions, T const& initialValue);
+    explicit Grid(int width, int height, T const& initialValue);
 
     void Initialize(IntVec2 const& dimensions, T const& initialValue);
     void Clear();
@@ -69,7 +69,7 @@ public:
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-Grid2D<T>::Grid2D(Grid2D<T> const& copy) : m_data(copy.m_data), m_dimensions(copy.m_dimensions)
+Grid<T>::Grid(Grid<T> const& copy) : m_data(copy.m_data), m_dimensions(copy.m_dimensions)
 {
     
 }
@@ -78,7 +78,7 @@ Grid2D<T>::Grid2D(Grid2D<T> const& copy) : m_data(copy.m_data), m_dimensions(cop
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-Grid2D<T>::Grid2D(IntVec2 const& dimensions, T const& initialValue) : m_dimensions(dimensions)
+Grid<T>::Grid(IntVec2 const& dimensions, T const& initialValue) : m_dimensions(dimensions)
 {
     m_data.resize((size_t) dimensions.x * dimensions.y);
     
@@ -92,7 +92,7 @@ Grid2D<T>::Grid2D(IntVec2 const& dimensions, T const& initialValue) : m_dimensio
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-Grid2D<T>::Grid2D(int width, int height, T const& initialValue) : Grid2D(IntVec2(width, height), initialValue)
+Grid<T>::Grid(int width, int height, T const& initialValue) : Grid(IntVec2(width, height), initialValue)
 {
     
 }
@@ -101,7 +101,7 @@ Grid2D<T>::Grid2D(int width, int height, T const& initialValue) : Grid2D(IntVec2
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void Grid2D<T>::Initialize(IntVec2 const& dimensions, T const& initialValue)
+void Grid<T>::Initialize(IntVec2 const& dimensions, T const& initialValue)
 {
     m_dimensions = dimensions;
     m_data.resize((size_t) dimensions.x * dimensions.y);
@@ -116,7 +116,7 @@ void Grid2D<T>::Initialize(IntVec2 const& dimensions, T const& initialValue)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void Grid2D<T>::Clear()
+void Grid<T>::Clear()
 {
     m_data.clear();
     m_dimensions = IntVec2::ZeroVector;
@@ -126,7 +126,7 @@ void Grid2D<T>::Clear()
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void Grid2D<T>::Set(int index, T const& value)
+void Grid<T>::Set(int index, T const& value)
 {
     m_data[index] = value;
 }
@@ -135,7 +135,7 @@ void Grid2D<T>::Set(int index, T const& value)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void Grid2D<T>::Set(IntVec2 const& coords, T const& value)
+void Grid<T>::Set(IntVec2 const& coords, T const& value)
 {
     int index = GetIndexForCoords(coords);
     m_data[index] = value;
@@ -145,7 +145,7 @@ void Grid2D<T>::Set(IntVec2 const& coords, T const& value)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void Grid2D<T>::Set(int x, int y, T const& value)
+void Grid<T>::Set(int x, int y, T const& value)
 {
     int index = GetIndexForCoords(x, y);
     m_data[index] = value;
@@ -155,7 +155,7 @@ void Grid2D<T>::Set(int x, int y, T const& value)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void Grid2D<T>::SetAll(T const& value)
+void Grid<T>::SetAll(T const& value)
 {
     for (int i = 0; i < m_data.size(); ++i)
     {
@@ -167,7 +167,7 @@ void Grid2D<T>::SetAll(T const& value)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void Grid2D<T>::SetEdges(T const& value)
+void Grid<T>::SetEdges(T const& value)
 {
     // First row
     for (int x = 0; x < m_dimensions.x; ++x)
@@ -205,7 +205,7 @@ void Grid2D<T>::SetEdges(T const& value)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-T Grid2D<T>::Get(int index) const
+T Grid<T>::Get(int index) const
 {
     return m_data[index];
 }
@@ -214,7 +214,7 @@ T Grid2D<T>::Get(int index) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-T Grid2D<T>::Get(int x, int y) const
+T Grid<T>::Get(int x, int y) const
 {
     int index = GetIndexForCoords(x, y);
 	return m_data[index];
@@ -224,7 +224,7 @@ T Grid2D<T>::Get(int x, int y) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-T Grid2D<T>::Get(IntVec2 const& coords) const
+T Grid<T>::Get(IntVec2 const& coords) const
 {
     int index = GetIndexForCoords(coords);
     return m_data[index];
@@ -234,7 +234,7 @@ T Grid2D<T>::Get(IntVec2 const& coords) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::GetIndexEastOf(int index, bool wrap) const
+int Grid<T>::GetIndexEastOf(int index, bool wrap) const
 {
     if (!IsValidIndex(index))
     {
@@ -261,7 +261,7 @@ int Grid2D<T>::GetIndexEastOf(int index, bool wrap) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::GetIndexWestOf(int index, bool wrap) const
+int Grid<T>::GetIndexWestOf(int index, bool wrap) const
 {
     if (!IsValidIndex(index))
     {
@@ -288,7 +288,7 @@ int Grid2D<T>::GetIndexWestOf(int index, bool wrap) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::GetIndexNorthOf(int index, bool wrap) const
+int Grid<T>::GetIndexNorthOf(int index, bool wrap) const
 {
     if (!IsValidIndex(index))
     {
@@ -316,7 +316,7 @@ int Grid2D<T>::GetIndexNorthOf(int index, bool wrap) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::GetIndexSouthOf(int index, bool wrap) const
+int Grid<T>::GetIndexSouthOf(int index, bool wrap) const
 {
     if (!IsValidIndex(index))
     {
@@ -344,7 +344,7 @@ int Grid2D<T>::GetIndexSouthOf(int index, bool wrap) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::GetLastIndex() const
+int Grid<T>::GetLastIndex() const
 {
     return (int) m_data.size() - 1;
 }
@@ -353,7 +353,7 @@ int Grid2D<T>::GetLastIndex() const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-bool Grid2D<T>::IsValidIndex(int index) const
+bool Grid<T>::IsValidIndex(int index) const
 {
     return index >= 0 && index < m_data.size();
 }
@@ -362,7 +362,7 @@ bool Grid2D<T>::IsValidIndex(int index) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-bool Grid2D<T>::IsValidCoords(IntVec2 const& coords) const
+bool Grid<T>::IsValidCoords(IntVec2 const& coords) const
 {
 	return  coords.x < m_dimensions.x   && 
             coords.y < m_dimensions.y   && 
@@ -374,7 +374,7 @@ bool Grid2D<T>::IsValidCoords(IntVec2 const& coords) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-bool Grid2D<T>::IsOnEdge(IntVec2 const& coords) const
+bool Grid<T>::IsOnEdge(IntVec2 const& coords) const
 {
     return (coords.x == 0) || (coords.y == 0) || (coords.x == GetWidth() - 1) || (coords.y == GetHeight() - 1);
 }
@@ -383,7 +383,7 @@ bool Grid2D<T>::IsOnEdge(IntVec2 const& coords) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::GetIndexForCoords(IntVec2 const& coords) const
+int Grid<T>::GetIndexForCoords(IntVec2 const& coords) const
 {
     return coords.y * m_dimensions.x + coords.x;
 }
@@ -392,7 +392,7 @@ int Grid2D<T>::GetIndexForCoords(IntVec2 const& coords) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::GetIndexForCoords(int x, int y) const
+int Grid<T>::GetIndexForCoords(int x, int y) const
 {
 	return y * m_dimensions.x + x;
 }
@@ -401,7 +401,7 @@ int Grid2D<T>::GetIndexForCoords(int x, int y) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-IntVec2 Grid2D<T>::GetCoordsForIndex(int index) const
+IntVec2 Grid<T>::GetCoordsForIndex(int index) const
 {
     return IntVec2(index % m_dimensions.x, index / m_dimensions.x);
 }
@@ -410,7 +410,7 @@ IntVec2 Grid2D<T>::GetCoordsForIndex(int index) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-IntVec2 Grid2D<T>::GetDimensions() const
+IntVec2 Grid<T>::GetDimensions() const
 {
     return m_dimensions;
 }
@@ -419,7 +419,7 @@ IntVec2 Grid2D<T>::GetDimensions() const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::GetWidth() const
+int Grid<T>::GetWidth() const
 {
     return m_dimensions.x;
 }
@@ -428,7 +428,7 @@ int Grid2D<T>::GetWidth() const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::GetHeight() const
+int Grid<T>::GetHeight() const
 {
     return m_dimensions.y;
 }
@@ -437,7 +437,7 @@ int Grid2D<T>::GetHeight() const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::Size() const
+int Grid<T>::Size() const
 {
     return (int) m_data.size();
 }
@@ -446,7 +446,7 @@ int Grid2D<T>::Size() const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-int Grid2D<T>::Count() const
+int Grid<T>::Count() const
 {
     return (int) m_data.size();
 }
@@ -455,7 +455,7 @@ int Grid2D<T>::Count() const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-T* Grid2D<T>::GetRawData()
+T* Grid<T>::GetRawData()
 {
     return m_data.data();
 }
@@ -464,7 +464,7 @@ T* Grid2D<T>::GetRawData()
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-T const* Grid2D<T>::GetRawData() const
+T const* Grid<T>::GetRawData() const
 {
     return m_data.data();
 }

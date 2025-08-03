@@ -52,4 +52,5 @@ public:
 	AABB2		m_UVs;
 	TileTags	m_tags;
 	Rgba8		m_tint = Rgba8::White;
+	uint8_t		m_cost;
 };

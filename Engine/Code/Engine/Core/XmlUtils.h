@@ -25,5 +25,6 @@ std::string ParseXmlAttribute(XmlElement const& element, char const* attributeNa
 float ParseXmlAttribute(XmlElement const& element, char const* attributeName, float defaultValue);
 bool ParseXmlAttribute(XmlElement const& element, char const* attributeName, bool defaultValue);
 int ParseXmlAttribute(XmlElement const& element, char const* attributeName, int defaultValue);
+uint8_t ParseXmlAttribute(XmlElement const& element, char const* attributeName, uint8_t defaultValue);
 Vec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec2 const& defaultValue);
 Rgba8 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Rgba8 const& defaultValue);

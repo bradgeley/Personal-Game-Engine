@@ -4,6 +4,7 @@
 #include "CPlayerController.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
+#include "FlowField.h"
 #include "FlowFieldChunk.h"
 #include "Chunk.h"
 #include "WorldRaycast.h"
@@ -51,18 +52,21 @@ void SDebugRender::Run(SystemContext const& context)
     }
 
     // Render Cost Field
-    SCFlowField const& flowfield = g_ecs->GetSingleton<SCFlowField>();
-    for (auto it : flowfield.m_activeFlowFieldChunks)
+    SCFlowField const& scFlowfield = g_ecs->GetSingleton<SCFlowField>();
+    FlowField const& flowField = scFlowfield.m_toPlayerFlowField;
+    for (auto const& it : flowField.m_activeFlowFieldChunks)
     {
         FlowFieldChunk* ffChunk = it.second;
+        WorldCoords currentWorldCoords;
+        currentWorldCoords.m_chunkCoords = ffChunk->GetChunkCoords();
 
         ffChunk->m_debugVBO.ClearVerts();
         for (int y = 0; y < ffChunk->m_costField.GetHeight(); ++y)
         {
             for (int x = 0; x < ffChunk->m_costField.GetWidth(); ++x)
             {
-                IntVec2 localTileCoords(x, y);
-                AABB2 tileBounds = world.GetTileBounds(ffChunk->m_chunk->m_chunkCoords, localTileCoords);
+                currentWorldCoords.m_localTileCoords = IntVec2(x, y);
+                AABB2 tileBounds = world.GetTileBounds(currentWorldCoords);
                 uint8_t cost = ffChunk->m_costField.Get(x, y);
                 float t = RangeMapClamped((float) cost, 0.f, 255.f, 0.f, 1.f);
                 Rgba8 tint = Rgba8::Lerp(Rgba8(255, 255, 255, 150), Rgba8(0, 0, 0, 150), t);
@@ -77,17 +81,19 @@ void SDebugRender::Run(SystemContext const& context)
 
     // Render Flow Field
     Font* font = g_renderer->GetDefaultFont();
-    for (auto it : flowfield.m_activeFlowFieldChunks)
+    for (auto it : flowField.m_activeFlowFieldChunks)
     {
         FlowFieldChunk* ffChunk = it.second;
+        WorldCoords currentWorldCoords;
+        currentWorldCoords.m_chunkCoords = ffChunk->GetChunkCoords();
     
         ffChunk->m_debugVBO.ClearVerts();
         for (int y = 0; y < ffChunk->m_distanceField.GetHeight(); ++y)
         {
             for (int x = 0; x < ffChunk->m_distanceField.GetWidth(); ++x)
             {
-                IntVec2 localTileCoords(x, y);
-                AABB2 tileBounds = world.GetTileBounds(ffChunk->m_chunk->m_chunkCoords, localTileCoords);
+                currentWorldCoords.m_localTileCoords = IntVec2(x, y);
+                AABB2 tileBounds = world.GetTileBounds(currentWorldCoords);
                 float distance = ffChunk->m_distanceField.Get(x, y);
     
                 float t = RangeMapClamped(distance, 0.f, 10.f, 0.f, 1.f);
@@ -103,17 +109,19 @@ void SDebugRender::Run(SystemContext const& context)
 
     // Render Gradient
 
-    for (auto it : flowfield.m_activeFlowFieldChunks)
+    for (auto it : flowField.m_activeFlowFieldChunks)
     {
         FlowFieldChunk* ffChunk = it.second;
+        WorldCoords currentWorldCoords;
+        currentWorldCoords.m_chunkCoords = ffChunk->GetChunkCoords();
     
         ffChunk->m_debugVBO.ClearVerts();
         for (int y = 0; y < ffChunk->m_distanceField.GetHeight(); ++y)
         {
             for (int x = 0; x < ffChunk->m_distanceField.GetWidth(); ++x)
             {
-                IntVec2 localTileCoords(x, y);
-                AABB2 tileBounds = world.GetTileBounds(ffChunk->m_chunk->m_chunkCoords, localTileCoords);
+                currentWorldCoords.m_localTileCoords = IntVec2(x, y);
+                AABB2 tileBounds = world.GetTileBounds(currentWorldCoords);
                 Vec2 gradient = ffChunk->m_gradient.Get(x, y);
     
                 AddVertsForArrow2D(ffChunk->m_debugVBO.GetMutableVerts(), tileBounds.GetCenter(), tileBounds.GetCenter() + gradient, 0.05f, Rgba8::Yellow);

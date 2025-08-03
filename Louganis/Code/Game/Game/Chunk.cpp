@@ -68,7 +68,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 
 #if defined(_DEBUG)
 	auto& debugVerts = m_debugVBO.GetMutableVerts();
-	AddVertsForWireGrid2D(debugVerts, m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
+	AddVertsForWireGrid(debugVerts, m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
 	AddVertsForWireBox2D(debugVerts, m_chunkBounds, 0.03f, Rgba8::Red);
 #endif
 }
@@ -94,4 +94,32 @@ bool Chunk::IsTileSolid(IntVec2 const& localTileCoords) const
 		return tileDef->IsSolid();
 	}
 	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Chunk::IsTileSolid(int tileIndex) const
+{
+	uint8_t tileID = m_tileIDs.Get(tileIndex);
+	TileDef const* tileDef = TileDef::GetTileDef(tileID);
+	if (tileDef)
+	{
+		return tileDef->IsSolid();
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+uint8_t Chunk::GetCost(int tileIndex) const
+{
+	uint8_t tileID = m_tileIDs.Get(tileIndex);
+	TileDef const* tileDef = TileDef::GetTileDef(tileID);
+	if (tileDef)
+	{
+		return tileDef->m_cost;
+	}
+	return (uint8_t)255;
 }

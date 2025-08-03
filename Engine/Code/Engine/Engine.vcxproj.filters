@@ -351,7 +351,7 @@
     <ClInclude Include="..\ThirdParty\stb\stb_image.h">
       <Filter>ThirdParty\stb</Filter>
     </ClInclude>
-    <ClInclude Include="Math\Grid2D.h">
+    <ClInclude Include="Math\Grid.h">
       <Filter>Math</Filter>
     </ClInclude>
     <ClInclude Include="Debug\DevConsole.h">

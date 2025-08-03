@@ -271,7 +271,7 @@
     <ClInclude Include="Math\AABB2.h" />
     <ClInclude Include="Math\Constants.h" />
     <ClInclude Include="Math\GeometryUtils.h" />
-    <ClInclude Include="Math\Grid2D.h" />
+    <ClInclude Include="Math\Grid.h" />
     <ClInclude Include="Math\IntVec2.h" />
     <ClInclude Include="Math\Mat44.h" />
     <ClInclude Include="Math\MathUtils.h" />

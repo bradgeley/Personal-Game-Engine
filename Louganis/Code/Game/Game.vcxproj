@@ -196,6 +196,8 @@
     <ClCompile Include="Game\CPlayerController.cpp" />
     <ClCompile Include="Game\CRender.cpp" />
     <ClCompile Include="Game\EntityDef.cpp" />
+    <ClCompile Include="Game\FlowGenerationCoords.cpp" />
+    <ClCompile Include="Game\FlowField.cpp" />
     <ClCompile Include="Game\FlowFieldChunk.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\SCamera.cpp" />
@@ -216,6 +218,7 @@
     <ClCompile Include="Game\SWorld.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
     <ClCompile Include="Game\WindowsApplication.cpp" />
+    <ClCompile Include="Game\WorldCoords.cpp" />
     <ClCompile Include="Game\WorldRaycast.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +233,8 @@
     <ClInclude Include="Game\CRender.h" />
     <ClInclude Include="Game\CTransform.h" />
     <ClInclude Include="Game\EntityDef.h" />
+    <ClInclude Include="Game\FlowGenerationCoords.h" />
+    <ClInclude Include="Game\FlowField.h" />
     <ClInclude Include="Game\FlowFieldChunk.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameCommon.h" />
@@ -253,6 +258,7 @@
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
     <ClInclude Include="Game\WindowsApplication.h" />
+    <ClInclude Include="Game\WorldCoords.h" />
     <ClInclude Include="Game\WorldRaycast.h" />
     <ClInclude Include="Game\WorldSettings.h" />
   </ItemGroup>

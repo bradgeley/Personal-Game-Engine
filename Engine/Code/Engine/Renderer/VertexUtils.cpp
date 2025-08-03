@@ -145,7 +145,7 @@ void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, 
 // Add lines for columns and rows to create a grid
 // There will be some overlap where lines intersect, but  
 //
-void AddVertsForWireGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint)
+void AddVertsForWireGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
     Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
@@ -174,7 +174,7 @@ void AddVertsForWireGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boun
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, Rgba8 const& tint)
+void AddVertsForGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, Rgba8 const& tint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
 
@@ -196,7 +196,7 @@ void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& bounding
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, Rgba8 const* colorsRowMajor, IntVec2 const& dims, Rgba8 const& gridLinesTint)
+void AddVertsForGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, Rgba8 const* colorsRowMajor, IntVec2 const& dims, Rgba8 const& gridLinesTint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
 
@@ -217,7 +217,7 @@ void AddVertsForGrid2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& bounding
 
     if (gridLinesTint.a > 0)
     {
-        AddVertsForWireGrid2D(out_verts, boundingAABB, dims, lineThickness, gridLinesTint);
+        AddVertsForWireGrid(out_verts, boundingAABB, dims, lineThickness, gridLinesTint);
     }
 }
 

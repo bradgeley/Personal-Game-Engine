@@ -1,6 +1,6 @@
 // Bradley Christensen - 2024
 #pragma once
-#include "Engine/Math/Grid2D.h"
+#include "Engine/Math/Grid.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Renderer/VertexBuffer.h"
 
@@ -15,14 +15,23 @@ class FlowFieldChunk
 {
 public:
 
-	explicit FlowFieldChunk(Chunk* correspondingChunk);
+	explicit FlowFieldChunk(Chunk* chunk);
+
+	void HardReset();
+	void SoftReset();
+
+	IntVec2 GetChunkCoords() const;
+	void SetDistanceFieldAt(IntVec2 const& localTileCoords, float distance);
+	void GenerateCostField();
+	void ResetConsideredCells();
+
+public:
 
 	Chunk* m_chunk;
-	IntVec2 m_chunkCoords;
 
-	Grid2D<uint8_t> m_costField;
-	Grid2D<float> m_distanceField;
-	Grid2D<Vec2> m_gradient;
-	Grid2D<bool> m_consideredNodes;
+	Grid<uint8_t> m_costField;
+	Grid<float> m_distanceField;
+	Grid<Vec2> m_gradient;
+	Grid<bool> m_consideredCells;
 	VertexBuffer m_debugVBO;
 };

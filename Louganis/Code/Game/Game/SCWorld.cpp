@@ -27,6 +27,14 @@ Chunk* SCWorld::GetActiveChunk(int x, int y) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Chunk* SCWorld::GetActiveChunk(WorldCoords const& worldCoords) const
+{
+	return GetActiveChunk(worldCoords.m_chunkCoords.x, worldCoords.m_chunkCoords.y);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Chunk* SCWorld::GetActiveChunkAtLocation(Vec2 const& worldLocation) const
 {
 	IntVec2 chunkCoords = GetChunkCoordsAtLocation(worldLocation);
@@ -47,11 +55,10 @@ IntVec2 SCWorld::GetChunkCoordsAtLocation(Vec2 const& worldLocation) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-IntVec2 SCWorld::GetWorldTileCoordsAtLocation(Vec2 const& worldLocation) const
+IntVec2 SCWorld::GetGlobalTileCoordsAtLocation(Vec2 const& worldLocation) const
 {
-	IntVec2 chunkCoords = GetChunkCoordsAtLocation(worldLocation);
-	IntVec2 localTileCoords = GetLocalTileCoordsAtLocation(worldLocation);
-	return chunkCoords * GetNumTilesInRow() + localTileCoords;
+	WorldCoords worldCoords = GetWorldCoordsAtLocation(worldLocation);
+	return worldCoords.GetGlobalTileCoords(GetNumTilesInRow());
 }
 
 
@@ -71,47 +78,73 @@ IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-IntVec2 SCWorld::GetLocalTileCoordsAtOffset(IntVec2 const& localTileCoords, IntVec2 const& offset, IntVec2& out_chunkCoordsOffset) const
+IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation, IntVec2 const& chunkCoords) const
 {
-	IntVec2 newTileCoords = localTileCoords + offset;
-	int numTilesPerRow = GetNumTilesInRow();
-
-	// Check north movement
-	while (newTileCoords.y >= numTilesPerRow)
-	{
-		newTileCoords.y -= numTilesPerRow;
-		out_chunkCoordsOffset.y++;
-	}
-	// Check south movement
-	while (newTileCoords.y < 0)
-	{
-		newTileCoords.y += numTilesPerRow;
-		out_chunkCoordsOffset.y--;
-	}
-	// Check east movement
-	while (newTileCoords.x >= numTilesPerRow)
-	{
-		newTileCoords.x -= numTilesPerRow;
-		out_chunkCoordsOffset.x++;
-	}
-	// Check west movement
-	while (newTileCoords.x < 0)
-	{
-		newTileCoords.x += numTilesPerRow;
-		out_chunkCoordsOffset.x--;
-	}
-
-	return newTileCoords;
+	Vec2 relativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * GetChunkWidth());
+	Vec2 tileSpaceLocation = relativeLocation / m_worldSettings.m_tileWidth;
+	IntVec2 localTileCoords = IntVec2(tileSpaceLocation.GetFloor());
+	localTileCoords.x = ClampInt(localTileCoords.x, 0, GetNumTilesInRow() - 1);
+	localTileCoords.y = ClampInt(localTileCoords.y, 0, GetNumTilesInRow() - 1);
+	return localTileCoords;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AABB2 SCWorld::CalculateChunkBounds(int x, int y) const
+WorldCoords SCWorld::GetWorldCoordsAtOffset(WorldCoords const& worldCoords, IntVec2 const& tileOffset) const
+{
+	int numTilesPerRow = GetNumTilesInRow();
+
+	WorldCoords result;
+	result.m_chunkCoords = worldCoords.m_chunkCoords;
+	result.m_localTileCoords = worldCoords.m_localTileCoords + tileOffset;
+
+	// Check north movement
+	while (result.m_localTileCoords.y >= numTilesPerRow)
+	{
+		result.m_localTileCoords.y -= numTilesPerRow;
+		result.m_chunkCoords.y++;
+	}
+	// Check south movement
+	while (result.m_localTileCoords.y < 0)
+	{
+		result.m_localTileCoords.y += numTilesPerRow;
+		result.m_chunkCoords.y--;
+	}
+	// Check east movement
+	while (result.m_localTileCoords.x >= numTilesPerRow)
+	{
+		result.m_localTileCoords.x -= numTilesPerRow;
+		result.m_chunkCoords.x++;
+	}
+	// Check west movement
+	while (result.m_localTileCoords.x < 0)
+	{
+		result.m_localTileCoords.x += numTilesPerRow;
+		result.m_chunkCoords.x--;
+	}
+
+	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+WorldCoords SCWorld::GetWorldCoordsAtLocation(Vec2 const& worldLocation) const
+{
+	IntVec2 chunkCoords = GetChunkCoordsAtLocation(worldLocation);
+	IntVec2 localTileCoords = GetLocalTileCoordsAtLocation(worldLocation, chunkCoords);
+	return WorldCoords(chunkCoords, localTileCoords);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 SCWorld::CalculateChunkBounds(int chunkX, int chunkY) const
 {
 	int numTilesInRow = GetNumTilesInRow();
 	float chunkWidth = m_worldSettings.m_tileWidth * numTilesInRow;
-	Vec2 chunkOrigin = Vec2(x, y) * chunkWidth;
+	Vec2 chunkOrigin = Vec2(chunkX, chunkY) * chunkWidth;
 	Vec2 tileDims = Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);
 	AABB2 result = AABB2(chunkOrigin, chunkOrigin + tileDims * (float) numTilesInRow);
 	return result;
@@ -122,7 +155,7 @@ AABB2 SCWorld::CalculateChunkBounds(int x, int y) const
 //----------------------------------------------------------------------------------------------------------------------
 AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos) const
 {
-	IntVec2 worldTileCoords = GetWorldTileCoordsAtLocation(worldPos);
+	IntVec2 worldTileCoords = GetGlobalTileCoordsAtLocation(worldPos);
 	AABB2 tileBounds;
 	tileBounds.mins = Vec2(worldTileCoords) * m_worldSettings.m_tileWidth;
 	tileBounds.maxs = tileBounds.mins + Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);
@@ -132,12 +165,12 @@ AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AABB2 SCWorld::GetTileBounds(IntVec2 const& chunkCoords, IntVec2 const& localTileCoords) const
+AABB2 SCWorld::GetTileBounds(WorldCoords const& worldCoords) const
 {
-	Vec2 chunkMins = Vec2(chunkCoords) * GetChunkWidth();
+	Vec2 chunkMins = Vec2(worldCoords.m_chunkCoords) * GetChunkWidth();
 	
 	AABB2 tileBounds;
-	tileBounds.mins = chunkMins + Vec2(localTileCoords) * m_worldSettings.m_tileWidth;
+	tileBounds.mins = chunkMins + Vec2(worldCoords.m_localTileCoords) * m_worldSettings.m_tileWidth;
 	tileBounds.maxs = tileBounds.mins + Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);
 	return tileBounds;
 }
@@ -156,13 +189,13 @@ AABB2 SCWorld::GetTileBounds(IntVec2 const& worldTileCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Chunk* SCWorld::GetOrCreateActiveChunk(int x, int y)
+Chunk* SCWorld::GetOrCreateActiveChunk(int chunkX, int chunkY)
 {
-	Chunk* chunk = GetActiveChunk(x, y);
+	Chunk* chunk = GetActiveChunk(chunkX, chunkY);
 	if (!chunk)
 	{
 		chunk = new Chunk();
-		IntVec2 chunkCoords = IntVec2(x, y);
+		IntVec2 chunkCoords = IntVec2(chunkX, chunkY);
 		chunk->Generate(chunkCoords, m_worldSettings);
 		m_activeChunks.emplace(chunkCoords, chunk);
 	}
@@ -184,9 +217,9 @@ void SCWorld::RemoveActiveChunk(IntVec2 const& coords)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::RemoveActiveChunk(int x, int y)
+void SCWorld::RemoveActiveChunk(int chunkX, int chunkY)
 {
-	IntVec2 chunkCoords(x, y);
+	IntVec2 chunkCoords(chunkX, chunkY);
 	RemoveActiveChunk(chunkCoords);
 }
 

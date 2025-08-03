@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
-#include "Engine/Math/Grid2D.h"
+#include "Engine/Math/Grid.h"
 #include "Engine/Renderer/Rgba8.h"
 #include <string>
 
@@ -15,7 +15,7 @@ struct IntVec2;
 //
 // A grid of pixels
 //
-class Image : public Grid2D<Rgba8>
+class Image : public Grid<Rgba8>
 {
 public:
     

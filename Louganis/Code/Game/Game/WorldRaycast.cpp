@@ -29,8 +29,8 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 
     result.m_hitLocation = raycast.m_start + raycast.m_direction * raycast.m_maxDistance;
     
-    IntVec2 localTileCoords = world.GetLocalTileCoordsAtLocation(raycast.m_start);
-    if (startChunk->IsTileSolid(localTileCoords))
+    WorldCoords currentWorldCoords = world.GetWorldCoordsAtLocation(raycast.m_start);
+    if (startChunk->IsTileSolid(currentWorldCoords.m_localTileCoords))
     {
         // Somehow we got inside a block
         result.m_blockingHit = true;
@@ -40,7 +40,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
         return result;
     }
 
-    AABB2 startTileBounds = world.GetTileBoundsAtWorldPos(raycast.m_start);
+    AABB2 startTileBounds = world.GetTileBounds(currentWorldCoords);
     Vec2 tileMinsToRayStart = raycast.m_start - startTileBounds.mins;
 
     float stepX = SignF(raycast.m_direction.x);
@@ -52,7 +52,6 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
     float rayLengthPerStepX = AbsF(1.f / raycast.m_direction.x);
     float rayLengthPerStepY = AbsF(1.f / raycast.m_direction.y);
 
-    IntVec2 currentTileCoords = localTileCoords;
     float totalRayLength = 0.f;
     float totalRayLengthX = rayLengthPerStepX * toLeadingEdgeX;
     float totalRayLengthY = rayLengthPerStepY * toLeadingEdgeY;
@@ -63,9 +62,8 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
     {
         if (totalRayLengthX < totalRayLengthY)
         {
-            IntVec2 chunkOffset;
-            currentTileCoords = world.GetLocalTileCoordsAtOffset(currentTileCoords, IntVec2((int) stepX, 0), chunkOffset);
-            currentChunk = world.GetActiveChunk(currentChunk->m_chunkCoords + chunkOffset);
+            currentWorldCoords = world.GetWorldCoordsAtOffset(currentWorldCoords, IntVec2((int) stepX, 0));
+            currentChunk = world.GetActiveChunk(currentWorldCoords.m_chunkCoords);
             if (!currentChunk)
             {
                 return result; // Cannot continue, no-hit
@@ -78,7 +76,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 
             totalRayLength = totalRayLengthX;
 
-            if (currentChunk->IsTileSolid(currentTileCoords))
+            if (currentChunk->IsTileSolid(currentWorldCoords.m_localTileCoords))
             {
                 result.m_blockingHit = true;
                 result.m_hitNormal = Vec2(-stepX, 0.f);
@@ -90,9 +88,8 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
         }
         else
         {
-            IntVec2 chunkOffset;
-            currentTileCoords = world.GetLocalTileCoordsAtOffset(currentTileCoords, IntVec2(0, (int) stepY), chunkOffset);
-            currentChunk = world.GetActiveChunk(currentChunk->m_chunkCoords + chunkOffset);
+            currentWorldCoords = world.GetWorldCoordsAtOffset(currentWorldCoords, IntVec2(0, (int) stepY));
+            currentChunk = world.GetActiveChunk(currentWorldCoords.m_chunkCoords);
             if (!currentChunk)
             {
                 return result; // Cannot continue, no-hit
@@ -105,7 +102,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 
             totalRayLength = totalRayLengthY;
 
-            if (currentChunk->IsTileSolid(currentTileCoords))
+            if (currentChunk->IsTileSolid(currentWorldCoords.m_localTileCoords))
             {
                 result.m_blockingHit = true;
                 result.m_hitNormal = Vec2(0.f, -stepY);

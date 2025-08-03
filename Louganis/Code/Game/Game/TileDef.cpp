@@ -5,7 +5,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-const char* s_tileDefsFilePath = "Data/Definitions/TileDefs.xml";
+static const char* s_tileDefsFilePath = "Data/Definitions/TileDefs.xml";
 std::vector<TileDef> TileDef::s_tileDefs;
 
 
@@ -21,6 +21,7 @@ TileDef::TileDef(XmlElement const* tileDefXmlElement)
 	SetTags(isVisible, isSolid, isOpaque);
 
 	m_tint = ParseXmlAttribute(*tileDefXmlElement, "tint", m_tint);
+	m_cost = ParseXmlAttribute(*tileDefXmlElement, "cost", m_cost);
 }
 
 
