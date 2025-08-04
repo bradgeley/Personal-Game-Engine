@@ -17,3 +17,4 @@
 #include "SRenderEntities.h"
 #include "SRenderWorld.h"
 #include "SWorld.h"
+#include "SWorldCollision.h"

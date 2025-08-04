@@ -285,7 +285,7 @@ void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::ResetRenderingPipelineState()
 {
-	// Only reset the dirty settings, so changes will be detected and applies on Draw
+	// Only reset the dirty settings, so changes will be detected and applied on Draw
 	m_dirtySettings = RendererSettings();
 	BindShader(m_defaultShader);
 	BindTexture(m_defaultTexture);

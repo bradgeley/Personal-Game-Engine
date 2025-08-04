@@ -31,6 +31,7 @@ struct WorldRaycastResult
     bool m_immediateHit = false;
     Vec2 m_hitLocation;
     Vec2 m_hitNormal;
+    float m_distance = 0.f;
 };
 
 

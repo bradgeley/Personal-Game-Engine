@@ -12,7 +12,7 @@
 void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings)
 {
 	m_chunkCoords = chunkCoords;
-	int numTilesInRow = Pow(2, worldSettings.m_chunkSizePowerOfTwo);
+	int numTilesInRow = Pow(2, s_worldChunkSizePowerOfTwo);
 	int numTilesInChunk = numTilesInRow * numTilesInRow;
 	float chunkWidth = worldSettings.m_tileWidth * numTilesInRow;
 	Vec2 chunkOrigin = Vec2(chunkCoords.x, chunkCoords.y) * chunkWidth;

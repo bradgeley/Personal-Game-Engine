@@ -7,10 +7,10 @@ constexpr float MAX_DISTANCE = 999.f;
 //----------------------------------------------------------------------------------------------------------------------
 FlowFieldChunk::FlowFieldChunk(Chunk* chunk) :
 	m_chunk(chunk),
-	m_costField(chunk->m_tileIDs.GetDimensions(), 0),
-	m_distanceField(chunk->m_tileIDs.GetDimensions(), MAX_DISTANCE),
-	m_gradient(chunk->m_tileIDs.GetDimensions(), Vec2::ZeroVector),
-	m_consideredCells(chunk->m_tileIDs.GetDimensions(), false)
+	m_costField(0),
+	m_distanceField(MAX_DISTANCE),
+	m_gradient(Vec2::ZeroVector),
+	m_consideredCells(false)
 {
 }
 

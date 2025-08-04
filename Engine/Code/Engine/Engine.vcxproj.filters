@@ -441,6 +441,9 @@
     <ClInclude Include="Performance\ScopedTimer.h">
       <Filter>Performance</Filter>
     </ClInclude>
+    <ClInclude Include="Math\FastGrid.h">
+      <Filter>Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">

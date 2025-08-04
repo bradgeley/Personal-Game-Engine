@@ -32,7 +32,6 @@ void SCopyTransform::Run(SystemContext const& context)
 
         render.m_pos = transform.m_pos;
         render.m_orientation = transform.m_orientation;
-        render.m_scale = 1.f;
     }
 }
 

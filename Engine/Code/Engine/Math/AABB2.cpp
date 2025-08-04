@@ -109,15 +109,15 @@ bool AABB2::IsPointInside(Vec2 const& point) const
 
 bool AABB2::IsOverlapping(AABB2 const& otherBox) const
 {
-    if ((otherBox.mins.x > mins.x && otherBox.mins.x < maxs.x) ||
-        (otherBox.maxs.x > mins.x && otherBox.maxs.x < maxs.x) ||
-        (otherBox.mins.x > mins.x && otherBox.maxs.x < maxs.x) ||
-        (otherBox.mins.x < mins.x && otherBox.maxs.x > maxs.x))
+    if ((otherBox.mins.x >= mins.x && otherBox.mins.x <= maxs.x) ||
+        (otherBox.maxs.x >= mins.x && otherBox.maxs.x <= maxs.x) ||
+        (otherBox.mins.x >= mins.x && otherBox.maxs.x <= maxs.x) ||
+        (otherBox.mins.x <= mins.x && otherBox.maxs.x >= maxs.x))
     {
-        if ((otherBox.mins.y > mins.y && otherBox.mins.y < maxs.y) ||
-            (otherBox.maxs.y > mins.y && otherBox.maxs.y < maxs.y) ||
-            (otherBox.mins.y > mins.y && otherBox.maxs.y < maxs.y) ||
-            (otherBox.mins.y < mins.y && otherBox.maxs.y > maxs.y))
+        if ((otherBox.mins.y >= mins.y && otherBox.mins.y <= maxs.y) ||
+            (otherBox.maxs.y >= mins.y && otherBox.maxs.y <= maxs.y) ||
+            (otherBox.mins.y >= mins.y && otherBox.maxs.y <= maxs.y) ||
+            (otherBox.mins.y <= mins.y && otherBox.maxs.y >= maxs.y))
         {
             return true;
         }

@@ -81,6 +81,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
                 result.m_blockingHit = true;
                 result.m_hitNormal = Vec2(-stepX, 0.f);
                 result.m_hitLocation = result.m_raycast.m_start + result.m_raycast.m_direction * totalRayLength;
+                result.m_distance = totalRayLength;
                 return result;
             }
 
@@ -107,6 +108,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
                 result.m_blockingHit = true;
                 result.m_hitNormal = Vec2(0.f, -stepY);
                 result.m_hitLocation = result.m_raycast.m_start + result.m_raycast.m_direction * totalRayLength;
+                result.m_distance = totalRayLength;
                 return result;
             }
 

@@ -270,6 +270,7 @@
     <ClInclude Include="Input\KeyButtonState.h" />
     <ClInclude Include="Math\AABB2.h" />
     <ClInclude Include="Math\Constants.h" />
+    <ClInclude Include="Math\FastGrid.h" />
     <ClInclude Include="Math\GeometryUtils.h" />
     <ClInclude Include="Math\Grid.h" />
     <ClInclude Include="Math\IntVec2.h" />

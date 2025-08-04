@@ -97,6 +97,9 @@
     <ClCompile Include="Game\WorldCoords.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SWorldCollision.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -215,6 +218,9 @@
     </ClInclude>
     <ClInclude Include="Game\WorldCoords.h">
       <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SWorldCollision.h">
+      <Filter>Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,10 +2,11 @@
   
   <EntityDef name = "Player">
     <Transform></Transform>
-    <Movement moveSpeed="10"></Movement>
+    <Movement moveSpeed="150"></Movement>
     <Camera tileHeight="10"></Camera>
     <PlayerController></PlayerController>
-    <Render></Render>
+    <Collision radius="0.25"></Collision>
+    <Render scale="0.25"></Render>
   </EntityDef>
   
 </EntityDefs>

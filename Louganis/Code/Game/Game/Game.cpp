@@ -72,6 +72,7 @@ void Game::Startup()
     physics.m_timeStep = 0.00833f;
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCamera>((int) FramePhase::Physics);
 
     // Render

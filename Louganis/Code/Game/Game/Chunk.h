@@ -1,8 +1,9 @@
 // Bradley Christensen - 2024
 #pragma once
-#include "Engine/Math/Grid.h"
+#include "Engine/Math/FastGrid.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Renderer/VertexBuffer.h"
+#include "WorldSettings.h"
 
 
 
@@ -26,7 +27,7 @@ public:
 
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
-	Grid<uint8_t> m_tileIDs;
+	FastGrid<uint8_t, s_worldChunkSizePowerOfTwo> m_tileIDs;
 	VertexBuffer m_vbo;
 #if defined(_DEBUG)
 	VertexBuffer m_debugVBO;

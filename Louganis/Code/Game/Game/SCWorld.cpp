@@ -251,7 +251,7 @@ void SCWorld::ClearActiveChunks()
 //----------------------------------------------------------------------------------------------------------------------
 int SCWorld::GetNumTilesInRow() const
 {
-	return Pow(2, m_worldSettings.m_chunkSizePowerOfTwo);
+	return Pow(2, s_worldChunkSizePowerOfTwo);
 }
 
 

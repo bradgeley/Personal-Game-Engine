@@ -24,7 +24,7 @@ void SRenderEntities::Run(SystemContext const& context)
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 
     VertexBuffer vbo;
-    AddVertsForAABB2(vbo.GetMutableVerts(), AABB2(-0.5, -0.5, 0.5, 0.5));
+    AddVertsForDisc2D(vbo.GetMutableVerts(), Vec2(), 1, 16);
 
     for (auto camIt = g_ecs->Iterate<CCamera>(context); camIt.IsValid(); ++camIt)
     {
@@ -36,10 +36,11 @@ void SRenderEntities::Run(SystemContext const& context)
         ModelConstants modelConstants;
         for (auto renderIt = g_ecs->Iterate<CRender>(context); renderIt.IsValid(); ++renderIt)
         {
-            CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
+            const CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
             modelConstants.m_modelMatrix.Reset();
             modelConstants.m_modelMatrix.AppendZRotation(render.m_orientation);
             modelConstants.m_modelMatrix.AppendTranslation2D(render.m_pos);
+            modelConstants.m_modelMatrix.AppendUniformScale2D(render.m_scale);
             render.m_tint.GetAsFloats(modelConstants.m_modelRgba);
 
             g_renderer->SetModelConstants(modelConstants);
