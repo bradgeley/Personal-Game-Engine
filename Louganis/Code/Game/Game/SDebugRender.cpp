@@ -9,6 +9,7 @@
 #include "Chunk.h"
 #include "WorldRaycast.h"
 #include "CCamera.h"
+#include "SCDebug.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Camera.h"
@@ -24,6 +25,7 @@
 void SDebugRender::Startup()
 {
     AddWriteDependencies<CTransform, CPlayerController>();
+    AddWriteDependencies<SCDebug>();
     AddReadDependencies<SCWorld, SCFlowField, InputSystem, CCamera>();
 }
 
@@ -35,6 +37,7 @@ void SDebugRender::Run(SystemContext const& context)
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
     SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 
     for (auto it = g_ecs->Iterate<CTransform, CPlayerController, CCamera>(context); it.IsValid(); ++it)
     {
@@ -132,6 +135,11 @@ void SDebugRender::Run(SystemContext const& context)
         g_renderer->BindShader(0);
         g_renderer->DrawVertexBuffer(&ffChunk->m_debugVBO);
     }
+
+    g_renderer->BindTexture(0);
+    g_renderer->BindShader(0);
+    g_renderer->DrawVertexBuffer(&scDebug.FrameVerts);
+    scDebug.FrameVerts.ClearVerts();
 }
 
 

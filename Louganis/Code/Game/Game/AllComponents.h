@@ -27,6 +27,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 // Singletons
+#include "SCDebug.h"
 #include "SCEntityFactory.h"
 #include "SCFlowField.h"
 #include "SCWorld.h"

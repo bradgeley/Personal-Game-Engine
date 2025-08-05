@@ -17,6 +17,9 @@ void SWorld::Startup()
 	playerInfo.m_def = EntityDef::GetEntityDef("Player");
 	playerInfo.m_spawnPos = Vec2(0.f, 0.f);
 	entityFactory.m_entitiesToSpawn.push_back(playerInfo);
+	playerInfo.m_def = EntityDef::GetEntityDef("PlayerNoCamera");
+	playerInfo.m_spawnPos = Vec2(1.f, 0.f);
+	entityFactory.m_entitiesToSpawn.push_back(playerInfo);
 }
 
 

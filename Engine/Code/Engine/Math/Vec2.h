@@ -43,6 +43,8 @@ public:
     Vec2 GetFloor() const;
     float GetDistanceTo(Vec2 const& other) const;
     float GetDistanceSquaredTo(Vec2 const& other) const;
+    bool IsZero() const;
+    bool IsNearlyZero(float epsilon) const;
     
     void Rotate90();
     void RotateMinus90();

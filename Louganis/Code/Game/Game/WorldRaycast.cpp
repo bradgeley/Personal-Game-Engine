@@ -37,6 +37,8 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
         result.m_immediateHit = true;
         result.m_hitNormal = -raycast.m_direction;
         result.m_hitLocation = result.m_raycast.m_start;
+        result.m_t = 0.f;
+        result.m_distance = 0.f;
         return result;
     }
 
@@ -82,6 +84,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
                 result.m_hitNormal = Vec2(-stepX, 0.f);
                 result.m_hitLocation = result.m_raycast.m_start + result.m_raycast.m_direction * totalRayLength;
                 result.m_distance = totalRayLength;
+                result.m_t = totalRayLength / raycast.m_maxDistance;
                 return result;
             }
 
@@ -109,6 +112,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
                 result.m_hitNormal = Vec2(0.f, -stepY);
                 result.m_hitLocation = result.m_raycast.m_start + result.m_raycast.m_direction * totalRayLength;
                 result.m_distance = totalRayLength;
+                result.m_t = totalRayLength / raycast.m_maxDistance;
                 return result;
             }
 

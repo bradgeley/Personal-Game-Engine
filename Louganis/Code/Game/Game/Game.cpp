@@ -54,6 +54,7 @@ void Game::Startup()
     g_ecs->RegisterComponentSingleton<SCWorld>();
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
     g_ecs->RegisterComponentSingleton<SCFlowField>();
+    g_ecs->RegisterComponentSingleton<SCDebug>();
 
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();

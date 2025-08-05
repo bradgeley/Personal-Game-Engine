@@ -116,6 +116,15 @@ float Vec2::GetDistanceSquaredTo(Vec2 const& other) const
     return GetDistanceSquared2D(*this, other);
 }
 
+bool Vec2::IsZero() const
+{
+    return (x == 0.f) && (y == 0.f);
+}
+
+bool Vec2::IsNearlyZero(float epsilon) const
+{
+    return (AbsF(x) < epsilon) && (AbsF(y) < epsilon);
+}
 
 void Vec2::Rotate90()
 {

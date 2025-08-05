@@ -72,8 +72,14 @@ bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const
 //----------------------------------------------------------------------------------------------------------------------
 bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB)
 {
+    if (discPosA == discPosB)
+    {
+        return false;
+    }
+
     Vec2 AtoB = discPosB - discPosA;
     float distanceSquared = AtoB.GetLengthSquared();
+
     float combinedRadii = (discRadiusA + discRadiusB);
     float combinedRadiiSquared = combinedRadii * combinedRadii;
     if (distanceSquared < combinedRadiiSquared)
