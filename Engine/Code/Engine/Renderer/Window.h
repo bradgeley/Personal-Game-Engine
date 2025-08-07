@@ -64,6 +64,7 @@ public:
 
     static Window* GetCurrentlyFocusedWindow();
     static Window* GetWindowByHandle(void* handle /*HWND*/);
+    static Window* FindWindowForMessage(void* handle /*HWND*/);
 
 private:
 

@@ -232,23 +232,49 @@ Window* Window::GetCurrentlyFocusedWindow()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Window* Window::GetWindowByHandle(void* handle /*HWND*/)
+Window* Window::GetWindowByHandle(void* handle)
 {
     if (handle == nullptr)
     {
         return nullptr;
     }
+
     for (Window* const& window : s_windows)
     {
         if (window->m_windowHandle == handle)
         {
             return window;
         }
-        else if (window->IsBeingCreated())
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Window* Window::FindWindowForMessage(void* handle /*HWND*/)
+{
+    if (handle == nullptr)
+    {
+        return nullptr;
+    }
+
+    Window* result = GetWindowByHandle(handle);
+    if (result)
+    {
+        return result;
+    }
+
+    // Since no existing matching window was found, assume that this message is being received to the window that is currently in the process of being created.
+    // This happens during the call to CreateWindowEx, which returns the HWND, but we'd need to know the HWND before it actually returns it.
+    for (Window* const& window : s_windows)
+    {
+        if (window->IsBeingCreated())
         {
             return window;
         }
     }
+
     return nullptr;
 }
 
@@ -361,7 +387,7 @@ void Window::RunMessagePump()
 //----------------------------------------------------------------------------------------------------------------------
 LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
 {
-    Window* window = Window::GetWindowByHandle(windowHandle);
+    Window* window = Window::FindWindowForMessage(windowHandle);
     ASSERT_OR_DIE(window != nullptr, "Could not find Window corresponding to the handle sent by windows message handling procedure.");
     
     NamedProperties args;
