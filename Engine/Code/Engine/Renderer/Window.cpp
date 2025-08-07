@@ -102,6 +102,15 @@ void Window::SetIsBeingCreated(bool isBeingCreated)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Window::SetWindowTitle(std::string const& newTitle)
+{
+    std::wstring wNewTitle = std::wstring(newTitle.begin(), newTitle.end());
+    SetWindowText((HWND) m_windowHandle, wNewTitle.c_str());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void* Window::GetHWND() const
 {
     return m_windowHandle;
@@ -192,6 +201,17 @@ bool Window::GiveFocus()
 void Window::SetHasFocus(bool hasFocus)
 {
     m_hasFocus = hasFocus;
+
+    std::string const& baseTitle = m_config.m_windowTitle;
+    if (m_hasFocus)
+    {
+        std::string focusedTitle = baseTitle + " (focused)";
+        SetWindowTitle(focusedTitle);
+    }
+    else
+    {
+        SetWindowTitle(baseTitle);
+    }
 }
 
 
@@ -237,7 +257,6 @@ Window* Window::GetWindowByHandle(void* handle /*HWND*/)
 //----------------------------------------------------------------------------------------------------------------------
 void Window::CreateMainWindow()
 {
-    SetIsBeingCreated(true);
     WNDCLASSEX wcex;
     memset(&wcex, 0, sizeof(wcex));
     wcex.cbSize         = sizeof(WNDCLASSEX);
@@ -293,7 +312,8 @@ void Window::CreateMainWindow()
     // Convert window title to a wstring
     std::string titleString = m_config.m_windowTitle;
     std::wstring titleWString = std::wstring(titleString.begin(), titleString.end());
-    
+
+    SetIsBeingCreated(true);
     HWND hwnd = CreateWindowEx(
         windowStyleExFlags,
         wcex.lpszClassName,

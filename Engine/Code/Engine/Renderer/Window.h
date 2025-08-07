@@ -48,6 +48,7 @@ public:
     bool IsValid() const;
     bool IsBeingCreated() const;
     void SetIsBeingCreated(bool isBeingCreated);
+    void SetWindowTitle(std::string const& newTitle);
 
     void* GetHWND() const;
     int GetWidth() const;
