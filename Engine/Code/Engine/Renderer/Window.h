@@ -5,6 +5,7 @@
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 #include <string>
+#include <vector>
 
 
 
@@ -32,7 +33,7 @@ struct WindowConfig
 //----------------------------------------------------------------------------------------------------------------------
 // Window
 //
-// A Windows window, used for rendering the main game.
+// A Windows window, used for rendering stuff.
 //
 class Window : public EngineSubsystem
 {
@@ -45,6 +46,8 @@ public:
     virtual void Shutdown() override;
 
     bool IsValid() const;
+    bool IsBeingCreated() const;
+    void SetIsBeingCreated(bool isBeingCreated);
 
     void* GetHWND() const;
     int GetWidth() const;
@@ -54,6 +57,12 @@ public:
 
     IntVec2 GetMouseClientPosition(bool originBottomLeft = true) const;
     Vec2 GetMouseClientRelativePosition(bool originBottomLeft = true) const;
+
+    bool GiveFocus();
+    void SetHasFocus(bool hasFocus);
+
+    static Window* GetCurrentlyFocusedWindow();
+    static Window* GetWindowByHandle(void* handle /*HWND*/);
 
 private:
 
@@ -76,9 +85,14 @@ public:
     WindowConfig const m_config;
 
 protected:
+
+    static std::vector<Window*> s_windows;
     
     IntVec2 m_dimensions;
 
     void* m_windowHandle            = nullptr; // HWND
     void* m_displayContext          = nullptr; // HDC
+
+    bool m_hasFocus                 = false;
+    bool m_isBeingCreated           = false;
 };

@@ -18,6 +18,11 @@ Window* g_window = nullptr;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+std::vector<Window*> Window::s_windows;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam);
 
 
@@ -32,7 +37,9 @@ Window::Window(WindowConfig const& config) : EngineSubsystem("Window"), m_config
 //----------------------------------------------------------------------------------------------------------------------
 void Window::Startup()
 {
+    s_windows.push_back(this);
     CreateMainWindow();
+    GiveFocus();
 }
 
 
@@ -54,6 +61,14 @@ void Window::Shutdown()
         m_windowHandle = nullptr;
         m_displayContext = nullptr;
     }
+    for (auto it = s_windows.begin(); it != s_windows.end(); ++it)
+    {
+        if (*it == this)
+        {
+            s_windows.erase(it);
+            break;
+        }
+    }
 }
 
 
@@ -66,6 +81,22 @@ bool Window::IsValid() const
         return IsWindow((HWND) m_windowHandle);
     }
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Window::IsBeingCreated() const
+{
+    return m_isBeingCreated;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::SetIsBeingCreated(bool isBeingCreated)
+{
+    m_isBeingCreated = isBeingCreated;
 }
 
 
@@ -144,8 +175,69 @@ Vec2 Window::GetMouseClientRelativePosition(bool originBottomLeft) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool Window::GiveFocus()
+{
+    if (m_windowHandle)
+    {
+        ::SetFocus((HWND) m_windowHandle);
+        ::SetForegroundWindow((HWND) m_windowHandle);
+        SetHasFocus(true);
+    }
+    return m_windowHandle != nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::SetHasFocus(bool hasFocus)
+{
+    m_hasFocus = hasFocus;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Window* Window::GetCurrentlyFocusedWindow()
+{
+    for (Window*& window : s_windows)
+    {
+        if (window->m_hasFocus)
+        {
+            return window;
+        }
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Window* Window::GetWindowByHandle(void* handle /*HWND*/)
+{
+    if (handle == nullptr)
+    {
+        return nullptr;
+    }
+    for (Window* const& window : s_windows)
+    {
+        if (window->m_windowHandle == handle)
+        {
+            return window;
+        }
+        else if (window->IsBeingCreated())
+        {
+            return window;
+        }
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Window::CreateMainWindow()
 {
+    SetIsBeingCreated(true);
     WNDCLASSEX wcex;
     memset(&wcex, 0, sizeof(wcex));
     wcex.cbSize         = sizeof(WNDCLASSEX);
@@ -216,12 +308,13 @@ void Window::CreateMainWindow()
         wcex.hInstance,
         nullptr);
 
-    ShowWindow(hwnd, SW_SHOW);
-    SetForegroundWindow(hwnd);
-    SetFocus(hwnd);
-    
+    ASSERT_OR_DIE(hwnd != nullptr, "Failed to create window.");
+
     m_windowHandle = hwnd;
     m_displayContext = GetDC(hwnd);
+    SetIsBeingCreated(false);
+
+    ::ShowWindow(hwnd, SW_SHOW);
 }
 
 
@@ -248,15 +341,21 @@ void Window::RunMessagePump()
 //----------------------------------------------------------------------------------------------------------------------
 LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
 {
-    ASSERT_OR_DIE(g_window, "Window doesn't exist during message handling procedure.")
+    Window* window = Window::GetWindowByHandle(windowHandle);
+    ASSERT_OR_DIE(window != nullptr, "Could not find Window corresponding to the handle sent by windows message handling procedure.");
     
     NamedProperties args;
     switch (wmMessageCode)
     {
-        case WM_ACTIVATE:       break;
+        case WM_ACTIVATE:       
+        {
+            int code = (int) wParam;
+            window->SetHasFocus(code != WA_INACTIVE);
+            break;
+        }
         case WM_CLOSE:
         {
-            g_window->m_quit.Broadcast(args);
+            window->m_quit.Broadcast(args);
             break;
         }
         case WM_MOVE:           break;
@@ -266,21 +365,21 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
         {
 			int charCode = (int) wParam;
             args.Set("Char", charCode);
-            g_window->m_charInputEvent.Broadcast(args);
+            window->m_charInputEvent.Broadcast(args);
             break;
         }
         case WM_KEYDOWN:
         {
 			int keyCode = (int) wParam;
             args.Set("Key", keyCode);
-            g_window->m_keyDownEvent.Broadcast(args);
+            window->m_keyDownEvent.Broadcast(args);
             break;
         }
         case WM_KEYUP:
         {
 			int keyCode = (int) wParam;
             args.Set("Key", keyCode);
-            g_window->m_keyUpEvent.Broadcast(args);
+            window->m_keyUpEvent.Broadcast(args);
             break;
         }
         case WM_LBUTTONDOWN:
@@ -289,7 +388,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
             if (bDown)
             {
                 args.Set("MouseButton", 0);
-                g_window->m_mouseButtonDownEvent.Broadcast(args);
+                window->m_mouseButtonDownEvent.Broadcast(args);
             }
             break;
         }
@@ -299,7 +398,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
             if (!bDown)
             {
                 args.Set("MouseButton", 0);
-                g_window->m_mouseButtonUpEvent.Broadcast(args);
+                window->m_mouseButtonUpEvent.Broadcast(args);
             }
             break;
         }
@@ -309,7 +408,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
             if (bDown)
             {
                 args.Set("MouseButton", 1);
-                g_window->m_mouseButtonDownEvent.Broadcast(args);
+                window->m_mouseButtonDownEvent.Broadcast(args);
             }
             break;
         }
@@ -319,7 +418,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
             if (!bDown)
             {
                 args.Set("MouseButton", 1);
-                g_window->m_mouseButtonUpEvent.Broadcast(args);
+                window->m_mouseButtonUpEvent.Broadcast(args);
             }
             break;
         }
@@ -329,7 +428,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
             if (bDown)
             {
                 args.Set("MouseButton", 2);
-                g_window->m_mouseButtonDownEvent.Broadcast(args);
+                window->m_mouseButtonDownEvent.Broadcast(args);
             }
             break;
         }
@@ -339,7 +438,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
             if (!bDown)
             {
                 args.Set("MouseButton", 2);
-                g_window->m_mouseButtonUpEvent.Broadcast(args);
+                window->m_mouseButtonUpEvent.Broadcast(args);
             }
             break;
         }
@@ -347,7 +446,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
         {
 			int wheelChange = ((int) wParam >> 16) / 120;
             args.Set("WheelChange", wheelChange);
-            g_window->m_mouseWheelEvent.Broadcast(args);
+            window->m_mouseWheelEvent.Broadcast(args);
             break;
         }
         default:

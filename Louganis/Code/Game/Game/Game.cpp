@@ -36,52 +36,7 @@ void Game::Startup()
 {
     g_rng = new RandomNumberGenerator();
 
-    AdminSystemConfig ecsConfig;
-    ecsConfig.m_maxDeltaSeconds = 0.1f;
-    g_ecs = new AdminSystem(ecsConfig);
-
-    // Array components
-    g_ecs->RegisterComponentArray<CTransform>();
-    g_ecs->RegisterComponentArray<CMovement>();
-    g_ecs->RegisterComponentArray<CRender>();
-    g_ecs->RegisterComponentArray<CCollision>();
-
-    // Map components
-    g_ecs->RegisterComponentMap<CCamera>();
-    g_ecs->RegisterComponentMap<CPlayerController>();
-
-    // Singleton components
-    g_ecs->RegisterComponentSingleton<SCWorld>();
-    g_ecs->RegisterComponentSingleton<SCEntityFactory>();
-    g_ecs->RegisterComponentSingleton<SCFlowField>();
-    g_ecs->RegisterComponentSingleton<SCDebug>();
-
-    // Other resource types
-    g_ecs->RegisterResourceByType<InputSystem>();
-    g_ecs->RegisterResourceByType<Renderer>();
-
-    // Pre Physics
-    g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
-    g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
-    g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
-    g_ecs->RegisterSystem<SLoadChunks>((int) FramePhase::PrePhysics);
-    g_ecs->RegisterSystem<SRemoveChunks>((int) FramePhase::PrePhysics);
-    g_ecs->RegisterSystem<SFlowField>((int) FramePhase::PrePhysics);
-
-    // Physics
-    SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
-    physics.m_timeStep = 0.00833f;
-    g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SCamera>((int) FramePhase::Physics);
-
-    // Render
-    g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
-
+    ConfigureECS();
     g_ecs->Startup();
 }
 
@@ -137,11 +92,18 @@ void Game::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Game::ConfigureEngine(Engine* engine) const
+void Game::ConfigureEngine(Engine* engine)
 {
     EventSystemConfig eventSysConfig;
     g_eventSystem = new EventSystem(eventSysConfig);
     engine->RegisterSubsystem(g_eventSystem);
+
+    WindowConfig debugWindowConfig;
+    debugWindowConfig.m_windowTitle = "Louganis Debug";
+    debugWindowConfig.m_clientAspect = 1.f;
+    debugWindowConfig.m_windowScale = 0.5f;
+    m_debugWindow = new Window(debugWindowConfig);
+    engine->RegisterSubsystem(m_debugWindow);
 
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Louganis";
@@ -169,4 +131,56 @@ void Game::ConfigureEngine(Engine* engine) const
     JobSystemConfig jobSysConfig;
     g_jobSystem = new JobSystem(jobSysConfig);
     engine->RegisterSubsystem(g_jobSystem);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Game::ConfigureECS()
+{
+    AdminSystemConfig ecsConfig;
+    ecsConfig.m_maxDeltaSeconds = 0.1f;
+    g_ecs = new AdminSystem(ecsConfig);
+
+    // Array components
+    g_ecs->RegisterComponentArray<CTransform>();
+    g_ecs->RegisterComponentArray<CMovement>();
+    g_ecs->RegisterComponentArray<CRender>();
+    g_ecs->RegisterComponentArray<CCollision>();
+
+    // Map components
+    g_ecs->RegisterComponentMap<CCamera>();
+    g_ecs->RegisterComponentMap<CPlayerController>();
+
+    // Singleton components
+    g_ecs->RegisterComponentSingleton<SCWorld>();
+    g_ecs->RegisterComponentSingleton<SCEntityFactory>();
+    g_ecs->RegisterComponentSingleton<SCFlowField>();
+    g_ecs->RegisterComponentSingleton<SCDebug>();
+
+    // Other resource types
+    g_ecs->RegisterResourceByType<InputSystem>();
+    g_ecs->RegisterResourceByType<Renderer>();
+
+    // Pre Physics
+    g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SLoadChunks>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SRemoveChunks>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SFlowField>((int) FramePhase::PrePhysics);
+
+    // Physics
+    SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
+    physics.m_timeStep = 0.00833f;
+    g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SCamera>((int) FramePhase::Physics);
+
+    // Render
+    g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 }

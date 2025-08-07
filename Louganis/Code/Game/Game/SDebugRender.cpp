@@ -24,7 +24,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugRender::Startup()
 {
-    AddWriteDependencies<CTransform, CPlayerController>();
+    AddWriteDependencies<CTransform, CPlayerController, Renderer>();
     AddWriteDependencies<SCDebug>();
     AddReadDependencies<SCWorld, SCFlowField, InputSystem, CCamera>();
 }

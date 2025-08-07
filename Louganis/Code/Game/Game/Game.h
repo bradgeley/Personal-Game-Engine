@@ -5,6 +5,7 @@
 
 
 class Engine;
+class Window;
 
 
 
@@ -20,5 +21,10 @@ public:
     void Render() const override;
     void Shutdown() override;
 
-    void ConfigureEngine(Engine* engine) const;
+    void ConfigureEngine(Engine* engine);
+    void ConfigureECS();
+
+private:
+
+    Window* m_debugWindow = nullptr;
 };

@@ -32,7 +32,7 @@ public:
     void ReleaseResources();
     
     std::vector<Vertex_PCU> const& GetVerts() const;
-    std::vector<Vertex_PCU>& GetMutableVerts(); // Calling this method dirties the buffer
+    std::vector<Vertex_PCU>& GetMutableVerts(bool setDirty = true);
     
     void AddVerts(std::vector<Vertex_PCU> const& verts);
     void ClearVerts();
@@ -42,6 +42,7 @@ public:
 	int GetNumVerts() const;
 
     bool IsDirty() const;
+    void SetDirty();
     bool IsEmpty() const;
 
 protected:

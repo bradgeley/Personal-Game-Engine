@@ -64,9 +64,13 @@ std::vector<Vertex_PCU> const& VertexBuffer::GetVerts() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::vector<Vertex_PCU>& VertexBuffer::GetMutableVerts()
+std::vector<Vertex_PCU>& VertexBuffer::GetMutableVerts(bool setDirty /*= true*/)
 {
-    m_isDirty = true; // for now just dirty the verts any time they are read as a mutable array, (assume changes were made)
+    if (setDirty)
+    {
+        // By default, assume that the vertex array has been changed after this function call
+        SetDirty();
+    }
     return m_verts;
 }
 
@@ -75,7 +79,7 @@ std::vector<Vertex_PCU>& VertexBuffer::GetMutableVerts()
 //----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::AddVerts(std::vector<Vertex_PCU> const& verts)
 {
-    m_isDirty = true;
+    SetDirty();
     m_verts.insert(m_verts.end(), verts.begin(), verts.end());
 }
 
@@ -84,7 +88,7 @@ void VertexBuffer::AddVerts(std::vector<Vertex_PCU> const& verts)
 //----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::ClearVerts()
 {
-    m_isDirty = true;
+    SetDirty();
     m_verts.clear();
 }
 
@@ -110,6 +114,14 @@ int VertexBuffer::GetNumVerts() const
 bool VertexBuffer::IsDirty() const
 {
     return m_isDirty;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void VertexBuffer::SetDirty()
+{
+    m_isDirty = true;
 }
 
 
