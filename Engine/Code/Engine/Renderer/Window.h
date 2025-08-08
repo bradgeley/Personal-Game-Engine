@@ -31,6 +31,14 @@ struct WindowConfig
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct WindowData
+{
+    Window* m_selfPtr = nullptr;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 // Window
 //
 // A Windows window, used for rendering stuff.
@@ -64,7 +72,6 @@ public:
 
     static Window* GetCurrentlyFocusedWindow();
     static Window* GetWindowByHandle(void* handle /*HWND*/);
-    static Window* FindWindowForMessage(void* handle /*HWND*/);
 
 private:
 
@@ -97,4 +104,6 @@ protected:
 
     bool m_hasFocus                 = false;
     bool m_isBeingCreated           = false;
+
+    WindowData* m_windowData        = nullptr;
 };

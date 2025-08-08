@@ -17,12 +17,12 @@ struct ID3D11RasterizerState;
 struct ID3D11DepthStencilState;
 struct ID3D11SamplerState;
 
-enum   D3D11_BLEND : int;
-enum   D3D11_BLEND_OP : int;
-enum   D3D11_FILTER : int;
-enum   D3D11_TEXTURE_ADDRESS_MODE : int;
-enum   D3D11_CULL_MODE : int;
-enum   D3D11_FILL_MODE : int;
+enum   D3D11_BLEND					: int;
+enum   D3D11_BLEND_OP				: int;
+enum   D3D11_FILTER					: int;
+enum   D3D11_TEXTURE_ADDRESS_MODE	: int;
+enum   D3D11_CULL_MODE				: int;
+enum   D3D11_FILL_MODE				: int;
 
 
 

@@ -34,7 +34,6 @@ void SEntityFactory::Run(SystemContext const&)
     for (SpawnInfo& spawnInfo : factory->m_entitiesToSpawn)
     {
         EntityID id = CreateEntityFromDef(spawnInfo.m_def);
-        auto render = g_ecs->GetComponent<CRender>(id);
         CTransform* transform = g_ecs->GetComponent<CTransform>(id);
         if (transform)
         {

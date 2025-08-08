@@ -41,7 +41,6 @@ void SMovement::Run(SystemContext const& context)
 
         Vec2 frameMovement = move.m_frameMoveDir * move.m_movementSpeed * context.m_deltaSeconds;
 
-        float movementRemaining = move.m_movementSpeed * context.m_deltaSeconds;
         while (!frameMovement.IsNearlyZero(scWorld.m_worldSettings.m_entityMinimumMovement))
         {
             // Run preventative physics raycasts

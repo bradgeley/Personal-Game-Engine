@@ -32,7 +32,7 @@ void SRenderEntities::Run(SystemContext const& context)
         CCamera& camera = cameraStorage[camIt.m_currentIndex];
         g_renderer->BeginCamera(&camera.m_camera);
 
-        // Render all things
+        // Render all things (1 draw call per entity = bad, todo: write sprite geometry shader)
         ModelConstants modelConstants;
         for (auto renderIt = g_ecs->Iterate<CRender>(context); renderIt.IsValid(); ++renderIt)
         {

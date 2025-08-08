@@ -28,7 +28,6 @@ void SWorldCollision::Run(SystemContext const& context)
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
     auto& scWorld = g_ecs->GetSingleton<SCWorld>();
-    auto& scDebug = g_ecs->GetSingleton<SCDebug>();
 
     for (auto it = g_ecs->Iterate<CTransform, CCollision, CRender>(context); it.IsValid(); ++it)
     {

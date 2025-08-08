@@ -4,6 +4,7 @@
 
 #include "Window.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Texture.h"
 
@@ -23,7 +24,8 @@ std::vector<Window*> Window::s_windows;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK SharedWindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam);
 
 
 
@@ -252,42 +254,13 @@ Window* Window::GetWindowByHandle(void* handle)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Window* Window::FindWindowForMessage(void* handle /*HWND*/)
-{
-    if (handle == nullptr)
-    {
-        return nullptr;
-    }
-
-    Window* result = GetWindowByHandle(handle);
-    if (result)
-    {
-        return result;
-    }
-
-    // Since no existing matching window was found, assume that this message is being received to the window that is currently in the process of being created.
-    // This happens during the call to CreateWindowEx, which returns the HWND, but we'd need to know the HWND before it actually returns it.
-    for (Window* const& window : s_windows)
-    {
-        if (window->IsBeingCreated())
-        {
-            return window;
-        }
-    }
-
-    return nullptr;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void Window::CreateMainWindow()
 {
     WNDCLASSEX wcex;
     memset(&wcex, 0, sizeof(wcex));
     wcex.cbSize         = sizeof(WNDCLASSEX);
     wcex.style          = CS_OWNDC;
-    wcex.lpfnWndProc    = WindowsMessageHandlingProcedure;
+    wcex.lpfnWndProc    = SharedWindowsMessageHandlingProcedure;
     wcex.cbClsExtra     = 0;
     wcex.cbWndExtra     = 0;
     wcex.hInstance      = GetModuleHandle(NULL);
@@ -352,7 +325,7 @@ void Window::CreateMainWindow()
         nullptr,
         nullptr,
         wcex.hInstance,
-        nullptr);
+        this);
 
     ASSERT_OR_DIE(hwnd != nullptr, "Failed to create window.");
 
@@ -385,15 +358,16 @@ void Window::RunMessagePump()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
 {
-    Window* window = Window::FindWindowForMessage(windowHandle);
     ASSERT_OR_DIE(window != nullptr, "Could not find Window corresponding to the handle sent by windows message handling procedure.");
-    
+    UNUSED(lParam);
+    UNUSED(windowHandle);
+
     NamedProperties args;
     switch (wmMessageCode)
     {
-        case WM_ACTIVATE:       
+        case WM_ACTIVATE:
         {
             int code = (int) wParam;
             window->SetHasFocus(code != WA_INACTIVE);
@@ -409,28 +383,28 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
         case WM_SIZE:           break;
         case WM_CHAR:
         {
-			int charCode = (int) wParam;
+            int charCode = (int) wParam;
             args.Set("Char", charCode);
             window->m_charInputEvent.Broadcast(args);
             break;
         }
         case WM_KEYDOWN:
         {
-			int keyCode = (int) wParam;
+            int keyCode = (int) wParam;
             args.Set("Key", keyCode);
             window->m_keyDownEvent.Broadcast(args);
             break;
         }
         case WM_KEYUP:
         {
-			int keyCode = (int) wParam;
+            int keyCode = (int) wParam;
             args.Set("Key", keyCode);
             window->m_keyUpEvent.Broadcast(args);
             break;
         }
         case WM_LBUTTONDOWN:
         {
-			bool bDown = (wParam & MK_LBUTTON) != 0;
+            bool bDown = (wParam & MK_LBUTTON) != 0;
             if (bDown)
             {
                 args.Set("MouseButton", 0);
@@ -490,7 +464,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
         }
         case WM_MOUSEWHEEL:
         {
-			int wheelChange = ((int) wParam >> 16) / 120;
+            int wheelChange = ((int) wParam >> 16) / 120;
             args.Set("WheelChange", wheelChange);
             window->m_mouseWheelEvent.Broadcast(args);
             break;
@@ -498,5 +472,32 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessa
         default:
             break;
     }
+
+    return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+LRESULT CALLBACK SharedWindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
+{
+    Window* window = nullptr;
+
+    if (wmMessageCode == WM_NCCREATE)
+    {
+        LPCREATESTRUCT createStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+        window = reinterpret_cast<Window*>(createStruct->lpCreateParams);
+        SetWindowLongPtr(windowHandle, GWLP_USERDATA, (LONG_PTR) window);
+    }
+    else
+    {
+        window = reinterpret_cast<Window*>(GetWindowLongPtr(windowHandle, GWLP_USERDATA));
+    }
+
+    if (window)
+    {
+        return WindowsMessageHandlingProcedure(window, windowHandle, wmMessageCode, wParam, lParam);
+    }
+
     return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
 }

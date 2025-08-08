@@ -23,7 +23,6 @@ void SRemoveChunks::Startup()
 void SRemoveChunks::Run(SystemContext const& context)
 {
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-	WorldSettings const& worldSettings = world.m_worldSettings;
 
 	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	float unloadRadius = world.GetChunkUnloadRadius();
@@ -35,7 +34,6 @@ void SRemoveChunks::Run(SystemContext const& context)
 	for (auto& chunkIt : world.m_activeChunks)
 	{
 		IntVec2 const& chunkCoords = chunkIt.first;
-		Chunk* chunk = chunkIt.second;
 
 		AABB2 chunkBounds = world.CalculateChunkBounds(chunkCoords.x, chunkCoords.y);
 
