@@ -31,14 +31,6 @@ struct WindowConfig
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct WindowData
-{
-    Window* m_selfPtr = nullptr;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 // Window
 //
 // A Windows window, used for rendering stuff.
@@ -99,6 +91,4 @@ protected:
 
     bool m_hasFocus                 = false;
     bool m_isBeingCreated           = false;
-
-    WindowData* m_windowData        = nullptr;
 };
