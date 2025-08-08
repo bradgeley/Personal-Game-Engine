@@ -7,6 +7,7 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Window.h"
+#include "Engine/Debug/DevConsole.h"
 
 
 
@@ -48,6 +49,8 @@ void JobSystemDebug::Startup()
     
     m_camera = new Camera();
     m_camera->SetOrthoBounds(Vec3(0.f, 0.f, 0.f), Vec3(WINDOW_WIDTH, WINDOW_HEIGHT, 1.f));
+
+    m_window->m_keyUpEvent.SubscribeMethod(this, &JobSystemDebug::HandleKeyUp);
 }
 
 
@@ -55,7 +58,10 @@ void JobSystemDebug::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void JobSystemDebug::BeginFrame()
 {
-    
+    if (!m_freezeLog)
+    {
+        m_frameDebugInfo.clear();
+    }
 }
 
 
@@ -72,7 +78,7 @@ void JobSystemDebug::Update(float deltaSeconds)
 void JobSystemDebug::Render() const
 {
     g_renderer->BeginWindow(m_window);
-    g_renderer->BeginCameraAndWindow(m_camera, g_window);
+    g_renderer->BeginCameraAndWindow(m_camera, m_window);
     g_renderer->ClearScreen(Rgba8::LightGray);
 
     VertexBuffer buffer;
@@ -81,15 +87,13 @@ void JobSystemDebug::Render() const
     
     g_renderer->DrawVertexBuffer(&buffer);
 
-    VertexBuffer text;
+    VertexBuffer textBuffer;
     auto font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(text.GetMutableVerts(), Vec2(WINDOW_WIDTH * 0.5f, WINDOW_HEIGHT - (0.5f * GRAPH_EDGE_PAD)),
-        Vec2(0.5f, 0.5f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::White);
+    font->AddVertsForAlignedText2D(textBuffer.GetMutableVerts(), Vec2(WINDOW_WIDTH * 0.5f, WINDOW_HEIGHT - (0.5f * GRAPH_EDGE_PAD)),
+        Vec2(0.f, 0.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::White);
     
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(&text);
-
-    g_renderer->Present();
+    g_renderer->DrawVertexBuffer(&textBuffer);
 }
 
 
@@ -97,7 +101,6 @@ void JobSystemDebug::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void JobSystemDebug::EndFrame()
 {
-    m_frameDebugInfo.clear();
 }
 
 
@@ -119,5 +122,33 @@ void JobSystemDebug::Shutdown()
 void JobSystemDebug::Log(JobDebugInfo& info)
 {
     std::unique_lock lock(m_logMutex);
-    m_frameDebugInfo.emplace_back(info);
+    if (!m_freezeLog)
+    {
+        m_frameDebugInfo.emplace_back(info);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystemDebug::HandleKeyUp(NamedProperties& args)
+{
+    char character = (char) args.Get("Key", -1);
+    if (character == 'F')
+    {
+        if (m_freezeLog)
+        {
+            g_devConsole->LogSuccess("Unfroze job system debug.");
+        }
+        else
+        {
+            g_devConsole->LogSuccess("Froze job system debug.");
+            for (JobDebugInfo const& line : m_frameDebugInfo)
+            {
+                g_devConsole->LogWarningF("Thread %i: start(%f) end(%f)", line.m_threadID, line.m_startTime, line.m_endTime);
+            }
+        }
+        m_freezeLog = !m_freezeLog;
+    }
+    return false;
 }

@@ -8,6 +8,7 @@
 
 class Camera;
 class Window;
+struct NamedProperties;
 
 
 
@@ -52,6 +53,10 @@ public:
 
     void Log(JobDebugInfo& info);
 
+public:
+
+    bool HandleKeyUp(NamedProperties& args);
+
 protected:
 
     JobSystemDebugConfig m_config;
@@ -61,4 +66,7 @@ protected:
 
     Window* m_window = nullptr;
     Camera* m_camera = nullptr;
+
+    // If true, freezes all logging so you can inspect 1 frame indefinitely
+    bool m_freezeLog = false;
 };

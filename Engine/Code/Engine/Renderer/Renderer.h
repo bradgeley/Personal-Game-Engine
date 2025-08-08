@@ -102,7 +102,9 @@ public:
     
     void CreateWindowRenderContext(Window* window);
     WindowRenderContext& GetCurrentWindowRenderContext();
+    WindowRenderContext const& GetCurrentWindowRenderContext() const;
     WindowRenderContext& GetWindowRenderContext(Window* window);
+    WindowRenderContext const& GetWindowRenderContext(Window* window) const;
 
 public:
 

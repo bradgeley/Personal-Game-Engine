@@ -207,7 +207,7 @@ void JobSystem::ExecuteJobGraph(JobGraph& jobGraph, bool helpWithTasksOnThisThre
 
         if (helpWithTasksOnThisThread)
         {
-            TryDoSpecificJobs(jobGraph.m_jobReceipts); // todo: may only do jobs in the jobGraph we just posted
+            TryDoSpecificJobs(jobGraph.m_jobReceipts);
         }
         else std::this_thread::yield();
         

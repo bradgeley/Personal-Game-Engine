@@ -12,6 +12,7 @@
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
+#include "Engine/Multithreading/JobSystemDebug.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "EntityDef.h"
 #include "TileDef.h"
@@ -98,13 +99,6 @@ void Game::ConfigureEngine(Engine* engine)
     g_eventSystem = new EventSystem(eventSysConfig);
     engine->RegisterSubsystem(g_eventSystem);
 
-    WindowConfig debugWindowConfig;
-    debugWindowConfig.m_windowTitle = "Louganis Debug";
-    debugWindowConfig.m_clientAspect = 1.f;
-    debugWindowConfig.m_windowScale = 0.5f;
-    m_debugWindow = new Window(debugWindowConfig);
-    engine->RegisterSubsystem(m_debugWindow);
-
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Louganis";
     windowConfig.m_clientAspect = 2.f;
@@ -131,6 +125,10 @@ void Game::ConfigureEngine(Engine* engine)
     JobSystemConfig jobSysConfig;
     g_jobSystem = new JobSystem(jobSysConfig);
     engine->RegisterSubsystem(g_jobSystem);
+
+    JobSystemDebugConfig jobSysDebugConfig;
+    g_jobSystemDebug = new JobSystemDebug(jobSysDebugConfig);
+    engine->RegisterSubsystem(g_jobSystemDebug);
 }
 
 
@@ -140,6 +138,8 @@ void Game::ConfigureECS()
 {
     AdminSystemConfig ecsConfig;
     ecsConfig.m_maxDeltaSeconds = 0.1f;
+    ecsConfig.m_enableMultithreading = true;
+    ecsConfig.m_autoMultithreadingEntityThreshold = 1;
     g_ecs = new AdminSystem(ecsConfig);
 
     // Array components

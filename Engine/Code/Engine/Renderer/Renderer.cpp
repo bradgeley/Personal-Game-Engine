@@ -234,10 +234,9 @@ void Renderer::EndCameraAndWindow(Camera const* camera, Window const* window)
 void Renderer::Present() const
 {
 	// If multiple windows, just present them all
-	for (auto window : m_windowRenderContexts)
+	for (auto& renderContext : m_windowRenderContexts)
 	{
-		ASSERT_OR_DIE(window.first, "Renderer::Present - at least one Window is null")
-		window.second.m_swapChain->Present(0, 0);
+		renderContext.second.m_swapChain->Present(0, 0);
 	}
 }
 
@@ -673,7 +672,23 @@ WindowRenderContext& Renderer::GetCurrentWindowRenderContext()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+WindowRenderContext const& Renderer::GetCurrentWindowRenderContext() const
+{
+	return m_windowRenderContexts.at(m_currentWindow);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 WindowRenderContext& Renderer::GetWindowRenderContext(Window* window)
+{
+	return m_windowRenderContexts.at(window);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+WindowRenderContext const& Renderer::GetWindowRenderContext(Window* window) const
 {
 	return m_windowRenderContexts.at(window);
 }
