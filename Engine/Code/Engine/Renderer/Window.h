@@ -70,9 +70,6 @@ public:
     bool GiveFocus();
     void SetHasFocus(bool hasFocus);
 
-    static Window* GetCurrentlyFocusedWindow();
-    static Window* GetWindowByHandle(void* handle /*HWND*/);
-
 private:
 
     void CreateMainWindow();
@@ -94,8 +91,6 @@ public:
     WindowConfig const m_config;
 
 protected:
-
-    static std::vector<Window*> s_windows;
     
     IntVec2 m_dimensions;
 

@@ -19,11 +19,6 @@ Window* g_window = nullptr;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::vector<Window*> Window::s_windows;
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK SharedWindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam);
 
@@ -39,7 +34,6 @@ Window::Window(WindowConfig const& config) : EngineSubsystem("Window"), m_config
 //----------------------------------------------------------------------------------------------------------------------
 void Window::Startup()
 {
-    s_windows.push_back(this);
     CreateMainWindow();
     GiveFocus();
 }
@@ -62,14 +56,6 @@ void Window::Shutdown()
         DestroyWindow((HWND) m_windowHandle);
         m_windowHandle = nullptr;
         m_displayContext = nullptr;
-    }
-    for (auto it = s_windows.begin(); it != s_windows.end(); ++it)
-    {
-        if (*it == this)
-        {
-            s_windows.erase(it);
-            break;
-        }
     }
 }
 
@@ -214,41 +200,6 @@ void Window::SetHasFocus(bool hasFocus)
     {
         SetWindowTitle(baseTitle);
     }
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Window* Window::GetCurrentlyFocusedWindow()
-{
-    for (Window*& window : s_windows)
-    {
-        if (window->m_hasFocus)
-        {
-            return window;
-        }
-    }
-    return nullptr;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Window* Window::GetWindowByHandle(void* handle)
-{
-    if (handle == nullptr)
-    {
-        return nullptr;
-    }
-
-    for (Window* const& window : s_windows)
-    {
-        if (window->m_windowHandle == handle)
-        {
-            return window;
-        }
-    }
-    return nullptr;
 }
 
 
