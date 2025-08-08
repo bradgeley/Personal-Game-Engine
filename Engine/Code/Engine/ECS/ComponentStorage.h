@@ -100,14 +100,17 @@ public:
 		return &m_data[eid];
 	}
 
-	virtual void			Destroy(EntityID)						override
+	virtual void			Destroy(EntityID eid)						override
 	{
-		// pretend it doesn't exist (from admin side)
+		m_data[eid].~CType();
 	}
 
 	virtual void			Clear()									override
 	{
-		// pretend it doesn't exist (from admin side)
+		for (CType& component : m_data)
+		{
+			component.~CType();
+		}
 	}
 
 	CType& operator [](EntityID id) { return m_data[id]; }
