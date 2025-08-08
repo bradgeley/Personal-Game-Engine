@@ -185,7 +185,10 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
         {
             continue;
         }
-        if (currentChunk->m_consideredCells.Get(currentLocalTileCoords))
+
+        int currentIndex = currentChunk->m_gradient.GetIndexForCoords(currentLocalTileCoords);
+
+        if (currentChunk->m_consideredCells.Get(currentIndex))
         {
             continue;
         }
@@ -193,7 +196,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
         {
             continue;
         }
-        currentChunk->m_consideredCells.Set(currentLocalTileCoords, true);
+        currentChunk->m_consideredCells.Set(currentIndex);
 
         for (IntVec2 const& neighborOffset : neighborOffsets)
         {
@@ -203,7 +206,8 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
             {
                 continue;
             }
-            if (neighborChunk->m_consideredCells.Get(neighborWorldCoords.m_localTileCoords) == true)
+            int neighborLocalTileIndex = neighborChunk->m_gradient.GetIndexForCoords(neighborWorldCoords.m_localTileCoords);
+            if (neighborChunk->m_consideredCells.Get(neighborLocalTileIndex) == true)
             {
                 continue;
             }
@@ -297,8 +301,10 @@ void SFlowField::GenerateGradient(FlowField& flowField)
         FlowGenerationCoords currentWorldCoords = flowField.m_openList.top();
         flowField.m_openList.pop();
 
+
         FlowFieldChunk* currentChunk = flowField.m_activeFlowFieldChunks.at(currentWorldCoords.m_chunkCoords);
-        if (currentChunk->m_consideredCells.Get(currentWorldCoords.m_localTileCoords))
+        int currentIndex = currentChunk->m_gradient.GetIndexForCoords(currentWorldCoords.m_localTileCoords);
+        if (currentChunk->m_consideredCells.Get(currentIndex))
         {
             continue;
         }
@@ -306,7 +312,7 @@ void SFlowField::GenerateGradient(FlowField& flowField)
         {
             continue;
         }
-        currentChunk->m_consideredCells.Set(currentWorldCoords.m_localTileCoords, true);
+        currentChunk->m_consideredCells.Set(currentIndex);
 
         float currentTileDistance = currentChunk->m_distanceField.Get(currentWorldCoords.m_localTileCoords);
 
@@ -342,7 +348,8 @@ void SFlowField::GenerateGradient(FlowField& flowField)
                 numNeighborsConsideredInDir.y += 1.f;
             }
 
-            if (neighborChunk->m_consideredCells.Get(neighborWorldCoords.m_localTileCoords) == false)
+            int neighborIndex = neighborChunk->m_gradient.GetIndexForCoords(neighborWorldCoords.m_localTileCoords);
+            if (neighborChunk->m_consideredCells.Get(neighborIndex) == false)
             {
                 flowField.m_openList.push({ neighborWorldCoords.m_chunkCoords, neighborWorldCoords.m_localTileCoords, currentNeighborDistance });
             }

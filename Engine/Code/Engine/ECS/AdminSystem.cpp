@@ -128,8 +128,8 @@ int AdminSystem::NumEntities() const
 std::vector<System*> AdminSystem::GetSystems() const
 {
 	std::vector<System*> result;
-	result.reserve(100);
-	for (auto& subgraph : m_systemSubgraphs)
+	result.reserve(64);
+	for (SystemSubgraph const& subgraph : m_systemSubgraphs)
 	{
 		result.insert(result.end(), subgraph.m_systems.begin(), subgraph.m_systems.end());
 	}
@@ -141,9 +141,9 @@ std::vector<System*> AdminSystem::GetSystems() const
 //----------------------------------------------------------------------------------------------------------------------
 System* AdminSystem::GetSystemByName(std::string const& name) const
 {
-	for (auto& subgraph : m_systemSubgraphs)
+	for (SystemSubgraph const& subgraph : m_systemSubgraphs)
 	{
-		for (auto& system : subgraph.m_systems)
+		for (System* const& system : subgraph.m_systems)
 		{
 			if (system->GetName() == name)
 			{
@@ -367,7 +367,7 @@ EntityID AdminSystem::CreateEntityInPlace(int entityID)
 void AdminSystem::DestroyAllEntities()
 {
 	m_entities.SetAll(false);
-	for (auto& entityComp : m_entityComposition)
+	for (BitMask& entityComp : m_entityComposition)
 	{
 		entityComp = 0i64;
 	}

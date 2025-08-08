@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Math/FastGrid.h"
 #include "Engine/Math/AABB2.h"
+#include "Engine/DataStructures/BitArray.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "WorldSettings.h"
 
@@ -33,6 +34,6 @@ public:
 	FastGrid<uint8_t, s_worldChunkSizePowerOfTwo> m_costField;
 	FastGrid<float, s_worldChunkSizePowerOfTwo> m_distanceField;
 	FastGrid<Vec2, s_worldChunkSizePowerOfTwo> m_gradient;
-	FastGrid<bool, s_worldChunkSizePowerOfTwo> m_consideredCells;
+	BitArray<(1 << s_worldChunkSizePowerOfTwo) * (1 << s_worldChunkSizePowerOfTwo)> m_consideredCells;
 	VertexBuffer m_debugVBO;
 };

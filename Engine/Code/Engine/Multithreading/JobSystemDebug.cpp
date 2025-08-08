@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2023
 #include "JobSystemDebug.h"
 #include "Engine/Core/EngineCommon.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
@@ -8,6 +9,7 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Window.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/DataStructures/BitArray.h"
 
 
 
@@ -17,6 +19,16 @@ constexpr float WINDOW_HEIGHT = 100.f;
 constexpr float GRAPH_EDGE_PAD = 5.f;
 constexpr float GRAPH_EDGE_THICKNESS = 0.25f;
 constexpr float TITLE_FONT_SIZE = 4.f;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Graph drawing helper functions
+static Vec2 GetGraphOrigin();
+static AABB2 GetGraphOutline();
+static Vec2 GetThreadOrigin(int threadID, int numTotalThreads);
+static void AddVertsForJob(VertexBuffer& vbo, JobDebugInfo const& debugInfo);
+static void AddVertsForThreadText(VertexBuffer& vbo, JobDebugInfo const& debugInfo);
 
 
 
@@ -82,8 +94,7 @@ void JobSystemDebug::Render() const
     g_renderer->ClearScreen(Rgba8::LightGray);
 
     VertexBuffer buffer;
-    AddVertsForWireBox2D(buffer.GetMutableVerts(), AABB2(GRAPH_EDGE_PAD, GRAPH_EDGE_PAD,
-        WINDOW_WIDTH - GRAPH_EDGE_PAD, WINDOW_HEIGHT - GRAPH_EDGE_PAD), GRAPH_EDGE_THICKNESS, Rgba8::Black);
+    AddVertsForWireBox2D(buffer.GetMutableVerts(), GetGraphOutline(), GRAPH_EDGE_THICKNESS, Rgba8::Black);
     
     g_renderer->DrawVertexBuffer(&buffer);
 
@@ -151,4 +162,69 @@ bool JobSystemDebug::HandleKeyUp(NamedProperties& args)
         m_freezeLog = !m_freezeLog;
     }
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int JobSystemDebug::CountUniqueThreads() const
+{
+    BitArray<64> bitArray;
+    for (JobDebugInfo const& debug : m_frameDebugInfo)
+    {
+        ASSERT_OR_DIE(debug.m_threadID <= 64, "Too many threads for preallocated bit array, increase size or reduce thread count.");
+        bitArray.Set(debug.m_threadID);
+    }
+    return bitArray.CountSetBits();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 GetGraphOrigin()
+{
+    return GetGraphOutline().mins; 
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 GetGraphOutline()
+{
+    static AABB2 outline = AABB2(GRAPH_EDGE_PAD, GRAPH_EDGE_PAD, WINDOW_WIDTH - GRAPH_EDGE_PAD, WINDOW_HEIGHT - GRAPH_EDGE_PAD);
+    return outline;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 GetThreadOrigin(int threadID, int numTotalThreads)
+{
+    float thickness = GetGraphOutline().GetHeight() / (float) numTotalThreads;
+    return GetGraphOrigin() + Vec2(0.f, (float) threadID * thickness);
+}
+
+
+
+// Graph is constructed as follows:
+
+// |--------------------------------------------------------------------------------------|
+// | Thread N |                       |    |                                              |
+// | ...      |                  |    |                                                   |
+// | Thread 0 | |               |                                                         |
+// |--------------------------------------------------------------------------------------|
+//             ^ 0 ms                                            ~deltaSeconds ^ (padding)
+
+//----------------------------------------------------------------------------------------------------------------------
+void AddVertsForJob(VertexBuffer& vbo, JobDebugInfo const& debugInfo)
+{ 
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AddVertsForThreadText(VertexBuffer& vbo, JobDebugInfo const& debugInfo)
+{
+
 }

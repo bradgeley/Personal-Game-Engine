@@ -1,12 +1,13 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
+#include "Engine/Core/EngineSubsystem.h"
 #include <mutex>
 #include <vector>
-#include "Engine/Core/EngineSubsystem.h"
 
 
 
 class Camera;
+class System;
 class Window;
 struct NamedProperties;
 
@@ -22,7 +23,7 @@ extern class JobSystemDebug* g_jobSystemDebug;
 //----------------------------------------------------------------------------------------------------------------------
 struct JobSystemDebugConfig
 {
-    
+    std::vector<std::string> m_systemSubgraphNames;
 };
 
 
@@ -33,6 +34,7 @@ struct JobDebugInfo
     int     m_threadID      = -1;
     float   m_startTime     = 0.f;
     float   m_endTime       = 0.f;
+    System* m_system        = nullptr;
 };
 
 
@@ -56,6 +58,10 @@ public:
 public:
 
     bool HandleKeyUp(NamedProperties& args);
+
+private:
+
+    int CountUniqueThreads() const;
 
 protected:
 

@@ -22,6 +22,8 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+std::vector<std::string> g_framePhaseNames = { "PrePhysics", "Physics", "PostPhysics", "Render" }; // todo: write enum to string macro?
+
 enum class FramePhase : int
 {
     PrePhysics,
@@ -127,6 +129,7 @@ void Game::ConfigureEngine(Engine* engine)
     engine->RegisterSubsystem(g_jobSystem);
 
     JobSystemDebugConfig jobSysDebugConfig;
+    jobSysDebugConfig.m_systemSubgraphNames = g_framePhaseNames;
     g_jobSystemDebug = new JobSystemDebug(jobSysDebugConfig);
     engine->RegisterSubsystem(g_jobSystemDebug);
 }
@@ -138,7 +141,7 @@ void Game::ConfigureECS()
 {
     AdminSystemConfig ecsConfig;
     ecsConfig.m_maxDeltaSeconds = 0.1f;
-    ecsConfig.m_enableMultithreading = true;
+    //ecsConfig.m_enableMultithreading = true;
     ecsConfig.m_autoMultithreadingEntityThreshold = 1;
     g_ecs = new AdminSystem(ecsConfig);
 

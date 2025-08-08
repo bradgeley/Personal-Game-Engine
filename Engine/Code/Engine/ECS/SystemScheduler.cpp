@@ -2,9 +2,11 @@
 #include "SystemScheduler.h"
 #include "System.h"
 #include "Engine/Multithreading/JobSystem.h"
+#include "Engine/Multithreading/JobSystemDebug.h"
 #include "AdminSystem.h"
 #include "Config.h"
 #include "SystemSubgraph.h"
+#include "Engine/Core/Time.h"
 
 
 
@@ -233,7 +235,15 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 		}
 
 		SystemContext context(system, deltaSeconds);
+
+		JobDebugInfo debugInfo;
+		debugInfo.m_threadID = 0;
+		debugInfo.m_startTime = GetCurrentTimeSecondsF();
+
 		RunSystem(context);
+
+		debugInfo.m_endTime = GetCurrentTimeSecondsF();
+		g_jobSystemDebug->Log(debugInfo);
 	}
 }
 

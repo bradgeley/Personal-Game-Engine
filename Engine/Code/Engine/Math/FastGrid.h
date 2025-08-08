@@ -150,7 +150,7 @@ void FastGrid<T, Pow2>::Set(int x, int y, T const& value)
 template <typename T, uint8_t Pow2>
 void FastGrid<T, Pow2>::SetAll(T const& value)
 {
-    for (int i = 0; i < m_data.size(); ++i)
+    for (int i = 0; i < (int) m_data.size(); ++i)
     {
         m_data[i] = value;
     }

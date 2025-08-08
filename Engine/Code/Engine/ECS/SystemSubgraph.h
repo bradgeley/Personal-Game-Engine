@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
+#include <string>
 #include <vector>
 
 
@@ -16,7 +17,7 @@ typedef uint32_t SystemSubgraphID;
 // System Sub-graph
 //
 // A list of systems that always run together, in priority order between each other - or in a job graph with auto multi-
-// threading enabled.
+// threading enabled. Primarily useful for subgraphs that need to run on a time-step multiple times per frame, like physics.
 //
 class SystemSubgraph
 {
