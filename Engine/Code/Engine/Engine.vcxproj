@@ -212,7 +212,7 @@
     <ClCompile Include="Multithreading\JobGraph.cpp" />
     <ClCompile Include="Multithreading\JobID.cpp" />
     <ClCompile Include="Multithreading\JobSystem.cpp" />
-    <ClCompile Include="Multithreading\JobSystemDebug.cpp" />
+    <ClCompile Include="Multithreading\PerformanceDebugWindow.cpp" />
     <ClCompile Include="Multithreading\JobWorker.cpp" />
     <ClCompile Include="Performance\ScopedTimer.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
@@ -289,7 +289,7 @@
     <ClInclude Include="Multithreading\JobGraph.h" />
     <ClInclude Include="Multithreading\JobID.h" />
     <ClInclude Include="Multithreading\JobSystem.h" />
-    <ClInclude Include="Multithreading\JobSystemDebug.h" />
+    <ClInclude Include="Multithreading\PerformanceDebugWindow.h" />
     <ClInclude Include="Multithreading\JobWorker.h" />
     <ClInclude Include="Performance\ScopedTimer.h" />
     <ClInclude Include="Renderer\Camera.h" />

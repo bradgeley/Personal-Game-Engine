@@ -2,7 +2,7 @@
 #include "SystemScheduler.h"
 #include "System.h"
 #include "Engine/Multithreading/JobSystem.h"
-#include "Engine/Multithreading/JobSystemDebug.h"
+#include "Engine/Multithreading/PerformanceDebugWindow.h"
 #include "AdminSystem.h"
 #include "Config.h"
 #include "SystemSubgraph.h"
@@ -105,7 +105,7 @@ void SystemScheduler::ScheduleFrame(std::vector<SystemSubgraph> const& systems)
 void SystemScheduler::RunFrame(float deltaSeconds)
 {
 	FrameDebugInfo frameDebugInfo;
-	frameDebugInfo.m_frameNumber = g_jobSystemDebug->GetFrameNumber() + 1;
+	frameDebugInfo.m_frameNumber = g_performanceDebugWindow->GetFrameNumber() + 1;
 	frameDebugInfo.m_actualDeltaSeconds = deltaSeconds;
 	frameDebugInfo.m_ecsFrameStartTime = GetCurrentTimeSecondsF();
 	if (g_jobSystem && g_ecs->IsAutoMultithreadingActive())
@@ -117,7 +117,7 @@ void SystemScheduler::RunFrame(float deltaSeconds)
 		RunFrame_Singlethreaded(deltaSeconds);
 	}
 	frameDebugInfo.m_ecsFrameEndTime = GetCurrentTimeSecondsF();
-	g_jobSystemDebug->UpdateFrameDebugInfo(frameDebugInfo);
+	g_performanceDebugWindow->UpdateFrameDebugInfo(frameDebugInfo);
 }
 
 
@@ -190,7 +190,7 @@ void SystemScheduler::TryRunSubgraph(SystemSubgraph& subgraph, float deltaSecond
 void RunSystem(SystemContext const& context)
 {
 	JobDebugInfo jobDebugInfo;
-	jobDebugInfo.m_threadID = context.m_system->GetGlobalPriority();
+	jobDebugInfo.m_rowIndex = context.m_system->GetGlobalPriority();
 	jobDebugInfo.m_startTime = GetCurrentTimeSecondsF();
 
 	context.m_system->PreRun();
@@ -207,7 +207,7 @@ void RunSystem(SystemContext const& context)
 	
 	context.m_system->PostRun();
 	jobDebugInfo.m_endTime = GetCurrentTimeSecondsF();
-	g_jobSystemDebug->Log(jobDebugInfo);
+	g_performanceDebugWindow->Log(jobDebugInfo);
 }
 
 
@@ -249,13 +249,13 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 		SystemContext context(system, deltaSeconds);
 
 		JobDebugInfo debugInfo;
-		debugInfo.m_threadID = system->GetGlobalPriority();
+		debugInfo.m_rowIndex = system->GetGlobalPriority();
 		debugInfo.m_startTime = GetCurrentTimeSecondsF();
 
 		RunSystem(context);
 
 		debugInfo.m_endTime = GetCurrentTimeSecondsF();
-		g_jobSystemDebug->Log(debugInfo);
+		g_performanceDebugWindow->Log(debugInfo);
 	}
 }
 

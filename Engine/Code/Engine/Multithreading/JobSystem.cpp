@@ -2,10 +2,11 @@
 #include "Engine/Multithreading/JobSystem.h"
 #include "JobDependencies.h"
 #include "JobGraph.h"
-#include "JobSystemDebug.h"
+#include "PerformanceDebugWindow.h"
 #include "JobWorker.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/Time.h"
 
 
@@ -265,6 +266,8 @@ Job* JobSystem::PopFirstAvailableJob(bool blocking)
 //----------------------------------------------------------------------------------------------------------------------
 void JobSystem::WorkerLoop_ExecuteJob(JobWorker* worker, Job* job)
 {
+    UNUSED(worker)
+
     #ifdef _DEBUG
         AddJobToInProgressQueue(job);
     #endif

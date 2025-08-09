@@ -3,6 +3,7 @@
 #include "EngineCommon.h"
 #include "EngineSubsystem.h"
 #include "Engine/Performance/ScopedTimer.h"
+#include "Engine/Performance/PerformanceDebugWindow.h"
 #include "Engine/Core/StringUtils.h"
 
 
@@ -38,7 +39,7 @@ void Engine::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::BeginFrame()
 {
-    for (auto& subsystem : m_subsystems)
+    for (EngineSubsystem*& subsystem : m_subsystems)
     {
         if (subsystem && subsystem->IsEnabled())
         {
@@ -52,7 +53,7 @@ void Engine::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::Update(float deltaSeconds)
 {
-    for (auto& subsystem : m_subsystems)
+    for (EngineSubsystem*& subsystem : m_subsystems)
     {
         if (subsystem && subsystem->IsEnabled())
         {

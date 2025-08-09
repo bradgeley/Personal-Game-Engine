@@ -1,5 +1,5 @@
 ﻿// Bradley Christensen - 2023
-#include "JobSystemDebug.h"
+#include "PerformanceDebugWindow.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Renderer/Camera.h"
@@ -40,12 +40,12 @@ static Vec2 GetThreadOrigin(int threadID, int numTotalThreads);
 //----------------------------------------------------------------------------------------------------------------------
 // THE JOB SYSTEM DEBUG
 //
-JobSystemDebug* g_jobSystemDebug = nullptr;
+PerformanceDebugWindow* g_performanceDebugWindow = nullptr;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-JobSystemDebug::JobSystemDebug(JobSystemDebugConfig const& config) : m_config(config)
+PerformanceDebugWindow::PerformanceDebugWindow(PerformanceDebugWindowConfig const& config) : m_config(config)
 {
     
 }
@@ -53,12 +53,12 @@ JobSystemDebug::JobSystemDebug(JobSystemDebugConfig const& config) : m_config(co
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::Startup()
+void PerformanceDebugWindow::Startup()
 {
     WindowConfig windowConfig;
     windowConfig.m_clientAspect = 1.5f;
     windowConfig.m_windowScale = 0.5f;
-    windowConfig.m_windowTitle = "Job System Debug Window";
+    windowConfig.m_windowTitle = "Performance Debug Window";
     m_window = new Window(windowConfig);
     m_window->Startup();
 
@@ -67,24 +67,25 @@ void JobSystemDebug::Startup()
     m_camera = new Camera();
     m_camera->SetOrthoBounds(Vec3(0.f, 0.f, 0.f), Vec3(WINDOW_WIDTH, WINDOW_HEIGHT, 1.f));
 
-    m_window->m_keyUpEvent.SubscribeMethod(this, &JobSystemDebug::HandleKeyUp);
+    m_window->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::BeginFrame()
+void PerformanceDebugWindow::BeginFrame()
 {
+    std::unique_lock lock(m_perfWindowMutex);
     if (!m_freezeLog)
     {
-        m_jobDebugLog.clear();
+        m_perfItemData.clear();
     }
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::Update(float deltaSeconds)
+void PerformanceDebugWindow::Update(float deltaSeconds)
 {
     UNUSED(deltaSeconds)
 }
@@ -92,7 +93,7 @@ void JobSystemDebug::Update(float deltaSeconds)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::Render() const
+void PerformanceDebugWindow::Render() const
 {
     g_renderer->BeginWindow(m_window);
     g_renderer->BeginCameraAndWindow(m_camera, m_window);
@@ -100,9 +101,9 @@ void JobSystemDebug::Render() const
 
     VertexBuffer buffer;
     AddVertsForWireBox2D(buffer.GetMutableVerts(), GetGraphOutline(), GRAPH_EDGE_THICKNESS, Rgba8::Black);
-    for (JobDebugInfo const& jobDebug : m_jobDebugLog)
+    for (PerfItemData const& perfData : m_perfItemData)
     {
-        AddVertsForJob(buffer, jobDebug);
+        AddVertsForData(buffer, perfData);
     }
     
     g_renderer->DrawVertexBuffer(&buffer);
@@ -112,13 +113,13 @@ void JobSystemDebug::Render() const
     font->AddVertsForAlignedText2D(textBuffer.GetMutableVerts(), Vec2(WINDOW_WIDTH * 0.5f, WINDOW_HEIGHT - (0.5f * GRAPH_EDGE_PAD)),
         Vec2(0.f, 0.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
 
-    float frameSeconds = m_frameDebugInfo.m_actualDeltaSeconds;
-    std::string frameCounterText = StringF("Frame:(%i) FPS(%.2f) Seconds(%.2fms) Draw(%i)", m_frameDebugInfo.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
+    float frameSeconds = m_perfFrameData.m_actualDeltaSeconds;
+    std::string frameCounterText = StringF("Frame:(%i) FPS(%.2f) Seconds(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
     font->AddVertsForAlignedText2D(textBuffer.GetMutableVerts(), GetGraphOutline().maxs, Vec2(-1.f, 1.f), TITLE_FONT_SIZE * 0.5f, frameCounterText, Rgba8::Black);
 
-    for (JobDebugInfo const& jobDebug : m_jobDebugLog)
+    for (PerfItemData const& perfData : m_perfItemData)
     {
-        AddVertsForThreadText(textBuffer, jobDebug);
+        AddVertsForRowText(textBuffer, perfData);
     }
     
     font->SetRendererState();
@@ -128,14 +129,14 @@ void JobSystemDebug::Render() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::EndFrame()
+void PerformanceDebugWindow::EndFrame()
 {
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::Shutdown()
+void PerformanceDebugWindow::Shutdown()
 {
     m_window->Shutdown();
     delete m_window;
@@ -148,53 +149,49 @@ void JobSystemDebug::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::Log(JobDebugInfo const& info)
+void PerformanceDebugWindow::LogData(PerfItemData const& info)
 {
-    std::unique_lock lock(m_logMutex);
+    std::unique_lock lock(m_perfWindowMutex);
     if (!m_freezeLog)
     {
-        m_jobDebugLog.emplace_back(info);
+        m_perfItemData.emplace_back(info);
     }
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::UpdateFrameDebugInfo(FrameDebugInfo const& info)
+void PerformanceDebugWindow::UpdatePerfWindowFrameData(PerfFrameData const& info)
 {
     if (!m_freezeLog)
     {
-        m_frameDebugInfo = info;
+        m_perfFrameData = info;
     }
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int JobSystemDebug::GetFrameNumber() const
+int PerformanceDebugWindow::GetFrameNumber() const
 {
-    return m_frameDebugInfo.m_frameNumber;
+    return m_perfFrameData.m_frameNumber;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool JobSystemDebug::HandleKeyUp(NamedProperties& args)
+bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
 {
     char character = (char) args.Get("Key", -1);
     if (character == 'F')
     {
         if (m_freezeLog)
         {
-            g_devConsole->LogSuccess("Unfroze job system debug.");
+            g_devConsole->LogSuccess("Unfroze performance debug window.");
         }
         else
         {
-            g_devConsole->LogSuccess("Froze job system debug.");
-            for (JobDebugInfo const& line : m_jobDebugLog)
-            {
-                g_devConsole->LogWarningF("Thread %i: start(%f) end(%f)", line.m_threadID, line.m_startTime, line.m_endTime);
-            }
+            g_devConsole->LogSuccess("Froze performance debug window.");
         }
         m_freezeLog = !m_freezeLog;
     }
@@ -204,13 +201,14 @@ bool JobSystemDebug::HandleKeyUp(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int JobSystemDebug::CountUniqueThreads() const
+int PerformanceDebugWindow::CountUniqueThreads() const
 {
-    BitArray<128> bitArray;
-    for (JobDebugInfo const& debug : m_jobDebugLog)
+    constexpr int bitArraySize = 128;
+    BitArray<bitArraySize> bitArray;
+    for (PerfItemData const& debug : m_perfItemData)
     {
-        ASSERT_OR_DIE(debug.m_threadID <= 64, "Too many threads for preallocated bit array, increase size or reduce thread count.");
-        bitArray.Set(debug.m_threadID);
+        ASSERT_OR_DIE(debug.m_perfRowIndex <= bitArraySize, "Too many threads for preallocated bit array, increase size or reduce thread count.");
+        bitArray.Set(debug.m_perfRowIndex);
     }
     return bitArray.CountSetBits();
 }
@@ -229,27 +227,27 @@ int JobSystemDebug::CountUniqueThreads() const
 //
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::AddVertsForJob(VertexBuffer& vbo, JobDebugInfo const& debugInfo) const
+void PerformanceDebugWindow::AddVertsForData(VertexBuffer& vbo, PerfItemData const& debugInfo) const
 {
     AABB2 jobBounds;
-    GetBoundsForJob(jobBounds, debugInfo);
-    Rgba8 systemTint = g_ecs->GetSystemByGlobalPriority(debugInfo.m_threadID)->GetDebugTint();
+    GetBoundsForData(jobBounds, debugInfo);
+    Rgba8 systemTint = g_ecs->GetSystemByGlobalPriority(debugInfo.m_perfRowIndex)->GetDebugTint();
     AddVertsForAABB2(vbo.GetMutableVerts(), jobBounds, systemTint);
 
     AABB2 threadBounds;
-    GetBoundsForThread(threadBounds, debugInfo);
+    GetBoundsForRow(threadBounds, debugInfo);
     AddVertsForWireBox2D(vbo.GetMutableVerts(), threadBounds, 0.1f, Rgba8::DarkGray);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::GetBoundsForJob(AABB2& out_jobBounds, JobDebugInfo const& debugInfo) const
+void PerformanceDebugWindow::GetBoundsForData(AABB2& out_jobBounds, PerfItemData const& debugInfo) const
 {
     AABB2 threadBounds;
-    GetBoundsForThread(threadBounds, debugInfo);
-    float jobStartFractionX = GetFractionWithin(debugInfo.m_startTime, m_frameDebugInfo.m_ecsFrameStartTime, m_frameDebugInfo.m_ecsFrameStartTime + m_frameDebugInfo.m_actualDeltaSeconds);
-    float jobEndFractionX = GetFractionWithin(debugInfo.m_endTime, m_frameDebugInfo.m_ecsFrameStartTime, m_frameDebugInfo.m_ecsFrameStartTime + m_frameDebugInfo.m_actualDeltaSeconds);
+    GetBoundsForRow(threadBounds, debugInfo);
+    float jobStartFractionX = GetFractionWithin(debugInfo.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+    float jobEndFractionX = GetFractionWithin(debugInfo.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
     float jobStartX = jobStartFractionX * threadBounds.GetWidth();
     float jobEndX = jobEndFractionX * threadBounds.GetWidth();
     Vec2 jobMins = Vec2(threadBounds.mins.x + jobStartX, threadBounds.mins.y);
@@ -263,10 +261,10 @@ void JobSystemDebug::GetBoundsForJob(AABB2& out_jobBounds, JobDebugInfo const& d
 
 
 
-void JobSystemDebug::GetBoundsForThread(AABB2& out_threadBounds, JobDebugInfo const& debugInfo) const
+void PerformanceDebugWindow::GetBoundsForRow(AABB2& out_threadBounds, PerfItemData const& debugInfo) const
 {
     int numThreads = CountUniqueThreads();
-    Vec2 threadMins = GetThreadOrigin(debugInfo.m_threadID, numThreads);
+    Vec2 threadMins = GetThreadOrigin(debugInfo.m_perfRowIndex, numThreads);
     Vec2 threadMaxs = threadMins + Vec2(GetGraphOutline().GetWidth(), GetGraphOutline().GetHeight() / (float) numThreads);
     out_threadBounds = AABB2(threadMins, threadMaxs);
 }
@@ -274,13 +272,13 @@ void JobSystemDebug::GetBoundsForThread(AABB2& out_threadBounds, JobDebugInfo co
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void JobSystemDebug::AddVertsForThreadText(VertexBuffer& vbo, JobDebugInfo const& debugInfo) const
+void PerformanceDebugWindow::AddVertsForRowText(VertexBuffer& vbo, PerfItemData const& debugInfo) const
 {
     AABB2 threadBounds;
-    GetBoundsForThread(threadBounds, debugInfo);
+    GetBoundsForRow(threadBounds, debugInfo);
 
     Font* font = g_renderer->GetDefaultFont();
-    System* system = g_ecs->GetSystemByGlobalPriority(debugInfo.m_threadID);
+    System* system = g_ecs->GetSystemByGlobalPriority(debugInfo.m_perfRowIndex);
     font->AddVertsForAlignedText2D(vbo.GetMutableVerts(), Vec2(threadBounds.GetCenterLeft().x - 2.5, threadBounds.GetCenterLeft().y), Vec2(-1, 0), threadBounds.GetHeight() * 0.5f, system->GetName());
 }
 

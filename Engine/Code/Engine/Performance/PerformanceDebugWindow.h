@@ -17,24 +17,36 @@ struct AABB2;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// THE Job System Debug
+// THE Performance Debug Window (System)
 //
-extern class JobSystemDebug* g_jobSystemDebug;
+extern class PerformanceDebugWindow* g_performanceDebugWindow;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct JobSystemDebugConfig
+struct PerformanceDebugWindowConfig
 {
-    std::vector<std::string>    m_systemSubgraphNames;
+
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct JobDebugInfo
+// A row of the performance graph, can be either a thread or something like an ecs system, or group of systems.
+struct PerfRow
 {
-    int     m_threadID      = -1;
+    std::string m_name;
+    Rgba8       m_nameTint;
+    Rgba8       m_rowDataTint;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// A single point of data, drawn in a PerfRow
+struct PerfItemData
+{
+    int     m_perfRowIndex  = -1;
     float   m_startTime     = 0.f;
     float   m_endTime       = 0.f;
 };
@@ -42,22 +54,23 @@ struct JobDebugInfo
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct FrameDebugInfo
+// Data about the frame as a whole
+struct PerfFrameData
 {
     int     m_frameNumber           = 0;
-    float   m_ecsFrameStartTime        = 0.f;
-    float   m_ecsFrameEndTime          = 0.f;
+    float   m_engineFrameStartTime  = 0.f;
+    float   m_engineFrameEndTime    = 0.f;
     float   m_actualDeltaSeconds    = 0.f;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class JobSystemDebug : public EngineSubsystem
+class PerformanceDebugWindow : public EngineSubsystem
 {
 public:
     
-    explicit JobSystemDebug(JobSystemDebugConfig const& config);
+    explicit PerformanceDebugWindow(PerformanceDebugWindowConfig const& config);
 
     void Startup() override;
     void BeginFrame() override;
@@ -66,8 +79,8 @@ public:
     void EndFrame() override;
     void Shutdown() override;
 
-    void Log(JobDebugInfo const& info);
-    void UpdateFrameDebugInfo(FrameDebugInfo const& info);
+    void LogData(PerfItemData const& info);
+    void UpdatePerfWindowFrameData(PerfFrameData const& info);
     int  GetFrameNumber() const;
 
 public:
@@ -77,19 +90,19 @@ public:
 private:
 
     int CountUniqueThreads() const;
-    void AddVertsForJob(VertexBuffer& vbo, JobDebugInfo const& debugInfo) const;
-    void GetBoundsForJob(AABB2& out_jobBounds, JobDebugInfo const& debugInfo) const;
-    void GetBoundsForThread(AABB2& out_threadBounds, JobDebugInfo const& debugInfo) const;
-    void AddVertsForThreadText(VertexBuffer& vbo, JobDebugInfo const& debugInfo) const;
+    void AddVertsForData(VertexBuffer& vbo, PerfItemData const& debugInfo) const;
+    void GetBoundsForData(AABB2& out_jobBounds, PerfItemData const& debugInfo) const;
+    void GetBoundsForRow(AABB2& out_threadBounds, PerfItemData const& debugInfo) const;
+    void AddVertsForRowText(VertexBuffer& vbo, PerfItemData const& debugInfo) const;
 
 protected:
 
-    JobSystemDebugConfig m_config;
+    PerformanceDebugWindowConfig m_config;
 
-    std::mutex m_logMutex;
-    std::vector<JobDebugInfo> m_jobDebugLog;
+    std::mutex m_perfWindowMutex;
+    std::vector<PerfItemData> m_perfItemData;
 
-    FrameDebugInfo m_frameDebugInfo;
+    PerfFrameData m_perfFrameData;
 
     Window* m_window = nullptr;
     Camera* m_camera = nullptr;

@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
+#include "Game/Framework/EngineBuildPreferences.h"
 #include <vector>
 
 

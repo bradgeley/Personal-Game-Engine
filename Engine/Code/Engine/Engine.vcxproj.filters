@@ -148,9 +148,6 @@
     <ClCompile Include="Multithreading\JobDependencies.cpp">
       <Filter>Multithreading</Filter>
     </ClCompile>
-    <ClCompile Include="Multithreading\JobSystemDebug.cpp">
-      <Filter>Multithreading</Filter>
-    </ClCompile>
     <ClCompile Include="ECS\GroupIter.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
@@ -210,6 +207,9 @@
     </ClCompile>
     <ClCompile Include="Core\BinaryUtils.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Multithreading\PerformanceDebugWindow.cpp">
+      <Filter>Performance</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -378,9 +378,6 @@
     <ClInclude Include="Multithreading\JobDependencies.h">
       <Filter>Multithreading</Filter>
     </ClInclude>
-    <ClInclude Include="Multithreading\JobSystemDebug.h">
-      <Filter>Multithreading</Filter>
-    </ClInclude>
     <ClInclude Include="ECS\GroupIter.h">
       <Filter>ECS</Filter>
     </ClInclude>
@@ -449,6 +446,9 @@
     </ClInclude>
     <ClInclude Include="Core\FileUtils.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Multithreading\PerformanceDebugWindow.h">
+      <Filter>Performance</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -12,7 +12,7 @@
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
-#include "Engine/Multithreading/JobSystemDebug.h"
+#include "Engine/Multithreading/PerformanceDebugWindow.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "EntityDef.h"
 #include "TileDef.h"
@@ -102,7 +102,7 @@ void Game::ConfigureEngine(Engine* engine)
     engine->RegisterSubsystem(g_eventSystem);
 
     WindowConfig windowConfig;
-    windowConfig.m_windowTitle = "Louganis";
+    windowConfig.m_windowTitle = "Project Louganis";
     windowConfig.m_clientAspect = 2.f;
     windowConfig.m_windowScale = 0.95f;
     g_window = new Window(windowConfig);
@@ -129,10 +129,9 @@ void Game::ConfigureEngine(Engine* engine)
     g_jobSystem = new JobSystem(jobSysConfig);
     engine->RegisterSubsystem(g_jobSystem);
 
-    JobSystemDebugConfig jobSysDebugConfig;
-    jobSysDebugConfig.m_systemSubgraphNames = g_framePhaseNames;
-    g_jobSystemDebug = new JobSystemDebug(jobSysDebugConfig);
-    engine->RegisterSubsystem(g_jobSystemDebug);
+    PerformanceDebugWindowConfig perfDebugWindowConfig;
+    g_performanceDebugWindow = new PerformanceDebugWindow(perfDebugWindowConfig);
+    engine->RegisterSubsystem(g_performanceDebugWindow);
 }
 
 
