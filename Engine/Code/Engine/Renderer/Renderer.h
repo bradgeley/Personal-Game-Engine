@@ -106,10 +106,13 @@ public:
     WindowRenderContext& GetWindowRenderContext(Window* window);
     WindowRenderContext const& GetWindowRenderContext(Window* window) const;
 
+    int GetNumFrameDrawCalls() const;
+
 public:
 
     // Events
     bool DebugDrawVertexBuffers(NamedProperties& args);
+    bool ToggleVSync(NamedProperties& args);
 
 private:
 
@@ -163,6 +166,7 @@ private:
 private:
 
     RendererConfig const m_config;
+    RendererPerUserSettings m_perUserSettings;
 
     Shader* m_defaultShader = nullptr;
     Texture* m_defaultTexture = nullptr;
@@ -190,6 +194,8 @@ private:
     Camera const* m_currentCamera = nullptr;
     RendererSettings m_settings;
     RendererSettings m_dirtySettings;
+
+    int m_numFrameDrawCalls = 0;
 
 #if defined(_DEBUG)
     bool m_debugDrawVertexBuffers = false;

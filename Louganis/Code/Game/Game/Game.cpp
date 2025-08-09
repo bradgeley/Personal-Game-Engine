@@ -125,6 +125,7 @@ void Game::ConfigureEngine(Engine* engine)
     engine->RegisterSubsystem(g_input);
 
     JobSystemConfig jobSysConfig;
+    jobSysConfig.m_threadCount = 12;
     g_jobSystem = new JobSystem(jobSysConfig);
     engine->RegisterSubsystem(g_jobSystem);
 
@@ -141,7 +142,7 @@ void Game::ConfigureECS()
 {
     AdminSystemConfig ecsConfig;
     ecsConfig.m_maxDeltaSeconds = 0.1f;
-    //ecsConfig.m_enableMultithreading = true;
+    ecsConfig.m_enableMultithreading = false;
     ecsConfig.m_autoMultithreadingEntityThreshold = 1;
     g_ecs = new AdminSystem(ecsConfig);
 
@@ -179,9 +180,9 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SCamera>((int) FramePhase::Physics);
 
     // Render
+    g_ecs->RegisterSystem<SCamera>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);

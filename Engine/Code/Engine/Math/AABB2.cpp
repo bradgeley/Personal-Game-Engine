@@ -87,6 +87,20 @@ Vec2 AABB2::GetBottomRight() const
 
 
 
+Vec2 AABB2::GetCenterLeft() const
+{
+    return Vec2(mins.x, (maxs.y + mins.y) * 0.5f);
+}
+
+
+
+Vec2 AABB2::GetCenterRight() const
+{
+    return Vec2(maxs.x, (maxs.y + mins.y) * 0.5f);
+}
+
+
+
 Vec2 AABB2::GetNearestPoint(Vec2 const& point) const
 {
     Vec2 result = point;

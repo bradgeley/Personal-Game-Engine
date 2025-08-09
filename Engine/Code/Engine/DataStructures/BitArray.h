@@ -1,7 +1,7 @@
 // Bradley Christensen - 2023
 #pragma once
+#include "Engine/Core/BinaryUtils.h"
 #include <cstdint>
-#include <intrin.h>
 #include <string.h> // for memset
 
 
@@ -63,6 +63,7 @@ private:
 
 	static inline int GetRowNumber(int index) { return index >> BIT_ARRAY_INDEX_TO_ROW_SHIFT; }
 	static inline size_t GetByteMask(int index) { return size_t(1) << (index & BIT_ARRAY_BYTE_MASK_LOWER_BITS); } // same as: 1 << (index % NUM_BITS_IN_SIZET)
+	static int BitScanForward(size_t row);
 
 private:
 
@@ -164,23 +165,16 @@ void BitArray<t_size>::SetAll(bool isSet)
 template<unsigned int t_size>
 int BitArray<t_size>::GetFirstUnsetIndex() const
 {
-	bool foundUnsetBit = false;
-	unsigned long firstUnsetBitIndex = 0;
-
 	for (int currentRowIndex = 0; currentRowIndex < s_numRows; ++currentRowIndex)
 	{
 		size_t& row = m_data[currentRowIndex];
 
-		#if defined(_M_X64) || defined(_WIN64)
-			foundUnsetBit = _BitScanForward64(&firstUnsetBitIndex, static_cast<unsigned long long>(~row));
-		#else
-			foundUnsetBit = _BitScanForward(&firstUnsetBitIndex, static_cast<unsigned long>(~row));
-		#endif
+		int firstUnsetBit = BinaryUtils::FirstUnsetBit(row);
 
-		if (foundUnsetBit && firstUnsetBitIndex < t_size) // one of the trailing 0's could be returned here, so check for that
+		if (firstUnsetBit != -1)
 		{
-			return firstUnsetBitIndex;
-		}
+			return firstUnsetBit;
+	}
 	}
 	return -1;
 }
@@ -191,22 +185,15 @@ int BitArray<t_size>::GetFirstUnsetIndex() const
 template<unsigned int t_size>
 int BitArray<t_size>::GetFirstSetIndex() const
 {
-	bool foundSetBit = false;
-	unsigned long firstSetBitIndex = 0;
-
 	for (int currentRowIndex = 0; currentRowIndex < s_numRows; ++currentRowIndex)
 	{
 		size_t& row = m_data[currentRowIndex];
 
-		#if defined(_M_X64) || defined(_WIN64)
-			foundSetBit = _BitScanForward64(&firstSetBitIndex, static_cast<unsigned long long>(row));
-		#else
-			foundSetBit = _BitScanForward(&firstSetBitIndex, static_cast<unsigned long>(row));
-		#endif
+		int firstSetBit = BinaryUtils::FirstSetBit(row);
 
-		if (foundSetBit) // no need to check trailing 0's, as they are not set
+		if (firstSetBit != -1)
 		{
-			return firstSetBitIndex;
+			return firstSetBit;
 		}
 	}
 	return -1;
@@ -220,9 +207,6 @@ int BitArray<t_size>::GetNextUnsetIndex(int queryIndex) const
 {
 	int firstRowIndex = GetRowNumber(queryIndex);
 	int firstRowStartingBitIndex = queryIndex - BIT_ARRAY_NUM_BITS_PER_ROW * firstRowIndex; // After the first row, we start from index 0 in each subsequent row.
-
-	bool foundUnsetbit = false;
-	unsigned long firstUnsetBitIndex = 0;
 
 	for (int currentRowIndex = firstRowIndex; currentRowIndex < (int) s_numRows; ++currentRowIndex)
 	{
@@ -241,15 +225,11 @@ int BitArray<t_size>::GetNextUnsetIndex(int queryIndex) const
 			rowExcludingFirstRowLowerBits &= firstRowMask; // zero out the LSB, only for that first row, so our bitscan ignores them if set
 		}
 
-		#if defined(_M_X64) || defined(_WIN64)
-			foundUnsetbit = _BitScanForward64(&firstUnsetBitIndex, static_cast<unsigned long long>(~rowExcludingFirstRowLowerBits));
-		#else
-			foundUnsetbit = _BitScanForward(&firstUnsetBitIndex, static_cast<unsigned long>(~rowExcludingFirstRowLowerBits));
-		#endif
+		int firstUnsetBit = BinaryUtils::FirstUnsetBit(rowExcludingFirstRowLowerBits);
 
-		if (foundUnsetbit)
+		if (firstUnsetBit != -1)
 		{
-			return firstUnsetBitIndex;
+			return firstUnsetBit;
 		}
 	}
 	return -1;
@@ -279,9 +259,6 @@ int BitArray<t_size>::GetNextSetIndex(int queryIndex) const
 	int firstRowIndex = GetRowNumber(queryIndex);
 	int firstRowStartingBitIndex = queryIndex - BIT_ARRAY_NUM_BITS_PER_ROW * firstRowIndex; // After the first row, we start from index 0 in each subsequent row.
 
-	bool foundSetBit = false;
-	unsigned long firstSetBitIndex = 0;
-
 	for (int currentRowIndex = GetRowNumber(queryIndex); currentRowIndex < s_numRows; ++currentRowIndex)
 	{
 		size_t const& row = m_data[currentRowIndex];
@@ -299,15 +276,11 @@ int BitArray<t_size>::GetNextSetIndex(int queryIndex) const
 			rowExcludingFirstRowLowerBits &= firstRowMask; // zero out the LSB, only for that first row, so our bitscan ignores them if set
 		}
 
-		#if defined(_M_X64) || defined(_WIN64)
-			foundSetBit = _BitScanForward64(&firstSetBitIndex, static_cast<unsigned long long>(rowExcludingFirstRowLowerBits));
-		#else
-			foundSetBit = _BitScanForward(&firstSetBitIndex, static_cast<unsigned long>(rowExcludingFirstRowLowerBits));
-		#endif
+		int firstSetBit = BinaryUtils::FirstSetBit(rowExcludingFirstRowLowerBits);
 
-		if (foundSetBit)
+		if (firstSetBit != -1)
 		{
-			return firstSetBitIndex;
+			return firstSetBit;
 		}
 	}
 	return -1;

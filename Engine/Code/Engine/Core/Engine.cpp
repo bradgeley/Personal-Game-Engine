@@ -2,6 +2,8 @@
 #include "Engine.h"
 #include "EngineCommon.h"
 #include "EngineSubsystem.h"
+#include "Engine/Performance/ScopedTimer.h"
+#include "Engine/Core/StringUtils.h"
 
 
 
@@ -69,7 +71,6 @@ void Engine::Render() const
         EngineSubsystem* const& subsystem = m_subsystems[i];
         if (subsystem && subsystem->IsEnabled())
         {
-            //ScopedTimer t(StringF("%s Render", subsystem->GetName().c_str()));
             subsystem->Render();
         }
     }

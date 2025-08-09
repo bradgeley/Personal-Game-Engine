@@ -6,7 +6,9 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Rgba8 const Rgba8::LightRed(255, 102, 102);
 Rgba8 const Rgba8::Red(255, 0, 0);
+Rgba8 const Rgba8::DarkRed(139, 0, 0);
 Rgba8 const Rgba8::DarkBlue(0, 0, 150);
 Rgba8 const Rgba8::DarkOceanBlue(6, 66, 115);
 Rgba8 const Rgba8::Blue(0, 0, 255);
@@ -14,6 +16,7 @@ Rgba8 const Rgba8::LightBlue(51,255,255);
 Rgba8 const Rgba8::LightOceanBlue(29, 162, 216);
 Rgba8 const Rgba8::Cerulean(0,171,240);
 Rgba8 const Rgba8::Green(0, 255, 0);
+Rgba8 const Rgba8::PastelGreen(119, 221, 119);
 Rgba8 const Rgba8::Cyan(0, 255, 255);
 Rgba8 const Rgba8::DarkGreen(0, 127, 0);
 Rgba8 const Rgba8::Black(0, 0, 0);
@@ -27,6 +30,7 @@ Rgba8 const Rgba8::Gold(255, 127, 0);
 Rgba8 const Rgba8::Yellow(255, 255, 0);
 Rgba8 const Rgba8::Orange(255, 165, 0);
 Rgba8 const Rgba8::Magenta(255, 0, 255);
+Rgba8 const Rgba8::Brown(165, 42, 42);
 Rgba8 const Rgba8::Empty(0, 0, 0, 0);
 
 

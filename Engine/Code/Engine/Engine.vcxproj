@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="Core\BinaryUtils.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\EngineSubsystem.cpp" />
     <ClCompile Include="Core\ErrorUtils.cpp" />
@@ -232,6 +233,7 @@
   <ItemGroup>
     <ClInclude Include="..\ThirdParty\stb\stb_image.h" />
     <ClInclude Include="..\ThirdParty\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="Core\BinaryUtils.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\EngineCommon.h" />
     <ClInclude Include="Core\EngineSubsystem.h" />

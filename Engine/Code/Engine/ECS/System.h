@@ -2,6 +2,7 @@
 #pragma once
 #include "AdminSystem.h"
 #include "SystemContext.h"
+#include "Engine/Renderer/Rgba8.h"
 #include "Config.h"
 #include <string>
 #include <typeinfo>
@@ -32,7 +33,7 @@ class System
 
 public:
 
-	explicit System(std::string const& name = "Unnamed System");
+	explicit System(std::string const& name = "Unnamed System", Rgba8 const& debugTint = Rgba8::Magenta);
 	virtual ~System() = default;
 
 	virtual void Startup()											{}
@@ -43,11 +44,14 @@ public:
 
 	bool IsActive() const											{ return m_isActive; }
 	void SetActive(bool isActive)									{ m_isActive = isActive; }
-	void SetRunPrio(int prio)										{ m_priority = prio; }
-	int	 GetPriority() const										{ return m_priority; }
+	void SetLocalPriority(int localPriority)						{ m_localPriority = localPriority; }
+	void SetGlobalPriority(int globalPriority)						{ m_globalPriority = globalPriority; }
+	int	 GetLocalPriority() const									{ return m_localPriority; }
+	int	 GetGlobalPriority() const									{ return m_globalPriority; }
 	int	 GetSystemSplittingNumJobs() const							{ return m_systemSplittingNumJobs; }
 	void SetSystemSplittingNumJobs(int numThreads)					{ m_systemSplittingNumJobs = numThreads; }
 	std::string const& GetName() const								{ return m_name; }
+	Rgba8 const& GetDebugTint() const;
 
 	BitMask const& GetReadDependencies() const; 
 	BitMask const& GetWriteDependencies() const;
@@ -69,10 +73,12 @@ protected:
 protected:
 
 	std::string const	m_name						= "Unnamed System";
+	Rgba8				m_debugTint					= Rgba8::Magenta;
 	bool				m_isActive					= true;
 	int					m_systemSplittingNumJobs	= 1; // 0-1 means do not split the system
 
-	int					m_priority					= -1;
+	int					m_localPriority				= -1;
+	int					m_globalPriority			= -1;
 	BitMask				m_readDependenciesBitMask	= 0;
 	BitMask				m_writeDependenciesBitMask	= 0;
 };

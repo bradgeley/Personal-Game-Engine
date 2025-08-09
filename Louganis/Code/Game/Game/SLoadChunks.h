@@ -9,7 +9,7 @@ class SLoadChunks : public System
 {
 public:
 
-    SLoadChunks(std::string const& name = "LoadChunks") : System(name) {};
+    SLoadChunks(std::string const& name = "LoadChunks", Rgba8 const& debugTint = Rgba8::PastelGreen) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

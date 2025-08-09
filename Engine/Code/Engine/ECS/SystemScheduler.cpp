@@ -25,7 +25,7 @@ public:
 
 	explicit AutoMultithreadedRunSystemJob(SystemContext const& context) : m_context(context)
 	{
-		m_priority = context.m_system->GetPriority();
+		m_priority = context.m_system->GetLocalPriority();
 		m_jobDependencies.m_readDependencies = context.m_system->GetReadDependencies();
 		m_jobDependencies.m_writeDependencies = context.m_system->GetWriteDependencies();
 	}
@@ -51,7 +51,7 @@ public:
 
 	explicit SplitSystemJob(SystemContext const& context) : m_context(context)
 	{
-		m_priority = context.m_system->GetPriority();
+		m_priority = context.m_system->GetLocalPriority();
 		m_jobDependencies.m_readDependencies = context.m_system->GetReadDependencies();
 		m_jobDependencies.m_writeDependencies = context.m_system->GetWriteDependencies();
 	}
@@ -79,7 +79,7 @@ SystemScheduler::SystemScheduler(AdminSystem* admin) : g_ecs(admin)
 //----------------------------------------------------------------------------------------------------------------------
 static bool SystemPriorityComparator(System* a, System* b) 
 {
-	return (a->GetPriority()) < (b->GetPriority());
+	return (a->GetLocalPriority()) < (b->GetLocalPriority());
 }
 
 
@@ -104,6 +104,10 @@ void SystemScheduler::ScheduleFrame(std::vector<SystemSubgraph> const& systems)
 //----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::RunFrame(float deltaSeconds)
 {
+	FrameDebugInfo frameDebugInfo;
+	frameDebugInfo.m_frameNumber = g_jobSystemDebug->GetFrameNumber() + 1;
+	frameDebugInfo.m_actualDeltaSeconds = deltaSeconds;
+	frameDebugInfo.m_ecsFrameStartTime = GetCurrentTimeSecondsF();
 	if (g_jobSystem && g_ecs->IsAutoMultithreadingActive())
 	{
 		RunFrame_AutoMultithreaded(deltaSeconds);
@@ -112,6 +116,8 @@ void SystemScheduler::RunFrame(float deltaSeconds)
 	{
 		RunFrame_Singlethreaded(deltaSeconds);
 	}
+	frameDebugInfo.m_ecsFrameEndTime = GetCurrentTimeSecondsF();
+	g_jobSystemDebug->UpdateFrameDebugInfo(frameDebugInfo);
 }
 
 
@@ -131,7 +137,7 @@ void SystemScheduler::RunSubgraph(SystemSubgraph const& subgraph, float deltaSec
 //----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::RunFrame_AutoMultithreaded(float deltaSeconds)
 {
-	for (auto& subgraph : m_systemSubgraphs)
+	for (SystemSubgraph& subgraph : m_systemSubgraphs)
 	{
 		TryRunSubgraph(subgraph, deltaSeconds, true);
 	}
@@ -142,7 +148,7 @@ void SystemScheduler::RunFrame_AutoMultithreaded(float deltaSeconds)
 //----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::RunFrame_Singlethreaded(float deltaSeconds)
 {
-	for (auto& subgraph : m_systemSubgraphs)
+	for (SystemSubgraph& subgraph : m_systemSubgraphs)
 	{
 		TryRunSubgraph(subgraph, deltaSeconds, false);
 	}
@@ -183,6 +189,10 @@ void SystemScheduler::TryRunSubgraph(SystemSubgraph& subgraph, float deltaSecond
 //----------------------------------------------------------------------------------------------------------------------
 void RunSystem(SystemContext const& context)
 {
+	JobDebugInfo jobDebugInfo;
+	jobDebugInfo.m_threadID = context.m_system->GetGlobalPriority();
+	jobDebugInfo.m_startTime = GetCurrentTimeSecondsF();
+
 	context.m_system->PreRun();
 	
 	int systemSplittingNumJobs = context.m_system->GetSystemSplittingNumJobs();
@@ -196,6 +206,8 @@ void RunSystem(SystemContext const& context)
 	}
 	
 	context.m_system->PostRun();
+	jobDebugInfo.m_endTime = GetCurrentTimeSecondsF();
+	g_jobSystemDebug->Log(jobDebugInfo);
 }
 
 
@@ -227,7 +239,7 @@ void SplitSystem(SystemContext const& context, int numJobs)
 //
 void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph, float deltaSeconds) const
 {
-	for (auto& system : subgraph.m_systems)
+	for (System* const& system : subgraph.m_systems)
 	{
 		if (!system->IsActive())
 		{
@@ -237,7 +249,7 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 		SystemContext context(system, deltaSeconds);
 
 		JobDebugInfo debugInfo;
-		debugInfo.m_threadID = 0;
+		debugInfo.m_threadID = system->GetGlobalPriority();
 		debugInfo.m_startTime = GetCurrentTimeSecondsF();
 
 		RunSystem(context);

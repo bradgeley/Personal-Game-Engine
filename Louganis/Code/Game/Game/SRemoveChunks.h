@@ -9,7 +9,7 @@ class SRemoveChunks : public System
 {
 public:
 
-    SRemoveChunks(std::string const& name = "Remove Chunks") : System(name) {};
+    SRemoveChunks(std::string const& name = "Remove Chunks", Rgba8 const& debugTint = Rgba8::DarkRed) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

@@ -9,7 +9,7 @@ class SDebugRender : public System
 {
 public:
 
-    SDebugRender(std::string const& name = "Debug Render") : System(name) {};
+    SDebugRender(std::string const& name = "Debug Render", Rgba8 const& debugTint = Rgba8::Magenta) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

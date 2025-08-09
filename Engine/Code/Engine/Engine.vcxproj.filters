@@ -208,6 +208,9 @@
     <ClCompile Include="Performance\ScopedTimer.cpp">
       <Filter>Performance</Filter>
     </ClCompile>
+    <ClCompile Include="Core\BinaryUtils.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -235,9 +238,6 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\ErrorUtils.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\FileUtils.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\Image.h">
@@ -443,6 +443,12 @@
     </ClInclude>
     <ClInclude Include="Math\FastGrid.h">
       <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\BinaryUtils.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\FileUtils.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

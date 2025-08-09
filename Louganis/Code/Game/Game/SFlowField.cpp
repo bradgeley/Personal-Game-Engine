@@ -120,9 +120,9 @@ int SFlowField::DestroyStaleFlowFieldChunks()
             coordsToRemove.push_back(flowFieldChunk->GetChunkCoords());
         }
     }
-    for (auto& coords : coordsToRemove)
+    for (IntVec2 const& coords : coordsToRemove)
     {
-        auto& flowChunk = flowField.m_activeFlowFieldChunks[coords];
+        FlowFieldChunk*& flowChunk = flowField.m_activeFlowFieldChunks[coords];
         flowChunk->HardReset();
         delete flowChunk;
         flowField.m_activeFlowFieldChunks.erase(coords);
@@ -156,19 +156,18 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
     ScopedTimer timer("- Generate Distance Field");
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 
-    for (auto& chunkPair : flowField.m_activeFlowFieldChunks)
     {
-        FlowFieldChunk*& chunk = chunkPair.second;
-        for (int i = 0; i < chunk->m_distanceField.Count(); ++i)
+        ScopedTimer timer("- Seed Distance Field");
+        for (auto& chunkPair : flowField.m_activeFlowFieldChunks)
         {
-            WorldCoords currentWorldCoords(chunk->GetChunkCoords(), chunk->m_distanceField.GetCoordsForIndex(i));
-            if (chunk->m_distanceField.Get(i) == 0.f)
+            FlowFieldChunk*& chunk = chunkPair.second;
+            for (int i = 0; i < chunk->m_distanceField.Count(); ++i)
             {
-                flowField.m_openList.push({ chunk->GetChunkCoords(), currentWorldCoords.m_localTileCoords, 0.f });
-            }
-            else if (chunk->m_distanceField.IsOnEdge(currentWorldCoords.m_localTileCoords))
-            {
-                flowField.m_openList.push({ currentWorldCoords.m_chunkCoords, currentWorldCoords.m_localTileCoords, chunk->m_distanceField.Get(currentWorldCoords.m_localTileCoords) });
+                WorldCoords currentWorldCoords(chunk->GetChunkCoords(), chunk->m_distanceField.GetCoordsForIndex(i));
+                if (chunk->m_distanceField.Get(i) == 0.f)
+                {
+                    flowField.m_openList.push({ chunk->GetChunkCoords(), currentWorldCoords.m_localTileCoords, 0.f });
+                }
             }
         }
     }
@@ -186,7 +185,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
             continue;
         }
 
-        int currentIndex = currentChunk->m_gradient.GetIndexForCoords(currentLocalTileCoords);
+        int currentIndex = currentChunk->m_distanceField.GetIndexForCoords(currentLocalTileCoords);
 
         if (currentChunk->m_consideredCells.Get(currentIndex))
         {

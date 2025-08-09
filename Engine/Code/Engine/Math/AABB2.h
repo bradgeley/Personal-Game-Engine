@@ -32,6 +32,8 @@ public:
     float GetAspect() const;
     Vec2 GetTopLeft() const;
     Vec2 GetBottomRight() const;
+    Vec2 GetCenterLeft() const;
+    Vec2 GetCenterRight() const;
 
     // Geometric Queries
     Vec2 GetNearestPoint(Vec2 const& point) const;

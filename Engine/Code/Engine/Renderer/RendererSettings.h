@@ -113,3 +113,15 @@ struct RendererSettings
     DepthTest m_depthTest                   = DepthTest::LessOrEqual;
     bool m_writeDepth                       = false;
 };
+
+
+
+//------------------------------------------------------------------------------------------------------------
+// Renderer Per User Settings
+//
+// Settings that the user might set, such as Vsync enabled, filtering mode, etc.
+//
+struct RendererPerUserSettings
+{
+    bool m_vsyncEnabled = false;
+};

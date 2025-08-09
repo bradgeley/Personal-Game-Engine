@@ -9,7 +9,7 @@ class System;
 
 
 
-typedef uint32_t SystemSubgraphID;
+typedef size_t SystemSubgraphID;
 
 
 

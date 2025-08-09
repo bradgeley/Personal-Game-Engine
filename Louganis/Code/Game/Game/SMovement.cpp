@@ -66,7 +66,10 @@ void SMovement::Run(SystemContext const& context)
                 raycast.m_maxDistance = distance;
                 raycast.m_queryWorldTiles = true;
 
-                AddVertsForArrow2D(scDebug.FrameVerts.GetMutableVerts(), raycast.m_start, raycast.m_start + raycast.m_direction * raycast.m_maxDistance, 0.033f, Rgba8::Yellow);
+                if (scDebug.m_debugRenderPreventativePhysicsRaycasts)
+                {
+                    AddVertsForArrow2D(scDebug.FrameVerts.GetMutableVerts(), raycast.m_start, raycast.m_start + raycast.m_direction * raycast.m_maxDistance, 0.033f, Rgba8::Yellow);
+                }
 
                 WorldRaycastResult result = Raycast(scWorld, raycast);
                 if (result.m_blockingHit)
@@ -81,7 +84,10 @@ void SMovement::Run(SystemContext const& context)
 
             if (shortestHitResult.m_blockingHit)
             {
-                AddVertsForArrow2D(scDebug.FrameVerts.GetMutableVerts(), shortestHitResult.m_hitLocation, shortestHitResult.m_hitLocation + shortestHitResult.m_hitNormal * 0.25f, 0.033f, Rgba8::Red);
+                if (scDebug.m_debugRenderPreventativePhysicsRaycasts)
+                {
+                    AddVertsForArrow2D(scDebug.FrameVerts.GetMutableVerts(), shortestHitResult.m_hitLocation, shortestHitResult.m_hitLocation + shortestHitResult.m_hitNormal * 0.25f, 0.033f, Rgba8::Red);
+                }
                 transform.m_pos = shortestHitResult.m_hitLocation + shortestHitResult.m_hitNormal * (collision.m_radius + scWorld.m_worldSettings.m_entityWallBuffer);
                 frameMovement -= frameMovement * shortestHitResult.m_t; // subtract out the movement we already completed
                 // Now subtract out all the movement that was in the direction of the wall we hit
@@ -95,7 +101,10 @@ void SMovement::Run(SystemContext const& context)
             }
             else
             {
-                AddVertsForArrow2D(scDebug.FrameVerts.GetMutableVerts(), transform.m_pos, transform.m_pos + frameMovement, 0.033f, Rgba8::Green);
+                if (scDebug.m_debugRenderPreventativePhysicsRaycasts)
+                {
+                    AddVertsForArrow2D(scDebug.FrameVerts.GetMutableVerts(), transform.m_pos, transform.m_pos + frameMovement, 0.033f, Rgba8::Green);
+                }
                 transform.m_pos += frameMovement;
                 frameMovement = Vec2::ZeroVector;
             }

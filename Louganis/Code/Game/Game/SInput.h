@@ -9,7 +9,7 @@ class SInput : public System
 {
 public:
 
-    SInput(std::string const& name = "Input") : System(name) {};
+    SInput(std::string const& name = "Input", Rgba8 const& debugTint = Rgba8::Black) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 };

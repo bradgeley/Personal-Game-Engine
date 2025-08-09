@@ -14,6 +14,7 @@
 #include "FontShaderSource.h"
 #include "Engine/Debug/DebugDrawUtils.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Events/EventSystem.h"
 #include <thread>
 
@@ -90,7 +91,7 @@ void Renderer::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::BeginFrame()
 {
-	
+	m_numFrameDrawCalls = 0;
 }
 
 
@@ -109,7 +110,7 @@ void Renderer::EndFrame()
 	}
 
 	Present();
-	std::this_thread::sleep_for(std::chrono::milliseconds(8));
+	std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
 
 
@@ -236,7 +237,8 @@ void Renderer::Present() const
 	// If multiple windows, just present them all
 	for (auto& renderContext : m_windowRenderContexts)
 	{
-		renderContext.second.m_swapChain->Present(0, 0);
+		UINT vsync = m_perUserSettings.m_vsyncEnabled ? 1 : 0;
+		renderContext.second.m_swapChain->Present(vsync, 0);
 	}
 }
 
@@ -466,6 +468,7 @@ void Renderer::Draw(int vertexCount, int vertexOffset)
 {
 	UpdateRenderingPipelineState();
 	m_deviceContext->Draw(vertexCount, vertexOffset);
+	++m_numFrameDrawCalls;
 }
 
 
@@ -558,9 +561,9 @@ void Renderer::DestroySamplerStates()
 void Renderer::CreateRenderContext()
 {
 	UINT deviceFlags = 0;
-#ifdef _DEBUG
-	deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
+	#ifdef _DEBUG
+		deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	#endif
 	
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -569,7 +572,7 @@ void Renderer::CreateRenderContext()
 	swapChainDesc.Windowed = TRUE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.Flags = 0;
-	swapChainDesc.BufferCount = 2;
+	swapChainDesc.BufferCount = 3;
 	swapChainDesc.OutputWindow = (HWND) g_window->GetHWND();
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.SampleDesc.Count = 1;
@@ -691,6 +694,14 @@ WindowRenderContext& Renderer::GetWindowRenderContext(Window* window)
 WindowRenderContext const& Renderer::GetWindowRenderContext(Window* window) const
 {
 	return m_windowRenderContexts.at(window);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int Renderer::GetNumFrameDrawCalls() const
+{
+	return m_numFrameDrawCalls;
 }
 
 
@@ -958,6 +969,15 @@ bool Renderer::DebugDrawVertexBuffers(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool Renderer::ToggleVSync(NamedProperties& args)
+{
+	m_perUserSettings.m_vsyncEnabled = !m_perUserSettings.m_vsyncEnabled;
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyBlendStates()
 {
 	DX_SAFE_RELEASE(m_blendStateByMode[(int) BlendMode::Opaque])
@@ -1131,6 +1151,7 @@ void Renderer::AddDevConsoleCommands()
 	if (g_eventSystem)
 	{
 		g_eventSystem->SubscribeMethod("DebugDrawVertexBuffers", this, &Renderer::DebugDrawVertexBuffers);
+		g_eventSystem->SubscribeMethod("ToggleVSync", this, &Renderer::ToggleVSync);
 	}
 }
 
@@ -1142,6 +1163,7 @@ void Renderer::RemoveDevConsoleCommands()
 	if (g_eventSystem)
 	{
 		g_eventSystem->UnsubscribeMethod("DebugDrawVertexBuffers", this, &Renderer::DebugDrawVertexBuffers);
+		g_eventSystem->UnsubscribeMethod("ToggleVSync", this, &Renderer::ToggleVSync);
 	}
 }
 

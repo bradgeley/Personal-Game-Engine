@@ -157,6 +157,24 @@ System* AdminSystem::GetSystemByName(std::string const& name) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+System* AdminSystem::GetSystemByGlobalPriority(int globalPriority) const
+{
+	for (SystemSubgraph const& subgraph : m_systemSubgraphs)
+	{
+		for (System* const& system : subgraph.m_systems)
+		{
+			if (system->GetGlobalPriority() == globalPriority)
+			{
+				return system;
+			}
+		}
+	}
+	return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AdminSystemConfig const& AdminSystem::GetConfig() const
 {
 	return m_config;
@@ -237,6 +255,22 @@ void AdminSystem::SetAutoMultithreadingThreshold(int newThreshold)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AdminSystem::RecalculateGlobalPriorities()
+{
+	int priority = 0;
+	for (auto& systemSubgraph : m_systemSubgraphs)
+	{
+		for (auto& system : systemSubgraph.m_systems)
+		{
+			system->SetGlobalPriority(priority);
+			++priority;
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::RegisterSystem(System* s, SystemSubgraphID subgraphID)
 {
 	if (subgraphID >= m_systemSubgraphs.size())
@@ -244,12 +278,14 @@ void AdminSystem::RegisterSystem(System* s, SystemSubgraphID subgraphID)
 		m_systemSubgraphs.resize(subgraphID + 1);
 	}
 
-	if (s->GetPriority() == -1)
+	if (s->GetLocalPriority() == -1)
 	{
-		s->SetRunPrio((int) m_systemSubgraphs[subgraphID].m_systems.size());
+		s->SetLocalPriority((int) m_systemSubgraphs[subgraphID].m_systems.size());
 	}
 	
 	m_systemSubgraphs[subgraphID].m_systems.emplace_back(s);
+
+	RecalculateGlobalPriorities();
 }
 
 

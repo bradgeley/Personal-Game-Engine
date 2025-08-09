@@ -44,8 +44,6 @@ public:
 	AdminSystem();
 	AdminSystem(AdminSystemConfig const& config);
 
-
-
 //----------------------------------------------------------------------------------------------------------------------
 // BASIC API
 //
@@ -56,8 +54,6 @@ public:
 	
 	void RunFrame(float deltaSeconds) const;
 	void RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeconds) const;
-
-
 
 //----------------------------------------------------------------------------------------------------------------------
 // REGISTERING COMPONENTS AND SYSTEMS (Register components/systems before calling AdminSystem::Startup())
@@ -93,8 +89,6 @@ public:
 private:
 
 	void RegisterComponentBit(HashCode typeHash);
-
-
 
 //----------------------------------------------------------------------------------------------------------------------
 // CREATING/DESTROYING ENTITIES
@@ -193,6 +187,7 @@ public:
 
 	std::vector<System*> GetSystems() const;
 	System* GetSystemByName(std::string const& name) const;
+	System* GetSystemByGlobalPriority(int globalPriority) const;
 
 	AdminSystemConfig const& GetConfig() const;
 	bool IsMultithreadingActive() const;
@@ -204,8 +199,10 @@ public:
 	void SetAllMultithreadingSettings(bool multithreadingActive, int autoMultithreading, int systemSplitting);
 	bool IsAutoMultithreadingActive() const;
 	void SetAutoMultithreadingThreshold(int newThreshold);
-	
 
+private:
+
+	void RecalculateGlobalPriorities();
 
 //----------------------------------------------------------------------------------------------------------------------
 // PRIVATE DATA

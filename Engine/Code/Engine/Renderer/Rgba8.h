@@ -32,7 +32,9 @@ public:
     
 public:
     
+    static Rgba8 const LightRed;
     static Rgba8 const Red;
+    static Rgba8 const DarkRed;
     static Rgba8 const DarkBlue;
     static Rgba8 const DarkOceanBlue;
     static Rgba8 const Blue;
@@ -40,6 +42,7 @@ public:
     static Rgba8 const LightOceanBlue;
     static Rgba8 const Cerulean;
     static Rgba8 const Green;
+    static Rgba8 const PastelGreen;
     static Rgba8 const Cyan;
     static Rgba8 const DarkGreen;
     static Rgba8 const Black;
@@ -53,5 +56,6 @@ public:
     static Rgba8 const Orange;
     static Rgba8 const Yellow;
     static Rgba8 const Magenta;
+    static Rgba8 const Brown;
     static Rgba8 const Empty;
 };

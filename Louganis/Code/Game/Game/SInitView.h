@@ -9,7 +9,7 @@ class SInitView : public System
 {
 public:
 
-    SInitView(std::string const& name = "Init View") : System(name) {};
+    SInitView(std::string const& name = "Init View", Rgba8 const& debugTint = Rgba8::Red) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 };
