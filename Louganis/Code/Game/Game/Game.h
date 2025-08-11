@@ -14,6 +14,8 @@ class Game : public EngineSubsystem
 {
 public:
 
+    Game();
+
     void Startup() override;
     void BeginFrame() override;
     void Update(float deltaSeconds) override;
@@ -23,8 +25,4 @@ public:
 
     void ConfigureEngine(Engine* engine);
     void ConfigureECS();
-
-private:
-
-    Window* m_debugWindow = nullptr;
 };

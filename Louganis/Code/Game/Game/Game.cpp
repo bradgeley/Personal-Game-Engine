@@ -12,7 +12,7 @@
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
-#include "Engine/Multithreading/PerformanceDebugWindow.h"
+#include "Engine/Performance/PerformanceDebugWindow.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "EntityDef.h"
 #include "TileDef.h"
@@ -31,6 +31,13 @@ enum class FramePhase : int
     PostPhysics,
     Render,
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Game::Game() : EngineSubsystem("Game")
+{
+}
 
 
 
@@ -130,6 +137,7 @@ void Game::ConfigureEngine(Engine* engine)
     engine->RegisterSubsystem(g_jobSystem);
 
     PerformanceDebugWindowConfig perfDebugWindowConfig;
+    constexpr int i = sizeof(PerformanceDebugWindow);
     g_performanceDebugWindow = new PerformanceDebugWindow(perfDebugWindowConfig);
     engine->RegisterSubsystem(g_performanceDebugWindow);
 }

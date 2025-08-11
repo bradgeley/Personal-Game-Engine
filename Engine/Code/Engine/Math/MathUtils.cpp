@@ -201,7 +201,7 @@ float SmoothStart3(float valZeroToOne)
 }
 
 
-float GetFractionWithin(float val, float min, float max)
+float GetFractionWithinF(float val, float min, float max)
 {
     float range = max - min;
     float valRelative = val - min;
@@ -209,9 +209,18 @@ float GetFractionWithin(float val, float min, float max)
 }
 
 
+
+float GetFractionWithin(double val, double min, double max)
+{
+    double range = max - min;
+    double valRelative = val - min;
+    return valRelative / range;
+}
+
+
 float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
 {
-    float fractionWithin = GetFractionWithin(valueInRangeA, minRangeA, maxRangeA);
+    float fractionWithin = GetFractionWithinF(valueInRangeA, minRangeA, maxRangeA);
     float rangeB = maxRangeB - minRangeB;
     return minRangeB + fractionWithin * rangeB;
 }

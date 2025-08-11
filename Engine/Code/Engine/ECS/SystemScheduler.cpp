@@ -11,6 +11,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+static std::string s_ecsSectionName = "ECS";
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void RunSystem(SystemContext const& context);
 void SplitSystem(SystemContext const& context, int numJobs);
 
@@ -184,8 +189,7 @@ void SystemScheduler::TryRunSubgraph(SystemSubgraph& subgraph, float deltaSecond
 void RunSystem(SystemContext const& context)
 {
 	PerfItemData perfItem;
-	perfItem.m_perfRowIndex = context.m_system->GetGlobalPriority();
-	perfItem.m_startTime = GetCurrentTimeSecondsF();
+	perfItem.m_startTime = GetCurrentTimeSeconds();
 
 	context.m_system->PreRun();
 	
@@ -200,8 +204,13 @@ void RunSystem(SystemContext const& context)
 	}
 	
 	context.m_system->PostRun();
-	perfItem.m_endTime = GetCurrentTimeSecondsF();
-	g_performanceDebugWindow->LogData(perfItem);
+
+	perfItem.m_endTime = GetCurrentTimeSeconds();
+
+	if (g_performanceDebugWindow)
+	{
+		g_performanceDebugWindow->LogItem(perfItem, s_ecsSectionName, context.m_system->GetName());
+	}
 }
 
 
@@ -243,13 +252,16 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 		SystemContext context(system, deltaSeconds);
 
 		PerfItemData perfItem;
-		perfItem.m_perfRowIndex = system->GetGlobalPriority();
-		perfItem.m_startTime = GetCurrentTimeSecondsF();
+		perfItem.m_startTime = GetCurrentTimeSeconds();
 
 		RunSystem(context);
 
-		perfItem.m_endTime = GetCurrentTimeSecondsF();
-		g_performanceDebugWindow->LogData(perfItem);
+		perfItem.m_endTime = GetCurrentTimeSeconds();
+
+		if (g_performanceDebugWindow)
+		{
+			g_performanceDebugWindow->LogItem(perfItem, s_ecsSectionName, system->GetName());
+		}
 	}
 }
 

@@ -26,6 +26,7 @@ struct WindowConfig
     std::string		m_windowTitle = "Untitled Window";
     float			m_clientAspect = 2.f;
     float           m_windowScale = 1.f;
+    bool            m_automaticallyPresent = true;
 };
 
 

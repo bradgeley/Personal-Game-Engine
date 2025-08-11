@@ -32,7 +32,20 @@ ScopedTimer::~ScopedTimer()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ScopedPerfWindowTimer::ScopedPerfWindowTimer(int perfSectionId) : m_perfSectionId(perfSectionId)
+PerfWindowScopedTimer::PerfWindowScopedTimer(std::string const& sectionName, std::string const& rowName)
+{
+	if (g_performanceDebugWindow)
+	{
+		m_perfSectionID = g_performanceDebugWindow->GetOrCreateSectionID(sectionName);
+		m_perfRowID = g_performanceDebugWindow->GetOrCreateRowID(m_perfSectionID, rowName);
+	}
+	m_startTimeSeconds = GetCurrentTimeSeconds();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+PerfWindowScopedTimer::PerfWindowScopedTimer(int sectionID, int rowID) : m_perfSectionID(sectionID), m_perfRowID(rowID)
 {
 	m_startTimeSeconds = GetCurrentTimeSeconds();
 }
@@ -40,10 +53,13 @@ ScopedPerfWindowTimer::ScopedPerfWindowTimer(int perfSectionId) : m_perfSectionI
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ScopedPerfWindowTimer::~ScopedPerfWindowTimer()
+PerfWindowScopedTimer::~PerfWindowScopedTimer()
 {
-	double endTimeSeconds = GetCurrentTimeSeconds();
-	double deltaSeconds = endTimeSeconds - m_startTimeSeconds;
-	deltaSeconds *= 1000.0;
-	if (g_performancewin)
+	PerfItemData item;
+	item.m_startTime = m_startTimeSeconds;
+	item.m_endTime = GetCurrentTimeSeconds();
+	if (g_performanceDebugWindow)
+	{
+		g_performanceDebugWindow->LogItem(item, m_perfSectionID, m_perfRowID);
+	}
 }

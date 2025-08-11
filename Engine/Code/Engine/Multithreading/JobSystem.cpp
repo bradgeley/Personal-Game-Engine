@@ -2,7 +2,6 @@
 #include "Engine/Multithreading/JobSystem.h"
 #include "JobDependencies.h"
 #include "JobGraph.h"
-#include "PerformanceDebugWindow.h"
 #include "JobWorker.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
@@ -45,7 +44,7 @@ void JobSystem::Shutdown()
     EngineSubsystem::Shutdown();
 
     // Finish the job queue, all jobs are now nullptr so no need to do any additional cleanup except the completed queue
-    WaitForAllJobs();
+    WaitForAllJobs(true);
 
     // Wake up all idle threads and tell them we aren't running anymore
     m_isRunning = false;
@@ -189,8 +188,18 @@ bool JobSystem::WaitForAllJobs(bool blockAndHelp)
                 std::this_thread::yield();
             }
         }
+
+        std::vector<JobID> jobIDs;
+        {
+            std::unique_lock lock(m_completedJobsMutex);
+            for (auto& jobs : m_completedJobs)
+            {
+                jobIDs.push_back(jobs->GetUniqueID());
+            }
+        }
+        CompleteJobs(jobIDs);
     }
-    while (blockAndHelp && m_numIncompleteJobs > 0);
+    while (m_numIncompleteJobs > 0);
 
     return m_numIncompleteJobs == 0;
 }

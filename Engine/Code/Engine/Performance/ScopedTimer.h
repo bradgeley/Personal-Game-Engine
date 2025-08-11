@@ -12,18 +12,22 @@ public:
 	ScopedTimer(std::string const& name);
 	~ScopedTimer();
 
-	double m_startTimeSeconds = 0;
-	std::string m_name = nullptr;
+	double m_startTimeSeconds	= 0;
+	std::string m_name			= nullptr;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class ScopedPerfWindowTimer
+class PerfWindowScopedTimer
 {
-	ScopedPerfWindowTimer(int perfSectionId);
-	~ScopedPerfWindowTimer();
+public:
 
-	double m_startTimeSeconds = 0;
-	int m_perfSectionId = -1;
+	PerfWindowScopedTimer(std::string const& sectionName, std::string const& rowName);
+	PerfWindowScopedTimer(int sectionID, int rowID);
+	~PerfWindowScopedTimer();
+
+	double m_startTimeSeconds	= 0;
+	int m_perfSectionID			= -1;
+	int m_perfRowID				= -1;
 };

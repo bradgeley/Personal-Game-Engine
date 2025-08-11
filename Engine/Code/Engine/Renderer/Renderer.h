@@ -69,6 +69,8 @@ public:
     void EndCameraAndWindow(Camera const* camera, Window const* window);
 
     void Present() const;
+    void PresentWindow(Window const* window) const;
+    void PresentWindowRenderContext(WindowRenderContext const& wrc) const;
 
     void ClearScreen(Rgba8 const& tint);
     void DrawVertexBuffer(VertexBuffer* vbo);
@@ -105,8 +107,8 @@ public:
     WindowRenderContext& GetOrCreateWindowRenderContext(Window* window);
     WindowRenderContext& GetCurrentWindowRenderContext();
     WindowRenderContext const& GetCurrentWindowRenderContext() const;
-    WindowRenderContext& GetWindowRenderContext(Window* window);
-    WindowRenderContext const& GetWindowRenderContext(Window* window) const;
+    WindowRenderContext& GetWindowRenderContext(Window const* window);
+    WindowRenderContext const& GetWindowRenderContext(Window const* window) const;
 
     MSAASettings GetMaxSupportedMSAASettings(DXGI_FORMAT format);
 

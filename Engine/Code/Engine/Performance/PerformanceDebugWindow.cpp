@@ -23,28 +23,29 @@ constexpr float WINDOW_WIDTH = 150.f;
 constexpr float WINDOW_HEIGHT = 100.f;
 constexpr float GRAPH_EDGE_PAD = 5.f;
 constexpr float GRAPH_LEFT_EDGE_PAD = 25.f;
-constexpr float GRAPH_EDGE_THICKNESS = 0.25f;
-constexpr float TITLE_FONT_SIZE = 4.f;
+constexpr float GRAPH_OUTLINE_THICKNESS = 0.33f;
+constexpr float GRAPH_SECTION_OUTLINE_THICKNESS = 0.33f;
+constexpr float GRAPH_ROW_OUTLINE_THICKNESS = 0.05f;
+constexpr float TITLE_FONT_SIZE = 5.f;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 // Graph drawing helper functions
-static Vec2 GetGraphOrigin();
+//
 static AABB2 GetGraphOutline();
-static Vec2 GetThreadOrigin(int threadID, int numTotalThreads);
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// THE JOB SYSTEM DEBUG
+// THE Performance Debug Window
 //
 PerformanceDebugWindow* g_performanceDebugWindow = nullptr;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerformanceDebugWindow::PerformanceDebugWindow(PerformanceDebugWindowConfig const& config) : m_config(config)
+PerformanceDebugWindow::PerformanceDebugWindow(PerformanceDebugWindowConfig const& config) : EngineSubsystem("Performance Debug Window"), m_config(config)
 {
     
 }
@@ -58,6 +59,7 @@ void PerformanceDebugWindow::Startup()
     windowConfig.m_clientAspect = 1.5f;
     windowConfig.m_windowScale = 0.5f;
     windowConfig.m_windowTitle = "Performance Debug Window";
+    windowConfig.m_automaticallyPresent = false;
     m_window = new Window(windowConfig);
     m_window->Startup();
 
@@ -74,10 +76,15 @@ void PerformanceDebugWindow::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::BeginFrame()
 {
-    std::unique_lock lock(m_perfWindowMutex);
     if (!m_freezeLog)
     {
-        m_perfItemData.clear();
+        for (PerfSection& ps : m_perfSections)
+        {
+            for (PerfRow& row : ps.m_perfRows)
+            {
+                row.m_perfItemData.clear();
+            }
+        }
     }
 }
 
@@ -94,34 +101,8 @@ void PerformanceDebugWindow::Update(float deltaSeconds)
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::Render() const
 {
-    g_renderer->BeginCameraAndWindow(m_camera, m_window);
-    g_renderer->ClearScreen(Rgba8::LightGray);
-
-    VertexBuffer buffer;
-    AddVertsForWireBox2D(buffer.GetMutableVerts(), GetGraphOutline(), GRAPH_EDGE_THICKNESS, Rgba8::Black);
-    for (PerfItemData const& perfData : m_perfItemData)
-    {
-        AddVertsForData(buffer, perfData);
-    }
-    
-    g_renderer->DrawVertexBuffer(&buffer);
-
-    VertexBuffer textBuffer;
-    Font* font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(textBuffer.GetMutableVerts(), Vec2(WINDOW_WIDTH * 0.5f, WINDOW_HEIGHT - (0.5f * GRAPH_EDGE_PAD)),
-        Vec2(0.f, 0.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
-
-    float frameSeconds = m_perfFrameData.m_actualDeltaSeconds;
-    std::string frameCounterText = StringF("Frame:(%i) FPS(%.2f) Seconds(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
-    font->AddVertsForAlignedText2D(textBuffer.GetMutableVerts(), GetGraphOutline().maxs, Vec2(-1.f, 1.f), TITLE_FONT_SIZE * 0.5f, frameCounterText, Rgba8::Black);
-
-    for (PerfItemData const& perfData : m_perfItemData)
-    {
-        AddVertsForRowText(textBuffer, perfData);
-    }
-    
-    font->SetRendererState();
-    g_renderer->DrawVertexBuffer(&textBuffer);
+    // empty, this window needs to wait until all main window rendering is completed
+    // Rendering happens on EngineFrameCompleted
 }
 
 
@@ -136,30 +117,61 @@ void PerformanceDebugWindow::EndFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::Shutdown()
 {
-    m_window->Shutdown();
-    delete m_window;
-    m_window = nullptr;
-    
-    delete m_camera;
-    m_camera = nullptr;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void PerformanceDebugWindow::LogData(int section, PerfItemData const& info)
-{
-    std::unique_lock lock(m_perfWindowMutex);
-    if (!m_freezeLog)
+    for (PerfSection& ps : m_perfSections)
     {
-        m_perfItemData.emplace_back(info);
+        for (PerfRow& row : ps.m_perfRows)
+        {
+            row.m_perfItemData.clear();
+        }
+        ps.m_perfRows.clear();
+    }
+    m_perfSections.clear();
+
+    if (m_window)
+    {
+        m_window->Shutdown();
+        delete m_window;
+        m_window = nullptr;
+    }
+    
+    if (m_camera)
+    {
+        delete m_camera;
+        m_camera = nullptr;
     }
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PerformanceDebugWindow::UpdatePerfWindowFrameData(PerfFrameData const& info)
+void PerformanceDebugWindow::LogItem(PerfItemData const& info, int sectionID, int rowID)
+{
+    if (!m_freezeLog)
+    {
+        PerfSection* section = FindPerfSection(sectionID);
+        ASSERT_OR_DIE(section != nullptr, "Cannot find section to log perf data.")
+        if (section)
+        {
+            ASSERT_OR_DIE(rowID < section->m_perfRows.size(), "Invalid row ID for section");
+            section->m_perfRows[rowID].m_perfItemData.push_back(info);
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PerformanceDebugWindow::LogItem(PerfItemData const& item, std::string const& sectionName, std::string const& rowName)
+{
+    PerfSection& section = GetOrCreatePerfSection(sectionName);
+    PerfRow& row = GetOrCreatePerfRow(section, rowName);
+    row.m_perfItemData.push_back(item);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PerformanceDebugWindow::UpdateFrameData(PerfFrameData const& info)
 {
     if (!m_freezeLog)
     {
@@ -170,31 +182,78 @@ void PerformanceDebugWindow::UpdatePerfWindowFrameData(PerfFrameData const& info
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int PerformanceDebugWindow::RegisterSection(PerfSection& section)
-{
-    static int id = 0;
-    section.m_id = id;
-    ++id;
-    m_perfSections.emplace_back(section);
-    return id;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-int PerformanceDebugWindow::RegisterSection(std::string const& name)
-{
-    PerfSection section;
-    section.m_name = name;
-    return RegisterSection(section);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-int PerformanceDebugWindow::GetFrameNumber() const
+int PerformanceDebugWindow::GetFrameNumber()
 {
     return m_perfFrameData.m_frameNumber;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int PerformanceDebugWindow::GetOrCreateSectionID(std::string const& sectionName)
+{
+    PerfSection* existingSection = FindPerfSection(sectionName);
+    if (existingSection)
+    {
+        return existingSection->m_id;
+    }
+
+    return RegisterSection(sectionName);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int PerformanceDebugWindow::GetOrCreateRowID(int sectionID, std::string const& rowName)
+{
+    PerfSection* section = FindPerfSection(sectionID);
+    if (!section)
+    {
+        return -1;
+    }
+
+    PerfRow& perfRow = GetOrCreatePerfRow(*section, rowName);
+    return perfRow.m_id;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PerformanceDebugWindow::EngineFrameCompleted()
+{
+    g_renderer->BeginCameraAndWindow(m_camera, m_window);
+    g_renderer->ClearScreen(Rgba8::LightGray);
+
+    VertexBuffer untexturedVerts;
+
+    for (PerfSection const& section : m_perfSections)
+    {
+        AddUntexturedVertsForSection(untexturedVerts, section);
+    }
+
+    // Graph Outline Box
+    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), GetGraphOutline(), GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
+
+    g_renderer->DrawVertexBuffer(&untexturedVerts);
+
+    VertexBuffer textVerts;
+    Font* font = g_renderer->GetDefaultFont();
+    font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), GetGraphOutline().GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
+
+    float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
+    std::string frameCounterText = StringF("Frame:(%i) FPS(%.2f) Seconds(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
+    font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), GetGraphOutline().maxs, Vec2(-1.f, 1.f), TITLE_FONT_SIZE * 0.75f, frameCounterText, Rgba8::Black);
+
+    for (PerfSection const& section : m_perfSections)
+    {
+        AddTextVertsForSection(textVerts, section);
+    }
+
+    font->SetRendererState();
+    g_renderer->DrawVertexBuffer(&textVerts);
+
+    // Custom present timing, so that the main game window finishes rendering before we display on our secondary window
+    g_renderer->PresentWindow(m_window);
 }
 
 
@@ -221,89 +280,211 @@ bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int PerformanceDebugWindow::RegisterSection(std::string const& name)
+{
+    PerfSection section;
+    section.m_name = name;
+    static int id = 0;
+    section.m_id = id;
+    ++id;
+    m_perfSections.emplace_back(section);
+    return section.m_id;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 int PerformanceDebugWindow::CountNumRows() const
 {
-    constexpr int bitArraySize = 128;
-    BitArray<bitArraySize> bitArray;
-    for (PerfItemData const& debug : m_perfItemData)
+    int numRows = 0;
+    for (PerfSection const& section : m_perfSections)
     {
-        ASSERT_OR_DIE(debug.m_perfRowIndex <= bitArraySize, "Too many threads for preallocated bit array, increase size or reduce thread count.");
-        bitArray.Set(debug.m_perfRowIndex);
+        numRows += (int) section.m_perfRows.size();
     }
-    return bitArray.CountSetBits();
+    return numRows;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// Graph is constructed as follows:
-//
-// |--------------------------------------------------------------------------------------|
-// | Thread N |                       |    |                                              |
-// | ...      |                  |    |                                                   |
-// | Thread 0 | |               |                                                         |
-// |--------------------------------------------------------------------------------------|
-//             ^ 0 ms                                            ~deltaSeconds ^ (padding)
-//
-
-//----------------------------------------------------------------------------------------------------------------------
-void PerformanceDebugWindow::AddVertsForData(VertexBuffer& vbo, PerfItemData const& debugInfo) const
+int PerformanceDebugWindow::CountNumRowsBeforeSection(int sectionID) const
 {
-    AABB2 jobBounds;
-    GetBoundsForData(jobBounds, debugInfo);
-    Rgba8 systemTint = g_ecs->GetSystemByGlobalPriority(debugInfo.m_perfRowIndex)->GetDebugTint();
-    AddVertsForAABB2(vbo.GetMutableVerts(), jobBounds, systemTint);
+    ASSERT_OR_DIE(sectionID < m_perfSections.size(), "Invalid row ID for section");
 
-    AABB2 threadBounds;
-    GetBoundsForRow(threadBounds, debugInfo);
-    AddVertsForWireBox2D(vbo.GetMutableVerts(), threadBounds, 0.1f, Rgba8::DarkGray);
+    int numRows = 0;
+    for (int i = 0; i < sectionID; ++i)
+    {
+        if (i >= sectionID)
+        {
+            break;
+        }
+        numRows += (int) m_perfSections[i].m_perfRows.size();
+    }
+    return numRows;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PerformanceDebugWindow::GetBoundsForData(AABB2& out_jobBounds, PerfItemData const& debugInfo) const
+void PerformanceDebugWindow::AddUntexturedVertsForSection(VertexBuffer& untexturedVerts, PerfSection const& section)
 {
-    AABB2 threadBounds;
-    GetBoundsForRow(threadBounds, debugInfo);
-    float jobStartFractionX = GetFractionWithin(debugInfo.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
-    float jobEndFractionX = GetFractionWithin(debugInfo.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
-    float jobStartX = jobStartFractionX * threadBounds.GetWidth();
-    float jobEndX = jobEndFractionX * threadBounds.GetWidth();
-    Vec2 jobMins = Vec2(threadBounds.mins.x + jobStartX, threadBounds.mins.y);
-    Vec2 jobMaxs = Vec2(threadBounds.mins.x + jobEndX, threadBounds.maxs.y);
-    out_jobBounds = AABB2(jobMins, jobMaxs);
+    // Section outline
+    int numTotalRows = CountNumRows();
+    int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
+    AABB2 graphOutline = GetGraphOutline();
+    float sectionHeightFraction = static_cast<float>(section.m_perfRows.size()) / static_cast<float>(numTotalRows);
+    float sectionMinsYFraction = static_cast<float>(numRowsBefore) / static_cast<float>(numTotalRows);
+    AABB2 sectionOutline;
+    sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
+    sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
+    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), sectionOutline, GRAPH_SECTION_OUTLINE_THICKNESS, Rgba8::Black);
+
+    for (PerfRow const& row : section.m_perfRows)
+    {
+        AddUntexturedVertsForRow(untexturedVerts, section, row);
+    }
 }
 
 
 
-void PerformanceDebugWindow::GetBoundsForRow(AABB2& out_rowBounds, PerfItemData const& debugInfo) const
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PerformanceDebugWindow::AddTextVertsForSection(VertexBuffer& textVerts, PerfSection const& section)
 {
-    int numRows = CountNumRows();
-    Vec2 threadMins = GetThreadOrigin(debugInfo.m_perfRowIndex, numRows);
-    Vec2 threadMaxs = threadMins + Vec2(GetGraphOutline().GetWidth(), GetGraphOutline().GetHeight() / (float) numRows);
-    out_rowBounds = AABB2(threadMins, threadMaxs);
+    UNUSED(textVerts);
+    UNUSED(section);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PerformanceDebugWindow::AddVertsForRowText(VertexBuffer& vbo, PerfItemData const& debugInfo) const
+void PerformanceDebugWindow::AddUntexturedVertsForRow(VertexBuffer& untexturedVerts, PerfSection const& section, PerfRow const& row)
 {
-    AABB2 threadBounds;
-    GetBoundsForRow(threadBounds, debugInfo);
+    // Row outline
+    int numTotalRows = CountNumRows();
+    int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
+    AABB2 graphOutline = GetGraphOutline();
 
-    Font* font = g_renderer->GetDefaultFont();
-    System* system = g_ecs->GetSystemByGlobalPriority(debugInfo.m_perfRowIndex);
-    font->AddVertsForAlignedText2D(vbo.GetMutableVerts(), Vec2(threadBounds.GetCenterLeft().x - 2.5f, threadBounds.GetCenterLeft().y), Vec2(-1, 0), threadBounds.GetHeight() * 0.5f, system->GetName());
+    float sectionHeightFraction = static_cast<float>(section.m_perfRows.size()) / static_cast<float>(numTotalRows);
+    float sectionMinsYFraction = static_cast<float>(numRowsBefore) / static_cast<float>(numTotalRows);
+
+    AABB2 sectionOutline;
+    sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
+    sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
+
+    float rowMinsYFraction = static_cast<float>(row.m_id) / static_cast<float>(section.m_perfRows.size());
+    float rowHeight = 1.f / numTotalRows * graphOutline.GetHeight();
+
+    AABB2 rowOutline;
+    rowOutline.mins = Vec2(sectionOutline.mins.x, sectionOutline.mins.y + sectionOutline.GetHeight() * rowMinsYFraction);
+    rowOutline.maxs = Vec2(graphOutline.maxs.x, rowOutline.mins.y + rowHeight);
+
+    // Add items
+    for (PerfItemData const& item : row.m_perfItemData)
+    {
+        float itemStartTimeFraction = (float) GetFractionWithin(item.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        float itemEndTimeFraction = (float) GetFractionWithin(item.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        AABB2 itemOutline;
+        itemOutline.mins.x = rowOutline.mins.x + rowOutline.GetWidth() * itemStartTimeFraction;
+        itemOutline.mins.y = rowOutline.mins.y;
+        itemOutline.maxs.x = rowOutline.mins.x + rowOutline.GetWidth() * itemEndTimeFraction;
+        itemOutline.maxs.y = rowOutline.maxs.y;
+
+        AddVertsForAABB2(untexturedVerts.GetMutableVerts(), itemOutline, row.m_rowDataTint);
+    }
+
+    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), rowOutline, GRAPH_ROW_OUTLINE_THICKNESS, Rgba8::Black);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 GetGraphOrigin()
+PerfSection* PerformanceDebugWindow::FindPerfSection(int sectionID)
 {
-    return GetGraphOutline().mins; 
+    for (PerfSection& ps : m_perfSections)
+    {
+        if (ps.m_id == sectionID)
+        {
+            return &ps;
+        }
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+PerfSection* PerformanceDebugWindow::FindPerfSection(std::string const& sectionName)
+{
+    for (PerfSection& ps : m_perfSections)
+    {
+        if (ps.m_name == sectionName)
+        {
+            return &ps;
+        }
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+PerfSection& PerformanceDebugWindow::GetOrCreatePerfSection(std::string const& sectionName)
+{
+    PerfSection* perfSection = FindPerfSection(sectionName);
+    if (perfSection)
+    {
+        return *perfSection;
+    }
+
+    int sectionID = RegisterSection(sectionName);
+    return *FindPerfSection(sectionID);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+PerfRow* PerformanceDebugWindow::FindPerfRow(PerfSection& section, int rowID)
+{
+    if (rowID < section.m_perfRows.size())
+    {
+        return &section.m_perfRows[rowID];
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+PerfRow* PerformanceDebugWindow::FindPerfRow(PerfSection& section, std::string const& rowName)
+{
+    for (PerfRow& ps : section.m_perfRows)
+    {
+        if (ps.m_name == rowName)
+        {
+            return &ps;
+        }
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+PerfRow& PerformanceDebugWindow::GetOrCreatePerfRow(PerfSection& section, std::string const& rowName)
+{
+    PerfRow* perfRow= FindPerfRow(section, rowName);
+    if (perfRow)
+    {
+        return *perfRow;
+    }
+
+    PerfRow newRow;
+    newRow.m_name = rowName;
+    newRow.m_id = (int) section.m_perfRows.size();
+    section.m_perfRows.push_back(newRow);
+    return section.m_perfRows[section.m_perfRows.size() - 1];
 }
 
 
@@ -313,13 +494,4 @@ AABB2 GetGraphOutline()
 {
     static AABB2 outline = AABB2(GRAPH_LEFT_EDGE_PAD, GRAPH_EDGE_PAD, WINDOW_WIDTH - GRAPH_EDGE_PAD, WINDOW_HEIGHT - GRAPH_EDGE_PAD);
     return outline;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Vec2 GetThreadOrigin(int threadID, int numTotalThreads)
-{
-    float thickness = GetGraphOutline().GetHeight() / (float) numTotalThreads;
-    return GetGraphOrigin() + Vec2(0.f, (float) threadID * thickness);
 }

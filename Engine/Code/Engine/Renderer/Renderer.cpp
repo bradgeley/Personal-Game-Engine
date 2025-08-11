@@ -246,28 +246,50 @@ void Renderer::Present() const
 	for (auto& pair : m_windowRenderContexts)
 	{
 		WindowRenderContext const& wrc = pair.second;
+		if (!wrc.m_window->m_config.m_automaticallyPresent)
+		{
+			continue;
+		}
 
-		// Get the backbuffer texture
-		ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
-		HRESULT hr = wrc.m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&swapChainBackBufferTexture));
-
-		ASSERT_OR_DIE(SUCCEEDED(hr), "Swap chain did not have a backbuffer texture.")
-
-		// Paint onto the backbuffer texture using the texture that we've been rendering to at higher quality (lets us use MSAA)
-		ID3D11DeviceContext* context = g_renderer->GetContext();
-		context->ResolveSubresource(
-			swapChainBackBufferTexture,
-			0,
-			wrc.m_backbufferTexture->m_textureHandle,
-			0,
-			DXGI_FORMAT_R8G8B8A8_UNORM
-		);
-
-		DX_SAFE_RELEASE(swapChainBackBufferTexture)
-
-		UINT vsync = m_perUserSettings.m_vsyncEnabled ? 1 : 0;
-		wrc.m_swapChain->Present(vsync, 0);
+		PresentWindowRenderContext(wrc);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::PresentWindow(Window const* window) const
+{
+	WindowRenderContext const& wrc = GetWindowRenderContext(window);
+	PresentWindowRenderContext(wrc);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::PresentWindowRenderContext(WindowRenderContext const& wrc) const
+{
+	// Get the backbuffer texture
+	ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
+	HRESULT hr = wrc.m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&swapChainBackBufferTexture));
+
+	ASSERT_OR_DIE(SUCCEEDED(hr), "Swap chain did not have a backbuffer texture.")
+
+	ID3D11DeviceContext* context = g_renderer->GetContext();
+
+	// Paint onto the actual backbuffer texture using the texture that we've been rendering to at higher quality (lets us use MSAA)
+	context->ResolveSubresource(
+		swapChainBackBufferTexture, // actual backbuffer d3d texture
+		0,
+		wrc.m_backbufferTexture->m_textureHandle, // higher sample count texture that we've been rendering to
+		0,
+		DXGI_FORMAT_R8G8B8A8_UNORM
+	);
+
+	DX_SAFE_RELEASE(swapChainBackBufferTexture)
+
+	UINT vsync = m_perUserSettings.m_vsyncEnabled ? 1 : 0;
+	wrc.m_swapChain->Present(vsync, 0);
 }
 
 
@@ -659,6 +681,7 @@ WindowRenderContext& Renderer::GetOrCreateWindowRenderContext(Window* window)
 	swapChainDesc.SampleDesc.Count = 1;
 
 	WindowRenderContext& windowRenderContext = m_windowRenderContexts[window];
+	windowRenderContext.m_window = window;
 	
 	HRESULT result = factory->CreateSwapChain(m_device, &swapChainDesc, &windowRenderContext.m_swapChain);
 	if (!SUCCEEDED(result))
@@ -705,7 +728,7 @@ WindowRenderContext const& Renderer::GetCurrentWindowRenderContext() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-WindowRenderContext& Renderer::GetWindowRenderContext(Window* window)
+WindowRenderContext& Renderer::GetWindowRenderContext(Window const* window)
 {
 	return m_windowRenderContexts.at(window);
 }
@@ -713,7 +736,7 @@ WindowRenderContext& Renderer::GetWindowRenderContext(Window* window)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-WindowRenderContext const& Renderer::GetWindowRenderContext(Window* window) const
+WindowRenderContext const& Renderer::GetWindowRenderContext(Window const* window) const
 {
 	return m_windowRenderContexts.at(window);
 }

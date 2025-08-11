@@ -53,6 +53,7 @@ void Window::Shutdown()
 {
     if (IsValid())
     {
+        SetWindowLongPtr((HWND) m_windowHandle, GWLP_USERDATA, 0);
         DestroyWindow((HWND) m_windowHandle);
         m_windowHandle = nullptr;
         m_displayContext = nullptr;
@@ -433,6 +434,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
 LRESULT CALLBACK SharedWindowsMessageHandlingProcedure(HWND windowHandle, UINT wmMessageCode, WPARAM wParam, LPARAM lParam)
 {
     Window* window = nullptr;
+    window = reinterpret_cast<Window*>(GetWindowLongPtr(windowHandle, GWLP_USERDATA));
 
     if (wmMessageCode == WM_NCCREATE)
     {
@@ -440,9 +442,10 @@ LRESULT CALLBACK SharedWindowsMessageHandlingProcedure(HWND windowHandle, UINT w
         window = reinterpret_cast<Window*>(createStruct->lpCreateParams);
         SetWindowLongPtr(windowHandle, GWLP_USERDATA, (LONG_PTR) window);
     }
-    else
+    else if (wmMessageCode == WM_NCDESTROY)
     {
-        window = reinterpret_cast<Window*>(GetWindowLongPtr(windowHandle, GWLP_USERDATA));
+        SetWindowLongPtr(windowHandle, GWLP_USERDATA, 0);
+        window = nullptr;
     }
 
     if (window)

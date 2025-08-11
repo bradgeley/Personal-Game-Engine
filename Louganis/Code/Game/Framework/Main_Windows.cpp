@@ -5,7 +5,10 @@
 #include <Windows.h>
 
 
-
+#if defined(_DEBUG)
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
 
 
 
@@ -16,6 +19,10 @@
 //
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
+	#if defined(_DEBUG)
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
+	#endif
+
    g_app = new WindowsApplication();
    g_app->Startup();
    g_app->Run();

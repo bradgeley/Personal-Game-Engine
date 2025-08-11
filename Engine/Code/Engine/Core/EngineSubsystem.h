@@ -14,6 +14,7 @@ class EngineSubsystem
 public:
     
     EngineSubsystem(std::string const& name = "Unnamed Subsystem");
+    EngineSubsystem(const EngineSubsystem&) = delete;
     virtual ~EngineSubsystem() = default;
     
     virtual void Startup()                                      {}
