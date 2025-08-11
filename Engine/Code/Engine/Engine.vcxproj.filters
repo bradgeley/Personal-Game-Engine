@@ -208,7 +208,7 @@
     <ClCompile Include="Core\BinaryUtils.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Multithreading\PerformanceDebugWindow.cpp">
+    <ClCompile Include="Performance\PerformanceDebugWindow.cpp">
       <Filter>Performance</Filter>
     </ClCompile>
   </ItemGroup>
@@ -447,7 +447,7 @@
     <ClInclude Include="Core\FileUtils.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Multithreading\PerformanceDebugWindow.h">
+    <ClInclude Include="Performance\PerformanceDebugWindow.h">
       <Filter>Performance</Filter>
     </ClInclude>
   </ItemGroup>

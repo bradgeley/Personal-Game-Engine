@@ -93,6 +93,8 @@ public:
     void BindVertexBuffer(VertexBuffer const* vbo) const;
     void BindConstantBuffer(ConstantBuffer const* cbo, int slot) const;
 
+    RendererPerUserSettings GetPerUserSettings() const;
+
     Font* GetDefaultFont() const; // todo: move somewhere else?
 
     ID3D11Device* GetDevice() const;
@@ -100,7 +102,7 @@ public:
     
     ID3D11BlendState* CreateBlendState(D3D11_BLEND srcFactor, D3D11_BLEND dstFactor, D3D11_BLEND_OP op);
     
-    void CreateWindowRenderContext(Window* window);
+    WindowRenderContext& GetOrCreateWindowRenderContext(Window* window);
     WindowRenderContext& GetCurrentWindowRenderContext();
     WindowRenderContext const& GetCurrentWindowRenderContext() const;
     WindowRenderContext& GetWindowRenderContext(Window* window);
@@ -113,11 +115,13 @@ public:
     // Events
     bool DebugDrawVertexBuffers(NamedProperties& args);
     bool ToggleVSync(NamedProperties& args);
+    bool ToggleMSAA(NamedProperties& args);
 
 private:
 
     void Draw(int vertexCount, int vertexOffset);
     
+    void CreateDevice();
     void CreateDebugLayer();
     void DestroyDebugLayer();
     void ReportLiveObjects();
@@ -125,7 +129,6 @@ private:
     ID3D11SamplerState* CreateSamplerState(SamplerFilter filter, SamplerAddressMode addressMode);
     void DestroySamplerStates();
     
-    void CreateRenderContext();
     void DestroyDevice();
     void DestroyWindowRenderContexts();
     

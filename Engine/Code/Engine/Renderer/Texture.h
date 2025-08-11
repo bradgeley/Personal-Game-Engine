@@ -38,13 +38,12 @@ public:
 protected:
 
     // Renderer constructor for creating a texture from the swap chain backbuffer
-    bool CreateFromSwapChain(IDXGISwapChain* swapChain);
+    bool InitAsBackbufferTexture(IDXGISwapChain* swapChain);
+    bool InitAsDepthBuffer(IDXGISwapChain* swapChain);
     
     ID3D11DepthStencilView*		CreateOrGetDepthStencilView();
     ID3D11RenderTargetView*		CreateOrGetRenderTargetView();
     ID3D11ShaderResourceView*	CreateOrGetShaderResourceView();
-    
-    static Texture*	CreateDepthBuffer(IntVec2 const& texelSize);
 
 protected:
 

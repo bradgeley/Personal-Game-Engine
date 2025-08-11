@@ -44,7 +44,8 @@ Renderer::Renderer(RendererConfig const& config) : EngineSubsystem("Renderer"), 
 void Renderer::Startup()
 {
 	CreateDebugLayer();
-	CreateRenderContext();
+	CreateDevice();
+	GetOrCreateWindowRenderContext(g_window);
 	CreateDefaultShader();
 	CreateDefaultTexture();
 	CreateBlendStates();
@@ -120,6 +121,11 @@ void Renderer::BeginWindow(Window const* window)
 {
 	ASSERT_OR_DIE(window, "Renderer::BeginWindow - trying to begin a null window.");
 
+	if (m_currentWindow == window)
+	{
+		return;
+	}
+
 	if (m_currentWindow && m_currentWindow != window)
 	{
 		EndWindow(m_currentWindow);
@@ -130,6 +136,10 @@ void Renderer::BeginWindow(Window const* window)
 		m_currentWindow = window;
 		Texture*& texture = m_windowRenderContexts.at(m_currentWindow).m_backbufferTexture;
 		BindRenderTarget(texture);
+	}
+	else
+	{
+		ERROR_AND_DIE("Tried to begin a window for which there is no window render context.")
 	}
 }
 
@@ -179,14 +189,12 @@ void Renderer::BeginCamera(Camera const* camera)
 	
 	// Set viewport
 	IntVec2 windowDims = m_currentWindow->GetDimensions();
-	Vec2 botLeft = Vec2::ZeroVector;
-	Vec2 topRight = Vec2(windowDims.x, windowDims.y);
 	
 	D3D11_VIEWPORT viewport;
-	viewport.TopLeftX = botLeft.x;
-	viewport.TopLeftY = botLeft.y;
-	viewport.Width = topRight.x;
-	viewport.Height = topRight.y;
+	viewport.TopLeftX = 0.f;
+	viewport.TopLeftY = 0.f;
+	viewport.Width = static_cast<float>(windowDims.x);
+	viewport.Height = static_cast<float>(windowDims.y);
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1;
 	m_deviceContext->RSSetViewports(1, &viewport);
@@ -235,10 +243,30 @@ void Renderer::EndCameraAndWindow(Camera const* camera, Window const* window)
 void Renderer::Present() const
 {
 	// If multiple windows, just present them all
-	for (auto& renderContext : m_windowRenderContexts)
+	for (auto& pair : m_windowRenderContexts)
 	{
+		WindowRenderContext const& wrc = pair.second;
+
+		// Get the backbuffer texture
+		ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
+		HRESULT hr = wrc.m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&swapChainBackBufferTexture));
+
+		ASSERT_OR_DIE(swapChainBackBufferTexture != nullptr, "Swap chain did not have a backbuffer texture.")
+
+		// Paint onto the backbuffer texture using the texture that we've been rendering to at higher quality (lets us use MSAA)
+		ID3D11DeviceContext* context = g_renderer->GetContext();
+		context->ResolveSubresource(
+			swapChainBackBufferTexture,
+			0,
+			wrc.m_backbufferTexture->m_textureHandle,
+			0,
+			DXGI_FORMAT_R8G8B8A8_UNORM
+		);
+
+		DX_SAFE_RELEASE(swapChainBackBufferTexture)
+
 		UINT vsync = m_perUserSettings.m_vsyncEnabled ? 1 : 0;
-		renderContext.second.m_swapChain->Present(vsync, 0);
+		wrc.m_swapChain->Present(vsync, 0);
 	}
 }
 
@@ -456,6 +484,14 @@ void Renderer::BindConstantBuffer(ConstantBuffer const* cbo, int slot) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+RendererPerUserSettings Renderer::GetPerUserSettings() const
+{
+	return m_perUserSettings;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Font* Renderer::GetDefaultFont() const
 {
 	return m_defaultFont;
@@ -469,6 +505,40 @@ void Renderer::Draw(int vertexCount, int vertexOffset)
 	UpdateRenderingPipelineState();
 	m_deviceContext->Draw(vertexCount, vertexOffset);
 	++m_numFrameDrawCalls;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::CreateDevice()
+{
+	UINT deviceFlags = 0;
+	#ifdef _DEBUG
+		deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	#endif
+
+	HRESULT hr = D3D11CreateDevice(
+		nullptr,                    // default adapter
+		D3D_DRIVER_TYPE_HARDWARE,   // hardware driver
+		nullptr,                    // no software rasterizer
+		0,                          // flags (e.g.,  D3D11_CREATE_DEVICE_DEBUG)
+		nullptr,					// feature levels array
+		0,							// number of feature levels
+		D3D11_SDK_VERSION,          // SDK version
+		&m_device,                  // output device pointer
+		nullptr,					// output feature level
+		&m_deviceContext            // output immediate context
+	);
+
+	ASSERT_OR_DIE(m_device, "Failed to create device");
+	ASSERT_OR_DIE(m_deviceContext, "Failed to create device context");
+
+	#if defined(_DEBUG)
+		std::string deviceName = StringF("Device (THE Renderer)");
+		m_device->SetPrivateData(WKPDID_D3DDebugObjectName, (int) deviceName.size(), deviceName.data());
+		std::string contextName = StringF("Device Context (THE Renderer)");
+		m_deviceContext->SetPrivateData(WKPDID_D3DDebugObjectName, (int) contextName.size(), contextName.data());
+	#endif
 }
 
 
@@ -558,71 +628,12 @@ void Renderer::DestroySamplerStates()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::CreateRenderContext()
+WindowRenderContext& Renderer::GetOrCreateWindowRenderContext(Window* window)
 {
-	UINT deviceFlags = 0;
-	#ifdef _DEBUG
-		deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-	#endif
-	
-	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChainDesc.BufferDesc.Height = g_window->GetHeight();
-	swapChainDesc.BufferDesc.Width = g_window->GetWidth();
-	swapChainDesc.Windowed = TRUE;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChainDesc.Flags = 0;
-	swapChainDesc.BufferCount = 3;
-	swapChainDesc.OutputWindow = (HWND) g_window->GetHWND();
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.SampleDesc.Count = 1;
-
-	WindowRenderContext& mainWindowContext = m_windowRenderContexts[g_window];
-
-	HRESULT result = D3D11CreateDeviceAndSwapChain(
-		nullptr,					
-		D3D_DRIVER_TYPE_HARDWARE,	
-		nullptr,					
-		deviceFlags,
-		nullptr,					
-		0,							
-		D3D11_SDK_VERSION,
-		&swapChainDesc,
-		(IDXGISwapChain**) &mainWindowContext.m_swapChain,
-		&m_device,
-		nullptr,
-		&m_deviceContext
-	);
-
-	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create device and swap chain")
-
-	mainWindowContext.m_backbufferTexture = new Texture();
-	mainWindowContext.m_backbufferTexture->CreateFromSwapChain(mainWindowContext.m_swapChain);
-
-	mainWindowContext.m_depthBuffer = Texture::CreateDepthBuffer(g_window->GetDimensions());
-
-	#ifdef _DEBUG
-		std::string deviceName = StringF("Device (THE Renderer)");
-		m_device->SetPrivateData(WKPDID_D3DDebugObjectName, (int) deviceName.size(), deviceName.data());
-		std::string contextName = StringF("Device Context (THE Renderer)");
-		m_deviceContext->SetPrivateData(WKPDID_D3DDebugObjectName, (int) contextName.size(), contextName.data());
-	
-		std::string backbufferName = StringF("Render Target Texture (%s)", g_window->m_config.m_windowTitle.c_str());
-		mainWindowContext.m_backbufferTexture->m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) backbufferName.size(), backbufferName.data());
-		std::string depthbufferName = StringF("Render Target Depth Buffer (%s)", g_window->m_config.m_windowTitle.c_str());
-		mainWindowContext.m_depthBuffer->m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) depthbufferName.size(), depthbufferName.data());
-	#endif
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Renderer::CreateWindowRenderContext(Window* window)
-{
-	if (m_windowRenderContexts.find(window) != m_windowRenderContexts.end())
+	auto existingWRC = m_windowRenderContexts.find(window);
+	if (existingWRC != m_windowRenderContexts.end())
 	{
-		g_devConsole->LogErrorF("Tried to create duplicate render context for window: %s", window->m_config.m_windowTitle.c_str());
-		return;
+		return existingWRC->second;
 	}
 	
 	IDXGIDevice* device;
@@ -659,9 +670,19 @@ void Renderer::CreateWindowRenderContext(Window* window)
 	DX_SAFE_RELEASE(device)
 	
 	windowRenderContext.m_backbufferTexture = new Texture();
-	windowRenderContext.m_backbufferTexture->CreateFromSwapChain(windowRenderContext.m_swapChain);
-	
-	windowRenderContext.m_depthBuffer = Texture::CreateDepthBuffer(window->GetDimensions());
+	windowRenderContext.m_backbufferTexture->InitAsBackbufferTexture(windowRenderContext.m_swapChain);
+
+	windowRenderContext.m_depthBuffer = new Texture();
+	windowRenderContext.m_depthBuffer->InitAsDepthBuffer(windowRenderContext.m_swapChain);
+
+	#if defined(_DEBUG)
+		std::string backbufferName = StringF("Render Target Texture (%s)", g_window->m_config.m_windowTitle.c_str());
+		windowRenderContext.m_backbufferTexture->m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) backbufferName.size(), backbufferName.data());
+		std::string depthbufferName = StringF("Render Target Depth Buffer (%s)", g_window->m_config.m_windowTitle.c_str());
+		windowRenderContext.m_depthBuffer->m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) depthbufferName.size(), depthbufferName.data());
+	#endif
+
+	return windowRenderContext;
 }
 
 
@@ -810,7 +831,7 @@ void Renderer::DestroyDepthStencilState()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::UpdateRenderingPipelineState(bool force)
+void Renderer::UpdateRenderingPipelineState(bool force /*= false*/)
 {
 	UpdateRasterizerState(force);
 	UpdateDepthStencilState(force);
@@ -957,13 +978,13 @@ bool Renderer::DebugDrawVertexBuffers(NamedProperties& args)
 {
 	UNUSED(args)
 
-#if defined(_DEBUG)
-	m_debugDrawVertexBuffers = !m_debugDrawVertexBuffers;
-	return true;
-#else
-	g_devConsole->LogError("Cannot debug draw vertex buffers in a Release build.");
-	return false;
-#endif
+	#if defined(_DEBUG)
+		m_debugDrawVertexBuffers = !m_debugDrawVertexBuffers;
+		return true;
+	#else
+		g_devConsole->LogError("Cannot debug draw vertex buffers in a Release build.");
+		return false;
+	#endif
 }
 
 
@@ -972,6 +993,38 @@ bool Renderer::DebugDrawVertexBuffers(NamedProperties& args)
 bool Renderer::ToggleVSync(NamedProperties& args)
 {
 	m_perUserSettings.m_vsyncEnabled = !m_perUserSettings.m_vsyncEnabled;
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Renderer::ToggleMSAA(NamedProperties& args)
+{
+	int& sampleCount = m_perUserSettings.m_msaaSampleCount;
+	if (sampleCount == 4)
+	{
+		sampleCount = 1;
+	}
+	else
+	{
+		sampleCount = 4;
+	}
+
+	// Recreate the depth buffer and backbuffer textures
+	for (auto& wrcPair : m_windowRenderContexts)
+	{
+		WindowRenderContext& wrc = wrcPair.second;
+		wrc.m_backbufferTexture->ReleaseResources();
+		wrc.m_depthBuffer->ReleaseResources();
+
+		wrc.m_backbufferTexture = new Texture();
+		wrc.m_backbufferTexture->InitAsBackbufferTexture(wrc.m_swapChain);
+
+		wrc.m_depthBuffer = new Texture();
+		wrc.m_depthBuffer->InitAsDepthBuffer(wrc.m_swapChain);
+	}
+
 	return false;
 }
 
@@ -1152,6 +1205,7 @@ void Renderer::AddDevConsoleCommands()
 	{
 		g_eventSystem->SubscribeMethod("DebugDrawVertexBuffers", this, &Renderer::DebugDrawVertexBuffers);
 		g_eventSystem->SubscribeMethod("ToggleVSync", this, &Renderer::ToggleVSync);
+		g_eventSystem->SubscribeMethod("ToggleMSAA", this, &Renderer::ToggleMSAA);
 	}
 }
 
@@ -1164,9 +1218,9 @@ void Renderer::RemoveDevConsoleCommands()
 	{
 		g_eventSystem->UnsubscribeMethod("DebugDrawVertexBuffers", this, &Renderer::DebugDrawVertexBuffers);
 		g_eventSystem->UnsubscribeMethod("ToggleVSync", this, &Renderer::ToggleVSync);
+		g_eventSystem->UnsubscribeMethod("ToggleMSAA", this, &Renderer::ToggleMSAA);
 	}
 }
-
 
 
 

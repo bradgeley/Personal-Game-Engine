@@ -42,9 +42,9 @@ bool Texture::CreateFromImage(Image const& image, bool createMipMap)
     desc.Height = m_dimensions.y;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
-    desc.Usage = D3D11_USAGE_IMMUTABLE;
+    desc.Usage = D3D11_USAGE_DEFAULT;
     desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
     desc.CPUAccessFlags = 0;
     desc.MiscFlags = 0;
     desc.SampleDesc.Count = 1;
@@ -52,7 +52,7 @@ bool Texture::CreateFromImage(Image const& image, bool createMipMap)
 
     D3D11_SUBRESOURCE_DATA initialData = {};
     initialData.pSysMem = image.GetRawData();
-    initialData.SysMemPitch = 4 * image.GetDimensions().x;
+    initialData.SysMemPitch = sizeof(Rgba8) * image.GetDimensions().x;
     initialData.SysMemSlicePitch = 0;
     
     HRESULT result = device->CreateTexture2D(&desc, &initialData, &m_textureHandle);
@@ -137,16 +137,107 @@ IntVec2 Texture::GetDimensions() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Texture::CreateFromSwapChain(IDXGISwapChain* swapChain)
+bool Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
 {
-    swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &m_textureHandle);
-    ASSERT_OR_DIE(m_textureHandle != nullptr, "Failed to create texture from swap chain backbuffer")
+    static int count = 0;
+    m_sourceImagePath = StringF("Backbuffer Texture %i", ++count);
 
-    D3D11_TEXTURE2D_DESC desc;
-    m_textureHandle->GetDesc(&desc);
+    ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
+    swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &swapChainBackBufferTexture);
+    ASSERT_OR_DIE(swapChainBackBufferTexture != nullptr, "Failed to create texture from swap chain backbuffer")
 
-    m_dimensions = IntVec2((int) desc.Width, (int) desc.Height);
+    D3D11_TEXTURE2D_DESC backbufferDesc;
+    swapChainBackBufferTexture->GetDesc(&backbufferDesc);
+
+    m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
+
+    RendererPerUserSettings perUserSettings = g_renderer->GetPerUserSettings();
+
+    if (perUserSettings.m_msaaSampleCount <= 1)
+    {
+        // No need to make a second texture to render to, just use the backbuffer directly.
+        m_textureHandle = swapChainBackBufferTexture;
+        return m_textureHandle != nullptr;
+    }
+
+    // Create our own texture that we will render to, with MSAA enabled
+
+    ID3D11Device* device = g_renderer->GetDevice();
+
+    UINT qualityLevels = 0;
+    HRESULT hr = device->CheckMultisampleQualityLevels(
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        perUserSettings.m_msaaSampleCount,
+        &qualityLevels
+    );
+
+    ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to get quality levels.");
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = m_dimensions.x;
+    desc.Height = m_dimensions.y;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+    desc.CPUAccessFlags = 0;
+    desc.MiscFlags = 0;
+    desc.SampleDesc.Count = perUserSettings.m_msaaSampleCount;
+    desc.SampleDesc.Quality = qualityLevels - 1;
+
+    HRESULT result = device->CreateTexture2D(&desc, nullptr, &m_textureHandle);
+    ASSERT_OR_DIE(SUCCEEDED(result) && m_textureHandle, "Failed to create texture from swap chain")
     
+    return m_textureHandle != nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
+{
+    static int count = 0;
+    m_sourceImagePath = StringF("Depth Buffer %i", ++count);
+
+    ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
+    swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &swapChainBackBufferTexture);
+    ASSERT_OR_DIE(swapChainBackBufferTexture != nullptr, "Failed to create texture from swap chain backbuffer")
+
+    D3D11_TEXTURE2D_DESC backbufferDesc;
+    swapChainBackBufferTexture->GetDesc(&backbufferDesc);
+
+    m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
+
+    RendererPerUserSettings perUserSettings = g_renderer->GetPerUserSettings();
+
+    ID3D11Device* device = g_renderer->GetDevice();
+
+    UINT qualityLevels = 0;
+    HRESULT hr = device->CheckMultisampleQualityLevels(
+        DXGI_FORMAT_R8G8B8A8_UNORM,
+        perUserSettings.m_msaaSampleCount,
+        &qualityLevels
+    );
+
+    ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to get quality levels.");
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    desc.Width = m_dimensions.x;
+    desc.Height = m_dimensions.y;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    desc.CPUAccessFlags = 0;
+    desc.MiscFlags = 0;
+    desc.SampleDesc.Count = perUserSettings.m_msaaSampleCount;
+    desc.SampleDesc.Quality = qualityLevels - 1;
+
+    HRESULT result = g_renderer->GetDevice()->CreateTexture2D(&desc, nullptr, &m_textureHandle);
+    ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth buffer")
+
     return m_textureHandle != nullptr;
 }
 
@@ -159,32 +250,6 @@ void Texture::ReleaseResources()
     DX_SAFE_RELEASE(m_renderTargetView)
     DX_SAFE_RELEASE(m_textureHandle)
     DX_SAFE_RELEASE(m_depthStencilView)
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Texture* Texture::CreateDepthBuffer(IntVec2 const& texelSize)
-{
-    Texture* texture = new Texture();
-
-    D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width = texelSize.x;
-    desc.Height = texelSize.y;
-    desc.MipLevels = 1;
-    desc.ArraySize = 1;
-    desc.Usage = D3D11_USAGE_DEFAULT; // GPU WRITABLE
-    desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    desc.CPUAccessFlags = 0;
-    desc.MiscFlags = 0;
-    desc.SampleDesc.Count = 1;
-    desc.SampleDesc.Quality = 0;
-
-    HRESULT result = g_renderer->GetDevice()->CreateTexture2D(&desc, nullptr, &texture->m_textureHandle);
-    ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth buffer")
-    
-    return texture;
 }
 
 

@@ -62,7 +62,7 @@ void PerformanceDebugWindow::Startup()
     m_window = new Window(windowConfig);
     m_window->Startup();
 
-    g_renderer->CreateWindowRenderContext(m_window);
+    g_renderer->GetOrCreateWindowRenderContext(m_window);
     
     m_camera = new Camera();
     m_camera->SetOrthoBounds(Vec3(0.f, 0.f, 0.f), Vec3(WINDOW_WIDTH, WINDOW_HEIGHT, 1.f));
@@ -95,7 +95,6 @@ void PerformanceDebugWindow::Update(float deltaSeconds)
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::Render() const
 {
-    g_renderer->BeginWindow(m_window);
     g_renderer->BeginCameraAndWindow(m_camera, m_window);
     g_renderer->ClearScreen(Rgba8::LightGray);
 
@@ -201,7 +200,7 @@ bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int PerformanceDebugWindow::CountUniqueThreads() const
+int PerformanceDebugWindow::CountNumRows() const
 {
     constexpr int bitArraySize = 128;
     BitArray<bitArraySize> bitArray;
@@ -261,12 +260,12 @@ void PerformanceDebugWindow::GetBoundsForData(AABB2& out_jobBounds, PerfItemData
 
 
 
-void PerformanceDebugWindow::GetBoundsForRow(AABB2& out_threadBounds, PerfItemData const& debugInfo) const
+void PerformanceDebugWindow::GetBoundsForRow(AABB2& out_rowBounds, PerfItemData const& debugInfo) const
 {
-    int numThreads = CountUniqueThreads();
-    Vec2 threadMins = GetThreadOrigin(debugInfo.m_perfRowIndex, numThreads);
-    Vec2 threadMaxs = threadMins + Vec2(GetGraphOutline().GetWidth(), GetGraphOutline().GetHeight() / (float) numThreads);
-    out_threadBounds = AABB2(threadMins, threadMaxs);
+    int numRows = CountNumRows();
+    Vec2 threadMins = GetThreadOrigin(debugInfo.m_perfRowIndex, numRows);
+    Vec2 threadMaxs = threadMins + Vec2(GetGraphOutline().GetWidth(), GetGraphOutline().GetHeight() / (float) numRows);
+    out_rowBounds = AABB2(threadMins, threadMaxs);
 }
 
 

@@ -2,7 +2,7 @@
 #include "SystemScheduler.h"
 #include "System.h"
 #include "Engine/Multithreading/JobSystem.h"
-#include "Engine/Multithreading/PerformanceDebugWindow.h"
+#include "Engine/Performance/PerformanceDebugWindow.h"
 #include "AdminSystem.h"
 #include "Config.h"
 #include "SystemSubgraph.h"
@@ -104,10 +104,6 @@ void SystemScheduler::ScheduleFrame(std::vector<SystemSubgraph> const& systems)
 //----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::RunFrame(float deltaSeconds)
 {
-	FrameDebugInfo frameDebugInfo;
-	frameDebugInfo.m_frameNumber = g_performanceDebugWindow->GetFrameNumber() + 1;
-	frameDebugInfo.m_actualDeltaSeconds = deltaSeconds;
-	frameDebugInfo.m_ecsFrameStartTime = GetCurrentTimeSecondsF();
 	if (g_jobSystem && g_ecs->IsAutoMultithreadingActive())
 	{
 		RunFrame_AutoMultithreaded(deltaSeconds);
@@ -116,8 +112,6 @@ void SystemScheduler::RunFrame(float deltaSeconds)
 	{
 		RunFrame_Singlethreaded(deltaSeconds);
 	}
-	frameDebugInfo.m_ecsFrameEndTime = GetCurrentTimeSecondsF();
-	g_performanceDebugWindow->UpdateFrameDebugInfo(frameDebugInfo);
 }
 
 
@@ -189,9 +183,9 @@ void SystemScheduler::TryRunSubgraph(SystemSubgraph& subgraph, float deltaSecond
 //----------------------------------------------------------------------------------------------------------------------
 void RunSystem(SystemContext const& context)
 {
-	JobDebugInfo jobDebugInfo;
-	jobDebugInfo.m_rowIndex = context.m_system->GetGlobalPriority();
-	jobDebugInfo.m_startTime = GetCurrentTimeSecondsF();
+	PerfItemData perfItem;
+	perfItem.m_perfRowIndex = context.m_system->GetGlobalPriority();
+	perfItem.m_startTime = GetCurrentTimeSecondsF();
 
 	context.m_system->PreRun();
 	
@@ -206,8 +200,8 @@ void RunSystem(SystemContext const& context)
 	}
 	
 	context.m_system->PostRun();
-	jobDebugInfo.m_endTime = GetCurrentTimeSecondsF();
-	g_performanceDebugWindow->Log(jobDebugInfo);
+	perfItem.m_endTime = GetCurrentTimeSecondsF();
+	g_performanceDebugWindow->LogData(perfItem);
 }
 
 
@@ -248,14 +242,14 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 
 		SystemContext context(system, deltaSeconds);
 
-		JobDebugInfo debugInfo;
-		debugInfo.m_rowIndex = system->GetGlobalPriority();
-		debugInfo.m_startTime = GetCurrentTimeSecondsF();
+		PerfItemData perfItem;
+		perfItem.m_perfRowIndex = system->GetGlobalPriority();
+		perfItem.m_startTime = GetCurrentTimeSecondsF();
 
 		RunSystem(context);
 
-		debugInfo.m_endTime = GetCurrentTimeSecondsF();
-		g_performanceDebugWindow->Log(debugInfo);
+		perfItem.m_endTime = GetCurrentTimeSecondsF();
+		g_performanceDebugWindow->LogData(perfItem);
 	}
 }
 

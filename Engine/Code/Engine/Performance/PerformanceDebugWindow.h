@@ -89,16 +89,16 @@ public:
 
 private:
 
-    int CountUniqueThreads() const;
+    int CountNumRows() const;
     void AddVertsForData(VertexBuffer& vbo, PerfItemData const& debugInfo) const;
     void GetBoundsForData(AABB2& out_jobBounds, PerfItemData const& debugInfo) const;
-    void GetBoundsForRow(AABB2& out_threadBounds, PerfItemData const& debugInfo) const;
+    void GetBoundsForRow(AABB2& out_rowBounds, PerfItemData const& debugInfo) const;
     void AddVertsForRowText(VertexBuffer& vbo, PerfItemData const& debugInfo) const;
 
 protected:
 
     PerformanceDebugWindowConfig m_config;
-
+     
     std::mutex m_perfWindowMutex;
     std::vector<PerfItemData> m_perfItemData;
 

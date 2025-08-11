@@ -124,4 +124,7 @@ struct RendererSettings
 struct RendererPerUserSettings
 {
     bool m_vsyncEnabled = false;
+
+    // If > 1, uses MSAA to render to a texture first before resolving that onto the backbuffer texture - to reduce aliasing.
+    int m_msaaSampleCount = 4;
 };
