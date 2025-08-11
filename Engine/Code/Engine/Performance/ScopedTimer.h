@@ -15,3 +15,15 @@ public:
 	double m_startTimeSeconds = 0;
 	std::string m_name = nullptr;
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+class ScopedPerfWindowTimer
+{
+	ScopedPerfWindowTimer(int perfSectionId);
+	~ScopedPerfWindowTimer();
+
+	double m_startTimeSeconds = 0;
+	int m_perfSectionId = -1;
+};

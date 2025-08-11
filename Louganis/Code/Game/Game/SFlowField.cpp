@@ -157,7 +157,6 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 
     {
-        ScopedTimer timer("- Seed Distance Field");
         for (auto& chunkPair : flowField.m_activeFlowFieldChunks)
         {
             FlowFieldChunk*& chunk = chunkPair.second;

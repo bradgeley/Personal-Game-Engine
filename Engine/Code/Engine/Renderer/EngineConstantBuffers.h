@@ -39,9 +39,9 @@ struct FontConstants
     FontConstants() = default;
     FontConstants(Rgba8 const& tint, float boldness, float antiAlias, float outlineThickness);
     
-    float m_outlineTint[4]              = { 1.f, 1.f, 1.f, 1.f };
-    float m_boldness                    = 0.5f;
-    float m_antiAliasAmount             = 0.1f;
+    float m_outlineTint[4]              = { 0.f, 0.f, 0.f, 0.f };
+    float m_boldness                    = 0.66f;
+    float m_antiAliasAmount             = 0.5f;
     float m_outlineThickness            = 0.f;
     float pad = (float) 0xFFFFFFFF;
     

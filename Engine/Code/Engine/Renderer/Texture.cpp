@@ -4,10 +4,7 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/Image.h"
 #include "Engine/Renderer/RendererInternal.h"
-
-#ifdef _DEBUG 
 #include "Engine/Core/StringUtils.h"
-#endif
 
 
 
@@ -139,9 +136,6 @@ IntVec2 Texture::GetDimensions() const
 //----------------------------------------------------------------------------------------------------------------------
 bool Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
 {
-    static int count = 0;
-    m_sourceImagePath = StringF("Backbuffer Texture %i", ++count);
-
     ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
     swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &swapChainBackBufferTexture);
     ASSERT_OR_DIE(swapChainBackBufferTexture != nullptr, "Failed to create texture from swap chain backbuffer")
@@ -153,25 +147,10 @@ bool Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
 
     RendererPerUserSettings perUserSettings = g_renderer->GetPerUserSettings();
 
-    if (perUserSettings.m_msaaSampleCount <= 1)
-    {
-        // No need to make a second texture to render to, just use the backbuffer directly.
-        m_textureHandle = swapChainBackBufferTexture;
-        return m_textureHandle != nullptr;
-    }
-
     // Create our own texture that we will render to, with MSAA enabled
 
     ID3D11Device* device = g_renderer->GetDevice();
-
-    UINT qualityLevels = 0;
-    HRESULT hr = device->CheckMultisampleQualityLevels(
-        DXGI_FORMAT_R8G8B8A8_UNORM,
-        perUserSettings.m_msaaSampleCount,
-        &qualityLevels
-    );
-
-    ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to get quality levels.");
+    MSAASettings msaaSettings = g_renderer->GetMaxSupportedMSAASettings(DXGI_FORMAT_R8G8B8A8_UNORM);
 
     D3D11_TEXTURE2D_DESC desc = {};
     desc.Width = m_dimensions.x;
@@ -183,11 +162,18 @@ bool Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
     desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
     desc.CPUAccessFlags = 0;
     desc.MiscFlags = 0;
-    desc.SampleDesc.Count = perUserSettings.m_msaaSampleCount;
-    desc.SampleDesc.Quality = qualityLevels - 1;
+    desc.SampleDesc.Count = msaaSettings.m_sampleCount;
+    desc.SampleDesc.Quality = msaaSettings.m_qualityLevel;
 
     HRESULT result = device->CreateTexture2D(&desc, nullptr, &m_textureHandle);
     ASSERT_OR_DIE(SUCCEEDED(result) && m_textureHandle, "Failed to create texture from swap chain")
+
+    #ifdef _DEBUG
+        static int count = 0;
+        m_sourceImagePath = StringF("Backbuffer Texture %i", ++count);
+        std::string name = StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+    #endif
     
     return m_textureHandle != nullptr;
 }
@@ -197,8 +183,6 @@ bool Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
 //----------------------------------------------------------------------------------------------------------------------
 bool Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
 {
-    static int count = 0;
-    m_sourceImagePath = StringF("Depth Buffer %i", ++count);
 
     ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
     swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &swapChainBackBufferTexture);
@@ -210,17 +194,7 @@ bool Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
     m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
 
     RendererPerUserSettings perUserSettings = g_renderer->GetPerUserSettings();
-
-    ID3D11Device* device = g_renderer->GetDevice();
-
-    UINT qualityLevels = 0;
-    HRESULT hr = device->CheckMultisampleQualityLevels(
-        DXGI_FORMAT_R8G8B8A8_UNORM,
-        perUserSettings.m_msaaSampleCount,
-        &qualityLevels
-    );
-
-    ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to get quality levels.");
+    MSAASettings msaaSettings = g_renderer->GetMaxSupportedMSAASettings(DXGI_FORMAT_D24_UNORM_S8_UINT);
 
     D3D11_TEXTURE2D_DESC desc = {};
     desc.Width = m_dimensions.x;
@@ -232,11 +206,18 @@ bool Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
     desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
     desc.CPUAccessFlags = 0;
     desc.MiscFlags = 0;
-    desc.SampleDesc.Count = perUserSettings.m_msaaSampleCount;
-    desc.SampleDesc.Quality = qualityLevels - 1;
+    desc.SampleDesc.Count = msaaSettings.m_sampleCount;
+    desc.SampleDesc.Quality = msaaSettings.m_qualityLevel;
 
     HRESULT result = g_renderer->GetDevice()->CreateTexture2D(&desc, nullptr, &m_textureHandle);
     ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth buffer")
+
+    #ifdef _DEBUG
+        static int count = 0;
+        m_sourceImagePath = StringF("Depth Buffer %i", ++count);
+        std::string name = StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+    #endif
 
     return m_textureHandle != nullptr;
 }
@@ -259,7 +240,8 @@ ID3D11DepthStencilView* Texture::CreateOrGetDepthStencilView()
 {
     if (!m_depthStencilView)
     {
-        HRESULT result = g_renderer->GetDevice()->CreateDepthStencilView(m_textureHandle, nullptr, &m_depthStencilView);
+        ID3D11Device* device = g_renderer->GetDevice();
+        HRESULT result = device->CreateDepthStencilView(m_textureHandle, nullptr, &m_depthStencilView);
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth stencil view")
 
         #ifdef _DEBUG
@@ -278,7 +260,8 @@ ID3D11RenderTargetView* Texture::CreateOrGetRenderTargetView()
 {
     if (!m_renderTargetView)
     {
-        HRESULT result = g_renderer->GetDevice()->CreateRenderTargetView(m_textureHandle, nullptr, &m_renderTargetView);
+        ID3D11Device* device = g_renderer->GetDevice();
+        HRESULT result = device->CreateRenderTargetView(m_textureHandle, nullptr, &m_renderTargetView);
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create rtv")
 
         #ifdef _DEBUG

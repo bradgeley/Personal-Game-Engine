@@ -6,6 +6,8 @@
 #include "Engine/Performance/PerformanceDebugWindow.h"
 #include "Engine/Core/StringUtils.h"
 
+#include "Game/Framework/EngineBuildPreferences.h"
+
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -31,6 +33,13 @@ void Engine::Startup()
         }
     }
 
+    #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
+        g_performanceDebugWindow->RegisterSection("BeginFrame");
+        g_performanceDebugWindow->RegisterSection("Update");
+        g_performanceDebugWindow->RegisterSection("Render");
+        g_performanceDebugWindow->RegisterSection("EndFrame");
+    #endif
+
     m_isActive = true;
 }
 
@@ -39,6 +48,10 @@ void Engine::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::BeginFrame()
 {
+    #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
+        ScopedTimer beginFrameTimer("BeginFrame");
+    #endif
+
     for (EngineSubsystem*& subsystem : m_subsystems)
     {
         if (subsystem && subsystem->IsEnabled())

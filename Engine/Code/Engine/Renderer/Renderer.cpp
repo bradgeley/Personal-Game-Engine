@@ -251,7 +251,7 @@ void Renderer::Present() const
 		ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
 		HRESULT hr = wrc.m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&swapChainBackBufferTexture));
 
-		ASSERT_OR_DIE(swapChainBackBufferTexture != nullptr, "Swap chain did not have a backbuffer texture.")
+		ASSERT_OR_DIE(SUCCEEDED(hr), "Swap chain did not have a backbuffer texture.")
 
 		// Paint onto the backbuffer texture using the texture that we've been rendering to at higher quality (lets us use MSAA)
 		ID3D11DeviceContext* context = g_renderer->GetContext();
@@ -530,6 +530,7 @@ void Renderer::CreateDevice()
 		&m_deviceContext            // output immediate context
 	);
 
+	ASSERT_OR_DIE(SUCCEEDED(hr), "D3D11CreateDevice failed with result");
 	ASSERT_OR_DIE(m_device, "Failed to create device");
 	ASSERT_OR_DIE(m_deviceContext, "Failed to create device context");
 
@@ -715,6 +716,37 @@ WindowRenderContext& Renderer::GetWindowRenderContext(Window* window)
 WindowRenderContext const& Renderer::GetWindowRenderContext(Window* window) const
 {
 	return m_windowRenderContexts.at(window);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+MSAASettings Renderer::GetMaxSupportedMSAASettings(DXGI_FORMAT format)
+{
+	MSAASettings result;
+	if (!m_perUserSettings.m_msaaEnabled)
+	{
+		return result;
+	}
+
+	for (int sampleCount = D3D10_MAX_MULTISAMPLE_SAMPLE_COUNT; sampleCount >= 1; sampleCount /= 2)
+	{
+		UINT numQualityLevels = 0;
+		HRESULT hr = m_device->CheckMultisampleQualityLevels(
+			format,
+			sampleCount,
+			&numQualityLevels
+		);
+
+		if (SUCCEEDED(hr) && numQualityLevels >= 1)
+		{
+			result.m_sampleCount = sampleCount;
+			result.m_qualityLevel = numQualityLevels - 1;
+			break;
+		}
+	}
+
+	return result;
 }
 
 
@@ -992,6 +1024,7 @@ bool Renderer::DebugDrawVertexBuffers(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool Renderer::ToggleVSync(NamedProperties& args)
 {
+	UNUSED(args)
 	m_perUserSettings.m_vsyncEnabled = !m_perUserSettings.m_vsyncEnabled;
 	return false;
 }
@@ -1001,15 +1034,8 @@ bool Renderer::ToggleVSync(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool Renderer::ToggleMSAA(NamedProperties& args)
 {
-	int& sampleCount = m_perUserSettings.m_msaaSampleCount;
-	if (sampleCount == 4)
-	{
-		sampleCount = 1;
-	}
-	else
-	{
-		sampleCount = 4;
-	}
+	UNUSED(args)
+	m_perUserSettings.m_msaaEnabled = !m_perUserSettings.m_msaaEnabled;
 
 	// Recreate the depth buffer and backbuffer textures
 	for (auto& wrcPair : m_windowRenderContexts)

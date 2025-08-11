@@ -32,23 +32,40 @@ struct PerformanceDebugWindowConfig
 
 
 //----------------------------------------------------------------------------------------------------------------------
+// A single point of data, drawn in a PerfRow
+struct PerfItemData
+{
+    float   m_startTime = 0.f;
+    float   m_endTime = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 // A row of the performance graph, can be either a thread or something like an ecs system, or group of systems.
 struct PerfRow
 {
     std::string m_name;
     Rgba8       m_nameTint;
     Rgba8       m_rowDataTint;
+
+    std::vector<PerfItemData> m_perfItemData;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// A single point of data, drawn in a PerfRow
-struct PerfItemData
+// A section of the performance graph, which encapsulates multiple rows
+struct PerfSection
 {
-    int     m_perfRowIndex  = -1;
-    float   m_startTime     = 0.f;
-    float   m_endTime       = 0.f;
+    std::string m_name;
+
+protected:
+
+    uint32_t m_id;
+    std::vector<PerfRow> m_perfRows;
+
+    friend class PerformanceDebugWindow;
 };
 
 
@@ -79,8 +96,9 @@ public:
     void EndFrame() override;
     void Shutdown() override;
 
-    void LogData(PerfItemData const& info);
+    void LogData(PerfItemData const& info, int section, int row);
     void UpdatePerfWindowFrameData(PerfFrameData const& info);
+    int RegisterSection(std::string const& name);
     int  GetFrameNumber() const;
 
 public:
@@ -100,7 +118,7 @@ protected:
     PerformanceDebugWindowConfig m_config;
      
     std::mutex m_perfWindowMutex;
-    std::vector<PerfItemData> m_perfItemData;
+    std::vector<PerfSection> m_perfSections;
 
     PerfFrameData m_perfFrameData;
 

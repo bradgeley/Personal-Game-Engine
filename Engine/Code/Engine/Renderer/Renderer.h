@@ -108,6 +108,8 @@ public:
     WindowRenderContext& GetWindowRenderContext(Window* window);
     WindowRenderContext const& GetWindowRenderContext(Window* window) const;
 
+    MSAASettings GetMaxSupportedMSAASettings(DXGI_FORMAT format);
+
     int GetNumFrameDrawCalls() const;
 
 public:

@@ -25,7 +25,6 @@ constexpr float GRAPH_EDGE_PAD = 5.f;
 constexpr float GRAPH_LEFT_EDGE_PAD = 25.f;
 constexpr float GRAPH_EDGE_THICKNESS = 0.25f;
 constexpr float TITLE_FONT_SIZE = 4.f;
-constexpr float JOB_MIN_THICKNESS = 0.5f;
 
 
 
@@ -148,7 +147,7 @@ void PerformanceDebugWindow::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PerformanceDebugWindow::LogData(PerfItemData const& info)
+void PerformanceDebugWindow::LogData(int section, PerfItemData const& info)
 {
     std::unique_lock lock(m_perfWindowMutex);
     if (!m_freezeLog)
@@ -166,6 +165,28 @@ void PerformanceDebugWindow::UpdatePerfWindowFrameData(PerfFrameData const& info
     {
         m_perfFrameData = info;
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int PerformanceDebugWindow::RegisterSection(PerfSection& section)
+{
+    static int id = 0;
+    section.m_id = id;
+    ++id;
+    m_perfSections.emplace_back(section);
+    return id;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int PerformanceDebugWindow::RegisterSection(std::string const& name)
+{
+    PerfSection section;
+    section.m_name = name;
+    return RegisterSection(section);
 }
 
 
@@ -251,10 +272,6 @@ void PerformanceDebugWindow::GetBoundsForData(AABB2& out_jobBounds, PerfItemData
     float jobEndX = jobEndFractionX * threadBounds.GetWidth();
     Vec2 jobMins = Vec2(threadBounds.mins.x + jobStartX, threadBounds.mins.y);
     Vec2 jobMaxs = Vec2(threadBounds.mins.x + jobEndX, threadBounds.maxs.y);
-    if (jobMaxs.x - jobMins.x < JOB_MIN_THICKNESS)
-    {
-        jobMaxs.x = jobMins.x + JOB_MIN_THICKNESS;
-    }
     out_jobBounds = AABB2(jobMins, jobMaxs);
 }
 
@@ -278,7 +295,7 @@ void PerformanceDebugWindow::AddVertsForRowText(VertexBuffer& vbo, PerfItemData 
 
     Font* font = g_renderer->GetDefaultFont();
     System* system = g_ecs->GetSystemByGlobalPriority(debugInfo.m_perfRowIndex);
-    font->AddVertsForAlignedText2D(vbo.GetMutableVerts(), Vec2(threadBounds.GetCenterLeft().x - 2.5, threadBounds.GetCenterLeft().y), Vec2(-1, 0), threadBounds.GetHeight() * 0.5f, system->GetName());
+    font->AddVertsForAlignedText2D(vbo.GetMutableVerts(), Vec2(threadBounds.GetCenterLeft().x - 2.5f, threadBounds.GetCenterLeft().y), Vec2(-1, 0), threadBounds.GetHeight() * 0.5f, system->GetName());
 }
 
 

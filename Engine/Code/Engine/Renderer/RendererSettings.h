@@ -124,7 +124,14 @@ struct RendererSettings
 struct RendererPerUserSettings
 {
     bool m_vsyncEnabled = false;
+    bool m_msaaEnabled = true; // We just render at the highest msaa sample count possible for the machine
+};
 
-    // If > 1, uses MSAA to render to a texture first before resolving that onto the backbuffer texture - to reduce aliasing.
-    int m_msaaSampleCount = 4;
+
+
+//------------------------------------------------------------------------------------------------------------
+struct MSAASettings
+{
+    uint32_t m_sampleCount = 1;
+    uint32_t m_qualityLevel = 0;
 };
