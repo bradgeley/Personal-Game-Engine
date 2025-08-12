@@ -453,7 +453,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     NamedProperties eventProperties;
 
     // Start at arg index 1 because index 0 is the command name
-    for (int i = 1; i < commandFragments.size(); ++i)
+    for (int i = 1; i < (int) commandFragments.size(); ++i)
     {
         auto& fragment = commandFragments[i];
         Strings keyValue = SplitStringOnDelimeter(fragment, '=');

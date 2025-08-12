@@ -126,6 +126,7 @@ private:
     void AddTextVertsForSection(VertexBuffer& textVerts, PerfSection const& section);
 
     void AddUntexturedVertsForRow(VertexBuffer& untexturedVerts, PerfSection const& section, PerfRow const& row);
+    void AddTextVertsForRow(VertexBuffer& textVerts, PerfSection const& section, PerfRow const& row);
 
     PerfSection* FindPerfSection(int sectionID);
     PerfSection* FindPerfSection(std::string const& sectionName);
@@ -135,6 +136,8 @@ private:
     PerfRow& GetOrCreatePerfRow(PerfSection& section, std::string const& rowName);
 
 protected:
+
+    std::mutex m_mutex;
 
     PerformanceDebugWindowConfig m_config;
 

@@ -16,13 +16,13 @@ DevConsoleCommandInfo::DevConsoleCommandInfo(std::string const& commandName) : m
 std::string DevConsoleCommandInfo::ToString() const
 {
 	std::string result = StringF("%s ", m_commandName.c_str());
-	for (int argIndex = 0; argIndex < m_argNames.size(); ++argIndex)
+	for (int argIndex = 0; argIndex < (int) m_argNames.size(); ++argIndex)
 	{
 		std::string const& argName = m_argNames[argIndex];
 		DevConsoleArgType argType = m_argTypes[argIndex];
 		result.append(StringF("%s=%s", argName.c_str(), ArgTypeToString(argType).c_str()));
 
-		if (argIndex < m_argNames.size() - 1)
+		if (argIndex < (int) m_argNames.size() - 1)
 		{
 			result.append(", ");
 		}

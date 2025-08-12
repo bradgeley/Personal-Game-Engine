@@ -220,7 +220,7 @@ void Window::CreateMainWindow()
     wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
     wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
     wcex.lpszMenuName   = NULL;
-    wcex.lpszClassName  = TEXT("Simple Window Class");
+    wcex.lpszClassName  = TEXT("Main Window");
     wcex.hIconSm        = LoadIcon(wcex.hInstance, IDI_APPLICATION); 
     RegisterClassEx(&wcex);
     
@@ -280,6 +280,16 @@ void Window::CreateMainWindow()
         this);
 
     ASSERT_OR_DIE(hwnd != nullptr, "Failed to create window.");
+
+    if (m_config.m_windowedBorderless)
+    {
+        SetWindowLongPtr(hwnd, GWL_STYLE, WS_POPUP);
+        SetWindowPos(hwnd, HWND_TOP,
+                     0, 0, desktopWidth, desktopHeight,
+                     SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+        m_dimensions.x = static_cast<int>(desktopWidth);
+        m_dimensions.y = static_cast<int>(desktopHeight);
+    }
 
     m_windowHandle = hwnd;
     m_displayContext = GetDC(hwnd);

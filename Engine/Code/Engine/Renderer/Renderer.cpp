@@ -100,6 +100,7 @@ void Renderer::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::EndFrame()
 {
+	ScopedTimer t("Renderer: EndFrame");
 	if (m_currentCamera)
 	{
 		EndCamera(m_currentCamera);
@@ -543,7 +544,7 @@ void Renderer::CreateDevice()
 		nullptr,                    // default adapter
 		D3D_DRIVER_TYPE_HARDWARE,   // hardware driver
 		nullptr,                    // no software rasterizer
-		0,                          // flags (e.g.,  D3D11_CREATE_DEVICE_DEBUG)
+		deviceFlags,                // flags (e.g.,  D3D11_CREATE_DEVICE_DEBUG)
 		nullptr,					// feature levels array
 		0,							// number of feature levels
 		D3D11_SDK_VERSION,          // SDK version
@@ -672,6 +673,7 @@ WindowRenderContext& Renderer::GetOrCreateWindowRenderContext(Window* window)
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.BufferDesc.Height = window->GetHeight();
 	swapChainDesc.BufferDesc.Width = window->GetWidth();
+	swapChainDesc.BufferDesc.RefreshRate = { 0, 0 };
 	swapChainDesc.Windowed = TRUE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.Flags = 0;

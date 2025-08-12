@@ -210,7 +210,7 @@ float GetFractionWithinF(float val, float min, float max)
 
 
 
-float GetFractionWithin(double val, double min, double max)
+double GetFractionWithin(double val, double min, double max)
 {
     double range = max - min;
     double valRelative = val - min;

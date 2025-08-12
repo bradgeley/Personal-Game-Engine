@@ -77,7 +77,7 @@ float SmoothStart3(float valZeroToOne);
 // Range Map
 //
 float GetFractionWithinF(float val, float min, float max);
-float GetFractionWithin(double val, double min, double max);
+double GetFractionWithin(double val, double min, double max);
 float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB);
 float RangeMapClamped(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB);
 

@@ -27,6 +27,7 @@ constexpr float GRAPH_OUTLINE_THICKNESS = 0.33f;
 constexpr float GRAPH_SECTION_OUTLINE_THICKNESS = 0.33f;
 constexpr float GRAPH_ROW_OUTLINE_THICKNESS = 0.05f;
 constexpr float TITLE_FONT_SIZE = 5.f;
+constexpr float SECTION_NAME_FONT_SIZE = 5.f;
 
 
 
@@ -55,18 +56,20 @@ PerformanceDebugWindow::PerformanceDebugWindow(PerformanceDebugWindowConfig cons
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::Startup()
 {
+    std::unique_lock lock(m_mutex);
     WindowConfig windowConfig;
     windowConfig.m_clientAspect = 1.5f;
     windowConfig.m_windowScale = 0.5f;
     windowConfig.m_windowTitle = "Performance Debug Window";
     windowConfig.m_automaticallyPresent = false;
+    windowConfig.m_windowedBorderless = false;
     m_window = new Window(windowConfig);
     m_window->Startup();
 
     g_renderer->GetOrCreateWindowRenderContext(m_window);
     
     m_camera = new Camera();
-    m_camera->SetOrthoBounds(Vec3(0.f, 0.f, 0.f), Vec3(WINDOW_WIDTH, WINDOW_HEIGHT, 1.f));
+    m_camera->SetOrthoBounds(Vec3::ZeroVector, Vec3(WINDOW_WIDTH, WINDOW_HEIGHT, 1.f));
 
     m_window->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
 }
@@ -76,6 +79,7 @@ void PerformanceDebugWindow::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::BeginFrame()
 {
+    std::unique_lock lock(m_mutex);
     if (!m_freezeLog)
     {
         for (PerfSection& ps : m_perfSections)
@@ -93,6 +97,7 @@ void PerformanceDebugWindow::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::Update(float deltaSeconds)
 {
+    std::unique_lock lock(m_mutex);
     UNUSED(deltaSeconds)
 }
 
@@ -110,6 +115,7 @@ void PerformanceDebugWindow::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::EndFrame()
 {
+    std::unique_lock lock(m_mutex);
 }
 
 
@@ -117,6 +123,7 @@ void PerformanceDebugWindow::EndFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::Shutdown()
 {
+    std::unique_lock lock(m_mutex);
     for (PerfSection& ps : m_perfSections)
     {
         for (PerfRow& row : ps.m_perfRows)
@@ -146,13 +153,14 @@ void PerformanceDebugWindow::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::LogItem(PerfItemData const& info, int sectionID, int rowID)
 {
+    std::unique_lock lock(m_mutex);
     if (!m_freezeLog)
     {
         PerfSection* section = FindPerfSection(sectionID);
         ASSERT_OR_DIE(section != nullptr, "Cannot find section to log perf data.")
         if (section)
         {
-            ASSERT_OR_DIE(rowID < section->m_perfRows.size(), "Invalid row ID for section");
+            ASSERT_OR_DIE(rowID < (int) section->m_perfRows.size(), "Invalid row ID for section");
             section->m_perfRows[rowID].m_perfItemData.push_back(info);
         }
     }
@@ -163,9 +171,13 @@ void PerformanceDebugWindow::LogItem(PerfItemData const& info, int sectionID, in
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::LogItem(PerfItemData const& item, std::string const& sectionName, std::string const& rowName)
 {
-    PerfSection& section = GetOrCreatePerfSection(sectionName);
-    PerfRow& row = GetOrCreatePerfRow(section, rowName);
-    row.m_perfItemData.push_back(item);
+    std::unique_lock lock(m_mutex);
+    if (!m_freezeLog)
+    {
+        PerfSection& section = GetOrCreatePerfSection(sectionName);
+        PerfRow& row = GetOrCreatePerfRow(section, rowName);
+        row.m_perfItemData.push_back(item);
+    }
 }
 
 
@@ -173,6 +185,7 @@ void PerformanceDebugWindow::LogItem(PerfItemData const& item, std::string const
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::UpdateFrameData(PerfFrameData const& info)
 {
+    std::unique_lock lock(m_mutex);
     if (!m_freezeLog)
     {
         m_perfFrameData = info;
@@ -184,6 +197,7 @@ void PerformanceDebugWindow::UpdateFrameData(PerfFrameData const& info)
 //----------------------------------------------------------------------------------------------------------------------
 int PerformanceDebugWindow::GetFrameNumber()
 {
+    std::unique_lock lock(m_mutex);
     return m_perfFrameData.m_frameNumber;
 }
 
@@ -192,6 +206,7 @@ int PerformanceDebugWindow::GetFrameNumber()
 //----------------------------------------------------------------------------------------------------------------------
 int PerformanceDebugWindow::GetOrCreateSectionID(std::string const& sectionName)
 {
+    std::unique_lock lock(m_mutex);
     PerfSection* existingSection = FindPerfSection(sectionName);
     if (existingSection)
     {
@@ -206,6 +221,7 @@ int PerformanceDebugWindow::GetOrCreateSectionID(std::string const& sectionName)
 //----------------------------------------------------------------------------------------------------------------------
 int PerformanceDebugWindow::GetOrCreateRowID(int sectionID, std::string const& rowName)
 {
+    std::unique_lock lock(m_mutex);
     PerfSection* section = FindPerfSection(sectionID);
     if (!section)
     {
@@ -221,6 +237,7 @@ int PerformanceDebugWindow::GetOrCreateRowID(int sectionID, std::string const& r
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::EngineFrameCompleted()
 {
+    std::unique_lock lock(m_mutex);
     g_renderer->BeginCameraAndWindow(m_camera, m_window);
     g_renderer->ClearScreen(Rgba8::LightGray);
 
@@ -261,6 +278,7 @@ void PerformanceDebugWindow::EngineFrameCompleted()
 //----------------------------------------------------------------------------------------------------------------------
 bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
 {
+    std::unique_lock lock(m_mutex);
     char character = (char) args.Get("Key", -1);
     if (character == 'F')
     {
@@ -309,7 +327,7 @@ int PerformanceDebugWindow::CountNumRows() const
 //----------------------------------------------------------------------------------------------------------------------
 int PerformanceDebugWindow::CountNumRowsBeforeSection(int sectionID) const
 {
-    ASSERT_OR_DIE(sectionID < m_perfSections.size(), "Invalid row ID for section");
+    ASSERT_OR_DIE(sectionID < (int) m_perfSections.size(), "Invalid row ID for section");
 
     int numRows = 0;
     for (int i = 0; i < sectionID; ++i)
@@ -354,6 +372,22 @@ void PerformanceDebugWindow::AddTextVertsForSection(VertexBuffer& textVerts, Per
 {
     UNUSED(textVerts);
     UNUSED(section);
+
+    int numTotalRows = CountNumRows();
+    int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
+    AABB2 graphOutline = GetGraphOutline();
+    float sectionHeightFraction = static_cast<float>(section.m_perfRows.size()) / static_cast<float>(numTotalRows);
+    float sectionMinsYFraction = static_cast<float>(numRowsBefore) / static_cast<float>(numTotalRows);
+    AABB2 sectionOutline;
+    sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
+    sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
+
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(1.f, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name);
+
+    for (PerfRow const& row : section.m_perfRows)
+    {
+        AddTextVertsForRow(textVerts, section, row);
+    }
 }
 
 
@@ -395,6 +429,45 @@ void PerformanceDebugWindow::AddUntexturedVertsForRow(VertexBuffer& untexturedVe
     }
 
     AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), rowOutline, GRAPH_ROW_OUTLINE_THICKNESS, Rgba8::Black);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSection const& section, PerfRow const& row)
+{
+    // Row outline
+    int numTotalRows = CountNumRows();
+    int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
+    AABB2 graphOutline = GetGraphOutline();
+
+    float sectionHeightFraction = static_cast<float>(section.m_perfRows.size()) / static_cast<float>(numTotalRows);
+    float sectionMinsYFraction = static_cast<float>(numRowsBefore) / static_cast<float>(numTotalRows);
+
+    AABB2 sectionOutline;
+    sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
+    sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
+
+    float rowMinsYFraction = static_cast<float>(row.m_id) / static_cast<float>(section.m_perfRows.size());
+    float rowHeight = 1.f / numTotalRows * graphOutline.GetHeight();
+
+    AABB2 rowOutline;
+    rowOutline.mins = Vec2(sectionOutline.mins.x, sectionOutline.mins.y + sectionOutline.GetHeight() * rowMinsYFraction);
+    rowOutline.maxs = Vec2(graphOutline.maxs.x, rowOutline.mins.y + rowHeight);
+
+    // Add items
+    for (PerfItemData const& item : row.m_perfItemData)
+    {
+        float itemStartTimeFraction = (float) GetFractionWithin(item.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        float itemEndTimeFraction = (float) GetFractionWithin(item.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        AABB2 itemOutline;
+        itemOutline.mins.x = rowOutline.mins.x + rowOutline.GetWidth() * itemStartTimeFraction;
+        itemOutline.mins.y = rowOutline.mins.y;
+        itemOutline.maxs.x = rowOutline.mins.x + rowOutline.GetWidth() * itemEndTimeFraction;
+        itemOutline.maxs.y = rowOutline.maxs.y;
+    }
+
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(1.f, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name);
 }
 
 
@@ -447,7 +520,7 @@ PerfSection& PerformanceDebugWindow::GetOrCreatePerfSection(std::string const& s
 //----------------------------------------------------------------------------------------------------------------------
 PerfRow* PerformanceDebugWindow::FindPerfRow(PerfSection& section, int rowID)
 {
-    if (rowID < section.m_perfRows.size())
+    if (rowID < (int) section.m_perfRows.size())
     {
         return &section.m_perfRows[rowID];
     }

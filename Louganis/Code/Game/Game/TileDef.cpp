@@ -88,7 +88,7 @@ TileDef const* TileDef::GetTileDef(std::string const& tileName)
 //----------------------------------------------------------------------------------------------------------------------
 int TileDef::GetTileDefID(std::string const& name)
 {
-	for (int i = 0; i < s_tileDefs.size(); ++i)
+	for (int i = 0; i < (int) s_tileDefs.size(); ++i)
 	{
 		auto& def = s_tileDefs[i];
 		if (def.m_name == name)

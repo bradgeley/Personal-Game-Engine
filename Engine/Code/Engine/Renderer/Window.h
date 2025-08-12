@@ -24,8 +24,9 @@ extern class Window* g_window;
 struct WindowConfig
 {
     std::string		m_windowTitle = "Untitled Window";
-    float			m_clientAspect = 2.f;
-    float           m_windowScale = 1.f;
+    float			m_clientAspect = 2.f; // override if m_openInWindowedBorderless = false
+    float           m_windowScale = 1.f;  // override if m_openInWindowedBorderless = false
+    bool            m_windowedBorderless = true;
     bool            m_automaticallyPresent = true;
 };
 

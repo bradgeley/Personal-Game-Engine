@@ -110,8 +110,7 @@ void Game::ConfigureEngine(Engine* engine)
 
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Project Louganis";
-    windowConfig.m_clientAspect = 2.f;
-    windowConfig.m_windowScale = 0.95f;
+    windowConfig.m_windowedBorderless = true;
     g_window = new Window(windowConfig);
     engine->RegisterSubsystem(g_window);
 

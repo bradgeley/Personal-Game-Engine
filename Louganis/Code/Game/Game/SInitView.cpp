@@ -2,6 +2,7 @@
 #include "SInitView.h"
 #include "CTransform.h"
 #include "CRender.h"
+#include "Engine/Core/EngineCommon.h"
 
 
 
@@ -17,6 +18,7 @@ void SInitView::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SInitView::Run(SystemContext const& context)
 {
+    UNUSED(context)
     //auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     //auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
     //
