@@ -110,7 +110,7 @@ void Game::ConfigureEngine(Engine* engine)
 
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Project Louganis";
-    windowConfig.m_windowedBorderless = true;
+    windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Borderless;
     g_window = new Window(windowConfig);
     engine->RegisterSubsystem(g_window);
 

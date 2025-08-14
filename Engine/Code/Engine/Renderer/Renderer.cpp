@@ -100,7 +100,6 @@ void Renderer::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::EndFrame()
 {
-	ScopedTimer t("Renderer: EndFrame");
 	if (m_currentCamera)
 	{
 		EndCamera(m_currentCamera);
@@ -689,6 +688,7 @@ WindowRenderContext& Renderer::GetOrCreateWindowRenderContext(Window* window)
 	if (!SUCCEEDED(result))
 	{
 		g_devConsole->LogError("Renderer::CreateRenderContextForWindow: Failed to create swap chain");
+		return windowRenderContext;
 	}
 
 	DX_SAFE_RELEASE(factory)
@@ -701,12 +701,8 @@ WindowRenderContext& Renderer::GetOrCreateWindowRenderContext(Window* window)
 	windowRenderContext.m_depthBuffer = new Texture();
 	windowRenderContext.m_depthBuffer->InitAsDepthBuffer(windowRenderContext.m_swapChain);
 
-	#if defined(_DEBUG)
-		std::string backbufferName = StringF("Render Target Texture (%s)", g_window->m_config.m_windowTitle.c_str());
-		windowRenderContext.m_backbufferTexture->m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) backbufferName.size(), backbufferName.data());
-		std::string depthbufferName = StringF("Render Target Depth Buffer (%s)", g_window->m_config.m_windowTitle.c_str());
-		windowRenderContext.m_depthBuffer->m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) depthbufferName.size(), depthbufferName.data());
-	#endif
+	window->m_focusChanged.SubscribeMethod(this, &Renderer::WindowFocusChanged);
+	window->m_windowModeChanged.SubscribeMethod(this, &Renderer::WindowModeChanged);
 
 	return windowRenderContext;
 }
@@ -976,26 +972,29 @@ void Renderer::DestroyDevice()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyWindowRenderContexts()
 {
-	for (auto& pair : m_windowRenderContexts)
+	for (auto pair : m_windowRenderContexts)
 	{
-		WindowRenderContext& context = pair.second;
-
-		if (context.m_backbufferTexture)
+		WindowRenderContext& wrc = pair.second;
+		if (wrc.m_backbufferTexture)
 		{
-			context.m_backbufferTexture->ReleaseResources();
-			delete context.m_backbufferTexture;
-			context.m_backbufferTexture = nullptr;
+			wrc.m_backbufferTexture->ReleaseResources();
+			delete wrc.m_backbufferTexture;
+			wrc.m_backbufferTexture = nullptr;
 		}
 
-		if (context.m_depthBuffer)
+		if (wrc.m_depthBuffer)
 		{
-			context.m_depthBuffer->ReleaseResources();
-			delete context.m_depthBuffer;
-			context.m_depthBuffer = nullptr;
+			wrc.m_depthBuffer->ReleaseResources();
+			delete wrc.m_depthBuffer;
+			wrc.m_depthBuffer = nullptr;
 		}
-	
-		DX_SAFE_RELEASE(context.m_swapChain)
+
+		wrc.m_swapChain->SetFullscreenState(false, nullptr);
+
+		DX_SAFE_RELEASE(wrc.m_swapChain)
 	}
+
+	m_windowRenderContexts.clear();
 }
 
 
@@ -1075,6 +1074,47 @@ bool Renderer::ToggleMSAA(NamedProperties& args)
 		wrc.m_depthBuffer = new Texture();
 		wrc.m_depthBuffer->InitAsDepthBuffer(wrc.m_swapChain);
 	}
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Renderer::WindowFocusChanged(NamedProperties& args)
+{
+	Window* window = args.Get("window", (Window*) nullptr);
+	bool hasFocus = args.Get("hasFocus", false);
+
+	if (window && window->IsFullscreen())
+	{
+		WindowRenderContext& wrc = GetOrCreateWindowRenderContext(window);
+		wrc.m_swapChain->SetFullscreenState(hasFocus, nullptr);
+
+		DXGI_SWAP_CHAIN_DESC desc = {};
+		wrc.m_swapChain->GetDesc(&desc);
+
+		HRESULT hr = wrc.m_swapChain->ResizeBuffers(
+			desc.BufferCount,
+			0,
+			0,
+			desc.BufferDesc.Format,
+			desc.Flags
+		);
+	}
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Renderer::WindowModeChanged(NamedProperties& args)
+{
+	WindowMode previousMode = args.Get("previousMode", WindowMode::Borderless);
+	WindowMode mode = args.Get("mode", WindowMode::Borderless);
+
+
 
 	return false;
 }

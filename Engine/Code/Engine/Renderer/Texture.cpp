@@ -143,6 +143,8 @@ bool Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
     D3D11_TEXTURE2D_DESC backbufferDesc;
     swapChainBackBufferTexture->GetDesc(&backbufferDesc);
 
+    DX_SAFE_RELEASE(swapChainBackBufferTexture)
+
     m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
 
     RendererPerUserSettings perUserSettings = g_renderer->GetPerUserSettings();
@@ -190,6 +192,8 @@ bool Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
 
     D3D11_TEXTURE2D_DESC backbufferDesc;
     swapChainBackBufferTexture->GetDesc(&backbufferDesc);
+
+    DX_SAFE_RELEASE(swapChainBackBufferTexture)
 
     m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
 

@@ -1,3 +1,5 @@
 hello
 debugdrawvertexbuffers
+setwindowmode mode=2
+setwindowmode mode=windowed
 

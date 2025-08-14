@@ -6,6 +6,7 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Events/EventSystem.h"
 #include "Texture.h"
 
 
@@ -25,7 +26,7 @@ LRESULT CALLBACK SharedWindowsMessageHandlingProcedure(HWND windowHandle, UINT w
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Window::Window(WindowConfig const& config) : EngineSubsystem("Window"), m_config(config)
+Window::Window(WindowConfig const& config) : EngineSubsystem("Window"), m_config(config), m_userSettings(m_config.m_startupUserSettings)
 {
 }
 
@@ -34,7 +35,11 @@ Window::Window(WindowConfig const& config) : EngineSubsystem("Window"), m_config
 //----------------------------------------------------------------------------------------------------------------------
 void Window::Startup()
 {
-    CreateMainWindow();
+    if (this == g_window)
+    {
+        RegisterEvents();
+    }
+    MakeWindow();
     GiveFocus();
 }
 
@@ -51,6 +56,11 @@ void Window::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Window::Shutdown()
 {
+    if (this == g_window)
+    {
+        UnregisterEvents();
+    }
+
     if (IsValid())
     {
         SetWindowLongPtr((HWND) m_windowHandle, GWLP_USERDATA, 0);
@@ -70,22 +80,6 @@ bool Window::IsValid() const
         return IsWindow((HWND) m_windowHandle);
     }
     return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool Window::IsBeingCreated() const
-{
-    return m_isBeingCreated;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Window::SetIsBeingCreated(bool isBeingCreated)
-{
-    m_isBeingCreated = isBeingCreated;
 }
 
 
@@ -135,6 +129,22 @@ float Window::GetAspect() const
 IntVec2 const& Window::GetDimensions() const
 {
     return m_dimensions;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+WindowMode Window::GetCurrentWindowMode() const
+{
+    return m_userSettings.m_windowMode;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Window::IsFullscreen() const
+{
+    return (m_userSettings.m_windowMode == WindowMode::Fullscreen);
 }
 
 
@@ -201,12 +211,25 @@ void Window::SetHasFocus(bool hasFocus)
     {
         SetWindowTitle(baseTitle);
     }
+
+    NamedProperties args;
+    args.Set("hasFocus", hasFocus);
+    args.Set("window", this);
+    m_focusChanged.Broadcast(args);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Window::CreateMainWindow()
+bool Window::HasFocus() const
+{
+    return m_hasFocus;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::MakeWindow()
 {
     WNDCLASSEX wcex;
     memset(&wcex, 0, sizeof(wcex));
@@ -264,7 +287,6 @@ void Window::CreateMainWindow()
     std::string titleString = m_config.m_windowTitle;
     std::wstring titleWString = std::wstring(titleString.begin(), titleString.end());
 
-    SetIsBeingCreated(true);
     HWND hwnd = CreateWindowEx(
         windowStyleExFlags,
         wcex.lpszClassName,
@@ -281,19 +303,29 @@ void Window::CreateMainWindow()
 
     ASSERT_OR_DIE(hwnd != nullptr, "Failed to create window.");
 
-    if (m_config.m_windowedBorderless)
+    switch (m_userSettings.m_windowMode)
     {
-        SetWindowLongPtr(hwnd, GWL_STYLE, WS_POPUP);
-        SetWindowPos(hwnd, HWND_TOP,
-                     0, 0, desktopWidth, desktopHeight,
-                     SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-        m_dimensions.x = static_cast<int>(desktopWidth);
-        m_dimensions.y = static_cast<int>(desktopHeight);
+        case WindowMode::Windowed:
+        {
+            SetWindowLongPtr(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+            break;
+        }
+        case WindowMode::Fullscreen:
+            // Fallthrough
+        case WindowMode::Borderless:
+        {
+            SetWindowLongPtr(hwnd, GWL_STYLE, WS_POPUP);
+            SetWindowPos(hwnd, HWND_TOP,
+                         0, 0, desktopWidth, desktopHeight,
+                         SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+            m_dimensions.x = static_cast<int>(desktopWidth);
+            m_dimensions.y = static_cast<int>(desktopHeight);
+            break;
+        }
     }
 
     m_windowHandle = hwnd;
     m_displayContext = GetDC(hwnd);
-    SetIsBeingCreated(false);
 
     ::ShowWindow(hwnd, SW_SHOW);
 }
@@ -315,6 +347,55 @@ void Window::RunMessagePump()
       TranslateMessage(&queuedMessage);
       DispatchMessage(&queuedMessage);
    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::RegisterEvents()
+{
+    if (g_eventSystem)
+    {
+        g_eventSystem->SubscribeMethod("SetWindowMode", this, &Window::SetWindowMode);
+    }
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::UnregisterEvents()
+{
+    if (g_eventSystem)
+    {
+        g_eventSystem->UnsubscribeMethod("SetWindowMode", this, &Window::SetWindowMode);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Window::SetWindowMode(NamedProperties& args)
+{
+    args.Set("previousMode", m_userSettings.m_windowMode);
+
+    std::string mode = args.Get("mode", std::string());
+    ToLower(mode);
+    if (strcmp(mode.c_str(), "borderless") == 0)
+    {
+        m_userSettings.m_windowMode = WindowMode::Borderless;
+    }
+    else if (strcmp(mode.c_str(), "windowed") == 0)
+    {
+        m_userSettings.m_windowMode = WindowMode::Windowed;
+    }
+    else if (strcmp(mode.c_str(), "fullscreen") == 0)
+    {
+        m_userSettings.m_windowMode = WindowMode::Fullscreen;
+    }
+
+    args.Set("mode", m_userSettings.m_windowMode);
+
+    m_windowModeChanged.Broadcast(args);
+    return false;
 }
 
 

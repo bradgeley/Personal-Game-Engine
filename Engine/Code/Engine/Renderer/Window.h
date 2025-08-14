@@ -21,13 +21,32 @@ extern class Window* g_window;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class WindowMode : uint8_t
+{
+    Windowed,
+    Fullscreen,
+    Borderless,
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct WindowUserSettings
+{
+    WindowMode m_windowMode = WindowMode::Borderless;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct WindowConfig
 {
     std::string		m_windowTitle = "Untitled Window";
     float			m_clientAspect = 2.f; // override if m_openInWindowedBorderless = false
     float           m_windowScale = 1.f;  // override if m_openInWindowedBorderless = false
-    bool            m_windowedBorderless = true;
     bool            m_automaticallyPresent = true;
+
+    WindowUserSettings m_startupUserSettings;
 };
 
 
@@ -48,8 +67,6 @@ public:
     virtual void Shutdown() override;
 
     bool IsValid() const;
-    bool IsBeingCreated() const;
-    void SetIsBeingCreated(bool isBeingCreated);
     void SetWindowTitle(std::string const& newTitle);
 
     void* GetHWND() const;
@@ -57,19 +74,29 @@ public:
     int GetHeight() const;
     float GetAspect() const;
     IntVec2 const& GetDimensions() const;
+    WindowMode GetCurrentWindowMode() const;
+    bool IsFullscreen() const;
 
     IntVec2 GetMouseClientPosition(bool originBottomLeft = true) const;
     Vec2 GetMouseClientRelativePosition(bool originBottomLeft = true) const;
 
     bool GiveFocus();
     void SetHasFocus(bool hasFocus);
+    bool HasFocus() const;
 
 private:
 
-    void CreateMainWindow();
+    void MakeWindow();
     void RunMessagePump();
+    void RegisterEvents();
+    void UnregisterEvents();
+
+    bool SetWindowMode(NamedProperties& args);
     
 public:
+
+    EventDelegate m_focusChanged;
+    EventDelegate m_windowModeChanged;
 
     // The input system listens to these events from the window and turns them into input events
     EventDelegate m_quit;
@@ -79,10 +106,11 @@ public:
     EventDelegate m_keyDownEvent;
     EventDelegate m_keyUpEvent;
     EventDelegate m_mouseWheelEvent;
-    
+
 public:
     
     WindowConfig const m_config;
+    WindowUserSettings m_userSettings;
 
 protected:
     
@@ -92,5 +120,4 @@ protected:
     void* m_displayContext          = nullptr; // HDC
 
     bool m_hasFocus                 = false;
-    bool m_isBeingCreated           = false;
 };

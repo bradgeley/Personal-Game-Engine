@@ -120,6 +120,8 @@ public:
     bool DebugDrawVertexBuffers(NamedProperties& args);
     bool ToggleVSync(NamedProperties& args);
     bool ToggleMSAA(NamedProperties& args);
+    bool WindowFocusChanged(NamedProperties& args);
+    bool WindowModeChanged(NamedProperties& args);
 
 private:
 

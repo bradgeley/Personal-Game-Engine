@@ -62,7 +62,7 @@ void PerformanceDebugWindow::Startup()
     windowConfig.m_windowScale = 0.5f;
     windowConfig.m_windowTitle = "Performance Debug Window";
     windowConfig.m_automaticallyPresent = false;
-    windowConfig.m_windowedBorderless = false;
+    windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Windowed;
     m_window = new Window(windowConfig);
     m_window->Startup();
 

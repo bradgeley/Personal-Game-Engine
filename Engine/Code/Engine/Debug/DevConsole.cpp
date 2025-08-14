@@ -320,7 +320,7 @@ bool DevConsole::HandleChar(NamedProperties& args)
 bool DevConsole::HandleKeyDown(NamedProperties& args)
 {
     int key = args.Get("Key", -1);
-    if (key == (uint8_t) KeyCode::Tilde)
+    if (key == (uint8_t) KeyCode::Tilde || key == (uint8_t) KeyCode::Escape)
     {
         m_isShowing = !m_isShowing;
         return true;

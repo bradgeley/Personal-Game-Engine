@@ -253,7 +253,6 @@ bool InputSystem::HandleKeyDown(NamedProperties& args)
     if (!m_isEnabled)
     {
         return false;
-        
     }
     int key = args.Get("Key", -1);
     if (IsValidKey(key))
