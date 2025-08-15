@@ -19,22 +19,18 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-constexpr float WINDOW_WIDTH = 150.f;
-constexpr float WINDOW_HEIGHT = 100.f;
-constexpr float GRAPH_EDGE_PAD = 5.f;
-constexpr float GRAPH_LEFT_EDGE_PAD = 25.f;
-constexpr float GRAPH_OUTLINE_THICKNESS = 0.33f;
-constexpr float GRAPH_SECTION_OUTLINE_THICKNESS = 0.33f;
-constexpr float GRAPH_ROW_OUTLINE_THICKNESS = 0.05f;
-constexpr float TITLE_FONT_SIZE = 5.f;
-constexpr float SECTION_NAME_FONT_SIZE = 5.f;
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// Graph drawing helper functions
-//
-static AABB2 GetGraphOutline();
+constexpr float WINDOW_RESOLUTION_X = 750.f;
+constexpr float WINDOW_RESOLUTION_Y = 750.f;
+constexpr float GRAPH_EDGE_PAD = 25.f;
+constexpr float GRAPH_LEFT_EDGE_PAD = 125.f;
+constexpr float GRAPH_OUTLINE_THICKNESS = 1.f;
+constexpr float GRAPH_SECTION_OUTLINE_THICKNESS = 1.f;
+constexpr float GRAPH_ROW_OUTLINE_THICKNESS = 0.25f;
+constexpr float TITLE_FONT_SIZE = 25.f;
+constexpr float FPS_COUNTER_FONT_SIZE = 0.75f * TITLE_FONT_SIZE;
+constexpr float SECTION_NAME_FONT_SIZE = 25.f;
+constexpr float SECTION_NAME_PADDING = 5.f;
+constexpr float ROW_NAME_PADDING = 5.f;
 
 
 
@@ -57,19 +53,25 @@ PerformanceDebugWindow::PerformanceDebugWindow(PerformanceDebugWindowConfig cons
 void PerformanceDebugWindow::Startup()
 {
     std::unique_lock lock(m_mutex);
+
     WindowConfig windowConfig;
-    windowConfig.m_clientAspect = 1.5f;
-    windowConfig.m_windowScale = 0.5f;
     windowConfig.m_windowTitle = "Performance Debug Window";
     windowConfig.m_automaticallyPresent = false;
     windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Windowed;
+    windowConfig.m_startupUserSettings.m_windowResolution = IntVec2(WINDOW_RESOLUTION_X, WINDOW_RESOLUTION_Y);
+    windowConfig.m_startupUserSettings.m_renderResolutionMultiplier = 1.f;
+
+    m_camera = new Camera();
     m_window = new Window(windowConfig);
+
+    m_window->m_windowSizeChanged.SubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
     m_window->Startup();
 
+    IntVec2 renderResolution = m_window->GetRenderResolution();
+    AABB2 bounds = AABB2(Vec2(IntVec2::ZeroVector), Vec2(renderResolution));
+    m_camera->SetOrthoBounds2D(bounds);
+
     g_renderer->GetOrCreateWindowRenderContext(m_window);
-    
-    m_camera = new Camera();
-    m_camera->SetOrthoBounds(Vec3::ZeroVector, Vec3(WINDOW_WIDTH, WINDOW_HEIGHT, 1.f));
 
     m_window->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
 }
@@ -238,6 +240,11 @@ int PerformanceDebugWindow::GetOrCreateRowID(int sectionID, std::string const& r
 void PerformanceDebugWindow::EngineFrameCompleted()
 {
     std::unique_lock lock(m_mutex);
+    if (!m_window)
+    {
+        return;
+    }
+
     g_renderer->BeginCameraAndWindow(m_camera, m_window);
     g_renderer->ClearScreen(Rgba8::LightGray);
 
@@ -249,17 +256,19 @@ void PerformanceDebugWindow::EngineFrameCompleted()
     }
 
     // Graph Outline Box
-    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), GetGraphOutline(), GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
+    AABB2 graphOutline;
+    GetGraphOutline(graphOutline);
+    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
 
     g_renderer->DrawVertexBuffer(&untexturedVerts);
 
     VertexBuffer textVerts;
     Font* font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), GetGraphOutline().GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
+    font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
 
     float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
     std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Seconds(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
-    font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), GetGraphOutline().maxs, Vec2(-1.f, 1.f), TITLE_FONT_SIZE * 0.75f, frameCounterText, Rgba8::Black);
+    font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
 
     for (PerfSection const& section : m_perfSections)
     {
@@ -292,6 +301,17 @@ bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
         }
         m_freezeLog = !m_freezeLog;
     }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool PerformanceDebugWindow::WindowSizeChanged(NamedProperties& args)
+{
+    IntVec2 renderResolution = m_window->GetRenderResolution();
+    AABB2 bounds = AABB2(Vec2(IntVec2::ZeroVector), Vec2(renderResolution));
+    m_camera->SetOrthoBounds2D(bounds);
     return false;
 }
 
@@ -347,9 +367,10 @@ int PerformanceDebugWindow::CountNumRowsBeforeSection(int sectionID) const
 void PerformanceDebugWindow::AddUntexturedVertsForSection(VertexBuffer& untexturedVerts, PerfSection const& section)
 {
     // Section outline
+    AABB2 graphOutline;
+    GetGraphOutline(graphOutline);
     int numTotalRows = CountNumRows();
     int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
-    AABB2 graphOutline = GetGraphOutline();
     float sectionHeightFraction = static_cast<float>(section.m_perfRows.size()) / static_cast<float>(numTotalRows);
     float sectionMinsYFraction = static_cast<float>(numRowsBefore) / static_cast<float>(numTotalRows);
     AABB2 sectionOutline;
@@ -375,14 +396,15 @@ void PerformanceDebugWindow::AddTextVertsForSection(VertexBuffer& textVerts, Per
 
     int numTotalRows = CountNumRows();
     int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
-    AABB2 graphOutline = GetGraphOutline();
+    AABB2 graphOutline;
+    GetGraphOutline(graphOutline);
     float sectionHeightFraction = static_cast<float>(section.m_perfRows.size()) / static_cast<float>(numTotalRows);
     float sectionMinsYFraction = static_cast<float>(numRowsBefore) / static_cast<float>(numTotalRows);
     AABB2 sectionOutline;
     sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
     sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(1.f, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name);
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name);
 
     for (PerfRow const& row : section.m_perfRows)
     {
@@ -398,7 +420,8 @@ void PerformanceDebugWindow::AddUntexturedVertsForRow(VertexBuffer& untexturedVe
     // Row outline
     int numTotalRows = CountNumRows();
     int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
-    AABB2 graphOutline = GetGraphOutline();
+    AABB2 graphOutline;
+    GetGraphOutline(graphOutline);
 
     float sectionHeightFraction = static_cast<float>(section.m_perfRows.size()) / static_cast<float>(numTotalRows);
     float sectionMinsYFraction = static_cast<float>(numRowsBefore) / static_cast<float>(numTotalRows);
@@ -439,7 +462,8 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
     // Row outline
     int numTotalRows = CountNumRows();
     int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
-    AABB2 graphOutline = GetGraphOutline();
+    AABB2 graphOutline;
+    GetGraphOutline(graphOutline);
 
     float sectionHeightFraction = static_cast<float>(section.m_perfRows.size()) / static_cast<float>(numTotalRows);
     float sectionMinsYFraction = static_cast<float>(numRowsBefore) / static_cast<float>(numTotalRows);
@@ -467,7 +491,7 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
         itemOutline.maxs.y = rowOutline.maxs.y;
     }
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(1.f, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name);
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name);
 }
 
 
@@ -563,8 +587,8 @@ PerfRow& PerformanceDebugWindow::GetOrCreatePerfRow(PerfSection& section, std::s
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AABB2 GetGraphOutline()
+void PerformanceDebugWindow::GetGraphOutline(AABB2& out_outline) const
 {
-    static AABB2 outline = AABB2(GRAPH_LEFT_EDGE_PAD, GRAPH_EDGE_PAD, WINDOW_WIDTH - GRAPH_EDGE_PAD, WINDOW_HEIGHT - GRAPH_EDGE_PAD);
-    return outline;
+    IntVec2 renderResolution = m_window->GetRenderResolution();
+    out_outline = AABB2(GRAPH_LEFT_EDGE_PAD, GRAPH_EDGE_PAD, renderResolution.x - GRAPH_EDGE_PAD, renderResolution.y - GRAPH_EDGE_PAD);
 }

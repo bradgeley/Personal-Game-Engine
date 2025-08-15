@@ -111,6 +111,7 @@ void Game::ConfigureEngine(Engine* engine)
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Project Louganis";
     windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Borderless;
+    windowConfig.m_startupUserSettings.m_windowResolution = IntVec2(500, 500); // if not fullscreen
     g_window = new Window(windowConfig);
     engine->RegisterSubsystem(g_window);
 

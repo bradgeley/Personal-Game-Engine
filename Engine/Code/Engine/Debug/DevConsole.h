@@ -99,6 +99,7 @@ protected:
 	bool HandleMouseButtonUp(NamedProperties& args);
 	bool HandleMouseWheel(NamedProperties& args);
 	bool OnCommandEnteredEvent(NamedProperties& args);
+	bool WindowSizeChanged(NamedProperties& args);
 
 private:
 

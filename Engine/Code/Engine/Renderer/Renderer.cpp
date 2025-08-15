@@ -188,13 +188,13 @@ void Renderer::BeginCamera(Camera const* camera)
 	m_dirtySettings.m_cameraConstants = camera->GetCameraConstants();
 	
 	// Set viewport
-	IntVec2 windowDims = m_currentWindow->GetDimensions();
+	IntVec2 renderResolution = m_currentWindow->GetRenderResolution();
 	
 	D3D11_VIEWPORT viewport;
 	viewport.TopLeftX = 0.f;
 	viewport.TopLeftY = 0.f;
-	viewport.Width = static_cast<float>(windowDims.x);
-	viewport.Height = static_cast<float>(windowDims.y);
+	viewport.Width = static_cast<float>(renderResolution.x);
+	viewport.Height = static_cast<float>(renderResolution.y);
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1;
 	m_deviceContext->RSSetViewports(1, &viewport);
@@ -248,6 +248,11 @@ void Renderer::Present() const
 		WindowRenderContext const& wrc = pair.second;
 		if (!wrc.m_window->m_config.m_automaticallyPresent)
 		{
+			continue;
+		}
+		if (wrc.m_window->GetIsMinimized())
+		{
+			// Suspend present while minimized
 			continue;
 		}
 
@@ -667,11 +672,13 @@ WindowRenderContext& Renderer::GetOrCreateWindowRenderContext(Window* window)
 	
 	IDXGIFactory* factory;
 	adapter->GetParent(__uuidof(IDXGIFactory), (void**)&factory);
+
+	IntVec2 renderResolution = window->GetRenderResolution();
 	
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChainDesc.BufferDesc.Height = window->GetHeight();
-	swapChainDesc.BufferDesc.Width = window->GetWidth();
+	swapChainDesc.BufferDesc.Height = renderResolution.y;
+	swapChainDesc.BufferDesc.Width = renderResolution.x;
 	swapChainDesc.BufferDesc.RefreshRate = { 0, 0 };
 	swapChainDesc.Windowed = TRUE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
@@ -703,6 +710,7 @@ WindowRenderContext& Renderer::GetOrCreateWindowRenderContext(Window* window)
 
 	window->m_focusChanged.SubscribeMethod(this, &Renderer::WindowFocusChanged);
 	window->m_windowModeChanged.SubscribeMethod(this, &Renderer::WindowModeChanged);
+	window->m_windowSizeChanged.SubscribeMethod(this, &Renderer::WindowSizeChanged);
 
 	return windowRenderContext;
 }
@@ -975,6 +983,13 @@ void Renderer::DestroyWindowRenderContexts()
 	for (auto pair : m_windowRenderContexts)
 	{
 		WindowRenderContext& wrc = pair.second;
+
+		wrc.m_window->m_focusChanged.UnsubscribeMethod(this, &Renderer::WindowFocusChanged);
+		wrc.m_window->m_windowModeChanged.UnsubscribeMethod(this, &Renderer::WindowModeChanged);
+		wrc.m_window->m_windowSizeChanged.UnsubscribeMethod(this, &Renderer::WindowSizeChanged);
+
+		wrc.m_swapChain->SetFullscreenState(false, nullptr);
+
 		if (wrc.m_backbufferTexture)
 		{
 			wrc.m_backbufferTexture->ReleaseResources();
@@ -988,8 +1003,6 @@ void Renderer::DestroyWindowRenderContexts()
 			delete wrc.m_depthBuffer;
 			wrc.m_depthBuffer = nullptr;
 		}
-
-		wrc.m_swapChain->SetFullscreenState(false, nullptr);
 
 		DX_SAFE_RELEASE(wrc.m_swapChain)
 	}
@@ -1032,15 +1045,15 @@ ID3D11BlendState* Renderer::CreateBlendState(::D3D11_BLEND srcFactor, ::D3D11_BL
 //----------------------------------------------------------------------------------------------------------------------
 bool Renderer::DebugDrawVertexBuffers(NamedProperties& args)
 {
-	UNUSED(args)
+UNUSED(args)
 
-	#if defined(_DEBUG)
-		m_debugDrawVertexBuffers = !m_debugDrawVertexBuffers;
-		return true;
-	#else
-		g_devConsole->LogError("Cannot debug draw vertex buffers in a Release build.");
-		return false;
-	#endif
+#if defined(_DEBUG)
+m_debugDrawVertexBuffers = !m_debugDrawVertexBuffers;
+return true;
+#else
+g_devConsole->LogError("Cannot debug draw vertex buffers in a Release build.");
+return false;
+#endif
 }
 
 
@@ -1049,7 +1062,7 @@ bool Renderer::DebugDrawVertexBuffers(NamedProperties& args)
 bool Renderer::ToggleVSync(NamedProperties& args)
 {
 	UNUSED(args)
-	m_perUserSettings.m_vsyncEnabled = !m_perUserSettings.m_vsyncEnabled;
+		m_perUserSettings.m_vsyncEnabled = !m_perUserSettings.m_vsyncEnabled;
 	return false;
 }
 
@@ -1059,7 +1072,7 @@ bool Renderer::ToggleVSync(NamedProperties& args)
 bool Renderer::ToggleMSAA(NamedProperties& args)
 {
 	UNUSED(args)
-	m_perUserSettings.m_msaaEnabled = !m_perUserSettings.m_msaaEnabled;
+		m_perUserSettings.m_msaaEnabled = !m_perUserSettings.m_msaaEnabled;
 
 	// Recreate the depth buffer and backbuffer textures
 	for (auto& wrcPair : m_windowRenderContexts)
@@ -1084,25 +1097,31 @@ bool Renderer::ToggleMSAA(NamedProperties& args)
 bool Renderer::WindowFocusChanged(NamedProperties& args)
 {
 	Window* window = args.Get("window", (Window*) nullptr);
-	bool hasFocus = args.Get("hasFocus", false);
-
-	if (window && window->IsFullscreen())
+	if (!window)
 	{
-		WindowRenderContext& wrc = GetOrCreateWindowRenderContext(window);
-		wrc.m_swapChain->SetFullscreenState(hasFocus, nullptr);
+		return false;
+	}
 
-		DXGI_SWAP_CHAIN_DESC desc = {};
-		wrc.m_swapChain->GetDesc(&desc);
+	WindowRenderContext& wrc = GetOrCreateWindowRenderContext(window);
 
-		HRESULT hr = wrc.m_swapChain->ResizeBuffers(
-			desc.BufferCount,
-			0,
-			0,
-			desc.BufferDesc.Format,
-			desc.Flags
-		);
-
-		ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to resize buffers after window fullscreen state change.");
+	if (window->IsFullscreen())
+	{
+		if (!window->HasFocus())
+		{
+			window->Minimize();
+		}
+		else
+		{
+			ShowWindow((HWND) window->GetHWND(), SW_SHOW);
+		}
+	}
+	else
+	{
+		if (window->HasFocus())
+		{
+			SetForegroundWindow((HWND) window->GetHWND());
+			SetActiveWindow((HWND) window->GetHWND());
+		}
 	}
 
 	return false;
@@ -1113,10 +1132,94 @@ bool Renderer::WindowFocusChanged(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool Renderer::WindowModeChanged(NamedProperties& args)
 {
+	Window* window = args.Get("window", (Window*) nullptr);
+	if (!window)
+	{
+		return false;
+	}
+
 	WindowMode previousMode = args.Get("previousMode", WindowMode::Borderless);
 	WindowMode mode = args.Get("mode", WindowMode::Borderless);
+	WindowRenderContext& wrc = GetOrCreateWindowRenderContext(window);
+
+	HWND hwnd = (HWND) window->GetHWND();
+
+	// Restore window if minimized
+	WINDOWPLACEMENT wp = {};
+	wp.length = sizeof(wp);
+	GetWindowPlacement(hwnd, &wp);
+	if (wp.showCmd == SW_SHOWMINIMIZED)
+	{
+		wp.showCmd = SW_SHOWNORMAL;
+		SetWindowPlacement(hwnd, &wp);
+	}
+
+	// Get monitor rect
+	RECT monitorRect = {};
+	HMONITOR hMon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
+	MONITORINFO mi = { sizeof(mi) };
+	GetMonitorInfo(hMon, &mi);
+	monitorRect = mi.rcMonitor;
+
+	HRESULT fullscreenResult;
+	if (!window->IsFullscreen())
+	{
+		fullscreenResult = wrc.m_swapChain->SetFullscreenState(FALSE, nullptr);
+	}
+
+	// Set style
+	DWORD style = window->GetWindowStyleFlags();
+	SetWindowLongPtr(hwnd, GWL_STYLE, style);
+
+	RECT targetRect = monitorRect;
+	if (window->IsWindowed())
+	{
+		IntVec2 lastKnownPos = window->GetLastKnownWindowedPos();
+		IntVec2 desiredResolution = window->GetDesiredWindowResolution(); 			
+		targetRect.left = lastKnownPos.x;
+		targetRect.top = lastKnownPos.y;
+		targetRect.right = targetRect.left + desiredResolution.x;
+		targetRect.bottom = targetRect.top + desiredResolution.y;
+		bool adjusted = AdjustWindowRect(&targetRect, style, FALSE);
+
+		ASSERT_OR_DIE(adjusted, "Failed to adjust");
+	}
+
+	std::this_thread::yield();
+	bool setPos = SetWindowPos(hwnd, HWND_TOP,
+				 targetRect.left, targetRect.top,
+				 targetRect.right - targetRect.left,
+				 targetRect.bottom - targetRect.top,
+				 SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+	ASSERT_OR_DIE(setPos, "Failed to set window Pos");
+
+	if (window->IsFullscreen())
+	{
+		fullscreenResult = wrc.m_swapChain->SetFullscreenState(TRUE, nullptr);
+	}
+
+	ASSERT_OR_DIE(SUCCEEDED(fullscreenResult), "Failed to set fullscreen.");
+
+	ResizeWindowRenderContext(wrc);
+
+	return false;
+}
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Renderer::WindowSizeChanged(NamedProperties& args)
+{
+	Window* window = args.Get("window", (Window*) nullptr);
+	if (!window)
+	{
+		return false;
+	}
+
+	WindowRenderContext& wrc = GetOrCreateWindowRenderContext(window);
+
+	ResizeWindowRenderContext(wrc);
 
 	return false;
 }
@@ -1313,6 +1416,33 @@ void Renderer::RemoveDevConsoleCommands()
 		g_eventSystem->UnsubscribeMethod("ToggleVSync", this, &Renderer::ToggleVSync);
 		g_eventSystem->UnsubscribeMethod("ToggleMSAA", this, &Renderer::ToggleMSAA);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::ResizeWindowRenderContext(WindowRenderContext& wrc)
+{
+	wrc.m_backbufferTexture->ReleaseResources();
+	wrc.m_depthBuffer->ReleaseResources();
+
+	DXGI_SWAP_CHAIN_DESC desc = {};
+	wrc.m_swapChain->GetDesc(&desc);
+
+	IntVec2 renderResolution = wrc.m_window->GetRenderResolution();
+
+	HRESULT hr = wrc.m_swapChain->ResizeBuffers(
+		desc.BufferCount,
+		renderResolution.x,
+		renderResolution.y,
+		desc.BufferDesc.Format,
+		desc.Flags
+	);
+
+	ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to resize buffers after window mode change.");
+
+	wrc.m_backbufferTexture->InitAsBackbufferTexture(wrc.m_swapChain);
+	wrc.m_depthBuffer->InitAsDepthBuffer(wrc.m_swapChain);
 }
 
 

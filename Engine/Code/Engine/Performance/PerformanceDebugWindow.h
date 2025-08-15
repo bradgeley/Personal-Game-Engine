@@ -114,6 +114,7 @@ public:
 public:
 
     bool HandleKeyUp(NamedProperties& args);
+    bool WindowSizeChanged(NamedProperties& args);
 
 private:
 
@@ -134,6 +135,8 @@ private:
     PerfRow* FindPerfRow(PerfSection& section, int rowID);
     PerfRow* FindPerfRow(PerfSection& section, std::string const& rowName);
     PerfRow& GetOrCreatePerfRow(PerfSection& section, std::string const& rowName);
+
+    void GetGraphOutline(AABB2& out_outline) const;
 
 protected:
 

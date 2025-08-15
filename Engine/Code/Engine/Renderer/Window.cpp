@@ -41,7 +41,10 @@ void Window::Startup()
         RegisterEvents();
     }
     MakeWindow();
-    GiveFocus();
+    if (m_config.m_takeFocusWhenCreated)
+    {
+        GiveFocus();
+    }
 }
 
 
@@ -105,7 +108,8 @@ void* Window::GetHWND() const
 //----------------------------------------------------------------------------------------------------------------------
 int Window::GetWidth() const
 {
-    return m_dimensions.x;
+    IntVec2 resolution = GetActualWindowResolution();
+    return resolution.x;
 }
 
 
@@ -113,7 +117,8 @@ int Window::GetWidth() const
 //----------------------------------------------------------------------------------------------------------------------
 int Window::GetHeight() const
 {
-    return m_dimensions.y;
+    IntVec2 resolution = GetActualWindowResolution();
+    return resolution.y;
 }
 
 
@@ -122,14 +127,6 @@ int Window::GetHeight() const
 float Window::GetAspect() const
 {
     return (float) GetWidth() / (float) GetHeight();
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-IntVec2 const& Window::GetDimensions() const
-{
-    return m_dimensions;
 }
 
 
@@ -146,6 +143,87 @@ WindowMode Window::GetCurrentWindowMode() const
 bool Window::IsFullscreen() const
 {
     return (m_userSettings.m_windowMode == WindowMode::Fullscreen);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Window::IsBorderless() const
+{
+    return (m_userSettings.m_windowMode == WindowMode::Borderless);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Window::IsWindowed() const
+{
+    return (m_userSettings.m_windowMode == WindowMode::Windowed);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::Minimize()
+{
+    ShowWindow((HWND) GetHWND(), SW_MINIMIZE);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::SetIsMinimized(bool isMinimized)
+{
+    m_isMinimized = isMinimized;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Window::GetIsMinimized() const
+{
+    return m_isMinimized;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 Window::GetDesiredWindowResolution() const
+{
+    if (m_userSettings.m_windowMode == WindowMode::Windowed)
+    {
+        return m_userSettings.m_windowResolution;
+    }
+
+    RECT desktopRect;
+    HWND desktop = GetDesktopWindow();
+    GetWindowRect(desktop, &desktopRect);
+
+    return IntVec2(desktopRect.right, desktopRect.bottom);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 Window::GetActualWindowResolution() const
+{
+    return m_actualResolution;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 Window::GetRenderResolution() const
+{
+    return GetActualWindowResolution() * m_userSettings.m_renderResolutionMultiplier;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 Window::GetLastKnownWindowedPos() const
+{
+    return m_lastKnownWindowedPos;
 }
 
 
@@ -189,8 +267,6 @@ bool Window::GiveFocus()
     if (m_windowHandle)
     {
         ::SetFocus((HWND) m_windowHandle);
-        ::SetForegroundWindow((HWND) m_windowHandle);
-        SetHasFocus(true);
     }
     return m_windowHandle != nullptr;
 }
@@ -202,16 +278,7 @@ void Window::SetHasFocus(bool hasFocus)
 {
     m_hasFocus = hasFocus;
 
-    std::string const& baseTitle = m_config.m_windowTitle;
-    if (m_hasFocus)
-    {
-        std::string focusedTitle = baseTitle + " (focused)";
-        SetWindowTitle(focusedTitle);
-    }
-    else
-    {
-        SetWindowTitle(baseTitle);
-    }
+    RefreshWindowTitle();
 
     NamedProperties args;
     args.Set("hasFocus", hasFocus);
@@ -225,6 +292,167 @@ void Window::SetHasFocus(bool hasFocus)
 bool Window::HasFocus() const
 {
     return m_hasFocus;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+uint32_t Window::GetWindowStyleFlags() const
+{
+    uint32_t windowStyleFlags = 0;
+
+    switch (m_userSettings.m_windowMode)
+    {
+        case WindowMode::Windowed:
+        {
+            windowStyleFlags |= WS_OVERLAPPEDWINDOW;
+            break;
+        }
+        case WindowMode::Fullscreen:
+            // Fallthrough
+        case WindowMode::Borderless:
+        {
+            windowStyleFlags |= WS_POPUP;
+            break;
+        }
+    }
+    return windowStyleFlags;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+uint32_t Window::GetWindowStyleExFlags() const
+{
+    uint32_t windowStyleExFlags = 0;
+    switch (m_userSettings.m_windowMode)
+    {
+        case WindowMode::Windowed:
+        {
+            break;
+        }
+        case WindowMode::Fullscreen:
+            // Fallthrough
+        case WindowMode::Borderless:
+        {
+            windowStyleExFlags |= WS_EX_APPWINDOW;
+            break;
+        }
+    }
+    return windowStyleExFlags;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+std::string Window::GetWindowTitle() const
+{
+    IntVec2 resolution = GetActualWindowResolution();
+    IntVec2 renderResolution = GetRenderResolution();
+    std::string focusString = m_hasFocus ? "Focused, " : "";
+    std::string modeString;
+    switch (m_userSettings.m_windowMode)
+    {
+        case WindowMode::Borderless:
+            modeString = "Borderless";
+            break;
+        case WindowMode::Windowed:
+            modeString = "Windowed";
+            break;
+        case WindowMode::Fullscreen:
+            modeString = "Fullscreen";
+            break;
+    }
+    std::string title = StringUtils::StringF("%s (%s%i/%i, %s)", m_config.m_windowTitle.c_str(), focusString.c_str(), resolution.x, resolution.y, modeString.c_str());
+    return title;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::RefreshWindowTitle()
+{
+    std::string windowTitle = GetWindowTitle();
+    SetWindowTitle(windowTitle);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::RefreshWindowSize()
+{
+    SetWindowLongPtr((HWND) m_windowHandle, GWL_STYLE, GetWindowStyleFlags());
+    SetWindowLongPtr((HWND) m_windowHandle, GWL_EXSTYLE, GetWindowStyleExFlags());
+
+    IntVec2 windowResolution = GetActualWindowResolution();
+
+    RECT rect = { 0,0, windowResolution.x, windowResolution.y };
+    bool result = AdjustWindowRectEx(&rect, GetWindowStyleFlags(), FALSE, 0);
+
+    result |= SetWindowPos(
+        (HWND) m_windowHandle,
+        nullptr,
+        0, 0,
+        windowResolution.x, windowResolution.y,
+        SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED
+    );
+
+    ASSERT_OR_DIE(result == true, StringUtils::StringF("Failed to set window size: error code %i", GetLastError()));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::HandleWindowResolutionChanged(int width, int height)
+{
+    if (width == 0 || height == 0)
+    {   
+        // Invalid
+        return;
+    }
+
+    if (m_isManuallyResizing)
+    {
+        m_userSettings.m_windowResolution.x = width;
+        m_userSettings.m_windowResolution.y = height;
+    }
+
+    m_actualResolution = IntVec2(width, height);
+
+    RefreshWindowTitle();
+
+    NamedProperties args;
+    args.Set("window", this);
+    m_windowSizeChanged.Broadcast(args);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::ToggleUserManualResizing(bool isManuallyResizing)
+{
+    m_isManuallyResizing = isManuallyResizing;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::HandleManualMove()
+{
+    if (m_isManuallyResizing)
+    {
+        RECT rect;
+        GetWindowRect((HWND) GetHWND(), &rect);
+        m_lastKnownWindowedPos = IntVec2(rect.left, rect.top);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::MakeChildOf(Window* parentWindow)
+{
+    ::SetWindowLongPtr((HWND) m_windowHandle, GWLP_HWNDPARENT, reinterpret_cast<LONG_PTR>(parentWindow->GetHWND()));
 }
 
 
@@ -248,55 +476,24 @@ void Window::MakeWindow()
     wcex.hIconSm        = LoadIcon(wcex.hInstance, IDI_APPLICATION); 
     RegisterClassEx(&wcex);
     
-    DWORD const windowStyleFlags = WS_CAPTION | WS_BORDER | WS_SYSMENU | WS_OVERLAPPED;
-    DWORD const windowStyleExFlags = WS_EX_APPWINDOW;
-
-    RECT desktopRect;
-    HWND desktopWindowHandle = GetDesktopWindow();
-    GetClientRect(desktopWindowHandle, &desktopRect);
-    float desktopWidth = (float) (desktopRect.right - desktopRect.left);
-    float desktopHeight = (float) (desktopRect.bottom - desktopRect.top);
-    float desktopAspect = desktopWidth / desktopHeight;
-
-    float clientHeight = desktopHeight * m_config.m_windowScale;
-    float clientWidth = desktopWidth * m_config.m_windowScale;
-    if (m_config.m_clientAspect > desktopAspect)
-    {
-        clientHeight = clientWidth / m_config.m_clientAspect;
-    }
-    else if (m_config.m_clientAspect < desktopAspect)
-    {
-        clientWidth = clientHeight * m_config.m_clientAspect;
-    }
-    m_dimensions.x = static_cast<int>(clientWidth);
-    m_dimensions.y = static_cast<int>(clientHeight);
-
-    // Calculate client rect bounds by centering the client area
-    float clientMarginX = 0.5f * (desktopWidth - clientWidth);
-    float clientMarginY = 0.5f * (desktopHeight - clientHeight);
-    RECT clientRect;
-    clientRect.left = (int) clientMarginX;
-    clientRect.right = clientRect.left + (int) clientWidth;
-    clientRect.top = (int) clientMarginY;
-    clientRect.bottom = clientRect.top + (int) clientHeight;
-    
-    // Calculate the outer dimensions of the physical window, including frame et. al.
-    RECT windowRect = clientRect;
-    AdjustWindowRectEx(&windowRect, windowStyleFlags, FALSE, windowStyleExFlags);
+    DWORD windowStyleFlags = GetWindowStyleFlags();
+    DWORD windowStyleExFlags = GetWindowStyleExFlags();
 
     // Convert window title to a wstring
     std::string titleString = m_config.m_windowTitle;
     std::wstring titleWString = std::wstring(titleString.begin(), titleString.end());
+
+    IntVec2 windowResolution = GetDesiredWindowResolution();
 
     HWND hwnd = CreateWindowEx(
         windowStyleExFlags,
         wcex.lpszClassName,
         titleWString.data(),
         windowStyleFlags,
-        windowRect.left,
-        windowRect.top,
-        windowRect.right - windowRect.left,
-        windowRect.bottom - windowRect.top,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        windowResolution.x,
+        windowResolution.y,
         nullptr,
         nullptr,
         wcex.hInstance,
@@ -304,31 +501,17 @@ void Window::MakeWindow()
 
     ASSERT_OR_DIE(hwnd != nullptr, "Failed to create window.");
 
-    switch (m_userSettings.m_windowMode)
-    {
-        case WindowMode::Windowed:
-        {
-            SetWindowLongPtr(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-            break;
-        }
-        case WindowMode::Fullscreen:
-            // Fallthrough
-        case WindowMode::Borderless:
-        {
-            m_dimensions.x = static_cast<int>(desktopWidth);
-            m_dimensions.y = static_cast<int>(desktopHeight);
-            SetWindowLongPtr(hwnd, GWL_STYLE, WS_POPUP);
-            SetWindowPos(hwnd, HWND_TOP,
-                         0, 0, m_dimensions.x, m_dimensions.y,
-                         SWP_FRAMECHANGED | SWP_SHOWWINDOW);
-            break;
-        }
-    }
-
     m_windowHandle = hwnd;
     m_displayContext = GetDC(hwnd);
 
-    ::ShowWindow(hwnd, SW_SHOW);
+    if (m_config.m_takeFocusWhenCreated)
+    {
+        ::ShowWindow(hwnd, SW_SHOW);
+    }
+    else
+    {
+        ::ShowWindow(hwnd, SW_SHOW);
+    }
 }
 
 
@@ -379,7 +562,7 @@ void Window::UnregisterEvents()
 //----------------------------------------------------------------------------------------------------------------------
 bool Window::SetWindowMode(NamedProperties& args)
 {
-    args.Set("previousMode", m_userSettings.m_windowMode);
+    WindowMode previousMode = m_userSettings.m_windowMode;
 
     std::string mode = args.Get("mode", std::string());
     StringUtils::ToLower(mode);
@@ -396,9 +579,16 @@ bool Window::SetWindowMode(NamedProperties& args)
         m_userSettings.m_windowMode = WindowMode::Fullscreen;
     }
 
-    args.Set("mode", m_userSettings.m_windowMode);
+    if (m_userSettings.m_windowMode != previousMode)
+    {
+        RefreshWindowTitle();
 
-    m_windowModeChanged.Broadcast(args);
+        args.Set("previousMode", previousMode);
+        args.Set("window", this);
+        args.Set("mode", m_userSettings.m_windowMode);
+
+        m_windowModeChanged.Broadcast(args);
+    }
     return false;
 }
 
@@ -425,9 +615,37 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
             window->m_quit.Broadcast(args);
             break;
         }
-        case WM_MOVE:           break;
+        case WM_MOVE:
+        {
+            window->HandleManualMove();
+            break;
+        }
         case WM_MOVING:         break;
-        case WM_SIZE:           break;
+        case WM_ENTERSIZEMOVE:
+        {
+            window->ToggleUserManualResizing(true);
+            break;
+        }
+        case WM_EXITSIZEMOVE:
+        {
+            window->ToggleUserManualResizing(false);
+            break;
+        }
+        case WM_SIZE:
+        {
+            if (wParam == SIZE_MINIMIZED)
+            {
+                window->SetIsMinimized(true);
+            }
+            else if (wParam == SIZE_RESTORED || wParam == SIZE_MAXIMIZED)
+            {
+                window->SetIsMinimized(false);
+            }
+            int width = LOWORD(lParam);
+            int height = HIWORD(lParam);
+            window->HandleWindowResolutionChanged(width, height);
+            break;
+        }
         case WM_CHAR:
         {
             int charCode = (int) wParam;

@@ -91,6 +91,7 @@ void DevConsole::Startup()
     m_log.SetNumLines(m_config.m_logNumLines);
 
     m_camera = new Camera(Vec3::ZeroVector, Vec3(g_window->GetAspect(), 1.f, 1.f));
+    g_window->m_windowSizeChanged.SubscribeMethod(this, &DevConsole::WindowSizeChanged);
 
     for (auto& backgroundImage : m_config.m_backgroundImages)
     {
@@ -176,6 +177,8 @@ void DevConsole::Shutdown()
     g_eventSystem->UnsubscribeMethod("clear", this, &DevConsole::Clear);
     
     m_inputLine.m_commandEntered.UnsubscribeMethod(this, &DevConsole::OnCommandEnteredEvent);
+
+    g_window->m_windowSizeChanged.UnsubscribeMethod(this, &DevConsole::WindowSizeChanged);
 
     for (auto& bgdTex : m_backgroundImages)
     {
@@ -555,6 +558,15 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     }
     
     return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool DevConsole::WindowSizeChanged(NamedProperties& args)
+{
+    m_camera->SetOrthoBounds(Vec3::ZeroVector, Vec3(g_window->GetAspect(), 1.f, 1.f));
+    return false;
 }
 
 

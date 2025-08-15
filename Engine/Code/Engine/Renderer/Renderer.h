@@ -122,6 +122,7 @@ public:
     bool ToggleMSAA(NamedProperties& args);
     bool WindowFocusChanged(NamedProperties& args);
     bool WindowModeChanged(NamedProperties& args);
+    bool WindowSizeChanged(NamedProperties& args);
 
 private:
 
@@ -171,6 +172,8 @@ private:
 
     void AddDevConsoleCommands();
     void RemoveDevConsoleCommands();
+
+    void ResizeWindowRenderContext(WindowRenderContext& wrc);
 
 private:
 

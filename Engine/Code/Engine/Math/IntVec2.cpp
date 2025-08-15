@@ -96,9 +96,17 @@ IntVec2 IntVec2::operator/(int divisor) const
 }
 
 
-IntVec2 IntVec2::operator*(int divisor) const
+IntVec2 IntVec2::operator*(int multiplier) const
 {
-    return IntVec2(x * divisor, y * divisor);
+    return IntVec2(x * multiplier, y * multiplier);
+}
+
+
+IntVec2 IntVec2::operator*(float multiplier) const
+{
+    float newX = static_cast<float>(x) * multiplier;
+    float newY = static_cast<float>(y) * multiplier;
+    return IntVec2(static_cast<int>(newX), static_cast<int>(newY));
 }
 
 
