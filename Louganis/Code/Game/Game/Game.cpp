@@ -132,7 +132,7 @@ void Game::ConfigureEngine(Engine* engine)
     engine->RegisterSubsystem(g_input);
 
     JobSystemConfig jobSysConfig;
-    jobSysConfig.m_threadCount = 12;
+    jobSysConfig.m_threadCount = std::thread::hardware_concurrency();
     g_jobSystem = new JobSystem(jobSysConfig);
     engine->RegisterSubsystem(g_jobSystem);
 

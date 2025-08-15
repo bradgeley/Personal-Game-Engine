@@ -7,29 +7,16 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// This recursive template calculates the Log2 of N as a constexpr, allowing BitArray do a lot of math at compile time.
-//
-template<size_t N, int P = 0>
-struct Log2
-{
-	static constexpr int value = Log2<(N >> 1), P + 1>::value;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-template<int P>
-struct Log2<1, P>
-{
-	static constexpr int value = P;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 constexpr int BIT_ARRAY_NUM_BITS_PER_ROW			= sizeof(size_t) * 8;;
-constexpr int BIT_ARRAY_INDEX_TO_ROW_SHIFT			= Log2<BIT_ARRAY_NUM_BITS_PER_ROW>::value; // To convert index to row, we divide the index by the power of 2 of the bits per row, which is the same as shifting by the power of 2, or Log2 of the number of bits in a row
 constexpr int BIT_ARRAY_BYTE_MASK_LOWER_BITS		= BIT_ARRAY_NUM_BITS_PER_ROW - 1; 
+
+// Shifting the index by this many bits is the same as dividing by the number of bits in a row, which gives us the index -> row conversion.
+// e.g. on 64 bit, index 100 >> 6 = 1, so we know that the bit is found in row index 1, or the second 64 bit row.
+#if defined(_M_X64) || defined(_WIN64)
+constexpr int BIT_ARRAY_INDEX_TO_ROW_SHIFT = 6;
+#else
+constexpr int BIT_ARRAY_INDEX_TO_ROW_SHIFT = 5;
+#endif
 
 
 
@@ -63,7 +50,6 @@ private:
 
 	static inline int GetRowNumber(int index) { return index >> BIT_ARRAY_INDEX_TO_ROW_SHIFT; }
 	static inline size_t GetByteMask(int index) { return size_t(1) << (index & BIT_ARRAY_BYTE_MASK_LOWER_BITS); } // same as: 1 << (index % NUM_BITS_IN_SIZET)
-	static int BitScanForward(size_t row);
 
 private:
 
