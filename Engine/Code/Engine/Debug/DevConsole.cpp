@@ -250,6 +250,26 @@ void DevConsole::AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void DevConsole::RemoveDevConsoleCommandInfo(std::string const& commandName)
+{
+    for (auto it = m_commandInfos.begin(); it != m_commandInfos.end();)
+    {
+        DevConsoleCommandInfo& commandInfo = *it;
+        if (strcmp(GetToLower(commandInfo.m_commandName).c_str(), GetToLower(commandName).c_str()) == 0)
+        {
+            m_commandInfos.erase(it);
+            break;
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 DevConsoleCommandInfo const* DevConsole::GetDevConsoleCommandInfo(std::string const& name) const
 {
     for (auto& info : m_commandInfos)
@@ -457,11 +477,37 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     {
         auto& fragment = commandFragments[i];
         Strings keyValue = SplitStringOnDelimeter(fragment, '=');
-        std::string argName = keyValue[0];
-        ToLower(argName);
-        if (keyValue.size() == 2)
+
+        if (keyValue.size() == 1 || keyValue.size() == 2)
         {
-            std::string const& argValue = keyValue[1];
+            std::string argName;
+            std::string argValue;
+            
+            if (keyValue.size() == 1)
+            {
+                // User only put the value, assume there is a devConsoleInfo that explains what it should mean
+                if (!info)
+                {
+                    g_devConsole->LogError("Arg name not specified, but DevConsoleCommandInfo does not exist for this command.");
+                    continue;
+                }
+                int argIndex = i - 1; // -1 accounts for the command name
+                if (argIndex >= info->m_argNames.size())
+                {
+                    g_devConsole->LogError("Unexpected number of args found in DevConsoleCommandInfo for this command.");
+                    continue;
+                }
+                argName = info->m_argNames[argIndex];
+                argValue = keyValue[0];
+            }
+            else if (keyValue.size() == 2)
+            {
+                argName = keyValue[0];
+                argValue = keyValue[1];
+            }
+            
+            ToLower(argName);
+
             if (info)
             {
                 DevConsoleArgType type = info->GetArgType(argName);
@@ -488,7 +534,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
         }
         else
         {
-            LogErrorF("Invalid arg: %s - Proper use: \"%s=X\"", argName.data(), argName.data());
+            LogErrorF("Invalid arg: %s", keyValue[0].c_str());
         }
     }
 

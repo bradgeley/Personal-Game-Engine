@@ -254,6 +254,7 @@ bool InputSystem::HandleKeyDown(NamedProperties& args)
     {
         return false;
     }
+
     int key = args.Get("Key", -1);
     if (IsValidKey(key))
     {

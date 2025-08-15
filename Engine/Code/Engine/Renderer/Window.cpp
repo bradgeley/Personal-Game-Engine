@@ -7,6 +7,7 @@
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Events/EventSystem.h"
+#include "Engine/Debug/DevConsole.h"
 #include "Texture.h"
 
 
@@ -356,6 +357,9 @@ void Window::RegisterEvents()
 {
     if (g_eventSystem)
     {
+        DevConsoleCommandInfo setWindowModeCommand("SetWindowMode");
+        setWindowModeCommand.AddArg("mode", DevConsoleArgType::String);
+        g_devConsole->AddDevConsoleCommandInfo(setWindowModeCommand);
         g_eventSystem->SubscribeMethod("SetWindowMode", this, &Window::SetWindowMode);
     }
 }
