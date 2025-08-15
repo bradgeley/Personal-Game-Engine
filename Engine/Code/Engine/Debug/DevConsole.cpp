@@ -208,12 +208,12 @@ bool DevConsole::Clear(NamedProperties& args)
 bool DevConsole::Help(NamedProperties& args)
 {
     AddLine("Commands:");
-    for (auto& m_commandInfo : m_commandInfos)
+    for (DevConsoleCommandInfo const& m_commandInfo : m_commandInfos)
     {
         AddLine(m_commandInfo.ToString(), Rgba8::Yellow);
     }
     AddLine("Events:");
-    for (auto& event : g_eventSystem->GetAllEventNames())
+    for (std::string const& event : g_eventSystem->GetAllEventNames())
     {
         AddLine(event, Rgba8::DarkGreen);
     }
@@ -272,7 +272,7 @@ void DevConsole::RemoveDevConsoleCommandInfo(std::string const& commandName)
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleCommandInfo const* DevConsole::GetDevConsoleCommandInfo(std::string const& name) const
 {
-    for (auto& info : m_commandInfos)
+    for (DevConsoleCommandInfo const& info : m_commandInfos)
     {
         if (info.m_commandName == name)
         {
@@ -474,10 +474,6 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     }  
 
     DevConsoleCommandInfo const* info = GetDevConsoleCommandInfo(eventName);
-    if (info)
-    {
-        g_devConsole->LogSuccess("Command info found.");
-    }
 
     NamedProperties eventProperties;
 
@@ -549,7 +545,11 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
 
     int numResponders = FireEvent(eventName, eventProperties);
     
-    if (numResponders == 0)
+    if (numResponders > 0)
+    {
+        LogSuccessF("%i response(s) to event: %s", numResponders, eventName.data());
+    }
+    else
     {
         LogWarning(StringUtils::StringF("No response to event: %s", eventName.data()));
     }
