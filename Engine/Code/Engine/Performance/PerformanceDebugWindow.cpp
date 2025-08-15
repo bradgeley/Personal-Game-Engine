@@ -258,7 +258,7 @@ void PerformanceDebugWindow::EngineFrameCompleted()
     font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), GetGraphOutline().GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
 
     float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
-    std::string frameCounterText = StringF("Frame:(%i) FPS(%.2f) Seconds(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
+    std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Seconds(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
     font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), GetGraphOutline().maxs, Vec2(-1.f, 1.f), TITLE_FONT_SIZE * 0.75f, frameCounterText, Rgba8::Black);
 
     for (PerfSection const& section : m_perfSections)

@@ -42,7 +42,7 @@ __declspec(noreturn) void FatalError(char const* filePath, char const* functionN
 	if(reasonForError.empty())
 	{
 		if(conditionText)
-			errorMessage = StringF("ERROR: \"%s\" is false!", conditionText);
+			errorMessage = StringUtils::StringF("ERROR: \"%s\" is false!", conditionText);
 		else
 			errorMessage = "Unspecified fatal error";
 	}
@@ -60,12 +60,12 @@ __declspec(noreturn) void FatalError(char const* filePath, char const* functionN
 	fullMessageText += "\n---------- Debugging Details Follow ----------\n";
 	if(conditionText)
 	{
-		fullMessageText += StringF("\nThis error was triggered by a run-time condition check:\n  %s\n  from %s(), line %i in %s\n",
+		fullMessageText += StringUtils::StringF("\nThis error was triggered by a run-time condition check:\n  %s\n  from %s(), line %i in %s\n",
 			conditionText, functionName, lineNum, filePath);
 	}
 	else
 	{
-		fullMessageText += StringF("\nThis was an unconditional error triggered by reaching\n line %i of %s, in %s()\n",
+		fullMessageText += StringUtils::StringF("\nThis was an unconditional error triggered by reaching\n line %i of %s, in %s()\n",
 			lineNum, filePath, functionName);
 	}
 	

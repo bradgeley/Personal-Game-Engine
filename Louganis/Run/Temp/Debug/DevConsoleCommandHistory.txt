@@ -3,3 +3,6 @@ debugdrawvertexbuffers
 setwindowmode mode=2
 setwindowmode mode=windowed
 
+setwindowmode windowed
+setwindowmode fullscreen
+setwindowmode borderless

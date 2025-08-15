@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleCommandInfo::DevConsoleCommandInfo(std::string const& commandName) : m_commandName(commandName)
 {
-	ToLower(m_commandName);
+	StringUtils::ToLower(m_commandName);
 }
 
 
@@ -15,12 +15,12 @@ DevConsoleCommandInfo::DevConsoleCommandInfo(std::string const& commandName) : m
 //----------------------------------------------------------------------------------------------------------------------
 std::string DevConsoleCommandInfo::ToString() const
 {
-	std::string result = StringF("%s ", m_commandName.c_str());
+	std::string result = StringUtils::StringF("%s ", m_commandName.c_str());
 	for (int argIndex = 0; argIndex < (int) m_argNames.size(); ++argIndex)
 	{
 		std::string const& argName = m_argNames[argIndex];
 		DevConsoleArgType argType = m_argTypes[argIndex];
-		result.append(StringF("%s=%s", argName.c_str(), ArgTypeToString(argType).c_str()));
+		result.append(StringUtils::StringF("%s=%s", argName.c_str(), ArgTypeToString(argType).c_str()));
 
 		if (argIndex < (int) m_argNames.size() - 1)
 		{
@@ -36,7 +36,7 @@ std::string DevConsoleCommandInfo::ToString() const
 void DevConsoleCommandInfo::AddArg(std::string const& argName, DevConsoleArgType argType)
 {
 	std::string lowerArgName = argName;
-	ToLower(lowerArgName);
+	StringUtils::ToLower(lowerArgName);
 	m_argNames.emplace_back(lowerArgName);
 	m_argTypes.emplace_back(argType);
 }

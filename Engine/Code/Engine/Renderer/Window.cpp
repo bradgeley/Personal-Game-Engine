@@ -315,12 +315,12 @@ void Window::MakeWindow()
             // Fallthrough
         case WindowMode::Borderless:
         {
-            SetWindowLongPtr(hwnd, GWL_STYLE, WS_POPUP);
-            SetWindowPos(hwnd, HWND_TOP,
-                         0, 0, desktopWidth, desktopHeight,
-                         SWP_FRAMECHANGED | SWP_SHOWWINDOW);
             m_dimensions.x = static_cast<int>(desktopWidth);
             m_dimensions.y = static_cast<int>(desktopHeight);
+            SetWindowLongPtr(hwnd, GWL_STYLE, WS_POPUP);
+            SetWindowPos(hwnd, HWND_TOP,
+                         0, 0, m_dimensions.x, m_dimensions.y,
+                         SWP_FRAMECHANGED | SWP_SHOWWINDOW);
             break;
         }
     }
@@ -382,7 +382,7 @@ bool Window::SetWindowMode(NamedProperties& args)
     args.Set("previousMode", m_userSettings.m_windowMode);
 
     std::string mode = args.Get("mode", std::string());
-    ToLower(mode);
+    StringUtils::ToLower(mode);
     if (strcmp(mode.c_str(), "borderless") == 0)
     {
         m_userSettings.m_windowMode = WindowMode::Borderless;

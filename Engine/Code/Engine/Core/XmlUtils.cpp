@@ -88,7 +88,7 @@ Vec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
         std::string value = attrib->Value();
-        auto strings = SplitStringOnDelimeter(value, ',');
+        auto strings = StringUtils::SplitStringOnDelimeter(value, ',');
         if (strings.size() != 2)
         {
             g_devConsole->LogErrorF("Vec2 ParseXmlAttribute Error: %s - value: %s - (e.g. -40,30.5)", attributeName, attrib->Value());
@@ -110,7 +110,7 @@ Rgba8 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Rg
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
         std::string value = attrib->Value();
-        Strings strings = SplitStringOnDelimeter(value, ',');
+        Strings strings = StringUtils::SplitStringOnDelimeter(value, ',');
         if (strings.size() < 3 || strings.size() > 4)
         {
             g_devConsole->LogErrorF("Rgba8 ParseXmlAttribute Error: %s - value: %s - (e.g. 40,30,255 or 255,255,255,255)", attributeName, attrib->Value());

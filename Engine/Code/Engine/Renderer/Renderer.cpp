@@ -557,9 +557,9 @@ void Renderer::CreateDevice()
 	ASSERT_OR_DIE(m_deviceContext, "Failed to create device context");
 
 	#if defined(_DEBUG)
-		std::string deviceName = StringF("Device (THE Renderer)");
+		std::string deviceName = StringUtils::StringF("Device (THE Renderer)");
 		m_device->SetPrivateData(WKPDID_D3DDebugObjectName, (int) deviceName.size(), deviceName.data());
-		std::string contextName = StringF("Device Context (THE Renderer)");
+		std::string contextName = StringUtils::StringF("Device Context (THE Renderer)");
 		m_deviceContext->SetPrivateData(WKPDID_D3DDebugObjectName, (int) contextName.size(), contextName.data());
 	#endif
 }
@@ -943,11 +943,11 @@ void Renderer::CreateBlendStates()
 	m_blendStateByMode[(int) BlendMode::Additive] = CreateBlendState(D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD);
 
 	#ifdef _DEBUG
-		std::string opaqueName = StringF("Blend State (Opaque)");
+		std::string opaqueName = StringUtils::StringF("Blend State (Opaque)");
 		m_blendStateByMode[(int) BlendMode::Opaque]->SetPrivateData(WKPDID_D3DDebugObjectName, (int) opaqueName.size(), opaqueName.data());
-		std::string alphaName = StringF("Blend State (Alpha)");
+		std::string alphaName = StringUtils::StringF("Blend State (Alpha)");
 		m_blendStateByMode[(int) BlendMode::Alpha]->SetPrivateData(WKPDID_D3DDebugObjectName, (int) alphaName.size(), alphaName.data());
-		std::string additiveName = StringF("Blend State (Additive)");
+		std::string additiveName = StringUtils::StringF("Blend State (Additive)");
 		m_blendStateByMode[(int) BlendMode::Additive]->SetPrivateData(WKPDID_D3DDebugObjectName, (int) additiveName.size(), additiveName.data());
 	#endif
 	
@@ -1101,6 +1101,8 @@ bool Renderer::WindowFocusChanged(NamedProperties& args)
 			desc.BufferDesc.Format,
 			desc.Flags
 		);
+
+		ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to resize buffers after window fullscreen state change.");
 	}
 
 	return false;

@@ -9,7 +9,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Strings SplitStringOnAnyDelimeter(std::string const& string, std::string const& delimiters)
+Strings StringUtils::SplitStringOnAnyDelimeter(std::string const& string, std::string const& delimiters)
 {
     Strings result;
 
@@ -35,7 +35,7 @@ Strings SplitStringOnAnyDelimeter(std::string const& string, std::string const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Strings SplitStringOnDelimeter(std::string const& string, char delimeter)
+Strings StringUtils::SplitStringOnDelimeter(std::string const& string, char delimeter)
 {
     Strings result;
 
@@ -61,7 +61,7 @@ Strings SplitStringOnDelimeter(std::string const& string, char delimeter)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::string GetToLower(std::string const& string)
+std::string StringUtils::GetToLower(std::string const& string)
 {
     std::string result;
     for (auto c : string)
@@ -78,7 +78,7 @@ std::string GetToLower(std::string const& string)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ToLower(std::string& out_string)
+void StringUtils::ToLower(std::string& out_string)
 {
     for (auto& c : out_string)
     {
@@ -92,7 +92,7 @@ void ToLower(std::string& out_string)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ToUpper(std::string& out_string)
+void StringUtils::ToUpper(std::string& out_string)
 {
     for (auto& c : out_string)
     {
@@ -108,7 +108,7 @@ void ToUpper(std::string& out_string)
 //----------------------------------------------------------------------------------------------------------------------
 // Move characters to the leftmost position possible until there is no whitespace in the string
 // - Probably much more efficient than copying the string, filling it with no whitespace chars, then copying back.
-void TrimWhitespace(std::string& out_string)
+void StringUtils::TrimWhitespace(std::string& out_string)
 {
     int noWhitespaceIndex = 0;
     for (int i = 0; i < (int) out_string.size(); ++i)
@@ -126,7 +126,7 @@ void TrimWhitespace(std::string& out_string)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TrimEdgeWhitespace(std::string& out_string)
+void StringUtils::TrimEdgeWhitespace(std::string& out_string)
 {
     TrimLeadingWhitespace(out_string);
     TrimTrailingWhitespace(out_string);
@@ -135,7 +135,7 @@ void TrimEdgeWhitespace(std::string& out_string)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TrimLeadingWhitespace(std::string& out_string)
+void StringUtils::TrimLeadingWhitespace(std::string& out_string)
 {
     int numLeadingWhitespace = 0;
     for (int i = 0; i < (int) out_string.size(); ++i)
@@ -153,7 +153,7 @@ void TrimLeadingWhitespace(std::string& out_string)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TrimTrailingWhitespace(std::string& out_string)
+void StringUtils::TrimTrailingWhitespace(std::string& out_string)
 {
     int numTrailingWhitespace = 0;
     for (int i = (int) out_string.size() - 1; i >= 0; --i)
@@ -171,7 +171,7 @@ void TrimTrailingWhitespace(std::string& out_string)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool IsWhitespace(char c)
+bool StringUtils::IsWhitespace(char c)
 {
     return (c == ' ') || (c == '\r') || (c == '\t') || (c == '\n') || (c == '\f');
 }
@@ -179,7 +179,7 @@ bool IsWhitespace(char c)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DoesStringContain(std::string const& string, char c)
+bool StringUtils::DoesStringContain(std::string const& string, char c)
 {
     for (auto& character : string)
     {
@@ -194,7 +194,7 @@ bool DoesStringContain(std::string const& string, char c)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool StringToBool(std::string const& boolAsString)
+bool StringUtils::StringToBool(std::string const& boolAsString)
 {
     std::string lower = GetToLower(boolAsString);
     if (lower == "true" || lower == "1")
@@ -216,7 +216,7 @@ bool StringToBool(std::string const& boolAsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int StringToInt(std::string const& intAsString)
+int StringUtils::StringToInt(std::string const& intAsString)
 {
     return atoi(intAsString.c_str());
 }
@@ -224,7 +224,7 @@ int StringToInt(std::string const& intAsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float StringToFloat(std::string const& floatAsString)
+float StringUtils::StringToFloat(std::string const& floatAsString)
 {
     return (float) atof(floatAsString.c_str());
 }
@@ -232,7 +232,7 @@ float StringToFloat(std::string const& floatAsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Rgba8 StringToRgba8(std::string const& rgba8AsString)
+Rgba8 StringUtils::StringToRgba8(std::string const& rgba8AsString)
 {
     Rgba8 result;
     Strings asStrings = SplitStringOnDelimeter(rgba8AsString, ',');
@@ -257,7 +257,7 @@ Rgba8 StringToRgba8(std::string const& rgba8AsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 StringToVec2(std::string const& vec2AsString)
+Vec2 StringUtils::StringToVec2(std::string const& vec2AsString)
 {
     Vec2 result;
     Strings asStrings = SplitStringOnDelimeter(vec2AsString, ',');
@@ -278,7 +278,7 @@ Vec2 StringToVec2(std::string const& vec2AsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-IntVec2 StringToIntVec2(std::string const& intVec2AsString)
+IntVec2 StringUtils::StringToIntVec2(std::string const& intVec2AsString)
 {
     IntVec2 result;
     Strings asStrings = SplitStringOnDelimeter(intVec2AsString, ',');
@@ -299,7 +299,7 @@ IntVec2 StringToIntVec2(std::string const& intVec2AsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Strings StringToStrings(std::string const& stringsAsString)
+Strings StringUtils::StringToStrings(std::string const& stringsAsString)
 {
     return SplitStringOnDelimeter(stringsAsString, ',');
 }
@@ -307,7 +307,7 @@ Strings StringToStrings(std::string const& stringsAsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DoesStringContainChar(std::string const& string, uint8_t character)
+bool StringUtils::DoesStringContainChar(std::string const& string, uint8_t character)
 {
     for (auto& c : string)
     {

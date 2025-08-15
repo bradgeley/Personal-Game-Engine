@@ -66,7 +66,7 @@ protected:
 template <typename T_Object, typename T_Method>
 void EventSystem::SubscribeMethod(std::string const& eventName, T_Object* object, T_Method method)
 {
-    std::string lowerName = GetToLower(eventName);
+    std::string lowerName = StringUtils::GetToLower(eventName);
     auto& subList = m_events[lowerName];
     subList.emplace_back(new EventSubscriberMethod(object, method));
 }
@@ -77,7 +77,7 @@ void EventSystem::SubscribeMethod(std::string const& eventName, T_Object* object
 template <typename T_Object, typename T_Method>
 void EventSystem::UnsubscribeMethod(std::string const& eventName, T_Object* object, T_Method method)
 {
-    std::string lowerName = GetToLower(eventName);
+    std::string lowerName = StringUtils::GetToLower(eventName);
     auto& subList = m_events[lowerName];
     for (auto it = subList.begin(); it != subList.end();)
     {

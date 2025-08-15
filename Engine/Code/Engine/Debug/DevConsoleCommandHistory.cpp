@@ -140,7 +140,7 @@ bool DevConsoleCommandHistory::LoadFrom(std::string const& filepath)
     std::string fileContents;
     if ((bool) FileReadToString(filepath, fileContents))
     {
-        Strings strings = SplitStringOnDelimeter(fileContents, '\n');
+        Strings strings = StringUtils::SplitStringOnDelimeter(fileContents, '\n');
         for (std::string const& splitString : strings)
         {
             AddCommand(splitString);

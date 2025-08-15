@@ -117,11 +117,11 @@ int GetFileSize(const std::string& filepath)
 //----------------------------------------------------------------------------------------------------------------------
 bool FileMakeDirsInPath(const std::string& filepath)
 {
-    Strings pathSections = SplitStringOnDelimeter(filepath, '.');
+    Strings pathSections = StringUtils::SplitStringOnDelimeter(filepath, '.');
     if (pathSections.size() == 2)
     {
         // Has an extension, lop it off and the last string 
-        Strings pathSectionsNoFileOrExt = SplitStringOnAnyDelimeter(pathSections[0], "/\\");
+        Strings pathSectionsNoFileOrExt = StringUtils::SplitStringOnAnyDelimeter(pathSections[0], "/\\");
         if (pathSectionsNoFileOrExt.size() >= 2)
         {
             pathSectionsNoFileOrExt.erase(pathSectionsNoFileOrExt.begin() + pathSectionsNoFileOrExt.size() - 1);

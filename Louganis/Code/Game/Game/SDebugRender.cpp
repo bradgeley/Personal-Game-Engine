@@ -116,7 +116,7 @@ void SDebugRender::Run(SystemContext const& context)
 
                     float t = RangeMapClamped(distance, 0.f, 10.f, 0.f, 1.f);
                     Rgba8 const& tint = Rgba8::Lerp(Rgba8::Green, Rgba8::Red, t);
-                    std::string distanceText = StringF("%.2f", distance);
+                    std::string distanceText = StringUtils::StringF("%.2f", distance);
                     font->AddVertsForAlignedText2D(ffChunk->m_debugVBO.GetMutableVerts(), tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, distanceText, tint);
                 }
             }

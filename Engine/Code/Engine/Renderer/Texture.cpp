@@ -95,7 +95,7 @@ bool Texture::CreateFromImage(Image const& image, bool createMipMap)
     }
 
     #ifdef _DEBUG
-        std::string name = StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
         m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
     
@@ -172,8 +172,8 @@ bool Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
 
     #ifdef _DEBUG
         static int count = 0;
-        m_sourceImagePath = StringF("Backbuffer Texture %i", ++count);
-        std::string name = StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        m_sourceImagePath = StringUtils::StringF("Backbuffer Texture %i", ++count);
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
         m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
     
@@ -218,8 +218,8 @@ bool Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
 
     #ifdef _DEBUG
         static int count = 0;
-        m_sourceImagePath = StringF("Depth Buffer %i", ++count);
-        std::string name = StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        m_sourceImagePath = StringUtils::StringF("Depth Buffer %i", ++count);
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
         m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
@@ -249,7 +249,7 @@ ID3D11DepthStencilView* Texture::CreateOrGetDepthStencilView()
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth stencil view")
 
         #ifdef _DEBUG
-            std::string name = StringF("Texture (Depth Stencil View). Source Image: %s", m_sourceImagePath.c_str());
+            std::string name = StringUtils::StringF("Texture (Depth Stencil View). Source Image: %s", m_sourceImagePath.c_str());
             m_depthStencilView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }
@@ -269,7 +269,7 @@ ID3D11RenderTargetView* Texture::CreateOrGetRenderTargetView()
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create rtv")
 
         #ifdef _DEBUG
-            std::string name = StringF("Texture (Render Target View). Source Image: %s", m_sourceImagePath.c_str());
+            std::string name = StringUtils::StringF("Texture (Render Target View). Source Image: %s", m_sourceImagePath.c_str());
             m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());  
         #endif
     }
@@ -289,7 +289,7 @@ ID3D11ShaderResourceView* Texture::CreateOrGetShaderResourceView()
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create srv")
 
         #ifdef _DEBUG
-            std::string name = StringF("Texture (Shader Resource View). Source Image: %s", m_sourceImagePath.c_str());
+            std::string name = StringUtils::StringF("Texture (Shader Resource View). Source Image: %s", m_sourceImagePath.c_str());
             m_shaderResourceView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }

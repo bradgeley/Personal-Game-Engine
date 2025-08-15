@@ -226,7 +226,7 @@ void AddVertsForGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAA
 //----------------------------------------------------------------------------------------------------------------------
 void AddVertsForDisc2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint, AABB2 const& UVs)
 {
-    ASSERT_OR_DIE(radius > 0.f && numSides >= 3, StringF("Cannot add verts for a disc with: radius=%f numSides=%i", radius, numSides))
+    ASSERT_OR_DIE(radius > 0.f && numSides >= 3, StringUtils::StringF("Cannot add verts for a disc with: radius=%f numSides=%i", radius, numSides))
 
     out_verts.reserve((size_t) 3 * numSides); // 3 Verts per side, each set of 3 making a pie slice
 

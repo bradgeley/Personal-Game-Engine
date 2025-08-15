@@ -40,7 +40,7 @@ bool Image::LoadFromFile(const char* imageFilePath, bool putOriginAtBottomLeft)
         &numComponents,
         numComponentsRequested);
 
-    ASSERT_OR_DIE(imageData != nullptr, StringF("Could not read image at path %s", imageFilePath))
+    ASSERT_OR_DIE(imageData != nullptr, StringUtils::StringF("Could not read image at path %s", imageFilePath))
     ASSERT_OR_DIE(numComponents == 3 || numComponents == 4, "Unsupported image format")
 
     if (imageData)

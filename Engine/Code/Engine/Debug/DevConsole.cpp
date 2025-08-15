@@ -48,11 +48,11 @@ public:
         m_texture = new Texture();
         if (m_image.LoadFromFile(m_path.data()))
         {
-            g_devConsole->LogSuccess(StringF("Loaded image: %s", m_path.data()));
+            g_devConsole->LogSuccess(StringUtils::StringF("Loaded image: %s", m_path.data()));
         }
         else
         {
-            g_devConsole->LogError(StringF("Failed to load image: %s", m_path.data()));
+            g_devConsole->LogError(StringUtils::StringF("Failed to load image: %s", m_path.data()));
         }
     }
     
@@ -255,7 +255,7 @@ void DevConsole::RemoveDevConsoleCommandInfo(std::string const& commandName)
     for (auto it = m_commandInfos.begin(); it != m_commandInfos.end();)
     {
         DevConsoleCommandInfo& commandInfo = *it;
-        if (strcmp(GetToLower(commandInfo.m_commandName).c_str(), GetToLower(commandName).c_str()) == 0)
+        if (strcmp(StringUtils::GetToLower(commandInfo.m_commandName).c_str(), StringUtils::GetToLower(commandName).c_str()) == 0)
         {
             m_commandInfos.erase(it);
             break;
@@ -451,13 +451,13 @@ bool DevConsole::HandleMouseWheel(NamedProperties& args)
 bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
 {
     std::string command = args.Get<std::string>("Command", "");
-    Strings commandFragments = SplitStringOnDelimeter(command, ' ');
+    Strings commandFragments = StringUtils::SplitStringOnDelimeter(command, ' ');
 
     // Add to command history
     m_commandHistory.AddCommand(command);
 
     // Fire the event
-    std::string eventName = GetToLower(commandFragments[0]);
+    std::string eventName = StringUtils::GetToLower(commandFragments[0]);
     if (!g_eventSystem->IsEventBound(eventName))
     {
         g_devConsole->LogWarning("No events bound to that command.");
@@ -476,7 +476,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     for (int i = 1; i < (int) commandFragments.size(); ++i)
     {
         auto& fragment = commandFragments[i];
-        Strings keyValue = SplitStringOnDelimeter(fragment, '=');
+        Strings keyValue = StringUtils::SplitStringOnDelimeter(fragment, '=');
 
         if (keyValue.size() == 1 || keyValue.size() == 2)
         {
@@ -506,7 +506,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
                 argValue = keyValue[1];
             }
             
-            ToLower(argName);
+            StringUtils::ToLower(argName);
 
             if (info)
             {
@@ -514,13 +514,13 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
                 switch (type)
                 {
                     case DevConsoleArgType::Float:
-                        eventProperties.Set(argName, StringToFloat(argValue));
+                        eventProperties.Set(argName, StringUtils::StringToFloat(argValue));
                         break;
                     case DevConsoleArgType::Int:
-                        eventProperties.Set(argName, StringToInt(argValue));
+                        eventProperties.Set(argName, StringUtils::StringToInt(argValue));
                         break;
                     case DevConsoleArgType::Bool:
-                        eventProperties.Set(argName, StringToBool(argValue));
+                        eventProperties.Set(argName, StringUtils::StringToBool(argValue));
                         break;
                     default:
                         eventProperties.Set(argName, argValue);
@@ -542,7 +542,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     
     if (numResponders == 0)
     {
-        LogWarning(StringF("No response to event: %s", eventName.data()));
+        LogWarning(StringUtils::StringF("No response to event: %s", eventName.data()));
     }
     
     return true;
@@ -760,7 +760,7 @@ std::string DevConsole::GuessCommandInput(std::string const& input) const
     
     int numInputChars = (int) input.size();
 
-    std::string inputLower = GetToLower(input);
+    std::string inputLower = StringUtils::GetToLower(input);
     
     Strings allEvents = g_eventSystem->GetAllEventNames();
     for (auto& event : allEvents)

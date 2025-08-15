@@ -24,7 +24,7 @@ ScopedTimer::~ScopedTimer()
 	if (g_devConsole)
 	{
 		std::string units = "ms";
-		std::string line = StringF("Scoped Timer: %s: %f%s", m_name.c_str(), deltaSeconds, units.c_str());
+		std::string line = StringUtils::StringF("Scoped Timer: %s: %f%s", m_name.c_str(), deltaSeconds, units.c_str());
 		g_devConsole->AddLine(line);
 	}
 }

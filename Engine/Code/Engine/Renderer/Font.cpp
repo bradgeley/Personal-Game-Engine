@@ -216,7 +216,7 @@ void Font::LoadFNT(const char* fntFilepath)
     XmlError error = resourcesXMLDoc.LoadFile(fntFilepath);
     if (error != XmlError::XML_SUCCESS)
     {
-        ERROR_AND_DIE(StringF("Failed to open Xml doc: %s", fntFilepath))
+        ERROR_AND_DIE(StringUtils::StringF("Failed to open Xml doc: %s", fntFilepath))
     }
     
 	XmlElement const* fontElem = resourcesXMLDoc.RootElement();
@@ -228,7 +228,7 @@ void Font::LoadFNT(const char* fntFilepath)
 		int imagePixelWidth = commonElem->FindAttribute("scaleW")->IntValue();
 		int imagePixelHeight = commonElem->FindAttribute("scaleH")->IntValue();
 		int pages = commonElem->FindAttribute("pages")->IntValue();
-		ASSERT_OR_DIE(pages == 1, StringF("Font %s: more than 1 page for font not supported.", fntFilepath))
+		ASSERT_OR_DIE(pages == 1, StringUtils::StringF("Font %s: more than 1 page for font not supported.", fntFilepath))
 
 		// get texture name
 		auto pagesElem = fontElem->FirstChildElement("pages");
@@ -237,13 +237,13 @@ void Font::LoadFNT(const char* fntFilepath)
 		std::string fullFilePath = "Data/Fonts/" + std::string(filename->Value());
     	m_texture = new Texture();
     	bool loadedTexture = m_texture->LoadFromImageFile(fullFilePath.c_str(), false);
-		ASSERT_OR_DIE(loadedTexture, StringF("Font %s - Failed to load texture: %s", fntFilepath, fullFilePath.c_str()))
+		ASSERT_OR_DIE(loadedTexture, StringUtils::StringF("Font %s - Failed to load texture: %s", fntFilepath, fullFilePath.c_str()))
 
 		auto charsElem = fontElem->FirstChildElement("chars");
 		auto count = charsElem->FindAttribute("count");
 
 		int charCount = count->IntValue();
-		ASSERT_OR_DIE(charCount <= 256, StringF("Font %s: char count exceeds supported amount (256)", fntFilepath))
+		ASSERT_OR_DIE(charCount <= 256, StringUtils::StringF("Font %s: char count exceeds supported amount (256)", fntFilepath))
 
 		auto charElem = charsElem->FirstChildElement("char");
 		for (int i = 0; i < charCount; ++i)

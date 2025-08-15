@@ -33,7 +33,7 @@ DevConsoleLog::~DevConsoleLog()
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleLog::AddLine(DevConsoleLine const& line)
 {
-    Strings lines = SplitStringOnDelimeter(line.m_line, '\n');
+    Strings lines = StringUtils::SplitStringOnDelimeter(line.m_line, '\n');
     for (auto& splitLine : lines)
     {
         if (splitLine == "")
