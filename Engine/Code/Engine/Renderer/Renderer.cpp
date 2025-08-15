@@ -1102,8 +1102,6 @@ bool Renderer::WindowFocusChanged(NamedProperties& args)
 		return false;
 	}
 
-	WindowRenderContext& wrc = GetOrCreateWindowRenderContext(window);
-
 	if (window->IsFullscreen())
 	{
 		if (!window->HasFocus())
@@ -1138,8 +1136,6 @@ bool Renderer::WindowModeChanged(NamedProperties& args)
 		return false;
 	}
 
-	WindowMode previousMode = args.Get("previousMode", WindowMode::Borderless);
-	WindowMode mode = args.Get("mode", WindowMode::Borderless);
 	WindowRenderContext& wrc = GetOrCreateWindowRenderContext(window);
 
 	HWND hwnd = (HWND) window->GetHWND();
@@ -1161,10 +1157,10 @@ bool Renderer::WindowModeChanged(NamedProperties& args)
 	GetMonitorInfo(hMon, &mi);
 	monitorRect = mi.rcMonitor;
 
-	HRESULT fullscreenResult;
 	if (!window->IsFullscreen())
 	{
-		fullscreenResult = wrc.m_swapChain->SetFullscreenState(FALSE, nullptr);
+		HRESULT fullscreenResult = wrc.m_swapChain->SetFullscreenState(FALSE, nullptr);
+		ASSERT_OR_DIE(SUCCEEDED(fullscreenResult), "Failed to set fullscreen.");
 	}
 
 	// Set style
@@ -1196,10 +1192,10 @@ bool Renderer::WindowModeChanged(NamedProperties& args)
 
 	if (window->IsFullscreen())
 	{
-		fullscreenResult = wrc.m_swapChain->SetFullscreenState(TRUE, nullptr);
+		HRESULT fullscreenResult = wrc.m_swapChain->SetFullscreenState(TRUE, nullptr);
+		ASSERT_OR_DIE(SUCCEEDED(fullscreenResult), "Failed to set fullscreen.");
 	}
 
-	ASSERT_OR_DIE(SUCCEEDED(fullscreenResult), "Failed to set fullscreen.");
 
 	ResizeWindowRenderContext(wrc);
 

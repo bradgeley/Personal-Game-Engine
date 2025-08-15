@@ -3,6 +3,7 @@
 #include "DebugDrawUtils.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/Image.h"
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Renderer/Camera.h"
@@ -565,6 +566,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool DevConsole::WindowSizeChanged(NamedProperties& args)
 {
+    UNUSED(args)
     m_camera->SetOrthoBounds(Vec3::ZeroVector, Vec3(g_window->GetAspect(), 1.f, 1.f));
     return false;
 }

@@ -12,5 +12,7 @@
 namespace BinaryUtils
 {
 	int FirstSetBit(size_t mask);
+	int FirstSetBit(size_t mask, int firstValidIndex);
 	int FirstUnsetBit(size_t mask);
+	int FirstUnsetBit(size_t mask, int firstValidIndex);
 }

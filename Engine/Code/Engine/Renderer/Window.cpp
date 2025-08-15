@@ -387,7 +387,7 @@ void Window::RefreshWindowSize()
     IntVec2 windowResolution = GetActualWindowResolution();
 
     RECT rect = { 0,0, windowResolution.x, windowResolution.y };
-    bool result = AdjustWindowRectEx(&rect, GetWindowStyleFlags(), FALSE, 0);
+    BOOL result = AdjustWindowRectEx(&rect, GetWindowStyleFlags(), FALSE, 0);
 
     result |= SetWindowPos(
         (HWND) m_windowHandle,

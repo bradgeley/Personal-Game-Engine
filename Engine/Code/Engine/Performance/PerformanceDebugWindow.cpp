@@ -19,8 +19,8 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-constexpr float WINDOW_RESOLUTION_X = 750.f;
-constexpr float WINDOW_RESOLUTION_Y = 750.f;
+constexpr int WINDOW_RESOLUTION_X = 750;
+constexpr int WINDOW_RESOLUTION_Y = 750;
 constexpr float GRAPH_EDGE_PAD = 25.f;
 constexpr float GRAPH_LEFT_EDGE_PAD = 125.f;
 constexpr float GRAPH_OUTLINE_THICKNESS = 1.f;
@@ -309,6 +309,7 @@ bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool PerformanceDebugWindow::WindowSizeChanged(NamedProperties& args)
 {
+    UNUSED(args)
     IntVec2 renderResolution = m_window->GetRenderResolution();
     AABB2 bounds = AABB2(Vec2(IntVec2::ZeroVector), Vec2(renderResolution));
     m_camera->SetOrthoBounds2D(bounds);

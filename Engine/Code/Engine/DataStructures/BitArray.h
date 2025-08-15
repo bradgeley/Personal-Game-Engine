@@ -49,7 +49,7 @@ public:
 private:
 
 	static inline int GetRowNumber(int index) { return index >> BIT_ARRAY_INDEX_TO_ROW_SHIFT; }
-	static inline size_t GetByteMask(int index) { return size_t(1) << (index & BIT_ARRAY_BYTE_MASK_LOWER_BITS); } // same as: 1 << (index % NUM_BITS_IN_SIZET)
+	static inline size_t GetBitMask(int index) { return size_t(1) << (index & BIT_ARRAY_BYTE_MASK_LOWER_BITS); } // same as: 1 << (index % NUM_BITS_IN_SIZET), which gets the remainder after dividing by the num bits in a row, which is the local bit index in that row.
 
 private:
 
@@ -84,7 +84,7 @@ template <unsigned int t_size>
 bool BitArray<t_size>::Get(int index) const
 {
 	int byteIndex = GetRowNumber(index);
-	return m_data[byteIndex] & GetByteMask(index);
+	return m_data[byteIndex] & GetBitMask(index);
 }
 
 
@@ -94,7 +94,7 @@ template <unsigned int t_size>
 bool BitArray<t_size>::Set(int index)
 {
 	int byteIndex = GetRowNumber(index);
-	return m_data[byteIndex] |= GetByteMask(index);
+	return m_data[byteIndex] |= GetBitMask(index);
 }
 
 
@@ -104,7 +104,7 @@ template <unsigned int t_size>
 bool BitArray<t_size>::Unset(int index)
 {
 	int byteIndex = GetRowNumber(index);
-	return m_data[byteIndex] &= ~GetByteMask(index);
+	return m_data[byteIndex] &= ~GetBitMask(index);
 }
 
 
@@ -134,7 +134,7 @@ void BitArray<t_size>::SetAll(bool isSet)
 
 	memset(&m_data, fillValue, s_numRows * sizeof(size_t));
 
-	// Handle the trailing bits that don't really matter
+	// Handle the trailing bits
 	if (isSet)
 	{
 		m_data[s_numRows - 1] &= (~s_trailingBitMask); // make sure trailing values are all 0's so hamming weights are accurate
@@ -198,20 +198,16 @@ int BitArray<t_size>::GetNextUnsetIndex(int queryIndex) const
 	{
 		size_t const& row = m_data[currentRowIndex];
 
-		if (row == SIZE_MAX)
-		{
-			continue;
-		}
-
-		size_t rowExcludingFirstRowLowerBits = row;
-
+		int firstUnsetBit = -1;
 		if (currentRowIndex == firstRowIndex)
 		{
-			size_t firstRowMask = SIZE_MAX << firstRowStartingBitIndex >> firstRowStartingBitIndex;
-			rowExcludingFirstRowLowerBits &= firstRowMask; // zero out the LSB, only for that first row, so our bitscan ignores them if set
+			firstUnsetBit = BinaryUtils::FirstUnsetBit(row, firstRowStartingBitIndex);
+		}
+		else
+		{
+			firstUnsetBit = BinaryUtils::FirstUnsetBit(row);
 		}
 
-		int firstUnsetBit = BinaryUtils::FirstUnsetBit(rowExcludingFirstRowLowerBits);
 
 		if (firstUnsetBit != -1)
 		{
@@ -249,20 +245,15 @@ int BitArray<t_size>::GetNextSetIndex(int queryIndex) const
 	{
 		size_t const& row = m_data[currentRowIndex];
 
-		if (row == (size_t) 0)
-		{
-			continue;
-		}
-
-		size_t rowExcludingFirstRowLowerBits = row;
-
+		int firstSetBit = -1;
 		if (currentRowIndex == firstRowIndex)
 		{
-			size_t firstRowMask = SIZE_MAX << firstRowStartingBitIndex >> firstRowStartingBitIndex;
-			rowExcludingFirstRowLowerBits &= firstRowMask; // zero out the LSB, only for that first row, so our bitscan ignores them if set
+			firstSetBit = BinaryUtils::FirstSetBit(row, firstRowStartingBitIndex);
 		}
-
-		int firstSetBit = BinaryUtils::FirstSetBit(rowExcludingFirstRowLowerBits);
+		else
+		{
+			firstSetBit = BinaryUtils::FirstSetBit(row);
+		}
 
 		if (firstSetBit != -1)
 		{
