@@ -30,6 +30,7 @@ enum class FramePhase : int
     Physics,
     PostPhysics,
     Render,
+    PostRender,
 };
 
 
@@ -189,9 +190,13 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
 
     // Render
+    g_ecs->RegisterSystem<SInitView>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SCamera>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
+
+    // debug
+    g_ecs->RegisterSystem<SSystemDebug>((int) FramePhase::PostRender);
 }

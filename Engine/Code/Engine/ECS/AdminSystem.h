@@ -189,6 +189,8 @@ public:
 	System* GetSystemByName(std::string const& name) const;
 	System* GetSystemByGlobalPriority(int globalPriority) const;
 
+	std::vector<SystemSubgraph> const& GetSystemSubgraphs() const;
+
 	AdminSystemConfig const& GetConfig() const;
 	bool IsMultithreadingActive() const;
 	void SetMultithreadingActive(bool isActive);

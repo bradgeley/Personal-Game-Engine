@@ -44,6 +44,7 @@ public:
 
 	bool IsActive() const											{ return m_isActive; }
 	void SetActive(bool isActive)									{ m_isActive = isActive; }
+	void ToggleIsActive();
 	void SetLocalPriority(int localPriority)						{ m_localPriority = localPriority; }
 	void SetGlobalPriority(int globalPriority)						{ m_globalPriority = globalPriority; }
 	int	 GetLocalPriority() const									{ return m_localPriority; }

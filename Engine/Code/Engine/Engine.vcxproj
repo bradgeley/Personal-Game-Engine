@@ -179,6 +179,7 @@
     <ClCompile Include="Debug\DevConsoleInput.cpp" />
     <ClCompile Include="Debug\DevConsoleLine.cpp" />
     <ClCompile Include="Debug\DevConsoleLog.cpp" />
+    <ClCompile Include="Debug\SSystemDebug.cpp" />
     <ClCompile Include="ECS\AdminSystem.cpp" />
     <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\ComponentStorage.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="Debug\DevConsoleInput.h" />
     <ClInclude Include="Debug\DevConsoleLine.h" />
     <ClInclude Include="Debug\DevConsoleLog.h" />
+    <ClInclude Include="Debug\SSystemDebug.h" />
     <ClInclude Include="ECS\AdminSystem.h" />
     <ClInclude Include="ECS\Component.h" />
     <ClInclude Include="ECS\ComponentStorage.h" />

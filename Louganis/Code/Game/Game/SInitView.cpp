@@ -2,15 +2,18 @@
 #include "SInitView.h"
 #include "CTransform.h"
 #include "CRender.h"
+#include "CCamera.h"
 #include "Engine/Core/EngineCommon.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Window.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SInitView::Startup()
 {
-    AddReadDependencies<CTransform>();
-    AddWriteDependencies<CRender>();
+    AddReadDependencies<CTransform, CCamera>();
+    AddWriteDependencies<CRender, Renderer>();
 }
 
 
@@ -19,14 +22,14 @@ void SInitView::Startup()
 void SInitView::Run(SystemContext const& context)
 {
     UNUSED(context)
-    //auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-    //auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-    //
-    //for (GroupIter it = g_ecs->Iterate<CRender, CTransform>(context); it.IsValid(); ++it)
-    //{
-    //    CRender* render = renderStorage.Get(it);
-    //    CTransform* transform = transStorage.Get(it);
-    //
-    //
-    //}
+
+    for (auto cameraIt = g_ecs->Iterate<CCamera>(context); cameraIt.IsValid(); ++cameraIt)
+    {
+        CCamera* cameraComponent = g_ecs->GetComponent<CCamera>(cameraIt.m_currentIndex);
+        AABB2 cameraOrthoBounds2D = cameraComponent->m_camera.GetOrthoBounds2D();
+        cameraOrthoBounds2D.Translate(cameraComponent->m_camera.GetPosition2D());
+
+        g_renderer->BeginCameraAndWindow(&cameraComponent->m_camera, g_window);
+        g_renderer->ClearScreen(Rgba8::White);
+    }
 }

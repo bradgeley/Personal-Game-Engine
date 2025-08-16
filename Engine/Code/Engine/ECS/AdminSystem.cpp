@@ -1,6 +1,7 @@
 // Bradley Christensen - 2023
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
 #include "AdminSystem.h"
 #include "Component.h"
 #include "SystemScheduler.h"
@@ -145,7 +146,7 @@ System* AdminSystem::GetSystemByName(std::string const& name) const
 	{
 		for (System* const& system : subgraph.m_systems)
 		{
-			if (system->GetName() == name)
+			if (StringUtils::GetToLower(system->GetName()) == StringUtils::GetToLower(name))
 			{
 				return system;
 			}
@@ -170,6 +171,14 @@ System* AdminSystem::GetSystemByGlobalPriority(int globalPriority) const
 		}
 	}
 	return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+std::vector<SystemSubgraph> const& AdminSystem::GetSystemSubgraphs() const
+{
+	return m_systemSubgraphs;
 }
 
 

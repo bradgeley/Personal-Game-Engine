@@ -13,6 +13,14 @@ System::System(std::string const& name, Rgba8 const& debugTint) : m_name(name), 
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void System::ToggleIsActive()
+{
+	m_isActive = !m_isActive;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Rgba8 const& System::GetDebugTint() const
 {
 	return m_debugTint;

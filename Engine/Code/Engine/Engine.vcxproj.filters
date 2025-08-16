@@ -211,6 +211,9 @@
     <ClCompile Include="Performance\PerformanceDebugWindow.cpp">
       <Filter>Performance</Filter>
     </ClCompile>
+    <ClCompile Include="Debug\SSystemDebug.cpp">
+      <Filter>Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -449,6 +452,9 @@
     </ClInclude>
     <ClInclude Include="Performance\PerformanceDebugWindow.h">
       <Filter>Performance</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug\SSystemDebug.h">
+      <Filter>Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

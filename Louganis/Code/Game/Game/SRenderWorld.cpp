@@ -56,9 +56,6 @@ void SRenderWorld::Run(SystemContext const& context)
         AABB2 cameraOrthoBounds2D = cameraComponent->m_camera.GetOrthoBounds2D();
         cameraOrthoBounds2D.Translate(cameraComponent->m_camera.GetPosition2D());
 
-        g_renderer->BeginCameraAndWindow(&cameraComponent->m_camera, g_window);
-        g_renderer->ClearScreen(Rgba8::White);
-
         for (auto& chunkIt : world.m_activeChunks)
         {
             Chunk* chunk = chunkIt.second;
