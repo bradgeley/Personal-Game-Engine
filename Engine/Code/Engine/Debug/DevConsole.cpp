@@ -199,9 +199,8 @@ void DevConsole::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DevConsole::Clear(NamedProperties& args)
+bool DevConsole::Clear(NamedProperties&)
 {
-    UNUSED(args)
     m_log.Clear();
     return true;
 }
@@ -430,18 +429,16 @@ bool DevConsole::HandleKeyUp(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DevConsole::HandleMouseButtonDown(NamedProperties& args)
+bool DevConsole::HandleMouseButtonDown(NamedProperties&)
 {
-    UNUSED(args)
     return m_isShowing;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DevConsole::HandleMouseButtonUp(NamedProperties& args)
+bool DevConsole::HandleMouseButtonUp(NamedProperties&)
 {
-    UNUSED(args)
     return m_isShowing;
 }
 
@@ -564,9 +561,8 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DevConsole::WindowSizeChanged(NamedProperties& args)
+bool DevConsole::WindowSizeChanged(NamedProperties&)
 {
-    UNUSED(args)
     m_camera->SetOrthoBounds(Vec3::ZeroVector, Vec3(g_window->GetAspect(), 1.f, 1.f));
     return false;
 }

@@ -63,9 +63,8 @@ bool SSystemDebug::ToggleSystem(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SSystemDebug::PrintAllSystems(NamedProperties& args)
+bool SSystemDebug::PrintAllSystems(NamedProperties&)
 {
-	UNUSED(args)
 	std::vector<SystemSubgraph> const& allSystemSubgraphs = g_ecs->GetSystemSubgraphs();
 
 	for (int subgraphID = 0; subgraphID < allSystemSubgraphs.size(); ++subgraphID)

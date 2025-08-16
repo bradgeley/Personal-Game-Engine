@@ -44,6 +44,15 @@ void SInput::Run(SystemContext const& context)
             move.m_frameMoveDir += Vec2(1.f, 0.f);
         }
         move.m_frameMoveDir.Normalize();
+
+        if (g_input->IsKeyDown(KeyCode::Shift))
+        {
+            move.m_isSprinting = true;
+        }
+        else
+        {
+            move.m_isSprinting = false;
+        }
     }
 
     auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();

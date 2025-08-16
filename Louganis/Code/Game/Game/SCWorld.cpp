@@ -6,9 +6,9 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Chunk* SCWorld::GetActiveChunk(IntVec2 const& coords) const
+Chunk* SCWorld::GetActiveChunk(IntVec2 const& chunkCoords) const
 {
-	auto it = m_activeChunks.find(coords);
+	auto it = m_activeChunks.find(chunkCoords);
 	if (it != m_activeChunks.end())
 	{
 		return it->second;
@@ -19,9 +19,9 @@ Chunk* SCWorld::GetActiveChunk(IntVec2 const& coords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Chunk* SCWorld::GetActiveChunk(int x, int y) const
+Chunk* SCWorld::GetActiveChunk(int chunkX, int chunkY) const
 {
-	return GetActiveChunk(IntVec2(x, y));
+	return GetActiveChunk(IntVec2(chunkX, chunkY));
 }
 
 
@@ -210,6 +210,9 @@ void SCWorld::RemoveActiveChunk(IntVec2 const& coords)
 	auto it = m_activeChunks.find(coords);
 	if (it != m_activeChunks.end())
 	{
+		Chunk* chunk = it->second;
+		chunk->Destroy();
+		delete chunk;
 		m_activeChunks.erase(it);
 	}
 }
@@ -228,7 +231,7 @@ void SCWorld::RemoveActiveChunk(int chunkX, int chunkY)
 //----------------------------------------------------------------------------------------------------------------------
 void SCWorld::RemoveActiveChunks(std::vector<IntVec2> const& coordsList)
 {
-	for (auto& coords : coordsList)
+	for (IntVec2 const& coords : coordsList)
 	{
 		RemoveActiveChunk(coords);
 	}

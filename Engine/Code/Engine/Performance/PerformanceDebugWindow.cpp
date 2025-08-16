@@ -312,9 +312,8 @@ bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool PerformanceDebugWindow::WindowSizeChanged(NamedProperties& args)
+bool PerformanceDebugWindow::WindowSizeChanged(NamedProperties&)
 {
-    UNUSED(args)
     IntVec2 renderResolution = m_window->GetRenderResolution();
     AABB2 bounds = AABB2(Vec2(IntVec2::ZeroVector), Vec2(renderResolution));
     m_camera->SetOrthoBounds2D(bounds);

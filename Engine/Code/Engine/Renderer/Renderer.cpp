@@ -1044,36 +1044,32 @@ ID3D11BlendState* Renderer::CreateBlendState(::D3D11_BLEND srcFactor, ::D3D11_BL
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Renderer::DebugDrawVertexBuffers(NamedProperties& args)
+bool Renderer::DebugDrawVertexBuffers(NamedProperties&)
 {
-UNUSED(args)
-
-#if defined(_DEBUG)
-m_debugDrawVertexBuffers = !m_debugDrawVertexBuffers;
-return true;
-#else
-g_devConsole->LogError("Cannot debug draw vertex buffers in a Release build.");
-return false;
-#endif
+	#if defined(_DEBUG)
+		m_debugDrawVertexBuffers = !m_debugDrawVertexBuffers;
+		return true;
+	#else
+		g_devConsole->LogError("Cannot debug draw vertex buffers in a Release build.");
+		return false;
+	#endif
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Renderer::ToggleVSync(NamedProperties& args)
+bool Renderer::ToggleVSync(NamedProperties&)
 {
-	UNUSED(args)
-		m_perUserSettings.m_vsyncEnabled = !m_perUserSettings.m_vsyncEnabled;
+	m_perUserSettings.m_vsyncEnabled = !m_perUserSettings.m_vsyncEnabled;
 	return false;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Renderer::ToggleMSAA(NamedProperties& args)
+bool Renderer::ToggleMSAA(NamedProperties&)
 {
-	UNUSED(args)
-		m_perUserSettings.m_msaaEnabled = !m_perUserSettings.m_msaaEnabled;
+	m_perUserSettings.m_msaaEnabled = !m_perUserSettings.m_msaaEnabled;
 
 	// Recreate the depth buffer and backbuffer textures
 	for (auto& wrcPair : m_windowRenderContexts)

@@ -100,6 +100,9 @@
     <ClCompile Include="Game\SWorldCollision.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SPreventativeCollision.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -220,6 +223,9 @@
       <Filter>Game\World</Filter>
     </ClInclude>
     <ClInclude Include="Game\SWorldCollision.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SPreventativeCollision.h">
       <Filter>Systems</Filter>
     </ClInclude>
   </ItemGroup>

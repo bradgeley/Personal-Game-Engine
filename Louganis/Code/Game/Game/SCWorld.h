@@ -19,8 +19,8 @@ class SCWorld
 {
 public:
 
-    Chunk* GetActiveChunk(IntVec2 const& coords) const;
-    Chunk* GetActiveChunk(int x, int y) const;
+    Chunk* GetActiveChunk(IntVec2 const& chunkCoords) const;
+    Chunk* GetActiveChunk(int chunkX, int chunkY) const;
     Chunk* GetActiveChunk(WorldCoords const& worldCoords) const;
     Chunk* GetActiveChunkAtLocation(Vec2 const& worldLocation) const;
     IntVec2 GetChunkCoordsAtLocation(Vec2 const& worldLocation) const;

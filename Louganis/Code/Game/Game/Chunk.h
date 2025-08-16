@@ -3,6 +3,7 @@
 #include "Engine/Math/FastGrid.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Events/EventDelegate.h"
 #include "WorldSettings.h"
 
 
@@ -25,6 +26,7 @@ public:
 
 public:
 
+	EventDelegate m_destroyed;
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
 	FastGrid<uint8_t, s_worldChunkSizePowerOfTwo> m_tileIDs;

@@ -9,6 +9,8 @@
 
 
 class Chunk;
+class SCWorld;
+struct NamedProperties;
 
 
 
@@ -17,7 +19,7 @@ class FlowFieldChunk
 {
 public:
 
-	explicit FlowFieldChunk(Chunk* chunk);
+	explicit FlowFieldChunk(Chunk* chunk, SCWorld* world);
 
 	void HardReset();
 	void SoftReset();
@@ -27,9 +29,22 @@ public:
 	void GenerateCostField();
 	void ResetConsideredCells();
 
-public:
+	Chunk* GetChunk() const;
+	AABB2 const& GetChunkBounds() const;
+	bool IsTileSolid(IntVec2 const& localTileCoords) const;
 
-	Chunk* m_chunk;
+protected:
+
+	bool ChunkDestroyed(NamedProperties& args);
+
+protected:
+
+	SCWorld* m_world = nullptr;
+	Chunk* m_chunk = nullptr;
+	IntVec2 m_chunkCoords;
+	AABB2 m_chunkBounds;
+
+public:
 
 	FastGrid<uint8_t, s_worldChunkSizePowerOfTwo> m_costField;
 	FastGrid<float, s_worldChunkSizePowerOfTwo> m_distanceField;

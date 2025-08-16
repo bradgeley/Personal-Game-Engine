@@ -4,6 +4,7 @@
 
 
 
+struct Vec2;
 struct IntVec2;
 class FlowFieldChunk;
 class FlowField;
@@ -20,8 +21,8 @@ public:
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;
-    int CreateMissingFlowFieldChunks();
-    int DestroyStaleFlowFieldChunks();
+    int CreateMissingFlowFieldChunks(Vec2 const& anchorLocation);
+    int DestroyStaleFlowFieldChunks(Vec2 const& anchorLocation);
 
 private:
     

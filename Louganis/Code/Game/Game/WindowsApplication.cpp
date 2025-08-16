@@ -68,9 +68,8 @@ void WindowsApplication::Quit()
 
 
 
-bool WindowsApplication::HandleQuit(NamedProperties& args)
+bool WindowsApplication::HandleQuit(NamedProperties&)
 {
-    UNUSED(args)
     Quit();
     return true;
 }

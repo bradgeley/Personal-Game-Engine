@@ -17,6 +17,7 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Font.h"
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Events/EventSystem.h"
 
@@ -182,7 +183,7 @@ void SDebugRender::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugRender::DebugRenderMouseRaycast(NamedProperties& args)
+bool SDebugRender::DebugRenderMouseRaycast(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderToMouseRaycast = !scDebug.m_debugRenderToMouseRaycast;
@@ -192,7 +193,7 @@ bool SDebugRender::DebugRenderMouseRaycast(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugRender::DebugRenderCostField(NamedProperties& args)
+bool SDebugRender::DebugRenderCostField(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderCostField = !scDebug.m_debugRenderCostField;
@@ -202,7 +203,7 @@ bool SDebugRender::DebugRenderCostField(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugRender::DebugRenderDistanceField(NamedProperties& args)
+bool SDebugRender::DebugRenderDistanceField(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderDistanceField = !scDebug.m_debugRenderDistanceField;
@@ -212,7 +213,7 @@ bool SDebugRender::DebugRenderDistanceField(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugRender::DebugRenderFlowField(NamedProperties& args)
+bool SDebugRender::DebugRenderFlowField(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderGradient = !scDebug.m_debugRenderGradient;

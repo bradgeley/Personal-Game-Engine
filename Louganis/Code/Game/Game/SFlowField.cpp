@@ -54,8 +54,8 @@ void SFlowField::Run(SystemContext const& context)
         playerChangedCoords = true;
     }
 
-    DestroyStaleFlowFieldChunks();
-    int numCreated = CreateMissingFlowFieldChunks();
+    DestroyStaleFlowFieldChunks(firstPlayerLocation);
+    int numCreated = CreateMissingFlowFieldChunks(firstPlayerLocation);
 
     if (numCreated > 0 || playerChangedCoords)
     {
@@ -76,13 +76,15 @@ void SFlowField::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int SFlowField::CreateMissingFlowFieldChunks()
+int SFlowField::CreateMissingFlowFieldChunks(Vec2 const& anchorLocation)
 {
     SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
     FlowField& flowField = scFlowField.m_toPlayerFlowField;
 
     int numCreated = 0;
+
+    float flowFieldGenerationRadiusSquared = world.m_worldSettings.m_flowFieldGenerationRadius * world.m_worldSettings.m_flowFieldGenerationRadius;
 
     // Create flow field chunks for all chunks in the world
     for (auto it : world.m_activeChunks)
@@ -91,10 +93,15 @@ int SFlowField::CreateMissingFlowFieldChunks()
         FlowFieldChunk* flowFieldChunk = flowField.GetActiveChunk(chunk->m_chunkCoords);
         if (!flowFieldChunk)
         {
-            flowFieldChunk = new FlowFieldChunk(chunk);
-            flowFieldChunk->GenerateCostField();
-            flowField.m_activeFlowFieldChunks.emplace(chunk->m_chunkCoords, flowFieldChunk);
-            numCreated++;
+            float distanceSquared = chunk->m_chunkBounds.GetCenter().GetDistanceSquaredTo(anchorLocation);
+
+            if (distanceSquared < flowFieldGenerationRadiusSquared)
+            {
+                flowFieldChunk = new FlowFieldChunk(chunk, &world);
+                flowFieldChunk->GenerateCostField();
+                flowField.m_activeFlowFieldChunks.emplace(chunk->m_chunkCoords, flowFieldChunk);
+                numCreated++;
+            }
         }
     }
 
@@ -103,11 +110,13 @@ int SFlowField::CreateMissingFlowFieldChunks()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int SFlowField::DestroyStaleFlowFieldChunks()
+int SFlowField::DestroyStaleFlowFieldChunks(Vec2 const& anchorLocation)
 {
     SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
     FlowField& flowField = scFlowField.m_toPlayerFlowField;
+
+    float flowFieldGenerationRadiusSquared = world.m_worldSettings.m_flowFieldGenerationRadius * world.m_worldSettings.m_flowFieldGenerationRadius;
 
     // Destroy flow field chunks that no longer have a valid chunk
     std::vector<IntVec2> coordsToRemove;
@@ -118,6 +127,15 @@ int SFlowField::DestroyStaleFlowFieldChunks()
         if (!world.GetActiveChunk(flowFieldChunk->GetChunkCoords()))
         {
             coordsToRemove.push_back(flowFieldChunk->GetChunkCoords());
+        }
+        else
+        {
+            float distanceSquared = flowFieldChunk->GetChunkBounds().GetCenter().GetDistanceSquaredTo(anchorLocation);
+
+            if (distanceSquared > flowFieldGenerationRadiusSquared)
+            {
+                coordsToRemove.push_back(flowFieldChunk->GetChunkCoords());
+            }
         }
     }
     for (IntVec2 const& coords : coordsToRemove)
@@ -190,7 +208,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
         {
             continue;
         }
-        if (currentChunk->m_chunk->IsTileSolid(currentLocalTileCoords))
+        if (currentChunk->IsTileSolid(currentLocalTileCoords))
         {
             continue;
         }
@@ -209,7 +227,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
             {
                 continue;
             }
-            if (neighborChunk->m_chunk->IsTileSolid(neighborWorldCoords.m_localTileCoords))
+            if (neighborChunk->IsTileSolid(neighborWorldCoords.m_localTileCoords))
             {
                 continue;
             }
@@ -228,7 +246,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
                 {
                     continue;
                 }
-                if (nofnChunk->m_chunk->IsTileSolid(nofnWorldCoords.m_localTileCoords))
+                if (nofnChunk->IsTileSolid(nofnWorldCoords.m_localTileCoords))
                 {
                     continue;
                 }
@@ -306,7 +324,7 @@ void SFlowField::GenerateGradient(FlowField& flowField)
         {
             continue;
         }
-        if (currentChunk->m_chunk->IsTileSolid(currentWorldCoords.m_localTileCoords))
+        if (currentChunk->IsTileSolid(currentWorldCoords.m_localTileCoords))
         {
             continue;
         }
@@ -328,7 +346,7 @@ void SFlowField::GenerateGradient(FlowField& flowField)
             float currentNeighborDistance = (float) neighborChunk->m_distanceField.Get(neighborWorldCoords.m_localTileCoords);
             float dDist = currentTileDistance - currentNeighborDistance;
 
-            if (neighborChunk->m_chunk->IsTileSolid(neighborWorldCoords.m_localTileCoords))
+            if (neighborChunk->IsTileSolid(neighborWorldCoords.m_localTileCoords))
             {
                 // Always treat solid walls as being 0.5 distance away in that direction, so that flow always generates away from walls without skewing too much
                 // If we leave this as the actual distance, which is very large (999), then gradient will point away from walls too strongly

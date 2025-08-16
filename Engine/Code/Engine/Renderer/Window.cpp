@@ -53,7 +53,6 @@ void Window::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void Window::BeginFrame()
 {
-    ScopedTimer t("BeginFrame");
     RunMessagePump();
 }
 

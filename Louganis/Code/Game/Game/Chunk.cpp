@@ -4,6 +4,7 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Math/Noise.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/DataStructures/NamedProperties.h"
 #include "TileDef.h"
 
 
@@ -80,6 +81,9 @@ void Chunk::Destroy()
 {
 	m_tileIDs.Clear();
 	m_vbo.ClearVerts();
+
+	NamedProperties args;
+	m_destroyed.Broadcast(args);
 }
 
 

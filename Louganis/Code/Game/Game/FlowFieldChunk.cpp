@@ -1,17 +1,26 @@
 // Bradley Christensen - 2024
 #include "FlowFieldChunk.h"
 #include "Chunk.h"
+#include "SCWorld.h"
+
+
 
 constexpr float MAX_DISTANCE = 999.f;
 
+
+
 //----------------------------------------------------------------------------------------------------------------------
-FlowFieldChunk::FlowFieldChunk(Chunk* chunk) :
+FlowFieldChunk::FlowFieldChunk(Chunk* chunk, SCWorld* world) :
+	m_world(world),
 	m_chunk(chunk),
+	m_chunkCoords(chunk->m_chunkCoords),
+	m_chunkBounds(chunk->m_chunkBounds),
 	m_costField(0),
 	m_distanceField(MAX_DISTANCE),
 	m_gradient(Vec2::ZeroVector),
 	m_consideredCells(false)
 {
+	m_chunk->m_destroyed.SubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
 }
 
 
@@ -41,13 +50,37 @@ void FlowFieldChunk::SoftReset()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Chunk* FlowFieldChunk::GetChunk() const
+{
+	return m_chunk;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 const& FlowFieldChunk::GetChunkBounds() const
+{
+	return m_chunkBounds;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 IntVec2 FlowFieldChunk::GetChunkCoords() const
+{
+	return m_chunkCoords;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool FlowFieldChunk::IsTileSolid(IntVec2 const& localTileCoords) const
 {
 	if (m_chunk)
 	{
-		return m_chunk->m_chunkCoords;
+		return m_chunk->IsTileSolid(localTileCoords);
 	}
-	return IntVec2();
+	return false;
 }
 
 
@@ -63,9 +96,19 @@ void FlowFieldChunk::SetDistanceFieldAt(IntVec2 const& localTileCoords, float di
 //----------------------------------------------------------------------------------------------------------------------
 void FlowFieldChunk::GenerateCostField()
 {
-	for (int i = 0; i < m_costField.Count(); ++i)
+	if (m_chunk)
 	{
-		m_costField.Set(i, m_chunk->GetCost(i));
+		for (int i = 0; i < m_costField.Count(); ++i)
+		{
+			m_costField.Set(i, m_chunk->GetCost(i));
+		}
+	}
+	else
+	{
+		for (int i = 0; i < m_costField.Count(); ++i)
+		{
+			m_costField.Set(i, 1);
+		}
 	}
 }
 
@@ -75,4 +118,14 @@ void FlowFieldChunk::GenerateCostField()
 void FlowFieldChunk::ResetConsideredCells()
 {
 	m_consideredCells.SetAll(false);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool FlowFieldChunk::ChunkDestroyed(NamedProperties&)
+{
+	m_chunk->m_destroyed.UnsubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
+	m_chunk = nullptr;
+	return false;
 }
