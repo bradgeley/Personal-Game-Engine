@@ -25,8 +25,8 @@ void SCollision::Run(SystemContext const& context)
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& collStorage  = g_ecs->GetArrayStorage<CCollision>();
 
-    auto itA = g_ecs->Iterate<CTransform, CCollision>(context);
-    auto itB = itA;
+    GroupIter itA = g_ecs->Iterate<CTransform, CCollision>(context);
+    GroupIter itB = itA;
 
     for (/*init above*/; itA.IsValid(); ++itA)
     {

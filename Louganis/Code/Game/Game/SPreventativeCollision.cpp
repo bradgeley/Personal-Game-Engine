@@ -9,6 +9,7 @@
 #include "SCWorld.h"
 #include "SCDebug.h"
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Events/EventSystem.h"
 #include "Engine/Math/GeometryUtils.h"
 
 
@@ -19,6 +20,8 @@ void SPreventativeCollision::Startup()
     AddWriteDependencies<CMovement, CTransform>();
     AddWriteDependencies<SCDebug>();
     AddReadDependencies<CCollision, SCWorld>();
+
+    g_eventSystem->SubscribeMethod("DebugRenderPreventativePhysics", this, &SPreventativeCollision::DebugRenderPreventativePhysics);
 }
 
 
@@ -112,4 +115,22 @@ void SPreventativeCollision::Run(SystemContext const& context)
             }
         }
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SPreventativeCollision::Shutdown()
+{
+    g_eventSystem->UnsubscribeMethod("DebugRenderPreventativePhysics", this, &SPreventativeCollision::DebugRenderPreventativePhysics);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SPreventativeCollision::DebugRenderPreventativePhysics(NamedProperties&)
+{
+    auto& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderPreventativePhysicsRaycasts = !scDebug.m_debugRenderPreventativePhysicsRaycasts;
+    return false;
 }
