@@ -5,6 +5,7 @@
 
 
 class SCWorld;
+class VertexBuffer;
 
 
 
@@ -40,3 +41,4 @@ struct WorldRaycastResult
 //----------------------------------------------------------------------------------------------------------------------
 WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast);
 void DebugDrawRaycast(WorldRaycastResult const& result);
+void AddVertsForRaycast(VertexBuffer& vbo, WorldRaycastResult const& result, float scaleMultiplier = 1.f);

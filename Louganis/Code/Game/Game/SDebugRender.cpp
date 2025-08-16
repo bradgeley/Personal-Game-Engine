@@ -18,6 +18,7 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Font.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Events/EventSystem.h"
 
 
 
@@ -27,6 +28,11 @@ void SDebugRender::Startup()
     AddWriteDependencies<CTransform, CPlayerController, Renderer>();
     AddWriteDependencies<SCDebug>();
     AddReadDependencies<SCWorld, SCFlowField, InputSystem, CCamera>();
+
+    g_eventSystem->SubscribeMethod("DebugRenderMouseRaycast", this, &SDebugRender::DebugRenderMouseRaycast);
+    g_eventSystem->SubscribeMethod("DebugRenderCostField", this, &SDebugRender::DebugRenderCostField);
+    g_eventSystem->SubscribeMethod("DebugRenderDistanceField", this, &SDebugRender::DebugRenderDistanceField);
+    g_eventSystem->SubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
 }
 
 
@@ -62,7 +68,7 @@ void SDebugRender::Run(SystemContext const& context)
             WorldRaycast raycast(playerLocation, playerToMouse.GetNormalized(), playerToMouse.GetLength());
             WorldRaycastResult result = Raycast(world, raycast);
 
-            DebugDrawRaycast(result);
+            AddVertsForRaycast(scDebug.m_frameVerts, result);
         }
     }
 
@@ -97,7 +103,7 @@ void SDebugRender::Run(SystemContext const& context)
 
 
     // Render Flow Field
-    if (scDebug.m_debugRenderFlowField)
+    if (scDebug.m_debugRenderDistanceField)
     {
         for (auto it : flowField.m_activeFlowFieldChunks)
         {
@@ -128,7 +134,6 @@ void SDebugRender::Run(SystemContext const& context)
 
 
     // Render Gradient
-
     if (scDebug.m_debugRenderGradient)
     {
         for (auto it : flowField.m_activeFlowFieldChunks)
@@ -156,11 +161,11 @@ void SDebugRender::Run(SystemContext const& context)
         }
     }
     
-
+    // Render debug verts 
     g_renderer->BindTexture(0);
     g_renderer->BindShader(0);
-    g_renderer->DrawVertexBuffer(&scDebug.FrameVerts);
-    scDebug.FrameVerts.ClearVerts();
+    g_renderer->DrawVertexBuffer(&scDebug.m_frameVerts);
+    scDebug.m_frameVerts.ClearVerts();
 }
 
 
@@ -168,5 +173,48 @@ void SDebugRender::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugRender::Shutdown()
 {
-    
+    g_eventSystem->UnsubscribeMethod("DebugRenderMouseRaycast", this, &SDebugRender::DebugRenderMouseRaycast);
+    g_eventSystem->UnsubscribeMethod("DebugRenderCostField", this, &SDebugRender::DebugRenderCostField);
+    g_eventSystem->UnsubscribeMethod("DebugRenderDistanceField", this, &SDebugRender::DebugRenderDistanceField);
+    g_eventSystem->UnsubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderMouseRaycast(NamedProperties& args)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderToMouseRaycast = !scDebug.m_debugRenderToMouseRaycast;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderCostField(NamedProperties& args)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderCostField = !scDebug.m_debugRenderCostField;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderDistanceField(NamedProperties& args)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderDistanceField = !scDebug.m_debugRenderDistanceField;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderFlowField(NamedProperties& args)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderGradient = !scDebug.m_debugRenderGradient;
+    return false;
 }

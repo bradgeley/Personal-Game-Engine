@@ -68,7 +68,7 @@ void SMovement::Run(SystemContext const& context)
 
                 if (scDebug.m_debugRenderPreventativePhysicsRaycasts)
                 {
-                    AddVertsForArrow2D(scDebug.FrameVerts.GetMutableVerts(), raycast.m_start, raycast.m_start + raycast.m_direction * raycast.m_maxDistance, 0.033f, Rgba8::Yellow);
+                    AddVertsForArrow2D(scDebug.m_frameVerts.GetMutableVerts(), raycast.m_start, raycast.m_start + raycast.m_direction * raycast.m_maxDistance, 0.033f, Rgba8::Yellow);
                 }
 
                 WorldRaycastResult result = Raycast(scWorld, raycast);
@@ -86,7 +86,7 @@ void SMovement::Run(SystemContext const& context)
             {
                 if (scDebug.m_debugRenderPreventativePhysicsRaycasts)
                 {
-                    AddVertsForArrow2D(scDebug.FrameVerts.GetMutableVerts(), shortestHitResult.m_hitLocation, shortestHitResult.m_hitLocation + shortestHitResult.m_hitNormal * 0.25f, 0.033f, Rgba8::Red);
+                    AddVertsForArrow2D(scDebug.m_frameVerts.GetMutableVerts(), shortestHitResult.m_hitLocation, shortestHitResult.m_hitLocation + shortestHitResult.m_hitNormal * 0.25f, 0.033f, Rgba8::Red);
                 }
                 transform.m_pos = shortestHitResult.m_hitLocation + shortestHitResult.m_hitNormal * (collision.m_radius + scWorld.m_worldSettings.m_entityWallBuffer);
                 frameMovement -= frameMovement * shortestHitResult.m_t; // subtract out the movement we already completed
@@ -103,7 +103,7 @@ void SMovement::Run(SystemContext const& context)
             {
                 if (scDebug.m_debugRenderPreventativePhysicsRaycasts)
                 {
-                    AddVertsForArrow2D(scDebug.FrameVerts.GetMutableVerts(), transform.m_pos, transform.m_pos + frameMovement, 0.033f, Rgba8::Green);
+                    AddVertsForArrow2D(scDebug.m_frameVerts.GetMutableVerts(), transform.m_pos, transform.m_pos + frameMovement, 0.033f, Rgba8::Green);
                 }
                 transform.m_pos += frameMovement;
                 frameMovement = Vec2::ZeroVector;

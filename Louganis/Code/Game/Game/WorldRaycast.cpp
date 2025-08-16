@@ -153,3 +153,31 @@ void DebugDrawRaycast(WorldRaycastResult const& result)
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(&vbo);
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AddVertsForRaycast(VertexBuffer& vbo, WorldRaycastResult const& result, float scaleMultiplier /*= 1.f*/)
+{
+    static int numTrianglesPerDisc = 16;
+    static float discRadius = 0.1f;
+    static float arrowThickness = 0.05f;
+
+    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_raycast.m_start, discRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_hitLocation, discRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+
+    if (result.m_immediateHit)
+    {
+        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Gray);
+        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_raycast.m_start, result.m_raycast.m_start + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Orange);
+    }
+    else if (result.m_blockingHit)
+    {
+        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Red);
+        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Red);
+    }
+    else
+    {
+        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Yellow);
+    }
+}

@@ -4,6 +4,10 @@
 
 
 
+struct NamedProperties;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 class SDebugRender : public System
 {
@@ -13,4 +17,11 @@ public:
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;
+
+protected:
+
+    bool DebugRenderMouseRaycast(NamedProperties& args);
+    bool DebugRenderCostField(NamedProperties& args);
+    bool DebugRenderDistanceField(NamedProperties& args);
+    bool DebugRenderFlowField(NamedProperties& args);
 };

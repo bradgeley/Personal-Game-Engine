@@ -47,6 +47,15 @@ void VertexBuffer::Initialize(int numExpectedVerts)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void VertexBuffer::ReserveAdditional(int numExpectedAdditionalVerts)
+{
+    int numVerts = m_verts.size();
+    m_verts.reserve(numVerts + numExpectedAdditionalVerts);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::ReleaseResources()
 {
     DX_SAFE_RELEASE(m_handle)

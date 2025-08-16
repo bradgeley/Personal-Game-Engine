@@ -29,6 +29,7 @@ public:
     ~VertexBuffer();
 
     void Initialize(int numExpectedVerts = 3);
+    void ReserveAdditional(int numExpectedAdditionalVerts);
     void ReleaseResources();
     
     std::vector<Vertex_PCU> const& GetVerts() const;

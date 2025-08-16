@@ -397,7 +397,7 @@ void Window::RefreshWindowSize()
         SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED
     );
 
-    ASSERT_OR_DIE(result == true, StringUtils::StringF("Failed to set window size: error code %i", GetLastError()));
+    ASSERT_OR_DIE(result == TRUE, StringUtils::StringF("Failed to set window size: error code %i", GetLastError()));
 }
 
 
