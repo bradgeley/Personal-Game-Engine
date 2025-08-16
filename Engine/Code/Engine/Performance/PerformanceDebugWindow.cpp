@@ -15,6 +15,7 @@
 #include "Engine/Core/StringUtils.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/System.h"
+#include "Engine/Performance/ScopedTimer.h"
 
 
 

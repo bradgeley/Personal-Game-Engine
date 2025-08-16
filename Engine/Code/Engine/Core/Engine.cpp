@@ -55,7 +55,7 @@ void Engine::BeginFrame()
 {
     #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
         s_frameData.m_engineFrameStartTime = GetCurrentTimeSeconds();
-        PerfWindowScopedTimer scopedTimer("Engine", "BeginFrame");
+        PerfWindowScopedTimer scopedTimer("Engine","BeginFrame");
     #endif
 
     for (EngineSubsystem*& subsystem : m_subsystems)

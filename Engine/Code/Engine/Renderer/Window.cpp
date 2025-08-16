@@ -8,6 +8,7 @@
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/Performance/ScopedTimer.h"
 #include "Texture.h"
 
 
@@ -52,6 +53,7 @@ void Window::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void Window::BeginFrame()
 {
+    ScopedTimer t("BeginFrame");
     RunMessagePump();
 }
 
@@ -538,7 +540,7 @@ void Window::RunMessagePump()
 //----------------------------------------------------------------------------------------------------------------------
 void Window::RegisterEvents()
 {
-    if (g_eventSystem)
+    if (g_eventSystem && g_devConsole)
     {
         DevConsoleCommandInfo setWindowModeCommand("SetWindowMode");
         setWindowModeCommand.AddArg("mode", DevConsoleArgType::String);
@@ -601,7 +603,11 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
     UNUSED(lParam);
     UNUSED(windowHandle);
 
-    NamedProperties args;
+    if (wmMessageCode == WM_MOUSEMOVE)
+    {
+        return DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
+    }
+
     switch (wmMessageCode)
     {
         case WM_ACTIVATE:
@@ -612,6 +618,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
         }
         case WM_CLOSE:
         {
+            NamedProperties args;
             window->m_quit.Broadcast(args);
             break;
         }
@@ -648,6 +655,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
         }
         case WM_CHAR:
         {
+            NamedProperties args;
             int charCode = (int) wParam;
             args.Set("Char", charCode);
             window->m_charInputEvent.Broadcast(args);
@@ -655,6 +663,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
         }
         case WM_KEYDOWN:
         {
+            NamedProperties args;
             int keyCode = (int) wParam;
             args.Set("Key", keyCode);
             window->m_keyDownEvent.Broadcast(args);
@@ -662,6 +671,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
         }
         case WM_KEYUP:
         {
+            NamedProperties args;
             int keyCode = (int) wParam;
             args.Set("Key", keyCode);
             window->m_keyUpEvent.Broadcast(args);
@@ -672,6 +682,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
             bool bDown = (wParam & MK_LBUTTON) != 0;
             if (bDown)
             {
+                NamedProperties args;
                 args.Set("MouseButton", 0);
                 window->m_mouseButtonDownEvent.Broadcast(args);
             }
@@ -682,6 +693,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
             bool bDown = (wParam & MK_LBUTTON) != 0;
             if (!bDown)
             {
+                NamedProperties args;
                 args.Set("MouseButton", 0);
                 window->m_mouseButtonUpEvent.Broadcast(args);
             }
@@ -692,6 +704,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
             bool bDown = (wParam & MK_RBUTTON) != 0;
             if (bDown)
             {
+                NamedProperties args;
                 args.Set("MouseButton", 1);
                 window->m_mouseButtonDownEvent.Broadcast(args);
             }
@@ -702,6 +715,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
             bool bDown = (wParam & MK_RBUTTON) != 0;
             if (!bDown)
             {
+                NamedProperties args;
                 args.Set("MouseButton", 1);
                 window->m_mouseButtonUpEvent.Broadcast(args);
             }
@@ -712,6 +726,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
             bool bDown = (wParam & MK_MBUTTON) != 0;
             if (bDown)
             {
+                NamedProperties args;
                 args.Set("MouseButton", 2);
                 window->m_mouseButtonDownEvent.Broadcast(args);
             }
@@ -722,6 +737,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
             bool bDown = (wParam & MK_MBUTTON) != 0;
             if (!bDown)
             {
+                NamedProperties args;
                 args.Set("MouseButton", 2);
                 window->m_mouseButtonUpEvent.Broadcast(args);
             }
@@ -729,6 +745,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
         }
         case WM_MOUSEWHEEL:
         {
+            NamedProperties args;
             int wheelChange = ((int) wParam >> 16) / 120;
             args.Set("WheelChange", wheelChange);
             window->m_mouseWheelEvent.Broadcast(args);
