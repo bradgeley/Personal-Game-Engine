@@ -64,7 +64,6 @@ void SRenderWorld::Run(SystemContext const& context)
                 DrawChunk(chunk);
             }
         }
-
     }
 }
 

@@ -126,6 +126,10 @@ void PerformanceDebugWindow::EndFrame()
 void PerformanceDebugWindow::Shutdown()
 {
     std::unique_lock lock(m_mutex);
+
+    m_textVBO.ReleaseResources();
+    m_untexturedVBO.ReleaseResources();
+
     for (PerfSection& ps : m_perfSections)
     {
         for (PerfRow& row : ps.m_perfRows)
@@ -248,35 +252,35 @@ void PerformanceDebugWindow::EngineFrameCompleted()
     g_renderer->BeginCameraAndWindow(m_camera, m_window);
     g_renderer->ClearScreen(Rgba8::LightGray);
 
-    VertexBuffer untexturedVerts;
+    m_untexturedVBO.ClearVerts();
 
     for (PerfSection const& section : m_perfSections)
     {
-        AddUntexturedVertsForSection(untexturedVerts, section);
+        AddUntexturedVertsForSection(m_untexturedVBO, section);
     }
 
     // Graph Outline Box
     AABB2 graphOutline;
     GetGraphOutline(graphOutline);
-    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
+    AddVertsForWireBox2D(m_untexturedVBO.GetMutableVerts(), graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
 
-    g_renderer->DrawVertexBuffer(&untexturedVerts);
+    g_renderer->DrawVertexBuffer(&m_untexturedVBO);
 
-    VertexBuffer textVerts;
+    m_textVBO.ClearVerts();
     Font* font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
+    font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
 
     float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
     std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Seconds(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
-    font->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
+    font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
 
     for (PerfSection const& section : m_perfSections)
     {
-        AddTextVertsForSection(textVerts, section);
+        AddTextVertsForSection(m_textVBO, section);
     }
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(&textVerts);
+    g_renderer->DrawVertexBuffer(&m_textVBO);
 
     // Custom present timing, so that the main game window finishes rendering before we display on our secondary window
     g_renderer->PresentWindow(m_window);

@@ -9,6 +9,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct EventDelegate
 {
+    ~EventDelegate();
+
     void Broadcast(NamedProperties& args) const;
     
     void SubscribeFunction(EventCallbackFunction callbackFunc);
@@ -43,8 +45,10 @@ void EventDelegate::UnsubscribeMethod(T_Object* object, T_Method method)
     for (int i = 0; i < (int) m_subs.size(); ++i)
     {
         auto& sub = m_subs[i];
-        if (sub->DoesObjectMatch(object) && sub->DoesFunctionMatch(&method))
+        if (sub && sub->DoesObjectMatch(object) && sub->DoesFunctionMatch(&method))
         {
+            delete sub;
+            sub = nullptr;
             m_subs.erase(m_subs.begin() + i);
             return;
         }

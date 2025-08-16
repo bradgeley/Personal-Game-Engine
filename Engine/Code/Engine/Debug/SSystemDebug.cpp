@@ -2,6 +2,7 @@
 #include "SSystemDebug.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/DataStructures/NamedProperties.h"
 
@@ -64,6 +65,7 @@ bool SSystemDebug::ToggleSystem(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool SSystemDebug::PrintAllSystems(NamedProperties& args)
 {
+	UNUSED(args)
 	std::vector<SystemSubgraph> const& allSystemSubgraphs = g_ecs->GetSystemSubgraphs();
 
 	for (int subgraphID = 0; subgraphID < allSystemSubgraphs.size(); ++subgraphID)

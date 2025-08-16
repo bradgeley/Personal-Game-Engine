@@ -36,6 +36,8 @@ public:
 
     EventSystem(EventSystemConfig config);
 
+    virtual void Shutdown() override;
+
     // Returns the number of subscribers that responded to the FireEvent call
     int FireEvent(std::string const& name);
     int FireEvent(std::string const& name, NamedProperties& args);
@@ -84,6 +86,7 @@ void EventSystem::UnsubscribeMethod(std::string const& eventName, T_Object* obje
         auto& sub = *it;
         if (sub->DoesObjectMatch(object) && sub->DoesFunctionMatch(&method))
         {
+            delete sub;
             it = subList.erase(it);
         }
         else

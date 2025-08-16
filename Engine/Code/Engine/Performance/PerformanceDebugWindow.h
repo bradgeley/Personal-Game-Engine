@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/Renderer/Rgba8.h"
+#include "Engine/Renderer/VertexBuffer.h"
 #include <mutex>
 #include <vector>
 
@@ -150,6 +151,9 @@ protected:
 
     Window* m_window = nullptr;
     Camera* m_camera = nullptr;
+
+    VertexBuffer m_untexturedVBO;
+    VertexBuffer m_textVBO;
 
     // If true, freezes all logging so you can inspect 1 frame indefinitely
     bool m_freezeLog = false;

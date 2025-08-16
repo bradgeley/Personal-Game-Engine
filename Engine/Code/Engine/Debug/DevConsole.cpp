@@ -692,7 +692,7 @@ void DevConsole::DrawTab() const
     m_vbo->ClearVerts();
 
     auto font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(m_vbo->GetMutableVerts(), tabDims.GetCenter(), Vec2::ZeroVector, tabDims.GetHeight(), "DevConsole", Rgba8::White);
+    font->AddVertsForAlignedText2D(m_vbo->GetMutableVerts(), tabDims.GetCenter(), Vec2::ZeroVector, tabDims.GetHeight(), "DevConsole (~)", Rgba8::White);
     font->SetRendererState();
     g_renderer->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();

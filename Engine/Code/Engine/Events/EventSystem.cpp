@@ -18,6 +18,23 @@ EventSystem::EventSystem(EventSystemConfig config) : EngineSubsystem("EventSyste
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void EventSystem::Shutdown()
+{
+    for (auto pair : m_events)
+    {
+        std::vector<EventSubscriber*>& subs = pair.second;
+        for (EventSubscriber*& sub : subs)
+        {
+            delete sub;
+        }
+        subs.clear();
+    }
+    m_events.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 int EventSystem::FireEvent(std::string const& name)
 {
     NamedProperties emptyArgs;
@@ -76,6 +93,7 @@ void EventSystem::UnsubscribeFunction(std::string const& eventName, EventCallbac
         auto& sub = *it;
         if (sub->DoesFunctionMatch((void const*) callbackFunc))
         {
+            delete sub;
             it = subList.erase(it);
         }
         else
