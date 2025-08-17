@@ -263,18 +263,17 @@ void AddVertsForCapsule2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start,
         return;
     }
 
-    constexpr int numSidesOnEachEnd = 16;
+    constexpr int numSidesOnEachEnd = 64;
 
     Vec2 lineDir = (end - start).GetNormalized();
     Vec2 lineRotated90 = lineDir.GetRotated90();
 
-    // Could be rotated but using an upright line as example for naming
+    // Could be rotated but using an upright capsule as example for naming
     Vec2 botLeftCorner = start + lineRotated90 * radius;
     Vec2 botRightCorner = start - lineRotated90 * radius;
     Vec2 topRightCorner = end - lineRotated90 * radius;
     Vec2 topLeftCorner = end + lineRotated90 * radius;
 
-    // Push some verts
     out_verts.reserve(out_verts.size() + 6 + (numSidesOnEachEnd * 3 * 2));
     out_verts.emplace_back(Vec3(botLeftCorner), tint);
     out_verts.emplace_back(Vec3(botRightCorner), tint);

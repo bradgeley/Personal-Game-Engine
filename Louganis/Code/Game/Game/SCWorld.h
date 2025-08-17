@@ -32,6 +32,7 @@ public:
     WorldCoords GetWorldCoordsAtOffset(WorldCoords const& worldCoords, IntVec2 const& tileOffset) const;
     WorldCoords GetWorldCoordsAtLocation(Vec2 const& worldLocation) const;
     void GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldCoords* eightNeighborsArray) const;
+    void GetWorldCoordsTouchingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const;
 
     AABB2 CalculateChunkBounds(int chunkX, int chunkY) const;
     AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos) const;

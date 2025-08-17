@@ -166,6 +166,14 @@ void SCWorld::GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldC
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SCWorld::GetWorldCoordsTouchingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AABB2 SCWorld::CalculateChunkBounds(int chunkX, int chunkY) const
 {
 	int numTilesInRow = GetNumTilesInRow();

@@ -132,6 +132,7 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
     WorldDiscCastResult result;
     result.m_discCast = discCast;
     result.m_hitLocation = discCast.m_start;
+    result.m_newDiscCenter = discCast.m_start + discCast.m_direction * discCast.m_maxDistance;
 
     if (discCast.m_direction == Vec2::ZeroVector)
     {
@@ -139,6 +140,11 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
     }
 
     result.m_hitLocation = discCast.m_start + discCast.m_direction * discCast.m_maxDistance;
+
+    if (discCast.m_discRadius <= world.m_worldSettings.m_tileWidth)
+    {
+
+    }
 
     WorldCoords currentWorldCoords = world.GetWorldCoordsAtLocation(discCast.m_start);
     WorldCoords neighbors[8];
@@ -166,6 +172,8 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
             return result;
         }
     }
+
+
 
     return result;
 }
@@ -238,7 +246,7 @@ void AddVertsForDiscCast(VertexBuffer& vbo, WorldDiscCastResult const& result, f
     static float pointRadius = 0.1f;
     static float arrowThickness = 0.05f;
 
-    AddVertsForCapsule2D(vbo.GetMutableVerts(), result.m_discCast.m_start, result.m_discCast.m_start + result.m_discCast.m_direction * result.m_discCast.m_maxDistance, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 127));
+    AddVertsForCapsule2D(vbo.GetMutableVerts(), result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 127));
 
     AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_discCast.m_start, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
     AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_hitLocation, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
