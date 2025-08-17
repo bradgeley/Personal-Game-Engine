@@ -25,6 +25,14 @@ struct WorldRaycast
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct WorldDiscCast : public WorldRaycast
+{
+    float m_discRadius = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct WorldRaycastResult
 {
     WorldRaycast m_raycast;
@@ -39,6 +47,23 @@ struct WorldRaycastResult
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct WorldDiscCastResult 
+{
+    WorldDiscCast m_discCast;
+    bool m_blockingHit = false;
+    bool m_immediateHit = false;
+    Vec2 m_hitLocation;
+    Vec2 m_hitNormal;
+    Vec2 m_newDiscCenter;
+    float m_distance = 0.f;
+    float m_t = 1.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast);
+WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast);
 void DebugDrawRaycast(WorldRaycastResult const& result);
 void AddVertsForRaycast(VertexBuffer& vbo, WorldRaycastResult const& result, float scaleMultiplier = 1.f);
+void AddVertsForDiscCast(VertexBuffer& vbo, WorldDiscCastResult const& result, float scaleMultiplier = 1.f);

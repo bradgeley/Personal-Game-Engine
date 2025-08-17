@@ -6,6 +6,7 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Math/GeometryUtils.h"
 
 
 
@@ -126,6 +127,52 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast)
+{
+    WorldDiscCastResult result;
+    result.m_discCast = discCast;
+    result.m_hitLocation = discCast.m_start;
+
+    if (discCast.m_direction == Vec2::ZeroVector)
+    {
+        return result;
+    }
+
+    result.m_hitLocation = discCast.m_start + discCast.m_direction * discCast.m_maxDistance;
+
+    WorldCoords currentWorldCoords = world.GetWorldCoordsAtLocation(discCast.m_start);
+    WorldCoords neighbors[8];
+    world.GetEightNeighborWorldCoords(currentWorldCoords, neighbors);
+
+    for (int neighborIndex = 0; neighborIndex < 8; ++neighborIndex)
+    {
+        WorldCoords const& neighborCoords = neighbors[neighborIndex];
+        AABB2 tileBounds = world.GetTileBounds(neighborCoords);
+        if (!GeometryUtils::IsDiscTouchingAABB(discCast.m_start, discCast.m_discRadius, tileBounds))
+        {
+            continue;
+        }
+
+        Chunk* chunk = world.GetActiveChunk(neighborCoords);
+        if (chunk->IsTileSolid(neighborCoords.m_localTileCoords))
+        {
+            result.m_blockingHit = true;
+            result.m_immediateHit = true;
+            result.m_hitNormal = -discCast.m_direction;
+            result.m_hitLocation = tileBounds.GetNearestPoint(discCast.m_start);
+            result.m_newDiscCenter = discCast.m_start;
+            result.m_t = 0.f;
+            result.m_distance = 0.f;
+            return result;
+        }
+    }
+
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DebugDrawRaycast(WorldRaycastResult const& result)
 {
     VertexBuffer vbo;
@@ -160,11 +207,11 @@ void DebugDrawRaycast(WorldRaycastResult const& result)
 void AddVertsForRaycast(VertexBuffer& vbo, WorldRaycastResult const& result, float scaleMultiplier /*= 1.f*/)
 {
     static int numTrianglesPerDisc = 16;
-    static float discRadius = 0.1f;
+    static float pointRadius = 0.1f;
     static float arrowThickness = 0.05f;
 
-    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_raycast.m_start, discRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
-    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_hitLocation, discRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_raycast.m_start, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_hitLocation, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
 
     if (result.m_immediateHit)
     {
@@ -179,5 +226,26 @@ void AddVertsForRaycast(VertexBuffer& vbo, WorldRaycastResult const& result, flo
     else
     {
         AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Yellow);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AddVertsForDiscCast(VertexBuffer& vbo, WorldDiscCastResult const& result, float scaleMultiplier)
+{
+    static int numTrianglesPerDisc = 16;
+    static float pointRadius = 0.1f;
+    static float arrowThickness = 0.05f;
+
+    AddVertsForCapsule2D(vbo.GetMutableVerts(), result.m_discCast.m_start, result.m_discCast.m_start + result.m_discCast.m_direction * result.m_discCast.m_maxDistance, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 127));
+
+    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_discCast.m_start, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_hitLocation, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+
+    if (result.m_immediateHit)
+    {
+        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_discCast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Red);
+        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Red);
     }
 }

@@ -9,6 +9,7 @@
 
 
 struct WorldSettings;
+class WorldCoords;
 
 
 

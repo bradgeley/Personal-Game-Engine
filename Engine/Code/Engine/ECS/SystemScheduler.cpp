@@ -90,17 +90,19 @@ static bool SystemPriorityComparator(System* a, System* b)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SystemScheduler::ScheduleFrame(std::vector<SystemSubgraph> const& systems)
+void SystemScheduler::ScheduleFrame(std::vector<SystemSubgraph>& systems)
 {
 	Cleanup();
 
-	// Make a local copy of all the subgraphs
-	m_systemSubgraphs.insert(m_systemSubgraphs.end(), systems.begin(), systems.end());
-	
-	// Within each subgraph sort by system priority
-	for (auto& subgraph : m_systemSubgraphs)
+	for (SystemSubgraph& subgraph : systems)
 	{
-		std::sort(subgraph.m_systems.begin(), subgraph.m_systems.end(), SystemPriorityComparator);
+		m_systemSubgraphs.push_back(&subgraph);
+	}
+	
+	// Within each subgraph, sort each system by priority
+	for (SystemSubgraph* subgraph : m_systemSubgraphs)
+	{
+		std::sort(subgraph->m_systems.begin(), subgraph->m_systems.end(), SystemPriorityComparator);
 	}
 }
 
@@ -136,9 +138,9 @@ void SystemScheduler::RunSubgraph(SystemSubgraph const& subgraph, float deltaSec
 //----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::RunFrame_AutoMultithreaded(float deltaSeconds)
 {
-	for (SystemSubgraph& subgraph : m_systemSubgraphs)
+	for (SystemSubgraph* subgraph : m_systemSubgraphs)
 	{
-		TryRunSubgraph(subgraph, deltaSeconds, true);
+		TryRunSubgraph(*subgraph, deltaSeconds, true);
 	}
 }
 
@@ -147,9 +149,9 @@ void SystemScheduler::RunFrame_AutoMultithreaded(float deltaSeconds)
 //----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::RunFrame_Singlethreaded(float deltaSeconds)
 {
-	for (SystemSubgraph& subgraph : m_systemSubgraphs)
+	for (SystemSubgraph* subgraph : m_systemSubgraphs)
 	{
-		TryRunSubgraph(subgraph, deltaSeconds, false);
+		TryRunSubgraph(*subgraph, deltaSeconds, false);
 	}
 }
 

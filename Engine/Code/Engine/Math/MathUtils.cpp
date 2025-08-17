@@ -356,3 +356,8 @@ float MathUtils::SignF(float val)
     }
     return -1.f;
 }
+
+bool MathUtils::IsNearlyEqual(float val, float comparison, float epsilon)
+{
+    return MathUtils::AbsF(val - comparison) <= epsilon;
+}

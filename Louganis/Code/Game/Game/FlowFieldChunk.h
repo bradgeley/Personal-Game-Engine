@@ -20,6 +20,7 @@ class FlowFieldChunk
 public:
 
 	explicit FlowFieldChunk(Chunk* chunk, SCWorld* world);
+	~FlowFieldChunk();
 
 	void HardReset();
 	void SoftReset();

@@ -1,5 +1,5 @@
 // Bradley Christensen - 2025
-#include "SPreventativeCollision.h"
+#include "SPhysics.h"
 #include "CCollision.h"
 #include "CMovement.h"
 #include "CTransform.h"
@@ -15,19 +15,19 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SPreventativeCollision::Startup()
+void SPhysics::Startup()
 {
     AddWriteDependencies<CMovement, CTransform>();
     AddWriteDependencies<SCDebug>();
     AddReadDependencies<CCollision, SCWorld>();
 
-    g_eventSystem->SubscribeMethod("DebugRenderPreventativePhysics", this, &SPreventativeCollision::DebugRenderPreventativePhysics);
+    g_eventSystem->SubscribeMethod("DebugRenderPreventativePhysics", this, &SPhysics::DebugRenderPreventativePhysics);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SPreventativeCollision::Run(SystemContext const& context)
+void SPhysics::Run(SystemContext const& context)
 {
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
@@ -79,6 +79,13 @@ void SPreventativeCollision::Run(SystemContext const& context)
                 WorldRaycastResult result = Raycast(scWorld, raycast);
                 if (result.m_blockingHit)
                 {
+                    float dotToNormal = MathUtils::DotProduct2D(raycastOffset, result.m_hitNormal);
+                    if (MathUtils::IsNearlyEqual(dotToNormal, 0.f, 0.1f))
+                    {
+                        // If the left side raycast hit a top or bottom side wall, we probably did a corner hit and that hit shouldn't count.
+                        // Really this is just a failure of the disc-casting to detect corners before our cardinal direction raycasts do.
+                        continue;
+                    }
                     if (result.m_t < tOfShortestRaycastHit)
                     {
                         tOfShortestRaycastHit = result.m_t;
@@ -120,15 +127,15 @@ void SPreventativeCollision::Run(SystemContext const& context)
  
 
 //----------------------------------------------------------------------------------------------------------------------
-void SPreventativeCollision::Shutdown()
+void SPhysics::Shutdown()
 {
-    g_eventSystem->UnsubscribeMethod("DebugRenderPreventativePhysics", this, &SPreventativeCollision::DebugRenderPreventativePhysics);
+    g_eventSystem->UnsubscribeMethod("DebugRenderPreventativePhysics", this, &SPhysics::DebugRenderPreventativePhysics);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SPreventativeCollision::DebugRenderPreventativePhysics(NamedProperties&)
+bool SPhysics::DebugRenderPreventativePhysics(NamedProperties&)
 {
     auto& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderPreventativePhysicsRaycasts = !scDebug.m_debugRenderPreventativePhysicsRaycasts;

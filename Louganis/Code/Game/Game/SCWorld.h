@@ -23,12 +23,16 @@ public:
     Chunk* GetActiveChunk(int chunkX, int chunkY) const;
     Chunk* GetActiveChunk(WorldCoords const& worldCoords) const;
     Chunk* GetActiveChunkAtLocation(Vec2 const& worldLocation) const;
+
     IntVec2 GetChunkCoordsAtLocation(Vec2 const& worldLocation) const;
     IntVec2 GetGlobalTileCoordsAtLocation(Vec2 const& worldLocation) const;
     IntVec2 GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const;
     IntVec2 GetLocalTileCoordsAtLocation(Vec2 const& worldLocation, IntVec2 const& chunkCoords) const;
+
     WorldCoords GetWorldCoordsAtOffset(WorldCoords const& worldCoords, IntVec2 const& tileOffset) const;
     WorldCoords GetWorldCoordsAtLocation(Vec2 const& worldLocation) const;
+    void GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldCoords* eightNeighborsArray) const;
+
     AABB2 CalculateChunkBounds(int chunkX, int chunkY) const;
     AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos) const;
     AABB2 GetTileBounds(WorldCoords const& worldCoords) const;
@@ -41,6 +45,7 @@ public:
     void ClearActiveChunks();
 
     int GetNumTilesInRow() const;
+
     float GetChunkUnloadRadius() const;
     float GetChunkWidth() const;
 

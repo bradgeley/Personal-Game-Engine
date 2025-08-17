@@ -23,6 +23,7 @@ namespace GeometryUtils
 	// 2D Collision
 	//
 	bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position2, float radius2);
+	bool IsDiscTouchingAABB(Vec2 const& discPos, float discRadius, AABB2 const& aabb);
 	bool PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point);
 	bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius);
 	bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB);

@@ -99,4 +99,5 @@ namespace MathUtils
 	void  SwapF(float& a, float& b);
 	int	  Sign(int val);
 	float SignF(float val);
+	bool  IsNearlyEqual(float val, float comparison, float epsilon = 0.000001f);
 }

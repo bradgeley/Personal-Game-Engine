@@ -52,7 +52,7 @@ public:
 	void Startup();
 	void Shutdown();
 	
-	void RunFrame(float deltaSeconds) const;
+	void RunFrame(float deltaSeconds);
 	void RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeconds) const;
 
 //----------------------------------------------------------------------------------------------------------------------

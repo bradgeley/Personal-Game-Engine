@@ -26,6 +26,17 @@ FlowFieldChunk::FlowFieldChunk(Chunk* chunk, SCWorld* world) :
 
 
 //----------------------------------------------------------------------------------------------------------------------
+FlowFieldChunk::~FlowFieldChunk()
+{
+	if (m_chunk)
+	{
+		m_chunk->m_destroyed.UnsubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void FlowFieldChunk::HardReset()
 {
 	m_consideredCells.SetAll(false);

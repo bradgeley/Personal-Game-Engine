@@ -252,3 +252,70 @@ void AddVertsForDisc2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& center, f
         out_verts.emplace_back(cornerPt2, tint, uv2);
     }
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AddVertsForCapsule2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start, Vec2 const& end, float radius, Rgba8 const& tint)
+{
+    if (radius <= 0)
+    {
+        return;
+    }
+
+    constexpr int numSidesOnEachEnd = 16;
+
+    Vec2 lineDir = (end - start).GetNormalized();
+    Vec2 lineRotated90 = lineDir.GetRotated90();
+
+    // Could be rotated but using an upright line as example for naming
+    Vec2 botLeftCorner = start + lineRotated90 * radius;
+    Vec2 botRightCorner = start - lineRotated90 * radius;
+    Vec2 topRightCorner = end - lineRotated90 * radius;
+    Vec2 topLeftCorner = end + lineRotated90 * radius;
+
+    // Push some verts
+    out_verts.reserve(out_verts.size() + 6 + (numSidesOnEachEnd * 3 * 2));
+    out_verts.emplace_back(Vec3(botLeftCorner), tint);
+    out_verts.emplace_back(Vec3(botRightCorner), tint);
+    out_verts.emplace_back(Vec3(topRightCorner), tint);
+
+    out_verts.emplace_back(Vec3(topRightCorner), tint);
+    out_verts.emplace_back(Vec3(topLeftCorner), tint);
+    out_verts.emplace_back(Vec3(botLeftCorner), tint);
+
+    float startingTheta = lineRotated90.GetAngleDegrees();
+    float thetaStepSize = 180.f / (float) numSidesOnEachEnd;
+    for (int i = 0; i < numSidesOnEachEnd; ++i)
+    {
+        float theta1 = startingTheta + i * thetaStepSize;
+        float theta2 = startingTheta + (i + 1) * thetaStepSize;
+
+        Vec2 unitCirclePos1 = Vec2::MakeFromUnitCircleDegrees(theta1);
+        Vec2 unitCirclePos2 = Vec2::MakeFromUnitCircleDegrees(theta2);
+
+        Vec2 cornerPt1 = start + unitCirclePos1 * radius;
+        Vec2 cornerPt2 = start + unitCirclePos2 * radius;
+
+        out_verts.emplace_back(start, tint);
+        out_verts.emplace_back(cornerPt1, tint);
+        out_verts.emplace_back(cornerPt2, tint);
+    }
+
+    startingTheta += 180.f;
+    for (int i = 0; i < numSidesOnEachEnd; ++i)
+    {
+        float theta1 = startingTheta + i * thetaStepSize;
+        float theta2 = startingTheta + (i + 1) * thetaStepSize;
+
+        Vec2 unitCirclePos1 = Vec2::MakeFromUnitCircleDegrees(theta1);
+        Vec2 unitCirclePos2 = Vec2::MakeFromUnitCircleDegrees(theta2);
+
+        Vec2 cornerPt1 = end + unitCirclePos1 * radius;
+        Vec2 cornerPt2 = end + unitCirclePos2 * radius;
+
+        out_verts.emplace_back(end, tint);
+        out_verts.emplace_back(cornerPt1, tint);
+        out_verts.emplace_back(cornerPt2, tint);
+    }
+}

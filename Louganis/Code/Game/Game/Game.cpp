@@ -49,6 +49,11 @@ void Game::Startup()
 
     ConfigureECS();
     g_ecs->Startup();
+
+    DevConsoleCommandInfo timeDilationCommand("TimeDilation");
+    timeDilationCommand.AddArg("t", DevConsoleArgType::Float);
+    g_devConsole->AddDevConsoleCommandInfo(timeDilationCommand);
+    g_eventSystem->SubscribeMethod("TimeDilation", this, &Game::TimeDilation);
 }
 
 
@@ -64,13 +69,12 @@ void Game::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Game::Update(float deltaSeconds)
 {
-    UNUSED(deltaSeconds)
     if (g_input->WasKeyJustReleased(KeyCode::Escape))
     {
         g_app->Quit();
     }
 
-    g_ecs->RunFrame(deltaSeconds);
+    g_ecs->RunFrame(deltaSeconds * m_currentTimeDilation);
 }
 
 
@@ -94,6 +98,9 @@ void Game::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void Game::Shutdown()
 {
+    g_eventSystem->UnsubscribeMethod("TimeDilation", this, &Game::TimeDilation);
+    g_devConsole->RemoveDevConsoleCommandInfo("TimeDilation");
+
     g_ecs->Shutdown();
 
     delete g_ecs;
@@ -189,7 +196,7 @@ void Game::ConfigureECS()
     SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
     physics.m_timeStep = 0.00833f;
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SPreventativeCollision>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
 
@@ -203,4 +210,22 @@ void Game::ConfigureECS()
 
     // debug
     g_ecs->RegisterSystem<SSystemDebug>((int) FramePhase::PostRender);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Game::TimeDilation(NamedProperties& args)
+{
+    float t = args.Get("t", m_currentTimeDilation);
+    if (t != m_currentTimeDilation)
+    {
+        m_currentTimeDilation = t;
+        g_devConsole->LogSuccess("time dilation successfully changed");
+    }
+    else
+    {
+        g_devConsole->LogWarning("time dilation unchanged");
+    }
+    return false;
 }

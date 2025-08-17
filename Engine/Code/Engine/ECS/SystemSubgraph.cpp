@@ -18,9 +18,9 @@ void SystemSubgraph::Startup() const
 //----------------------------------------------------------------------------------------------------------------------
 void SystemSubgraph::Shutdown() const
 {
-    for (auto& system : m_systems)
+    for (int i = (int) m_systems.size() - 1; i >= 0; --i)
     {
-        system->Shutdown();
+        m_systems[i]->Shutdown();
     }
 }
 
@@ -32,6 +32,7 @@ void SystemSubgraph::Cleanup()
     for (auto& system : m_systems)
     {
         delete system;
+        system = nullptr;
     }
     m_systems.clear();
 }

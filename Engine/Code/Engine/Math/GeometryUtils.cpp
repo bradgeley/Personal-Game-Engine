@@ -38,6 +38,15 @@ bool GeometryUtils::DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool GeometryUtils::IsDiscTouchingAABB(Vec2 const& discPos, float discRadius, AABB2 const& aabb)
+{
+    Vec2 nearestPointOnAABB = aabb.GetNearestPoint(discPos);
+    return IsPointInsideDisc2D(nearestPointOnAABB, discPos, discRadius);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool GeometryUtils::PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point)
 {
     Vec2 pointToDisc = (discPos - point);
@@ -108,12 +117,6 @@ bool GeometryUtils::PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA,
 //----------------------------------------------------------------------------------------------------------------------
 bool GeometryUtils::PushDiscOutOfAABB2D(Vec2& discPos, float discRadius, AABB2 const& aabb)
 {
-    AABB2 discBounds = AABB2(discPos, discRadius, discRadius);
-    if (!discBounds.IsOverlapping(aabb))
-    {
-        return false;
-    }
-
     Vec2 nearestPointOnAABB = aabb.GetNearestPoint(discPos);
     if (!IsPointInsideDisc2D(nearestPointOnAABB, discPos, discRadius))
     {
@@ -121,7 +124,6 @@ bool GeometryUtils::PushDiscOutOfAABB2D(Vec2& discPos, float discRadius, AABB2 c
     }
 
     PushDiscOutOfPoint2D(discPos, discRadius, nearestPointOnAABB);
-
     return true;
 }
 

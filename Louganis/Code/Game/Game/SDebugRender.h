@@ -21,6 +21,7 @@ public:
 protected:
 
     bool DebugRenderMouseRaycast(NamedProperties& args);
+    bool DebugRenderMouseDiscCast(NamedProperties& args);
     bool DebugRenderCostField(NamedProperties& args);
     bool DebugRenderDistanceField(NamedProperties& args);
     bool DebugRenderFlowField(NamedProperties& args);

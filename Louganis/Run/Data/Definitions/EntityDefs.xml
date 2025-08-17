@@ -2,7 +2,7 @@
   
   <EntityDef name = "Player">
     <Transform></Transform>
-    <Movement moveSpeed="10" sprintMoveSpeedMultiplier="5"></Movement> // Debug value
+    <Movement moveSpeed="10" sprintMoveSpeedMultiplier="50"></Movement> // Debug value
     <Camera tileHeight="10"></Camera>
     <PlayerController></PlayerController>
     <Collision radius="0.25"></Collision>

@@ -31,6 +31,7 @@ void SDebugRender::Startup()
     AddReadDependencies<SCWorld, SCFlowField, InputSystem, CCamera>();
 
     g_eventSystem->SubscribeMethod("DebugRenderMouseRaycast", this, &SDebugRender::DebugRenderMouseRaycast);
+    g_eventSystem->SubscribeMethod("DebugRenderMouseDiscCast", this, &SDebugRender::DebugRenderMouseDiscCast);
     g_eventSystem->SubscribeMethod("DebugRenderCostField", this, &SDebugRender::DebugRenderCostField);
     g_eventSystem->SubscribeMethod("DebugRenderDistanceField", this, &SDebugRender::DebugRenderDistanceField);
     g_eventSystem->SubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
@@ -56,6 +57,7 @@ void SDebugRender::Run(SystemContext const& context)
         g_renderer->BeginCamera(&cameraComp->m_camera);
     }
 
+    // Mouse Raycast
     if (scDebug.m_debugRenderToMouseRaycast)
     {
         for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
@@ -70,6 +72,28 @@ void SDebugRender::Run(SystemContext const& context)
             WorldRaycastResult result = Raycast(world, raycast);
 
             AddVertsForRaycast(scDebug.m_frameVerts, result);
+        }
+    }
+
+    // Mouse Disc Cast
+    if (scDebug.m_debugRenderToMouseDiscCast)
+    {
+        for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
+        {
+            CTransform* playerTransform = transStorage.Get(it);
+            CCamera* cameraComp = cameraStorage.Get(it);
+            Vec2 playerLocation = playerTransform->m_pos;
+            Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
+            Vec2 worldMousePos = cameraComp->m_camera.ScreenToWorldOrtho(relMousePos);
+            Vec2 playerToMouse = worldMousePos - playerLocation;
+            WorldDiscCast discCast; 
+            discCast.m_direction = playerToMouse.GetNormalized();
+            discCast.m_start = playerLocation;
+            discCast.m_maxDistance = playerToMouse.GetLength();
+            discCast.m_discRadius = 1.f;
+            WorldDiscCastResult result = DiscCast(world, discCast);
+
+            AddVertsForDiscCast(scDebug.m_frameVerts, result);
         }
     }
 
@@ -187,6 +211,16 @@ bool SDebugRender::DebugRenderMouseRaycast(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderToMouseRaycast = !scDebug.m_debugRenderToMouseRaycast;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderMouseDiscCast(NamedProperties&)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderToMouseDiscCast = !scDebug.m_debugRenderToMouseDiscCast;
     return false;
 }
 

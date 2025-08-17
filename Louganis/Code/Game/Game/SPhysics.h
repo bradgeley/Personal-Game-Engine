@@ -9,11 +9,11 @@ struct NamedProperties;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SPreventativeCollision : public System
+class SPhysics : public System
 {
 public:
 
-    SPreventativeCollision(std::string const& name = "PreventativeCollision", Rgba8 const& debugTint = Rgba8::Orange) : System(name, debugTint) {};
+    SPhysics(std::string const& name = "Physics", Rgba8 const& debugTint = Rgba8::Orange) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

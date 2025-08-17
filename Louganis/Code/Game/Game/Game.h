@@ -6,6 +6,7 @@
 
 class Engine;
 class Window;
+struct NamedProperties;
 
 
 
@@ -25,4 +26,12 @@ public:
 
     void ConfigureEngine(Engine* engine);
     void ConfigureECS();
+
+protected:
+
+    bool TimeDilation(NamedProperties& args);
+
+protected:
+
+    float m_currentTimeDilation = 1.f;
 };

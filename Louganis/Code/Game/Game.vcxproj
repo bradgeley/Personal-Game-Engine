@@ -212,7 +212,7 @@
     <ClCompile Include="Game\SLoadChunks.cpp" />
     <ClCompile Include="Game\SMovement.cpp" />
     <ClCompile Include="Game\SCopyTransform.cpp" />
-    <ClCompile Include="Game\SPreventativeCollision.cpp" />
+    <ClCompile Include="Game\SPhysics.cpp" />
     <ClCompile Include="Game\SRemoveChunks.cpp" />
     <ClCompile Include="Game\SRenderEntities.cpp" />
     <ClCompile Include="Game\SRenderWorld.cpp" />
@@ -253,7 +253,7 @@
     <ClInclude Include="Game\SLoadChunks.h" />
     <ClInclude Include="Game\SMovement.h" />
     <ClInclude Include="Game\SCopyTransform.h" />
-    <ClInclude Include="Game\SPreventativeCollision.h" />
+    <ClInclude Include="Game\SPhysics.h" />
     <ClInclude Include="Game\SRemoveChunks.h" />
     <ClInclude Include="Game\SRenderEntities.h" />
     <ClInclude Include="Game\SRenderWorld.h" />

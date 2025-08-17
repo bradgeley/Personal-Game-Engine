@@ -71,7 +71,7 @@ void AdminSystem::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AdminSystem::RunFrame(float deltaSeconds) const
+void AdminSystem::RunFrame(float deltaSeconds)
 {
 	if (m_config.m_maxDeltaSeconds > 0.f && deltaSeconds > m_config.m_maxDeltaSeconds)
 	{

@@ -6,6 +6,21 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+IntVec2 s_neighborOffsets[8] =
+{
+	IntVec2(1, 0),
+	IntVec2(-1, 0),
+	IntVec2(0, 1),
+	IntVec2(0, -1),
+	IntVec2(1, 1),
+	IntVec2(-1, -1),
+	IntVec2(-1, 1),
+	IntVec2(1, -1)
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Chunk* SCWorld::GetActiveChunk(IntVec2 const& chunkCoords) const
 {
 	auto it = m_activeChunks.find(chunkCoords);
@@ -135,6 +150,17 @@ WorldCoords SCWorld::GetWorldCoordsAtLocation(Vec2 const& worldLocation) const
 	IntVec2 chunkCoords = GetChunkCoordsAtLocation(worldLocation);
 	IntVec2 localTileCoords = GetLocalTileCoordsAtLocation(worldLocation, chunkCoords);
 	return WorldCoords(chunkCoords, localTileCoords);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldCoords* eightNeighborsArray) const
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		eightNeighborsArray[i] = GetWorldCoordsAtOffset(worldCoords, s_neighborOffsets[i]);
+	}
 }
 
 

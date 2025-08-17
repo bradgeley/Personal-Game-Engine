@@ -13,6 +13,7 @@ public:
 	VertexBuffer m_frameVerts;
 	bool m_debugRenderDistanceField = false;
 	bool m_debugRenderToMouseRaycast = false;
+	bool m_debugRenderToMouseDiscCast = false;
 	bool m_debugRenderCostField = false;
 	bool m_debugRenderGradient = false;
 	bool m_debugRenderPreventativePhysicsRaycasts = false;
