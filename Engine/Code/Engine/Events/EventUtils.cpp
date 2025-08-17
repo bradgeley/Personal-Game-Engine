@@ -1,36 +1,54 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Engine/Events/EventUtils.h"
-
-#include "EventSystem.h"
+#include "Engine/Events/EventSystem.h"
+#include "Engine/Core/ErrorUtils.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
+void EventUtils::SubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
 {
-    g_eventSystem->SubscribeFunction(eventName, callbackFunc);
+    ASSERT_OR_DIE(g_eventSystem != nullptr, "Event system does not exist");
+    if (g_eventSystem)
+    {
+        g_eventSystem->SubscribeFunction(eventName, callbackFunc);
+    }
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void UnsubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
+void EventUtils::UnsubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
 {
-    g_eventSystem->UnsubscribeFunction(eventName, callbackFunc);
+    ASSERT_OR_DIE(g_eventSystem != nullptr, "Event system does not exist");
+    if (g_eventSystem)
+    {
+        g_eventSystem->UnsubscribeFunction(eventName, callbackFunc);
+    }
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FireEvent(std::string const& eventName, NamedProperties& args)
+int EventUtils::FireEvent(std::string const& eventName, NamedProperties& args)
 {
-    return g_eventSystem->FireEvent(eventName, args);
+    ASSERT_OR_DIE(g_eventSystem != nullptr, "Event system does not exist");
+    if (g_eventSystem)
+    {
+        return g_eventSystem->FireEvent(eventName, args);
+    }
+    return 0;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FireEvent(std::string const& eventName)
+int EventUtils::FireEvent(std::string const& eventName)
 {
-    return g_eventSystem->FireEvent(eventName);
+    ASSERT_OR_DIE(g_eventSystem != nullptr, "Event system does not exist");
+    if (g_eventSystem)
+    {
+        return g_eventSystem->FireEvent(eventName);
+    }
+    return 0;
 }

@@ -9,7 +9,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool IsPointInsideDisc2D(Vec2 const& point, Vec2 const& discCenter, float discRadius)
+bool GeometryUtils::IsPointInsideDisc2D(Vec2 const& point, Vec2 const& discCenter, float discRadius)
 {
     float distSquared = (point - discCenter).GetLengthSquared();
     if (distSquared > discRadius * discRadius)
@@ -22,9 +22,9 @@ bool IsPointInsideDisc2D(Vec2 const& point, Vec2 const& discCenter, float discRa
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position2, float radius2)
+bool GeometryUtils::DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position2, float radius2)
 {
-    float distanceSquared = GetDistanceSquared2D(position1, position2);
+    float distanceSquared = MathUtils::GetDistanceSquared2D(position1, position2);
     float combinedRadii = (radius1 + radius2);
     float combinedRadiiSquared = combinedRadii * combinedRadii;
     if (distanceSquared >= combinedRadiiSquared)
@@ -38,7 +38,7 @@ bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point)
+bool GeometryUtils::PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point)
 {
     Vec2 pointToDisc = (discPos - point);
     float distSquared = pointToDisc.GetLengthSquared();
@@ -50,7 +50,7 @@ bool PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point)
 
     if (distSquared < (radius * radius))
     {
-        float distance = SqrtF(distSquared);
+        float distance = MathUtils::SqrtF(distSquared);
         Vec2 pointToDiscNormal = pointToDisc / distance;
         discPos = point + pointToDiscNormal * radius;
         return true;
@@ -61,7 +61,7 @@ bool PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius)
+bool GeometryUtils::PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius)
 {
     float combinedRadii = (mobileDiscRadius + staticDiscRadius);
     return PushDiscOutOfPoint2D(mobileDiscPos, combinedRadii, staticDiscPos);
@@ -70,7 +70,7 @@ bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB)
+bool GeometryUtils::PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB)
 {
     if (discPosA == discPosB)
     {
@@ -84,7 +84,7 @@ bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB
     float combinedRadiiSquared = combinedRadii * combinedRadii;
     if (distanceSquared < combinedRadiiSquared)
     {
-        float distance = SqrtF(distanceSquared);
+        float distance = MathUtils::SqrtF(distanceSquared);
         float overlapAmount = combinedRadii - distance;
 
         AtoB /= distance; // Normalize
@@ -106,7 +106,7 @@ bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool PushDiscOutOfAABB2D(Vec2& discPos, float discRadius, AABB2 const& aabb)
+bool GeometryUtils::PushDiscOutOfAABB2D(Vec2& discPos, float discRadius, AABB2 const& aabb)
 {
     AABB2 discBounds = AABB2(discPos, discRadius, discRadius);
     if (!discBounds.IsOverlapping(aabb))
@@ -128,7 +128,7 @@ bool PushDiscOutOfAABB2D(Vec2& discPos, float discRadius, AABB2 const& aabb)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA, Vec2& discPosB, float discRadiusB, Vec2& discVelB, float elasticity)
+bool GeometryUtils::BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA, Vec2& discPosB, float discRadiusB, Vec2& discVelB, float elasticity)
 {
     Vec2 AtoB = discPosB - discPosA;
     float distanceSquared = AtoB.GetLengthSquared();
@@ -137,7 +137,7 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
     if (distanceSquared < combinedRadiiSquared)
     {
         // Push discs out of each other first
-        float distance = SqrtF(distanceSquared);
+        float distance = MathUtils::SqrtF(distanceSquared);
         float overlapAmount = combinedRadii - distance;
 
         AtoB /= distance; // Normalize
@@ -156,7 +156,7 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
         Vec2 relativeVelB = discVelB - discVelA;
 
         // Bounce B off of A
-        float dotB = DotProduct2D(relativeVelB, AtoB);
+        float dotB = MathUtils::DotProduct2D(relativeVelB, AtoB);
         if (dotB > 0.f)
         {
             // B's velocity dot's positive with AToB, so they are moving apart and we shouldn't bounce them
@@ -183,7 +183,7 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA, float massA, Vec2& discPosB, float discRadiusB, Vec2& discVelB, float massB, float elasticity)
+bool GeometryUtils::BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA, float massA, Vec2& discPosB, float discRadiusB, Vec2& discVelB, float massB, float elasticity)
 {
     Vec2 AtoB = discPosB - discPosA;
     float distanceSquared = AtoB.GetLengthSquared();
@@ -192,7 +192,7 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
     if (distanceSquared < combinedRadiiSquared)
     {
         // Push discs out of each other first (no prediction yet)
-        float distance = SqrtF(distanceSquared);
+        float distance = MathUtils::SqrtF(distanceSquared);
         float overlapAmount = combinedRadii - distance;
 
         AtoB /= distance; // Normalize
@@ -209,8 +209,8 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
         discPosA += displacementA;
         discPosB += displacementB;
         
-        float A_speedNorm = DotProduct2D(discVelA, collisionNormal);
-        float B_speedNorm = DotProduct2D(discVelB, collisionNormal);
+        float A_speedNorm = MathUtils::DotProduct2D(discVelA, collisionNormal);
+        float B_speedNorm = MathUtils::DotProduct2D(discVelB, collisionNormal);
         float speedDiffInitial = A_speedNorm - B_speedNorm;
         if (speedDiffInitial > 0.f)
         {
@@ -236,7 +236,7 @@ bool BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discVelA
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DoLinesIntersect(Vec2 const& a1, Vec2 const& a2, Vec2 const& b1, Vec2 const& b2)
+bool GeometryUtils::DoLinesIntersect(Vec2 const& a1, Vec2 const& a2, Vec2 const& b1, Vec2 const& b2)
 {
     Plane2 planeA(a1, a2);
     Plane2 planeB(b1, b2);
@@ -246,7 +246,7 @@ bool DoLinesIntersect(Vec2 const& a1, Vec2 const& a2, Vec2 const& b1, Vec2 const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool DoesLineIntersectAABB2(Vec2 const& lineStart, Vec2 const& lineEnd, AABB2 const& box2D)
+bool GeometryUtils::DoesLineIntersectAABB2(Vec2 const& lineStart, Vec2 const& lineEnd, AABB2 const& box2D)
 {
     AABB2 lineBounds = AABB2(lineStart, lineEnd);
 

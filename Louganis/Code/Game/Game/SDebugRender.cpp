@@ -90,7 +90,7 @@ void SDebugRender::Run(SystemContext const& context)
                     currentWorldCoords.m_localTileCoords = IntVec2(x, y);
                     AABB2 tileBounds = world.GetTileBounds(currentWorldCoords);
                     uint8_t cost = ffChunk->m_costField.Get(x, y);
-                    float t = RangeMapClamped((float) cost, 0.f, 255.f, 0.f, 1.f);
+                    float t = MathUtils::RangeMapClamped((float) cost, 0.f, 255.f, 0.f, 1.f);
                     Rgba8 tint = Rgba8::Lerp(Rgba8(255, 255, 255, 150), Rgba8(0, 0, 0, 150), t);
                     AddVertsForAABB2(ffChunk->m_debugVBO.GetMutableVerts(), tileBounds, tint);
                 }
@@ -121,7 +121,7 @@ void SDebugRender::Run(SystemContext const& context)
                     AABB2 tileBounds = world.GetTileBounds(currentWorldCoords);
                     float distance = ffChunk->m_distanceField.Get(x, y);
 
-                    float t = RangeMapClamped(distance, 0.f, 10.f, 0.f, 1.f);
+                    float t = MathUtils::RangeMapClamped(distance, 0.f, 10.f, 0.f, 1.f);
                     Rgba8 const& tint = Rgba8::Lerp(Rgba8::Green, Rgba8::Red, t);
                     std::string distanceText = StringUtils::StringF("%.2f", distance);
                     font->AddVertsForAlignedText2D(ffChunk->m_debugVBO.GetMutableVerts(), tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, distanceText, tint);

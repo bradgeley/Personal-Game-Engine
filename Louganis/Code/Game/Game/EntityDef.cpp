@@ -26,7 +26,7 @@ void EntityDef::LoadFromXML()
     XmlElement* entityDefElem = root->FirstChildElement("EntityDef");
     while (entityDefElem)
     {
-        std::string name = ParseXmlAttribute(*entityDefElem, "name", "Unnamed Entity Def");
+        std::string name = XmlUtils::ParseXmlAttribute(*entityDefElem, "name", "Unnamed Entity Def");
         if (GetEntityDefID(name) != -1)
         {
             g_devConsole->LogErrorF("Duplicate Entity Def: %s", name.c_str());
@@ -85,7 +85,7 @@ int EntityDef::GetEntityDefID(std::string const& name)
 //----------------------------------------------------------------------------------------------------------------------
 EntityDef::EntityDef(XmlElement const* xmlElement)
 {
-    m_name = ParseXmlAttribute(*xmlElement, "name", m_name);
+    m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
 
     //tinyxml2::XMLElement const* elem;
 

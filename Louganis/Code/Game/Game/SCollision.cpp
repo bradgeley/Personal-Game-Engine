@@ -48,7 +48,7 @@ void SCollision::Run(SystemContext const& context)
             Vec2& posB = transB.m_pos;
             float& radiusB = collB.m_radius;
 
-            PushDiscsOutOfEachOther2D(posA, radiusA, posB, radiusB);
+            GeometryUtils::PushDiscsOutOfEachOther2D(posA, radiusA, posB, radiusB);
         }
     }
 }

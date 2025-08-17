@@ -57,7 +57,7 @@ void SPreventativeCollision::Run(SystemContext const& context)
             {
                 Vec2 const& raycastOffset = raycastOffsets[raycastIndex];
 
-                if (DotProduct2D(raycastOffset, frameMovement) <= 0)
+                if (MathUtils::DotProduct2D(raycastOffset, frameMovement) <= 0)
                 {
                     // Offsets on the opposite side as the frame movement are unnecessary
                     continue;
@@ -101,7 +101,7 @@ void SPreventativeCollision::Run(SystemContext const& context)
             }
             else if (shortestHitResult.m_immediateHit)
             {
-                PushDiscOutOfPoint2D(transform.m_pos, collision.m_radius + scWorld.m_worldSettings.m_entityWallBuffer, shortestHitResult.m_hitLocation);
+                GeometryUtils::PushDiscOutOfPoint2D(transform.m_pos, collision.m_radius + scWorld.m_worldSettings.m_entityWallBuffer, shortestHitResult.m_hitLocation);
                 frameMovement = Vec2::ZeroVector;
             }
             else
@@ -117,7 +117,7 @@ void SPreventativeCollision::Run(SystemContext const& context)
     }
 }
 
-
+ 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SPreventativeCollision::Shutdown()

@@ -9,16 +9,16 @@ AABB2 const AABB2::ZeroToOne = AABB2();
 
 
 AABB2::AABB2(Vec2 const& mins, Vec2 const& maxs) :
-    mins(MinF(mins.x, maxs.x), MinF(mins.y, maxs.y)),
-    maxs(MaxF(mins.x, maxs.x), MaxF(mins.y, maxs.y))
+    mins(MathUtils::MinF(mins.x, maxs.x), MathUtils::MinF(mins.y, maxs.y)),
+    maxs(MathUtils::MaxF(mins.x, maxs.x), MathUtils::MaxF(mins.y, maxs.y))
 {
 }
 
 
 
 AABB2::AABB2(float minX, float minY, float maxX, float maxY) :
-    mins(MinF(minX, maxX), MinF(minY, maxY)),
-    maxs(MaxF(minX, maxX), MaxF(minY, maxY))
+    mins(MathUtils::MinF(minX, maxX), MathUtils::MinF(minY, maxY)),
+    maxs(MathUtils::MaxF(minX, maxX), MathUtils::MaxF(minY, maxY))
 {
 }
 
@@ -104,8 +104,8 @@ Vec2 AABB2::GetCenterRight() const
 Vec2 AABB2::GetNearestPoint(Vec2 const& point) const
 {
     Vec2 result = point;
-    result.x = ClampF(result.x, mins.x, maxs.x);
-    result.y = ClampF(result.y, mins.y, maxs.y);
+    result.x = MathUtils::ClampF(result.x, mins.x, maxs.x);
+    result.y = MathUtils::ClampF(result.y, mins.y, maxs.y);
     return result;
 }
 

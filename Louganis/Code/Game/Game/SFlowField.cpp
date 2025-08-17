@@ -268,15 +268,15 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
             //     D(j) = min(dx + W(j), dy + W(j));
             // end
 
-            float delta = 2 * neighborCost - PowF(dx - dy, 2);
+            float delta = 2 * neighborCost - MathUtils::PowF(dx - dy, 2);
             float calculatedNeighborDistance;
             if (delta >= 0)
             {
-                calculatedNeighborDistance = (dx + dy + SqrtF(delta)) / 2.f;
+                calculatedNeighborDistance = (dx + dy + MathUtils::SqrtF(delta)) / 2.f;
             }
             else
             {
-                calculatedNeighborDistance = MinF(dx + neighborCost, dy + neighborCost);
+                calculatedNeighborDistance = MathUtils::MinF(dx + neighborCost, dy + neighborCost);
             }
 
             if (calculatedNeighborDistance < neighborChunk->m_distanceField.Get(neighborWorldCoords.m_localTileCoords))
@@ -355,12 +355,12 @@ void SFlowField::GenerateGradient(FlowField& flowField)
 
             if (neighborOffset.x != 0.f)
             {
-                gradient.x += dDist * Sign(neighborOffset.x);
+                gradient.x += dDist * MathUtils::Sign(neighborOffset.x);
                 numNeighborsConsideredInDir.x += 1.f;
             }
             else
             {
-                gradient.y += dDist * Sign(neighborOffset.y);
+                gradient.y += dDist * MathUtils::Sign(neighborOffset.y);
                 numNeighborsConsideredInDir.y += 1.f;
             }
 

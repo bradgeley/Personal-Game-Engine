@@ -111,14 +111,14 @@ Mat44 Mat44::GetAppended(Mat44 const& appendThis) const
 void Mat44::Transpose()
 {
 	// Simply swap values along the diagonal
-	SwapF(m_values[Iy], m_values[Jx]);
-	SwapF(m_values[Iz], m_values[Kx]);
-	SwapF(m_values[Iw], m_values[Tx]);
+	MathUtils::SwapF(m_values[Iy], m_values[Jx]);
+	MathUtils::SwapF(m_values[Iz], m_values[Kx]);
+	MathUtils::SwapF(m_values[Iw], m_values[Tx]);
 
-	SwapF(m_values[Jz], m_values[Ky]);
-	SwapF(m_values[Jw], m_values[Ty]);
+	MathUtils::SwapF(m_values[Jz], m_values[Ky]);
+	MathUtils::SwapF(m_values[Jw], m_values[Ty]);
 
-	SwapF(m_values[Kw], m_values[Tz]);
+	MathUtils::SwapF(m_values[Kw], m_values[Tz]);
 }
 
 
@@ -304,8 +304,8 @@ Mat44 Mat44::CreateTranslation3D(Vec3 const& translation)
 Mat44 Mat44::CreateXRotationDegrees(float rotationDegreesAboutX)
 {
 	Mat44 xRotationMatrix;
-	float cos = CosDegrees(rotationDegreesAboutX);
-	float sin = SinDegrees(rotationDegreesAboutX);
+	float cos = MathUtils::CosDegrees(rotationDegreesAboutX);
+	float sin = MathUtils::SinDegrees(rotationDegreesAboutX);
 	
 	// J basis's Y value goes from 1 to 0, Z value goes from 0 to 1
 	xRotationMatrix[Jy] = cos;
@@ -323,8 +323,8 @@ Mat44 Mat44::CreateXRotationDegrees(float rotationDegreesAboutX)
 Mat44 Mat44::CreateYRotationDegrees(float rotationDegreesAboutY)
 {
 	Mat44 yRotationMatrix;
-	float cos = CosDegrees(rotationDegreesAboutY);
-	float sin = SinDegrees(rotationDegreesAboutY);
+	float cos = MathUtils::CosDegrees(rotationDegreesAboutY);
+	float sin = MathUtils::SinDegrees(rotationDegreesAboutY);
 
 	// I basis's X value goes 1->0, Z value goes 0->-1
 	yRotationMatrix[Ix] = cos;
@@ -342,8 +342,8 @@ Mat44 Mat44::CreateYRotationDegrees(float rotationDegreesAboutY)
 Mat44 Mat44::CreateZRotationDegrees(float rotationDegreesAboutZ)
 {
 	Mat44 zRotationMatrix;
-	float cos = CosDegrees(rotationDegreesAboutZ);
-	float sin = SinDegrees(rotationDegreesAboutZ);
+	float cos = MathUtils::CosDegrees(rotationDegreesAboutZ);
+	float sin = MathUtils::SinDegrees(rotationDegreesAboutZ);
 	
 	// I basis's X value goes from 1 to 0, Y value goes from 0 to 1
 	zRotationMatrix[Ix] = cos;

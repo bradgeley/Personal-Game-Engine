@@ -34,32 +34,32 @@ Vec2::Vec2(Vec3 const& fromVec3) : x(fromVec3.x), y(fromVec3.y)
 
 float Vec2::GetLength() const
 {
-    return GetLength2D(*this);
+    return MathUtils::GetLength2D(*this);
 }
 
 
 float Vec2::GetLengthSquared() const
 {
-    return GetLengthSquared2D(*this);
+    return MathUtils::GetLengthSquared2D(*this);
 }
 
 
 float Vec2::GetAngleDegrees() const
 {
-    return RadiansToDegrees(atan2f(y, x));
+    return MathUtils::RadiansToDegrees(atan2f(y, x));
 }
 
 
 void Vec2::Normalize()
 {
-    NormalizeVector2D(*this);
+    MathUtils::NormalizeVector2D(*this);
 }
 
 
 Vec2 Vec2::GetNormalized() const
 {
     Vec2 copy = *this;
-    NormalizeVector2D(copy);
+    MathUtils::NormalizeVector2D(copy);
     return copy;
 }
 
@@ -85,13 +85,13 @@ Vec2 Vec2::GetRotated(float degrees) const
 
 Vec2 Vec2::GetProjectedOntoNormal(Vec2 const& normal) const
 {
-    return normal * DotProduct2D(*this, normal);
+    return normal * MathUtils::DotProduct2D(*this, normal);
 }
 
 
 Vec2 Vec2::GetProjectedOnto(Vec2 const& vector) const
 {
-    float magnitudeInProjDir = DotProduct2D(*this, vector);
+    float magnitudeInProjDir = MathUtils::DotProduct2D(*this, vector);
     return magnitudeInProjDir * vector / GetLengthSquared();
 
 }
@@ -107,13 +107,13 @@ Vec2 Vec2::GetFloor() const
 
 float Vec2::GetDistanceTo(Vec2 const& other) const
 {
-    return GetDistance2D(*this, other);
+    return MathUtils::GetDistance2D(*this, other);
 }
 
 
 float Vec2::GetDistanceSquaredTo(Vec2 const& other) const
 {
-    return GetDistanceSquared2D(*this, other);
+    return MathUtils::GetDistanceSquared2D(*this, other);
 }
 
 bool Vec2::IsZero() const
@@ -123,7 +123,7 @@ bool Vec2::IsZero() const
 
 bool Vec2::IsNearlyZero(float epsilon) const
 {
-    return (AbsF(x) < epsilon) && (AbsF(y) < epsilon);
+    return (MathUtils::AbsF(x) < epsilon) && (MathUtils::AbsF(y) < epsilon);
 }
 
 void Vec2::Rotate90()
@@ -147,8 +147,8 @@ void Vec2::Rotate(float degrees)
     float angle = GetAngleDegrees();
     float length = GetLength();
     angle += degrees;
-    x = CosDegrees(angle) * length;
-    y = SinDegrees(angle) * length;
+    x = MathUtils::CosDegrees(angle) * length;
+    y = MathUtils::SinDegrees(angle) * length;
 }
 
 
@@ -199,16 +199,16 @@ void Vec2::ClampLength(float minLength, float maxLength)
 
 void Vec2::Floor()
 {
-    x = static_cast<float>(FloorF(x));
-    y = static_cast<float>(FloorF(y));
+    x = static_cast<float>(MathUtils::FloorF(x));
+    y = static_cast<float>(MathUtils::FloorF(y));
 }
 
 
 Vec2 Vec2::MakeFromUnitCircleDegrees(float angleDegrees)
 {
     Vec2 result;
-    result.x = CosDegrees(angleDegrees);
-    result.y = SinDegrees(angleDegrees);
+    result.x = MathUtils::CosDegrees(angleDegrees);
+    result.y = MathUtils::SinDegrees(angleDegrees);
     return result;
 }
 

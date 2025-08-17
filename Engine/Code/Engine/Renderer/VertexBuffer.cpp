@@ -49,8 +49,8 @@ void VertexBuffer::Initialize(int numExpectedVerts)
 //----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::ReserveAdditional(int numExpectedAdditionalVerts)
 {
-    int numVerts = m_verts.size();
-    m_verts.reserve(numVerts + numExpectedAdditionalVerts);
+    size_t numVerts = m_verts.size();
+    m_verts.reserve(numVerts + (size_t) numExpectedAdditionalVerts);
 }
 
 

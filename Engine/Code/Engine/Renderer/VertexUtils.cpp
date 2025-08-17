@@ -201,7 +201,7 @@ void AddVertsForGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAA
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
 
     Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
-    float lineThickness = 0.1f * MinF(cellDims.x, cellDims.y);
+    float lineThickness = 0.1f * MathUtils::MinF(cellDims.x, cellDims.y);
 
     out_verts.reserve(out_verts.size() + (size_t) dims.x * dims.y * 6);
     for (int y = 0; y < dims.y; ++y)

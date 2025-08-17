@@ -122,7 +122,7 @@ void DevConsole::Update(float deltaSeconds)
 {
     float animSeconds = m_config.m_openCloseAnimationSpeed * deltaSeconds;
     m_openCloseAnimationFraction += (m_isShowing ? -animSeconds : animSeconds);
-    m_openCloseAnimationFraction = ClampF(m_openCloseAnimationFraction, 0.f, 1.f);
+    m_openCloseAnimationFraction = MathUtils::ClampF(m_openCloseAnimationFraction, 0.f, 1.f);
 
     UpdateBackgroundImage(deltaSeconds);
 
@@ -134,7 +134,7 @@ void DevConsole::Update(float deltaSeconds)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::Render() const
 {
-    float devConsoleOffset = SmoothStart3(m_openCloseAnimationFraction);
+    float devConsoleOffset = MathUtils::SmoothStart3(m_openCloseAnimationFraction);
 
     // Sets camera and renderer pipeline state
     g_renderer->BeginCameraAndWindow(m_camera, g_window);
@@ -544,7 +544,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
         }
     }
 
-    int numResponders = FireEvent(eventName, eventProperties);
+    int numResponders = EventUtils::FireEvent(eventName, eventProperties);
     
     if (numResponders > 0)
     {
@@ -787,7 +787,7 @@ std::string DevConsole::GuessCommandInput(std::string const& input) const
         int numEventChars = (int) event.size();
         
         int numMatchingChars = 0;
-        for (int i = 0; i < Min(numEventChars, numInputChars); ++i)
+        for (int i = 0; i < MathUtils::Min(numEventChars, numInputChars); ++i)
         {
             if (inputLower[i] == event[i])
             {

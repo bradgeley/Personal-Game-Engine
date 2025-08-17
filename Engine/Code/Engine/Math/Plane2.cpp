@@ -17,7 +17,7 @@ Plane2::Plane2(Vec2 const& from, Vec2 const& to)
 {
     Vec2 edge = (to - from);
     m_normal = edge.GetRotated90().GetNormalized();
-    m_distance = DotProduct2D(from, m_normal);
+    m_distance = MathUtils::DotProduct2D(from, m_normal);
 }
 
 
@@ -25,7 +25,7 @@ Plane2::Plane2(Vec2 const& from, Vec2 const& to)
 //----------------------------------------------------------------------------------------------------------------------
 float Plane2::GetAltitude(Vec2 const& point) const
 {
-    float d = DotProduct2D(point, m_normal);
+    float d = MathUtils::DotProduct2D(point, m_normal);
     return d - m_distance;
 }
 

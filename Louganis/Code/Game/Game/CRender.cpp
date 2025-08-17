@@ -8,5 +8,5 @@
 CRender::CRender(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-    m_scale = ParseXmlAttribute(elem, "scale", m_scale);
+    m_scale = XmlUtils::ParseXmlAttribute(elem, "scale", m_scale);
 }

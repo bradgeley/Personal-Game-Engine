@@ -74,7 +74,7 @@ float GetFractalNoise1D(float position, float scale, unsigned int numOctaves, fl
 	for (unsigned int octaveIndex = 0; octaveIndex < numOctaves; ++octaveIndex)
 	{
 		// Weighted average of the 2 to get the noise for this position
-		float relativeFloor = (float) FloorF(relativePos);
+		float relativeFloor = (float) MathUtils::FloorF(relativePos);
 		float distanceToWest = relativePos - relativeFloor;
 
 		int indexWest = static_cast<int>(relativeFloor);
@@ -83,7 +83,7 @@ float GetFractalNoise1D(float position, float scale, unsigned int numOctaves, fl
 		float noiseWest = GetNoiseZeroToOne1D(indexWest, seed);
 		float noiseEast = GetNoiseZeroToOne1D(indexEast, seed);
 
-		float weightEast = SmoothStep3(distanceToWest); // East weight inc as distance from west inc
+		float weightEast = MathUtils::SmoothStep3(distanceToWest); // East weight inc as distance from west inc
 		float weightWest = 1.f - weightEast;
 		float noiseZeroToOne = weightWest * noiseWest + weightEast * noiseEast;
 		float noiseNegOneToOne = (noiseZeroToOne - 0.5f) * 2.f; // map to -1,1
@@ -105,7 +105,7 @@ float GetFractalNoise1D(float position, float scale, unsigned int numOctaves, fl
 	{
 		totalNoise /= maxAmplitude; // Get back into range -1,1 from the range -A,A (where A = max amplitude from octaves)
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to 0,1 for smooth step
-		totalNoise = SmoothStep3(totalNoise);		// Octaves tend to make noise middly, this pushes edges towards -1 and 1 again
+		totalNoise = MathUtils::SmoothStep3(totalNoise);		// Octaves tend to make noise middly, this pushes edges towards -1 and 1 again
 		totalNoise = (totalNoise * 2.0f) - 1.f;		// Map back to -1,1
 	}
 
@@ -125,7 +125,7 @@ float GetFractalNoise2D(float x, float y, float scale, unsigned int numOctaves, 
 
 	for (unsigned int octaveIndex = 0; octaveIndex < numOctaves; ++octaveIndex)
 	{
-		Vec2 relativeFloor = Vec2(FloorF(relativePos.x), FloorF(relativePos.y));
+		Vec2 relativeFloor = Vec2(MathUtils::FloorF(relativePos.x), MathUtils::FloorF(relativePos.y));
 
 		IntVec2 southWest = IntVec2(relativeFloor);
 		IntVec2 northEast = southWest + IntVec2(1, 1);
@@ -136,8 +136,8 @@ float GetFractalNoise2D(float x, float y, float scale, unsigned int numOctaves, 
 		float southEastNoise = GetNoiseZeroToOne2D(northEast.x, southWest.y, seed);
 
 		Vec2 distanceToSouthWest = relativePos - relativeFloor;
-		float weightEast = SmoothStep3(distanceToSouthWest.x);
-		float weightNorth = SmoothStep3(distanceToSouthWest.y);
+		float weightEast = MathUtils::SmoothStep3(distanceToSouthWest.x);
+		float weightNorth = MathUtils::SmoothStep3(distanceToSouthWest.y);
 		float weightWest = 1.f - weightEast;
 		float weightSouth = 1.f - weightNorth;
 
@@ -163,7 +163,7 @@ float GetFractalNoise2D(float x, float y, float scale, unsigned int numOctaves, 
 	{
 		totalNoise /= maxAmplitude; // Get back into range -1,1 from the range -A,A (where A = max amplitude from octaves)
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to 0,1 for smooth step
-		totalNoise = SmoothStep3(totalNoise);		// Octaves tend to make noise middly, this pushes edges towards -1 and 1 again
+		totalNoise = MathUtils::SmoothStep3(totalNoise);		// Octaves tend to make noise middly, this pushes edges towards -1 and 1 again
 		totalNoise = (totalNoise * 2.0f) - 1.f;		// Map back to -1,1
 	}
 
@@ -188,7 +188,7 @@ float GetPerlinNoise1D(float position, float scale, unsigned int numOctaves, flo
 	for (unsigned int octaveIndex = 0; octaveIndex < numOctaves; ++octaveIndex)
 	{
 		// Weighted average of the 2 to get the noise for this position
-		float relativeFloor = (float) FloorF(relativePos);
+		float relativeFloor = (float) MathUtils::FloorF(relativePos);
 		float distanceToWest = relativePos - relativeFloor;
 		float distanceToEast = distanceToWest - 1.f; // always negative
 
@@ -201,7 +201,7 @@ float GetPerlinNoise1D(float position, float scale, unsigned int numOctaves, flo
 		float dotWest = gradientWest * distanceToWest; // 1D "dot product"
 		float dotEast = gradientEast * distanceToEast;
 
-		float weightEast = SmoothStep3(distanceToWest); // East weight inc as distance from west inc
+		float weightEast = MathUtils::SmoothStep3(distanceToWest); // East weight inc as distance from west inc
 		float weightWest = 1.f - weightEast;
 		float noiseZeroToOne = (weightWest * dotWest) + (weightEast * dotEast);
 		float noiseThisOctave = 2.f * noiseZeroToOne; // 1D Perlin is in -.5,.5, map to -1,1
@@ -223,7 +223,7 @@ float GetPerlinNoise1D(float position, float scale, unsigned int numOctaves, flo
 	{
 		totalNoise /= maxAmplitude; // Get back into range -1,1 from the range -A,A (where A = max amplitude from octaves)
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to 0,1 for smooth step
-		totalNoise = SmoothStep3(totalNoise);		// Octaves tend to make noise middly, this pushes edges towards -1 and 1 again
+		totalNoise = MathUtils::SmoothStep3(totalNoise);		// Octaves tend to make noise middly, this pushes edges towards -1 and 1 again
 		totalNoise = (totalNoise * 2.0f) - 1.f;		// Map back to -1,1
 	}
 
@@ -272,8 +272,8 @@ float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, f
 
 		// The greater the distance to the left, the greater the weight of the right, and so on
 		// Use bot left because its displacements are guaranteed to be between 0 and 1 (non negative)
-		float weightRight = SmoothStep3(botLeftToSample.x);
-		float weightTop = SmoothStep3(botLeftToSample.y);
+		float weightRight = MathUtils::SmoothStep3(botLeftToSample.x);
+		float weightTop = MathUtils::SmoothStep3(botLeftToSample.y);
 		float weightLeft = 1.f - weightRight;
 		float weightBot = 1.f - weightTop;
 
@@ -288,10 +288,10 @@ float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, f
 		Vec2 const& topRightGradient = gradients[topRightRandomIndex];
 		Vec2 const& botRightGradient = gradients[botRightRandomIndex];
 
-		float dotBotLeft = DotProduct2D(botLeftToSample, botLeftGradient);
-		float dotTopLeft = DotProduct2D(topLeftToSample, topLeftGradient);
-		float dotTopRight = DotProduct2D(topRightToSample, topRightGradient);
-		float dotBotRight = DotProduct2D(botRightToSample, botRightGradient);
+		float dotBotLeft = MathUtils::DotProduct2D(botLeftToSample, botLeftGradient);
+		float dotTopLeft = MathUtils::DotProduct2D(topLeftToSample, topLeftGradient);
+		float dotTopRight = MathUtils::DotProduct2D(topRightToSample, topRightGradient);
+		float dotBotRight = MathUtils::DotProduct2D(botRightToSample, botRightGradient);
 
 		float blendBot = (weightLeft * dotBotLeft) + (weightRight * dotBotRight);
 		float blendTop = (weightLeft * dotTopLeft) + (weightRight* dotTopRight);
@@ -318,7 +318,7 @@ float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, f
 	{
 		totalNoise /= maxAmplitude; // Get back into range -1,1 from the range -A,A (where A = max amplitude from octaves)
 		totalNoise = (totalNoise * 0.5f) + 0.5f;	// Map to 0,1 for smooth step
-		totalNoise = SmoothStep3(totalNoise);		// Octaves tend to make noise middly, this pushes edges towards -1 and 1 again
+		totalNoise = MathUtils::SmoothStep3(totalNoise);		// Octaves tend to make noise middly, this pushes edges towards -1 and 1 again
 		totalNoise = (totalNoise * 2.0f) - 1.f;		// Map back to -1,1
 	}
 

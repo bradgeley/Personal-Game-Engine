@@ -85,10 +85,10 @@ bool Rgba8::operator!=(Rgba8 const& other) const
 Rgba8 Rgba8::Lerp(Rgba8 const& start, Rgba8 const& end, float t)
 {
     Rgba8 result;
-    result.r = static_cast<uint8_t>(InterpolateInt(start.r, end.r, t));
-    result.g = static_cast<uint8_t>(InterpolateInt(start.g, end.g, t));
-    result.b = static_cast<uint8_t>(InterpolateInt(start.b, end.b, t));
-    result.a = static_cast<uint8_t>(InterpolateInt(start.a, end.a, t));
+    result.r = static_cast<uint8_t>(MathUtils::InterpolateInt(start.r, end.r, t));
+    result.g = static_cast<uint8_t>(MathUtils::InterpolateInt(start.g, end.g, t));
+    result.b = static_cast<uint8_t>(MathUtils::InterpolateInt(start.b, end.b, t));
+    result.a = static_cast<uint8_t>(MathUtils::InterpolateInt(start.a, end.a, t));
     return result;
 }
 

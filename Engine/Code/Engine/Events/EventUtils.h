@@ -13,7 +13,11 @@ typedef bool (*EventCallbackFunction)(NamedProperties& args);
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
-void UnsubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
-int FireEvent(std::string const& eventName, NamedProperties& args);
-int FireEvent(std::string const& eventName);
+namespace EventUtils
+{
+	void SubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
+	void UnsubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
+
+	int FireEvent(std::string const& eventName, NamedProperties& args);
+	int FireEvent(std::string const& eventName);
+}

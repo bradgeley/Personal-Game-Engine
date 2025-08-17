@@ -111,7 +111,7 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
 void DevConsoleCommandHistory::ArrowUp()
 {
     // Decrement on arrow up so the index is reversed when rendering
-    m_selectedLineIndex = (int8_t) DecrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
+    m_selectedLineIndex = (int8_t) MathUtils::DecrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
 }
 
 
@@ -120,7 +120,7 @@ void DevConsoleCommandHistory::ArrowUp()
 void DevConsoleCommandHistory::ArrowDown()
 {
     // Decrement on arrow up so the index is reversed when rendering
-    m_selectedLineIndex = (int8_t) IncrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
+    m_selectedLineIndex = (int8_t) MathUtils::IncrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
 }
 
 

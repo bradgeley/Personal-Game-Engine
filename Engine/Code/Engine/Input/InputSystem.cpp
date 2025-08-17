@@ -220,8 +220,8 @@ Vec2 InputSystem::GetMouseClientCenterRelativePosition(bool originBottomLeft) co
 {
     Vec2 clientRelativePosition = GetMouseClientRelativePosition(originBottomLeft);
     Vec2 clientCenterRelativePosition;
-    clientCenterRelativePosition.x = RangeMap(clientRelativePosition.x, 0.f, 1.f, -1.f, 1.f);
-    clientCenterRelativePosition.y = RangeMap(clientRelativePosition.y, 0.f, 1.f, -1.f, 1.f);
+    clientCenterRelativePosition.x = MathUtils::RangeMap(clientRelativePosition.x, 0.f, 1.f, -1.f, 1.f);
+    clientCenterRelativePosition.y = MathUtils::RangeMap(clientRelativePosition.y, 0.f, 1.f, -1.f, 1.f);
     return clientCenterRelativePosition;
 }
 

@@ -7,7 +7,7 @@
 #include "cmath"
 
 
-int QuadraticEquation(float a, float b, float c, float& out_root1, float& out_root2)
+int MathUtils::QuadraticEquation(float a, float b, float c, float& out_root1, float& out_root2)
 {
     float descriminant = b * b - 4 * a * c;
     if (descriminant < 0.f)
@@ -31,45 +31,45 @@ int QuadraticEquation(float a, float b, float c, float& out_root1, float& out_ro
 }
 
 
-float SinDegrees(float degrees)
+float MathUtils::SinDegrees(float degrees)
 {
     float radians = DegreesToRadians(degrees);
     return sinf(radians);
 }
 
 
-float CosDegrees(float degrees)
+float MathUtils::CosDegrees(float degrees)
 {
     float radians = DegreesToRadians(degrees);
     return cosf(radians);
 }
 
 
-float SinRadians(float radians)
+float MathUtils::SinRadians(float radians)
 {
     return sinf(radians);
 }
 
 
-float CosRadians(float radians)
+float MathUtils::CosRadians(float radians)
 {
     return cosf(radians);
 }
 
 
-float DegreesToRadians(float degrees)
+float MathUtils::DegreesToRadians(float degrees)
 {
     return degrees * static_cast<float>(M_PI) / 180.f;
 }
 
 
-float RadiansToDegrees(float radians)
+float MathUtils::RadiansToDegrees(float radians)
 {
     return radians * 180.f / static_cast<float>(M_PI);
 }
 
 
-int ClampInt(int value, int min, int max)
+int MathUtils::ClampInt(int value, int min, int max)
 {
     if (value > max)
     {
@@ -83,7 +83,7 @@ int ClampInt(int value, int min, int max)
 }
 
 
-float ClampF(float value, float min, float max)
+float MathUtils::ClampF(float value, float min, float max)
 {
     if (value > max)
     {
@@ -97,19 +97,19 @@ float ClampF(float value, float min, float max)
 }
 
 
-float GetLength2D(const Vec2& vec)
+float MathUtils::GetLength2D(const Vec2& vec)
 {
     return sqrtf(vec.x * vec.x + vec.y * vec.y);
 }
 
 
-float GetLengthSquared2D(const Vec2& vec)
+float MathUtils::GetLengthSquared2D(const Vec2& vec)
 {
     return vec.x * vec.x + vec.y * vec.y;
 }
 
 
-void NormalizeVector2D(Vec2& vec)
+void MathUtils::NormalizeVector2D(Vec2& vec)
 {
     float length = GetLength2D(vec);
     if (length != 0.f)
@@ -119,33 +119,33 @@ void NormalizeVector2D(Vec2& vec)
 }
 
 
-float DotProduct2D(const Vec2& vecA, const Vec2& vecB)
+float MathUtils::DotProduct2D(const Vec2& vecA, const Vec2& vecB)
 {
     return vecA.x * vecB.x + vecA.y * vecB.y;
 }
 
 
-float GetDistance2D(Vec2 const& vecA, Vec2 const& vecB)
+float MathUtils::GetDistance2D(Vec2 const& vecA, Vec2 const& vecB)
 {
     Vec2 aToB = vecA - vecB;
     return aToB.GetLength();
 }
 
 
-float GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB)
+float MathUtils::GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB)
 {
     Vec2 aToB = vecA - vecB;
     return aToB.GetLengthSquared();
 }
 
 
-float GetLength3D(const Vec3& vec) 
+float MathUtils::GetLength3D(const Vec3& vec)
 {
     return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }
 
 
-void NormalizeVector3D(Vec3& vec)
+void MathUtils::NormalizeVector3D(Vec3& vec)
 {
     float length = GetLength3D(vec);
     if (length != 0.f)
@@ -155,33 +155,33 @@ void NormalizeVector3D(Vec3& vec)
 }
 
 
-float Interpolate(float a, float b, float t)
+float MathUtils::Interpolate(float a, float b, float t)
 {
     return (b - a) * t + a;
 }
 
 
-float InterpolateClamped(float a, float b, float t)
+float MathUtils::InterpolateClamped(float a, float b, float t)
 {
     t = ClampF(t, 0.f, 1.f);
     return (b - a) * t + a;
 }
 
 
-int InterpolateInt(int a, int b, float t)
+int MathUtils::InterpolateInt(int a, int b, float t)
 {
     return (int) Interpolate((float) a, (float) b, t);
 }
 
 
-int InterpolateIntClamped(int a, int b, float t)
+int MathUtils::InterpolateIntClamped(int a, int b, float t)
 {
     t = ClampF(t, 0.f, 1.f);
     return (int) Interpolate((float) a, (float) b, t);
 }
 
 
-float SmoothStep3(float valZeroToOne)
+float MathUtils::SmoothStep3(float valZeroToOne)
 {
     // -2*x^3 + 3*x^2
     float valSquared = valZeroToOne * valZeroToOne;
@@ -189,19 +189,19 @@ float SmoothStep3(float valZeroToOne)
 }
 
 
-float SmoothStart2(float valZeroToOne)
+float MathUtils::SmoothStart2(float valZeroToOne)
 {
     return valZeroToOne * valZeroToOne;
 }
 
 
-float SmoothStart3(float valZeroToOne)
+float MathUtils::SmoothStart3(float valZeroToOne)
 {
     return valZeroToOne * valZeroToOne * valZeroToOne;
 }
 
 
-float GetFractionWithinF(float val, float min, float max)
+float MathUtils::GetFractionWithinF(float val, float min, float max)
 {
     float range = max - min;
     float valRelative = val - min;
@@ -210,7 +210,7 @@ float GetFractionWithinF(float val, float min, float max)
 
 
 
-double GetFractionWithin(double val, double min, double max)
+double MathUtils::GetFractionWithin(double val, double min, double max)
 {
     double range = max - min;
     double valRelative = val - min;
@@ -218,7 +218,7 @@ double GetFractionWithin(double val, double min, double max)
 }
 
 
-float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
+float MathUtils::RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
 {
     float fractionWithin = GetFractionWithinF(valueInRangeA, minRangeA, maxRangeA);
     float rangeB = maxRangeB - minRangeB;
@@ -226,13 +226,13 @@ float RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minR
 }
 
 
-float RangeMapClamped(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
+float MathUtils::RangeMapClamped(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
 {
     return ClampF(RangeMap(valueInRangeA, minRangeA, maxRangeA, minRangeB, maxRangeB), minRangeB, maxRangeB);
 }
 
 
-int IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
+int MathUtils::IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
 {
     ++val;
     if (val > rangeMax)
@@ -250,7 +250,7 @@ int IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
 }
 
 
-int DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
+int MathUtils::DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
 {
     --val;
     if (val < rangeMin)
@@ -268,69 +268,69 @@ int DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
 }
 
 
-float MinF(float a, float b)
+float MathUtils::MinF(float a, float b)
 {
 	return a <= b ? a : b;
 }
 
 
-float MaxF(float a, float b)
+float MathUtils::MaxF(float a, float b)
 {
 	return a >= b ? a : b;
 }
 
 
-int Min(int a, int b)
+int MathUtils::Min(int a, int b)
 {
 	return a <= b ? a : b;
 }
 
 
-int Max(int a, int b)
+int MathUtils::Max(int a, int b)
 {
 	return a >= b ? a : b;
 }
 
 
-int Pow(int base, int exp)
+int MathUtils::Pow(int base, int exp)
 {
     return static_cast<int>(pow(base, exp));
 }
 
 
-float PowF(float base, float exp)
+float MathUtils::PowF(float base, float exp)
 {
     return powf(base, exp);
 }
 
 
-int FloorF(float val)
+int MathUtils::FloorF(float val)
 {
     double d = (double) val;
     return (int) floor(d);
 }
 
 
-int CeilingF(float val)
+int MathUtils::CeilingF(float val)
 {
     double d = (double) val;
     return (int) ceil(d);
 }
 
 
-float SqrtF(float val)
+float MathUtils::SqrtF(float val)
 {
     return sqrtf(val);
 }
 
 
-float AbsF(float val)
+float MathUtils::AbsF(float val)
 {
     return fabsf(val);
 }
 
 
-void SwapF(float& a, float& b)
+void MathUtils::SwapF(float& a, float& b)
 {
     float a_copy = a;
     a = b;
@@ -338,7 +338,7 @@ void SwapF(float& a, float& b)
 }
 
 
-int Sign(int val)
+int MathUtils::Sign(int val)
 {
     if (val >= 0)
     {
@@ -348,7 +348,7 @@ int Sign(int val)
 }
 
 
-float SignF(float val)
+float MathUtils::SignF(float val)
 {
     if (val >= 0.f)
     {

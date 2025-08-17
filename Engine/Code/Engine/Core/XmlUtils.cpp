@@ -6,7 +6,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::string ParseXmlAttribute(XmlElement const& element, char const* attributeName, char const*	defaultValue)
+std::string XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, char const*	defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
@@ -18,7 +18,7 @@ std::string ParseXmlAttribute(XmlElement const& element, char const* attributeNa
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::string ParseXmlAttribute(XmlElement const& element, char const* attributeName, std::string const& defaultValue)
+std::string XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, std::string const& defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
@@ -30,7 +30,7 @@ std::string ParseXmlAttribute(XmlElement const& element, char const* attributeNa
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float ParseXmlAttribute(XmlElement const& element, char const* attributeName, float defaultValue)
+float XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, float defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
@@ -42,7 +42,7 @@ float ParseXmlAttribute(XmlElement const& element, char const* attributeName, fl
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool ParseXmlAttribute(XmlElement const& element, char const* attributeName, bool defaultValue)
+bool XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, bool defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
@@ -54,7 +54,7 @@ bool ParseXmlAttribute(XmlElement const& element, char const* attributeName, boo
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int ParseXmlAttribute(XmlElement const& element, char const* attributeName, int defaultValue)
+int XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, int defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
@@ -66,7 +66,7 @@ int ParseXmlAttribute(XmlElement const& element, char const* attributeName, int 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-uint8_t ParseXmlAttribute(XmlElement const& element, char const* attributeName, uint8_t defaultValue)
+uint8_t XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, uint8_t defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
@@ -83,7 +83,7 @@ uint8_t ParseXmlAttribute(XmlElement const& element, char const* attributeName, 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec2 const& defaultValue)
+Vec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec2 const& defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
@@ -105,7 +105,7 @@ Vec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Rgba8 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Rgba8 const& defaultValue)
+Rgba8 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, Rgba8 const& defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {

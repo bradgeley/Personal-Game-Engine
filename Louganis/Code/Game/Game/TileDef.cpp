@@ -13,15 +13,15 @@ std::vector<TileDef> TileDef::s_tileDefs;
 //----------------------------------------------------------------------------------------------------------------------
 TileDef::TileDef(XmlElement const* tileDefXmlElement)
 {
-	m_name = ParseXmlAttribute(*tileDefXmlElement, "name", m_name);
+	m_name = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "name", m_name);
 
-	bool isVisible = ParseXmlAttribute(*tileDefXmlElement, "visible", true);
-	bool isSolid = ParseXmlAttribute(*tileDefXmlElement, "solid", true);
-	bool isOpaque = ParseXmlAttribute(*tileDefXmlElement, "opaque", true);
+	bool isVisible = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "visible", true);
+	bool isSolid = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "solid", true);
+	bool isOpaque = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "opaque", true);
 	SetTags(isVisible, isSolid, isOpaque);
 
-	m_tint = ParseXmlAttribute(*tileDefXmlElement, "tint", m_tint);
-	m_cost = ParseXmlAttribute(*tileDefXmlElement, "cost", m_cost);
+	m_tint = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "tint", m_tint);
+	m_cost = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "cost", m_cost);
 }
 
 

@@ -28,20 +28,20 @@ Vec3::Vec3(IntVec2 const& fromIntVec2, float z) : x(static_cast<float>(fromIntVe
 
 float Vec3::GetLength() const
 {
-    return GetLength3D(*this);
+    return MathUtils::GetLength3D(*this);
 }
 
 
 void Vec3::Normalize()
 {
-    NormalizeVector3D(*this);
+    MathUtils::NormalizeVector3D(*this);
 }
 
 
 Vec3 Vec3::GetNormalized() const
 {
     Vec3 copy = *this;
-    NormalizeVector3D(copy);
+    MathUtils::NormalizeVector3D(copy);
     return copy;
 }
 

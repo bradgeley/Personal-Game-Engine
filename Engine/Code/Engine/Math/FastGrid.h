@@ -80,7 +80,7 @@ FastGrid<T, Pow2>::FastGrid(FastGrid<T,  Pow2> const& copy) : m_data(copy.m_data
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T, uint8_t Pow2>
-FastGrid<T, Pow2>::FastGrid(T const& initialValue) : m_dimensions(Pow(2, Pow2), Pow(2, Pow2))
+FastGrid<T, Pow2>::FastGrid(T const& initialValue) : m_dimensions(MathUtils::Pow(2, Pow2), MathUtils::Pow(2, Pow2))
 {
     m_data.resize((size_t) m_dimensions.x * m_dimensions.y);
 

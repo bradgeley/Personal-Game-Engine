@@ -445,8 +445,8 @@ void PerformanceDebugWindow::AddUntexturedVertsForRow(VertexBuffer& untexturedVe
     // Add items
     for (PerfItemData const& item : row.m_perfItemData)
     {
-        float itemStartTimeFraction = (float) GetFractionWithin(item.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
-        float itemEndTimeFraction = (float) GetFractionWithin(item.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        float itemStartTimeFraction = (float) MathUtils::GetFractionWithin(item.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        float itemEndTimeFraction = (float) MathUtils::GetFractionWithin(item.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
         AABB2 itemOutline;
         itemOutline.mins.x = rowOutline.mins.x + rowOutline.GetWidth() * itemStartTimeFraction;
         itemOutline.mins.y = rowOutline.mins.y;
@@ -487,8 +487,8 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
     // Add items
     for (PerfItemData const& item : row.m_perfItemData)
     {
-        float itemStartTimeFraction = (float) GetFractionWithin(item.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
-        float itemEndTimeFraction = (float) GetFractionWithin(item.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        float itemStartTimeFraction = (float) MathUtils::GetFractionWithin(item.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        float itemEndTimeFraction = (float) MathUtils::GetFractionWithin(item.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
         AABB2 itemOutline;
         itemOutline.mins.x = rowOutline.mins.x + rowOutline.GetWidth() * itemStartTimeFraction;
         itemOutline.mins.y = rowOutline.mins.y;

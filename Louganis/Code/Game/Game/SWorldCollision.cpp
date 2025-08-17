@@ -67,7 +67,7 @@ void SWorldCollision::Run(SystemContext const& context)
                     if (neighborChunk->IsTileSolid(neighborCoord.m_localTileCoords))
                     {
                         AABB2 neighborTileBounds = scWorld.GetTileBounds(neighborCoord);
-                        PushDiscOutOfAABB2D(pos, radius + scWorld.m_worldSettings.m_entityWallBuffer, neighborTileBounds);
+                        GeometryUtils::PushDiscOutOfAABB2D(pos, radius + scWorld.m_worldSettings.m_entityWallBuffer, neighborTileBounds);
                     }
                 }
             }
