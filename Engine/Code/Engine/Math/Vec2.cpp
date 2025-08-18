@@ -126,6 +126,19 @@ bool Vec2::IsNearlyZero(float epsilon) const
     return (MathUtils::AbsF(x) < epsilon) && (MathUtils::AbsF(y) < epsilon);
 }
 
+
+float Vec2::Dot(Vec2 const& other) const
+{
+    return MathUtils::DotProduct2D(*this, other);
+}
+
+
+float Vec2::Cross(Vec2 const& other) const
+{
+    return MathUtils::CrossProduct2D(*this, other);
+}
+
+
 void Vec2::Rotate90()
 {
     float X = x;

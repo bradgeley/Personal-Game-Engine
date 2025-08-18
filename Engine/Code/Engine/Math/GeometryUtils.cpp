@@ -50,8 +50,15 @@ bool GeometryUtils::IsDiscTouchingAABB(Vec2 const& discPos, float discRadius, AA
 bool GeometryUtils::DoesCapsuleOverlapAABB(Vec2 const& capsuleStart, Vec2 const& capsuleEnd, float capsuleRadius, AABB2 const& aabb)
 {
     AABB2 capsuleBounds = GetCapsuleBounds(capsuleStart, capsuleEnd, capsuleRadius);
-    
+
     if (!capsuleBounds.IsOverlapping(aabb))
+    {
+        return false;
+    }
+
+    float combinedRadii = capsuleRadius + aabb.GetHeight() * MathUtils::SQRT2OVER2F;
+    float distSquaredToLine = GetShortestDistanceSquaredToLineSegment(aabb.GetCenter(), capsuleStart, capsuleEnd);
+    if (distSquaredToLine > combinedRadii * combinedRadii)
     {
         return false;
     }
@@ -61,8 +68,13 @@ bool GeometryUtils::DoesCapsuleOverlapAABB(Vec2 const& capsuleStart, Vec2 const&
         return true;
     }
 
-    float distance = GetShortestDistanceBetweenLineSegmentAndAABB(capsuleStart, capsuleEnd, aabb);
-    return distance < capsuleRadius;
+    float distanceSquared = GetShortestDistanceSquaredBetweenLineSegmentAndAABB(capsuleStart, capsuleEnd, aabb);
+    if (distanceSquared >= (capsuleRadius * capsuleRadius))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -183,42 +195,42 @@ bool GeometryUtils::BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA,
         float distance = MathUtils::SqrtF(distanceSquared);
         float overlapAmount = combinedRadii - distance;
 
-        AtoB /= distance; // Normalize
+AtoB /= distance; // Normalize
 
-        float weightA = discRadiusB / combinedRadii;
-        float weightB = 1.f - weightA;
+float weightA = discRadiusB / combinedRadii;
+float weightB = 1.f - weightA;
 
-        Vec2 displacementA = AtoB * -1.f * overlapAmount * weightA;
-        Vec2 displacementB = AtoB * overlapAmount * weightB;
+Vec2 displacementA = AtoB * -1.f * overlapAmount * weightA;
+Vec2 displacementB = AtoB * overlapAmount * weightB;
 
-        discPosA += displacementA;
-        discPosB += displacementB;
+discPosA += displacementA;
+discPosB += displacementB;
 
-        // Put everything in terms of Va = 0
-        Vec2 relativeVelA = Vec2::ZeroVector;
-        Vec2 relativeVelB = discVelB - discVelA;
+// Put everything in terms of Va = 0
+Vec2 relativeVelA = Vec2::ZeroVector;
+Vec2 relativeVelB = discVelB - discVelA;
 
-        // Bounce B off of A
-        float dotB = MathUtils::DotProduct2D(relativeVelB, AtoB);
-        if (dotB > 0.f)
-        {
-            // B's velocity dot's positive with AToB, so they are moving apart and we shouldn't bounce them
-            return false;
-        }
+// Bounce B off of A
+float dotB = MathUtils::DotProduct2D(relativeVelB, AtoB);
+if (dotB > 0.f)
+{
+    // B's velocity dot's positive with AToB, so they are moving apart and we shouldn't bounce them
+    return false;
+}
 
-        Vec2 projectedVelB = AtoB * dotB;
-        Vec2 remainingVelB = relativeVelB - projectedVelB;
+Vec2 projectedVelB = AtoB * dotB;
+Vec2 remainingVelB = relativeVelB - projectedVelB;
 
-        Vec2 velocityTransfer = projectedVelB * elasticity;
+Vec2 velocityTransfer = projectedVelB * elasticity;
 
-        relativeVelB -= velocityTransfer;
-        relativeVelA += velocityTransfer;
+relativeVelB -= velocityTransfer;
+relativeVelA += velocityTransfer;
 
-        // Add back what was lost before
-        discVelB = relativeVelB + discVelA;
-        discVelA = relativeVelA + discVelA;
+// Add back what was lost before
+discVelB = relativeVelB + discVelA;
+discVelA = relativeVelA + discVelA;
 
-        return true;
+return true;
     }
     return false;
 }
@@ -251,7 +263,7 @@ bool GeometryUtils::BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA,
 
         discPosA += displacementA;
         discPosB += displacementB;
-        
+
         float A_speedNorm = MathUtils::DotProduct2D(discVelA, collisionNormal);
         float B_speedNorm = MathUtils::DotProduct2D(discVelB, collisionNormal);
         float speedDiffInitial = A_speedNorm - B_speedNorm;
@@ -281,9 +293,19 @@ bool GeometryUtils::BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA,
 //----------------------------------------------------------------------------------------------------------------------
 bool GeometryUtils::DoLinesIntersect(Vec2 const& a1, Vec2 const& a2, Vec2 const& b1, Vec2 const& b2)
 {
-    Plane2 planeA(a1, a2);
-    Plane2 planeB(b1, b2);
-	return (planeA.Straddles(b1, b2)) && (planeB.Straddles(a1, a2));
+    Vec2 lineA = a2 - a1;
+    if ((lineA.Cross(b1 - a1) * lineA.Cross(b2 - a1)) >= 0.f)
+    {
+        return false;
+    }
+
+    Vec2 lineB = b2 - b1;
+    if ((lineB.Cross(a1 - b1) * lineB.Cross(a2 - b1)) >= 0.f)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -307,6 +329,8 @@ bool GeometryUtils::DoesLineIntersectAABB2(Vec2 const& lineStart, Vec2 const& li
     Vec2 botRight = box2D.GetBottomRight();
     Vec2 const& topRight = box2D.maxs;
     Vec2 const& botLeft = box2D.mins;
+
+    Vec2 line = lineEnd - lineStart;
 
     return DoLinesIntersect(topLeft, topRight, lineStart, lineEnd) 
         || DoLinesIntersect(topRight, botRight, lineStart, lineEnd) 
@@ -388,25 +412,28 @@ bool GeometryUtils::GetFirstLineAABBIntersection(Vec2 const& lineStart, Vec2 con
 Vec2 GeometryUtils::GetNearestPointOnLine(Vec2 const& queryPoint, Vec2 const& lineStart, Vec2 const& lineEnd)
 {
     Vec2 line = lineEnd - lineStart;
-    float lineLength = line.GetLength();
+    if (line.IsNearlyZero(0.000001f))
+    {
+        return lineStart;
+    }
 
-    Vec2 lineNorm = line / lineLength;
-    Vec2 relativeQueryPoint = queryPoint - lineStart;
-    float distanceAlongLine = MathUtils::DotProduct2D(relativeQueryPoint, lineNorm);
+    Vec2 startToPoint = queryPoint - lineStart;
+    float squaredLength = line.GetLengthSquared();
+    float dot = line.Dot(startToPoint);
+    float fractionAlongSegment = dot / squaredLength;
 
     // Check if query point is beyond either end point of the line
-    if (distanceAlongLine >= lineLength)
+    if (fractionAlongSegment >= 1.f)
     {
         return lineEnd;
     }
-    else if (distanceAlongLine <= 0.f)
+    else if (fractionAlongSegment <= 0.f)
     {
         return lineStart;
     }
 
     // Point is between the end points, relatively speaking
-    float t = distanceAlongLine / lineLength;
-    return lineStart + line * t;
+    return lineStart + line * fractionAlongSegment;
 }
 
 
@@ -432,18 +459,24 @@ float GeometryUtils::GetShortestDistanceSquaredToLineSegment(Vec2 const& queryPo
 //----------------------------------------------------------------------------------------------------------------------
 float GeometryUtils::GetShortestDistanceBetweenLineSegments(Vec2 const& aStart, Vec2 const& aEnd, Vec2 const& bStart, Vec2 const& bEnd)
 {
+    return MathUtils::SqrtF(GetShortestDistanceSquaredBetweenLineSegments(aStart, aEnd, bStart, bEnd));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float GeometryUtils::GetShortestDistanceSquaredBetweenLineSegments(Vec2 const& aStart, Vec2 const& aEnd, Vec2 const& bStart, Vec2 const& bEnd)
+{
     if (aStart == aEnd)
     {
-        return GeometryUtils::GetShortestDistanceToLineSegment(aStart, bStart, bEnd);
+        return GeometryUtils::GetShortestDistanceSquaredToLineSegment(aStart, bStart, bEnd);
     }
     if (bStart == bEnd)
     {
-        return GeometryUtils::GetShortestDistanceToLineSegment(bStart, aStart, bEnd);
+        return GeometryUtils::GetShortestDistanceSquaredToLineSegment(bStart, aStart, bEnd);
     }
 
-    Plane2 planeA(aStart, aEnd);
-    Plane2 planeB(bStart, bEnd);
-    if (planeA.Straddles(bStart, bEnd) && planeB.Straddles(aStart, aEnd))
+    if (DoLinesIntersect(aStart, aEnd, bStart, bEnd))
     {
         return 0.f;
     }
@@ -464,7 +497,7 @@ float GeometryUtils::GetShortestDistanceBetweenLineSegments(Vec2 const& aStart, 
     shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToBStart);
     shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToBEnd);
 
-    return MathUtils::SqrtF(shortestDistanceSquared);
+    return shortestDistanceSquared;
 }
 
 
@@ -472,20 +505,28 @@ float GeometryUtils::GetShortestDistanceBetweenLineSegments(Vec2 const& aStart, 
 //----------------------------------------------------------------------------------------------------------------------
 float GeometryUtils::GetShortestDistanceBetweenLineSegmentAndAABB(Vec2 const& lineStart, Vec2 const& lineEnd, AABB2 const& aabb)
 {
+    return MathUtils::SqrtF(GetShortestDistanceSquaredBetweenLineSegmentAndAABB(lineStart, lineEnd, aabb));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float GeometryUtils::GetShortestDistanceSquaredBetweenLineSegmentAndAABB(Vec2 const& lineStart, Vec2 const& lineEnd, AABB2 const& aabb)
+{
     // Check all 4 lines of the AABB with the query line
-    float distToTop = GetShortestDistanceBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.maxs);
-    float distToRight = GetShortestDistanceBetweenLineSegments(lineStart, lineEnd, aabb.maxs, aabb.GetBottomRight());
-    float distToLeft = GetShortestDistanceBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.mins);
-    float distToBottom = GetShortestDistanceBetweenLineSegments(lineStart, lineEnd, aabb.mins, aabb.GetBottomRight());
+    float distToTop = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.maxs);
+    float distToRight = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.maxs, aabb.GetBottomRight());
+    float distToLeft = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.mins);
+    float distToBottom = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.mins, aabb.GetBottomRight());
 
     // Separating Axis Theorem    
-    float shortestDistance = FLT_MAX;
-    shortestDistance = MathUtils::MinF(shortestDistance, distToTop);
-    shortestDistance = MathUtils::MinF(shortestDistance, distToRight);
-    shortestDistance = MathUtils::MinF(shortestDistance, distToLeft);
-    shortestDistance = MathUtils::MinF(shortestDistance, distToBottom);
+    float shortestDistanceSquared = FLT_MAX;
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distToTop);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distToRight);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distToLeft);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distToBottom);
 
-    return shortestDistance;
+    return shortestDistanceSquared;
 }
 
 

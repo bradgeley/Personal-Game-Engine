@@ -229,8 +229,29 @@ bool DevConsole::Help(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::AddLine(std::string const& line, Rgba8 const& tint)
 {
+    DevConsoleLine devConsoleLine(line, tint);
     std::unique_lock lock(m_devConsoleMutex);
-    m_log.AddLine({ line, tint });
+    m_log.AddLine(devConsoleLine);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsole::AddMultiLine(std::string const& line, Rgba8 const& tint)
+{
+    Strings lines = StringUtils::SplitStringOnDelimeter(line, '\n');
+    
+    for (auto& splitLine : lines)
+    {
+        if (splitLine == "")
+        {
+            continue;
+        }
+        DevConsoleLine devConsoleLine(splitLine, tint);
+    
+        std::unique_lock lock(m_devConsoleMutex);
+        m_log.AddLine(devConsoleLine);
+    }
 }
 
 

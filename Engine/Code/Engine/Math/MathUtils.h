@@ -16,10 +16,19 @@ struct Vec3;
 namespace MathUtils
 {
 	//----------------------------------------------------------------------------------------------------------------------
-// Quadratic Equation
-//
-// Returns the number of real roots that were found and passed back out of the function (through out_root1 and out_root2)
-//
+	// Constants
+	//
+	constexpr float SQRT2F = 1.4142136f;
+	constexpr float SQRT2OVER2F = SQRT2F / 2;
+	constexpr double SQRT2 = 1.4142135623730951;
+
+
+
+	//----------------------------------------------------------------------------------------------------------------------
+	// Quadratic Equation
+	//
+	// Returns the number of real roots that were found and passed back out of the function (through out_root1 and out_root2)
+	//
 	int QuadraticEquation(float a, float b, float c, float& out_root1, float& out_root2);
 
 
@@ -50,6 +59,7 @@ namespace MathUtils
 	float GetLengthSquared2D(Vec2 const& vec);
 	void  NormalizeVector2D(Vec2& vec);
 	float DotProduct2D(Vec2 const& vecA, Vec2 const& vecB);
+	float CrossProduct2D(Vec2 const& vecA, Vec2 const& vecB);
 	float GetDistance2D(Vec2 const& vecA, Vec2 const& vecB);
 	float GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB);
 

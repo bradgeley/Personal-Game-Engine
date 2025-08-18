@@ -94,8 +94,12 @@ void SDebugRender::Run(SystemContext const& context)
             discCast.m_maxDistance = playerToMouse.GetLength();
             discCast.m_discRadius = 1.f;
 
+            WorldDiscCastResult result;
             // Disc Cast
-            WorldDiscCastResult result = DiscCast(world, discCast);
+            {
+                ScopedTimer t("DiscCast - RenderDebug");
+                result = DiscCast(world, discCast);
+            }
 
             AABB2 capsuleBounds = GeometryUtils::GetCapsuleBounds(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius);
             AddVertsForWireBox2D(scDebug.m_frameVerts.GetMutableVerts(), capsuleBounds, 0.1f);

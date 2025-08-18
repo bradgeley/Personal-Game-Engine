@@ -45,6 +45,8 @@ public:
     float GetDistanceSquaredTo(Vec2 const& other) const;
     bool IsZero() const;
     bool IsNearlyZero(float epsilon) const;
+    float Dot(Vec2 const& other) const;
+    float Cross(Vec2 const& other) const;
     
     void Rotate90();
     void RotateMinus90();

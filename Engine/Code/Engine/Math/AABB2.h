@@ -29,6 +29,7 @@ public:
     Vec2 GetHalfDimensions() const;
     float GetWidth() const;
     float GetHeight() const;
+    float GetHalfHeight() const;
     float GetAspect() const;
     Vec2 GetTopLeft() const;
     Vec2 GetBottomRight() const;

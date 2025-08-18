@@ -11,6 +11,8 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Math/GeometryUtils.h"
+#include "Engine/Performance/ScopedTimer.h"
+#include "Engine/Debug/DevConsole.h"
 
 
 
@@ -53,8 +55,9 @@ void SPhysics::Run(SystemContext const& context)
             discCast.m_direction = frameMovement.GetNormalized();
             discCast.m_maxDistance = frameMovement.GetLength();
             discCast.m_discRadius = radius;
-            WorldDiscCastResult result = DiscCast(scWorld, discCast);
-            AddVertsForDiscCast(scDebug.m_frameVerts, result);
+
+            WorldDiscCastResult result;
+            result = DiscCast(scWorld, discCast);
 
             if (result.m_immediateHit)
             {

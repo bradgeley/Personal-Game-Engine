@@ -75,8 +75,12 @@ namespace GeometryUtils
 	//
 	float GetShortestDistanceToLineSegment(Vec2 const& queryPoint, Vec2 const& lineStart, Vec2 const& lineEnd);
 	float GetShortestDistanceSquaredToLineSegment(Vec2 const& queryPoint, Vec2 const& lineStart, Vec2 const& lineEnd);
+
 	float GetShortestDistanceBetweenLineSegments(Vec2 const& aStart, Vec2 const& aEnd, Vec2 const& bStart, Vec2 const& bEnd);
+	float GetShortestDistanceSquaredBetweenLineSegments(Vec2 const& aStart, Vec2 const& aEnd, Vec2 const& bStart, Vec2 const& bEnd);
+
 	float GetShortestDistanceBetweenLineSegmentAndAABB(Vec2 const& lineStart, Vec2 const& lineEnd, AABB2 const& aabb);
+	float GetShortestDistanceSquaredBetweenLineSegmentAndAABB(Vec2 const& lineStart, Vec2 const& lineEnd, AABB2 const& aabb);
 
 
 

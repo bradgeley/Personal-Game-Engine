@@ -1,11 +1,13 @@
 // Bradley Christensen - 2022-2023
 #include "Game/Game/WindowsApplication.h"
+#include "EngineBuildPreferences.h"
+
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 
-#if defined(_DEBUG)
+#if defined(DEBUG_MEMORY_LEAKS)
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
 #endif
@@ -19,7 +21,7 @@
 //
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
-	#if defined(_DEBUG)
+	#if defined(DEBUG_MEMORY_LEAKS)
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 	#endif
 

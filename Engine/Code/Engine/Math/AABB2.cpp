@@ -66,6 +66,13 @@ float AABB2::GetHeight() const
 
 
 
+float AABB2::GetHalfHeight() const
+{
+    return (maxs.y - mins.y) * 0.5f;
+}
+
+
+
 float AABB2::GetAspect() const
 {
     return GetWidth() / GetHeight();

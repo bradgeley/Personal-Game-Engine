@@ -71,6 +71,7 @@ public:
 	bool Help(NamedProperties& args);
 
 	void AddLine(std::string const& line, Rgba8 const& tint = Rgba8::LightBlue);
+	void AddMultiLine(std::string const& line, Rgba8 const& tint = Rgba8::LightBlue);
 	void AddBackgroundImage(Texture* backgroundImage);
 
 	void AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info);

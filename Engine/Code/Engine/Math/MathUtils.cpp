@@ -130,6 +130,12 @@ float MathUtils::DotProduct2D(const Vec2& vecA, const Vec2& vecB)
 }
 
 
+float MathUtils::CrossProduct2D(Vec2 const& vecA, Vec2 const& vecB)
+{
+    return vecA.x * vecB.y - vecA.y * vecB.x;
+}
+
+
 float MathUtils::GetDistance2D(Vec2 const& vecA, Vec2 const& vecB)
 {
     Vec2 aToB = vecA - vecB;
