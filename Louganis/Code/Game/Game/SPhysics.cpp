@@ -48,76 +48,35 @@ void SPhysics::Run(SystemContext const& context)
 
         while (!frameMovement.IsNearlyZero(scWorld.m_worldSettings.m_entityMinimumMovement))
         {
-            // Run preventative physics raycasts
-            float tOfShortestRaycastHit = 1.f;
-            WorldRaycastResult shortestHitResult;
+            WorldDiscCast discCast;
+            discCast.m_start = transform.m_pos;
+            discCast.m_direction = frameMovement.GetNormalized();
+            discCast.m_maxDistance = frameMovement.GetLength();
+            discCast.m_discRadius = radius;
+            WorldDiscCastResult result = DiscCast(scWorld, discCast);
+            AddVertsForDiscCast(scDebug.m_frameVerts, result);
 
-            Vec2 raycastOffsets[4] = { Vec2(0.f, radius), Vec2(0.f, -radius), Vec2(radius, 0.f), Vec2(-radius, 0.f) };
-            for (int raycastIndex = 0; raycastIndex < 4; ++raycastIndex)
+            if (result.m_immediateHit)
             {
-                Vec2 const& raycastOffset = raycastOffsets[raycastIndex];
-
-                if (MathUtils::DotProduct2D(raycastOffset, frameMovement) <= 0)
-                {
-                    // Offsets on the opposite side as the frame movement are unnecessary
-                    continue;
-                }
-
-                float distance = frameMovement.GetLength();
-
-                WorldRaycast raycast;
-                raycast.m_direction = frameMovement / distance;
-                raycast.m_start = transform.m_pos + raycastOffset;
-                raycast.m_maxDistance = distance;
-                raycast.m_queryWorldTiles = true;
-
-                if (scDebug.m_debugRenderPreventativePhysicsRaycasts)
-                {
-                    AddVertsForArrow2D(scDebug.m_frameVerts.GetMutableVerts(), raycast.m_start, raycast.m_start + raycast.m_direction * raycast.m_maxDistance, 0.033f, Rgba8::Yellow);
-                }
-
-                WorldRaycastResult result = Raycast(scWorld, raycast);
-                if (result.m_blockingHit)
-                {
-                    float dotToNormal = MathUtils::DotProduct2D(raycastOffset, result.m_hitNormal);
-                    if (MathUtils::IsNearlyEqual(dotToNormal, 0.f, 0.1f))
-                    {
-                        // If the left side raycast hit a top or bottom side wall, we probably did a corner hit and that hit shouldn't count.
-                        // Really this is just a failure of the disc-casting to detect corners before our cardinal direction raycasts do.
-                        continue;
-                    }
-                    if (result.m_t < tOfShortestRaycastHit)
-                    {
-                        tOfShortestRaycastHit = result.m_t;
-                        shortestHitResult = result;
-                    }
-                }
-            }
-
-            if (shortestHitResult.m_blockingHit)
-            {
-                if (scDebug.m_debugRenderPreventativePhysicsRaycasts)
-                {
-                    AddVertsForArrow2D(scDebug.m_frameVerts.GetMutableVerts(), shortestHitResult.m_hitLocation, shortestHitResult.m_hitLocation + shortestHitResult.m_hitNormal * 0.25f, 0.033f, Rgba8::Red);
-                }
-                transform.m_pos = shortestHitResult.m_hitLocation + shortestHitResult.m_hitNormal * (collision.m_radius + scWorld.m_worldSettings.m_entityWallBuffer);
-                frameMovement -= frameMovement * shortestHitResult.m_t; // subtract out the movement we already completed
-                // Now subtract out all the movement that was in the direction of the wall we hit
-                Vec2 projectedIntoWall = frameMovement.GetProjectedOntoNormal(shortestHitResult.m_hitNormal);
-                frameMovement -= projectedIntoWall;
-            }
-            else if (shortestHitResult.m_immediateHit)
-            {
-                GeometryUtils::PushDiscOutOfPoint2D(transform.m_pos, collision.m_radius + scWorld.m_worldSettings.m_entityWallBuffer, shortestHitResult.m_hitLocation);
+                transform.m_pos += frameMovement;
                 frameMovement = Vec2::ZeroVector;
+            }
+            else if (result.m_blockingHit)
+            {
+                if (MathUtils::IsNearlyEqual(result.m_t, 0.f, 0.000001f))
+                {
+                    frameMovement = Vec2::ZeroVector;
+                    break;
+                }
+                Vec2 actualMovement = result.m_newDiscCenter - transform.m_pos;
+                transform.m_pos = result.m_newDiscCenter;
+
+                frameMovement -= actualMovement;
+                frameMovement = frameMovement.GetProjectedOntoNormal(result.m_hitNormal.GetRotated90());
             }
             else
             {
-                if (scDebug.m_debugRenderPreventativePhysicsRaycasts)
-                {
-                    AddVertsForArrow2D(scDebug.m_frameVerts.GetMutableVerts(), transform.m_pos, transform.m_pos + frameMovement, 0.033f, Rgba8::Green);
-                }
-                transform.m_pos += frameMovement;
+                transform.m_pos = result.m_newDiscCenter;
                 frameMovement = Vec2::ZeroVector;
             }
         }

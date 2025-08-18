@@ -17,5 +17,5 @@ struct WorldSettings
     float m_chunkUnloadRadius               = 150.f;
     float m_flowFieldGenerationRadius       = 50.f;
     float m_entityWallBuffer                = 0.01f;
-    float m_entityMinimumMovement           = 0.01f;
+    float m_entityMinimumMovement           = 0.0001f;
 };

@@ -110,14 +110,11 @@ void SDebugRender::Run(SystemContext const& context)
                 }
             }
 
+            world.ForEachWorldCoordsOverlappingCapsule(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, [&](WorldCoords& coords) 
             {
-                ScopedTimer t("GetWorldCoordsOverlappingCapsule");
-                world.ForEachWorldCoordsOverlappingCapsule(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, [&](WorldCoords& coords) 
-                {
-                    AddVertsForWireBox2D(scDebug.m_frameVerts.GetMutableVerts(), world.GetTileBounds(coords), 0.1f, Rgba8::Magenta);
-                    return true; 
-                });
-            }
+                AddVertsForWireBox2D(scDebug.m_frameVerts.GetMutableVerts(), world.GetTileBounds(coords), 0.1f, Rgba8::Magenta);
+                return true; 
+            });
 
             AddVertsForDiscCast(scDebug.m_frameVerts, result);
         }
