@@ -96,6 +96,11 @@ float MathUtils::ClampF(float value, float min, float max)
     return value;
 }
 
+float MathUtils::Clamp01F(float value)
+{
+    return ClampF(value, 0.f, 1.f);
+}
+
 
 float MathUtils::GetLength2D(const Vec2& vec)
 {
@@ -323,6 +328,10 @@ float MathUtils::SqrtF(float val)
     return sqrtf(val);
 }
 
+int MathUtils::Abs(int val)
+{
+    return abs(val);
+}
 
 float MathUtils::AbsF(float val)
 {

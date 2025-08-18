@@ -101,6 +101,13 @@ Vec2 AABB2::GetCenterRight() const
 
 
 
+AABB2 AABB2::GetExpandedBy(float flatExpansionAmount) const
+{
+    return AABB2(mins - Vec2(flatExpansionAmount, flatExpansionAmount), maxs + Vec2(flatExpansionAmount, flatExpansionAmount));
+}
+
+
+
 Vec2 AABB2::GetNearestPoint(Vec2 const& point) const
 {
     Vec2 result = point;
@@ -192,4 +199,12 @@ void AABB2::Squeeze(float squeezeAmount)
         mins = newMins;
         maxs = newMaxs;
     }
+}
+
+
+
+void AABB2::ExpandBy(float flatEpansionAmount)
+{
+    mins -= Vec2(flatEpansionAmount, flatEpansionAmount);
+    maxs += Vec2(flatEpansionAmount, flatEpansionAmount);
 }

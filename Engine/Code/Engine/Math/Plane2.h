@@ -22,5 +22,6 @@ public:
 public:
     
     float GetAltitude(Vec2 const& point) const;
+    float GetDistance(Vec2 const& point) const;
     bool Straddles(Vec2 const& a, Vec2 const& b) const;
 };

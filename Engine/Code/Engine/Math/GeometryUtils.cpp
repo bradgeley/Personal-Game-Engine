@@ -47,6 +47,27 @@ bool GeometryUtils::IsDiscTouchingAABB(Vec2 const& discPos, float discRadius, AA
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool GeometryUtils::DoesCapsuleOverlapAABB(Vec2 const& capsuleStart, Vec2 const& capsuleEnd, float capsuleRadius, AABB2 const& aabb)
+{
+    AABB2 capsuleBounds = GetCapsuleBounds(capsuleStart, capsuleEnd, capsuleRadius);
+    
+    if (!capsuleBounds.IsOverlapping(aabb))
+    {
+        return false;
+    }
+
+    if (aabb.IsPointInside(capsuleStart) || aabb.IsPointInside(capsuleEnd))
+    {
+        return true;
+    }
+
+    float distance = GetShortestDistanceBetweenLineSegmentAndAABB(capsuleStart, capsuleEnd, aabb);
+    return distance < capsuleRadius;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool GeometryUtils::PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point)
 {
     Vec2 pointToDisc = (discPos - point);
@@ -125,6 +146,26 @@ bool GeometryUtils::PushDiscOutOfAABB2D(Vec2& discPos, float discRadius, AABB2 c
 
     PushDiscOutOfPoint2D(discPos, discRadius, nearestPointOnAABB);
     return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 GeometryUtils::GetDiscBounds(Vec2 const& center, float radius)
+{
+    return AABB2(center - Vec2(radius, radius), center + Vec2(radius, radius));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 GeometryUtils::GetCapsuleBounds(Vec2 const& start, Vec2 const& end, float radius)
+{
+    float minX = MathUtils::MinF(start.x - radius, end.x - radius);
+    float minY = MathUtils::MinF(start.y - radius, end.y - radius);
+    float maxX = MathUtils::MaxF(start.x + radius, end.x + radius);
+    float maxY = MathUtils::MaxF(start.y + radius, end.y + radius);
+    return AABB2(minX, minY, maxX, maxY);
 }
 
 
@@ -267,10 +308,222 @@ bool GeometryUtils::DoesLineIntersectAABB2(Vec2 const& lineStart, Vec2 const& li
     Vec2 const& topRight = box2D.maxs;
     Vec2 const& botLeft = box2D.mins;
 
-    if (DoLinesIntersect(topLeft, topRight, lineStart, lineEnd)) return true;
-    if (DoLinesIntersect(topRight, botRight, lineStart, lineEnd)) return true;
-    if (DoLinesIntersect(botRight, botLeft, lineStart, lineEnd)) return true;
-    if (DoLinesIntersect(botLeft, topLeft, lineStart, lineEnd)) return true;
-    
+    return DoLinesIntersect(topLeft, topRight, lineStart, lineEnd) 
+        || DoLinesIntersect(topRight, botRight, lineStart, lineEnd) 
+        || DoLinesIntersect(botRight, botLeft, lineStart, lineEnd) 
+        || DoLinesIntersect(botLeft, topLeft, lineStart, lineEnd);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool GeometryUtils::GetFirstLineAABBIntersection(Vec2 const& lineStart, Vec2 const& lineEnd, AABB2 const& box2D, float& out_tOfFirstIntersection)
+{
+    Vec2 velocity = lineEnd - lineStart;
+    Vec2 oneOverVelocity = Vec2(1.f / velocity.x, 1.f / velocity.y);
+
+    float entryT = 0.f;
+    float exitT = 1.f;
+
+    constexpr float axisAlignedTolerance = 0.000001f;
+
+    // Check x direction first
+    if (MathUtils::AbsF(velocity.x) < axisAlignedTolerance)
+    {
+        if (lineStart.x < box2D.mins.x || lineStart.x > box2D.maxs.x)
+        {
+            // X is a separating axis
+            return false;
+        }
+    }
+    else
+    {
+        float tEnterX = (box2D.mins.x - lineStart.x) * oneOverVelocity.x;
+        float tExitX = (box2D.maxs.x - lineStart.x) * oneOverVelocity.x;
+
+        if (tEnterX > tExitX)
+        {
+            MathUtils::SwapF(tEnterX, tExitX);
+        }
+
+        entryT = MathUtils::MaxF(tEnterX, entryT);
+        exitT = MathUtils::MinF(tExitX, exitT);
+    }
+
+    // then Y
+    if (MathUtils::AbsF(velocity.y) < axisAlignedTolerance)
+    {
+        if (lineStart.y < box2D.mins.y || lineStart.y > box2D.maxs.y)
+        {
+            // Y is a separating axis
+            return false;
+        }
+    }
+    else
+    {
+        float tEnterY = (box2D.mins.y - lineStart.y) * oneOverVelocity.y;
+        float tExitY = (box2D.maxs.y - lineStart.y) * oneOverVelocity.y;
+
+        if (tEnterY > tExitY)
+        {
+            MathUtils::SwapF(tEnterY, tExitY);
+        }
+
+        entryT = MathUtils::MaxF(tEnterY, entryT);
+        exitT = MathUtils::MinF(tExitY, exitT);
+    }
+
+    if (entryT < 0.f || entryT > 1.f)
+    {
+        return false;
+    }
+
+    out_tOfFirstIntersection = entryT;
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 GeometryUtils::GetNearestPointOnLine(Vec2 const& queryPoint, Vec2 const& lineStart, Vec2 const& lineEnd)
+{
+    Vec2 line = lineEnd - lineStart;
+    float lineLength = line.GetLength();
+
+    Vec2 lineNorm = line / lineLength;
+    Vec2 relativeQueryPoint = queryPoint - lineStart;
+    float distanceAlongLine = MathUtils::DotProduct2D(relativeQueryPoint, lineNorm);
+
+    // Check if query point is beyond either end point of the line
+    if (distanceAlongLine >= lineLength)
+    {
+        return lineEnd;
+    }
+    else if (distanceAlongLine <= 0.f)
+    {
+        return lineStart;
+    }
+
+    // Point is between the end points, relatively speaking
+    float t = distanceAlongLine / lineLength;
+    return lineStart + line * t;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float GeometryUtils::GetShortestDistanceToLineSegment(Vec2 const& queryPoint, Vec2 const& lineStart, Vec2 const& lineEnd)
+{
+    Vec2 nearestPoint = GetNearestPointOnLine(queryPoint, lineStart, lineEnd);
+    return queryPoint.GetDistanceTo(nearestPoint);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float GeometryUtils::GetShortestDistanceSquaredToLineSegment(Vec2 const& queryPoint, Vec2 const& lineStart, Vec2 const& lineEnd)
+{
+    Vec2 nearestPoint = GetNearestPointOnLine(queryPoint, lineStart, lineEnd);
+    return queryPoint.GetDistanceSquaredTo(nearestPoint);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float GeometryUtils::GetShortestDistanceBetweenLineSegments(Vec2 const& aStart, Vec2 const& aEnd, Vec2 const& bStart, Vec2 const& bEnd)
+{
+    if (aStart == aEnd)
+    {
+        return GeometryUtils::GetShortestDistanceToLineSegment(aStart, bStart, bEnd);
+    }
+    if (bStart == bEnd)
+    {
+        return GeometryUtils::GetShortestDistanceToLineSegment(bStart, aStart, bEnd);
+    }
+
+    Plane2 planeA(aStart, aEnd);
+    Plane2 planeB(bStart, bEnd);
+    if (planeA.Straddles(bStart, bEnd) && planeB.Straddles(aStart, aEnd))
+    {
+        return 0.f;
+    }
+
+    Vec2 nearestToAStart = GetNearestPointOnLine(aStart, bStart, bEnd);
+    Vec2 nearestToAEnd = GetNearestPointOnLine(aEnd, bStart, bEnd);
+    Vec2 nearestToBStart = GetNearestPointOnLine(bStart, aStart, aEnd);
+    Vec2 nearestToBEnd = GetNearestPointOnLine(bEnd, aStart, aEnd);
+
+    float distSquaredToAStart = nearestToAStart.GetDistanceSquaredTo(aStart);
+    float distSquaredToAEnd = nearestToAEnd.GetDistanceSquaredTo(aEnd);
+    float distSquaredToBStart = nearestToBStart.GetDistanceSquaredTo(bStart);
+    float distSquaredToBEnd = nearestToBEnd.GetDistanceSquaredTo(bEnd);
+
+    float shortestDistanceSquared = FLT_MAX;
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToAStart);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToAEnd);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToBStart);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToBEnd);
+
+    return MathUtils::SqrtF(shortestDistanceSquared);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float GeometryUtils::GetShortestDistanceBetweenLineSegmentAndAABB(Vec2 const& lineStart, Vec2 const& lineEnd, AABB2 const& aabb)
+{
+    // Check all 4 lines of the AABB with the query line
+    float distToTop = GetShortestDistanceBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.maxs);
+    float distToRight = GetShortestDistanceBetweenLineSegments(lineStart, lineEnd, aabb.maxs, aabb.GetBottomRight());
+    float distToLeft = GetShortestDistanceBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.mins);
+    float distToBottom = GetShortestDistanceBetweenLineSegments(lineStart, lineEnd, aabb.mins, aabb.GetBottomRight());
+
+    // Separating Axis Theorem    
+    float shortestDistance = FLT_MAX;
+    shortestDistance = MathUtils::MinF(shortestDistance, distToTop);
+    shortestDistance = MathUtils::MinF(shortestDistance, distToRight);
+    shortestDistance = MathUtils::MinF(shortestDistance, distToLeft);
+    shortestDistance = MathUtils::MinF(shortestDistance, distToBottom);
+
+    return shortestDistance;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool GeometryUtils::SweepDiscVsPoint(Vec2 const& discStart, Vec2 const& discEnd, float discRadius, Vec2 const& point, float& out_tOfIntersection)
+{
+    Vec2 velocity = discEnd - discStart;
+
+    // Solve quadratic to Check corners
+    Vec2 delta = discStart - point;
+    float root1, root2;
+
+    float a = velocity.x * velocity.x + velocity.y * velocity.y;
+    float b = 2.f * (delta.x * velocity.x + delta.y * velocity.y);
+    float c = (delta.x * delta.x) + (delta.y * delta.y) - (discRadius * discRadius);
+
+    int numRoots = MathUtils::QuadraticEquation(a, b, c, root1, root2);
+
+    float t;
+    if (numRoots == 1)
+    {
+        t = root1;
+    }
+    else if (numRoots == 2)
+    {
+        t = MathUtils::MinF(root1, root2);
+    }
+    else
+    {
+        return false;
+    }
+
+    if (t >= 0.f && t <= 1.f)
+    {
+        out_tOfIntersection = t;
+        return true;
+    }
+
     return false;
 }

@@ -4,6 +4,7 @@
 #include "WorldSettings.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/IntVec2.h"
+#include <functional>
 #include <map>
 #include <vector>
 
@@ -32,7 +33,13 @@ public:
     WorldCoords GetWorldCoordsAtOffset(WorldCoords const& worldCoords, IntVec2 const& tileOffset) const;
     WorldCoords GetWorldCoordsAtLocation(Vec2 const& worldLocation) const;
     void GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldCoords* eightNeighborsArray) const;
-    void GetWorldCoordsTouchingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const;
+
+    // For each - return false means stop iterating, true means keep iterating.
+    void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords&)>& func) const;
+    void ForEachChunkOverlappingAABB(AABB2 const& aabb, const std::function<bool(Chunk&)>& func) const;
+
+    void GetWorldCoordsOverlappingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const;
+    void GetChunksOverlappingAABB(std::vector<Chunk*>& out_chunks, AABB2 const& aabb) const;
 
     AABB2 CalculateChunkBounds(int chunkX, int chunkY) const;
     AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos) const;
@@ -46,6 +53,7 @@ public:
     void ClearActiveChunks();
 
     int GetNumTilesInRow() const;
+    int GetNumTilesInChunk() const;
 
     float GetChunkUnloadRadius() const;
     float GetChunkWidth() const;

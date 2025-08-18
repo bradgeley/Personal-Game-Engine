@@ -11,6 +11,7 @@
 #include "CCamera.h"
 #include "SCDebug.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Math/GeometryUtils.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Renderer.h"
@@ -20,6 +21,7 @@
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Events/EventSystem.h"
+#include "Engine/Performance/ScopedTimer.h"
 
 
 
@@ -44,7 +46,7 @@ void SDebugRender::Run(SystemContext const& context)
 {
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
-    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     SCFlowField const& scFlowfield = g_ecs->GetSingleton<SCFlowField>();
     FlowField const& flowField = scFlowfield.m_toPlayerFlowField;
@@ -91,7 +93,31 @@ void SDebugRender::Run(SystemContext const& context)
             discCast.m_start = playerLocation;
             discCast.m_maxDistance = playerToMouse.GetLength();
             discCast.m_discRadius = 1.f;
+
+            // Disc Cast
             WorldDiscCastResult result = DiscCast(world, discCast);
+
+            AABB2 capsuleBounds = GeometryUtils::GetCapsuleBounds(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius);
+            AddVertsForWireBox2D(scDebug.m_frameVerts.GetMutableVerts(), capsuleBounds, 0.1f);
+            std::vector<Chunk*> chunks;
+            world.GetChunksOverlappingAABB(chunks, capsuleBounds);
+            for (auto& chunk : chunks)
+            {
+                if (GeometryUtils::DoesCapsuleOverlapAABB(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, chunk->m_chunkBounds))
+                {
+                    Rgba8 tint = Rgba8::Cyan;
+                    AddVertsForWireBox2D(scDebug.m_frameVerts.GetMutableVerts(), chunk->m_chunkBounds, 0.1f, tint);
+                }
+            }
+
+            {
+                ScopedTimer t("GetWorldCoordsOverlappingCapsule");
+                world.ForEachWorldCoordsOverlappingCapsule(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, [&](WorldCoords& coords) 
+                {
+                    AddVertsForWireBox2D(scDebug.m_frameVerts.GetMutableVerts(), world.GetTileBounds(coords), 0.1f, Rgba8::Magenta);
+                    return true; 
+                });
+            }
 
             AddVertsForDiscCast(scDebug.m_frameVerts, result);
         }

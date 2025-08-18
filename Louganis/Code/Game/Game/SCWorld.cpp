@@ -2,6 +2,7 @@
 #include "SCWorld.h"
 #include "Chunk.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Math/GeometryUtils.h"
 
 
 
@@ -166,9 +167,129 @@ void SCWorld::GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldC
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::GetWorldCoordsTouchingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const
+void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords&)>& func) const
 {
+	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
+	int tilesInChunk = GetNumTilesInChunk();
 
+	ForEachChunkOverlappingAABB(boundingBox, [&](Chunk& chunk) 
+	{ 
+		if (!GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, chunk.m_chunkBounds))
+		{
+			return true;
+		}
+
+		WorldCoords worldCoords;
+		worldCoords.m_chunkCoords = chunk.m_chunkCoords;
+		for (int i = 0; i < tilesInChunk; ++i)
+		{
+			worldCoords.m_localTileCoords = chunk.m_tileIDs.GetCoordsForIndex(i);
+			AABB2 tileBounds = GetTileBounds(worldCoords);
+			if (GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
+			{
+				if (!func(worldCoords))
+				{
+					return false;
+				}
+			}
+		}
+		return true; 
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachChunkOverlappingAABB(AABB2 const& aabb, const std::function<bool(Chunk&)>& func) const
+{
+	// Start in bot left, and iterate in a grid pattern
+	IntVec2 initialChunkCoords = GetChunkCoordsAtLocation(aabb.mins);
+	IntVec2 endChunkCoords = GetChunkCoordsAtLocation(aabb.maxs);
+
+	int startX = MathUtils::Min(initialChunkCoords.x, endChunkCoords.x);
+	int endX = MathUtils::Max(initialChunkCoords.x, endChunkCoords.x);
+
+	int startY = MathUtils::Min(initialChunkCoords.y, endChunkCoords.y);
+	int endY = MathUtils::Max(initialChunkCoords.y, endChunkCoords.y);
+
+	for (int x = startX; x <= endX; ++x)
+	{
+		for (int y = startY; y <= endY; ++y)
+		{
+			if (Chunk* chunk = GetActiveChunk(x, y))
+			{
+				if (!func(*chunk))
+				{
+					return;
+				}
+			}
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::GetWorldCoordsOverlappingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const
+{
+	std::vector<Chunk*> chunks;
+	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
+	GetChunksOverlappingAABB(chunks, boundingBox);
+
+	// Conservative estimate
+	out_worldCoords.reserve((GetNumTilesInRow()) * chunks.size());
+
+	int tilesInChunk = GetNumTilesInChunk();
+
+	for (Chunk* chunk : chunks)
+	{
+		if (!GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, chunk->m_chunkBounds))
+		{
+			continue;
+		}
+
+		WorldCoords worldCoords;
+		worldCoords.m_chunkCoords = chunk->m_chunkCoords;
+		for (int i = 0; i < tilesInChunk; ++i)
+		{
+			worldCoords.m_localTileCoords = chunk->m_tileIDs.GetCoordsForIndex(i);
+			AABB2 tileBounds = GetTileBounds(worldCoords);
+			if (GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
+			{
+				out_worldCoords.push_back(worldCoords);
+			}
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::GetChunksOverlappingAABB(std::vector<Chunk*>& out_chunks, AABB2 const& aabb) const
+{
+	// Start in bot left, and iterate in a grid pattern
+	IntVec2 initialChunkCoords = GetChunkCoordsAtLocation(aabb.mins);
+	IntVec2 endChunkCoords = GetChunkCoordsAtLocation(aabb.maxs);
+
+	int startX = MathUtils::Min(initialChunkCoords.x, endChunkCoords.x);
+	int endX = MathUtils::Max(initialChunkCoords.x, endChunkCoords.x);
+
+	int startY = MathUtils::Min(initialChunkCoords.y, endChunkCoords.y);
+	int endY = MathUtils::Max(initialChunkCoords.y, endChunkCoords.y);
+
+	size_t numToReserve = (size_t) MathUtils::Abs(endY - startY) * MathUtils::Abs(endX - startX);
+	out_chunks.reserve(numToReserve);
+
+	for (int x = startX; x <= endX; ++x)
+	{
+		for (int y = startY; y <= endY; ++y)
+		{
+			if (Chunk* chunk = GetActiveChunk(x, y))
+			{
+				out_chunks.push_back(chunk);
+			}
+		}
+	}
 }
 
 
@@ -289,6 +410,15 @@ void SCWorld::ClearActiveChunks()
 int SCWorld::GetNumTilesInRow() const
 {
 	return MathUtils::Pow(2, s_worldChunkSizePowerOfTwo);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int SCWorld::GetNumTilesInChunk() const
+{
+	int numInRow = GetNumTilesInRow();
+	return numInRow * numInRow;
 }
 
 

@@ -34,6 +34,7 @@ public:
     Vec2 GetBottomRight() const;
     Vec2 GetCenterLeft() const;
     Vec2 GetCenterRight() const;
+    AABB2 GetExpandedBy(float flatExpansionAmount) const;
 
     // Geometric Queries
     Vec2 GetNearestPoint(Vec2 const& point) const;
@@ -46,6 +47,7 @@ public:
     void SetDimsAboutCenter(Vec2 const& newDims);
     void SetHalfDimsAboutCenter(Vec2 const& newHalfDims);
     void Squeeze(float flatSqueezeAmount);
+    void ExpandBy(float flatEpansionAmount);
 
 public:
     

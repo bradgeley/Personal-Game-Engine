@@ -7,6 +7,7 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/GeometryUtils.h"
+#include "Engine/Performance/ScopedTimer.h"
 
 
 
@@ -129,10 +130,12 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 //----------------------------------------------------------------------------------------------------------------------
 WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast)
 {
+    ScopedTimer t("DiscCast");
     WorldDiscCastResult result;
     result.m_discCast = discCast;
     result.m_hitLocation = discCast.m_start;
-    result.m_newDiscCenter = discCast.m_start + discCast.m_direction * discCast.m_maxDistance;
+    Vec2 const end = discCast.m_start + discCast.m_direction * discCast.m_maxDistance;
+    result.m_newDiscCenter = end;
 
     if (discCast.m_direction == Vec2::ZeroVector)
     {
@@ -141,39 +144,111 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 
     result.m_hitLocation = discCast.m_start + discCast.m_direction * discCast.m_maxDistance;
 
-    if (discCast.m_discRadius <= world.m_worldSettings.m_tileWidth)
+    // Check for initial hit
+    world.ForEachWorldCoordsOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result](WorldCoords& coords) 
     {
-
-    }
-
-    WorldCoords currentWorldCoords = world.GetWorldCoordsAtLocation(discCast.m_start);
-    WorldCoords neighbors[8];
-    world.GetEightNeighborWorldCoords(currentWorldCoords, neighbors);
-
-    for (int neighborIndex = 0; neighborIndex < 8; ++neighborIndex)
-    {
-        WorldCoords const& neighborCoords = neighbors[neighborIndex];
-        AABB2 tileBounds = world.GetTileBounds(neighborCoords);
-        if (!GeometryUtils::IsDiscTouchingAABB(discCast.m_start, discCast.m_discRadius, tileBounds))
+        Chunk* chunk = world.GetActiveChunk(coords);
+        if (chunk->IsTileSolid(coords.m_localTileCoords))
         {
-            continue;
-        }
-
-        Chunk* chunk = world.GetActiveChunk(neighborCoords);
-        if (chunk->IsTileSolid(neighborCoords.m_localTileCoords))
-        {
+            AABB2 tileBounds = world.GetTileBounds(coords);
+            Vec2 nearestPoint = tileBounds.GetNearestPoint(discCast.m_start);
             result.m_blockingHit = true;
             result.m_immediateHit = true;
             result.m_hitNormal = -discCast.m_direction;
-            result.m_hitLocation = tileBounds.GetNearestPoint(discCast.m_start);
+            result.m_hitLocation = nearestPoint;
             result.m_newDiscCenter = discCast.m_start;
             result.m_t = 0.f;
             result.m_distance = 0.f;
-            return result;
+            return false; // stop iterating
         }
-    }
+        return true;
+    });
+
+    // Sweep against all the tiles in the path
+    world.ForEachWorldCoordsOverlappingCapsule(discCast.m_start, end, discCast.m_discRadius, [&world, &discCast, &result, &end](WorldCoords& coords)
+    {
+        // Early out for non-solid tiles
+        Chunk* chunk = world.GetActiveChunk(coords);
+        if (!chunk->IsTileSolid(coords.m_localTileCoords))
+        {
+            return true;
+        }
+
+        // Line vs. expanded tile bounds for sweep test
+        AABB2 tileBounds = world.GetTileBounds(coords);
+        AABB2 expandedTileBounds = tileBounds.GetExpandedBy(discCast.m_discRadius);
+
+        float tOfFirstIntersection;
+        if (GeometryUtils::GetFirstLineAABBIntersection(discCast.m_start, end, expandedTileBounds, tOfFirstIntersection))
+        {
+            if (tOfFirstIntersection < result.m_t)
+            {
+                Vec2 newDiscCenter = discCast.m_start + discCast.m_direction * discCast.m_maxDistance * tOfFirstIntersection;
+                float distance = GeometryUtils::GetShortestDistanceBetweenLineSegmentAndAABB(discCast.m_start, newDiscCenter, tileBounds);
+                constexpr float tolerance = 0.000001f;
+                if (MathUtils::AbsF(distance - discCast.m_discRadius) > tolerance)
+                {
+                    // Do Corner hit detection
+                    Vec2 corners[4] = { tileBounds.mins, tileBounds.maxs, tileBounds.GetBottomRight(), tileBounds.GetTopLeft() };
+
+                    float cornerHitT = 1.f;
+                    for (int cornerIndex = 0; cornerIndex < 4; ++cornerIndex)
+                    {
+                        Vec2 const& corner = corners[cornerIndex];
 
 
+                        // Solve quadratic to Check corners
+                        Vec2 velocity = discCast.m_direction * discCast.m_maxDistance;
+                        Vec2 delta = discCast.m_start - corner;
+                        float root1, root2;
+                        float a = velocity.x * velocity.x + velocity.y * velocity.y;
+                        float b = 2.f * (delta.x * velocity.x + delta.y * velocity.y);
+                        float c = (delta.x * delta.x) + (delta.y * delta.y) - (discCast.m_discRadius * discCast.m_discRadius);
+                        int numRoots = MathUtils::QuadraticEquation(a, b, c, root1, root2);
+
+                        float t;
+                        if (numRoots == 1)
+                        {
+                            t = root1;
+                        }
+                        else if (numRoots == 2)
+                        {
+                            t = MathUtils::MinF(root1, root2);
+                        }
+                        else continue;
+
+                        if (t >= 0.f && t <= 1.f)
+                        {
+                            cornerHitT = MathUtils::MinF(cornerHitT, t);
+                        }
+                    }
+
+                    if (cornerHitT < result.m_t && cornerHitT )
+                    {
+                        // Corner hit
+                        result.m_blockingHit = true;
+                        result.m_t = cornerHitT;
+                        result.m_distance = discCast.m_maxDistance * result.m_t;
+                        result.m_newDiscCenter = discCast.m_start + discCast.m_direction * result.m_distance;
+                        result.m_hitLocation = expandedTileBounds.GetNearestPoint(result.m_newDiscCenter);
+                        result.m_hitNormal = (result.m_newDiscCenter - result.m_hitLocation).GetNormalized();
+                    }
+                }
+                else
+                {
+                    // Side wall hit
+                    result.m_blockingHit = true;
+                    result.m_distance = discCast.m_maxDistance * tOfFirstIntersection;
+                    result.m_newDiscCenter = newDiscCenter;
+                    result.m_hitLocation = expandedTileBounds.GetNearestPoint(result.m_newDiscCenter);
+                    result.m_hitNormal = (result.m_newDiscCenter - result.m_hitLocation).GetNormalized();
+                    result.m_t = tOfFirstIntersection;
+                }
+
+            }
+        }
+        return true;
+    });
 
     return result;
 }
@@ -246,14 +321,12 @@ void AddVertsForDiscCast(VertexBuffer& vbo, WorldDiscCastResult const& result, f
     static float pointRadius = 0.1f;
     static float arrowThickness = 0.05f;
 
-    AddVertsForCapsule2D(vbo.GetMutableVerts(), result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 127));
+    AddVertsForCapsule2D(vbo.GetMutableVerts(), result.m_discCast.m_start, result.m_discCast.m_start + result.m_discCast.m_direction * result.m_discCast.m_maxDistance * result.m_t, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 127));
 
     AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_discCast.m_start, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
     AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_hitLocation, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
 
-    if (result.m_immediateHit)
-    {
-        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_discCast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Red);
-        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Red);
-    }
+
+    AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_discCast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Red);
+    AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Red);
 }

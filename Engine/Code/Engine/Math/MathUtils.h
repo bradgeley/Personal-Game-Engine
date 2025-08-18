@@ -40,6 +40,7 @@ namespace MathUtils
 	//
 	int   ClampInt(int value, int min, int max);
 	float ClampF(float value, float min, float max);
+	float Clamp01F(float value);
 
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -95,6 +96,7 @@ namespace MathUtils
 	int   FloorF(float val);
 	int   CeilingF(float val);
 	float SqrtF(float val);
+	int	  Abs(int val);
 	float AbsF(float val);
 	void  SwapF(float& a, float& b);
 	int	  Sign(int val);

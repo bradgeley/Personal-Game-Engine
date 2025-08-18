@@ -32,6 +32,14 @@ float Plane2::GetAltitude(Vec2 const& point) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float Plane2::GetDistance(Vec2 const& point) const
+{
+    return MathUtils::AbsF(GetAltitude(point));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Plane2::Straddles(Vec2 const& a, Vec2 const& b) const
 {
 	return GetAltitude(a) * GetAltitude(b) < 0.f;
