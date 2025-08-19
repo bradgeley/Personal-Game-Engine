@@ -37,40 +37,11 @@ void SWorldCollision::Run(SystemContext const& context)
         Vec2& pos = trans.m_pos;
         float& radius = coll.m_radius;
 
-        WorldCoords worldCoords = scWorld.GetWorldCoordsAtLocation(trans.m_pos);
-        if (Chunk* chunk = scWorld.GetActiveChunk(worldCoords))
+        scWorld.ForEachSolidWorldCoordsOverlappingCapsule(pos, pos, radius, [&scWorld, &pos, &radius](WorldCoords& coords)
         {
-            if (chunk->IsTileSolid(worldCoords.m_localTileCoords))
-            {
-                // can't push out if we are inside a wall
-                continue;
-            }
-
-            constexpr int numNeighbors = 8;
-            WorldCoords neighborCoords[numNeighbors] =
-            {
-                scWorld.GetWorldCoordsAtOffset(worldCoords, IntVec2(1, 0)),
-                scWorld.GetWorldCoordsAtOffset(worldCoords, IntVec2(-1, 0)),
-                scWorld.GetWorldCoordsAtOffset(worldCoords, IntVec2(0, 1)),
-                scWorld.GetWorldCoordsAtOffset(worldCoords, IntVec2(0, -1)),
-                scWorld.GetWorldCoordsAtOffset(worldCoords, IntVec2(1, 1)),
-                scWorld.GetWorldCoordsAtOffset(worldCoords, IntVec2(-1, -1)),
-                scWorld.GetWorldCoordsAtOffset(worldCoords, IntVec2(-1, 1)),
-                scWorld.GetWorldCoordsAtOffset(worldCoords, IntVec2(1, -1))
-            };
-
-            for (int neighborIndex = 0; neighborIndex < numNeighbors; ++neighborIndex)
-            {
-                WorldCoords& neighborCoord = neighborCoords[neighborIndex];
-                if (Chunk* neighborChunk = scWorld.GetActiveChunk(neighborCoord))
-                {
-                    if (neighborChunk->IsTileSolid(neighborCoord.m_localTileCoords))
-                    {
-                        AABB2 neighborTileBounds = scWorld.GetTileBounds(neighborCoord);
-                        GeometryUtils::PushDiscOutOfAABB2D(pos, radius + scWorld.m_worldSettings.m_entityWallBuffer, neighborTileBounds);
-                    }
-                }
-            }
-        }
+            AABB2 tileBounds = scWorld.GetTileBounds(coords);
+            GeometryUtils::PushDiscOutOfAABB2D(pos, radius + scWorld.m_worldSettings.m_entityWallBuffer, tileBounds);
+            return true;
+        });
     }
 }

@@ -46,9 +46,12 @@ void SPhysics::Run(SystemContext const& context)
         const float& radius = collision.m_radius;
 
         // This is how much movement we want to do this frame, total
+        Vec2 originalFrameMovement = move.m_frameMovement;
         Vec2& frameMovement = move.m_frameMovement;
 
-        while (!frameMovement.IsNearlyZero(scWorld.m_worldSettings.m_entityMinimumMovement))
+        constexpr int maxNumBounces = 3;
+        int numBounces = 0;
+        while (!frameMovement.IsNearlyZero(scWorld.m_worldSettings.m_entityMinimumMovement) && numBounces < maxNumBounces)
         {
             WorldDiscCast discCast;
             discCast.m_start = transform.m_pos;
@@ -58,24 +61,25 @@ void SPhysics::Run(SystemContext const& context)
 
             WorldDiscCastResult result;
             result = DiscCast(scWorld, discCast);
+            AddVertsForDiscCast(scDebug.m_frameVerts, result);
 
             if (result.m_immediateHit)
             {
-                transform.m_pos += frameMovement;
-                frameMovement = Vec2::ZeroVector;
+                break;
             }
             else if (result.m_blockingHit)
             {
-                if (MathUtils::IsNearlyEqual(result.m_t, 0.f, 0.000001f))
-                {
-                    frameMovement = Vec2::ZeroVector;
-                    break;
-                }
-                Vec2 actualMovement = result.m_newDiscCenter - transform.m_pos;
                 transform.m_pos = result.m_newDiscCenter;
+                transform.m_pos -= discCast.m_direction * scWorld.m_worldSettings.m_entityWallBuffer;
+                Vec2 lostMomentum = frameMovement.GetProjectedOntoNormal(result.m_hitNormal);
+                frameMovement -= lostMomentum;
+                numBounces++;
 
-                frameMovement -= actualMovement;
-                frameMovement = frameMovement.GetProjectedOntoNormal(result.m_hitNormal.GetRotated90());
+                if (frameMovement.Dot(originalFrameMovement) < -0.001f)
+                {
+                    // Don't allow multiple bounces to change the direction we were originally going
+                    frameMovement = Vec2::ZeroVector;
+                }
             }
             else
             {

@@ -133,8 +133,8 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
     WorldDiscCastResult result;
     result.m_discCast = discCast;
     result.m_hitLocation = discCast.m_start;
-    Vec2 const end = discCast.m_start + discCast.m_direction * discCast.m_maxDistance;
-    result.m_newDiscCenter = end;
+    Vec2 const discCastEndPoint = discCast.m_start + discCast.m_direction * discCast.m_maxDistance;
+    result.m_newDiscCenter = discCastEndPoint;
 
     if (discCast.m_direction == Vec2::ZeroVector)
     {
@@ -145,99 +145,86 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 
     // Check for initial hit
     float nearestDistSquared = FLT_MAX;
-    world.ForEachWorldCoordsOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result, &nearestDistSquared](WorldCoords& coords)
+    world.ForEachSolidWorldCoordsOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result, &nearestDistSquared](WorldCoords& coords)
     {
-        Chunk* chunk = world.GetActiveChunk(coords);
-        if (chunk->IsTileSolid(coords.m_localTileCoords))
+        AABB2 tileBounds = world.GetTileBounds(coords);
+        Vec2 nearestPoint = tileBounds.GetNearestPoint(discCast.m_start);
+    
+        float distSquared = nearestPoint.GetDistanceSquaredTo(discCast.m_start);
+        if (distSquared < nearestDistSquared)
         {
-            AABB2 tileBounds = world.GetTileBounds(coords);
-            Vec2 nearestPoint = tileBounds.GetNearestPoint(discCast.m_start);
+            nearestDistSquared = distSquared;
     
-            float distSquared = nearestPoint.GetDistanceSquaredTo(discCast.m_start);
-            if (distSquared < nearestDistSquared)
-            {
-                nearestDistSquared = distSquared;
-    
-                result.m_blockingHit = true;
-                result.m_immediateHit = true;
-                result.m_newDiscCenter = discCast.m_start;
-                result.m_hitLocation = nearestPoint;
-                result.m_hitNormal = (result.m_newDiscCenter - result.m_hitLocation).GetNormalized();
-                result.m_t = 0.f;
-                result.m_distance = 0.f;
-            }
+            result.m_blockingHit = true;
+            result.m_immediateHit = true;
+            result.m_newDiscCenter = discCast.m_start;
+            result.m_hitLocation = nearestPoint;
+            result.m_hitNormal = (result.m_newDiscCenter - result.m_hitLocation).GetNormalized();
+            result.m_t = 0.f;
+            result.m_distance = 0.f;
         }
         return true;
     });
 
     // Sweep against all the tiles in the path
-    world.ForEachWorldCoordsOverlappingCapsule(discCast.m_start, end, discCast.m_discRadius, [&world, &discCast, &result, &end](WorldCoords& coords)
+    world.ForEachSolidWorldCoordsOverlappingCapsule(discCast.m_start, discCastEndPoint, discCast.m_discRadius, [&world, &discCast, &result, &discCastEndPoint](WorldCoords& coords)
     {
-        // Early out for non-solid tiles
-        Chunk* chunk = world.GetActiveChunk(coords);
-        if (!chunk->IsTileSolid(coords.m_localTileCoords))
-        {
-            return true;
-        }
-
         // Line vs. expanded tile bounds for sweep test
         AABB2 tileBounds = world.GetTileBounds(coords);
         AABB2 expandedTileBounds = tileBounds.GetExpandedBy(discCast.m_discRadius);
 
         float tOfFirstIntersection;
-        if (GeometryUtils::GetFirstLineAABBIntersection(discCast.m_start, end, expandedTileBounds, tOfFirstIntersection))
+        if (GeometryUtils::GetFirstLineAABBIntersection(discCast.m_start, discCastEndPoint, expandedTileBounds, tOfFirstIntersection))
         {
-            if (tOfFirstIntersection < result.m_t)
+            Vec2 newDiscCenter = discCast.m_start + discCast.m_direction * discCast.m_maxDistance * tOfFirstIntersection;
+            Vec2 nearestPoint = tileBounds.GetNearestPoint(newDiscCenter);
+            float distSquared = nearestPoint.GetDistanceSquaredTo(newDiscCenter);
+
+            float radiusSquared = discCast.m_discRadius * discCast.m_discRadius;
+            if (distSquared > radiusSquared)
             {
-                Vec2 newDiscCenter = discCast.m_start + discCast.m_direction * discCast.m_maxDistance * tOfFirstIntersection;
-                Vec2 nearestPoint = tileBounds.GetNearestPoint(newDiscCenter);
-                float distSquared = nearestPoint.GetDistanceSquaredTo(newDiscCenter);
+                // Do Corner hit detection
+                Vec2 corners[4] = { tileBounds.mins, tileBounds.maxs, tileBounds.GetBottomRight(), tileBounds.GetTopLeft() };
 
-                float tolerance = world.m_worldSettings.m_entityWallBuffer;
-                float toleranceRadius = discCast.m_discRadius + tolerance;
-                if (distSquared > toleranceRadius * toleranceRadius + tolerance)
+                float smallestCornerT = FLT_MAX;
+                int cornerHitIndex = -1;
+                for (int cornerIndex = 0; cornerIndex < 4; ++cornerIndex)
                 {
-                    // Do Corner hit detection
-                    Vec2 corners[4] = { tileBounds.mins, tileBounds.maxs, tileBounds.GetBottomRight(), tileBounds.GetTopLeft() };
-
-                    float smallestCornerT = 1.f;
-                    int cornerHitIndex = -1;
-                    for (int cornerIndex = 0; cornerIndex < 4; ++cornerIndex)
+                    Vec2 const& corner = corners[cornerIndex];
+                    float cornerT;
+                    if (GeometryUtils::SweepDiscVsPoint(discCast.m_start, discCastEndPoint, discCast.m_discRadius, corner, cornerT))
                     {
-                        Vec2 const& corner = corners[cornerIndex];
-                        float cornerT;
-                        if (GeometryUtils::SweepDiscVsPoint(discCast.m_start, end, discCast.m_discRadius, corner, cornerT))
+                        if (cornerT < smallestCornerT)
                         {
-                            if (cornerT < smallestCornerT)
-                            {
-                                cornerHitIndex = cornerIndex;
-                                smallestCornerT = cornerT;
-                            }
+                            cornerHitIndex = cornerIndex;
+                            smallestCornerT = cornerT;
                         }
                     }
-
-                    if (smallestCornerT < result.m_t && smallestCornerT )
-                    {
-                        // Corner hit
-                        result.m_blockingHit = true;
-                        result.m_t = smallestCornerT;
-                        result.m_distance = discCast.m_maxDistance * result.m_t;
-                        result.m_newDiscCenter = discCast.m_start + discCast.m_direction * result.m_distance;
-                        result.m_hitLocation = corners[cornerHitIndex];
-                        result.m_hitNormal = (result.m_newDiscCenter - result.m_hitLocation).GetNormalized();
-                    }
                 }
-                else
+
+                if (smallestCornerT >= 0.f 
+                    && smallestCornerT <= 1.f
+                    && smallestCornerT <= result.m_t)
                 {
-                    // Side wall hit
+                    // Corner hit
                     result.m_blockingHit = true;
-                    result.m_distance = discCast.m_maxDistance * tOfFirstIntersection;
-                    result.m_newDiscCenter = newDiscCenter;
-                    result.m_hitLocation = tileBounds.GetNearestPoint(result.m_newDiscCenter);
+                    result.m_t = smallestCornerT;
+                    result.m_distance = discCast.m_maxDistance * result.m_t;
+                    result.m_newDiscCenter = discCast.m_start + discCast.m_direction * result.m_distance;
+                    result.m_hitLocation = corners[cornerHitIndex];
                     result.m_hitNormal = (result.m_newDiscCenter - result.m_hitLocation).GetNormalized();
-                    result.m_t = tOfFirstIntersection;
                 }
 
+            }
+            else if (tOfFirstIntersection <= result.m_t)
+            {
+                // Side wall hit
+                result.m_blockingHit = true;
+                result.m_t = tOfFirstIntersection;
+                result.m_distance = discCast.m_maxDistance * result.m_t;
+                result.m_newDiscCenter = newDiscCenter;
+                result.m_hitLocation = tileBounds.GetNearestPoint(result.m_newDiscCenter);
+                result.m_hitNormal = (result.m_newDiscCenter - result.m_hitLocation).GetNormalized();
             }
         }
         return true;

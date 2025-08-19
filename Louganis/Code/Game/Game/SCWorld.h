@@ -36,6 +36,7 @@ public:
 
     // For each - return false means stop iterating, true means keep iterating.
     void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords&)>& func) const;
+    void ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords&)>& func) const;
     void ForEachChunkOverlappingAABB(AABB2 const& aabb, const std::function<bool(Chunk&)>& func) const;
 
     void GetWorldCoordsOverlappingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const;

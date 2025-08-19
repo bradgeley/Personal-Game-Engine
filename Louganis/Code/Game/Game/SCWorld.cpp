@@ -200,6 +200,43 @@ void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords&)>& func) const
+{
+	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
+	int tilesInChunk = GetNumTilesInChunk();
+
+	ForEachChunkOverlappingAABB(boundingBox, [&](Chunk& chunk)
+	{
+		if (!GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, chunk.m_chunkBounds))
+		{
+			return true;
+		}
+
+		WorldCoords worldCoords;
+		worldCoords.m_chunkCoords = chunk.m_chunkCoords;
+		for (int i = 0; i < tilesInChunk; ++i)
+		{
+			if (!chunk.IsTileSolid(i))
+			{
+				continue;
+			}
+			worldCoords.m_localTileCoords = chunk.m_tileIDs.GetCoordsForIndex(i);
+			AABB2 tileBounds = GetTileBounds(worldCoords);
+			if (GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
+			{
+				if (!func(worldCoords))
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::ForEachChunkOverlappingAABB(AABB2 const& aabb, const std::function<bool(Chunk&)>& func) const
 {
 	// Start in bot left, and iterate in a grid pattern

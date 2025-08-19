@@ -5,8 +5,8 @@
     <Movement moveSpeed="10" sprintMoveSpeedMultiplier="50"></Movement> // Debug value
     <Camera tileHeight="10"></Camera>
     <PlayerController></PlayerController>
-    <Collision radius="0.25"></Collision>
-    <Render scale="0.25"></Render>
+    <Collision radius="10"></Collision>
+    <Render scale="10"></Render>
   </EntityDef>
   
 </EntityDefs>

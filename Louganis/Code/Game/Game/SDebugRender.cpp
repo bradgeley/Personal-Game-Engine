@@ -22,6 +22,7 @@
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Performance/ScopedTimer.h"
+#include "Engine/Renderer/Window.h"
 
 
 
@@ -59,6 +60,17 @@ void SDebugRender::Run(SystemContext const& context)
         g_renderer->BeginCamera(&cameraComp->m_camera);
     }
 
+    if (g_window->HasFocus())
+    {
+        auto it = g_ecs->Iterate<CTransform, CPlayerController>(context);
+        if (it.IsValid())
+        {
+            CCamera* cameraComp = cameraStorage.Get(it);
+            Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
+            scDebug.m_debugMouseLocation = cameraComp->m_camera.ScreenToWorldOrtho(relMousePos);
+        }
+    }
+
     // Mouse Raycast
     if (scDebug.m_debugRenderToMouseRaycast)
     {
@@ -83,16 +95,13 @@ void SDebugRender::Run(SystemContext const& context)
         for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
         {
             CTransform* playerTransform = transStorage.Get(it);
-            CCamera* cameraComp = cameraStorage.Get(it);
             Vec2 playerLocation = playerTransform->m_pos;
-            Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
-            Vec2 worldMousePos = cameraComp->m_camera.ScreenToWorldOrtho(relMousePos);
-            Vec2 playerToMouse = worldMousePos - playerLocation;
+            Vec2 playerToMouse = scDebug.m_debugMouseLocation - playerLocation;
             WorldDiscCast discCast; 
             discCast.m_direction = playerToMouse.GetNormalized();
             discCast.m_start = playerLocation;
             discCast.m_maxDistance = playerToMouse.GetLength();
-            discCast.m_discRadius = 1.f;
+            discCast.m_discRadius = 10.f;
 
             WorldDiscCastResult result;
             // Disc Cast

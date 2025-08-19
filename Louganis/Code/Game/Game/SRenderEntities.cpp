@@ -24,7 +24,7 @@ void SRenderEntities::Run(SystemContext const& context)
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 
     VertexBuffer vbo;
-    AddVertsForDisc2D(vbo.GetMutableVerts(), Vec2(), 1, 16);
+    AddVertsForDisc2D(vbo.GetMutableVerts(), Vec2(), 1, 128);
 
     for (auto camIt = g_ecs->Iterate<CCamera>(context); camIt.IsValid(); ++camIt)
     {

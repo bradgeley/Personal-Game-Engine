@@ -69,7 +69,7 @@ bool GeometryUtils::DoesCapsuleOverlapAABB(Vec2 const& capsuleStart, Vec2 const&
     }
 
     float distanceSquared = GetShortestDistanceSquaredBetweenLineSegmentAndAABB(capsuleStart, capsuleEnd, aabb);
-    if (distanceSquared >= (capsuleRadius * capsuleRadius))
+    if (distanceSquared > (capsuleRadius * capsuleRadius))
     {
         return false;
     }
@@ -346,8 +346,8 @@ bool GeometryUtils::GetFirstLineAABBIntersection(Vec2 const& lineStart, Vec2 con
     Vec2 velocity = lineEnd - lineStart;
     Vec2 oneOverVelocity = Vec2(1.f / velocity.x, 1.f / velocity.y);
 
-    float entryT = 0.f;
-    float exitT = 1.f;
+    float resultEntryT = -std::numeric_limits<float>::infinity();
+    float resultExitT = std::numeric_limits<float>::infinity();
 
     constexpr float axisAlignedTolerance = 0.000001f;
 
@@ -365,13 +365,8 @@ bool GeometryUtils::GetFirstLineAABBIntersection(Vec2 const& lineStart, Vec2 con
         float tEnterX = (box2D.mins.x - lineStart.x) * oneOverVelocity.x;
         float tExitX = (box2D.maxs.x - lineStart.x) * oneOverVelocity.x;
 
-        if (tEnterX > tExitX)
-        {
-            MathUtils::SwapF(tEnterX, tExitX);
-        }
-
-        entryT = MathUtils::MaxF(tEnterX, entryT);
-        exitT = MathUtils::MinF(tExitX, exitT);
+        resultEntryT = MathUtils::MaxF(resultEntryT, MathUtils::MinF(tEnterX, tExitX));
+        resultExitT = MathUtils::MinF(resultExitT, MathUtils::MaxF(tEnterX, tExitX));
     }
 
     // then Y
@@ -388,22 +383,17 @@ bool GeometryUtils::GetFirstLineAABBIntersection(Vec2 const& lineStart, Vec2 con
         float tEnterY = (box2D.mins.y - lineStart.y) * oneOverVelocity.y;
         float tExitY = (box2D.maxs.y - lineStart.y) * oneOverVelocity.y;
 
-        if (tEnterY > tExitY)
-        {
-            MathUtils::SwapF(tEnterY, tExitY);
-        }
-
-        entryT = MathUtils::MaxF(tEnterY, entryT);
-        exitT = MathUtils::MinF(tExitY, exitT);
+        resultEntryT = MathUtils::MaxF(resultEntryT, MathUtils::MinF(tEnterY, tExitY));
+        resultExitT = MathUtils::MinF(resultExitT, MathUtils::MaxF(tEnterY, tExitY));
     }
 
-    if (entryT < 0.f || entryT > 1.f)
+    if (resultExitT >= resultEntryT && resultExitT >= 0.0f)
     {
-        return false;
+        out_tOfFirstIntersection = resultEntryT >= 0.0f ? resultEntryT : resultExitT;
+        return true;
     }
 
-    out_tOfFirstIntersection = entryT;
-    return true;
+    return false;
 }
 
 
@@ -514,17 +504,17 @@ float GeometryUtils::GetShortestDistanceBetweenLineSegmentAndAABB(Vec2 const& li
 float GeometryUtils::GetShortestDistanceSquaredBetweenLineSegmentAndAABB(Vec2 const& lineStart, Vec2 const& lineEnd, AABB2 const& aabb)
 {
     // Check all 4 lines of the AABB with the query line
-    float distToTop = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.maxs);
-    float distToRight = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.maxs, aabb.GetBottomRight());
-    float distToLeft = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.mins);
-    float distToBottom = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.mins, aabb.GetBottomRight());
+    float distSquaredToTop = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.maxs);
+    float distSquaredToRight = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.maxs, aabb.GetBottomRight());
+    float distSquaredToLeft = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.GetTopLeft(), aabb.mins);
+    float distSquaredToBottom = GetShortestDistanceSquaredBetweenLineSegments(lineStart, lineEnd, aabb.mins, aabb.GetBottomRight());
 
     // Separating Axis Theorem    
     float shortestDistanceSquared = FLT_MAX;
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distToTop);
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distToRight);
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distToLeft);
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distToBottom);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToTop);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToRight);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToLeft);
+    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToBottom);
 
     return shortestDistanceSquared;
 }
