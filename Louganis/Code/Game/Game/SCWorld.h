@@ -48,6 +48,7 @@ public:
     AABB2 GetTileBounds(IntVec2 const& worldTileCoords) const;
     
     Chunk* GetOrCreateActiveChunk(int chunkX, int chunkY);
+    bool TryLoadChunk(IntVec2 const& chunkCoords); // only returns true if the chunk needed to be loaded and was loaded
     void RemoveActiveChunk(IntVec2 const& coords);
     void RemoveActiveChunk(int chunkX, int chunkY);
     void RemoveActiveChunks(std::vector<IntVec2> const& coordsList);

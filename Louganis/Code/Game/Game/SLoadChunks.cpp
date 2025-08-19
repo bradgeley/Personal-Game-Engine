@@ -7,6 +7,22 @@
 #include "Chunk.h"
 #include "TileDef.h"
 #include "Engine/Debug/DevConsole.h"
+#include <unordered_set>
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+namespace std
+{
+	template<>
+	struct hash<IntVec2>
+	{
+		size_t operator()(const IntVec2& v) const noexcept
+		{
+			return (std::hash<int>()(v.x) << 1) ^ std::hash<int>()(v.y);
+		}
+	};
+}
 
 
 
@@ -24,12 +40,12 @@ void SLoadChunks::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SLoadChunks::Run(SystemContext const& context)
 {
+	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	WorldSettings const& worldSettings = world.m_worldSettings;
 
 	int numTilesInRow = world.GetNumTilesInRow();
 	float chunkWidth = numTilesInRow * worldSettings.m_tileWidth;
-	float oneOverChunkWidth = 1.f / chunkWidth;
 	float chunkLoadRadiusSquared = worldSettings.m_chunkLoadRadius * worldSettings.m_chunkLoadRadius;
 	float chunkUnloadRadiusSquared = worldSettings.m_chunkUnloadRadius * worldSettings.m_chunkUnloadRadius;
 	if (chunkUnloadRadiusSquared < chunkLoadRadiusSquared)
@@ -38,26 +54,42 @@ void SLoadChunks::Run(SystemContext const& context)
 		chunkUnloadRadiusSquared = chunkLoadRadiusSquared;
 	}
 
-	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
 	{
 		CTransform& playerTransform = *transformStorage.Get(it);
-		
-		AABB2 loadChunksBounds;
-		loadChunksBounds.mins = playerTransform.m_pos - Vec2(world.m_worldSettings.m_chunkLoadRadius, world.m_worldSettings.m_chunkLoadRadius);
-		loadChunksBounds.maxs = playerTransform.m_pos + Vec2(world.m_worldSettings.m_chunkLoadRadius, world.m_worldSettings.m_chunkLoadRadius);
-		IntVec2 chunkCoordsAtMins = IntVec2((loadChunksBounds.mins * oneOverChunkWidth).GetFloor());
-		IntVec2 chunkCoordsAtMaxs = IntVec2((loadChunksBounds.maxs * oneOverChunkWidth).GetFloor());
 
-		for (int y = chunkCoordsAtMins.y; y <= chunkCoordsAtMaxs.y; ++y)
+		int loadedChunks = 0;
+		std::queue<IntVec2> openList;
+		std::unordered_set<IntVec2> closedList;
+
+		openList.push(world.GetChunkCoordsAtLocation(playerTransform.m_pos));
+
+		while (!openList.empty())
 		{
-			for (int x = chunkCoordsAtMins.x; x <= chunkCoordsAtMaxs.x; ++x)
+			IntVec2 top = openList.front();
+			openList.pop();
+			closedList.insert(top);
+
+			AABB2 chunkBounds = world.CalculateChunkBounds(top.x, top.y);
+			if (chunkBounds.GetCenter().GetDistanceSquaredTo(playerTransform.m_pos) < chunkLoadRadiusSquared)
 			{
-				AABB2 chunkBounds = world.CalculateChunkBounds(x, y);
-				float distanceSquared = chunkBounds.GetCenter().GetDistanceSquaredTo(playerTransform.m_pos);
-				if (distanceSquared <= chunkLoadRadiusSquared)
+				if (world.TryLoadChunk(top)) 
 				{
-					world.GetOrCreateActiveChunk(x, y);
+					loadedChunks++;
+					if (loadedChunks >= world.m_worldSettings.m_maxNumChunksToLoadPerFrame)
+					{
+						break;
+					}
+				}
+
+				IntVec2 neighbors[4] = { IntVec2(1, 0), IntVec2(-1, 0), IntVec2(0, 1), IntVec2(0, -1) };
+				for (IntVec2& neighbor : neighbors)
+				{
+					IntVec2 neighborWorld = top + neighbor;
+					if (closedList.insert(neighborWorld).second)
+					{
+						openList.push(neighborWorld);
+					}
 				}
 			}
 		}

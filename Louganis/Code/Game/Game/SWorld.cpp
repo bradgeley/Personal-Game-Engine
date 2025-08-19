@@ -15,7 +15,7 @@ void SWorld::Startup()
 
 	SpawnInfo playerInfo;
 	playerInfo.m_def = EntityDef::GetEntityDef("Player");
-	playerInfo.m_spawnPos = Vec2(0.f, 0.f);
+	playerInfo.m_spawnPos = Vec2(1.1f, 1.1f);
 	entityFactory.m_entitiesToSpawn.push_back(playerInfo);
 }
 

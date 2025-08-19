@@ -397,6 +397,18 @@ Chunk* SCWorld::GetOrCreateActiveChunk(int chunkX, int chunkY)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::TryLoadChunk(IntVec2 const& chunkCoords)
+{
+	if (GetActiveChunk(chunkCoords))
+	{
+		return false;
+	}
+	return GetOrCreateActiveChunk(chunkCoords.x, chunkCoords.y) != nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::RemoveActiveChunk(IntVec2 const& coords)
 {
 	auto it = m_activeChunks.find(coords);
