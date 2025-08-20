@@ -20,34 +20,26 @@ void SRenderEntities::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderEntities::Run(SystemContext const& context)
 {
-    auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 
     VertexBuffer vbo;
     AddVertsForDisc2D(vbo.GetMutableVerts(), Vec2(), 1, 128);
 
-    for (auto camIt = g_ecs->Iterate<CCamera>(context); camIt.IsValid(); ++camIt)
+    // Render all things (1 draw call per entity = bad, todo: write sprite geometry shader)
+    ModelConstants modelConstants;
+    for (auto renderIt = g_ecs->Iterate<CRender>(context); renderIt.IsValid(); ++renderIt)
     {
-        // For each camera
-        CCamera& camera = cameraStorage[camIt.m_currentIndex];
-        g_renderer->BeginCamera(&camera.m_camera);
+        const CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
+        modelConstants.m_modelMatrix.Reset();
+        //modelConstants.m_modelMatrix.AppendZRotation(render.m_orientation);
+        modelConstants.m_modelMatrix.AppendTranslation2D(render.m_pos);
+        modelConstants.m_modelMatrix.AppendUniformScale2D(render.m_scale);
+        render.m_tint.GetAsFloats(modelConstants.m_modelRgba);
 
-        // Render all things (1 draw call per entity = bad, todo: write sprite geometry shader)
-        ModelConstants modelConstants;
-        for (auto renderIt = g_ecs->Iterate<CRender>(context); renderIt.IsValid(); ++renderIt)
-        {
-            const CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
-            modelConstants.m_modelMatrix.Reset();
-            modelConstants.m_modelMatrix.AppendZRotation(render.m_orientation);
-            modelConstants.m_modelMatrix.AppendTranslation2D(render.m_pos);
-            modelConstants.m_modelMatrix.AppendUniformScale2D(render.m_scale);
-            render.m_tint.GetAsFloats(modelConstants.m_modelRgba);
-
-            g_renderer->SetModelConstants(modelConstants);
-            g_renderer->BindShader(nullptr);
-            g_renderer->BindTexture(nullptr);
-            g_renderer->DrawVertexBuffer(&vbo);
-        }
+        g_renderer->SetModelConstants(modelConstants);
+        g_renderer->BindShader(nullptr);
+        g_renderer->BindTexture(nullptr);
+        g_renderer->DrawVertexBuffer(&vbo);
     }
 }
 

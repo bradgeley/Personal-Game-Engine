@@ -23,5 +23,14 @@ void SInitView::Run(SystemContext const& context)
 {
     UNUSED(context)
 
+    auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
+
     g_renderer->ClearScreen(Rgba8::LightGray);
+
+    auto camIt = g_ecs->Iterate<CCamera>(context);
+    if (camIt.IsValid())
+    {
+        CCamera& camera = cameraStorage[camIt.m_currentIndex];
+        g_renderer->BeginCameraAndWindow(&camera.m_camera, g_window);
+    }
 }

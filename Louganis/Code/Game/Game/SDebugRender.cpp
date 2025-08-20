@@ -53,13 +53,6 @@ void SDebugRender::Run(SystemContext const& context)
     FlowField const& flowField = scFlowfield.m_toPlayerFlowField;
     Font* font = g_renderer->GetDefaultFont();
 
-    auto playerCameraIt = g_ecs->Iterate<CTransform, CPlayerController, CCamera>(context);
-    if (playerCameraIt.IsValid())
-    {
-        CCamera* cameraComp = cameraStorage.Get(playerCameraIt);
-        g_renderer->BeginCamera(&cameraComp->m_camera);
-    }
-
     if (g_window->HasFocus())
     {
         auto it = g_ecs->Iterate<CTransform, CPlayerController>(context);
