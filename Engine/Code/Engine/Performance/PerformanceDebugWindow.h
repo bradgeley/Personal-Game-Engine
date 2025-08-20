@@ -84,6 +84,7 @@ struct PerfFrameData
     double   m_engineFrameStartTime  = 0.f;
     double   m_engineFrameEndTime    = 0.f;
     double   m_actualDeltaSeconds    = 0.f;
+    bool     m_normalizeFrameTime    = true; // if true, the shown graph nodes will fill the available space
 };
 
 
@@ -138,6 +139,7 @@ private:
     PerfRow& GetOrCreatePerfRow(PerfSection& section, std::string const& rowName);
 
     void GetGraphOutline(AABB2& out_outline) const;
+    Vec2 GetItemFrameBounds() const;
 
 protected:
 

@@ -31,8 +31,8 @@ void SWorldCollision::Run(SystemContext const& context)
 
     for (auto it = g_ecs->Iterate<CTransform, CCollision, CRender>(context); it.IsValid(); ++it)
     {
-        CTransform& trans = transStorage[it.m_currentIndex];
-        CCollision& coll = *collStorage.Get(it.m_currentIndex);
+        CTransform& trans = transStorage[it];
+        CCollision& coll = *collStorage.Get(it);
 
         Vec2& pos = trans.m_pos;
         float& radius = coll.m_radius;

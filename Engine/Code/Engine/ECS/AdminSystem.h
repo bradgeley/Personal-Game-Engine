@@ -136,9 +136,12 @@ public:
 	CType* GetComponent(EntityID entityID = ENTITY_ID_SINGLETON) const;
 
 	template <typename CType>
+	inline CType* GetComponent(GroupIter const& it) const;
+
+	template <typename CType>
 	CType& GetSingleton() const;
 
-	BitMask GetComponentBit(HashCode componentTypeHash) const { return m_componentBitMasks.at(componentTypeHash); }
+	inline BitMask GetComponentBit(HashCode componentTypeHash) const { return m_componentBitMasks.at(componentTypeHash); }
 
 	template <typename CType>
 	TypedBaseStorage<CType>* GetStorage() const;
@@ -360,6 +363,15 @@ CType* AdminSystem::GetComponent(EntityID entityID /*= ENTITY_ID_SINGLETON*/) co
 	HashCode typeHash = typeid(CType).hash_code();
 	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeHash));
 	return typedStorage->Get(entityID);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename CType>
+inline CType* AdminSystem::GetComponent(GroupIter const& it) const
+{
+	return GetComponent<CType>(it.m_currentIndex);
 }
 
 

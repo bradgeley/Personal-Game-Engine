@@ -112,4 +112,5 @@ namespace MathUtils
 	int	  Sign(int val);
 	float SignF(float val);
 	bool  IsNearlyEqual(float val, float comparison, float epsilon = 0.000001f);
+	bool  IsNearlyZero(float val, float epsilon = 0.000001f);
 }

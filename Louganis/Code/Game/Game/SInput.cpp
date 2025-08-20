@@ -23,8 +23,7 @@ void SInput::Run(SystemContext const& context)
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
     for (auto it = g_ecs->Iterate<CMovement, CPlayerController>(context); it.IsValid(); ++it)
     {
-        EntityID& ent = it.m_currentIndex;
-        auto& move = moveStorage[ent];
+        CMovement& move = moveStorage[it];
 
         move.m_frameMoveDir = Vec2::ZeroVector;
         if (g_input->IsKeyDown('W'))
@@ -58,8 +57,7 @@ void SInput::Run(SystemContext const& context)
     auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
     for (auto it = g_ecs->Iterate<CCamera, CPlayerController>(context); it.IsValid(); ++it)
     {
-        EntityID& ent = it.m_currentIndex;
-        auto& camera = cameraStorage[ent];
+        CCamera& camera = cameraStorage[it];
 
         int wheelChange = g_input->GetMouseWheelChange();
         if (wheelChange != 0)

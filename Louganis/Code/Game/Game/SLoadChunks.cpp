@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2023
 #include "SLoadChunks.h"
+#include "SCLoadChunks.h"
 #include "SCWorld.h"
 #include "CPlayerController.h"
 #include "CTransform.h"
@@ -14,7 +15,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SLoadChunks::Startup()
 {
-	AddWriteDependencies<SCWorld>();
+	AddWriteDependencies<SCWorld, SCLoadChunks>();
 	AddReadDependencies<CTransform, CPlayerController>();
 
 	TileDef::LoadFromXML();
@@ -25,10 +26,20 @@ void SLoadChunks::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SLoadChunks::Run(SystemContext const& context)
 {
-	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-	WorldSettings const& worldSettings = world.m_worldSettings;
+	SCLoadChunks& scLoadChunks = g_ecs->GetSingleton<SCLoadChunks>();
 
+	scLoadChunks.m_numLoadedChunksThisFrame = 0;
+	if (!(scLoadChunks.m_unloadedChunksInRadius || world.GetPlayerChangedWorldCoordsThisFrame()))
+	{
+		// This loop needs to run if:
+		// A - chunk loading was completely finished
+		// B - player moved coords, so maybe we need to load more chunks
+		return;
+	}
+
+	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
+	WorldSettings const& worldSettings = world.m_worldSettings;
 	float chunkLoadRadius = worldSettings.m_chunkLoadRadius;
 	float chunkUnloadRadius = worldSettings.m_chunkUnloadRadius;
 	if (chunkUnloadRadius < chunkLoadRadius)
@@ -37,20 +48,23 @@ void SLoadChunks::Run(SystemContext const& context)
 		chunkUnloadRadius = chunkLoadRadius;
 	}
 
+	scLoadChunks.m_unloadedChunksInRadius = false;
 	for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
 	{
 		CTransform& playerTransform = *transformStorage.Get(it);
 
-		int numChunksLoaded = 0;
- 		world.ForEachChunkCoordsInCircle(playerTransform.m_pos, chunkLoadRadius, [&world, &numChunksLoaded](IntVec2 const& chunkCoords) 
+ 		world.ForEachChunkCoordsInCircle(playerTransform.m_pos, chunkLoadRadius, [&world, &scLoadChunks](IntVec2 const& chunkCoords)
 		{ 
+			bool shouldContinueLooping = true;
 			if (!world.IsChunkLoaded(chunkCoords))
 			{
 				world.LoadChunk(chunkCoords);
-				numChunksLoaded++;
-				return numChunksLoaded <= world.m_worldSettings.m_maxNumChunksToLoadPerFrame;
+				scLoadChunks.m_numLoadedChunksThisFrame++;
+				bool hitLimit = scLoadChunks.m_numLoadedChunksThisFrame >= world.m_worldSettings.m_maxNumChunksToLoadPerFrame;
+				scLoadChunks.m_unloadedChunksInRadius = hitLimit;
+				shouldContinueLooping = !hitLimit;
 			}
-			return true;
+			return shouldContinueLooping;
 		});
 	}
 }

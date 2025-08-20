@@ -38,7 +38,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			Vec2 worldTileCoords = chunkMinsTileCoords + Vec2(x, y);
 
 			int index = m_tileIDs.GetIndexForCoords(x, y);
-			float wallNoise = GetPerlinNoise2D(worldTileCoords.x, worldTileCoords.y, 100.f, 8, 0.5f, 2.f, true, worldSettings.m_worldSeed);
+			float wallNoise = GetPerlinNoise2D(worldTileCoords.x, worldTileCoords.y, 100.f, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed));
 			if (wallNoise > 0.f)
 			{
 				m_tileIDs.Set(index, (uint8_t) wallTileDef);
@@ -103,9 +103,9 @@ bool Chunk::IsTileSolid(IntVec2 const& localTileCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Chunk::IsTileSolid(int tileIndex) const
+bool Chunk::IsTileSolid(int localTileIndex) const
 {
-	uint8_t tileID = m_tileIDs.Get(tileIndex);
+	uint8_t tileID = m_tileIDs.Get(localTileIndex);
 	TileDef const* tileDef = TileDef::GetTileDef(tileID);
 	if (tileDef)
 	{
@@ -117,9 +117,9 @@ bool Chunk::IsTileSolid(int tileIndex) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-uint8_t Chunk::GetCost(int tileIndex) const
+uint8_t Chunk::GetCost(int localTileIndex) const
 {
-	uint8_t tileID = m_tileIDs.Get(tileIndex);
+	uint8_t tileID = m_tileIDs.Get(localTileIndex);
 	TileDef const* tileDef = TileDef::GetTileDef(tileID);
 	if (tileDef)
 	{

@@ -117,7 +117,7 @@ float MathUtils::GetLengthSquared2D(const Vec2& vec)
 void MathUtils::NormalizeVector2D(Vec2& vec)
 {
     float length = GetLength2D(vec);
-    if (length != 0.f)
+    if (!IsNearlyZero(length))
     {
         vec /= length;
     }
@@ -372,7 +372,12 @@ float MathUtils::SignF(float val)
     return -1.f;
 }
 
-bool MathUtils::IsNearlyEqual(float val, float comparison, float epsilon)
+bool MathUtils::IsNearlyEqual(float val, float comparison, float epsilon /*= 0.000001f*/)
 {
     return MathUtils::AbsF(val - comparison) <= epsilon;
+}
+
+bool MathUtils::IsNearlyZero(float val, float epsilon /*= 0.000001f*/)
+{
+    return MathUtils::AbsF(val) <= epsilon;
 }

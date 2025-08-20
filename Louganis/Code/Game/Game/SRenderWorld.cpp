@@ -53,7 +53,7 @@ void SRenderWorld::Run(SystemContext const& context)
     auto cameraIt = g_ecs->Iterate<CCamera>(context);
     if (cameraIt.IsValid())
     {
-        CCamera* cameraComponent = g_ecs->GetComponent<CCamera>(cameraIt.m_currentIndex);
+        CCamera* cameraComponent = g_ecs->GetComponent<CCamera>(cameraIt);
         AABB2 cameraOrthoBounds2D = cameraComponent->m_camera.GetOrthoBounds2D();
         cameraOrthoBounds2D.Translate(cameraComponent->m_camera.GetPosition2D());
 

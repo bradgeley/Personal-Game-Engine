@@ -2,6 +2,7 @@
 #include "SFlowField.h"
 #include "CTransform.h"
 #include "SCWorld.h"
+#include "SCLoadChunks.h"
 #include "SCFlowField.h"
 #include "CPlayerController.h"
 #include "FlowFieldChunk.h"
@@ -24,7 +25,7 @@ IntVec2 neighborOffsets[4] = { IntVec2(1,  0),
 //----------------------------------------------------------------------------------------------------------------------
 void SFlowField::Startup()
 {
-    AddReadDependencies<CTransform, SCWorld>();
+    AddReadDependencies<CTransform, SCWorld, SCLoadChunks>();
     AddWriteDependencies<SCFlowField>();
 }
 
@@ -45,22 +46,20 @@ void SFlowField::Run(SystemContext const& context)
     }
 
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-    WorldCoords playerWorldCoords = world.GetWorldCoordsAtLocation(firstPlayerLocation);
-    
-    bool playerChangedCoords = false;
-    if (playerWorldCoords != scFlowField.m_lastKnownPlayerWorldCoords)
+    SCLoadChunks& scLoadChunks = g_ecs->GetSingleton<SCLoadChunks>();
+    bool playerChangedCoords = world.GetPlayerChangedWorldCoordsThisFrame();
+
+    int chunksCreated = 0;
+    if (playerChangedCoords || scLoadChunks.m_numLoadedChunksThisFrame > 0)
     {
-        scFlowField.m_lastKnownPlayerWorldCoords = playerWorldCoords;
-        playerChangedCoords = true;
+        DestroyStaleFlowFieldChunks(firstPlayerLocation);
+        chunksCreated = CreateMissingFlowFieldChunks(firstPlayerLocation);
     }
 
-    DestroyStaleFlowFieldChunks(firstPlayerLocation);
-    int numCreated = CreateMissingFlowFieldChunks(firstPlayerLocation);
-
-    if (numCreated > 0 || playerChangedCoords)
+    if (playerChangedCoords || chunksCreated > 0)
     {
         flowField.SoftReset();
-        GenerateFlow(flowField, playerWorldCoords);
+        GenerateFlow(flowField, world.m_lastKnownPlayerWorldCoords);
     }
 }
 
@@ -292,8 +291,14 @@ void SFlowField::GenerateGradient(FlowField& flowField)
         FlowGenerationCoords currentWorldCoords = flowField.m_openList.top();
         flowField.m_openList.pop();
 
-        FlowFieldChunk* currentChunk = flowField.m_activeFlowFieldChunks.at(currentWorldCoords.m_chunkCoords);
+        FlowFieldChunk* currentChunk = flowField.GetActiveChunk(currentWorldCoords.m_chunkCoords);
+        if (!currentChunk)
+        {
+            continue;
+        }
+
         int currentIndex = currentChunk->m_gradient.GetIndexForCoords(currentWorldCoords.m_localTileCoords);
+
         if (currentChunk->m_consideredCells.Get(currentIndex))
         {
             continue;

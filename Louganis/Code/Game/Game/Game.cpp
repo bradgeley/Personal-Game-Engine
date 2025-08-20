@@ -180,6 +180,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCFlowField>();
     g_ecs->RegisterComponentSingleton<SCDebug>();
     g_ecs->RegisterComponentSingleton<SCRender>();
+    g_ecs->RegisterComponentSingleton<SCLoadChunks>();
 
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();
@@ -190,7 +191,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLoadChunks>((int) FramePhase::PrePhysics);
-    g_ecs->RegisterSystem<SRemoveChunks>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SUnloadChunks>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SFlowField>((int) FramePhase::PrePhysics);
 
     // Physics

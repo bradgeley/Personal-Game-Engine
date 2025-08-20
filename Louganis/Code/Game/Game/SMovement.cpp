@@ -19,8 +19,7 @@ void SMovement::Run(SystemContext const& context)
 
     for (auto it = g_ecs->Iterate<CMovement>(context); it.IsValid(); ++it)
     {
-        EntityID& ent = it.m_currentIndex;
-        CMovement& move = moveStorage[ent];
+        CMovement& move = moveStorage[it];
 
         move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * context.m_deltaSeconds;
         if (move.m_isSprinting)

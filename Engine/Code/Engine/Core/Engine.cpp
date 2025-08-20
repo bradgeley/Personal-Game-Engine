@@ -55,6 +55,9 @@ void Engine::BeginFrame()
 {
     #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
         s_frameData.m_engineFrameStartTime = GetCurrentTimeSeconds();
+    #endif
+
+    #if defined(PERF_WINDOW_DISPLAY_ENGINE_SECTION)
         PerfWindowScopedTimer scopedTimer("Engine","BeginFrame");
     #endif
 
@@ -74,6 +77,9 @@ void Engine::Update(float deltaSeconds)
 {
     #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
         s_frameData.m_actualDeltaSeconds = deltaSeconds;
+    #endif
+
+    #if defined(PERF_WINDOW_DISPLAY_ENGINE_SECTION)
         PerfWindowScopedTimer scopedTimer("Engine", "Update");
     #endif
 
@@ -91,7 +97,7 @@ void Engine::Update(float deltaSeconds)
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::Render() const
 {
-    #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
+    #if defined(PERF_WINDOW_DISPLAY_ENGINE_SECTION)
         PerfWindowScopedTimer scopedTimer("Engine", "Render");
     #endif
 
@@ -111,7 +117,7 @@ void Engine::Render() const
 void Engine::EndFrame()
 {
     {
-        #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
+        #if defined(PERF_WINDOW_DISPLAY_ENGINE_SECTION)
             PerfWindowScopedTimer scopedTimer("Engine", "EndFrame");
         #endif
 

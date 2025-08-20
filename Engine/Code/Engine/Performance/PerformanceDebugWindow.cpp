@@ -23,7 +23,7 @@
 constexpr int WINDOW_RESOLUTION_X = 750;
 constexpr int WINDOW_RESOLUTION_Y = 750;
 constexpr float GRAPH_EDGE_PAD = 25.f;
-constexpr float GRAPH_LEFT_EDGE_PAD = 125.f;
+constexpr float GRAPH_LEFT_EDGE_PAD = 75.f;
 constexpr float GRAPH_OUTLINE_THICKNESS = 1.f;
 constexpr float GRAPH_SECTION_OUTLINE_THICKNESS = 1.f;
 constexpr float GRAPH_ROW_OUTLINE_THICKNESS = 0.25f;
@@ -267,13 +267,20 @@ void PerformanceDebugWindow::EngineFrameCompleted()
 
     g_renderer->DrawVertexBuffer(&m_untexturedVBO);
 
+    // Title
     m_textVBO.ClearVerts();
     Font* font = g_renderer->GetDefaultFont();
     font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
 
+    // FPS Counter
     float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
-    std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Seconds(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
+    std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
     font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
+
+    // X-Axis Frame Time
+    Vec2 frameBounds = GetItemFrameBounds();
+    font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.mins, Vec2(1.f, -1.f), FPS_COUNTER_FONT_SIZE, "0", Rgba8::Black);
+    font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.GetBottomRight(), Vec2(-1.f, -1.f), FPS_COUNTER_FONT_SIZE, StringUtils::StringF("%0.3fms", (frameBounds.y - frameBounds.x) * 1000.f), Rgba8::Black);
 
     for (PerfSection const& section : m_perfSections)
     {
@@ -442,11 +449,13 @@ void PerformanceDebugWindow::AddUntexturedVertsForRow(VertexBuffer& untexturedVe
     rowOutline.mins = Vec2(sectionOutline.mins.x, sectionOutline.mins.y + sectionOutline.GetHeight() * rowMinsYFraction);
     rowOutline.maxs = Vec2(graphOutline.maxs.x, rowOutline.mins.y + rowHeight);
 
+    Vec2 allItemTimeBounds = GetItemFrameBounds();
+
     // Add items
     for (PerfItemData const& item : row.m_perfItemData)
     {
-        float itemStartTimeFraction = (float) MathUtils::GetFractionWithin(item.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
-        float itemEndTimeFraction = (float) MathUtils::GetFractionWithin(item.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        float itemStartTimeFraction = (float) MathUtils::GetFractionWithin(item.m_startTime, allItemTimeBounds.x, allItemTimeBounds.y);
+        float itemEndTimeFraction = (float) MathUtils::GetFractionWithin(item.m_endTime, allItemTimeBounds.x, allItemTimeBounds.y);
         AABB2 itemOutline;
         itemOutline.mins.x = rowOutline.mins.x + rowOutline.GetWidth() * itemStartTimeFraction;
         itemOutline.mins.y = rowOutline.mins.y;
@@ -484,11 +493,13 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
     rowOutline.mins = Vec2(sectionOutline.mins.x, sectionOutline.mins.y + sectionOutline.GetHeight() * rowMinsYFraction);
     rowOutline.maxs = Vec2(graphOutline.maxs.x, rowOutline.mins.y + rowHeight);
 
+    Vec2 allItemTimeBounds = GetItemFrameBounds();
+
     // Add items
     for (PerfItemData const& item : row.m_perfItemData)
     {
-        float itemStartTimeFraction = (float) MathUtils::GetFractionWithin(item.m_startTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
-        float itemEndTimeFraction = (float) MathUtils::GetFractionWithin(item.m_endTime, m_perfFrameData.m_engineFrameStartTime, m_perfFrameData.m_engineFrameEndTime);
+        float itemStartTimeFraction = (float) MathUtils::GetFractionWithin(item.m_startTime, allItemTimeBounds.x, allItemTimeBounds.y);
+        float itemEndTimeFraction = (float) MathUtils::GetFractionWithin(item.m_endTime, allItemTimeBounds.x, allItemTimeBounds.y);
         AABB2 itemOutline;
         itemOutline.mins.x = rowOutline.mins.x + rowOutline.GetWidth() * itemStartTimeFraction;
         itemOutline.mins.y = rowOutline.mins.y;
@@ -596,4 +607,26 @@ void PerformanceDebugWindow::GetGraphOutline(AABB2& out_outline) const
 {
     IntVec2 renderResolution = m_window->GetRenderResolution();
     out_outline = AABB2(GRAPH_LEFT_EDGE_PAD, GRAPH_EDGE_PAD, renderResolution.x - GRAPH_EDGE_PAD, renderResolution.y - GRAPH_EDGE_PAD);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 PerformanceDebugWindow::GetItemFrameBounds() const
+{
+    Vec2 bounds = Vec2(FLT_MAX, 0.f);
+    float& earliestStartTime = bounds.x;
+    float& latestEndTime = bounds.y;
+    for (auto& section : m_perfSections)
+    {
+        for (auto& row : section.m_perfRows)
+        {
+            for (auto& item : row.m_perfItemData)
+            {
+                earliestStartTime = MathUtils::MinF(earliestStartTime, (float) item.m_startTime);
+                latestEndTime = MathUtils::MaxF(latestEndTime, (float) item.m_endTime);
+            }
+        }
+    }
+    return bounds;
 }

@@ -53,7 +53,8 @@ public:
 	virtual CType*			Add(EntityID eid, CType const& copy)	= 0;
 
 	// Not virtual on purpose for performance reasons - this is the most called function in the ECS
-	CType& operator [](EntityID id) { return *Get(id); } 
+	inline CType& operator [](EntityID id) { return *Get(id); }
+	inline CType& operator [](GroupIter const& it) { return *Get(it.m_currentIndex); }
 };
 
 
@@ -113,7 +114,8 @@ public:
 		}
 	}
 
-	CType& operator [](EntityID id) { return m_data[id]; }
+	inline CType& operator [](EntityID id) { return m_data[id]; }
+	inline CType& operator [](GroupIter const& it) { return m_data[it.m_currentIndex]; }
 
 public:
 
@@ -198,7 +200,8 @@ public:
 		m_data.clear();
 	}
 
-	CType& operator [](EntityID id) { return m_data[id]; }
+	inline CType& operator [](EntityID id) { return m_data[id]; }
+	inline CType& operator [](GroupIter const& it) { return m_data[it.m_currentIndex]; }
 
 public:
 	
@@ -260,7 +263,8 @@ public:
 		// not relevant to singleton
 	}
 	
-	CType& operator [](EntityID [[maybe_unused]] id) { return m_data; }
+	inline CType& operator [](EntityID [[maybe_unused]] id) { return m_data; }
+	inline CType& operator [](GroupIter const& [[maybe_unused]] it) { return m_data; }
 
 public:
 
@@ -323,7 +327,8 @@ public:
 		m_tags.SetAll(false);
 	}
 
-	bool operator[](EntityID id) { return m_tags.Get(id); }
+	inline bool operator[](EntityID id) { return m_tags.Get(id); }
+	inline bool operator[](GroupIter const& it) { return m_tags.Get(it.m_currentIndex); }
 
 public:
 	

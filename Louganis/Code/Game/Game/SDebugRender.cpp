@@ -18,7 +18,6 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Font.h"
-#include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Performance/ScopedTimer.h"

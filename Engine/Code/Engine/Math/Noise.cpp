@@ -40,6 +40,36 @@ unsigned int GetRawNoise2D(int x, int y, int seed)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+size_t GetRawNoise1D_64(int x, size_t seed)
+{
+	size_t bits = static_cast<size_t>(x);
+
+	#if defined(_M_X64) || defined(_WIN64)
+		size_t RANDOM_BITS_1 = 16069955140179554870;
+		size_t RANDOM_BITS_2 = 12176651035439328948;
+		size_t RANDOM_BITS_3 = 15364385324645250847;
+	#else
+		size_t RANDOM_BITS_1 = 2440335539;
+		size_t RANDOM_BITS_2 = 3143968388;
+		size_t RANDOM_BITS_3 = 3939586176;
+	#endif
+
+	// Randomly generated bits
+
+	bits *= RANDOM_BITS_1;
+	bits ^= bits >> 7;
+	bits += seed;
+	bits += RANDOM_BITS_2;
+	bits ^= bits >> 11;
+	bits *= RANDOM_BITS_3;
+	bits ^= bits >> 17;
+
+	return bits;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float GetNoiseZeroToOne1D(int x, int seed)
 {
 	unsigned int rawNoise = GetRawNoise1D(x, seed);

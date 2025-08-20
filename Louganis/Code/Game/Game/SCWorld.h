@@ -51,6 +51,7 @@ public:
     
     Chunk* GetOrCreateActiveChunk(int chunkX, int chunkY);
     Chunk* LoadChunk(IntVec2 const& chunkCoords);
+    bool UnloadChunk(Chunk* chunk);
     bool IsChunkLoaded(IntVec2 const& chunkCoords) const;
     bool RemoveActiveChunk(IntVec2 const& coords);
     void RemoveActiveChunk(int chunkX, int chunkY);
@@ -63,11 +64,17 @@ public:
     float GetChunkUnloadRadius() const;
     float GetChunkWidth() const;
 
+    bool GetPlayerChangedWorldCoordsThisFrame() const;
+
 public:
 
     WorldSettings m_worldSettings;
 
     // lifetime owned by SWorld
     std::map<IntVec2, Chunk*> m_activeChunks;
+
+    // Tracks if the player has moved
+    WorldCoords m_lastKnownPlayerWorldCoords = WorldCoords::s_invalidWorldCoords;
+    bool m_playerChangedWorldCoordsThisFrame = true;
 };
 

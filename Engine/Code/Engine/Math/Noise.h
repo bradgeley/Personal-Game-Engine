@@ -16,6 +16,7 @@
 //
 unsigned int GetRawNoise1D(int x, int seed);
 unsigned int GetRawNoise2D(int x, int y, int seed);
+size_t GetRawNoise1D_64(int x, size_t seed);
 
 //----------------------------------------------------------------------------------------------------------------------
 // Noise

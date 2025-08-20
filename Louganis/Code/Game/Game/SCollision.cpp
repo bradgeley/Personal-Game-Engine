@@ -2,7 +2,6 @@
 #include "SCollision.h"
 #include "CCollision.h"
 #include "CTransform.h"
-#include "Engine/Input/InputSystem.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Math/MathUtils.h"
 
@@ -30,8 +29,8 @@ void SCollision::Run(SystemContext const& context)
 
     for (/*init above*/; itA.IsValid(); ++itA)
     {
-        CTransform& transA = transStorage[itA.m_currentIndex];
-        CCollision& collA = *collStorage.Get(itA.m_currentIndex);
+        CTransform& transA = transStorage[itA];
+        CCollision& collA = *collStorage.Get(itA);
 
         Vec2& posA = transA.m_pos;
         float& radiusA = collA.m_radius;
@@ -42,8 +41,8 @@ void SCollision::Run(SystemContext const& context)
 
         for (/*init above*/; itB.IsValid(); ++itB)
         {
-            CTransform& transB = transStorage[itB.m_currentIndex];
-            CCollision& collB = *collStorage.Get(itB.m_currentIndex);
+            CTransform& transB = transStorage[itB];
+            CCollision& collB = *collStorage.Get(itB);
 
             Vec2& posB = transB.m_pos;
             float& radiusB = collB.m_radius;

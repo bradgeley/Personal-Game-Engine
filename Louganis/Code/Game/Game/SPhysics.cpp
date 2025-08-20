@@ -20,7 +20,6 @@
 void SPhysics::Startup()
 {
     AddWriteDependencies<CMovement, CTransform>();
-    AddWriteDependencies<SCDebug>();
     AddReadDependencies<CCollision, SCWorld>();
 
     g_eventSystem->SubscribeMethod("DebugRenderPreventativePhysics", this, &SPhysics::DebugRenderPreventativePhysics);
@@ -35,14 +34,12 @@ void SPhysics::Run(SystemContext const& context)
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
     auto& scWorld = g_ecs->GetSingleton<SCWorld>();
-    auto& scDebug = g_ecs->GetSingleton<SCDebug>();
 
     for (auto it = g_ecs->Iterate<CMovement, CTransform>(context); it.IsValid(); ++it)
     {
-        EntityID& ent = it.m_currentIndex;
-        CMovement& move = moveStorage[ent];
-        CTransform& transform = transStorage[ent];
-        const CCollision& collision = collisionStorage[ent];
+        CMovement& move = moveStorage[it];
+        CTransform& transform = transStorage[it];
+        const CCollision& collision = collisionStorage[it];
         const float& radius = collision.m_radius;
 
         // This is how much movement we want to do this frame, total
@@ -61,7 +58,6 @@ void SPhysics::Run(SystemContext const& context)
 
             WorldDiscCastResult result;
             result = DiscCast(scWorld, discCast);
-            AddVertsForDiscCast(scDebug.m_frameVerts, result);
 
             if (result.m_immediateHit)
             {

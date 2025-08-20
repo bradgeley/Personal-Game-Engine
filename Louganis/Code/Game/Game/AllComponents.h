@@ -31,4 +31,5 @@
 #include "SCEntityFactory.h"
 #include "SCFlowField.h"
 #include "SCWorld.h"
+#include "SCLoadChunks.h"
 #include "SCRender.h"

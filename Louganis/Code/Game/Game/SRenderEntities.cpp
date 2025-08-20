@@ -29,7 +29,7 @@ void SRenderEntities::Run(SystemContext const& context)
     ModelConstants modelConstants;
     for (auto renderIt = g_ecs->Iterate<CRender>(context); renderIt.IsValid(); ++renderIt)
     {
-        const CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
+        const CRender& render = *renderStorage.Get(renderIt);
         modelConstants.m_modelMatrix.Reset();
         //modelConstants.m_modelMatrix.AppendZRotation(render.m_orientation);
         modelConstants.m_modelMatrix.AppendTranslation2D(render.m_pos);
@@ -41,6 +41,8 @@ void SRenderEntities::Run(SystemContext const& context)
         g_renderer->BindTexture(nullptr);
         g_renderer->DrawVertexBuffer(&vbo);
     }
+
+    g_renderer->SetModelConstants(ModelConstants());
 }
 
 

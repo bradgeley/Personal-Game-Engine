@@ -5,11 +5,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SRemoveChunks : public System
+class SUnloadChunks : public System
 {
 public:
 
-    SRemoveChunks(std::string const& name = "RemoveChunks", Rgba8 const& debugTint = Rgba8::DarkRed) : System(name, debugTint) {};
+    SUnloadChunks(std::string const& name = "UnloadChunks", Rgba8 const& debugTint = Rgba8::DarkRed) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

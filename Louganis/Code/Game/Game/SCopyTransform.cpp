@@ -27,8 +27,8 @@ void SCopyTransform::Run(SystemContext const& context)
 
     for (auto renderIt = g_ecs->Iterate<CRender, CTransform>(context); renderIt.IsValid(); ++renderIt)
     {
-        CRender& render = *renderStorage.Get(renderIt.m_currentIndex);
-        CTransform& transform = *transStorage.Get(renderIt.m_currentIndex);
+        CRender& render = *renderStorage.Get(renderIt);
+        CTransform& transform = *transStorage.Get(renderIt);
 
         render.m_pos = transform.m_pos;
         render.m_orientation = transform.m_orientation;
