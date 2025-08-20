@@ -28,12 +28,17 @@ void SRemoveChunks::Run(SystemContext const& context)
 	float unloadRadius = world.GetChunkUnloadRadius();
 	float unloadRadiusSquared = unloadRadius * unloadRadius;
 	
-	std::vector<IntVec2> chunksToRemove;
+	static std::vector<IntVec2> chunksToRemove;
+	chunksToRemove.clear();
 	chunksToRemove.reserve(world.m_activeChunks.size());
 
 	for (auto& chunkIt : world.m_activeChunks)
 	{
 		IntVec2 const& chunkCoords = chunkIt.first;
+		if (!world.GetActiveChunk(chunkCoords))
+		{
+			continue;
+		}
 
 		AABB2 chunkBounds = world.CalculateChunkBounds(chunkCoords.x, chunkCoords.y);
 
@@ -45,11 +50,8 @@ void SRemoveChunks::Run(SystemContext const& context)
 
 			if (distanceSquared < unloadRadiusSquared)
 			{
-				if (world.GetActiveChunk(chunkCoords))
-				{
-					isChunkInRangeOfAtLeastOnePlayer = true;
-					break;
-				}
+				isChunkInRangeOfAtLeastOnePlayer = true;
+				break;
 			}
 		}
 

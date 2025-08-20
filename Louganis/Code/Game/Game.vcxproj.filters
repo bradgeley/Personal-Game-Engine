@@ -228,6 +228,9 @@
     <ClInclude Include="Game\SPhysics.h">
       <Filter>Systems</Filter>
     </ClInclude>
+    <ClInclude Include="Game\SCRender.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">

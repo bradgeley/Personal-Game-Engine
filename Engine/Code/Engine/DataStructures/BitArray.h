@@ -31,8 +31,8 @@ public:
 
 	static int Size();
 	bool Get(int index) const;
-	bool Set(int index);
-	bool Unset(int index);
+	void Set(int index);
+	void Unset(int index);
 	bool Flip(int index);
 	
 	void SetAll(bool isSet);
@@ -91,20 +91,20 @@ bool BitArray<t_size>::Get(int index) const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <unsigned int t_size>
-bool BitArray<t_size>::Set(int index)
+void BitArray<t_size>::Set(int index)
 {
 	int byteIndex = GetRowNumber(index);
-	return m_data[byteIndex] |= GetBitMask(index);
+	m_data[byteIndex] |= GetBitMask(index);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 template <unsigned int t_size>
-bool BitArray<t_size>::Unset(int index)
+void BitArray<t_size>::Unset(int index)
 {
 	int byteIndex = GetRowNumber(index);
-	return m_data[byteIndex] &= ~GetBitMask(index);
+	m_data[byteIndex] &= ~GetBitMask(index);
 }
 
 
@@ -116,11 +116,13 @@ bool BitArray<t_size>::Flip(int index)
 	bool isBitSet = Get(index);
 	if (isBitSet)
 	{
-		return Unset(index);
+		Unset(index);
+		return false;
 	}
 	else
 	{
-		return Set(index);
+		Set(index);
+		return true;
 	}
 }
 

@@ -179,6 +179,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
     g_ecs->RegisterComponentSingleton<SCFlowField>();
     g_ecs->RegisterComponentSingleton<SCDebug>();
+    g_ecs->RegisterComponentSingleton<SCRender>();
 
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();

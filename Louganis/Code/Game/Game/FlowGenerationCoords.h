@@ -12,6 +12,7 @@ class FlowGenerationCoords : public WorldCoords
 public:
 
 	FlowGenerationCoords(IntVec2 const& chunkCoords, IntVec2 const& localTileCoords, float distance);
+	FlowGenerationCoords(WorldCoords const& worldCoords, float distance);
 
 public:
 

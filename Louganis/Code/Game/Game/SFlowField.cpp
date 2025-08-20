@@ -84,26 +84,27 @@ int SFlowField::CreateMissingFlowFieldChunks(Vec2 const& anchorLocation)
 
     int numCreated = 0;
 
-    float flowFieldGenerationRadiusSquared = world.m_worldSettings.m_flowFieldGenerationRadius * world.m_worldSettings.m_flowFieldGenerationRadius;
+    float flowFieldGenerationRadius = world.m_worldSettings.m_flowFieldGenerationRadius;
+    float flowFieldGenerationRadiusSquared = flowFieldGenerationRadius * flowFieldGenerationRadius;
 
-    // Create flow field chunks for all chunks in the world
-    for (auto it : world.m_activeChunks)
+    AABB2 flowFieldBounds = AABB2(anchorLocation - Vec2(flowFieldGenerationRadius, flowFieldGenerationRadius), anchorLocation + Vec2(flowFieldGenerationRadius, flowFieldGenerationRadius));
+    world.ForEachChunkOverlappingAABB(flowFieldBounds, [&flowField, &world, flowFieldGenerationRadiusSquared, &numCreated, &anchorLocation](Chunk& chunk)
     {
-        Chunk* chunk = it.second;
-        FlowFieldChunk* flowFieldChunk = flowField.GetActiveChunk(chunk->m_chunkCoords);
+        FlowFieldChunk* flowFieldChunk = flowField.GetActiveChunk(chunk.m_chunkCoords);
         if (!flowFieldChunk)
         {
-            float distanceSquared = chunk->m_chunkBounds.GetCenter().GetDistanceSquaredTo(anchorLocation);
-
+            float distanceSquared = chunk.m_chunkBounds.GetCenter().GetDistanceSquaredTo(anchorLocation);
+            
             if (distanceSquared < flowFieldGenerationRadiusSquared)
             {
-                flowFieldChunk = new FlowFieldChunk(chunk, &world);
+                flowFieldChunk = new FlowFieldChunk(&chunk, &world);
                 flowFieldChunk->GenerateCostField();
-                flowField.m_activeFlowFieldChunks.emplace(chunk->m_chunkCoords, flowFieldChunk);
+                flowField.m_activeFlowFieldChunks.emplace(chunk.m_chunkCoords, flowFieldChunk);
                 numCreated++;
             }
         }
-    }
+        return true;
+    });
 
     return numCreated;
 }
@@ -119,8 +120,10 @@ int SFlowField::DestroyStaleFlowFieldChunks(Vec2 const& anchorLocation)
     float flowFieldGenerationRadiusSquared = world.m_worldSettings.m_flowFieldGenerationRadius * world.m_worldSettings.m_flowFieldGenerationRadius;
 
     // Destroy flow field chunks that no longer have a valid chunk
-    std::vector<IntVec2> coordsToRemove;
-    coordsToRemove.reserve(16);
+    static std::vector<IntVec2> coordsToRemove;
+    coordsToRemove.clear();
+    coordsToRemove.reserve(flowField.m_activeFlowFieldChunks.size());
+
     for (auto it : flowField.m_activeFlowFieldChunks)
     {
         FlowFieldChunk*& flowFieldChunk = it.second;
@@ -162,7 +165,10 @@ void SFlowField::GenerateFlow(FlowField& flowField, WorldCoords const& destinati
         g_devConsole->LogError("Failed to seed flow field");
     }
 
+    flowField.m_openList.emplace(destination, 0.f);
     GenerateDistanceField(flowField);
+
+    flowField.m_openList.emplace(destination, 0.f);
     GenerateGradient(flowField);
 }
 
@@ -174,27 +180,13 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
     ScopedTimer timer("- Generate Distance Field");
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 
-    {
-        for (auto& chunkPair : flowField.m_activeFlowFieldChunks)
-        {
-            FlowFieldChunk*& chunk = chunkPair.second;
-            for (int i = 0; i < chunk->m_distanceField.Count(); ++i)
-            {
-                WorldCoords currentWorldCoords(chunk->GetChunkCoords(), chunk->m_distanceField.GetCoordsForIndex(i));
-                if (chunk->m_distanceField.Get(i) == 0.f)
-                {
-                    flowField.m_openList.push({ chunk->GetChunkCoords(), currentWorldCoords.m_localTileCoords, 0.f });
-                }
-            }
-        }
-    }
-
     while (!flowField.m_openList.empty())
     {
         FlowGenerationCoords flowGenCoords = flowField.m_openList.top();
+        flowField.m_openList.pop();
+
         IntVec2 const& currentChunkCoords = flowGenCoords.m_chunkCoords;
         IntVec2 const& currentLocalTileCoords = flowGenCoords.m_localTileCoords;
-        flowField.m_openList.pop();
 
         FlowFieldChunk* currentChunk = flowField.GetActiveChunk(currentChunkCoords);
         if (!currentChunk)
@@ -222,8 +214,8 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
             {
                 continue;
             }
-            int neighborLocalTileIndex = neighborChunk->m_gradient.GetIndexForCoords(neighborWorldCoords.m_localTileCoords);
-            if (neighborChunk->m_consideredCells.Get(neighborLocalTileIndex) == true)
+            int neighborLocalTileIndex = neighborChunk->m_distanceField.GetIndexForCoords(neighborWorldCoords.m_localTileCoords);
+            if (neighborChunk->m_consideredCells.Get(neighborLocalTileIndex))
             {
                 continue;
             }
@@ -293,30 +285,12 @@ void SFlowField::GenerateGradient(FlowField& flowField)
     ScopedTimer timer("- Generate Gradient");
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 
-    for (auto& chunkPair : flowField.m_activeFlowFieldChunks)
-    {
-        FlowFieldChunk*& chunk = chunkPair.second;
-        for (int i = 0; i < chunk->m_distanceField.Count(); ++i)
-        {
-            WorldCoords currentWorldCoords(chunk->GetChunkCoords(), chunk->m_distanceField.GetCoordsForIndex(i));
-            if (chunk->m_distanceField.Get(i) == 0.f)
-            {
-                flowField.m_openList.push({ chunk->GetChunkCoords(), currentWorldCoords.m_localTileCoords, 0.f });
-            }
-            else if (chunk->m_distanceField.IsOnEdge(currentWorldCoords.m_localTileCoords))
-            {
-                flowField.m_openList.push({ currentWorldCoords.m_chunkCoords, currentWorldCoords.m_localTileCoords, chunk->m_distanceField.Get(currentWorldCoords.m_localTileCoords) });
-            }
-        }
-    }
-
     flowField.ResetConsideredCells();
 
     while (!flowField.m_openList.empty())
     {
         FlowGenerationCoords currentWorldCoords = flowField.m_openList.top();
         flowField.m_openList.pop();
-
 
         FlowFieldChunk* currentChunk = flowField.m_activeFlowFieldChunks.at(currentWorldCoords.m_chunkCoords);
         int currentIndex = currentChunk->m_gradient.GetIndexForCoords(currentWorldCoords.m_localTileCoords);
@@ -333,7 +307,6 @@ void SFlowField::GenerateGradient(FlowField& flowField)
         float currentTileDistance = currentChunk->m_distanceField.Get(currentWorldCoords.m_localTileCoords);
 
         Vec2 gradient = Vec2::ZeroVector;
-        Vec2 numNeighborsConsideredInDir; // if we reached a tile edge, there's only 1 neighbor to look at for the tile, so divide by 1 instead of 2
         for (IntVec2 const& neighborOffset : neighborOffsets)
         {
             WorldCoords neighborWorldCoords = world.GetWorldCoordsAtOffset(currentWorldCoords, neighborOffset);
@@ -356,12 +329,10 @@ void SFlowField::GenerateGradient(FlowField& flowField)
             if (neighborOffset.x != 0.f)
             {
                 gradient.x += dDist * MathUtils::Sign(neighborOffset.x);
-                numNeighborsConsideredInDir.x += 1.f;
             }
             else
             {
                 gradient.y += dDist * MathUtils::Sign(neighborOffset.y);
-                numNeighborsConsideredInDir.y += 1.f;
             }
 
             int neighborIndex = neighborChunk->m_gradient.GetIndexForCoords(neighborWorldCoords.m_localTileCoords);

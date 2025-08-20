@@ -7,22 +7,7 @@
 #include "Chunk.h"
 #include "TileDef.h"
 #include "Engine/Debug/DevConsole.h"
-#include <unordered_set>
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-namespace std
-{
-	template<>
-	struct hash<IntVec2>
-	{
-		size_t operator()(const IntVec2& v) const noexcept
-		{
-			return (std::hash<int>()(v.x) << 1) ^ std::hash<int>()(v.y);
-		}
-	};
-}
+#include "Engine/Performance/ScopedTimer.h"
 
 
 
@@ -44,55 +29,29 @@ void SLoadChunks::Run(SystemContext const& context)
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	WorldSettings const& worldSettings = world.m_worldSettings;
 
-	int numTilesInRow = world.GetNumTilesInRow();
-	float chunkWidth = numTilesInRow * worldSettings.m_tileWidth;
-	float chunkLoadRadiusSquared = worldSettings.m_chunkLoadRadius * worldSettings.m_chunkLoadRadius;
-	float chunkUnloadRadiusSquared = worldSettings.m_chunkUnloadRadius * worldSettings.m_chunkUnloadRadius;
-	if (chunkUnloadRadiusSquared < chunkLoadRadiusSquared)
+	float chunkLoadRadius = worldSettings.m_chunkLoadRadius;
+	float chunkUnloadRadius = worldSettings.m_chunkUnloadRadius;
+	if (chunkUnloadRadius < chunkLoadRadius)
 	{
 		g_devConsole->LogWarning("Chunk unload radius was smaller than the load radius, clamping to match");
-		chunkUnloadRadiusSquared = chunkLoadRadiusSquared;
+		chunkUnloadRadius = chunkLoadRadius;
 	}
 
 	for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
 	{
 		CTransform& playerTransform = *transformStorage.Get(it);
 
-		int loadedChunks = 0;
-		std::queue<IntVec2> openList;
-		std::unordered_set<IntVec2> closedList;
-
-		openList.push(world.GetChunkCoordsAtLocation(playerTransform.m_pos));
-
-		while (!openList.empty())
-		{
-			IntVec2 top = openList.front();
-			openList.pop();
-			closedList.insert(top);
-
-			AABB2 chunkBounds = world.CalculateChunkBounds(top.x, top.y);
-			if (chunkBounds.GetCenter().GetDistanceSquaredTo(playerTransform.m_pos) < chunkLoadRadiusSquared)
+		int numChunksLoaded = 0;
+ 		world.ForEachChunkCoordsInCircle(playerTransform.m_pos, chunkLoadRadius, [&world, &numChunksLoaded](IntVec2 const& chunkCoords) 
+		{ 
+			if (!world.IsChunkLoaded(chunkCoords))
 			{
-				if (world.TryLoadChunk(top)) 
-				{
-					loadedChunks++;
-					if (loadedChunks >= world.m_worldSettings.m_maxNumChunksToLoadPerFrame)
-					{
-						break;
-					}
-				}
-
-				IntVec2 neighbors[4] = { IntVec2(1, 0), IntVec2(-1, 0), IntVec2(0, 1), IntVec2(0, -1) };
-				for (IntVec2& neighbor : neighbors)
-				{
-					IntVec2 neighborWorld = top + neighbor;
-					if (closedList.insert(neighborWorld).second)
-					{
-						openList.push(neighborWorld);
-					}
-				}
+				world.LoadChunk(chunkCoords);
+				numChunksLoaded++;
+				return numChunksLoaded <= world.m_worldSettings.m_maxNumChunksToLoadPerFrame;
 			}
-		}
+			return true;
+		});
 	}
 }
 

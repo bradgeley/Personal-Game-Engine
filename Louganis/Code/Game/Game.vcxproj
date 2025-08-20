@@ -245,6 +245,7 @@
     <ClInclude Include="Game\SCEntityFactory.h" />
     <ClInclude Include="Game\SCFlowField.h" />
     <ClInclude Include="Game\SCollision.h" />
+    <ClInclude Include="Game\SCRender.h" />
     <ClInclude Include="Game\SDebugRender.h" />
     <ClInclude Include="Game\SEntityFactory.h" />
     <ClInclude Include="Game\SFlowField.h" />

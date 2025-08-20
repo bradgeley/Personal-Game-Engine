@@ -8,3 +8,10 @@ FlowGenerationCoords::FlowGenerationCoords(IntVec2 const& chunkCoords, IntVec2 c
 	: WorldCoords(chunkCoords, localTileCoords), m_distance(distance)
 {
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+FlowGenerationCoords::FlowGenerationCoords(WorldCoords const& worldCoords, float distance) : WorldCoords(worldCoords), m_distance(distance)
+{
+}

@@ -3,6 +3,24 @@
 #include "Chunk.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/GeometryUtils.h"
+#include "Engine/Core/ErrorUtils.h"
+#include <queue>
+#include <unordered_set>
+
+
+
+namespace std
+{
+	template <>
+	struct hash<IntVec2>
+	{
+		size_t operator()(const IntVec2& v) const noexcept
+		{
+			// simple hash combine
+			return (std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1));
+		}
+	};
+}
 
 
 
@@ -267,6 +285,79 @@ void SCWorld::ForEachChunkOverlappingAABB(AABB2 const& aabb, const std::function
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachChunkCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const
+{
+	// Start in bot left, and iterate in a grid pattern
+	IntVec2 initialChunkCoords = GetChunkCoordsAtLocation(aabb.mins);
+	IntVec2 endChunkCoords = GetChunkCoordsAtLocation(aabb.maxs);
+
+	int startX = MathUtils::Min(initialChunkCoords.x, endChunkCoords.x);
+	int endX = MathUtils::Max(initialChunkCoords.x, endChunkCoords.x);
+
+	int startY = MathUtils::Min(initialChunkCoords.y, endChunkCoords.y);
+	int endY = MathUtils::Max(initialChunkCoords.y, endChunkCoords.y);
+
+	IntVec2 coords;
+	for (coords.x = startX; coords.x <= endX; ++coords.x)
+	{
+		for (coords.y = startY; coords.y <= endY; ++coords.y)
+		{
+			if (!func(coords))
+			{
+				return;
+			}
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachChunkCoordsInCircle(Vec2 const& circleCenter, float circleRadius, const std::function<bool(IntVec2 const&)>& func) const
+{
+	std::queue<IntVec2> openList;
+	std::unordered_set<IntVec2> closedList;
+
+	IntVec2 initialChunkCoords = GetChunkCoordsAtLocation(circleCenter);
+	openList.push(initialChunkCoords);
+	closedList.insert(initialChunkCoords);
+
+	static IntVec2 neighborOffsets[4] = { IntVec2(1, 0), IntVec2(-1, 0), IntVec2(0, 1), IntVec2(0, -1) };
+	float radiusSquared = circleRadius * circleRadius;
+
+	ASSERT_OR_DIE(circleRadius < 999'999'999.f && circleRadius >= 0.f, "ForEachChunkCoordsInCircle: Ginormous or negative radius, probably unintended?");
+
+	while (!openList.empty())
+	{
+		IntVec2 top = openList.front();
+		openList.pop();
+
+		if (!func(top))
+		{
+			return;
+		}
+
+		for (IntVec2& neighborOffset : neighborOffsets)
+		{
+			IntVec2 neighborChunkCoords = top + neighborOffset;
+			if (!closedList.insert(neighborChunkCoords).second)
+			{
+				continue;
+			}
+
+			Vec2 neighborChunkCenter = CalculateChunkCenter(neighborChunkCoords.x, neighborChunkCoords.y);
+			if (neighborChunkCenter.GetDistanceSquaredTo(circleCenter) < radiusSquared)
+			{
+				openList.push(neighborChunkCoords);
+			}
+		}
+	}
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::GetWorldCoordsOverlappingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const
 {
 	std::vector<Chunk*> chunks;
@@ -345,6 +436,20 @@ AABB2 SCWorld::CalculateChunkBounds(int chunkX, int chunkY) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Vec2 SCWorld::CalculateChunkCenter(int chunkX, int chunkY) const
+{
+	int numTilesInRow = GetNumTilesInRow();
+	float chunkWidth = m_worldSettings.m_tileWidth * numTilesInRow;
+	float chunkHalfWidth = chunkWidth * 0.5f;
+	Vec2 chunkOrigin = Vec2(chunkX, chunkY) * chunkWidth;
+	Vec2 result = chunkOrigin + Vec2(chunkHalfWidth, chunkHalfWidth);
+	return result;
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos) const
 {
 	IntVec2 worldTileCoords = GetGlobalTileCoordsAtLocation(worldPos);
@@ -384,32 +489,36 @@ AABB2 SCWorld::GetTileBounds(IntVec2 const& worldTileCoords) const
 Chunk* SCWorld::GetOrCreateActiveChunk(int chunkX, int chunkY)
 {
 	Chunk* chunk = GetActiveChunk(chunkX, chunkY);
-	if (!chunk)
+	if (chunk)
 	{
-		chunk = new Chunk();
-		IntVec2 chunkCoords = IntVec2(chunkX, chunkY);
-		chunk->Generate(chunkCoords, m_worldSettings);
-		m_activeChunks.emplace(chunkCoords, chunk);
+		return chunk;	
 	}
+	return LoadChunk(IntVec2(chunkX, chunkY));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Chunk* SCWorld::LoadChunk(IntVec2 const& chunkCoords)
+{
+	Chunk* chunk = new Chunk();
+	chunk->Generate(chunkCoords, m_worldSettings);
+	m_activeChunks.emplace(chunkCoords, chunk);
 	return chunk;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SCWorld::TryLoadChunk(IntVec2 const& chunkCoords)
+bool SCWorld::IsChunkLoaded(IntVec2 const& chunkCoords) const
 {
-	if (GetActiveChunk(chunkCoords))
-	{
-		return false;
-	}
-	return GetOrCreateActiveChunk(chunkCoords.x, chunkCoords.y) != nullptr;
+	return m_activeChunks.find(chunkCoords) != m_activeChunks.end();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::RemoveActiveChunk(IntVec2 const& coords)
+bool SCWorld::RemoveActiveChunk(IntVec2 const& coords)
 {
 	auto it = m_activeChunks.find(coords);
 	if (it != m_activeChunks.end())
@@ -418,7 +527,9 @@ void SCWorld::RemoveActiveChunk(IntVec2 const& coords)
 		chunk->Destroy();
 		delete chunk;
 		m_activeChunks.erase(it);
+		return true;
 	}
+	return false;
 }
 
 

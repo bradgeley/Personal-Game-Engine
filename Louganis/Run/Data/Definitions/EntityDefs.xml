@@ -3,7 +3,7 @@
   <EntityDef name = "Player">
     <Transform></Transform>
     <Movement moveSpeed="10" sprintMoveSpeedMultiplier="50"></Movement> // Debug value
-    <Camera tileHeight="10"></Camera>
+    <Camera tileHeight="10" maxZoom ="1000"></Camera>
     <PlayerController></PlayerController>
     <Collision radius="0.5"></Collision>
     <Render scale="0.5"></Render>
