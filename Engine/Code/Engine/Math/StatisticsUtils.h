@@ -17,6 +17,10 @@ namespace StatisticsUtils
     template<typename T>
     double GetAverage(T* valArray, size_t numVals)
     {
+        if (numVals == 0)
+        {
+            return 0.0;
+        }
         T total = 0;
         for (int i = 0; i < numVals; ++i)
         {
@@ -31,6 +35,10 @@ namespace StatisticsUtils
     template<typename T>
     T* GetMin(T* valArray, size_t numVals)
     {
+        if (numVals == 0)
+        {
+            return nullptr;
+        }
         T* minValue = nullptr;
         for (int i = 0; i < numVals; ++i)
         {
@@ -53,6 +61,10 @@ namespace StatisticsUtils
     template<typename T>
     T* GetMax(T* valArray, size_t numVals)
     {
+        if (numVals == 0)
+        {
+            return nullptr;
+        }
         T* maxValue = nullptr;
         for (int i = 0; i < numVals; ++i)
         {

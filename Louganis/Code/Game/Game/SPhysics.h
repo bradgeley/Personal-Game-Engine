@@ -13,7 +13,7 @@ class SPhysics : public System
 {
 public:
 
-    SPhysics(std::string const& name = "Physics", Rgba8 const& debugTint = Rgba8::Orange) : System(name, debugTint) {};
+    SPhysics(std::string const& name = "Physics", Rgba8 const& debugTint = Rgba8::MediumSlateBlue) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

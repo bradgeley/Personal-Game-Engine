@@ -618,6 +618,7 @@ LRESULT CALLBACK WindowsMessageHandlingProcedure(Window* window, HWND windowHand
         case WM_CLOSE:
         {
             NamedProperties args;
+            args.Set("window", window);
             window->m_quit.Broadcast(args);
             break;
         }

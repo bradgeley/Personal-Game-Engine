@@ -31,7 +31,7 @@ ScopedTimer::~ScopedTimer()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerfWindowScopedTimer::PerfWindowScopedTimer(std::string const& sectionName, std::string const& rowName)
+PerfWindowScopedTimer::PerfWindowScopedTimer(std::string const& sectionName, std::string const& rowName, Rgba8 tint /*= Rgba8::White*/) : m_tint(tint)
 {
 	if (g_performanceDebugWindow)
 	{
@@ -44,7 +44,7 @@ PerfWindowScopedTimer::PerfWindowScopedTimer(std::string const& sectionName, std
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerfWindowScopedTimer::PerfWindowScopedTimer(int sectionID, int rowID) : m_perfSectionID(sectionID), m_perfRowID(rowID)
+PerfWindowScopedTimer::PerfWindowScopedTimer(int sectionID, int rowID, Rgba8 tint /*= Rgba8::White*/) : m_perfSectionID(sectionID), m_perfRowID(rowID), m_tint(tint)
 {
 	m_startTimeSeconds = GetCurrentTimeSeconds();
 }
@@ -57,6 +57,7 @@ PerfWindowScopedTimer::~PerfWindowScopedTimer()
 	PerfItemData item;
 	item.m_startTime = m_startTimeSeconds;
 	item.m_endTime = GetCurrentTimeSeconds();
+	item.m_tint = m_tint;
 	if (g_performanceDebugWindow)
 	{
 		g_performanceDebugWindow->LogItem(item, m_perfSectionID, m_perfRowID);

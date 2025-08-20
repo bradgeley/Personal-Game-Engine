@@ -22,8 +22,8 @@ public:
 	void Destroy();
 
 	bool IsTileSolid(IntVec2 const& localTileCoords) const;
-	bool IsTileSolid(int tileIndex) const;
-	uint8_t GetCost(int tileIndex) const;
+	bool IsTileSolid(int localTileIndex) const;
+	uint8_t GetCost(int localTileIndex) const;
 
 public:
 

@@ -27,6 +27,7 @@ extern class PerformanceDebugWindow* g_performanceDebugWindow;
 //----------------------------------------------------------------------------------------------------------------------
 struct PerformanceDebugWindowConfig
 {
+    bool  m_startOpen        = false;
     Rgba8 m_graphOutlineTint = Rgba8::Black;
 };
 
@@ -38,6 +39,7 @@ struct PerfItemData
 {
     double   m_startTime     = 0.f;
     double   m_endTime       = 0.f;
+    Rgba8    m_tint          = Rgba8::White;
 };
 
 
@@ -46,9 +48,7 @@ struct PerfItemData
 // A row of the performance graph, can be either a thread or something like an ecs system, or group of systems.
 struct PerfRow
 {
-    std::string m_name = "Unnamed Perf Row";
-    Rgba8       m_nameTint      = Rgba8::White;
-    Rgba8       m_rowDataTint   = Rgba8::White;
+    std::string m_name          = "Unnamed Perf Row";
 
 protected:
 
@@ -103,6 +103,9 @@ public:
     void EndFrame() override;
     void Shutdown() override;
 
+    bool OpenWindow();
+    bool CloseWindow();
+
     void LogItem(PerfItemData const& item, int sectionID, int rowID);
     void LogItem(PerfItemData const& item, std::string const& sectionName, std::string const& rowName);
     void UpdateFrameData(PerfFrameData const& info);
@@ -117,11 +120,11 @@ public:
 
     bool HandleKeyUp(NamedProperties& args);
     bool WindowSizeChanged(NamedProperties& args);
+    bool HandleWindowQuit(NamedProperties& args);
 
 private:
 
     // Internal functions, not mutex guarded
-    int RegisterSection(std::string const& name);
     int CountNumRows() const;
     int CountNumRowsBeforeSection(int sectionID) const;
 
@@ -134,9 +137,12 @@ private:
     PerfSection* FindPerfSection(int sectionID);
     PerfSection* FindPerfSection(std::string const& sectionName);
     PerfSection& GetOrCreatePerfSection(std::string const& sectionName);
+    int CreatePerfSection(std::string const& name);
+
     PerfRow* FindPerfRow(PerfSection& section, int rowID);
     PerfRow* FindPerfRow(PerfSection& section, std::string const& rowName);
     PerfRow& GetOrCreatePerfRow(PerfSection& section, std::string const& rowName);
+    int CreatePerfRow(PerfSection& section, std::string const& rowName);
 
     void GetGraphOutline(AABB2& out_outline) const;
     Vec2 GetItemFrameBounds() const;

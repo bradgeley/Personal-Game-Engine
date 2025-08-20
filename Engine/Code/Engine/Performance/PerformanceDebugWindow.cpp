@@ -13,6 +13,7 @@
 #include "Engine/DataStructures/BitArray.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Input/InputSystem.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/System.h"
 #include "Engine/Performance/ScopedTimer.h"
@@ -55,26 +56,12 @@ void PerformanceDebugWindow::Startup()
 {
     std::unique_lock lock(m_mutex);
 
-    WindowConfig windowConfig;
-    windowConfig.m_windowTitle = "Performance Debug Window";
-    windowConfig.m_automaticallyPresent = false;
-    windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Windowed;
-    windowConfig.m_startupUserSettings.m_windowResolution = IntVec2(WINDOW_RESOLUTION_X, WINDOW_RESOLUTION_Y);
-    windowConfig.m_startupUserSettings.m_renderResolutionMultiplier = 1.f;
+    if (m_config.m_startOpen)
+    {
+        OpenWindow();
+    }
 
-    m_camera = new Camera();
-    m_window = new Window(windowConfig);
-
-    m_window->m_windowSizeChanged.SubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
-    m_window->Startup();
-
-    IntVec2 renderResolution = m_window->GetRenderResolution();
-    AABB2 bounds = AABB2(Vec2(IntVec2::ZeroVector), Vec2(renderResolution));
-    m_camera->SetOrthoBounds2D(bounds);
-
-    g_renderer->GetOrCreateWindowRenderContext(m_window);
-
-    m_window->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
+    g_input->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
 }
 
 
@@ -158,6 +145,60 @@ void PerformanceDebugWindow::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool PerformanceDebugWindow::OpenWindow()
+{
+    if (m_window)
+    {
+        return false;
+    }
+
+    WindowConfig windowConfig;
+    windowConfig.m_windowTitle = "Performance Debug Window";
+    windowConfig.m_automaticallyPresent = false;
+    windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Windowed;
+    windowConfig.m_startupUserSettings.m_windowResolution = IntVec2(WINDOW_RESOLUTION_X, WINDOW_RESOLUTION_Y);
+    windowConfig.m_startupUserSettings.m_renderResolutionMultiplier = 1.f;
+
+    m_window = new Window(windowConfig);
+    m_window->Startup();
+
+    IntVec2 renderResolution = m_window->GetRenderResolution();
+    AABB2 bounds = AABB2(Vec2(IntVec2::ZeroVector), Vec2(renderResolution));
+
+    m_camera = new Camera();
+    m_camera->SetOrthoBounds2D(bounds);
+
+    m_window->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
+    m_window->m_quit.SubscribeMethod(this, &PerformanceDebugWindow::HandleWindowQuit);
+    m_window->m_windowSizeChanged.SubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
+
+    g_renderer->GetOrCreateWindowRenderContext(m_window);
+
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool PerformanceDebugWindow::CloseWindow()
+{
+    delete m_camera;
+    m_camera = nullptr;
+
+    m_window->m_keyUpEvent.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
+    m_window->m_quit.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleWindowQuit);
+    m_window->m_windowSizeChanged.UnsubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
+
+    m_window->Shutdown();
+    delete m_window;
+    m_window = nullptr;
+
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::LogItem(PerfItemData const& info, int sectionID, int rowID)
 {
     std::unique_lock lock(m_mutex);
@@ -220,7 +261,7 @@ int PerformanceDebugWindow::GetOrCreateSectionID(std::string const& sectionName)
         return existingSection->m_id;
     }
 
-    return RegisterSection(sectionName);
+    return CreatePerfSection(sectionName);
 }
 
 
@@ -300,7 +341,7 @@ void PerformanceDebugWindow::EngineFrameCompleted()
 bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
 {
     std::unique_lock lock(m_mutex);
-    char character = (char) args.Get("Key", -1);
+    unsigned char character = (unsigned char) args.Get("Key", -1);
     if (character == 'F')
     {
         if (m_freezeLog)
@@ -312,6 +353,10 @@ bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
             g_devConsole->LogSuccess("Froze performance debug window.");
         }
         m_freezeLog = !m_freezeLog;
+    }
+    else if (character == (unsigned char) KeyCode::F1)
+    {
+        OpenWindow();
     }
     return false;
 }
@@ -330,15 +375,11 @@ bool PerformanceDebugWindow::WindowSizeChanged(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int PerformanceDebugWindow::RegisterSection(std::string const& name)
+bool PerformanceDebugWindow::HandleWindowQuit(NamedProperties&)
 {
-    PerfSection section;
-    section.m_name = name;
-    static int id = 0;
-    section.m_id = id;
-    ++id;
-    m_perfSections.emplace_back(section);
-    return section.m_id;
+    CloseWindow();
+
+    return false;
 }
 
 
@@ -462,7 +503,7 @@ void PerformanceDebugWindow::AddUntexturedVertsForRow(VertexBuffer& untexturedVe
         itemOutline.maxs.x = rowOutline.mins.x + rowOutline.GetWidth() * itemEndTimeFraction;
         itemOutline.maxs.y = rowOutline.maxs.y;
 
-        AddVertsForAABB2(untexturedVerts.GetMutableVerts(), itemOutline, row.m_rowDataTint);
+        AddVertsForAABB2(untexturedVerts.GetMutableVerts(), itemOutline, item.m_tint);
     }
 
     AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), rowOutline, GRAPH_ROW_OUTLINE_THICKNESS, Rgba8::Black);
@@ -551,8 +592,22 @@ PerfSection& PerformanceDebugWindow::GetOrCreatePerfSection(std::string const& s
         return *perfSection;
     }
 
-    int sectionID = RegisterSection(sectionName);
+    int sectionID = CreatePerfSection(sectionName);
     return *FindPerfSection(sectionID);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int PerformanceDebugWindow::CreatePerfSection(std::string const& name)
+{
+    PerfSection section;
+    section.m_name = name;
+    static int id = 0;
+    section.m_id = id;
+    ++id;
+    m_perfSections.emplace_back(section);
+    return section.m_id;
 }
 
 
@@ -593,11 +648,20 @@ PerfRow& PerformanceDebugWindow::GetOrCreatePerfRow(PerfSection& section, std::s
         return *perfRow;
     }
 
+    int rowId = CreatePerfRow(section, rowName);
+    return section.m_perfRows[rowId];
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int PerformanceDebugWindow::CreatePerfRow(PerfSection& section, std::string const& rowName)
+{
     PerfRow newRow;
     newRow.m_name = rowName;
     newRow.m_id = (int) section.m_perfRows.size();
     section.m_perfRows.push_back(newRow);
-    return section.m_perfRows[section.m_perfRows.size() - 1];
+    return newRow.m_id;
 }
 
 

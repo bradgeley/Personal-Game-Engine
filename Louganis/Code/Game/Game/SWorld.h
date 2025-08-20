@@ -16,7 +16,7 @@ class SWorld : public System
 {
 public:
 
-    SWorld(std::string const& name = "World", Rgba8 const& debugTint = Rgba8::Brown) : System(name, debugTint) {};
+    SWorld(std::string const& name = "World", Rgba8 const& debugTint = Rgba8::ForestGreen) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

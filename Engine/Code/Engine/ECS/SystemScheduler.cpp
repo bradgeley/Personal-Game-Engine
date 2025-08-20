@@ -191,6 +191,7 @@ void SystemScheduler::TryRunSubgraph(SystemSubgraph& subgraph, float deltaSecond
 void RunSystem(SystemContext const& context)
 {
 	PerfItemData perfItem;
+	perfItem.m_tint = context.m_system->GetDebugTint();
 	perfItem.m_startTime = GetCurrentTimeSeconds();
 
 	context.m_system->PreRun();
@@ -254,6 +255,7 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 		SystemContext context(system, deltaSeconds);
 
 		PerfItemData perfItem;
+		perfItem.m_tint = system->GetDebugTint();
 		perfItem.m_startTime = GetCurrentTimeSeconds();
 
 		RunSystem(context);
