@@ -109,6 +109,7 @@ public:
     WindowRenderContext const& GetCurrentWindowRenderContext() const;
     WindowRenderContext& GetWindowRenderContext(Window const* window);
     WindowRenderContext const& GetWindowRenderContext(Window const* window) const;
+    void DestroyWindowRenderContext(Window* window);
 
     MSAASettings GetMaxSupportedMSAASettings(DXGI_FORMAT format);
 
@@ -138,6 +139,7 @@ private:
     
     void DestroyDevice();
     void DestroyWindowRenderContexts();
+    void DestroyWindowRenderContext(WindowRenderContext& wrc);
     
     void CreateConstantBuffers();
     void DestroyConstantBuffers();

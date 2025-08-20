@@ -182,16 +182,27 @@ bool PerformanceDebugWindow::OpenWindow()
 //----------------------------------------------------------------------------------------------------------------------
 bool PerformanceDebugWindow::CloseWindow()
 {
-    delete m_camera;
-    m_camera = nullptr;
+    if (m_window)
+    {
+        m_window->m_keyUpEvent.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
+        m_window->m_quit.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleWindowQuit);
+        m_window->m_windowSizeChanged.UnsubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
 
-    m_window->m_keyUpEvent.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
-    m_window->m_quit.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleWindowQuit);
-    m_window->m_windowSizeChanged.UnsubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
+        if (g_renderer)
+        {
+            g_renderer->DestroyWindowRenderContext(m_window);
+        }
 
-    m_window->Shutdown();
-    delete m_window;
-    m_window = nullptr;
+        m_window->Shutdown();
+        delete m_window;
+        m_window = nullptr;
+    }
+
+    if (m_camera)
+    {
+        delete m_camera;
+        m_camera = nullptr;
+    }
 
     return false;
 }
@@ -356,7 +367,10 @@ bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
     }
     else if (character == (unsigned char) KeyCode::F1)
     {
-        OpenWindow();
+        if (!OpenWindow())
+        {
+            m_window->GiveFocus();
+        }
     }
     return false;
 }

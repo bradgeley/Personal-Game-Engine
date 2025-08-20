@@ -751,6 +751,25 @@ WindowRenderContext const& Renderer::GetWindowRenderContext(Window const* window
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Renderer::DestroyWindowRenderContext(Window* window)
+{
+	for (auto it = m_windowRenderContexts.begin(); it != m_windowRenderContexts.end();)
+	{
+		if (it->second.m_window == window)
+		{
+			DestroyWindowRenderContext(it->second);
+			it = m_windowRenderContexts.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 MSAASettings Renderer::GetMaxSupportedMSAASettings(DXGI_FORMAT format)
 {
 	MSAASettings result;
@@ -984,31 +1003,38 @@ void Renderer::DestroyWindowRenderContexts()
 	for (auto pair : m_windowRenderContexts)
 	{
 		WindowRenderContext& wrc = pair.second;
-
-		wrc.m_window->m_focusChanged.UnsubscribeMethod(this, &Renderer::WindowFocusChanged);
-		wrc.m_window->m_windowModeChanged.UnsubscribeMethod(this, &Renderer::WindowModeChanged);
-		wrc.m_window->m_windowSizeChanged.UnsubscribeMethod(this, &Renderer::WindowSizeChanged);
-
-		wrc.m_swapChain->SetFullscreenState(false, nullptr);
-
-		if (wrc.m_backbufferTexture)
-		{
-			wrc.m_backbufferTexture->ReleaseResources();
-			delete wrc.m_backbufferTexture;
-			wrc.m_backbufferTexture = nullptr;
-		}
-
-		if (wrc.m_depthBuffer)
-		{
-			wrc.m_depthBuffer->ReleaseResources();
-			delete wrc.m_depthBuffer;
-			wrc.m_depthBuffer = nullptr;
-		}
-
-		DX_SAFE_RELEASE(wrc.m_swapChain)
+		DestroyWindowRenderContext(wrc);
 	}
 
 	m_windowRenderContexts.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::DestroyWindowRenderContext(WindowRenderContext& wrc)
+{
+	wrc.m_window->m_focusChanged.UnsubscribeMethod(this, &Renderer::WindowFocusChanged);
+	wrc.m_window->m_windowModeChanged.UnsubscribeMethod(this, &Renderer::WindowModeChanged);
+	wrc.m_window->m_windowSizeChanged.UnsubscribeMethod(this, &Renderer::WindowSizeChanged);
+
+	wrc.m_swapChain->SetFullscreenState(false, nullptr);
+
+	if (wrc.m_backbufferTexture)
+	{
+		wrc.m_backbufferTexture->ReleaseResources();
+		delete wrc.m_backbufferTexture;
+		wrc.m_backbufferTexture = nullptr;
+	}
+
+	if (wrc.m_depthBuffer)
+	{
+		wrc.m_depthBuffer->ReleaseResources();
+		delete wrc.m_depthBuffer;
+		wrc.m_depthBuffer = nullptr;
+	}
+
+	DX_SAFE_RELEASE(wrc.m_swapChain)
 }
 
 
