@@ -61,7 +61,7 @@ void PerformanceDebugWindow::Startup()
         OpenWindow();
     }
 
-    g_input->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
+    g_input->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandleMainWindowKeyUp);
 }
 
 
@@ -114,6 +114,11 @@ void PerformanceDebugWindow::EndFrame()
 void PerformanceDebugWindow::Shutdown()
 {
     std::unique_lock lock(m_mutex);
+
+    if (g_input)
+    {
+        g_input->m_keyUpEvent.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleMainWindowKeyUp);
+    }
 
     m_textVBO.ReleaseResources();
     m_untexturedVBO.ReleaseResources();
@@ -168,7 +173,7 @@ bool PerformanceDebugWindow::OpenWindow()
     m_camera = new Camera();
     m_camera->SetOrthoBounds2D(bounds);
 
-    m_window->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
+    m_window->m_keyUpEvent.SubscribeMethod(this, &PerformanceDebugWindow::HandlePerfWindowKeyUp);
     m_window->m_quit.SubscribeMethod(this, &PerformanceDebugWindow::HandleWindowQuit);
     m_window->m_windowSizeChanged.SubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
 
@@ -184,7 +189,7 @@ bool PerformanceDebugWindow::CloseWindow()
 {
     if (m_window)
     {
-        m_window->m_keyUpEvent.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleKeyUp);
+        m_window->m_keyUpEvent.UnsubscribeMethod(this, &PerformanceDebugWindow::HandlePerfWindowKeyUp);
         m_window->m_quit.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleWindowQuit);
         m_window->m_windowSizeChanged.UnsubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
 
@@ -349,7 +354,7 @@ void PerformanceDebugWindow::EngineFrameCompleted()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
+bool PerformanceDebugWindow::HandleMainWindowKeyUp(NamedProperties& args)
 {
     std::unique_lock lock(m_mutex);
     unsigned char character = (unsigned char) args.Get("Key", -1);
@@ -371,6 +376,20 @@ bool PerformanceDebugWindow::HandleKeyUp(NamedProperties& args)
         {
             m_window->GiveFocus();
         }
+    }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool PerformanceDebugWindow::HandlePerfWindowKeyUp(NamedProperties& args)
+{
+    std::unique_lock lock(m_mutex);
+    unsigned char character = (unsigned char) args.Get("Key", -1);
+    if (character == (unsigned char) KeyCode::Escape)
+    {
+        CloseWindow();
     }
     return false;
 }

@@ -118,7 +118,8 @@ public:
 
 public:
 
-    bool HandleKeyUp(NamedProperties& args);
+    bool HandleMainWindowKeyUp(NamedProperties& args);
+    bool HandlePerfWindowKeyUp(NamedProperties& args);
     bool WindowSizeChanged(NamedProperties& args);
     bool HandleWindowQuit(NamedProperties& args);
 
