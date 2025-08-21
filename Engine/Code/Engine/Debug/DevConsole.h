@@ -75,8 +75,8 @@ public:
 	void AddBackgroundImage(Texture* backgroundImage);
 
 	void AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info);
-	void RemoveDevConsoleCommandInfo(std::string const& commandName);
-	DevConsoleCommandInfo const* GetDevConsoleCommandInfo(std::string const& name) const;
+	void RemoveDevConsoleCommandInfo(Name commandName);
+	DevConsoleCommandInfo const* GetDevConsoleCommandInfo(Name commandName) const;
 	
 	void LogSuccess(std::string const& line);
 	void LogWarning(std::string const& line);

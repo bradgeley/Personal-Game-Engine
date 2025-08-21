@@ -1,5 +1,6 @@
 // Bradley Christensen - 2023
 #pragma once
+#include "Engine/Core/Name.h"
 #include <string>
 #include <vector>
 
@@ -30,7 +31,7 @@ struct DevConsoleCommandInfo
 	DevConsoleArgType GetArgType(std::string const& argName) const;
 	static std::string ArgTypeToString(DevConsoleArgType argType);
 
-	std::string m_commandName;
+	Name m_commandName;
 	std::vector<std::string> m_argNames;
 	std::vector<DevConsoleArgType> m_argTypes;
 };

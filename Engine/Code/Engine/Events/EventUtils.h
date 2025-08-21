@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
+#include "Engine/Core/Name.h"
 #include <string>
 
 
@@ -15,9 +16,9 @@ typedef bool (*EventCallbackFunction)(NamedProperties& args);
 //----------------------------------------------------------------------------------------------------------------------
 namespace EventUtils
 {
-	void SubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
-	void UnsubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc);
+	void SubscribeEventCallbackFunction(Name eventName, EventCallbackFunction callbackFunc);
+	void UnsubscribeEventCallbackFunction(Name eventName, EventCallbackFunction callbackFunc);
 
-	int FireEvent(std::string const& eventName, NamedProperties& args);
-	int FireEvent(std::string const& eventName);
+	int FireEvent(Name eventName, NamedProperties& args);
+	int FireEvent(Name eventName);
 }

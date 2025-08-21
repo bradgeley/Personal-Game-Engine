@@ -166,6 +166,8 @@
     <ClCompile Include="Core\ErrorUtils.cpp" />
     <ClCompile Include="Core\FileUtils.cpp" />
     <ClCompile Include="Core\Image.cpp" />
+    <ClCompile Include="Core\Name.cpp" />
+    <ClCompile Include="Core\NameTable.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
     <ClCompile Include="Core\Time.cpp" />
     <ClCompile Include="Core\XmlUtils.cpp" />
@@ -241,6 +243,8 @@
     <ClInclude Include="Core\ErrorUtils.h" />
     <ClInclude Include="Core\FileUtils.h" />
     <ClInclude Include="Core\Image.h" />
+    <ClInclude Include="Core\Name.h" />
+    <ClInclude Include="Core\NameTable.h" />
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Core\Time.h" />
     <ClInclude Include="Core\XmlUtils.h" />

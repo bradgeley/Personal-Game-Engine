@@ -1,12 +1,14 @@
 // Bradley Christensen - 2024
 #pragma once
-#include "Engine/Math/IntVec2.h"
 #include "FlowField.h"
-#include <limits.h>
 
 
 
-class FlowFieldChunk;
+//----------------------------------------------------------------------------------------------------------------------
+struct FlowFieldKey
+{
+
+};
 
 
 

@@ -5,6 +5,7 @@
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Core/NameTable.h"
 
 #include "Game/Framework/EngineBuildPreferences.h"
 
@@ -36,6 +37,8 @@ void Engine::Startup()
     {
         return;
     }
+
+    g_nameTable = new NameTable();
 
     for (EngineSubsystem*& subsystem : m_subsystems)
     {
@@ -116,18 +119,16 @@ void Engine::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::EndFrame()
 {
-    {
-        #if defined(PERF_WINDOW_DISPLAY_ENGINE_SECTION)
-            PerfWindowScopedTimer scopedTimer("Engine", "EndFrame");
-        #endif
+    #if defined(PERF_WINDOW_DISPLAY_ENGINE_SECTION)
+        PerfWindowScopedTimer scopedTimer("Engine", "EndFrame");
+    #endif
 
-        for (int i = (int) m_subsystems.size() - 1; i >= 0; --i)
+    for (int i = (int) m_subsystems.size() - 1; i >= 0; --i)
+    {
+        EngineSubsystem*& subsystem = m_subsystems[i];
+        if (subsystem && subsystem->IsEnabled())
         {
-            EngineSubsystem*& subsystem = m_subsystems[i];
-            if (subsystem && subsystem->IsEnabled())
-            {
-                subsystem->EndFrame();
-            }
+            subsystem->EndFrame();
         }
     }
 
@@ -158,6 +159,9 @@ void Engine::Shutdown()
         }
     }
     m_subsystems.clear();
+
+    delete g_nameTable;
+    g_nameTable = nullptr;
 }
 
 

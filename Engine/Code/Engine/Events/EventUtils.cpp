@@ -6,7 +6,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void EventUtils::SubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
+void EventUtils::SubscribeEventCallbackFunction(Name eventName, EventCallbackFunction callbackFunc)
 {
     ASSERT_OR_DIE(g_eventSystem != nullptr, "Event system does not exist");
     if (g_eventSystem)
@@ -18,7 +18,7 @@ void EventUtils::SubscribeEventCallbackFunction(std::string const& eventName, Ev
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void EventUtils::UnsubscribeEventCallbackFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
+void EventUtils::UnsubscribeEventCallbackFunction(Name eventName, EventCallbackFunction callbackFunc)
 {
     ASSERT_OR_DIE(g_eventSystem != nullptr, "Event system does not exist");
     if (g_eventSystem)
@@ -30,7 +30,7 @@ void EventUtils::UnsubscribeEventCallbackFunction(std::string const& eventName, 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int EventUtils::FireEvent(std::string const& eventName, NamedProperties& args)
+int EventUtils::FireEvent(Name eventName, NamedProperties& args)
 {
     ASSERT_OR_DIE(g_eventSystem != nullptr, "Event system does not exist");
     if (g_eventSystem)
@@ -43,7 +43,7 @@ int EventUtils::FireEvent(std::string const& eventName, NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int EventUtils::FireEvent(std::string const& eventName)
+int EventUtils::FireEvent(Name eventName)
 {
     ASSERT_OR_DIE(g_eventSystem != nullptr, "Event system does not exist");
     if (g_eventSystem)

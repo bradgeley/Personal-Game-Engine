@@ -9,6 +9,13 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+constexpr int ASCII_UPPER_TO_LOWER = 'a' - 'A'; // Dest (lower) - Source (upper) = upper -> lower
+constexpr int ASCII_LOWER_TO_UPPER = 'A' - 'a'; // Dest (upper) - Source (lower) = lower -> upper
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Strings StringUtils::SplitStringOnAnyDelimeter(std::string const& string, std::string const& delimiters)
 {
     Strings result;
@@ -68,7 +75,7 @@ std::string StringUtils::GetToLower(std::string const& string)
     {
         if (c >= 'A' && c <= 'Z')
         {
-            c -= ('A' - 'a');
+            c += ASCII_UPPER_TO_LOWER;
         }
         result += c;
     }
@@ -84,7 +91,7 @@ void StringUtils::ToLower(std::string& out_string)
     {
         if (c >= 'A' && c <= 'Z')
         {
-            c -= ('A' - 'a');
+            c += ASCII_UPPER_TO_LOWER;
         }
     }
 }
@@ -98,7 +105,7 @@ void StringUtils::ToUpper(std::string& out_string)
     {
         if (c >= 'a' && c <= 'z')
         {
-            c += ('A' - 'a');
+            c += ASCII_LOWER_TO_UPPER;
         }
     }
 }
@@ -317,4 +324,66 @@ bool StringUtils::DoesStringContainChar(std::string const& string, uint8_t chara
         } 
     }
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+std::size_t StringUtils::CaseInsensitiveStringHash::operator()(const std::string& input) const noexcept
+{
+    #if INTPTR_MAX == INT64_MAX
+        constexpr size_t FNV_offset = 1469598103934665603ULL;
+        constexpr size_t FNV_prime = 1099511628211ULL;
+    #else
+        constexpr size_t FNV_offset = 2166136261U;
+        constexpr size_t FNV_prime = 16777619U;
+    #endif
+
+    size_t hash = FNV_offset;
+    for (unsigned char c : input)
+    {
+        if (c >= 'A' && c <= 'Z')
+        {
+            c = c + 32; // ASCII fast lower
+        }
+        hash ^= c;
+        hash *= FNV_prime;
+    }
+    return hash;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool StringUtils::CaseInsensitiveStringEquals::operator()(const std::string& a, const std::string& b) const noexcept
+{
+    constexpr int capitalDifference = 'a' - 'A';
+
+    size_t aSize = a.size();
+    size_t bSize = b.size();
+    if (aSize != bSize)
+    {
+        return false;
+    }
+
+    for (size_t i = 0; i < aSize; ++i)
+    {
+        unsigned char ca = a[i];
+        unsigned char cb = b[i];
+
+        if (ca >= 'A' && ca <= 'Z')
+        {
+            ca += capitalDifference;
+        }
+        if (cb >= 'A' && cb <= 'Z')
+        {
+            cb += capitalDifference;
+        }
+
+        if (ca != cb)
+        {
+            return false;
+        }
+    }
+    return true;
 }

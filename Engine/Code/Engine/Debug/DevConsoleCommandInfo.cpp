@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleCommandInfo::DevConsoleCommandInfo(std::string const& commandName) : m_commandName(commandName)
 {
-	StringUtils::ToLower(m_commandName);
+
 }
 
 
@@ -15,7 +15,7 @@ DevConsoleCommandInfo::DevConsoleCommandInfo(std::string const& commandName) : m
 //----------------------------------------------------------------------------------------------------------------------
 std::string DevConsoleCommandInfo::ToString() const
 {
-	std::string result = StringUtils::StringF("%s ", m_commandName.c_str());
+	std::string result = StringUtils::StringF("%s ", m_commandName.ToCStr());
 	for (int argIndex = 0; argIndex < (int) m_argNames.size(); ++argIndex)
 	{
 		std::string const& argName = m_argNames[argIndex];

@@ -274,12 +274,12 @@ void DevConsole::AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void DevConsole::RemoveDevConsoleCommandInfo(std::string const& commandName)
+void DevConsole::RemoveDevConsoleCommandInfo(Name commandName)
 {
     for (auto it = m_commandInfos.begin(); it != m_commandInfos.end();)
     {
         DevConsoleCommandInfo& commandInfo = *it;
-        if (strcmp(StringUtils::GetToLower(commandInfo.m_commandName).c_str(), StringUtils::GetToLower(commandName).c_str()) == 0)
+        if (commandInfo.m_commandName == commandName)
         {
             m_commandInfos.erase(it);
             break;
@@ -294,11 +294,11 @@ void DevConsole::RemoveDevConsoleCommandInfo(std::string const& commandName)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-DevConsoleCommandInfo const* DevConsole::GetDevConsoleCommandInfo(std::string const& name) const
+DevConsoleCommandInfo const* DevConsole::GetDevConsoleCommandInfo(Name commandName) const
 {
     for (DevConsoleCommandInfo const& info : m_commandInfos)
     {
-        if (info.m_commandName == name)
+        if (info.m_commandName == commandName)
         {
             return &info;
         }
@@ -488,7 +488,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     m_commandHistory.AddCommand(command);
 
     // Fire the event
-    std::string eventName = StringUtils::GetToLower(commandFragments[0]);
+    Name eventName = Name(commandFragments[0]);
     if (!g_eventSystem->IsEventBound(eventName))
     {
         g_devConsole->LogWarning("No events bound to that command.");
@@ -569,11 +569,11 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     
     if (numResponders > 0)
     {
-        LogSuccessF("%i response(s) to event: %s", numResponders, eventName.data());
+        LogSuccessF("%i response(s) to event: %s", numResponders, eventName.ToCStr());
     }
     else
     {
-        LogWarning(StringUtils::StringF("No response to event: %s", eventName.data()));
+        LogWarning(StringUtils::StringF("No response to event: %s", eventName.ToCStr()));
     }
     
     return true;

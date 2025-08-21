@@ -60,4 +60,20 @@ namespace StringUtils
         snprintf(buffer, sizeof(buffer), format, args...);
         return buffer;
     }
+
+
+
+    //----------------------------------------------------------------------------------------------------------------------
+    struct CaseInsensitiveStringHash
+    {
+        std::size_t operator()(const std::string& input) const noexcept;
+    };
+
+
+
+    //----------------------------------------------------------------------------------------------------------------------
+    struct CaseInsensitiveStringEquals
+    {
+        bool operator()(const std::string& a, const std::string& b) const noexcept;
+    };
 }

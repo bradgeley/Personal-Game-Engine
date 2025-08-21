@@ -35,7 +35,7 @@ void EventSystem::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int EventSystem::FireEvent(std::string const& name)
+int EventSystem::FireEvent(Name name)
 {
     NamedProperties emptyArgs;
     return FireEvent(name, emptyArgs);
@@ -44,10 +44,9 @@ int EventSystem::FireEvent(std::string const& name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int EventSystem::FireEvent(std::string const& name, NamedProperties& args)
+int EventSystem::FireEvent(Name name, NamedProperties& args)
 {
-    std::string lowerName = StringUtils::GetToLower(name);
-    auto it = m_events.find(lowerName);
+    auto it = m_events.find(name);
     if (it != m_events.end())
     {
         std::vector<EventSubscriber*> const& subList = it->second;
@@ -65,29 +64,26 @@ int EventSystem::FireEvent(std::string const& name, NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool EventSystem::IsEventBound(std::string const& name) const
+bool EventSystem::IsEventBound(Name name) const
 {
-    std::string lowerName = StringUtils::GetToLower(name);
-    return (m_events.find(lowerName) != m_events.end());
+    return (m_events.find(name) != m_events.end());
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void EventSystem::SubscribeFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
+void EventSystem::SubscribeFunction(Name eventName, EventCallbackFunction callbackFunc)
 {
-    std::string lowerName = StringUtils::GetToLower(eventName);
-    auto& subList = m_events[lowerName];
+    auto& subList = m_events[eventName];
     subList.emplace_back(new EventSubscriberFunction(callbackFunc));
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void EventSystem::UnsubscribeFunction(std::string const& eventName, EventCallbackFunction callbackFunc)
+void EventSystem::UnsubscribeFunction(Name eventName, EventCallbackFunction callbackFunc)
 {
-    std::string lowerName = StringUtils::GetToLower(eventName);
-    auto& subList = m_events[lowerName];
+    auto& subList = m_events[eventName];
     for (auto it = subList.begin(); it != subList.end();)
     {
         auto& sub = *it;
@@ -111,7 +107,7 @@ Strings EventSystem::GetAllEventNames() const
     Strings result;
     for (auto& pair : m_events)
     {
-        result.emplace_back(pair.first);
+        result.emplace_back(pair.first.ToString());
     }
     return result;
 }
