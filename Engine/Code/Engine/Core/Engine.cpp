@@ -34,6 +34,7 @@ static PerfFrameData s_frameData;
 Engine::Engine()
 {
     g_nameTable = new NameTable();
+    g_nameTable->Startup();
 }
 
 
@@ -41,6 +42,7 @@ Engine::Engine()
 //----------------------------------------------------------------------------------------------------------------------
 Engine::~Engine()
 {
+    g_nameTable->Shutdown();
     delete g_nameTable;
     g_nameTable = nullptr;
 }

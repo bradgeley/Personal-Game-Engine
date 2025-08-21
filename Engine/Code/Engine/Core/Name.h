@@ -19,7 +19,7 @@ public:
 	Name(Name const& other);
 
 	bool IsValid() const;
-	size_t GetNameIndex() const;
+	uint32_t GetNameIndex() const;
 	std::string const& ToString() const;
 	const char* ToCStr() const;
 
@@ -27,16 +27,17 @@ public:
 
 protected:
 
-	Name(size_t index);
+	Name(uint32_t index);
 
 public:
 
 	static Name s_invalidName;
+	static std::string s_invalidNameString;
 	static uint32_t s_invalidNameIndex;
 
 protected:
 
-	size_t m_nameIndex = s_invalidNameIndex;
+	uint32_t m_nameIndex = s_invalidNameIndex;
 };
 
 
@@ -49,7 +50,7 @@ namespace std
 	{
 		size_t operator()(Name const& name) const noexcept
 		{
-			return std::hash<size_t>()(name.GetNameIndex());
+			return static_cast<size_t>(std::hash<uint32_t>()(name.GetNameIndex()));
 		}
 	};
 }
