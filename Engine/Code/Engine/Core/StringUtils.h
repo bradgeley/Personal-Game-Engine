@@ -39,7 +39,7 @@ namespace StringUtils
     Rgba8 StringToRgba8(std::string const& rgba8AsString);
     Vec2 StringToVec2(std::string const& vec2AsString);
     IntVec2 StringToIntVec2(std::string const& intVec2AsString);
-    Strings StringToStrings(std::string const& stringsAsString);
+    Strings CSVToStrings(std::string const& stringsAsString);
 
 
 

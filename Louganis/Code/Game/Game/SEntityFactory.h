@@ -13,7 +13,7 @@ class SEntityFactory : public System
 {
 public:
 
-    SEntityFactory(std::string const& name = "EntityFactory", Rgba8 const& debugTint = Rgba8::Gold) : System(name, debugTint) {};
+    SEntityFactory(Name name = "EntityFactory", Rgba8 const& debugTint = Rgba8::Gold) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

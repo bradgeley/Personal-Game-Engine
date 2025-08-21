@@ -306,7 +306,7 @@ IntVec2 StringUtils::StringToIntVec2(std::string const& intVec2AsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Strings StringUtils::StringToStrings(std::string const& stringsAsString)
+Strings StringUtils::CSVToStrings(std::string const& stringsAsString)
 {
     return SplitStringOnDelimeter(stringsAsString, ',');
 }

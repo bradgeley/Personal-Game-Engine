@@ -9,7 +9,7 @@ class SCollision : public System
 {
 public:
 
-    SCollision(std::string const& name = "Collision", Rgba8 const& debugTint = Rgba8::Red) : System(name, debugTint) {};
+    SCollision(Name name = "Collision", Rgba8 const& debugTint = Rgba8::Red) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 };

@@ -2,9 +2,9 @@
 #pragma once
 #include "AdminSystem.h"
 #include "SystemContext.h"
-#include "Engine/Renderer/Rgba8.h"
+#include "Engine/Renderer/Rgba8.h" // <-- may want to remove outside dependencies
+#include "Engine/Core/Name.h" // <-- may want to remove outside dependencies
 #include "Config.h"
-#include <string>
 #include <typeinfo>
 
 
@@ -33,7 +33,7 @@ class System
 
 public:
 
-	explicit System(std::string const& name = "Unnamed System", Rgba8 const& debugTint = Rgba8::Magenta);
+	explicit System(Name name = "Unnamed System", Rgba8 const& debugTint = Rgba8::Magenta);
 	virtual ~System() = default;
 
 	virtual void Startup()											{}
@@ -51,7 +51,7 @@ public:
 	int	 GetGlobalPriority() const									{ return m_globalPriority; }
 	int	 GetSystemSplittingNumJobs() const							{ return m_systemSplittingNumJobs; }
 	void SetSystemSplittingNumJobs(int numThreads)					{ m_systemSplittingNumJobs = numThreads; }
-	std::string const& GetName() const								{ return m_name; }
+	Name GetName() const											{ return m_name; }
 	Rgba8 const& GetDebugTint() const;
 
 	BitMask const& GetReadDependencies() const; 
@@ -73,7 +73,7 @@ protected:
 
 protected:
 
-	std::string const	m_name						= "Unnamed System";
+	Name				m_name						= "Unnamed System";
 	Rgba8				m_debugTint					= Rgba8::Magenta;
 	bool				m_isActive					= true;
 	int					m_systemSplittingNumJobs	= 1; // 0-1 means do not split the system

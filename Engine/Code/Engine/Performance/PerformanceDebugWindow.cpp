@@ -233,7 +233,7 @@ void PerformanceDebugWindow::LogItem(PerfItemData const& info, int sectionID, in
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PerformanceDebugWindow::LogItem(PerfItemData const& item, std::string const& sectionName, std::string const& rowName)
+void PerformanceDebugWindow::LogItem(PerfItemData const& item, Name sectionName, Name rowName)
 {
     std::unique_lock lock(m_mutex);
     if (!m_freezeLog)
@@ -268,7 +268,7 @@ int PerformanceDebugWindow::GetFrameNumber()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int PerformanceDebugWindow::GetOrCreateSectionID(std::string const& sectionName)
+int PerformanceDebugWindow::GetOrCreateSectionID(Name sectionName)
 {
     std::unique_lock lock(m_mutex);
     PerfSection* existingSection = FindPerfSection(sectionName);
@@ -283,7 +283,7 @@ int PerformanceDebugWindow::GetOrCreateSectionID(std::string const& sectionName)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int PerformanceDebugWindow::GetOrCreateRowID(int sectionID, std::string const& rowName)
+int PerformanceDebugWindow::GetOrCreateRowID(int sectionID, Name rowName)
 {
     std::unique_lock lock(m_mutex);
     PerfSection* section = FindPerfSection(sectionID);
@@ -490,7 +490,7 @@ void PerformanceDebugWindow::AddTextVertsForSection(VertexBuffer& textVerts, Per
     sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
     sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name);
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name.ToString());
 
     for (PerfRow const& row : section.m_perfRows)
     {
@@ -581,7 +581,7 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
         itemOutline.maxs.y = rowOutline.maxs.y;
     }
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name);
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
 }
 
 
@@ -602,7 +602,7 @@ PerfSection* PerformanceDebugWindow::FindPerfSection(int sectionID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerfSection* PerformanceDebugWindow::FindPerfSection(std::string const& sectionName)
+PerfSection* PerformanceDebugWindow::FindPerfSection(Name sectionName)
 {
     for (PerfSection& ps : m_perfSections)
     {
@@ -617,7 +617,7 @@ PerfSection* PerformanceDebugWindow::FindPerfSection(std::string const& sectionN
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerfSection& PerformanceDebugWindow::GetOrCreatePerfSection(std::string const& sectionName)
+PerfSection& PerformanceDebugWindow::GetOrCreatePerfSection(Name sectionName)
 {
     PerfSection* perfSection = FindPerfSection(sectionName);
     if (perfSection)
@@ -632,7 +632,7 @@ PerfSection& PerformanceDebugWindow::GetOrCreatePerfSection(std::string const& s
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int PerformanceDebugWindow::CreatePerfSection(std::string const& name)
+int PerformanceDebugWindow::CreatePerfSection(Name name)
 {
     PerfSection section;
     section.m_name = name;
@@ -658,7 +658,7 @@ PerfRow* PerformanceDebugWindow::FindPerfRow(PerfSection& section, int rowID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerfRow* PerformanceDebugWindow::FindPerfRow(PerfSection& section, std::string const& rowName)
+PerfRow* PerformanceDebugWindow::FindPerfRow(PerfSection& section, Name rowName)
 {
     for (PerfRow& ps : section.m_perfRows)
     {
@@ -673,7 +673,7 @@ PerfRow* PerformanceDebugWindow::FindPerfRow(PerfSection& section, std::string c
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerfRow& PerformanceDebugWindow::GetOrCreatePerfRow(PerfSection& section, std::string const& rowName)
+PerfRow& PerformanceDebugWindow::GetOrCreatePerfRow(PerfSection& section, Name rowName)
 {
     PerfRow* perfRow= FindPerfRow(section, rowName);
     if (perfRow)
@@ -688,7 +688,7 @@ PerfRow& PerformanceDebugWindow::GetOrCreatePerfRow(PerfSection& section, std::s
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int PerformanceDebugWindow::CreatePerfRow(PerfSection& section, std::string const& rowName)
+int PerformanceDebugWindow::CreatePerfRow(PerfSection& section, Name rowName)
 {
     PerfRow newRow;
     newRow.m_name = rowName;

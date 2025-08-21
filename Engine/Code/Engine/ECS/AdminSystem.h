@@ -5,6 +5,7 @@
 #include "EntityID.h"
 #include "SystemSubgraph.h"
 #include "SystemContext.h"
+#include "Engine/Core/Name.h"
 #include <vector>
 #include <unordered_map>
 
@@ -65,7 +66,7 @@ public:
 	template<typename T>
 	void RegisterSystem(SystemSubgraphID subgraphID = 0);
 	
-	void SetSystemActive(std::string const& sysName, bool isActive) const;
+	void SetSystemActive(Name systemName, bool isActive) const;
 	SystemSubgraph& CreateOrGetSystemSubgraph(SystemSubgraphID subgraphID);
 
 	template <typename CType>
@@ -189,7 +190,7 @@ public:
 public:
 
 	std::vector<System*> GetSystems() const;
-	System* GetSystemByName(std::string const& name) const;
+	System* GetSystemByName(Name name) const;
 	System* GetSystemByGlobalPriority(int globalPriority) const;
 
 	std::vector<SystemSubgraph> const& GetSystemSubgraphs() const;

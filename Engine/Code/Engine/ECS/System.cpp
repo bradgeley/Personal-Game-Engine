@@ -5,7 +5,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-System::System(std::string const& name, Rgba8 const& debugTint) : m_name(name), m_debugTint(debugTint)
+System::System(Name name, Rgba8 const& debugTint) : m_name(name), m_debugTint(debugTint)
 {
 
 }

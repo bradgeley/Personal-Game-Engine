@@ -35,8 +35,8 @@ class Engine
 {
 public:
 
-    Engine() = default;
-    ~Engine() = default;
+    Engine();
+    ~Engine();
 
     void Startup();
     void BeginFrame();

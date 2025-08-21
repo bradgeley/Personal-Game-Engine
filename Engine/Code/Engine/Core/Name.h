@@ -1,6 +1,6 @@
 // Bradley Christensen - 2025
 #pragma once
-#include "Engine/Core/StringUtils.h"
+#include <string>
 #include <cstdint>
 
 

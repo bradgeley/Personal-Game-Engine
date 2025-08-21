@@ -8,7 +8,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ScopedTimer::ScopedTimer(std::string const& name) : m_name(name)
+ScopedTimer::ScopedTimer(Name name) : m_name(name)
 {
 	m_startTimeSeconds = GetCurrentTimeSeconds();
 }
@@ -23,7 +23,7 @@ ScopedTimer::~ScopedTimer()
 	deltaSeconds *= 1000.0;
 	if (g_devConsole)
 	{
-		std::string line = StringUtils::StringF("Scoped Timer: %s: %f%s", m_name.c_str(), deltaSeconds, "ms");
+		std::string line = StringUtils::StringF("Scoped Timer: %s: %f%s", m_name.ToCStr(), deltaSeconds, "ms");
 		g_devConsole->AddLine(line);
 	}
 }

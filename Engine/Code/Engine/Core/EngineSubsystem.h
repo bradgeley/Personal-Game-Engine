@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
+#include "Engine/Core/Name.h"
 #include <string>
 
 
@@ -13,7 +14,7 @@ class EngineSubsystem
 {
 public:
     
-    EngineSubsystem(std::string const& name = "Unnamed Subsystem");
+    EngineSubsystem(Name name = "Unnamed Subsystem");
     EngineSubsystem(const EngineSubsystem&) = delete;
     virtual ~EngineSubsystem() = default;
     
@@ -24,7 +25,7 @@ public:
     virtual void EndFrame()                                     {}
     virtual void Shutdown()                                     {}
 
-    std::string const& GetName();
+    Name GetName();
 
     bool IsEnabled() const;
     void SetEnabled(bool isEnabled);
@@ -33,5 +34,5 @@ public:
 protected:
 
     bool m_isEnabled = true;
-    std::string m_name;
+    Name m_name;
 };

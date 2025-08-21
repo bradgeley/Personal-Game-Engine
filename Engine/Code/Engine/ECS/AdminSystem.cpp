@@ -37,9 +37,9 @@ void AdminSystem::Startup()
 {
 	m_systemScheduler = new SystemScheduler(this);
 
-	for (auto& s : m_systemSubgraphs)
+	for (SystemSubgraph& subgraph : m_systemSubgraphs)
 	{
-		s.Startup();
+		subgraph.Startup();
 	}
 }
 
@@ -48,10 +48,10 @@ void AdminSystem::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::Shutdown()
 {
-	for (auto& s : m_systemSubgraphs)
+	for (auto& subgraph : m_systemSubgraphs)
 	{
-		s.Shutdown();
-		s.Cleanup();
+		subgraph.Shutdown();
+		subgraph.Cleanup();
 	}
 
 	m_systemSubgraphs.clear();
@@ -140,13 +140,13 @@ std::vector<System*> AdminSystem::GetSystems() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-System* AdminSystem::GetSystemByName(std::string const& name) const
+System* AdminSystem::GetSystemByName(Name name) const
 {
 	for (SystemSubgraph const& subgraph : m_systemSubgraphs)
 	{
 		for (System* const& system : subgraph.m_systems)
 		{
-			if (StringUtils::GetToLower(system->GetName()) == StringUtils::GetToLower(name))
+			if (system->GetName() == name)
 			{
 				return system;
 			}
@@ -300,12 +300,12 @@ void AdminSystem::RegisterSystem(System* s, SystemSubgraphID subgraphID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AdminSystem::SetSystemActive(std::string const& sysName, bool isActive) const
+void AdminSystem::SetSystemActive(Name systemName, bool isActive) const
 {
-	System* s = GetSystemByName(sysName);
-	if (s)
+	System* system = GetSystemByName(systemName);
+	if (system)
 	{
-		s->SetActive(isActive);
+		system->SetActive(isActive);
 	}
 }
 

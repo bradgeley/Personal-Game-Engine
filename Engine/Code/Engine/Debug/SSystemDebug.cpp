@@ -9,7 +9,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-SSystemDebug::SSystemDebug(std::string const& name, Rgba8 const& debugTint) : System(name, debugTint)
+SSystemDebug::SSystemDebug(Name name, Rgba8 const& debugTint) : System(name, debugTint)
 {
 }
 
@@ -74,7 +74,7 @@ bool SSystemDebug::PrintAllSystems(NamedProperties&)
 		for (System* system : subgraph.m_systems)
 		{
 			std::string activeString = system->IsActive() ? "active" : "inactive";
-			std::string line = StringUtils::StringF("- %s: (%s)", system->GetName().c_str(), activeString.c_str());
+			std::string line = StringUtils::StringF("- %s: (%s)", system->GetName().ToCStr(), activeString.c_str());
 			g_devConsole->AddLine(line);
 		}
 	}

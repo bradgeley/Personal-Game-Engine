@@ -31,14 +31,29 @@ static PerfFrameData s_frameData;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Engine::Engine()
+{
+    g_nameTable = new NameTable();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Engine::~Engine()
+{
+    delete g_nameTable;
+    g_nameTable = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Engine::Startup()
 {
     if (m_isActive)
     {
         return;
     }
-
-    g_nameTable = new NameTable();
 
     for (EngineSubsystem*& subsystem : m_subsystems)
     {
@@ -159,9 +174,6 @@ void Engine::Shutdown()
         }
     }
     m_subsystems.clear();
-
-    delete g_nameTable;
-    g_nameTable = nullptr;
 }
 
 

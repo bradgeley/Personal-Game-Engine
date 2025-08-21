@@ -4,14 +4,14 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-EngineSubsystem::EngineSubsystem(std::string const& name) : m_name(name)
+EngineSubsystem::EngineSubsystem(Name name) : m_name(name)
 {
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::string const& EngineSubsystem::GetName()
+Name EngineSubsystem::GetName()
 {
     return m_name;
 }
