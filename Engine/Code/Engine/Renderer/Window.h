@@ -34,7 +34,7 @@ enum class WindowMode : uint8_t
 struct WindowUserSettings
 {
     WindowMode m_windowMode = WindowMode::Borderless;
-    IntVec2 m_windowResolution = IntVec2(1920, 1080); // in fullscreen and borderless, this will forced to be the desktop size
+    IntVec2 m_windowedResolution = IntVec2(1920, 1080); // in fullscreen and borderless, this will forced to be the desktop size
     float m_renderResolutionMultiplier = 1.f; // should be between 0 and 1, but close to 0 would cause issues.
 };
 

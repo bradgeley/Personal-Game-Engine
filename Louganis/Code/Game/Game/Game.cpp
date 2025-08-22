@@ -128,7 +128,7 @@ void Game::ConfigureEngine(Engine* engine)
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Project Louganis";
     windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Borderless;
-    windowConfig.m_startupUserSettings.m_windowResolution = IntVec2(500, 500); // if not fullscreen
+    windowConfig.m_startupUserSettings.m_windowedResolution = IntVec2(500, 500);
     g_window = new Window(windowConfig);
     engine->RegisterSubsystem(g_window);
 
@@ -141,6 +141,7 @@ void Game::ConfigureEngine(Engine* engine)
     dcConfig.m_backgroundImageSustainSeconds = 30.f;
     dcConfig.m_backgroundImageFadeSeconds = 1.f;
     dcConfig.m_backgroundImages = { "DrStrange.jpg" , "Hawkeye.jpg", "Thanos.jpg", "Avengers.png", "IronMan.jpg", "Jack1.jpg", "Jack2.jpg", "Thor.jpg" };
+    dcConfig.m_openSoundFilePath = "Data/Sounds/SFX/WaterDroplet1.wav";
     g_devConsole = new DevConsole(dcConfig);
     engine->RegisterSubsystem(g_devConsole);
 
@@ -170,6 +171,10 @@ void Game::ConfigureECS()
     ecsConfig.m_autoMultithreadingEntityThreshold = 1;
     g_ecs = new AdminSystem(ecsConfig);
 
+    //----------------------------------------------------------------------------------------------------------------------
+    // COMPONENTS
+    // 
+
     // Array components
     g_ecs->RegisterComponentArray<CTransform>();
     g_ecs->RegisterComponentArray<CMovement>();
@@ -181,17 +186,23 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentMap<CPlayerController>();
 
     // Singleton components
-    g_ecs->RegisterComponentSingleton<SCWorld>();
+    g_ecs->RegisterComponentSingleton<SCAudio>();
+    g_ecs->RegisterComponentSingleton<SCDebug>();
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
     g_ecs->RegisterComponentSingleton<SCFlowField>();
-    g_ecs->RegisterComponentSingleton<SCDebug>();
-    g_ecs->RegisterComponentSingleton<SCRender>();
     g_ecs->RegisterComponentSingleton<SCLoadChunks>();
+    g_ecs->RegisterComponentSingleton<SCRender>();
+    g_ecs->RegisterComponentSingleton<SCWorld>();
 
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();
     g_ecs->RegisterResourceByType<Renderer>();
     g_ecs->RegisterResourceByType<AudioSystem>();
+
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // SYSTEMS
+    // 
 
     // Pre Physics
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
@@ -199,6 +210,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLoadChunks>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SUnloadChunks>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SBackgroundMusic>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SFlowField>((int) FramePhase::PrePhysics);
 
     // Physics

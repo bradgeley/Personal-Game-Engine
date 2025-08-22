@@ -11,6 +11,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Game Systems
 //
+#include "SBackgroundMusic.h"
 #include "SCamera.h"
 #include "SCollision.h"
 #include "SCopyTransform.h" 

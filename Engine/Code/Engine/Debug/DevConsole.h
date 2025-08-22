@@ -31,6 +31,7 @@ extern class DevConsole* g_devConsole;
 struct DevConsoleConfig
 {
 	std::string m_commandHistoryFilePath = "Temp/Debug/DevConsoleCommandHistory.txt";
+	std::string m_openSoundFilePath;
 	
 	// All visual toggles for dev console
 	float m_inputLineThickness				= 30.f;
@@ -66,6 +67,10 @@ public:
 	void Update(float deltaSeconds) override;
 	void Render() const override;
 	void Shutdown() override;
+
+	bool Open();
+	bool Close();
+	bool ToggleOpen();
 
 	bool Clear(NamedProperties& args);
 	bool Help(NamedProperties& args);

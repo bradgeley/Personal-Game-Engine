@@ -4,7 +4,11 @@
 
 
 
-struct ma_engine;
+#if defined(AUDIO_SYSTEM_ENABLED) && defined(AUDIO_SYSTEM_USE_MINI_AUDIO)
+
+
+
+struct MiniAudioImpl;
 
 
 
@@ -15,18 +19,27 @@ public:
 
     MiniAudioSystem(AudioSystemConfig const& config);
 
-    void Startup() override;
-    void BeginFrame() override;
-    void Update(float deltaSeconds) override;
-    void EndFrame() override;
-    void Shutdown() override;
+    virtual void Startup() override;
+    virtual void BeginFrame() override;
+    virtual void Update(float deltaSeconds) override;
+    virtual void EndFrame() override;
+    virtual void Shutdown() override;
 
-    ma_engine* GetEngine() const;
+    // Play sound
+    virtual SoundID PlaySoundFromFile(const char* filepath, bool looping = false, float volume = 1.f) override;
 
-    virtual void PlaySoundFromFile(const char* filepath) override;
+    // Stop sound
+    virtual void StopSound(SoundID id) override;
+
+    // Configure playing sound
+    virtual void SetSoundVolume(SoundID id, float volume) override;
+    virtual void SetSoundLooping(SoundID id, bool looping) override;
 
 public:
 
-    ma_engine* m_miniAudioEngine = nullptr;
+    MiniAudioImpl* m_miniAudioImpl = nullptr;
 };
 
+
+
+#endif // AUDIO_SYSTEM_ENABLED && AUDIO_SYSTEM_USE_MINI_AUDIO

@@ -20,6 +20,11 @@
 #include "Engine/Renderer/Window.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/Font.h"
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(AUDIO_SYSTEM_ENABLED)
+#include "Engine/Audio/AudioSystem.h"
+#endif
 
 
 
@@ -199,6 +204,50 @@ void DevConsole::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool DevConsole::Open()
+{
+    m_isShowing = true;
+    #if defined(AUDIO_SYSTEM_ENABLED)
+        if (g_audioSystem && !m_config.m_openSoundFilePath.empty())
+        {
+            SoundID id = g_audioSystem->PlaySoundFromFile(m_config.m_openSoundFilePath.c_str());
+            if (id == AudioSystem::s_invalidSoundID)
+            {
+                LogErrorF("Dev console opening sound file invalid: %s", m_config.m_openSoundFilePath.c_str());
+            }
+        }
+    #endif
+    return m_isShowing;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool DevConsole::Close()
+{
+    m_isShowing = false;
+    return m_isShowing;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool DevConsole::ToggleOpen()
+{
+    if (m_isShowing)
+    {
+        Close();
+    }
+    else
+    {
+        Open();
+    }
+    return m_isShowing;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool DevConsole::Clear(NamedProperties&)
 {
     m_log.Clear();
@@ -366,17 +415,14 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
     int key = args.Get("Key", -1);
     if (key == (uint8_t) KeyCode::Tilde)
     {
-        m_isShowing = !m_isShowing;
+        ToggleOpen();
         return true;
     }
 
     if (key == (uint8_t) KeyCode::Escape)
     {
-        if (m_isShowing)
-        {
-            m_isShowing = !m_isShowing;
-            return true;
-        }
+        Close();
+        return true;
     }
 
     if (!m_isShowing)

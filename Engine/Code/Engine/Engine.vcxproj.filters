@@ -223,12 +223,6 @@
     <ClCompile Include="Audio\AudioSystem.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Audio\Sound.cpp">
-      <Filter>Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="Audio\MiniAudioSound.cpp">
-      <Filter>Audio\MiniAudio</Filter>
-    </ClCompile>
     <ClCompile Include="Audio\MiniAudioSystem.cpp">
       <Filter>Audio\MiniAudio</Filter>
     </ClCompile>
@@ -488,12 +482,6 @@
     </ClInclude>
     <ClInclude Include="Audio\AudioSystem.h">
       <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Audio\Sound.h">
-      <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Audio\MiniAudioSound.h">
-      <Filter>Audio\MiniAudio</Filter>
     </ClInclude>
     <ClInclude Include="Audio\MiniAudioSystem.h">
       <Filter>Audio\MiniAudio</Filter>

@@ -161,7 +161,7 @@ bool PerformanceDebugWindow::OpenWindow()
     windowConfig.m_windowTitle = "Performance Debug Window";
     windowConfig.m_automaticallyPresent = false;
     windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Windowed;
-    windowConfig.m_startupUserSettings.m_windowResolution = IntVec2(WINDOW_RESOLUTION_X, WINDOW_RESOLUTION_Y);
+    windowConfig.m_startupUserSettings.m_windowedResolution = IntVec2(WINDOW_RESOLUTION_X, WINDOW_RESOLUTION_Y);
     windowConfig.m_startupUserSettings.m_renderResolutionMultiplier = 1.f;
 
     m_window = new Window(windowConfig);

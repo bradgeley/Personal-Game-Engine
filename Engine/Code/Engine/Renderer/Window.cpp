@@ -193,7 +193,7 @@ IntVec2 Window::GetDesiredWindowResolution() const
 {
     if (m_userSettings.m_windowMode == WindowMode::Windowed)
     {
-        return m_userSettings.m_windowResolution;
+        return m_userSettings.m_windowedResolution;
     }
 
     RECT desktopRect;
@@ -414,8 +414,8 @@ void Window::HandleWindowResolutionChanged(int width, int height)
 
     if (m_isManuallyResizing)
     {
-        m_userSettings.m_windowResolution.x = width;
-        m_userSettings.m_windowResolution.y = height;
+        m_userSettings.m_windowedResolution.x = width;
+        m_userSettings.m_windowedResolution.y = height;
     }
 
     m_actualResolution = IntVec2(width, height);

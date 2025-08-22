@@ -221,7 +221,7 @@ protected:
 	SystemScheduler*				m_systemScheduler = nullptr;
 
 	BitArray<MAX_ENTITIES>			m_entities;
-	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 };
+	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 }; // Todo: if user needs more than 32 or 64 components, allow them to use a fixed size BitArray for entity composition, so the max component count would be uncapped
 
 	std::unordered_map<HashCode, BaseStorage*>	m_componentStorage;
 	std::unordered_map<HashCode, BitMask>		m_componentBitMasks;

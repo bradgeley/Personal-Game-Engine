@@ -22,4 +22,5 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Audio System
 //
+#define AUDIO_SYSTEM_ENABLED
 #define AUDIO_SYSTEM_USE_MINI_AUDIO

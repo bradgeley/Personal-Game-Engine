@@ -1,5 +1,12 @@
 // Bradley Christensen - 2022-2023
 #include "Engine/Audio/AudioUtils.h"
+
+
+
+#if defined(AUDIO_SYSTEM_ENABLED)
+
+
+
 #include "Engine/Audio/MiniAudioSystem.h"
 #include "Game/Framework/EngineBuildPreferences.h"
 
@@ -14,3 +21,7 @@ AudioSystem* AudioUtils::MakeAudioSystem(AudioSystemConfig const& config)
 		return nullptr;
 	#endif
 }
+
+
+
+#endif // AUDIO_SYSTEM_ENABLED

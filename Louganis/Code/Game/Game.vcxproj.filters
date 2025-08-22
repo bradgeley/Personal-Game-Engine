@@ -100,6 +100,9 @@
     <ClCompile Include="Game\SPhysics.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SBackgroundMusic.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -109,9 +112,6 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Game\GameCommon.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\WindowsApplication.h">
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Game\SRenderEntities.h">
@@ -229,6 +229,18 @@
       <Filter>Singletons</Filter>
     </ClInclude>
     <ClInclude Include="Game\SCLoadChunks.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WindowsApplication.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCAudio.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SBackgroundMusic.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AllSingletonComponents.h">
       <Filter>Singletons</Filter>
     </ClInclude>
   </ItemGroup>
