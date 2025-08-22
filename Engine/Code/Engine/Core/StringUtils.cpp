@@ -100,6 +100,18 @@ void StringUtils::ToLower(std::string& out_string)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+char StringUtils::ToLowerChar(char c)
+{
+    if (IsUpper(c))
+    {
+        return c + ASCII_UPPER_TO_LOWER;
+    }
+    return c;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void StringUtils::ToUpper(std::string& out_string)
 {
     for (char& c : out_string)
@@ -109,6 +121,18 @@ void StringUtils::ToUpper(std::string& out_string)
             c += ASCII_LOWER_TO_UPPER;
         }
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+char StringUtils::ToUpperChar(char c)
+{
+    if (IsLower(c))
+    {
+        return c + ASCII_LOWER_TO_UPPER;
+    }
+    return c;
 }
 
 

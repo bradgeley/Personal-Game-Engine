@@ -20,7 +20,9 @@ namespace StringUtils
 {
     std::string GetToLower(std::string const& string);
     void ToLower(std::string& out_string);
+    char ToLowerChar(char c);
     void ToUpper(std::string& out_string);
+    char ToUpperChar(char c);
     void TrimWhitespace(std::string& out_string);
     void TrimEdgeWhitespace(std::string& out_string); // Only trims on left and right of string, not central whitespace
     void TrimLeadingWhitespace(std::string& out_string); // Only trims on left of string, not central whitespace

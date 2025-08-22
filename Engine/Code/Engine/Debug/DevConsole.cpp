@@ -366,6 +366,55 @@ DevConsoleCommandInfo const* DevConsole::GetDevConsoleCommandInfo(Name commandNa
 
 
 //----------------------------------------------------------------------------------------------------------------------
+std::string DevConsole::GuessCommandInput(std::string const& input) const
+{
+    int bestMatching = 0;
+    std::string bestGuess = "";
+
+    int numInputChars = (int) input.size();
+
+    Strings allEvents = g_eventSystem->GetAllEventNames();
+    for (std::string const& eventName : allEvents)
+    {
+        int numEventChars = (int) eventName.size();
+
+        int numMatchingChars = 0;
+        for (int i = 0; i < MathUtils::Min(numEventChars, numInputChars); ++i)
+        {
+            char inputChar = StringUtils::ToLowerChar(input[i]);
+            char eventChar = StringUtils::ToLowerChar(eventName[i]);
+
+            if (inputChar != eventChar)
+            {
+                break;
+            }
+            else
+            {
+                ++numMatchingChars;
+
+                if (numMatchingChars > bestMatching)
+                {
+                    bestMatching = numMatchingChars;
+                    bestGuess = eventName;
+                }
+            }
+        }
+    }
+
+    if (!bestGuess.empty())
+    {
+        for (int i = 0; i < input.size(); ++i)
+        {
+            bestGuess[i] = input[i];
+        }
+    }
+
+    return bestGuess;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsole::LogSuccess(std::string const& line)
 {
     AddLine(line, m_config.m_successTint);
@@ -840,45 +889,6 @@ float DevConsole::GetBackgroundImageAlpha() const
     }
 
     return alpha;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-std::string DevConsole::GuessCommandInput(std::string const& input) const
-{
-    int bestMatching = 0;
-    std::string bestGuess = "";
-    
-    int numInputChars = (int) input.size();
-
-    std::string inputLower = StringUtils::GetToLower(input);
-    
-    Strings allEvents = g_eventSystem->GetAllEventNames();
-    for (auto& event : allEvents)
-    {
-        int numEventChars = (int) event.size();
-        
-        int numMatchingChars = 0;
-        for (int i = 0; i < MathUtils::Min(numEventChars, numInputChars); ++i)
-        {
-            if (inputLower[i] == event[i])
-            {
-                ++numMatchingChars;
-            }
-            if (numMatchingChars > bestMatching)
-            {
-                bestMatching = numMatchingChars;
-                bestGuess = event;
-            }
-            if (inputLower[i] != event[i])
-            {
-                break;
-            }
-        }
-    }
-    
-    return bestGuess;
 }
 
 

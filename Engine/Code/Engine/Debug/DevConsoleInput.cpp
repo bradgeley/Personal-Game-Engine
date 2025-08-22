@@ -10,6 +10,7 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Window.h"
+#include "Engine/Debug/DevConsole.h"
 
 
 
@@ -46,7 +47,7 @@ void DevConsoleInput::SetOutputLog(DevConsoleLog* log)
 void DevConsoleInput::Update(float deltaSeconds)
 {
     m_caretAnimationFraction += deltaSeconds;
-    if (m_caretAnimationFraction > 1.f)
+    while (m_caretAnimationFraction > 1.f)
     {
         m_caretAnimationFraction -= 1.f;
     }
@@ -233,6 +234,11 @@ void DevConsoleInput::RenderBackground(AABB2 const& box) const
 void DevConsoleInput::RenderText(AABB2 const& box) const
 {
     Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+
+    std::string guess = g_devConsole->GuessCommandInput(m_input.m_line);
+
+    float alpha = MathUtils::RangeMapClamped(m_caretAnimationFraction, 0.f, 1.f, 75.f, 100.f);
+    font->AddVertsForText2D(m_vbo->GetMutableVerts(), box.mins, box.GetHeight(), LINE_PREFIX + guess, Rgba8(155, 155, 155, static_cast<uint8_t>(alpha)));
     font->AddVertsForText2D(m_vbo->GetMutableVerts(), box.mins, box.GetHeight(), LINE_PREFIX + m_input.m_line, Rgba8::White);
 
     font->SetRendererState();

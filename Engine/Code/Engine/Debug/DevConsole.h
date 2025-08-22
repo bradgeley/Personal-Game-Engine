@@ -83,6 +83,7 @@ public:
 	void AddDevConsoleCommandInfo(Name eventName, Name argName, DevConsoleArgType argType);
 	void RemoveDevConsoleCommandInfo(Name commandName);
 	DevConsoleCommandInfo const* GetDevConsoleCommandInfo(Name commandName) const;
+	std::string GuessCommandInput(std::string const& input) const;
 	
 	void LogSuccess(std::string const& line);
 	void LogWarning(std::string const& line);
@@ -117,7 +118,6 @@ private:
 	void DrawCommandHistory() const;
 	void PickNextBackgroundImage();
 	float GetBackgroundImageAlpha() const;
-	std::string GuessCommandInput(std::string const& input) const;
 	
 	void LoadCommandHistory();
 	void SaveCommandHistory() const;

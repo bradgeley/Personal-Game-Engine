@@ -104,6 +104,7 @@ float4 PixelMain(v2p_t input) : SV_Target0
         return finalColor;
     }
 
+    finalColor.a *= input.tint.a;
     return finalColor;
 }
     
