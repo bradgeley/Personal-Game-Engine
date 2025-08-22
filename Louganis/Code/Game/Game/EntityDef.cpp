@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2023
+// Bradley Christensen - 2023
 #include "EntityDef.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Core/StringUtils.h"
@@ -27,7 +27,7 @@ void EntityDef::LoadFromXML()
     XmlElement* entityDefElem = root->FirstChildElement("EntityDef");
     while (entityDefElem)
     {
-        Name name = XmlUtils::ParseXmlAttribute(*entityDefElem, "name", name);
+        Name name = XmlUtils::ParseXmlAttribute(*entityDefElem, "name", Name::s_invalidName);
         if (GetEntityDefID(name) != -1)
         {
             g_devConsole->LogErrorF("Duplicate Entity Def: %s", name.ToCStr());

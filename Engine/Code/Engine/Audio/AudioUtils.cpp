@@ -10,7 +10,7 @@ AudioSystem* AudioUtils::MakeAudioSystem(AudioSystemConfig const& config)
 {
 	#if defined(AUDIO_SYSTEM_USE_MINI_AUDIO)
 		return new MiniAudioSystem(config);
+	#else
+		return nullptr;
 	#endif
-
-	return nullptr;
 }

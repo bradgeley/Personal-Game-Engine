@@ -13,6 +13,13 @@ std::string Name::s_invalidNameString = "Invalid Name";
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Name::Name() : Name(s_invalidNameString)
+{
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Name::Name(std::string const& string)
 {
     auto it = g_nameTable->m_lookupTable.find(string);
@@ -26,6 +33,10 @@ Name::Name(std::string const& string)
     {
         m_nameIndex = static_cast<uint32_t>(it->second);
     }
+
+    #if defined(_DEBUG)
+        m_debugString = string;
+    #endif
 }
 
 
@@ -33,6 +44,9 @@ Name::Name(std::string const& string)
 //----------------------------------------------------------------------------------------------------------------------
 Name::Name(const char* string) : Name(std::string(string))
 {
+    #if defined(_DEBUG)
+        m_debugString = string;
+    #endif
 }
 
 
@@ -40,6 +54,9 @@ Name::Name(const char* string) : Name(std::string(string))
 //----------------------------------------------------------------------------------------------------------------------
 Name::Name(Name const& other) : m_nameIndex(other.m_nameIndex)
 {
+    #if defined(_DEBUG)
+        m_debugString = other.m_debugString;
+    #endif
 }
 
 
@@ -67,7 +84,7 @@ std::string const& Name::ToString() const
     {
         return g_nameTable->m_nameTable[m_nameIndex];
     }
-    return s_invalidName.ToString();
+    return s_invalidNameString;
 }
 
 
@@ -75,7 +92,11 @@ std::string const& Name::ToString() const
 //----------------------------------------------------------------------------------------------------------------------
 const char* Name::ToCStr() const
 {
-    return ToString().c_str();
+    if (g_nameTable && IsValid())
+    {
+        return g_nameTable->m_nameTable[m_nameIndex].c_str();
+    }
+    return s_invalidNameString.c_str();
 }
 
 

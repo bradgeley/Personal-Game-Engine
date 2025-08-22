@@ -14,8 +14,9 @@ struct Name
 {
 public:
 
-	Name(std::string const& string = "Invalid Name");
-	Name(const char* string = "Invalid Name");
+	Name();
+	Name(std::string const& string);
+	Name(const char* string);
 	Name(Name const& other);
 
 	bool IsValid() const;
@@ -38,6 +39,10 @@ public:
 protected:
 
 	uint32_t m_nameIndex = s_invalidNameIndex;
+
+#if defined(_DEBUG)
+	std::string m_debugString;
+#endif
 };
 
 
