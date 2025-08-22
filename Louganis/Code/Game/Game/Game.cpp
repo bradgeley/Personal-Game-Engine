@@ -52,9 +52,7 @@ void Game::Startup()
     ConfigureECS();
     g_ecs->Startup();
 
-    DevConsoleCommandInfo timeDilationCommand("TimeDilation");
-    timeDilationCommand.AddArg("t", DevConsoleArgType::Float);
-    g_devConsole->AddDevConsoleCommandInfo(timeDilationCommand);
+    g_devConsole->AddDevConsoleCommandInfo("TimeDilation", "t", DevConsoleArgType::Float);
     g_eventSystem->SubscribeMethod("TimeDilation", this, &Game::TimeDilation);
 }
 

@@ -541,9 +541,7 @@ void Window::RegisterEvents()
 {
     if (g_eventSystem && g_devConsole)
     {
-        DevConsoleCommandInfo setWindowModeCommand("SetWindowMode");
-        setWindowModeCommand.AddArg("mode", DevConsoleArgType::String);
-        g_devConsole->AddDevConsoleCommandInfo(setWindowModeCommand);
+        g_devConsole->AddDevConsoleCommandInfo("SetWindowMode", "mode", DevConsoleArgType::String);
         g_eventSystem->SubscribeMethod("SetWindowMode", this, &Window::SetWindowMode);
     }
 }

@@ -21,9 +21,7 @@ void SSystemDebug::Startup()
 	ASSERT_OR_DIE(g_devConsole, "Dev Console doesn't exist.")
 	ASSERT_OR_DIE(g_eventSystem, "Event System doesn't exist.")
 
-	DevConsoleCommandInfo toggleSystemCommand("ToggleSystem");
-	toggleSystemCommand.AddArg("name", DevConsoleArgType::String);
-	g_devConsole->AddDevConsoleCommandInfo(toggleSystemCommand);
+	g_devConsole->AddDevConsoleCommandInfo("ToggleSystem", "name", DevConsoleArgType::String);
 
 	g_eventSystem->SubscribeMethod("ToggleSystem", this, &SSystemDebug::ToggleSystem);
 	g_eventSystem->SubscribeMethod("PrintAllSystems", this, &SSystemDebug::PrintAllSystems);

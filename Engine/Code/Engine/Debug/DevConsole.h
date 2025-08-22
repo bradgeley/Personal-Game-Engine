@@ -80,6 +80,7 @@ public:
 	void AddBackgroundImage(Texture* backgroundImage);
 
 	void AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info);
+	void AddDevConsoleCommandInfo(Name eventName, Name argName, DevConsoleArgType argType);
 	void RemoveDevConsoleCommandInfo(Name commandName);
 	DevConsoleCommandInfo const* GetDevConsoleCommandInfo(Name commandName) const;
 	

@@ -5,9 +5,17 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-DevConsoleCommandInfo::DevConsoleCommandInfo(std::string const& commandName) : m_commandName(commandName)
+DevConsoleCommandInfo::DevConsoleCommandInfo(Name commandName) : m_commandName(commandName)
 {
 
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+DevConsoleCommandInfo::DevConsoleCommandInfo(Name commandName, Name argName, DevConsoleArgType argType) : m_commandName(commandName)
+{
+	AddArg(argName, argType); 
 }
 
 

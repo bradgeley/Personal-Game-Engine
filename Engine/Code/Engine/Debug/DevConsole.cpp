@@ -323,6 +323,14 @@ void DevConsole::AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void DevConsole::AddDevConsoleCommandInfo(Name eventName, Name argName, DevConsoleArgType argType)
+{
+    m_commandInfos.emplace_back(eventName, argName, argType);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsole::RemoveDevConsoleCommandInfo(Name commandName)
 {
     for (auto it = m_commandInfos.begin(); it != m_commandInfos.end();)

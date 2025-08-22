@@ -2,6 +2,8 @@
 #include "SBackgroundMusic.h"
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Events/EventSystem.h"
+#include "Engine/Debug/DevConsole.h"
+#include "Engine/DataStructures/NamedProperties.h"
 #include "SCAudio.h"
 
 
@@ -19,6 +21,9 @@ void SBackgroundMusic::Startup()
 	PlayBGM();
 
 	g_eventSystem->SubscribeMethod("ToggleBGM", this, &SBackgroundMusic::ToggleBGM);
+
+	g_eventSystem->SubscribeMethod("SetVolume_BGM", this, &SBackgroundMusic::SetVolume_BGM);
+	g_devConsole->AddDevConsoleCommandInfo("SetVolume_BGM", "volume", DevConsoleArgType::Float);
 }
 
 
@@ -35,6 +40,7 @@ void SBackgroundMusic::Run(SystemContext const&)
 void SBackgroundMusic::Shutdown()
 {
 	g_eventSystem->UnsubscribeMethod("ToggleBGM", this, &SBackgroundMusic::ToggleBGM);
+	g_devConsole->RemoveDevConsoleCommandInfo("SetVolume_BGM");
 
 	SCAudio& scAudio = g_ecs->GetSingleton<SCAudio>();
 	g_audioSystem->StopSound(scAudio.m_bgmSoundID);
@@ -55,6 +61,17 @@ bool SBackgroundMusic::ToggleBGM(NamedProperties&)
 		g_audioSystem->TogglePaused(scAudio.m_bgmSoundID);
 	}
 
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SBackgroundMusic::SetVolume_BGM(NamedProperties& args)
+{
+	SCAudio& scAudio = g_ecs->GetSingleton<SCAudio>();
+	scAudio.m_bgmVolume = args.Get("volume", scAudio.m_bgmVolume);
+	g_audioSystem->SetSoundVolume(scAudio.m_bgmSoundID, scAudio.m_bgmVolume);
 	return false;
 }
 

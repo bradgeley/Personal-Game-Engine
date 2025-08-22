@@ -21,6 +21,7 @@ public:
 protected:
 
     bool ToggleBGM(NamedProperties& args);
+    bool SetVolume_BGM(NamedProperties& args);
 
 private:
 
