@@ -27,11 +27,11 @@ struct DevConsoleCommandInfo
 	DevConsoleCommandInfo(std::string const& commandName);
 
 	std::string ToString() const;
-	void AddArg(std::string const& argName, DevConsoleArgType argType);
-	DevConsoleArgType GetArgType(std::string const& argName) const;
+	void AddArg(Name argName, DevConsoleArgType argType);
+	DevConsoleArgType GetArgType(Name argName) const;
 	static std::string ArgTypeToString(DevConsoleArgType argType);
 
 	Name m_commandName;
-	std::vector<std::string> m_argNames;
+	std::vector<Name> m_argNames;
 	std::vector<DevConsoleArgType> m_argTypes;
 };

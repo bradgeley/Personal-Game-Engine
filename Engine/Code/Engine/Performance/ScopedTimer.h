@@ -25,7 +25,7 @@ class PerfWindowScopedTimer
 {
 public:
 
-	PerfWindowScopedTimer(std::string const& sectionName, std::string const& rowName, Rgba8 tint = Rgba8::White);
+	PerfWindowScopedTimer(Name sectionName, Name rowName, Rgba8 tint = Rgba8::White);
 	PerfWindowScopedTimer(int sectionID, int rowID, Rgba8 tint = Rgba8::White);
 	~PerfWindowScopedTimer();
 

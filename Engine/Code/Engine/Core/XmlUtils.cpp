@@ -22,7 +22,19 @@ std::string XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* a
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
-        return attrib->Value();
+        return std::string(attrib->Value());
+    }
+    return defaultValue;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Name XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, Name defaultValue)
+{
+    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    {
+        return Name(attrib->Value());
     }
     return defaultValue;
 }

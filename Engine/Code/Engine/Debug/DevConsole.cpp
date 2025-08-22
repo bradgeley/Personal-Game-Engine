@@ -507,7 +507,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
 
         if (keyValue.size() == 1 || keyValue.size() == 2)
         {
-            std::string argName;
+            Name argName = Name::s_invalidName;
             std::string argValue;
             
             if (keyValue.size() == 1)
@@ -532,8 +532,6 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
                 argName = keyValue[0];
                 argValue = keyValue[1];
             }
-            
-            StringUtils::ToLower(argName);
 
             if (info)
             {

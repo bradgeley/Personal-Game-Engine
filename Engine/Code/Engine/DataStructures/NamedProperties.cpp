@@ -32,7 +32,7 @@ int NamedProperties::Size() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool NamedProperties::Contains(std::string const& name) const
+bool NamedProperties::Contains(Name name) const
 {
     return m_properties.find(name) != m_properties.end();
 }

@@ -2,6 +2,7 @@
 #pragma once
 #include "AllComponents.h"
 #include "Engine/Core/XmlUtils.h"
+#include "Engine/Core/Name.h"
 #include <vector>
 #include <optional>
 
@@ -16,8 +17,8 @@ public:
 
     static void LoadFromXML();
     static EntityDef const* GetEntityDef(uint8_t id);
-    static EntityDef const* GetEntityDef(std::string const& name);
-    static int GetEntityDefID(std::string const& name);
+    static EntityDef const* GetEntityDef(Name name);
+    static int GetEntityDefID(Name name);
 
 private:
 
@@ -25,7 +26,7 @@ private:
 
 public:
 
-    std::string m_name = "Unnamed EntityDef";
+    Name m_name = "Unnamed EntityDef";
 
     // Components
     std::optional<CTransform>           m_transform;

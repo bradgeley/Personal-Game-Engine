@@ -4,6 +4,7 @@
 #include "Engine/Math/AABB2.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Renderer/Rgba8.h"
+#include "Engine/Core/Name.h"
 #include <vector>
 
 
@@ -33,8 +34,8 @@ public:
 
 	static void LoadFromXML();
 	static TileDef const* GetTileDef(uint8_t id);
-	static TileDef const* GetTileDef(std::string const& name);
-	static int GetTileDefID(std::string const& name);
+	static TileDef const* GetTileDef(Name name);
+	static int GetTileDefID(Name name);
 
 	inline bool IsVisible() const { return m_tags & TileTag::Visible; }
 	inline bool IsSolid()   const { return m_tags & TileTag::Solid; }
@@ -48,9 +49,9 @@ private:
 
 public:
 
-	std::string m_name = "Unnamed TileDef";
+	Name		m_name		= "Unnamed TileDef";
 	AABB2		m_UVs;
 	TileTags	m_tags;
-	Rgba8		m_tint = Rgba8::White;
+	Rgba8		m_tint		= Rgba8::White;
 	uint8_t		m_cost;
 };

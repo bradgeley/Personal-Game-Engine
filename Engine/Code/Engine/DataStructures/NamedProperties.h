@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
-#include <string>
+#include "Engine/Core/Name.h"
 #include <unordered_map>
 #include <typeinfo>
 
@@ -129,25 +129,25 @@ struct NamedProperties
     ~NamedProperties();
     
     template<typename T>
-    void Set(std::string const& name, T const& value);
+    void Set(Name name, T const& value);
     
     template<typename T>
-    T Get(std::string const& name, T const& defaultValue) const;
+    T Get(Name name, T const& defaultValue) const;
 
     void Clear();
     int Size() const;
-    bool Contains(std::string const& name) const;
+    bool Contains(Name name) const;
 
 private:
 
-    std::unordered_map<std::string, PropertyBase*> m_properties;
+    std::unordered_map<Name, PropertyBase*> m_properties;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-void NamedProperties::Set(std::string const& name, T const& value)
+void NamedProperties::Set(Name name, T const& value)
 {
     auto maybeExistingProperty = m_properties.find(name);
     if (maybeExistingProperty != m_properties.end())
@@ -173,7 +173,7 @@ void NamedProperties::Set(std::string const& name, T const& value)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T>
-T NamedProperties::Get(std::string const& name, T const& defaultValue) const
+T NamedProperties::Get(Name name, T const& defaultValue) const
 {
     auto maybeExistingProperty = m_properties.find(name);
     if (maybeExistingProperty != m_properties.end())

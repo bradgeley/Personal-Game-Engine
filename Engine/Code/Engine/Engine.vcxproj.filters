@@ -220,6 +220,9 @@
     <ClCompile Include="Core\NameTable.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Audio\AudioSystem.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -468,6 +471,12 @@
     <ClInclude Include="Core\NameTable.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\ThirdParty\miniaudio\miniaudio.h">
+      <Filter>ThirdParty\miniaudio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\AudioSystem.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">
@@ -508,6 +517,12 @@
     </Filter>
     <Filter Include="Performance">
       <UniqueIdentifier>{d08b2afe-9022-4777-80cd-423aad5f2a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdParty\miniaudio">
+      <UniqueIdentifier>{89a9be7c-c145-4144-94b7-b2f7bf79148e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{1032fd09-b7e9-4c88-a965-ef456e284715}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

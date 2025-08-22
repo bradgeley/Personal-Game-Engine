@@ -29,9 +29,9 @@ TileDef::TileDef(XmlElement const* tileDefXmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 void TileDef::SetTags(bool isVisible, bool isSolid, bool isOpaque)
 {
-	if (isVisible) m_tags |= TileTag::Visible;
-	if (isSolid)   m_tags |= TileTag::Solid;
-	if (isOpaque)  m_tags |= TileTag::Opaque;
+	m_tags |= isVisible ? TileTag::Visible	: 0;
+	m_tags |= isSolid	? TileTag::Solid	: 0;
+	m_tags |= isOpaque	? TileTag::Opaque	: 0;
 }
 
 
@@ -70,7 +70,7 @@ TileDef const* TileDef::GetTileDef(uint8_t tileID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TileDef const* TileDef::GetTileDef(std::string const& tileName)
+TileDef const* TileDef::GetTileDef(Name tileName)
 {
 	for (size_t i = 0; i < s_tileDefs.size(); i++)
 	{
@@ -86,7 +86,7 @@ TileDef const* TileDef::GetTileDef(std::string const& tileName)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int TileDef::GetTileDefID(std::string const& name)
+int TileDef::GetTileDefID(Name name)
 {
 	for (int i = 0; i < (int) s_tileDefs.size(); ++i)
 	{

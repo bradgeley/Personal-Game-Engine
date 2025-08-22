@@ -31,7 +31,7 @@ ScopedTimer::~ScopedTimer()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerfWindowScopedTimer::PerfWindowScopedTimer(std::string const& sectionName, std::string const& rowName, Rgba8 tint /*= Rgba8::White*/) : m_tint(tint)
+PerfWindowScopedTimer::PerfWindowScopedTimer(Name sectionName, Name rowName, Rgba8 tint /*= Rgba8::White*/) : m_tint(tint)
 {
 	if (g_performanceDebugWindow)
 	{

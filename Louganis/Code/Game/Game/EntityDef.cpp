@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2023
 #include "EntityDef.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Renderer/Texture.h"
 
 
@@ -20,16 +21,16 @@ void EntityDef::LoadFromXML()
     if (!root)
     {
         g_devConsole->LogErrorF("SEntityFactory::LoadFromXml - Could not load file: %s", s_entityDefsFilePath);
-        return;
+        return; 
     }
 
     XmlElement* entityDefElem = root->FirstChildElement("EntityDef");
     while (entityDefElem)
     {
-        std::string name = XmlUtils::ParseXmlAttribute(*entityDefElem, "name", "Unnamed Entity Def");
+        Name name = XmlUtils::ParseXmlAttribute(*entityDefElem, "name", name);
         if (GetEntityDefID(name) != -1)
         {
-            g_devConsole->LogErrorF("Duplicate Entity Def: %s", name.c_str());
+            g_devConsole->LogErrorF("Duplicate Entity Def: %s", name.ToCStr());
         }
 
         // Emplace new definition using the constructor that takes an Xml Element
@@ -51,7 +52,7 @@ EntityDef const* EntityDef::GetEntityDef(uint8_t id)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-EntityDef const* EntityDef::GetEntityDef(std::string const& name)
+EntityDef const* EntityDef::GetEntityDef(Name name)
 {
     for (size_t i = 0; i < s_entityDefs.size(); i++)
     {
@@ -67,7 +68,7 @@ EntityDef const* EntityDef::GetEntityDef(std::string const& name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int EntityDef::GetEntityDefID(std::string const& name)
+int EntityDef::GetEntityDefID(Name name)
 {
     for (size_t i = 0; i < s_entityDefs.size(); i++)
     {
@@ -86,6 +87,7 @@ int EntityDef::GetEntityDefID(std::string const& name)
 EntityDef::EntityDef(XmlElement const* xmlElement)
 {
     m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
+    g_devConsole->AddLine(StringUtils::StringF("Entity def loading: %s", m_name.ToCStr()));
 
     //tinyxml2::XMLElement const* elem;
 

@@ -3,6 +3,7 @@
 #include "ThirdParty/tinyxml2/tinyxml2.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/Rgba8.h"
+#include "Engine/Core/Name.h"
 #include <string>
 
 
@@ -24,6 +25,7 @@ namespace XmlUtils
 {
 	std::string ParseXmlAttribute(XmlElement const& element, char const* attributeName, char const* defaultValue);
 	std::string ParseXmlAttribute(XmlElement const& element, char const* attributeName, std::string const& defaultValue);
+	Name ParseXmlAttribute(XmlElement const& element, char const* attributeName, Name defaultValue);
 	float ParseXmlAttribute(XmlElement const& element, char const* attributeName, float defaultValue);
 	bool ParseXmlAttribute(XmlElement const& element, char const* attributeName, bool defaultValue);
 	int ParseXmlAttribute(XmlElement const& element, char const* attributeName, int defaultValue);
