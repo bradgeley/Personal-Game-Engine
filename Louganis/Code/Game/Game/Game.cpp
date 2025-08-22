@@ -14,6 +14,8 @@
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
 #include "Engine/ECS/AdminSystem.h"
+#include "Engine/Audio/AudioSystem.h"
+#include "Engine/Audio/AudioUtils.h"
 #include "EntityDef.h"
 #include "TileDef.h"
 #include "AllComponents.h"
@@ -119,6 +121,10 @@ void Game::ConfigureEngine(Engine* engine)
     g_eventSystem = new EventSystem(eventSysConfig);
     engine->RegisterSubsystem(g_eventSystem);
 
+    AudioSystemConfig audioConfig;
+    g_audioSystem = AudioUtils::MakeAudioSystem(audioConfig);
+    engine->RegisterSubsystem(g_audioSystem);
+
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Project Louganis";
     windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Borderless;
@@ -185,6 +191,7 @@ void Game::ConfigureECS()
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();
     g_ecs->RegisterResourceByType<Renderer>();
+    g_ecs->RegisterResourceByType<AudioSystem>();
 
     // Pre Physics
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);

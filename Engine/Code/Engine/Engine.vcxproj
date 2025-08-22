@@ -165,6 +165,10 @@
   <ItemGroup>
     <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="Audio\AudioSystem.cpp" />
+    <ClCompile Include="Audio\AudioUtils.cpp" />
+    <ClCompile Include="Audio\MiniAudioSound.cpp" />
+    <ClCompile Include="Audio\MiniAudioSystem.cpp" />
+    <ClCompile Include="Audio\Sound.cpp" />
     <ClCompile Include="Core\BinaryUtils.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\EngineSubsystem.cpp" />
@@ -243,6 +247,10 @@
     <ClInclude Include="..\ThirdParty\stb\stb_image.h" />
     <ClInclude Include="..\ThirdParty\tinyxml2\tinyxml2.h" />
     <ClInclude Include="Audio\AudioSystem.h" />
+    <ClInclude Include="Audio\AudioUtils.h" />
+    <ClInclude Include="Audio\MiniAudioSound.h" />
+    <ClInclude Include="Audio\MiniAudioSystem.h" />
+    <ClInclude Include="Audio\Sound.h" />
     <ClInclude Include="Core\BinaryUtils.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\EngineCommon.h" />

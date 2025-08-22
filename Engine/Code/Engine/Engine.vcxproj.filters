@@ -223,6 +223,18 @@
     <ClCompile Include="Audio\AudioSystem.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Audio\Sound.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\MiniAudioSound.cpp">
+      <Filter>Audio\MiniAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\MiniAudioSystem.cpp">
+      <Filter>Audio\MiniAudio</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\AudioUtils.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -477,6 +489,18 @@
     <ClInclude Include="Audio\AudioSystem.h">
       <Filter>Audio</Filter>
     </ClInclude>
+    <ClInclude Include="Audio\Sound.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\MiniAudioSound.h">
+      <Filter>Audio\MiniAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\MiniAudioSystem.h">
+      <Filter>Audio\MiniAudio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\AudioUtils.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">
@@ -523,6 +547,9 @@
     </Filter>
     <Filter Include="Audio">
       <UniqueIdentifier>{1032fd09-b7e9-4c88-a965-ef456e284715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\MiniAudio">
+      <UniqueIdentifier>{e0ee9040-49e8-4e87-b9f7-10636fac74de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
