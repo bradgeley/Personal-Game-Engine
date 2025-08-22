@@ -21,9 +21,9 @@ Strings StringUtils::SplitStringOnAnyDelimeter(std::string const& string, std::s
     Strings result;
 
     std::string line = "";
-    line.reserve(32);
+    line.reserve(string.size());
 
-    for (auto& c : string)
+    for (char const& c : string)
     {
         if (DoesStringContain(delimiters, c))
         {
@@ -47,9 +47,9 @@ Strings StringUtils::SplitStringOnDelimeter(std::string const& string, char deli
     Strings result;
 
     std::string line = "";
-    line.reserve(32);
+    line.reserve(string.size());
     
-    for (auto& c : string)
+    for (char const& c : string)
     {
         if (c == delimeter)
         {
@@ -71,9 +71,10 @@ Strings StringUtils::SplitStringOnDelimeter(std::string const& string, char deli
 std::string StringUtils::GetToLower(std::string const& string)
 {
     std::string result;
-    for (auto c : string)
+    result.reserve(string.size());
+    for (char c : string)
     {
-        if (c >= 'A' && c <= 'Z')
+        if (IsUpper(c))
         {
             c += ASCII_UPPER_TO_LOWER;
         }
@@ -87,9 +88,9 @@ std::string StringUtils::GetToLower(std::string const& string)
 //----------------------------------------------------------------------------------------------------------------------
 void StringUtils::ToLower(std::string& out_string)
 {
-    for (auto& c : out_string)
+    for (char& c : out_string)
     {
-        if (c >= 'A' && c <= 'Z')
+        if (IsUpper(c))
         {
             c += ASCII_UPPER_TO_LOWER;
         }
@@ -101,9 +102,9 @@ void StringUtils::ToLower(std::string& out_string)
 //----------------------------------------------------------------------------------------------------------------------
 void StringUtils::ToUpper(std::string& out_string)
 {
-    for (auto& c : out_string)
+    for (char& c : out_string)
     {
-        if (c >= 'a' && c <= 'z')
+        if (IsLower(c))
         {
             c += ASCII_LOWER_TO_UPPER;
         }
@@ -186,9 +187,25 @@ bool StringUtils::IsWhitespace(char c)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool StringUtils::IsUpper(char c)
+{
+    return c >= 'A' && c <= 'Z';
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool StringUtils::IsLower(char c)
+{
+    return c >= 'a' && c <= 'z';
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool StringUtils::DoesStringContain(std::string const& string, char c)
 {
-    for (auto& character : string)
+    for (char const& character : string)
     {
         if (character == c)
         {
@@ -204,18 +221,18 @@ bool StringUtils::DoesStringContain(std::string const& string, char c)
 bool StringUtils::StringToBool(std::string const& boolAsString)
 {
     std::string lower = GetToLower(boolAsString);
-    if (lower == "true" || lower == "1")
+    if (lower == "true" || lower == "1" || lower == "yes")
     {
         return true;
     }
-    if (lower == "false" || lower == "0")
+    if (lower == "false" || lower == "0" || lower == "no")
     {
         return false;
     }
 
     if (g_devConsole)
     {
-        g_devConsole->LogWarningF("StringToBool: Arg {%s} did not contain a valid bool string (true, false, 1, 0)", boolAsString.c_str());
+        g_devConsole->LogWarningF("StringToBool: Arg {%s} did not contain a valid bool string (true/false, 1/0, yes/no)", boolAsString.c_str());
     }
     return false;
 }
@@ -316,7 +333,7 @@ Strings StringUtils::CSVToStrings(std::string const& stringsAsString)
 //----------------------------------------------------------------------------------------------------------------------
 bool StringUtils::DoesStringContainChar(std::string const& string, uint8_t character)
 {
-    for (auto& c : string)
+    for (char const& c : string)
     {
         if ((uint8_t) c == character)
         {
@@ -342,9 +359,9 @@ std::size_t StringUtils::CaseInsensitiveStringHash::operator()(const std::string
     size_t hash = FNV_offset;
     for (unsigned char c : input)
     {
-        if (c >= 'A' && c <= 'Z')
+        if (IsUpper(c))
         {
-            c = c + 32; // ASCII fast lower
+            c = c + ASCII_UPPER_TO_LOWER;
         }
         hash ^= c;
         hash *= FNV_prime;
@@ -357,8 +374,6 @@ std::size_t StringUtils::CaseInsensitiveStringHash::operator()(const std::string
 //----------------------------------------------------------------------------------------------------------------------
 bool StringUtils::CaseInsensitiveStringEquals::operator()(const std::string& a, const std::string& b) const noexcept
 {
-    constexpr int capitalDifference = 'a' - 'A';
-
     size_t aSize = a.size();
     size_t bSize = b.size();
     if (aSize != bSize)
@@ -371,13 +386,13 @@ bool StringUtils::CaseInsensitiveStringEquals::operator()(const std::string& a, 
         unsigned char ca = a[i];
         unsigned char cb = b[i];
 
-        if (ca >= 'A' && ca <= 'Z')
+        if (IsUpper(ca))
         {
-            ca += capitalDifference;
+            ca += ASCII_UPPER_TO_LOWER;
         }
-        if (cb >= 'A' && cb <= 'Z')
+        if (IsUpper(cb))
         {
-            cb += capitalDifference;
+            cb += ASCII_UPPER_TO_LOWER;
         }
 
         if (ca != cb)

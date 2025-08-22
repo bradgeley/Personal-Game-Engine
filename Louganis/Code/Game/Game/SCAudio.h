@@ -13,7 +13,7 @@ class SCAudio
 {
 public:
 
-	float m_bgmVolume = 0.25f;
+	float m_bgmVolume = 0.05f;
 	SoundID m_bgmSoundID;
 };
 

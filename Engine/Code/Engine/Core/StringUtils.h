@@ -26,6 +26,8 @@ namespace StringUtils
     void TrimLeadingWhitespace(std::string& out_string); // Only trims on left of string, not central whitespace
     void TrimTrailingWhitespace(std::string& out_string); // Only trims on right of string, not central whitespace
     bool IsWhitespace(char c);
+    bool IsUpper(char c);
+    bool IsLower(char c);
     bool DoesStringContain(std::string const& string, char c);
 
 

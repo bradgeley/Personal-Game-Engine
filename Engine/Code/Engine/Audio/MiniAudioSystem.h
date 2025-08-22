@@ -25,10 +25,18 @@ public:
     virtual void EndFrame() override;
     virtual void Shutdown() override;
 
+    // Sound queries
+    virtual bool IsValidSoundID(SoundID id) const override;
+    virtual bool IsSoundPlaying(SoundID id) const override;
+    virtual bool IsSoundPaused(SoundID id) const override;
+
     // Play sound
     virtual SoundID PlaySoundFromFile(const char* filepath, bool looping = false, float volume = 1.f) override;
+    virtual bool ResumeSound(SoundID id) override;
+    virtual bool TogglePaused(SoundID id) override;
 
     // Stop sound
+    virtual void PauseSound(SoundID id) override;
     virtual void StopSound(SoundID id) override;
 
     // Configure playing sound

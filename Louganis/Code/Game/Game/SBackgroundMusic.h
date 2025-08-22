@@ -4,6 +4,10 @@
 
 
 
+struct NamedProperties;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 class SBackgroundMusic : public System
 {
@@ -13,4 +17,12 @@ public:
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;
+
+protected:
+
+    bool ToggleBGM(NamedProperties& args);
+
+private:
+
+    void PlayBGM();
 };

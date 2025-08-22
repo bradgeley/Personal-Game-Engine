@@ -38,10 +38,18 @@ public:
 
 	AudioSystem(AudioSystemConfig const& config);
 
+	// Sound queries
+	virtual bool IsValidSoundID(SoundID id) const = 0;
+	virtual bool IsSoundPlaying(SoundID id) const = 0;
+	virtual bool IsSoundPaused(SoundID id) const = 0;
+
 	// Play sound
 	virtual SoundID PlaySoundFromFile(const char* filepath, bool looping = false, float volume = 1.f) = 0;
+	virtual bool ResumeSound(SoundID id) = 0; // return value = whether the sound is playing or not
+	virtual bool TogglePaused(SoundID id) = 0;
 
 	// Stop sound
+	virtual void PauseSound(SoundID id) = 0;
 	virtual void StopSound(SoundID id) = 0;
 
 	// Configure playing sound

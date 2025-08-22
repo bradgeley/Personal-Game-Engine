@@ -565,7 +565,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
                     continue;
                 }
                 int argIndex = i - 1; // -1 accounts for the command name
-                if (argIndex >= info->m_argNames.size())
+                if (argIndex >= (int) info->m_argNames.size())
                 {
                     g_devConsole->LogError("Unexpected number of args found in DevConsoleCommandInfo for this command.");
                     continue;

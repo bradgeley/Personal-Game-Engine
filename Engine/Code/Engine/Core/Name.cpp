@@ -1,6 +1,7 @@
 // Bradley Christensen - 2025
 #include "Name.h"
 #include "NameTable.h"
+#include "Engine/Core/ErrorUtils.h"
 #include <limits>
 
 
@@ -22,6 +23,8 @@ Name::Name() : Name(s_invalidNameString)
 //----------------------------------------------------------------------------------------------------------------------
 Name::Name(std::string const& string)
 {
+    ASSERT_OR_DIE(g_nameTable, "Name table does not exist yet.");
+
     auto it = g_nameTable->m_lookupTable.find(string);
     if (it == g_nameTable->m_lookupTable.end())
     {

@@ -67,7 +67,7 @@ bool SSystemDebug::PrintAllSystems(NamedProperties&)
 {
 	std::vector<SystemSubgraph> const& allSystemSubgraphs = g_ecs->GetSystemSubgraphs();
 
-	for (int subgraphID = 0; subgraphID < allSystemSubgraphs.size(); ++subgraphID)
+	for (int subgraphID = 0; subgraphID < (int) allSystemSubgraphs.size(); ++subgraphID)
 	{
 		SystemSubgraph const& subgraph = allSystemSubgraphs[subgraphID];
 		g_devConsole->AddLine(StringUtils::StringF("Subgraph %i", subgraphID), Rgba8::LightOceanBlue);

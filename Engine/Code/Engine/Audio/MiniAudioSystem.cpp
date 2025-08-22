@@ -31,6 +31,7 @@
 struct MiniAudioSoundImpl
 {
 	ma_sound m_sound;
+	ma_uint64 m_cursor = 0;
 };
 
 
@@ -120,6 +121,40 @@ void MiniAudioSystem::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool MiniAudioSystem::IsValidSoundID(SoundID id) const
+{
+	return m_miniAudioImpl->m_sounds.find(id) != m_miniAudioImpl->m_sounds.end();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool MiniAudioSystem::IsSoundPlaying(SoundID id) const
+{
+	auto it = m_miniAudioImpl->m_sounds.find(id);
+	if (it == m_miniAudioImpl->m_sounds.end())
+	{
+		return false;
+	}
+	return ma_sound_is_playing(&it->second.m_sound);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool MiniAudioSystem::IsSoundPaused(SoundID id) const
+{
+	auto it = m_miniAudioImpl->m_sounds.find(id);
+	if (it == m_miniAudioImpl->m_sounds.end())
+	{
+		return false;
+	}
+	return !ma_sound_is_playing(&it->second.m_sound);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 SoundID MiniAudioSystem::PlaySoundFromFile(const char* filepath, bool looping /*= false*/, float volume /*= 1.f*/)
 {
 	SoundID newID = RequestSoundID();
@@ -133,6 +168,68 @@ SoundID MiniAudioSystem::PlaySoundFromFile(const char* filepath, bool looping /*
 		return newID;
 	}
 	return s_invalidSoundID;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool MiniAudioSystem::ResumeSound(SoundID id)
+{
+	auto it = m_miniAudioImpl->m_sounds.find(id);
+	if (it == m_miniAudioImpl->m_sounds.end())
+	{
+		return false;
+	}
+
+	bool isPlaying = ma_sound_is_playing(&it->second.m_sound);
+	if (!isPlaying)
+	{
+		ma_sound_get_cursor_in_pcm_frames(&it->second.m_sound, &it->second.m_cursor);
+		ma_result result = ma_sound_start(&it->second.m_sound);
+		isPlaying = result == MA_SUCCESS;
+	}
+	return isPlaying;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool MiniAudioSystem::TogglePaused(SoundID id)
+{
+	auto it = m_miniAudioImpl->m_sounds.find(id);
+	if (it == m_miniAudioImpl->m_sounds.end())
+	{
+		return false;
+	}
+
+	bool isPlaying = ma_sound_is_playing(&it->second.m_sound);
+	if (isPlaying)
+	{
+		ma_sound_get_cursor_in_pcm_frames(&it->second.m_sound, &it->second.m_cursor);
+		ma_result result = ma_sound_stop(&it->second.m_sound);
+		isPlaying = result == MA_SUCCESS;
+	}
+	else
+	{
+		ma_sound_get_cursor_in_pcm_frames(&it->second.m_sound, &it->second.m_cursor);
+		ma_result result = ma_sound_start(&it->second.m_sound);
+		isPlaying = result == MA_SUCCESS;
+	}
+	return isPlaying;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void MiniAudioSystem::PauseSound(SoundID id)
+{
+	auto it = m_miniAudioImpl->m_sounds.find(id);
+	if (it == m_miniAudioImpl->m_sounds.end())
+	{
+		return;
+	}
+	ma_sound_get_cursor_in_pcm_frames(&it->second.m_sound, &it->second.m_cursor);
+	ma_sound_stop(&it->second.m_sound);
 }
 
 

@@ -56,7 +56,7 @@ int FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bu
     std::fstream filestream(filepath.data(), fileMode);
     if (filestream.is_open())
     {
-        size_t fileSizeBytes = filestream.tellg(); // already at the end from std::ios::ate
+        size_t fileSizeBytes = static_cast<size_t>(filestream.tellg()); // already at the end from std::ios::ate
         fileSizeBytes = std::min(fileSizeBytes, bufferSize); // don't let it write more than the buffer can take
         filestream.seekg(std::ios::beg);
         filestream.read((char*)bufferData, static_cast<int>(fileSizeBytes));
