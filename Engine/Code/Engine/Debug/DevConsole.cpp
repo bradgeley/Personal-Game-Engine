@@ -403,7 +403,7 @@ std::string DevConsole::GuessCommandInput(std::string const& input) const
 
     if (!bestGuess.empty())
     {
-        for (int i = 0; i < input.size(); ++i)
+        for (int i = 0; i < MathUtils::Min((int) input.size(), (int) bestGuess.size()); ++i)
         {
             bestGuess[i] = input[i];
         }
@@ -587,11 +587,27 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     std::string command = args.Get<std::string>("Command", "");
     Strings commandFragments = StringUtils::SplitStringOnDelimeter(command, ' ');
 
+    // Remove empty fragments due to too much whitespace
+    for (auto it = commandFragments.begin(); it != commandFragments.end();)
+    {
+        if (it->empty())
+        {
+            it = commandFragments.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+
     // Add to command history
     m_commandHistory.AddCommand(command);
 
     // Fire the event
-    Name eventName = Name(commandFragments[0]);
+    std::string eventNameString = commandFragments[0];
+    StringUtils::TrimWhitespace(eventNameString);
+    Name eventName = eventNameString;
+
     if (!g_eventSystem->IsEventBound(eventName))
     {
         g_devConsole->LogWarning("No events bound to that command.");
