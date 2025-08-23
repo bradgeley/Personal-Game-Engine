@@ -369,17 +369,15 @@ DevConsoleCommandInfo const* DevConsole::GetDevConsoleCommandInfo(Name commandNa
 std::string DevConsole::GuessCommandInput(std::string const& input) const
 {
     int bestMatching = 0;
-    std::string bestGuess = "";
+    std::string bestValidGuess = "";
 
     int numInputChars = (int) input.size();
 
     Strings allEvents = g_eventSystem->GetAllEventNames();
     for (std::string const& eventName : allEvents)
     {
-        int numEventChars = (int) eventName.size();
-
         int numMatchingChars = 0;
-        for (int i = 0; i < MathUtils::Min(numEventChars, numInputChars); ++i)
+        for (int i = 0; i < numInputChars; ++i)
         {
             char inputChar = StringUtils::ToLowerChar(input[i]);
             char eventChar = StringUtils::ToLowerChar(eventName[i]);
@@ -391,25 +389,25 @@ std::string DevConsole::GuessCommandInput(std::string const& input) const
             else
             {
                 ++numMatchingChars;
-
-                if (numMatchingChars > bestMatching)
-                {
-                    bestMatching = numMatchingChars;
-                    bestGuess = eventName;
-                }
             }
         }
-    }
 
-    if (!bestGuess.empty())
-    {
-        for (int i = 0; i < MathUtils::Min((int) input.size(), (int) bestGuess.size()); ++i)
+        if (numMatchingChars == numInputChars && numMatchingChars > bestMatching)
         {
-            bestGuess[i] = input[i];
+            bestMatching = numMatchingChars;
+            bestValidGuess = eventName;
         }
     }
 
-    return bestGuess;
+    if (!bestValidGuess.empty())
+    {
+        for (int i = 0; i < MathUtils::Min((int) input.size(), (int) bestValidGuess.size()); ++i)
+        {
+            bestValidGuess[i] = input[i];
+        }
+    }
+
+    return bestValidGuess;
 }
 
 
