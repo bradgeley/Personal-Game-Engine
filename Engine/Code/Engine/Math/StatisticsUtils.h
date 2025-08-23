@@ -1,7 +1,5 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
-#include <float.h>
-#include <type_traits>
 
 
 
@@ -13,7 +11,18 @@
 namespace StatisticsUtils
 {
     
-    //------------------------------------------------------------------------------------------------------------------
+    template<typename T>
+    double GetAverage(T* valArray, size_t numVals);
+
+    template<typename T>
+    T* GetMin(T* valArray, size_t numVals);
+
+    template<typename T>
+    T* GetMax(T* valArray, size_t numVals);
+
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     template<typename T>
     double GetAverage(T* valArray, size_t numVals)
     {
@@ -30,8 +39,8 @@ namespace StatisticsUtils
     }
 
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Returns the address of the min value in the array
+
+    //----------------------------------------------------------------------------------------------------------------------
     template<typename T>
     T* GetMin(T* valArray, size_t numVals)
     {
@@ -56,8 +65,8 @@ namespace StatisticsUtils
     }
 
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Returns the address of the max value in the array
+
+    //----------------------------------------------------------------------------------------------------------------------
     template<typename T>
     T* GetMax(T* valArray, size_t numVals)
     {

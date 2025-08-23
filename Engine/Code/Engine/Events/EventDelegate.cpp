@@ -6,10 +6,12 @@
 //----------------------------------------------------------------------------------------------------------------------
 EventDelegate::~EventDelegate()
 {
-	for (auto& sub : m_subs)
+	for (EventSubscriber*& sub : m_subs)
 	{
 		delete sub;
+		sub = nullptr;
 	}
+	m_subs.clear();
 }
 
 
@@ -18,7 +20,7 @@ EventDelegate::~EventDelegate()
 void EventDelegate::Broadcast(NamedProperties& args) const
 {
 	bool consumed = false;
-    for (auto& sub : m_subs)
+    for (EventSubscriber* const& sub : m_subs)
     {
         consumed = sub->Execute(args);
     	if (consumed)
@@ -41,13 +43,16 @@ void EventDelegate::SubscribeFunction(EventCallbackFunction callbackFunc)
 //----------------------------------------------------------------------------------------------------------------------
 void EventDelegate::UnsubscribeFunction(EventCallbackFunction callbackFunc)
 {
-	for (int i = 0; i < (int) m_subs.size(); ++i)
+	for (auto it = m_subs.begin(); it != m_subs.end();)
 	{
-		auto& sub = m_subs[i];
-		if (sub->DoesObjectMatch(nullptr) && sub->DoesFunctionMatch((void const*)callbackFunc))
+		EventSubscriber*& sub = *it;
+		if (sub && sub->DoesObjectMatch(nullptr) && sub->DoesFunctionMatch((void const*)callbackFunc))
 		{
-			m_subs.erase(m_subs.begin() + i);
-			return;
+			it = m_subs.erase(it);
+		}
+		else
+		{
+			it++;
 		}
 	}
 }

@@ -29,7 +29,7 @@ extern class Engine* g_engine;
 // - EndFrame
 //
 // Run in backward order:
-// - Shutdown    
+// - Shutdown
 //
 class Engine
 {

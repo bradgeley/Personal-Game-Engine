@@ -1,8 +1,6 @@
 ﻿// Bradley Christensen - 2023
 #include "DevConsoleInput.h"
 #include "DevConsoleLog.h"
-#include "Engine/DataStructures/NamedProperties.h"
-#include "Engine/Input/InputUtils.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/Font.h"

@@ -41,6 +41,7 @@ protected:
 	uint32_t m_nameIndex = s_invalidNameIndex;
 
 #if defined(_DEBUG)
+	// This is purely for debug visualization purposes. Custom natvis file did not work using ToString or ToCStr
 	std::string m_debugString;
 #endif
 };

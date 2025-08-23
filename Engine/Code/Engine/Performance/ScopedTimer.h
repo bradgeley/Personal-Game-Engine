@@ -14,6 +14,8 @@ public:
 	ScopedTimer(Name name);
 	~ScopedTimer();
 
+public:
+
 	double m_startTimeSeconds	= 0;
 	Name m_name;
 };
@@ -28,6 +30,8 @@ public:
 	PerfWindowScopedTimer(Name sectionName, Name rowName, Rgba8 tint = Rgba8::White);
 	PerfWindowScopedTimer(int sectionID, int rowID, Rgba8 tint = Rgba8::White);
 	~PerfWindowScopedTimer();
+
+public:
 
 	double m_startTimeSeconds	= 0;
 	int m_perfSectionID			= -1;

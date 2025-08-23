@@ -37,6 +37,7 @@ class AudioSystem : public EngineSubsystem
 public:
 
 	AudioSystem(AudioSystemConfig const& config);
+	virtual ~AudioSystem() = default;
 
 	// Sound queries
 	virtual bool IsValidSoundID(SoundID id) const = 0;

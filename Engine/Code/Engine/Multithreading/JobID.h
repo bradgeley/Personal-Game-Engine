@@ -10,6 +10,8 @@ struct JobID
     friend class Job;
     friend class JobSystem;
 
+public:
+
     JobID();
     JobID(uint32_t uniqueID);
 

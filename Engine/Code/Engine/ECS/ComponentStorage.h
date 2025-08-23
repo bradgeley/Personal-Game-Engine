@@ -32,7 +32,7 @@ enum class ComponentStorageType
 	Array,
 	Map,
 	Singleton,
-	TAG,
+	Tag,
 };
 
 

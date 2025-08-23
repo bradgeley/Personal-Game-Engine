@@ -4,10 +4,12 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 AABB2 const AABB2::ZeroToOne = AABB2();
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 AABB2::AABB2(Vec2 const& mins, Vec2 const& maxs) :
     mins(MathUtils::MinF(mins.x, maxs.x), MathUtils::MinF(mins.y, maxs.y)),
     maxs(MathUtils::MaxF(mins.x, maxs.x), MathUtils::MaxF(mins.y, maxs.y))
@@ -16,6 +18,7 @@ AABB2::AABB2(Vec2 const& mins, Vec2 const& maxs) :
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 AABB2::AABB2(float minX, float minY, float maxX, float maxY) :
     mins(MathUtils::MinF(minX, maxX), MathUtils::MinF(minY, maxY)),
     maxs(MathUtils::MaxF(minX, maxX), MathUtils::MaxF(minY, maxY))
@@ -24,6 +27,7 @@ AABB2::AABB2(float minX, float minY, float maxX, float maxY) :
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 AABB2::AABB2(Vec2 const& center, float halfWidth, float halfHeight)
     : mins(center - Vec2(halfWidth, halfHeight)), maxs(center + Vec2(halfWidth, halfHeight))
 {
@@ -31,6 +35,7 @@ AABB2::AABB2(Vec2 const& center, float halfWidth, float halfHeight)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 AABB2::GetCenter() const
 {
     return mins + GetHalfDimensions();
@@ -38,6 +43,7 @@ Vec2 AABB2::GetCenter() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 AABB2::GetDimensions() const
 {
     return maxs - mins;
@@ -45,6 +51,7 @@ Vec2 AABB2::GetDimensions() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 AABB2::GetHalfDimensions() const
 {
     return (maxs - mins) * 0.5f;
@@ -52,6 +59,7 @@ Vec2 AABB2::GetHalfDimensions() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 float AABB2::GetWidth() const
 {
     return maxs.x - mins.x;
@@ -59,6 +67,7 @@ float AABB2::GetWidth() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 float AABB2::GetHeight() const
 {
     return maxs.y - mins.y;
@@ -66,6 +75,7 @@ float AABB2::GetHeight() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 float AABB2::GetHalfHeight() const
 {
     return (maxs.y - mins.y) * 0.5f;
@@ -73,6 +83,7 @@ float AABB2::GetHalfHeight() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 float AABB2::GetAspect() const
 {
     return GetWidth() / GetHeight();
@@ -80,6 +91,7 @@ float AABB2::GetAspect() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 AABB2::GetTopLeft() const
 {
     return Vec2(mins.x, maxs.y);
@@ -87,6 +99,7 @@ Vec2 AABB2::GetTopLeft() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 AABB2::GetBottomRight() const
 {
     return Vec2(maxs.x, mins.y);
@@ -94,6 +107,7 @@ Vec2 AABB2::GetBottomRight() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 AABB2::GetCenterLeft() const
 {
     return Vec2(mins.x, (maxs.y + mins.y) * 0.5f);
@@ -101,6 +115,7 @@ Vec2 AABB2::GetCenterLeft() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 AABB2::GetCenterRight() const
 {
     return Vec2(maxs.x, (maxs.y + mins.y) * 0.5f);
@@ -108,6 +123,7 @@ Vec2 AABB2::GetCenterRight() const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 AABB2 AABB2::GetExpandedBy(float flatExpansionAmount) const
 {
     return AABB2(mins - Vec2(flatExpansionAmount, flatExpansionAmount), maxs + Vec2(flatExpansionAmount, flatExpansionAmount));
@@ -115,6 +131,7 @@ AABB2 AABB2::GetExpandedBy(float flatExpansionAmount) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 AABB2::GetNearestPoint(Vec2 const& point) const
 {
     Vec2 result = point;
@@ -125,6 +142,7 @@ Vec2 AABB2::GetNearestPoint(Vec2 const& point) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool AABB2::IsPointInside(Vec2 const& point) const
 {
     return (point.x > mins.x) &&
@@ -135,6 +153,7 @@ bool AABB2::IsPointInside(Vec2 const& point) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool AABB2::IsOverlapping(AABB2 const& otherBox) const
 {
     if ((otherBox.mins.x >= mins.x && otherBox.mins.x <= maxs.x) ||
@@ -155,6 +174,7 @@ bool AABB2::IsOverlapping(AABB2 const& otherBox) const
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void AABB2::Translate(Vec2 const& translation)
 {
     mins += translation;
@@ -163,6 +183,7 @@ void AABB2::Translate(Vec2 const& translation)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void AABB2::SetCenter(Vec2 const& newCenter)
 {
     Vec2 halfDims = GetHalfDimensions();
@@ -172,6 +193,7 @@ void AABB2::SetCenter(Vec2 const& newCenter)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void AABB2::SetDimsAboutCenter(Vec2 const& newDims)
 {
     Vec2 center = GetCenter();
@@ -182,6 +204,7 @@ void AABB2::SetDimsAboutCenter(Vec2 const& newDims)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void AABB2::SetHalfDimsAboutCenter(Vec2 const& newHalfDims)
 {
     Vec2 center = GetCenter();
@@ -191,6 +214,7 @@ void AABB2::SetHalfDimsAboutCenter(Vec2 const& newHalfDims)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void AABB2::Squeeze(float squeezeAmount)
 {
     Vec2 newMins = mins + Vec2(squeezeAmount, squeezeAmount);
@@ -210,6 +234,7 @@ void AABB2::Squeeze(float squeezeAmount)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void AABB2::ExpandBy(float flatEpansionAmount)
 {
     mins -= Vec2(flatEpansionAmount, flatEpansionAmount);

@@ -63,19 +63,13 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
     Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
 
     // Draw Background
-    VertexBuffer backgroundBuffer;
-    auto& bgVerts = backgroundBuffer.GetMutableVerts();
-    AddVertsForAABB2(bgVerts, box, Rgba8(0, 0, 0, 200));
-    AddVertsForWireBox2D(bgVerts, box, 0.0025f, Rgba8(255, 255, 255, 200));
+    static VertexBuffer untexturedVerts;
+    untexturedVerts.ClearVerts();
+    AddVertsForAABB2(untexturedVerts.GetMutableVerts(), box, Rgba8(0, 0, 0, 200));
+    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), box, 0.0025f, Rgba8(255, 255, 255, 200));
 
-    g_renderer->BindShader(nullptr);
-    g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(&backgroundBuffer);
-    backgroundBuffer.ClearVerts();
-    //
-
-    VertexBuffer buffer;
-    auto& verts = buffer.GetMutableVerts();
+    static VertexBuffer textVerts;
+    textVerts.ClearVerts();
 
     float lineThickness = box.GetHeight() / (float) m_maxHistorySize;
 
@@ -90,19 +84,20 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
         
         if (m_selectedLineIndex == i)
         {
-            AddVertsForAABB2(bgVerts, textBox, Rgba8::Cerulean);
-            g_renderer->BindShader(nullptr);
-            g_renderer->BindTexture(nullptr);
-            g_renderer->DrawVertexBuffer(&backgroundBuffer);
+            AddVertsForAABB2(untexturedVerts.GetMutableVerts(), textBox, Rgba8::Cerulean);
         }
         
-        font->AddVertsForText2D(verts, textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
+        font->AddVertsForText2D(textVerts.GetMutableVerts(), textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
         
         linesRendered += 1.f;
     }
 
+    g_renderer->BindShader(nullptr);
+    g_renderer->BindTexture(nullptr);
+    g_renderer->DrawVertexBuffer(&untexturedVerts);
+
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(&buffer);
+    g_renderer->DrawVertexBuffer(&textVerts);
 }
 
 
@@ -157,7 +152,7 @@ bool DevConsoleCommandHistory::LoadFrom(std::string const& filepath)
 bool DevConsoleCommandHistory::SaveTo(std::string const& filepath) const
 {
     std::string historyAsOneString;
-    for (auto& line : m_log)
+    for (std::string const& line : m_log)
     {
         historyAsOneString += line;
         historyAsOneString += '\n';
@@ -177,7 +172,7 @@ bool DevConsoleCommandHistory::SaveTo(std::string const& filepath) const
 //----------------------------------------------------------------------------------------------------------------------
 bool DevConsoleCommandHistory::TryMoveCommandToBottomOfList(std::string const& command)
 {
-    for (int i = 0; i < (int) m_log.size(); ++i)
+    for (size_t i = 0; i < m_log.size(); ++i)
     {
         if (m_log[i] == command)
         {

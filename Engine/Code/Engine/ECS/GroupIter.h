@@ -1,7 +1,6 @@
 // Bradley Christensen - 2023
 #pragma once
 #include "EntityID.h"
-#include <climits>
 
 
 
@@ -29,6 +28,6 @@ public:
 public:
 
 	SystemContext const*	m_context			= nullptr;
-	EntityID				m_currentIndex		= UINT_MAX;
+	EntityID				m_currentIndex		= ENTITY_ID_INVALID;
 	BitMask					m_groupMask			= 0;
 };

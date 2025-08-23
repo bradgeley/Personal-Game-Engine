@@ -42,15 +42,18 @@ void EventDelegate::SubscribeMethod(T_Object* object, T_Method method)
 template <typename T_Object, typename T_Method>
 void EventDelegate::UnsubscribeMethod(T_Object* object, T_Method method)
 {
-    for (int i = 0; i < (int) m_subs.size(); ++i)
+    for (auto it = m_subs.begin(); it != m_subs.end();)
     {
-        auto& sub = m_subs[i];
+        EventSubscriber*& sub = *it;
         if (sub && sub->DoesObjectMatch(object) && sub->DoesFunctionMatch(&method))
         {
             delete sub;
             sub = nullptr;
-            m_subs.erase(m_subs.begin() + i);
-            return;
+            it = m_subs.erase(it);
+        }
+        else
+        {
+            it++;
         }
     }
 }

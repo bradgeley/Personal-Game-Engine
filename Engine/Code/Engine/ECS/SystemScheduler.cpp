@@ -3,6 +3,7 @@
 #include "System.h"
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
+#include "Engine/Multithreading/JobGraph.h"
 #include "AdminSystem.h"
 #include "Config.h"
 #include "SystemSubgraph.h"

@@ -58,7 +58,7 @@ __declspec(noreturn) void FatalError(char const* filePath, char const* functionN
 	}
 
 	fullMessageText += "\n---------- Debugging Details Follow ----------\n";
-	if(conditionText)
+	if (conditionText)
 	{
 		fullMessageText += StringUtils::StringF("\nThis error was triggered by a run-time condition check:\n  %s\n  from %s(), line %i in %s\n",
 			conditionText, functionName, lineNum, filePath);
@@ -69,7 +69,7 @@ __declspec(noreturn) void FatalError(char const* filePath, char const* functionN
 			lineNum, filePath, functionName);
 	}
 	
-	if(isDebuggerPresent)
+	if (isDebuggerPresent)
 	{
 		bool isAnswerYes = SystemDialogue_YesNo(fullMessageTitle, fullMessageText, MsgSeverityLevel::FATAL);
 		ShowCursor(TRUE);

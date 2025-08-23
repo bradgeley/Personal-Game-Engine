@@ -8,8 +8,12 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct DevConsoleLine
 {
+public:
+
     DevConsoleLine() = default;
     DevConsoleLine(std::string const& line, Rgba8 const& tint);
+
+public:
 
     std::string m_line;
     Rgba8 m_tint;

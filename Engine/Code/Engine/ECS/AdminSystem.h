@@ -46,7 +46,7 @@ public:
 	AdminSystem(AdminSystemConfig const& config);
 
 //----------------------------------------------------------------------------------------------------------------------
-// BASIC API
+// LIFECYCLE
 //
 public:
 
@@ -254,13 +254,13 @@ void AdminSystem::RegisterComponent(ComponentStorageType storageType /*= Compone
 	{
 		switch (storageType)
 		{
-		case ComponentStorageType::MAP:
+		case ComponentStorageType::Map:
 			m_componentStorage.emplace(typeHash, new MapStorage<CType>());
 			break;
-		case ComponentStorageType::SINGLETON:
+		case ComponentStorageType::Singleton:
 			m_componentStorage.emplace(typeHash, new SingletonStorage<CType>());
 			break;
-		case ComponentStorageType::TAG:
+		case ComponentStorageType::Tag:
 			m_componentStorage.emplace(typeHash, new TagStorage<CType>());
 			break;
 		default:

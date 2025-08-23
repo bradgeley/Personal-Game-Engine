@@ -195,42 +195,42 @@ bool GeometryUtils::BounceDiscsOffEachOther2D(Vec2& discPosA, float discRadiusA,
         float distance = MathUtils::SqrtF(distanceSquared);
         float overlapAmount = combinedRadii - distance;
 
-AtoB /= distance; // Normalize
+        AtoB /= distance; // Normalize
 
-float weightA = discRadiusB / combinedRadii;
-float weightB = 1.f - weightA;
+        float weightA = discRadiusB / combinedRadii;
+        float weightB = 1.f - weightA;
 
-Vec2 displacementA = AtoB * -1.f * overlapAmount * weightA;
-Vec2 displacementB = AtoB * overlapAmount * weightB;
+        Vec2 displacementA = AtoB * -1.f * overlapAmount * weightA;
+        Vec2 displacementB = AtoB * overlapAmount * weightB;
 
-discPosA += displacementA;
-discPosB += displacementB;
+        discPosA += displacementA;
+        discPosB += displacementB;
 
-// Put everything in terms of Va = 0
-Vec2 relativeVelA = Vec2::ZeroVector;
-Vec2 relativeVelB = discVelB - discVelA;
+        // Put everything in terms of Va = 0
+        Vec2 relativeVelA = Vec2::ZeroVector;
+        Vec2 relativeVelB = discVelB - discVelA;
 
-// Bounce B off of A
-float dotB = MathUtils::DotProduct2D(relativeVelB, AtoB);
-if (dotB > 0.f)
-{
-    // B's velocity dot's positive with AToB, so they are moving apart and we shouldn't bounce them
-    return false;
-}
+        // Bounce B off of A
+        float dotB = MathUtils::DotProduct2D(relativeVelB, AtoB);
+        if (dotB > 0.f)
+        {
+            // B's velocity dot's positive with AToB, so they are moving apart and we shouldn't bounce them
+            return false;
+        }
 
-Vec2 projectedVelB = AtoB * dotB;
-Vec2 remainingVelB = relativeVelB - projectedVelB;
+        Vec2 projectedVelB = AtoB * dotB;
+        Vec2 remainingVelB = relativeVelB - projectedVelB;
 
-Vec2 velocityTransfer = projectedVelB * elasticity;
+        Vec2 velocityTransfer = projectedVelB * elasticity;
 
-relativeVelB -= velocityTransfer;
-relativeVelA += velocityTransfer;
+        relativeVelB -= velocityTransfer;
+        relativeVelA += velocityTransfer;
 
-// Add back what was lost before
-discVelB = relativeVelB + discVelA;
-discVelA = relativeVelA + discVelA;
+        // Add back what was lost before
+        discVelB = relativeVelB + discVelA;
+        discVelA = relativeVelA + discVelA;
 
-return true;
+        return true;
     }
     return false;
 }
@@ -525,8 +525,6 @@ float GeometryUtils::GetShortestDistanceSquaredBetweenLineSegmentAndAABB(Vec2 co
 bool GeometryUtils::SweepDiscVsPoint(Vec2 const& discStart, Vec2 const& discEnd, float discRadius, Vec2 const& point, float& out_tOfIntersection)
 {
     Vec2 velocity = discEnd - discStart;
-
-    // Solve quadratic to Check corners
     Vec2 delta = discStart - point;
     float root1, root2;
 

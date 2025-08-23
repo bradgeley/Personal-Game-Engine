@@ -12,9 +12,8 @@ EventSubscriberFunction::EventSubscriberFunction(EventCallbackFunction f) : m_ca
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool EventSubscriberFunction::DoesObjectMatch(void const* objectAddress) const
+bool EventSubscriberFunction::DoesObjectMatch(void const*) const
 {
-    (void) objectAddress;
     return false;
 }
 

@@ -6,6 +6,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 SystemContext::SystemContext(System* system, float deltaSeconds) : m_system(system), m_deltaSeconds(deltaSeconds)
 {
+
 }
 
 

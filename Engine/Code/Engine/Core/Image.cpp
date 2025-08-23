@@ -6,6 +6,7 @@
 #include "ThirdParty/stb/stb_image.h"
 
 
+
 //----------------------------------------------------------------------------------------------------------------------
 Image::Image(IntVec2 const& dimensions, Rgba8 const& color)
     : Grid<Rgba8>(dimensions, color), m_sourceImagePath("None")

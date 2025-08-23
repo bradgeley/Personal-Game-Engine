@@ -48,7 +48,7 @@ void AdminSystem::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::Shutdown()
 {
-	for (auto& subgraph : m_systemSubgraphs)
+	for (SystemSubgraph& subgraph : m_systemSubgraphs)
 	{
 		subgraph.Shutdown();
 		subgraph.Cleanup();
@@ -267,9 +267,9 @@ void AdminSystem::SetAutoMultithreadingThreshold(int newThreshold)
 void AdminSystem::RecalculateGlobalPriorities()
 {
 	int priority = 0;
-	for (auto& systemSubgraph : m_systemSubgraphs)
+	for (SystemSubgraph& systemSubgraph : m_systemSubgraphs)
 	{
-		for (auto& system : systemSubgraph.m_systems)
+		for (System*& system : systemSubgraph.m_systems)
 		{
 			system->SetGlobalPriority(priority);
 			++priority;

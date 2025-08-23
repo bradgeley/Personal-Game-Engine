@@ -7,6 +7,8 @@
 #include "cmath"
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::QuadraticEquation(float a, float b, float c, float& out_root1, float& out_root2)
 {
     float descriminant = b * b - 4 * a * c;
@@ -31,6 +33,8 @@ int MathUtils::QuadraticEquation(float a, float b, float c, float& out_root1, fl
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::SinDegrees(float degrees)
 {
     float radians = DegreesToRadians(degrees);
@@ -38,6 +42,8 @@ float MathUtils::SinDegrees(float degrees)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::CosDegrees(float degrees)
 {
     float radians = DegreesToRadians(degrees);
@@ -45,30 +51,40 @@ float MathUtils::CosDegrees(float degrees)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::SinRadians(float radians)
 {
     return sinf(radians);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::CosRadians(float radians)
 {
     return cosf(radians);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::DegreesToRadians(float degrees)
 {
     return degrees * static_cast<float>(M_PI) / 180.f;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::RadiansToDegrees(float radians)
 {
     return radians * 180.f / static_cast<float>(M_PI);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::ClampInt(int value, int min, int max)
 {
     if (value > max)
@@ -83,6 +99,8 @@ int MathUtils::ClampInt(int value, int min, int max)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::ClampF(float value, float min, float max)
 {
     if (value > max)
@@ -96,24 +114,33 @@ float MathUtils::ClampF(float value, float min, float max)
     return value;
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::Clamp01F(float value)
 {
     return ClampF(value, 0.f, 1.f);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::GetLength2D(const Vec2& vec)
 {
     return sqrtf(vec.x * vec.x + vec.y * vec.y);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::GetLengthSquared2D(const Vec2& vec)
 {
     return vec.x * vec.x + vec.y * vec.y;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 void MathUtils::NormalizeVector2D(Vec2& vec)
 {
     float length = GetLength2D(vec);
@@ -124,18 +151,24 @@ void MathUtils::NormalizeVector2D(Vec2& vec)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::DotProduct2D(const Vec2& vecA, const Vec2& vecB)
 {
     return vecA.x * vecB.x + vecA.y * vecB.y;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::CrossProduct2D(Vec2 const& vecA, Vec2 const& vecB)
 {
     return vecA.x * vecB.y - vecA.y * vecB.x;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::GetDistance2D(Vec2 const& vecA, Vec2 const& vecB)
 {
     Vec2 aToB = vecA - vecB;
@@ -143,6 +176,8 @@ float MathUtils::GetDistance2D(Vec2 const& vecA, Vec2 const& vecB)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB)
 {
     Vec2 aToB = vecA - vecB;
@@ -150,12 +185,16 @@ float MathUtils::GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::GetLength3D(const Vec3& vec)
 {
     return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 void MathUtils::NormalizeVector3D(Vec3& vec)
 {
     float length = GetLength3D(vec);
@@ -166,12 +205,16 @@ void MathUtils::NormalizeVector3D(Vec3& vec)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::Interpolate(float a, float b, float t)
 {
     return (b - a) * t + a;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::InterpolateClamped(float a, float b, float t)
 {
     t = ClampF(t, 0.f, 1.f);
@@ -179,12 +222,16 @@ float MathUtils::InterpolateClamped(float a, float b, float t)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::InterpolateInt(int a, int b, float t)
 {
     return (int) Interpolate((float) a, (float) b, t);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::InterpolateIntClamped(int a, int b, float t)
 {
     t = ClampF(t, 0.f, 1.f);
@@ -192,6 +239,8 @@ int MathUtils::InterpolateIntClamped(int a, int b, float t)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::SmoothStep3(float valZeroToOne)
 {
     // -2*x^3 + 3*x^2
@@ -200,18 +249,24 @@ float MathUtils::SmoothStep3(float valZeroToOne)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::SmoothStart2(float valZeroToOne)
 {
     return valZeroToOne * valZeroToOne;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::SmoothStart3(float valZeroToOne)
 {
     return valZeroToOne * valZeroToOne * valZeroToOne;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::GetFractionWithinF(float val, float min, float max)
 {
     float range = max - min;
@@ -221,6 +276,8 @@ float MathUtils::GetFractionWithinF(float val, float min, float max)
 
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 double MathUtils::GetFractionWithin(double val, double min, double max)
 {
     double range = max - min;
@@ -229,6 +286,8 @@ double MathUtils::GetFractionWithin(double val, double min, double max)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::RangeMap(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
 {
     float fractionWithin = GetFractionWithinF(valueInRangeA, minRangeA, maxRangeA);
@@ -237,12 +296,16 @@ float MathUtils::RangeMap(float valueInRangeA, float minRangeA, float maxRangeA,
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::RangeMapClamped(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
 {
     return ClampF(RangeMap(valueInRangeA, minRangeA, maxRangeA, minRangeB, maxRangeB), minRangeB, maxRangeB);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
 {
     ++val;
@@ -261,6 +324,8 @@ int MathUtils::IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wra
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
 {
     --val;
@@ -279,42 +344,56 @@ int MathUtils::DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wra
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::MinF(float a, float b)
 {
 	return a <= b ? a : b;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::MaxF(float a, float b)
 {
 	return a >= b ? a : b;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::Min(int a, int b)
 {
 	return a <= b ? a : b;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::Max(int a, int b)
 {
 	return a >= b ? a : b;
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::Pow(int base, int exp)
 {
     return static_cast<int>(pow(base, exp));
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::PowF(float base, float exp)
 {
     return powf(base, exp);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::FloorF(float val)
 {
     double d = (double) val;
@@ -322,6 +401,8 @@ int MathUtils::FloorF(float val)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::CeilingF(float val)
 {
     double d = (double) val;
@@ -329,22 +410,32 @@ int MathUtils::CeilingF(float val)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::SqrtF(float val)
 {
     return sqrtf(val);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::Abs(int val)
 {
     return abs(val);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::AbsF(float val)
 {
     return fabsf(val);
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 void MathUtils::SwapF(float& a, float& b)
 {
     float a_copy = a;
@@ -353,6 +444,8 @@ void MathUtils::SwapF(float& a, float& b)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::Sign(int val)
 {
     if (val >= 0)
@@ -363,6 +456,8 @@ int MathUtils::Sign(int val)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::SignF(float val)
 {
     if (val >= 0.f)
@@ -372,11 +467,17 @@ float MathUtils::SignF(float val)
     return -1.f;
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool MathUtils::IsNearlyEqual(float val, float comparison, float epsilon /*= 0.000001f*/)
 {
     return MathUtils::AbsF(val - comparison) <= epsilon;
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool MathUtils::IsNearlyZero(float val, float epsilon /*= 0.000001f*/)
 {
     return MathUtils::AbsF(val) <= epsilon;

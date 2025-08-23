@@ -24,6 +24,8 @@ enum class DevConsoleArgType
 //
 struct DevConsoleCommandInfo
 {
+public:
+
 	DevConsoleCommandInfo(Name commandName);
 	DevConsoleCommandInfo(Name commandName, Name argName, DevConsoleArgType argType);
 
@@ -31,6 +33,8 @@ struct DevConsoleCommandInfo
 	void AddArg(Name argName, DevConsoleArgType argType);
 	DevConsoleArgType GetArgType(Name argName) const;
 	static std::string ArgTypeToString(DevConsoleArgType argType);
+
+public:
 
 	Name m_commandName;
 	std::vector<Name> m_argNames;

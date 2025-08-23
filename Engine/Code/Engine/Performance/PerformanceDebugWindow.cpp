@@ -2,20 +2,19 @@
 #include "PerformanceDebugWindow.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
+#include "Engine/Debug/DevConsole.h"
+#include "Engine/DataStructures/BitArray.h"
+#include "Engine/ECS/AdminSystem.h"
+#include "Engine/ECS/System.h"
+#include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Window.h"
-#include "Engine/Debug/DevConsole.h"
-#include "Engine/Debug/DevConsole.h"
-#include "Engine/DataStructures/BitArray.h"
 #include "Engine/Math/MathUtils.h"
-#include "Engine/Core/StringUtils.h"
-#include "Engine/Input/InputSystem.h"
-#include "Engine/ECS/AdminSystem.h"
-#include "Engine/ECS/System.h"
 #include "Engine/Performance/ScopedTimer.h"
 
 
@@ -85,10 +84,9 @@ void PerformanceDebugWindow::BeginFrame()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PerformanceDebugWindow::Update(float deltaSeconds)
+void PerformanceDebugWindow::Update(float)
 {
-    std::unique_lock lock(m_mutex);
-    UNUSED(deltaSeconds)
+
 }
 
 
@@ -105,7 +103,7 @@ void PerformanceDebugWindow::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::EndFrame()
 {
-    std::unique_lock lock(m_mutex);
+
 }
 
 
