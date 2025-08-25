@@ -1,15 +1,15 @@
 // Bradley Christensen - 2024
 #pragma once
-#include "Engine/Math/FastGrid.h"
-#include "Engine/Math/AABB2.h"
 #include "Engine/Events/EventDelegate.h"
+#include "Engine/Math/AABB2.h"
+#include "Engine/Math/FastGrid.h"
+#include "Engine/Renderer/RendererUtils.h"
 #include "WorldSettings.h"
 
 
 
 struct WorldSettings;
 class WorldCoords;
-class VertexBuffer;
 
 
 
@@ -31,8 +31,8 @@ public:
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
 	FastGrid<uint8_t, s_worldChunkSizePowerOfTwo> m_tileIDs;
-	VertexBuffer* m_vbo = nullptr;
+	VertexBufferID m_vbo = RendererUtils::InvalidID;
 #if defined(_DEBUG)
-	VertexBuffer* m_debugVBO = nullptr;
+	VertexBufferID m_debugVBO = RendererUtils::InvalidID;
 #endif
 };

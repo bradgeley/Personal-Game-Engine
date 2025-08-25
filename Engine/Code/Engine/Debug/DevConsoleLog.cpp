@@ -24,9 +24,7 @@ DevConsoleLog::DevConsoleLog()
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleLog::~DevConsoleLog()
 {
-    m_vbo->ReleaseResources();
-    delete m_vbo;
-    m_vbo = nullptr;
+    g_renderer->ReleaseVertexBuffer(m_vbo);
 }
 
 
@@ -44,6 +42,9 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
 {
     Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
 
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+    vbo.ClearVerts();
+
     float lineThickness = box.GetHeight() / m_numLines;
     float maxLinesOnScreen = box.GetHeight() / lineThickness;
 
@@ -56,15 +57,14 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
         AABB2 textBox = AABB2(box.mins.x, box.mins.y + yOffsetBot, box.maxs.x, box.mins.y + yOffsetTop);
         float squeeze = textBox.GetHeight() / 15.f;
         textBox.Squeeze(squeeze);
-        font->AddVertsForText2D(*m_vbo, textBox.mins, textBox.GetHeight(), LINE_PREFIX + m_log[lineIndex].m_line, m_log[lineIndex].m_tint);
+        font->AddVertsForText2D(vbo, textBox.mins, textBox.GetHeight(), LINE_PREFIX + m_log[lineIndex].m_line, m_log[lineIndex].m_tint);
         
         --lineIndex;
         linesRendered += 1.f;
     }
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(m_vbo);
-    m_vbo->ClearVerts();
+    g_renderer->DrawVertexBuffer(vbo);
 }
 
 

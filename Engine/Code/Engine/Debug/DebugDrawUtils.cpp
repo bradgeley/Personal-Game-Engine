@@ -9,11 +9,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, Rgba8 tint)
 {
-    VertexBuffer* vbo = g_renderer->MakeVertexBuffer();
-    auto& verts = vbo->GetMutableVerts();
-
-    // For each triangle, draw 18 verts, so for each vert in "triangles" we push 6 verts
-    verts.reserve(triangles.size() * 6);
+    VertexBufferID id = g_renderer->MakeVertexBuffer();
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
     
     for (size_t i = 0; i < triangles.size(); i += 3)
     {
@@ -21,15 +18,14 @@ void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, 
         Vertex_PCU const& v2 = triangles[i+1];
         Vertex_PCU const& v3 = triangles[i+2];
         
-        AddVertsForLine2D(*vbo, Vec2(v1.pos), Vec2(v2.pos), thickness, tint);
-        AddVertsForLine2D(*vbo, Vec2(v2.pos), Vec2(v3.pos), thickness, tint);
-        AddVertsForLine2D(*vbo, Vec2(v3.pos), Vec2(v1.pos), thickness, tint);
+        AddVertsForLine2D(vbo, Vec2(v1.pos), Vec2(v2.pos), thickness, tint);
+        AddVertsForLine2D(vbo, Vec2(v2.pos), Vec2(v3.pos), thickness, tint);
+        AddVertsForLine2D(vbo, Vec2(v3.pos), Vec2(v1.pos), thickness, tint);
     }
 
     g_renderer->BindTexture(nullptr);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(vbo);
 
-    vbo->ReleaseResources();
-    delete vbo;
+    g_renderer->ReleaseVertexBuffer(id);
 }

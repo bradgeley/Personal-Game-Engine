@@ -25,22 +25,17 @@ public:
 
     virtual void ClearScreen(Rgba8 const& tint) override;
     virtual void ClearDepth(float depth) override;
-    virtual void BindVertexBuffer(VertexBuffer const* vbo) const override;
-    virtual void BindConstantBuffer(ConstantBuffer const* cbo, int slot) const override;
+    virtual void BindVertexBuffer(VertexBufferID vbo) const override;
+    virtual void BindVertexBuffer(VertexBuffer& vbo) const override;
+    virtual void BindConstantBuffer(ConstantBufferID cbo, int slot) const override;
 
     // Factory Functions
-    virtual Texture* MakeTexture() const override;
-    virtual Shader* MakeShader(ShaderConfig const& config) const override;
-    virtual ConstantBuffer* MakeConstantBuffer() const override;
-    virtual VertexBuffer* MakeVertexBuffer() const override;
-    virtual Swapchain* MakeSwapchain() const override;
+    virtual TextureID MakeTexture() override;
+    virtual ShaderID MakeShader(ShaderConfig const& config) override;
+    virtual ConstantBufferID MakeConstantBuffer() override;
+    virtual VertexBufferID MakeVertexBuffer() override;
+    virtual SwapchainID MakeSwapchain() override;
     virtual RenderTargetID MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& resolution) override;
-
-    // ID Functions
-    RenderTargetID RequestRenderTargetID() const;
-
-    // Release Functions
-    virtual void ReleaseSwapchainRenderTarget(RenderTargetID renderTargetID) override;
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;

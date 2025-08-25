@@ -65,12 +65,13 @@ public:
     void Complete() override
     {
         // Can only create textures in sync with the main thread
-        m_texture->CreateFromImage(m_image);
-        m_console->AddBackgroundImage(m_texture); 
+        Texture* texture = g_renderer->GetTexture(m_texture);
+        texture->CreateFromImage(m_image);
+        m_console->AddBackgroundImage(m_texture);
     }
 
     Image m_image;
-    Texture* m_texture = nullptr;
+    TextureID m_texture = RendererUtils::InvalidID;
     DevConsole* m_console;
     std::string m_path;
 };
@@ -184,20 +185,16 @@ void DevConsole::Shutdown()
 
     g_window->m_windowSizeChanged.UnsubscribeMethod(this, &DevConsole::WindowSizeChanged);
 
-    for (Texture* bgdTex : m_backgroundImages)
+    for (TextureID bgdTex : m_backgroundImages)
     {
-        bgdTex->ReleaseResources();
-        delete bgdTex;
-        bgdTex = nullptr;
+        g_renderer->ReleaseTexture(bgdTex);
     }
     m_backgroundImages.clear();
 
     delete m_camera;
     m_camera = nullptr;
 
-    m_vbo->ReleaseResources();
-    delete m_vbo;
-    m_vbo = nullptr;
+    g_renderer->ReleaseVertexBuffer(m_vbo);
 }
 
 
@@ -305,7 +302,7 @@ void DevConsole::AddMultiLine(std::string const& line, Rgba8 const& tint)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void DevConsole::AddBackgroundImage(Texture* backgroundImage)
+void DevConsole::AddBackgroundImage(TextureID backgroundImage)
 {
     std::unique_lock lock(m_devConsoleMutex);
     m_backgroundImages.emplace_back(backgroundImage);
@@ -753,21 +750,29 @@ void DevConsole::UpdateBackgroundImage(float deltaSeconds)
 void DevConsole::DrawBackground() const
 {
     AABB2 backgroundBox = m_camera->GetOrthoBounds2D();
-    AddVertsForAABB2(*m_vbo, backgroundBox, m_config.m_backgroundTint);
+
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+    vbo.ClearVerts();
+
+    AddVertsForAABB2(vbo, backgroundBox, m_config.m_backgroundTint);
     g_renderer->BindTexture(nullptr);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(m_vbo);
-    m_vbo->ClearVerts();
+
+    // Reusing the same vbo for 2 draw calls - todo: make more efficient
+    vbo.ClearVerts();
     
     if (m_backgroundImages.empty())
     {
         return;
     }
 
-    Texture* currentBkg = m_backgroundImages[m_currentBackgroundImageIndex];
+    TextureID currentBkg = m_backgroundImages[m_currentBackgroundImageIndex];
+    Texture* texture = g_renderer->GetTexture(currentBkg);
+
     float alpha = GetBackgroundImageAlpha();
     
-    auto imageDims = currentBkg->GetDimensions();
+    auto imageDims = texture->GetDimensions();
     float imageAspect = imageDims.GetAspect();
     AABB2 imageBox = backgroundBox;
     
@@ -777,7 +782,7 @@ void DevConsole::DrawBackground() const
         imageBox.mins.x += (windowAspect - imageAspect);
         AABB2 fillerBox = backgroundBox;
         fillerBox.maxs.x = imageBox.mins.x;
-        AddVertsForAABB2(*m_vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 0.f, 0.f, 1.f));
+        AddVertsForAABB2(vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 0.f, 0.f, 1.f));
     }
     else
     {
@@ -785,14 +790,13 @@ void DevConsole::DrawBackground() const
         imageBox.maxs.y += (windowAspect - imageAspect);
         AABB2 fillerBox = backgroundBox;
         fillerBox.mins.y = imageBox.maxs.y;
-        AddVertsForAABB2(*m_vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 1.f, 1.f, 1.f));
+        AddVertsForAABB2(vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 1.f, 1.f, 1.f));
     }
     
-    AddVertsForAABB2(*m_vbo, imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
+    AddVertsForAABB2(vbo, imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
     g_renderer->BindTexture(currentBkg);
     g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(m_vbo);
-    m_vbo->ClearVerts();
+    g_renderer->DrawVertexBuffer(vbo);
 }
 
 
@@ -816,17 +820,20 @@ void DevConsole::DrawTab() const
     tabDims.maxs = backgroundBox.GetBottomRight();
     tabDims.mins = tabDims.maxs - tabSize * Vec2(0.07f, 0.01f);
 
-    AddVertsForAABB2(*m_vbo, tabDims, m_config.m_backgroundTint);
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+    vbo.ClearVerts();
+
+    AddVertsForAABB2(vbo, tabDims, m_config.m_backgroundTint);
     g_renderer->BindTexture(nullptr);
     g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(m_vbo);
-    m_vbo->ClearVerts();
+    g_renderer->DrawVertexBuffer(vbo);
+
+    vbo.ClearVerts();
 
     auto font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(*m_vbo, tabDims.GetCenter(), Vec2::ZeroVector, tabDims.GetHeight(), "DevConsole (~)", Rgba8::White);
+    font->AddVertsForAlignedText2D(vbo, tabDims.GetCenter(), Vec2::ZeroVector, tabDims.GetHeight(), "DevConsole (~)", Rgba8::White);
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(m_vbo);
-    m_vbo->ClearVerts();
+    g_renderer->DrawVertexBuffer(vbo);
 }
 
 

@@ -27,6 +27,14 @@ Vec2 Font::AlignBottomLeft	= Vec2(0.f, 0.f);
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Font::~Font()
+{
+	ReleaseResources();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Font::SetRendererState() const
 {
 	g_renderer->SetCullMode(CullMode::None);
@@ -42,18 +50,8 @@ void Font::SetRendererState() const
 //----------------------------------------------------------------------------------------------------------------------
 void Font::ReleaseResources()
 {
-	if (m_shader)
-	{
-		m_shader->ReleaseResources();
-		delete m_shader;
-		m_shader = nullptr;
-	}
-	if (m_texture)
-	{
-		m_texture->ReleaseResources();
-		delete m_texture;
-		m_texture = nullptr;
-	}
+	g_renderer->ReleaseShader(m_shader);
+	g_renderer->ReleaseTexture(m_texture);
 }
 
 
@@ -202,7 +200,7 @@ float Font::GetOffsetXOfCharIndex(std::string const& line, int index, float cell
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Texture* Font::GetTexture() const
+TextureID Font::GetTexture() const
 {
 	return m_texture;
 }
@@ -210,17 +208,9 @@ Texture* Font::GetTexture() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Shader* Font::GetShader() const
+ShaderID Font::GetShader() const
 {
 	return m_shader;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Font::~Font()
-{
-	
 }
 
 
@@ -252,7 +242,8 @@ void Font::LoadFNT(const char* fntFilepath)
 		auto filename = page->FindAttribute("file");
 		std::string fullFilePath = "Data/Fonts/" + std::string(filename->Value());
     	m_texture = g_renderer->MakeTexture();
-    	bool loadedTexture = m_texture->LoadFromImageFile(fullFilePath.c_str(), false);
+		Texture* texture = g_renderer->GetTexture(m_texture);
+    	bool loadedTexture = texture->LoadFromImageFile(fullFilePath.c_str(), false);
 		ASSERT_OR_DIE(loadedTexture, StringUtils::StringF("Font %s - Failed to load texture: %s", fntFilepath, fullFilePath.c_str()))
 
 		auto charsElem = fontElem->FirstChildElement("chars");

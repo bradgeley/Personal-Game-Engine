@@ -28,9 +28,7 @@ DevConsoleInput::DevConsoleInput()
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleInput::~DevConsoleInput()
 {
-    m_vbo->ReleaseResources();
-    delete m_vbo;
-    m_vbo = nullptr;
+    g_renderer->ReleaseVertexBuffer(m_vbo);
 }
 
 
@@ -220,12 +218,13 @@ void DevConsoleInput::RenderToBox(AABB2 const& box) const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::RenderBackground(AABB2 const& box) const
 {
-    AddVertsForAABB2(*m_vbo, box, Rgba8::DarkGray);
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+    vbo.ClearVerts();
+    AddVertsForAABB2(vbo, box, Rgba8::DarkGray);
 
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(m_vbo);
-    m_vbo->ClearVerts();
+    g_renderer->DrawVertexBuffer(vbo);
 }
 
 
@@ -237,13 +236,15 @@ void DevConsoleInput::RenderText(AABB2 const& box) const
 
     std::string guess = g_devConsole->GuessCommandInput(m_input.m_line);
 
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+    vbo.ClearVerts();
+
     float alpha = MathUtils::RangeMapClamped(m_caretAnimationFraction, 0.f, 1.f, 75.f, 100.f);
-    font->AddVertsForText2D(*m_vbo, box.mins, box.GetHeight(), LINE_PREFIX + guess, Rgba8(155, 155, 155, static_cast<uint8_t>(alpha)));
-    font->AddVertsForText2D(*m_vbo, box.mins, box.GetHeight(), LINE_PREFIX + m_input.m_line, Rgba8::White);
+    font->AddVertsForText2D(vbo, box.mins, box.GetHeight(), LINE_PREFIX + guess, Rgba8(155, 155, 155, static_cast<uint8_t>(alpha)));
+    font->AddVertsForText2D(vbo, box.mins, box.GetHeight(), LINE_PREFIX + m_input.m_line, Rgba8::White);
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(m_vbo);
-    m_vbo->ClearVerts();
+    g_renderer->DrawVertexBuffer(vbo);
 }
 
 
@@ -270,10 +271,12 @@ void DevConsoleInput::RenderSelection(AABB2 const& box) const
     selectionBox.maxs = box.mins;
     selectionBox.maxs.y = box.maxs.y;
     selectionBox.maxs.x += caretOffsetX + caretThickness;
+
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+    vbo.ClearVerts();
     
-    AddVertsForAABB2(*m_vbo, selectionBox, Rgba8(0,171,240, 100));
-    g_renderer->DrawVertexBuffer(m_vbo);
-    m_vbo->ClearVerts();
+    AddVertsForAABB2(vbo, selectionBox, Rgba8(0,171,240, 100));
+    g_renderer->DrawVertexBuffer(vbo);
 }
 
 
@@ -294,12 +297,14 @@ void DevConsoleInput::RenderCaret(AABB2 const& box) const
     caretBox.maxs = box.mins;
     caretBox.maxs.y = box.maxs.y;
     caretBox.maxs.x += caretOffsetX + caretThickness;
+
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+    vbo.ClearVerts();
     
-    AddVertsForAABB2(*m_vbo, caretBox, caretTint);
+    AddVertsForAABB2(vbo, caretBox, caretTint);
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(m_vbo);
-    m_vbo->ClearVerts();
+    g_renderer->DrawVertexBuffer(vbo);
 }
 
 

@@ -24,13 +24,8 @@ DevConsoleCommandHistory::DevConsoleCommandHistory()
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleCommandHistory::~DevConsoleCommandHistory()
 {
-    m_untexturedVerts->ReleaseResources();
-    delete m_untexturedVerts;
-    m_untexturedVerts = nullptr;
-
-    m_textVerts->ReleaseResources();
-    delete m_textVerts;
-    m_textVerts = nullptr;
+    g_renderer->ReleaseVertexBuffer(m_textVerts);
+    g_renderer->ReleaseVertexBuffer(m_untexturedVerts);
 }
 
 
@@ -85,12 +80,15 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
 {
     Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
 
-    // Draw Background
-    m_untexturedVerts->ClearVerts();
-    AddVertsForAABB2(*m_untexturedVerts, box, Rgba8(0, 0, 0, 200));
-    AddVertsForWireBox2D(*m_untexturedVerts, box, 0.0025f, Rgba8(255, 255, 255, 200));
+    VertexBuffer& untexturedVerts = *g_renderer->GetVertexBuffer(m_untexturedVerts);
+    VertexBuffer& textVerts = *g_renderer->GetVertexBuffer(m_textVerts);
 
-    m_textVerts->ClearVerts();
+    // Draw Background
+    untexturedVerts.ClearVerts();
+    AddVertsForAABB2(untexturedVerts, box, Rgba8(0, 0, 0, 200));
+    AddVertsForWireBox2D(untexturedVerts, box, 0.0025f, Rgba8(255, 255, 255, 200));
+
+    textVerts.ClearVerts();
 
     float lineThickness = box.GetHeight() / (float) m_maxHistorySize;
 
@@ -105,20 +103,20 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
         
         if (m_selectedLineIndex == i)
         {
-            AddVertsForAABB2(*m_untexturedVerts, textBox, Rgba8::Cerulean);
+            AddVertsForAABB2(untexturedVerts, textBox, Rgba8::Cerulean);
         }
         
-        font->AddVertsForText2D(*m_textVerts, textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
+        font->AddVertsForText2D(textVerts, textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
         
         linesRendered += 1.f;
     }
 
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(m_untexturedVerts);
+    g_renderer->DrawVertexBuffer(untexturedVerts);
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(m_textVerts);
+    g_renderer->DrawVertexBuffer(textVerts);
 }
 
 

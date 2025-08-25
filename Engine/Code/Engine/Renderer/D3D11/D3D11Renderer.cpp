@@ -40,9 +40,10 @@ D3D11Renderer* D3D11Renderer::Get()
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::Present() const
 {
-	ASSERT_OR_DIE(m_currentRenderTarget != INVALID_RENDER_TARGET_ID, "Present called with no render target bound.");
+	auto it = m_renderTargets.find(m_currentRenderTarget);
+	ASSERT_OR_DIE(it != m_renderTargets.end(), "Present called with no render target bound.");
 
-	RenderTarget* renderTarget = m_renderTargets.at(m_currentRenderTarget);
+	RenderTarget* renderTarget = it->second;
 	renderTarget->Present();
 }
 
@@ -53,9 +54,14 @@ void D3D11Renderer::ClearScreen(Rgba8 const& tint)
 {
 	RenderTarget* renderTarget = m_renderTargets.at(m_currentRenderTarget);
 	ASSERT_OR_DIE(renderTarget, "Tried to clear null render target.");
+
 	float colorAsFloats[4] = {};
 	tint.GetAsFloats(&colorAsFloats[0]);
-	ID3D11RenderTargetView* const renderTargetView = dynamic_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
+
+	D3D11Texture* backbuffer = dynamic_cast<D3D11Texture*>(GetTexture(renderTarget->m_backbufferTexture));
+	ASSERT_OR_DIE(backbuffer, "Backbuffer texture is null.");
+
+	ID3D11RenderTargetView* const renderTargetView = backbuffer->CreateOrGetRenderTargetView();
 	m_deviceContext->ClearRenderTargetView(renderTargetView, colorAsFloats);
 }
 
@@ -66,77 +72,118 @@ void D3D11Renderer::ClearDepth(float depth)
 {
 	RenderTarget* renderTarget = m_renderTargets.at(m_currentRenderTarget);
 	ASSERT_OR_DIE(renderTarget && renderTarget->m_depthBuffer, "Tried to clear null depth buffer.");
-	ID3D11DepthStencilView* view = dynamic_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
+
+	D3D11Texture* depthBuffer = dynamic_cast<D3D11Texture*>(GetTexture(renderTarget->m_depthBuffer));
+	ASSERT_OR_DIE(depthBuffer, "Depth buffer texture is null.");
+
+	ID3D11DepthStencilView* view = depthBuffer->CreateOrGetDepthStencilView();
 	m_deviceContext->ClearDepthStencilView(view, D3D11_CLEAR_DEPTH, depth, 0);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::BindVertexBuffer(VertexBuffer const* vbo) const
+void D3D11Renderer::BindVertexBuffer(VertexBufferID id) const
 {
-	UINT stride = (UINT) vbo->GetStride();
+	VertexBuffer* vbo = GetVertexBuffer(id);
+	ASSERT_OR_DIE(vbo, "Binding invalid vertex buffer");
+
+	BindVertexBuffer(*vbo);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void D3D11Renderer::BindVertexBuffer(VertexBuffer& vbo) const
+{
+	D3D11VertexBuffer* d3dvbo = dynamic_cast<D3D11VertexBuffer*>(&vbo);
+	ASSERT_OR_DIE(d3dvbo, "Trying to draw non-d3d vbo.")
+
+	UINT stride = (UINT) vbo.GetStride();
 	UINT offset = 0;
 
 	m_deviceContext->IASetVertexBuffers(
 		0,
 		1,
-		&dynamic_cast<D3D11VertexBuffer const*>(vbo)->m_handle,
+		&d3dvbo->m_handle,
 		&stride,
 		&offset
 	);
 
-	ID3D11InputLayout* vertexLayout = dynamic_cast<D3D11Shader*>(m_defaultShader)->CreateOrGetInputLayout();
+	ID3D11InputLayout* vertexLayout = dynamic_cast<D3D11Shader*>(GetDefaultShader())->CreateOrGetInputLayout(); // todo: use bound shader instead of default? when I support other vertex layouts
 	m_deviceContext->IASetInputLayout(vertexLayout);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::BindConstantBuffer(ConstantBuffer const* cbo, int slot) const
+void D3D11Renderer::BindConstantBuffer(ConstantBufferID id, int slot) const
 {
-	m_deviceContext->VSSetConstantBuffers(slot, 1, &dynamic_cast<D3D11ConstantBuffer const*>(cbo)->m_handle);
-	m_deviceContext->PSSetConstantBuffers(slot, 1, &dynamic_cast<D3D11ConstantBuffer const*>(cbo)->m_handle);
+	D3D11ConstantBuffer* cbo = dynamic_cast<D3D11ConstantBuffer*>(GetConstantBuffer(id));
+	ASSERT_OR_DIE(cbo, "Binding invalid constant buffer");
+	m_deviceContext->VSSetConstantBuffers(slot, 1, &cbo->m_handle);
+	m_deviceContext->PSSetConstantBuffers(slot, 1, &cbo->m_handle);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Texture* D3D11Renderer::MakeTexture() const
+TextureID D3D11Renderer::MakeTexture()
 {
-	return new D3D11Texture();
+	auto texResult = new D3D11Texture();
+	std::unique_lock lock(m_texturesMutex);
+	TextureID texID = RequestTextureID();
+	m_textures[texID] = texResult;
+	return texID;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Shader* D3D11Renderer::MakeShader(ShaderConfig const& config) const
+ShaderID D3D11Renderer::MakeShader(ShaderConfig const& config)
 {
-	return new D3D11Shader(config);
+	auto shaderResult = new D3D11Shader(config);
+	std::unique_lock lock(m_shadersMutex);
+	ShaderID shaderID = RequestShaderID();
+	m_shaders[shaderID] = shaderResult;
+	return shaderID;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ConstantBuffer* D3D11Renderer::MakeConstantBuffer() const
+ConstantBufferID D3D11Renderer::MakeConstantBuffer()
 {
-	return new D3D11ConstantBuffer();
+	auto cbResult = new D3D11ConstantBuffer();
+	std::unique_lock lock(m_constantBuffersMutex);
+	ConstantBufferID cbID = RequestConstantBufferID();
+	m_constantBuffers[cbID] = cbResult;
+	return cbID;
+
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-VertexBuffer* D3D11Renderer::MakeVertexBuffer() const
+VertexBufferID D3D11Renderer::MakeVertexBuffer()
 {
-	return new D3D11VertexBuffer();
+	auto vbResult = new D3D11VertexBuffer();
+	std::unique_lock lock(m_vertexBuffersMutex);
+	VertexBufferID vbID = RequestVertexBufferID();
+	m_vertexBuffers[vbID] = vbResult;
+	return vbID;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Swapchain* D3D11Renderer::MakeSwapchain() const
+SwapchainID D3D11Renderer::MakeSwapchain()
 {
-	return new D3D11Swapchain();
+	auto scResult = new D3D11Swapchain();
+	std::unique_lock lock(m_swapchainsMutex);
+	SwapchainID scID = RequestSwapchainID();
+	m_swapchains[scID] = scResult;
+	return scID;
 }
 
 
@@ -146,10 +193,9 @@ RenderTargetID D3D11Renderer::MakeSwapchainRenderTarget(void* hwnd, IntVec2 cons
 {
 	RenderTarget* renderTarget = new RenderTarget();
 	renderTarget->m_renderDimensions = resolution;
-	renderTarget->m_backbufferTexture = new D3D11Texture();
-	renderTarget->m_depthBuffer = new D3D11Texture();
-	D3D11Swapchain* d3d11Swapchain = new D3D11Swapchain();
-	renderTarget->m_swapchain = d3d11Swapchain;
+	renderTarget->m_backbufferTexture = MakeTexture();
+	renderTarget->m_depthBuffer = MakeTexture();
+	renderTarget->m_swapchain = MakeSwapchain();
 
 	// Create the swap chain
 	IDXGIDevice* device;
@@ -174,50 +220,44 @@ RenderTargetID D3D11Renderer::MakeSwapchainRenderTarget(void* hwnd, IntVec2 cons
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.SampleDesc.Count = 1;
 
+	D3D11Swapchain* d3d11Swapchain = dynamic_cast<D3D11Swapchain*>(GetSwapchain(renderTarget->m_swapchain));
 	HRESULT result = factory->CreateSwapChain(m_device, &swapChainDesc, &d3d11Swapchain->m_swapChain);
-	if (!SUCCEEDED(result))
-	{
-		delete renderTarget->m_backbufferTexture;
-		delete renderTarget->m_depthBuffer;
-		delete renderTarget;
-		return INVALID_RENDER_TARGET_ID;
-	}
 
 	DX_SAFE_RELEASE(factory);
 	DX_SAFE_RELEASE(adapter);
 	DX_SAFE_RELEASE(device);
 
-	dynamic_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(d3d11Swapchain->m_swapChain);
-	dynamic_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(d3d11Swapchain->m_swapChain);
+	if (!SUCCEEDED(result))
+	{
+		ReleaseTexture(renderTarget->m_backbufferTexture);
+		ReleaseTexture(renderTarget->m_depthBuffer);
+		ReleaseSwapchain(renderTarget->m_swapchain);
+		delete renderTarget;
+		return RendererUtils::InvalidID;
+	}
 
+	#if defined(_DEBUG)
+		std::string swapchainString = "Swapchain";
+		d3d11Swapchain->m_swapChain->SetPrivateData(WKPDID_D3DDebugObjectName, (int) swapchainString.size(), swapchainString.data());
+	#endif
+
+	D3D11Texture* backBuffer = dynamic_cast<D3D11Texture*>(GetTexture(renderTarget->m_backbufferTexture));
+	D3D11Texture* depthBuffer = dynamic_cast<D3D11Texture*>(GetTexture(renderTarget->m_depthBuffer));
+
+	ASSERT_OR_DIE(backBuffer, "Invalid backbuffer");
+	ASSERT_OR_DIE(depthBuffer, "Invalid depth buffer");
+
+	bool backBufferSuccess = backBuffer->InitAsBackbufferTexture(d3d11Swapchain->m_swapChain);
+	bool depthBufferSuccess = depthBuffer->InitAsDepthBuffer(d3d11Swapchain->m_swapChain);
+	depthBuffer->CreateOrGetDepthStencilView();
+
+	ASSERT_OR_DIE(backBufferSuccess, "Backbuffer failed to init.");
+	ASSERT_OR_DIE(depthBufferSuccess, "Depth buffer failed to init");
+
+	std::unique_lock lock(m_renderTargetsMutex);
 	RenderTargetID newID = RequestRenderTargetID();
-	renderTarget->m_id = newID;
 	m_renderTargets[newID] = renderTarget;
-
 	return newID;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-RenderTargetID D3D11Renderer::RequestRenderTargetID() const
-{
-	static RenderTargetID s_id;
-	return s_id++;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::ReleaseSwapchainRenderTarget(RenderTargetID renderTargetID)
-{
-	auto renderTarget = m_renderTargets.at(renderTargetID);
-	renderTarget->ReleaseResources();
-
-	delete renderTarget;
-	renderTarget = nullptr;
-
-	m_renderTargets.erase(renderTargetID);
 }
 
 
@@ -242,12 +282,18 @@ ID3D11DeviceContext* D3D11Renderer::GetDeviceContext() const
 void D3D11Renderer::BindRenderTarget(RenderTargetID renderTargetID)
 {
 	m_currentRenderTarget = renderTargetID;
-	RenderTarget* renderTarget = m_renderTargets[renderTargetID];
+	RenderTarget* renderTarget = GetRenderTarget(renderTargetID);
 
 	ASSERT_OR_DIE(renderTarget && renderTarget->m_backbufferTexture && renderTarget->m_depthBuffer, "Null render target.");
 
-	ID3D11DepthStencilView* dsv = dynamic_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
-	ID3D11RenderTargetView* rtv = dynamic_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
+	D3D11Texture* backbuffer = dynamic_cast<D3D11Texture*>(GetTexture(renderTarget->m_backbufferTexture));
+	D3D11Texture* depthBuffer = dynamic_cast<D3D11Texture*>(GetTexture(renderTarget->m_depthBuffer));
+
+	ASSERT_OR_DIE(backbuffer, "Invalid backbuffer");
+	ASSERT_OR_DIE(depthBuffer, "Invalid depth buffer");
+
+	ID3D11DepthStencilView* dsv = depthBuffer->CreateOrGetDepthStencilView();
+	ID3D11RenderTargetView* rtv = backbuffer->CreateOrGetRenderTargetView();
 	m_deviceContext->OMSetRenderTargets(1, &rtv, dsv);
 
 	// Set viewport
@@ -271,18 +317,23 @@ void D3D11Renderer::ResizeSwapChainRenderTarget(RenderTargetID renderTargetID, I
 	RenderTarget* renderTarget = m_renderTargets[renderTargetID];
 	ASSERT_OR_DIE(renderTarget && renderTarget->m_backbufferTexture && renderTarget->m_depthBuffer, "Null render target.");
 
-	renderTarget->m_backbufferTexture->ReleaseResources();
-	renderTarget->m_depthBuffer->ReleaseResources();
+	D3D11Texture* backBuffer = dynamic_cast<D3D11Texture*>(GetTexture(renderTarget->m_backbufferTexture));
+	D3D11Texture* depthBuffer = dynamic_cast<D3D11Texture*>(GetTexture(renderTarget->m_depthBuffer));
+	D3D11Swapchain* swapchain = dynamic_cast<D3D11Swapchain*>(GetSwapchain(renderTarget->m_swapchain));
 
-	D3D11Swapchain* d3dSwapchain = dynamic_cast<D3D11Swapchain*>(renderTarget->m_swapchain);
-	ASSERT_OR_DIE(d3dSwapchain, "Invalid swap chain.");
+	ASSERT_OR_DIE(backBuffer, "Invalid backbuffer");
+	ASSERT_OR_DIE(depthBuffer, "Invalid depth buffer");
+	ASSERT_OR_DIE(swapchain, "Invalid swapchain");
+
+	backBuffer->ReleaseResources();
+	depthBuffer->ReleaseResources();
 
 	DXGI_SWAP_CHAIN_DESC desc = {};
-	d3dSwapchain->m_swapChain->GetDesc(&desc);
+	swapchain->m_swapChain->GetDesc(&desc);
 
 	renderTarget->m_renderDimensions = newSize;
 
-	HRESULT hr = d3dSwapchain->m_swapChain->ResizeBuffers(
+	HRESULT hr = swapchain->m_swapChain->ResizeBuffers(
 		desc.BufferCount,
 		renderTarget->m_renderDimensions.x,
 		renderTarget->m_renderDimensions.y,
@@ -292,8 +343,8 @@ void D3D11Renderer::ResizeSwapChainRenderTarget(RenderTargetID renderTargetID, I
 
 	ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to resize buffers after window mode change.");
 
-	dynamic_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(d3dSwapchain->m_swapChain);
-	dynamic_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(d3dSwapchain->m_swapChain);
+	backBuffer->InitAsBackbufferTexture(swapchain->m_swapChain);
+	depthBuffer->InitAsDepthBuffer(swapchain->m_swapChain);
 }
 
 
@@ -301,9 +352,13 @@ void D3D11Renderer::ResizeSwapChainRenderTarget(RenderTargetID renderTargetID, I
 //----------------------------------------------------------------------------------------------------------------------
 bool D3D11Renderer::SetFullscreenState(RenderTargetID renderTargetID, bool fullscreen)
 {
-	D3D11Swapchain* d3dSwapchain = dynamic_cast<D3D11Swapchain*>(m_renderTargets[renderTargetID]->m_swapchain);
-	ASSERT_OR_DIE(d3dSwapchain, "Invalid swap chain.");
-	HRESULT hr = d3dSwapchain->m_swapChain->SetFullscreenState((BOOL) fullscreen, nullptr);
+	RenderTarget* rt = GetRenderTarget(renderTargetID);
+	ASSERT_OR_DIE(rt, "Invalid renderTarget");
+
+	D3D11Swapchain* swapchain = dynamic_cast<D3D11Swapchain*>(GetSwapchain(rt->m_swapchain));
+	ASSERT_OR_DIE(swapchain, "Invalid swapchain");
+
+	HRESULT hr = swapchain->m_swapChain->SetFullscreenState((BOOL) fullscreen, nullptr);
 	return SUCCEEDED(hr);
 }
 
@@ -370,7 +425,14 @@ void D3D11Renderer::DepthStencilStateUpdated()
 	desc.DepthFunc = D3D11_COMPARISON_ALWAYS;
 	desc.StencilEnable = FALSE;
 
-	m_device->CreateDepthStencilState(&desc, &m_depthStencilState);
+	HRESULT hr = m_device->CreateDepthStencilState(&desc, &m_depthStencilState);
+	ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to create depth stencil state.")
+
+	#ifdef _DEBUG
+		std::string depthStencilStateName = StringUtils::StringF("Depth Stencil State");
+		m_depthStencilState->SetPrivateData(WKPDID_D3DDebugObjectName, (int) depthStencilStateName.size(), depthStencilStateName.data());
+	#endif
+
 	m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 0);
 }
 
@@ -403,8 +465,10 @@ void D3D11Renderer::SamplerStateUpdated()
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::BoundTextureUpdated()
 {
-	ASSERT_OR_DIE(m_settings.m_texture, "Tried to update null bound texture.");
-	ID3D11ShaderResourceView* srv = dynamic_cast<D3D11Texture*>(m_settings.m_texture)->CreateOrGetShaderResourceView();
+	D3D11Texture* boundTexture = dynamic_cast<D3D11Texture*>(GetBoundTexture());
+	ASSERT_OR_DIE(boundTexture, "Tried to update null or non-d3d texture.");
+
+	ID3D11ShaderResourceView* srv = boundTexture->CreateOrGetShaderResourceView();
 
 	// todo: support multiple textures bound at the same time
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
@@ -415,11 +479,12 @@ void D3D11Renderer::BoundTextureUpdated()
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::BoundShaderUpdated()
 {
-	ASSERT_OR_DIE(m_settings.m_shader, "Tried to update null bound shader.");
+	D3D11Shader* boundShader = dynamic_cast<D3D11Shader*>(GetBoundShader());
+	ASSERT_OR_DIE(boundShader, "Tried to update null or non-d3d shader.");
 
-	ID3D11PixelShader* pixelShader = dynamic_cast<D3D11Shader*>(m_settings.m_shader)->m_pixelShader;
+	ID3D11PixelShader* pixelShader = boundShader->m_pixelShader;
 	ASSERT_OR_DIE(pixelShader, "Shader has no valid pixel shader.");
-	ID3D11VertexShader* vertexShader = dynamic_cast<D3D11Shader*>(m_settings.m_shader)->m_vertexShader;
+	ID3D11VertexShader* vertexShader = boundShader->m_vertexShader;
 	ASSERT_OR_DIE(vertexShader, "Shader has no valid vertex shader.");
 
 	m_deviceContext->VSSetShader(vertexShader, nullptr, 0);
@@ -432,19 +497,19 @@ void D3D11Renderer::BoundShaderUpdated()
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::CreateDebugLayer()
 {
-#if defined(_DEBUG)
-	HMODULE modHandle = ::LoadLibraryA("Dxgidebug.dll");
-	ASSERT_OR_DIE(modHandle, "Failed to load Dxgidebug.dll");
+	#if defined(_DEBUG)
+		HMODULE modHandle = ::LoadLibraryA("Dxgidebug.dll");
+		ASSERT_OR_DIE(modHandle, "Failed to load Dxgidebug.dll");
 
-	typedef HRESULT(WINAPI* GetDebugModuleFunc)(REFIID, void**);
-	GetDebugModuleFunc getModuleFunc = (GetDebugModuleFunc) ::GetProcAddress(modHandle, "DXGIGetDebugInterface");
-	ASSERT_OR_DIE(getModuleFunc, "Failed to acquire DXGIGetDebugInterface");
+		typedef HRESULT(WINAPI* GetDebugModuleFunc)(REFIID, void**);
+		GetDebugModuleFunc getModuleFunc = (GetDebugModuleFunc) ::GetProcAddress(modHandle, "DXGIGetDebugInterface");
+		ASSERT_OR_DIE(getModuleFunc, "Failed to acquire DXGIGetDebugInterface");
 
-	HRESULT result = getModuleFunc(__uuidof(IDXGIDebug), (void**) &m_debug);
-	ASSERT_OR_DIE(SUCCEEDED(result), "getModuleFunc Failed");
+		HRESULT result = getModuleFunc(__uuidof(IDXGIDebug), (void**) &m_debug);
+		ASSERT_OR_DIE(SUCCEEDED(result), "getModuleFunc Failed");
 
-	m_debugModule = modHandle;
-#endif
+		m_debugModule = modHandle;
+	#endif
 }
 
 
@@ -474,12 +539,12 @@ void D3D11Renderer::CreateDevice()
 	ASSERT_OR_DIE(m_device, "Failed to create device");
 	ASSERT_OR_DIE(m_deviceContext, "Failed to create device context");
 
-#if defined(_DEBUG)
-	std::string deviceName = StringUtils::StringF("Device (THE Renderer)");
-	m_device->SetPrivateData(WKPDID_D3DDebugObjectName, (int) deviceName.size(), deviceName.data());
-	std::string contextName = StringUtils::StringF("Device Context (THE Renderer)");
-	m_deviceContext->SetPrivateData(WKPDID_D3DDebugObjectName, (int) contextName.size(), contextName.data());
-#endif
+	#if defined(_DEBUG)
+		std::string deviceName = StringUtils::StringF("Device (THE Renderer)");
+		m_device->SetPrivateData(WKPDID_D3DDebugObjectName, (int) deviceName.size(), deviceName.data());
+		std::string contextName = StringUtils::StringF("Device Context (THE Renderer)");
+		m_deviceContext->SetPrivateData(WKPDID_D3DDebugObjectName, (int) contextName.size(), contextName.data());
+	#endif
 }
 
 
@@ -525,8 +590,12 @@ void D3D11Renderer::CreateRasterizerState()
 	rasterizerDesc.AntialiasedLineEnable = true;
 	rasterizerDesc.DepthClipEnable = true;
 
-	m_device->CreateRasterizerState(&rasterizerDesc, &m_rasterizerState);
-	ASSERT_OR_DIE(m_rasterizerState, "Failed to create rasterizer state");
+	HRESULT hr = m_device->CreateRasterizerState(&rasterizerDesc, &m_rasterizerState);
+	ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to create rasterizer state");
+	#ifdef _DEBUG
+		std::string rasterizerName = StringUtils::StringF("Rasterizer State");
+		m_rasterizerState->SetPrivateData(WKPDID_D3DDebugObjectName, (int) rasterizerName.size(), rasterizerName.data());
+	#endif
 }
 
 
@@ -536,8 +605,12 @@ void D3D11Renderer::CreateDefaultShader()
 {
 	ShaderConfig defaultShaderConfig;
 	defaultShaderConfig.m_name = "DefaultShader";
-	m_defaultShader = new D3D11Shader(defaultShaderConfig);
-	dynamic_cast<D3D11Shader*>(m_defaultShader)->CreateFromSource(s_HLSLDefaultShaderSource);
+	m_defaultShader = MakeShader(defaultShaderConfig);
+
+	D3D11Shader* defaultShader = dynamic_cast<D3D11Shader*>(GetDefaultShader());
+	ASSERT_OR_DIE(defaultShader, "Invalid default shader.");
+
+	defaultShader->CreateFromSource(s_HLSLDefaultShaderSource);
 }
 
 
@@ -546,7 +619,7 @@ void D3D11Renderer::CreateDefaultShader()
 void Renderer::CreateDefaultTexture()
 {
 	m_defaultTexture = MakeTexture();
-	m_defaultTexture->CreateUniformTexture(IntVec2(1, 1), Rgba8::White);
+	GetDefaultTexture()->CreateUniformTexture(IntVec2(1, 1), Rgba8::White);
 }
 
 
@@ -554,12 +627,21 @@ void Renderer::CreateDefaultTexture()
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::CreateDefaultFont()
 {
-	m_defaultFont = new Font();
-	m_defaultFont->LoadFNT("Data/Fonts/Gypsy.fnt");
+	m_defaultFont = MakeFont();
+
+	Font* font = GetFont(m_defaultFont);
+	ASSERT_OR_DIE(font, "Invalid default font.");
+
+	font->LoadFNT("Data/Fonts/Gypsy.fnt");
+
 	ShaderConfig config;
 	config.m_name = "Default Font Shader";
-	m_defaultFont->m_shader = MakeShader(config);
-	m_defaultFont->m_shader->CreateFromSource(s_HLSLDefaultFontShaderSource);
+	font->m_shader = MakeShader(config);
+
+	Shader* shader = GetShader(font->m_shader);
+	ASSERT_OR_DIE(shader, "Invalid default font shader.");
+
+	shader->CreateFromSource(s_HLSLDefaultFontShaderSource);
 }
 
 
@@ -690,7 +772,7 @@ void D3D11Renderer::ReportLiveObjects()
 	#if defined(_DEBUG)
 		if (m_debug)
 		{
-			DXGI_DEBUG_RLO_FLAGS flags = (DXGI_DEBUG_RLO_FLAGS) (DXGI_DEBUG_RLO_DETAIL | DXGI_DEBUG_RLO_IGNORE_INTERNAL);
+			DXGI_DEBUG_RLO_FLAGS flags = (DXGI_DEBUG_RLO_FLAGS) (DXGI_DEBUG_RLO_DETAIL);
 			m_debug->ReportLiveObjects(DXGI_DEBUG_ALL, flags);
 		}
 	#endif
@@ -706,7 +788,7 @@ bool D3D11Renderer::ToggleMSAA(NamedProperties&)
 	// Recreate the depth buffer and backbuffer textures
 	for (auto& rt : m_renderTargets)
 	{
-		ResizeSwapChainRenderTarget(rt.second->m_id, rt.second->m_renderDimensions);
+		ResizeSwapChainRenderTarget(rt.first, rt.second->m_renderDimensions);
 	}
 
 	return false;

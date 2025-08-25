@@ -40,6 +40,7 @@ void D3D11Shader::ReleaseResources()
 	DX_SAFE_RELEASE(m_pixelShader);
 	DX_SAFE_RELEASE(m_vertexShader);
 	DX_SAFE_RELEASE(m_inputLayout);
+	m_vertexByteCode.clear();
 }
 
 
@@ -68,6 +69,7 @@ bool D3D11Shader::CreateFromSource(std::string const& sourceCode)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool D3D11Shader::CompileAsVertexShader(std::string const& sourceCode)
 {
 	ID3D11Device* device = D3D11Renderer::Get()->GetDevice();
@@ -121,6 +123,7 @@ bool D3D11Shader::CompileAsVertexShader(std::string const& sourceCode)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 bool D3D11Shader::CompileAsPixelShader(std::string const& sourceCode)
 {
 	ID3D11Device* device = D3D11Renderer::Get()->GetDevice();
@@ -170,6 +173,7 @@ bool D3D11Shader::CompileAsPixelShader(std::string const& sourceCode)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11InputLayout* D3D11Shader::CreateInputLayoutFor_Vertex_PCU()
 {
 	ID3D11Device* device = D3D11Renderer::Get()->GetDevice();
@@ -213,6 +217,11 @@ ID3D11InputLayout* D3D11Shader::CreateInputLayoutFor_Vertex_PCU()
 	);
 
 	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create input layout for vertex PCU");
+
+	#if defined(_DEBUG)
+		std::string inputLayoutString = "Input Layout (Vertex_PCU)";
+		m_inputLayout->SetPrivateData(WKPDID_D3DDebugObjectName, (int) inputLayoutString.size(), inputLayoutString.data());
+	#endif
 
 	return m_inputLayout;
 }

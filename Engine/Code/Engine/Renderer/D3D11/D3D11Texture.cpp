@@ -99,8 +99,8 @@ bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap)
     }
 
     #ifdef _DEBUG
-    std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
-    m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
     return SUCCEEDED(result);
@@ -113,14 +113,14 @@ bool D3D11Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
 {
     ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
     swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &swapChainBackBufferTexture);
-    ASSERT_OR_DIE(swapChainBackBufferTexture != nullptr, "Failed to create texture from swap chain backbuffer")
+    ASSERT_OR_DIE(swapChainBackBufferTexture != nullptr, "Failed to create texture from swap chain backbuffer");
 
-        D3D11_TEXTURE2D_DESC backbufferDesc;
+    D3D11_TEXTURE2D_DESC backbufferDesc;
     swapChainBackBufferTexture->GetDesc(&backbufferDesc);
 
-    DX_SAFE_RELEASE(swapChainBackBufferTexture)
+    DX_SAFE_RELEASE(swapChainBackBufferTexture);
 
-        m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
+    m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
 
     RendererUserSettings perUserSettings = g_renderer->GetPerUserSettings();
 
@@ -143,13 +143,13 @@ bool D3D11Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
     desc.SampleDesc.Quality = msaaSettings.m_qualityLevel;
 
     HRESULT result = device->CreateTexture2D(&desc, nullptr, &m_textureHandle);
-    ASSERT_OR_DIE(SUCCEEDED(result) && m_textureHandle, "Failed to create texture from swap chain")
+    ASSERT_OR_DIE(SUCCEEDED(result) && m_textureHandle, "Failed to create texture from swap chain");
 
-        #ifdef _DEBUG
+    #ifdef _DEBUG
         static int count = 0;
-    m_sourceImagePath = StringUtils::StringF("Backbuffer Texture %i", ++count);
-    std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
-    m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+        m_sourceImagePath = StringUtils::StringF("Backbuffer Texture %i", ++count);
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
     return m_textureHandle != nullptr;
@@ -163,14 +163,14 @@ bool D3D11Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
 
     ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
     swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**) &swapChainBackBufferTexture);
-    ASSERT_OR_DIE(swapChainBackBufferTexture != nullptr, "Failed to create texture from swap chain backbuffer")
+    ASSERT_OR_DIE(swapChainBackBufferTexture != nullptr, "Failed to create texture from swap chain backbuffer");
 
-        D3D11_TEXTURE2D_DESC backbufferDesc;
+    D3D11_TEXTURE2D_DESC backbufferDesc;
     swapChainBackBufferTexture->GetDesc(&backbufferDesc);
 
-    DX_SAFE_RELEASE(swapChainBackBufferTexture)
+    DX_SAFE_RELEASE(swapChainBackBufferTexture);
 
-        m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
+    m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
 
     RendererUserSettings perUserSettings = g_renderer->GetPerUserSettings();
     MSAASettings msaaSettings = D3D11Renderer::Get()->GetMaxSupportedMSAASettings(DXGI_FORMAT_D24_UNORM_S8_UINT);
@@ -189,13 +189,13 @@ bool D3D11Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
     desc.SampleDesc.Quality = msaaSettings.m_qualityLevel;
 
     HRESULT result = D3D11Renderer::Get()->GetDevice()->CreateTexture2D(&desc, nullptr, &m_textureHandle);
-    ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth buffer")
+    ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth buffer");
 
-        #ifdef _DEBUG
+    #ifdef _DEBUG
         static int count = 0;
-    m_sourceImagePath = StringUtils::StringF("Depth Buffer %i", ++count);
-    std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
-    m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+        m_sourceImagePath = StringUtils::StringF("Depth Buffer %i", ++count);
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
     return m_textureHandle != nullptr;
@@ -236,11 +236,11 @@ ID3D11DepthStencilView* D3D11Texture::CreateOrGetDepthStencilView()
     {
         ID3D11Device* device = D3D11Renderer::Get()->GetDevice();
         HRESULT result = device->CreateDepthStencilView(m_textureHandle, nullptr, &m_depthStencilView);
-        ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth stencil view")
+        ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth stencil view");
 
-            #ifdef _DEBUG
+        #ifdef _DEBUG
             std::string name = StringUtils::StringF("Texture (Depth Stencil View). Source Image: %s", m_sourceImagePath.c_str());
-        m_depthStencilView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+            m_depthStencilView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }
 
@@ -256,11 +256,11 @@ ID3D11RenderTargetView* D3D11Texture::CreateOrGetRenderTargetView()
     {
         ID3D11Device* device = D3D11Renderer::Get()->GetDevice();
         HRESULT result = device->CreateRenderTargetView(m_textureHandle, nullptr, &m_renderTargetView);
-        ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create rtv")
+        ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create rtv");
 
-            #ifdef _DEBUG
+        #ifdef _DEBUG
             std::string name = StringUtils::StringF("Texture (Render Target View). Source Image: %s", m_sourceImagePath.c_str());
-        m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+            m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }
 
@@ -276,11 +276,11 @@ ID3D11ShaderResourceView* D3D11Texture::CreateOrGetShaderResourceView()
     {
         ID3D11Device* device = D3D11Renderer::Get()->GetDevice();
         HRESULT result = device->CreateShaderResourceView(m_textureHandle, nullptr, &m_shaderResourceView);
-        ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create srv")
+        ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create srv");
 
-            #ifdef _DEBUG
+        #ifdef _DEBUG
             std::string name = StringUtils::StringF("Texture (Shader Resource View). Source Image: %s", m_sourceImagePath.c_str());
-        m_shaderResourceView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
+            m_shaderResourceView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }
 

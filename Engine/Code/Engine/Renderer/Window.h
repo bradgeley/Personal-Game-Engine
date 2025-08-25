@@ -155,5 +155,5 @@ protected:
     bool m_isManuallyResizing       = false;
     bool m_isMinimized              = false;
 
-    RenderTargetID m_renderTarget   = INVALID_RENDER_TARGET_ID;
+    RenderTargetID m_renderTargetID = RendererUtils::InvalidID;
 };

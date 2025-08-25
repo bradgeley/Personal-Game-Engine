@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
 #include "Engine/Math/Vec2.h"
+#include "Engine/Renderer/RendererUtils.h"
 #include "Rgba8.h"
 #include <string>
 #include <vector>
@@ -56,8 +57,8 @@ public:
     Font() = default;
     ~Font();
 
-    Texture* GetTexture() const;
-    Shader* GetShader() const;
+    TextureID GetTexture() const;
+    ShaderID GetShader() const;
 
     void LoadFNT(const char* fntFilepath);
     
@@ -88,8 +89,8 @@ public:
 
 public:
 
-    Texture* m_texture = nullptr;
-    Shader* m_shader = nullptr;
+    TextureID m_texture = RendererUtils::InvalidID;
+    ShaderID m_shader = RendererUtils::InvalidID;
     GlyphData m_glyphData[MAX_GLYPHS];
     std::vector<KerningPair> m_kerningData[MAX_GLYPHS];
 };

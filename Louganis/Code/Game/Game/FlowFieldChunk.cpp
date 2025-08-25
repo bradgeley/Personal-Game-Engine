@@ -35,12 +35,8 @@ FlowFieldChunk::~FlowFieldChunk()
 	{
 		m_chunk->m_destroyed.UnsubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
 	}
-	if (m_debugVBO)
-	{
-		m_debugVBO->ReleaseResources();
-		delete m_debugVBO;
-		m_debugVBO = nullptr;
-	}
+
+	g_renderer->ReleaseVertexBuffer(m_debugVBO);
 }
 
 
@@ -52,7 +48,7 @@ void FlowFieldChunk::HardReset()
 	m_costField.SetAll(0);
 	m_distanceField.SetAll(MAX_DISTANCE);
 	m_gradient.SetAll(Vec2::ZeroVector);
-	m_debugVBO->ClearVerts();
+	g_renderer->GetVertexBuffer(m_debugVBO)->ClearVerts();
 }
 
 
@@ -64,7 +60,7 @@ void FlowFieldChunk::SoftReset()
 	m_consideredCells.SetAll(false);
 	m_distanceField.SetAll(MAX_DISTANCE);
 	m_gradient.SetAll(Vec2());
-	m_debugVBO->ClearVerts();
+	g_renderer->GetVertexBuffer(m_debugVBO)->ClearVerts();
 }
 
 

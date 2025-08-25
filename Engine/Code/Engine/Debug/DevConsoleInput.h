@@ -2,12 +2,12 @@
 #pragma once
 #include "Engine/Debug/DevConsoleLine.h"
 #include "Engine/Events/EventDelegate.h"
+#include "Engine/Renderer/RendererUtils.h"
 #include <string>
 
 
 
 class DevConsoleLog;
-class VertexBuffer;
 struct AABB2;
 
 
@@ -55,6 +55,6 @@ protected:
     int m_selectionStartIndex = -1; // -1 means not selecting anything
     float m_caretAnimationFraction = 0.f;
     DevConsoleLine m_input;
-    VertexBuffer* m_vbo = nullptr;
+    VertexBufferID m_vbo = RendererUtils::InvalidID;
 };
 

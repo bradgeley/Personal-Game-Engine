@@ -1,8 +1,9 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
+#include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/Rgba8.h"
-#include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Renderer/RendererUtils.h"
 #include <mutex>
 #include <vector>
 
@@ -161,8 +162,8 @@ protected:
     Window* m_window = nullptr;
     Camera* m_camera = nullptr;
 
-    VertexBuffer* m_untexturedVBO = nullptr;
-    VertexBuffer* m_textVBO = nullptr;
+    VertexBufferID m_untexturedVBO = RendererUtils::InvalidID;
+    VertexBufferID m_textVBO = RendererUtils::InvalidID;
 
     // If true, freezes all logging so you can inspect 1 frame indefinitely
     bool m_freezeLog = false;

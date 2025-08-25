@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/Input/KeyButtonState.h"
+#include "Engine/Renderer/RendererUtils.h"
 #include "Engine/Renderer/Rgba8.h"
 #include "DevConsoleCommandHistory.h"
 #include "DevConsoleCommandInfo.h"
@@ -76,7 +77,7 @@ public:
 
 	void AddLine(std::string const& line, Rgba8 const& tint = Rgba8::LightBlue);
 	void AddMultiLine(std::string const& line, Rgba8 const& tint = Rgba8::LightBlue);
-	void AddBackgroundImage(Texture* backgroundImage);
+	void AddBackgroundImage(TextureID backgroundImage);
 
 	void AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info);
 	void AddDevConsoleCommandInfo(Name eventName, Name argName, DevConsoleArgType argType);
@@ -161,11 +162,11 @@ private:
 	EDevConsoleBGIState m_transitionState = EDevConsoleBGIState::Sustaining;
 	int m_currentBackgroundImageIndex = 0;
 	float m_backgroundAnimationSeconds = 0.f;
-	std::vector<Texture*> m_backgroundImages;
+	std::vector<TextureID> m_backgroundImages;
 	std::vector<JobID> m_backgroundImageLoadingJobs;
 
 	// Vertex Buffers
-	VertexBuffer* m_vbo = nullptr;
+	VertexBufferID m_vbo = RendererUtils::InvalidID;
 };
 
 

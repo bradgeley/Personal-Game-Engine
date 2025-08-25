@@ -2,7 +2,6 @@
 #pragma once
 #include "Engine/Renderer/Vertex_PCU.h"
 #include "Engine/Math/AABB2.h"
-#include <vector>
 
 
 

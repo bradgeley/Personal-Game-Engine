@@ -1,9 +1,6 @@
 // Bradley Christensen - 2024
 #pragma once
-
-
-
-class VertexBuffer;
+#include "Engine/Renderer/RendererUtils.h"
 
 
 
@@ -12,7 +9,8 @@ class SCDebug
 {
 public:
 
-	VertexBuffer* m_frameVerts = nullptr; // Cleared out each frame
+	VertexBufferID m_frameUntexVerts = RendererUtils::InvalidID;
+	VertexBufferID m_frameDefaultFontVerts = RendererUtils::InvalidID;
 	bool m_debugRenderDistanceField = false;
 	bool m_debugRenderToMouseRaycast = false;
 	bool m_debugRenderToMouseDiscCast = false;

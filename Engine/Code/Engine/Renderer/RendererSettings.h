@@ -1,12 +1,8 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
 #include "EngineConstantBuffers.h"
+#include "RendererUtils.h"
 #include <cstdint>
-
-
-
-class Shader;
-class Texture;
 
 
 
@@ -101,8 +97,8 @@ struct RendererSettings
     ModelConstants m_modelConstants;
     FontConstants m_fontConstants;
 
-    Texture* m_texture                      = nullptr;
-    Shader* m_shader                        = nullptr;
+    TextureID m_boundTexture                = RendererUtils::InvalidID;
+    ShaderID m_boundShader                  = RendererUtils::InvalidID;
     
     FillMode m_fillMode                     = FillMode::Solid;
     Winding m_winding                       = Winding::CounterClockwise;

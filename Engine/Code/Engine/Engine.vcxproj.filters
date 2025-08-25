@@ -250,6 +250,9 @@
     <ClCompile Include="Renderer\D3D11\D3D11Swapchain.cpp">
       <Filter>Renderer\D3D11</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\RendererUtils.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -530,6 +533,9 @@
     </ClInclude>
     <ClInclude Include="Renderer\D3D11\D3D11Swapchain.h">
       <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RendererUtils.h">
+      <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

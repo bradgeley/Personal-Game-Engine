@@ -22,8 +22,9 @@ void SRenderEntities::Run(SystemContext const& context)
 {
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 
-    VertexBuffer* vbo = g_renderer->MakeVertexBuffer();
-    AddVertsForDisc2D(*vbo, Vec2(), 1, 128);
+    VertexBufferID id = g_renderer->MakeVertexBuffer();
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
+    AddVertsForDisc2D(vbo, Vec2(), 1, 128);
 
     // Render all things (1 draw call per entity = bad, todo: write sprite geometry shader)
     ModelConstants modelConstants;
@@ -44,8 +45,8 @@ void SRenderEntities::Run(SystemContext const& context)
 
     g_renderer->SetModelConstants(ModelConstants());
 
-    vbo->ReleaseResources();
-    delete vbo;
+    // todo: make more efficient
+    g_renderer->ReleaseVertexBuffer(id);
 }
 
 

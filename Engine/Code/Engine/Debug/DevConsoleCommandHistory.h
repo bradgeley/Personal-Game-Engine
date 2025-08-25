@@ -1,12 +1,12 @@
 ﻿// Bradley Christensen - 2023
 #pragma once
+#include "Engine/Renderer/RendererUtils.h"
 #include <string>
 #include <vector>
 
 
 
 struct AABB2;
-class VertexBuffer;
 
 
 
@@ -41,6 +41,6 @@ protected:
     std::vector<std::string> m_log;
     int8_t m_maxHistorySize = 10;
     int8_t m_selectedLineIndex = -1;
-    VertexBuffer* m_untexturedVerts = nullptr;
-    VertexBuffer* m_textVerts = nullptr;
+    VertexBufferID m_untexturedVerts = RendererUtils::InvalidID;
+    VertexBufferID m_textVerts = RendererUtils::InvalidID;
 };

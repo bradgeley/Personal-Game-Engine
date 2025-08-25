@@ -237,6 +237,7 @@
     <ClCompile Include="Renderer\EngineConstantBuffers.cpp" />
     <ClCompile Include="Renderer\Font.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Renderer\RendererUtils.cpp" />
     <ClCompile Include="Renderer\RenderTarget.cpp" />
     <ClCompile Include="Renderer\Rgba8.cpp" />
     <ClCompile Include="Renderer\Shader.cpp" />
@@ -332,6 +333,7 @@
     <ClInclude Include="Renderer\Font.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Renderer\RendererSettings.h" />
+    <ClInclude Include="Renderer\RendererUtils.h" />
     <ClInclude Include="Renderer\RenderTarget.h" />
     <ClInclude Include="Renderer\Rgba8.h" />
     <ClInclude Include="Renderer\Shader.h" />

@@ -2,7 +2,9 @@
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
 #include "RendererSettings.h"
+#include "RendererUtils.h"
 #include <unordered_map>
+#include <mutex>
 
 
 
@@ -19,12 +21,6 @@ struct IntVec2;
 struct NamedProperties;
 struct RenderTarget;
 struct ShaderConfig;
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-typedef uint32_t RenderTargetID;
-extern uint32_t INVALID_RENDER_TARGET_ID;
 
 
 
@@ -75,23 +71,38 @@ public:
     RendererUserSettings GetPerUserSettings() const;
 
     virtual void ClearScreen(Rgba8 const& tint) = 0;
-    void DrawVertexBuffer(VertexBuffer* vbo);
+    void DrawVertexBuffer(VertexBufferID id);
+    void DrawVertexBuffer(VertexBuffer& vbo);
 
     virtual void ClearDepth(float depth) = 0;
-    virtual void BindVertexBuffer(VertexBuffer const* vbo) const = 0;
-    virtual void BindConstantBuffer(ConstantBuffer const* cbo, int slot) const = 0;
 
-    // Factory Functions
-    static Renderer* MakeRendererInterface(RendererConfig const& config);
-    virtual Texture* MakeTexture() const = 0;
-    virtual Shader* MakeShader(ShaderConfig const& config) const = 0;
-    virtual ConstantBuffer* MakeConstantBuffer() const = 0;
-    virtual VertexBuffer* MakeVertexBuffer() const = 0;
-    virtual Swapchain* MakeSwapchain() const = 0;
-    virtual RenderTargetID MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& initialDims) = 0;
+    // Factory Make Functions
+    static  Renderer*           MakeRenderer(RendererConfig const& config);
+    virtual TextureID           MakeTexture() = 0;
+    virtual ShaderID            MakeShader(ShaderConfig const& config) = 0;
+    virtual ConstantBufferID    MakeConstantBuffer() = 0;
+    virtual VertexBufferID      MakeVertexBuffer() = 0;
+    virtual SwapchainID         MakeSwapchain() = 0;
+    virtual RenderTargetID      MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& initialDims) = 0;
+    virtual FontID              MakeFont();
 
-    // Release Functions
-    virtual void ReleaseSwapchainRenderTarget(RenderTargetID renderTarget) = 0;
+    // Factory Get Functions
+    Texture*                    GetTexture(TextureID id) const;
+    Shader*                     GetShader(ShaderID id) const;
+    ConstantBuffer*             GetConstantBuffer(ConstantBufferID id) const;
+    VertexBuffer*               GetVertexBuffer(VertexBufferID id) const;
+    Swapchain*                  GetSwapchain(SwapchainID id) const;
+    RenderTarget*               GetRenderTarget(RenderTargetID id);
+    Font*                       GetFont(FontID id);
+
+    // Factory Release Functions
+    void                        ReleaseTexture(TextureID id);
+    void                        ReleaseShader(ShaderID id);
+    void                        ReleaseConstantBuffer(ConstantBufferID id);
+    void                        ReleaseVertexBuffer(VertexBufferID id);
+    void                        ReleaseSwapchain(SwapchainID id);
+    void                        ReleaseRenderTarget(RenderTargetID id);
+    void                        ReleaseFont(FontID id);
 
     // Rendering Pipeline State
     void ResetRenderingPipelineState();
@@ -105,17 +116,42 @@ public:
     void SetCullMode(CullMode cullMode);
     void SetWindingOrder(Winding winding);
     void SetFillMode(FillMode fillMode);
-    void BindTexture(Texture* texture);
+
+    // Binding
     void BindShader(Shader* shader);
+    void BindShader(ShaderID shader);
+    void BindTexture(Texture* texture);
+    void BindTexture(TextureID texture);
     virtual void BindRenderTarget(RenderTargetID renderTarget) = 0;
+    virtual void BindVertexBuffer(VertexBufferID vbo) const = 0;
+    virtual void BindVertexBuffer(VertexBuffer& vbo) const = 0;
+    virtual void BindConstantBuffer(ConstantBufferID cbo, int slot) const = 0;
+
     virtual void ResizeSwapChainRenderTarget(RenderTargetID renderTarget, IntVec2 const& newSize) = 0;
     virtual void UnbindRenderTarget(RenderTargetID renderTarget);
     virtual bool SetFullscreenState(RenderTargetID renderTarget, bool fullscreen) = 0;
 
     int GetNumFrameDrawCalls() const;
+
+    // Get Defaults
     Font* GetDefaultFont() const;
+    Texture* GetDefaultTexture() const;
+    Shader* GetDefaultShader() const;
+
+    // Get Bound
+    Shader* GetBoundShader() const;
+    Texture* GetBoundTexture() const;
 
 protected:
+
+    // ID Functions
+    TextureID        RequestTextureID() const;
+    ShaderID         RequestShaderID() const;
+    ConstantBufferID RequestConstantBufferID() const;
+    VertexBufferID   RequestVertexBufferID() const;
+    SwapchainID      RequestSwapchainID() const;
+    RenderTargetID   RequestRenderTargetID() const;
+    FontID           RequestFontID() const;
 
     virtual void Draw(int vertexCount, int vertexOffset);
 
@@ -155,14 +191,19 @@ protected:
     // State cleanup
     virtual void DestroyDebugLayer() = 0;
     virtual void DestroyDevice() = 0;
-    virtual void DestroyConstantBuffers();
     virtual void DestroyBlendStates() = 0;
     virtual void DestroyDepthStencilState() = 0;
     virtual void DestroySamplerStates() = 0;
     virtual void DestroyRasterizerState() = 0;
-    virtual void DestroyDefaultShader();
-    virtual void DestroyDefaultTexture();
-    virtual void DestroyDefaultFont();
+
+    // Factory cleanup
+    virtual void DestroyShaders();
+    virtual void DestroyTextures();
+    virtual void DestroyConstantBuffers();
+    virtual void DestroyVertexBuffers();
+    virtual void DestroySwapchains();
+    virtual void DestroyRenderTargets();
+    virtual void DestroyFonts();
 
     // Dev Console Commands
     void AddDevConsoleCommands();
@@ -178,23 +219,39 @@ protected:
     RendererUserSettings m_perUserSettings;
 
     // Renderer Pipeline State
-    RenderTargetID m_currentRenderTarget = INVALID_RENDER_TARGET_ID;
+    RenderTargetID m_currentRenderTarget       = RendererUtils::InvalidID;
     Camera const* m_currentCamera = nullptr;
     RendererSettings m_settings;
     RendererSettings m_dirtySettings;
     int m_numFrameDrawCalls = 0;
 
-    // Constant Buffers
-    ConstantBuffer* m_cameraConstantsGPU = nullptr;
-    ConstantBuffer* m_modelConstantsGPU = nullptr;
-    ConstantBuffer* m_fontConstantsGPU = nullptr;
+    // Constant Buffers (move somewhere?)
+    ConstantBufferID    m_cameraConstantsGPU   = RendererUtils::InvalidID;
+    ConstantBufferID    m_modelConstantsGPU    = RendererUtils::InvalidID;
+    ConstantBufferID    m_fontConstantsGPU     = RendererUtils::InvalidID;
 
     // Defaults
-    Shader* m_defaultShader = nullptr;
-    Texture* m_defaultTexture = nullptr;
-    Font* m_defaultFont = nullptr;
+    ShaderID            m_defaultShader        = RendererUtils::InvalidID;
+    TextureID           m_defaultTexture       = RendererUtils::InvalidID;
+    FontID              m_defaultFont          = RendererUtils::InvalidID;
 
+    // GPU Objects
+    std::unordered_map<FontID, Font*> m_fonts;
+    std::unordered_map<ShaderID, Shader*> m_shaders;
+    std::unordered_map<TextureID, Texture*> m_textures;
+    std::unordered_map<SwapchainID, Swapchain*> m_swapchains;
+    std::unordered_map<VertexBufferID, VertexBuffer*> m_vertexBuffers;
     std::unordered_map<RenderTargetID, RenderTarget*> m_renderTargets;
+    std::unordered_map<ConstantBufferID, ConstantBuffer*> m_constantBuffers;
+
+    // Mutexes
+    mutable std::mutex m_fontsMutex;
+    mutable std::mutex m_shadersMutex;
+    mutable std::mutex m_texturesMutex;
+    mutable std::mutex m_swapchainsMutex;
+    mutable std::mutex m_vertexBuffersMutex;
+    mutable std::mutex m_constantBuffersMutex;
+    mutable std::mutex m_renderTargetsMutex;
 
     // Debug
 #if defined(_DEBUG)

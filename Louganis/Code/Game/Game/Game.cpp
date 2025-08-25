@@ -127,7 +127,7 @@ void Game::ConfigureEngine(Engine* engine)
     engine->RegisterSubsystem(g_audioSystem);
 
     RendererConfig rendererConfig;
-    g_renderer = Renderer::MakeRendererInterface(rendererConfig);
+    g_renderer = Renderer::MakeRenderer(rendererConfig);
     engine->RegisterSubsystem(g_renderer);
 
     WindowConfig windowConfig;

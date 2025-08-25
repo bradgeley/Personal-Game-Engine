@@ -238,34 +238,33 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 //----------------------------------------------------------------------------------------------------------------------
 void DebugDrawRaycast(WorldRaycastResult const& result)
 {
-    VertexBuffer* vbo = g_renderer->MakeVertexBuffer();
-    vbo->Initialize(1024);
+    VertexBufferID id = g_renderer->MakeVertexBuffer();
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
+    vbo.Initialize(1024);
 
-    AddVertsForDisc2D(*vbo, result.m_raycast.m_start, 0.1f, 16, Rgba8::Yellow);
-    AddVertsForDisc2D(*vbo, result.m_hitLocation, 0.1f, 16, Rgba8::Yellow);
+    AddVertsForDisc2D(vbo, result.m_raycast.m_start, 0.1f, 16, Rgba8::Yellow);
+    AddVertsForDisc2D(vbo, result.m_hitLocation, 0.1f, 16, Rgba8::Yellow);
 
     if (result.m_immediateHit)
     {
-        AddVertsForArrow2D(*vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Gray);
-        AddVertsForArrow2D(*vbo, result.m_raycast.m_start, result.m_raycast.m_start + result.m_hitNormal, 0.05f, Rgba8::Orange);
+        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Gray);
+        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_raycast.m_start + result.m_hitNormal, 0.05f, Rgba8::Orange);
     }
     else if (result.m_blockingHit)
     {
-        AddVertsForArrow2D(*vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Red);
-        AddVertsForArrow2D(*vbo, result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, 0.05f, Rgba8::Red);
+        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Red);
+        AddVertsForArrow2D(vbo, result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, 0.05f, Rgba8::Red);
     }
     else
     {
-        AddVertsForArrow2D(*vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Yellow);
+        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Yellow);
     }
 
     g_renderer->BindTexture(nullptr);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(vbo);
 
-    vbo->ReleaseResources();
-    delete vbo;
-    vbo = nullptr;
+    g_renderer->ReleaseVertexBuffer(id);
 }
 
 
