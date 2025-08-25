@@ -205,7 +205,7 @@ RenderTarget* D3D11Renderer::MakeSwapchainRenderTarget(void* hwnd, IntVec2 const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::ReleaseSwapchainRenderTarget(RenderTarget* renderTarget) const
+void D3D11Renderer::ReleaseSwapchainRenderTarget(RenderTarget*& renderTarget) const
 {
 	D3D11SwapchainRenderTarget* scrt = reinterpret_cast<D3D11SwapchainRenderTarget*>(renderTarget);
 	DX_SAFE_RELEASE(scrt->m_swapChain);
@@ -217,6 +217,9 @@ void D3D11Renderer::ReleaseSwapchainRenderTarget(RenderTarget* renderTarget) con
 	scrt->m_depthBuffer->ReleaseResources();
 	delete scrt->m_depthBuffer;
 	scrt->m_depthBuffer = nullptr;
+
+	delete renderTarget;
+	renderTarget = nullptr;
 }
 
 

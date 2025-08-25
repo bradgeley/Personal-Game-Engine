@@ -81,7 +81,7 @@ public:
     virtual RenderTarget* MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& initialDims) const = 0;
 
     // Release Functions
-    virtual void ReleaseSwapchainRenderTarget(RenderTarget*) const = 0;
+    virtual void ReleaseSwapchainRenderTarget(RenderTarget*& renderTarget) const = 0;
 
     // Rendering Pipeline State
     void ResetRenderingPipelineState();
