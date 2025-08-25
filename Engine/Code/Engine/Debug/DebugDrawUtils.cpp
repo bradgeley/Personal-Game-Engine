@@ -30,5 +30,6 @@ void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, 
     g_rendererInterface->BindShader(nullptr);
     g_rendererInterface->DrawVertexBuffer(vbo);
 
+    vbo->ReleaseResources();
     delete vbo;
 }

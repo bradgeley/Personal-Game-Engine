@@ -574,6 +574,7 @@ void SCWorld::ClearActiveChunks()
 {
 	for (auto chunk : m_activeChunks)
 	{
+		chunk.second->Destroy();
 		delete chunk.second;
 	}
 	m_activeChunks.clear();

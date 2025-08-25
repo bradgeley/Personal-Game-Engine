@@ -578,15 +578,6 @@ void RendererInterface::DestroyDefaultShader()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::CreateDefaultTexture()
-{
-	m_defaultTexture = MakeTexture();
-	m_defaultTexture->CreateUniformTexture(IntVec2(1, 1), Rgba8::White);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void RendererInterface::DestroyDefaultTexture()
 {
 	m_defaultTexture->ReleaseResources();
@@ -599,6 +590,9 @@ void RendererInterface::DestroyDefaultTexture()
 //----------------------------------------------------------------------------------------------------------------------
 void RendererInterface::DestroyDefaultFont()
 {
+	m_defaultFont->ReleaseResources();
+	delete m_defaultFont;
+	m_defaultFont = nullptr;
 }
 
 

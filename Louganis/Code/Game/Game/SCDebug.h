@@ -12,7 +12,7 @@ class SCDebug
 {
 public:
 
-	VertexBuffer* m_frameVerts; // Cleared out each frame
+	VertexBuffer* m_frameVerts = nullptr; // Cleared out each frame
 	bool m_debugRenderDistanceField = false;
 	bool m_debugRenderToMouseRaycast = false;
 	bool m_debugRenderToMouseDiscCast = false;

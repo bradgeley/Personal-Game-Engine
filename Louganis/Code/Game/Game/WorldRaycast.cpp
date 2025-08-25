@@ -262,6 +262,10 @@ void DebugDrawRaycast(WorldRaycastResult const& result)
     g_rendererInterface->BindTexture(nullptr);
     g_rendererInterface->BindShader(nullptr);
     g_rendererInterface->DrawVertexBuffer(vbo);
+
+    vbo->ReleaseResources();
+    delete vbo;
+    vbo = nullptr;
 }
 
 

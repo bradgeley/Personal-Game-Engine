@@ -35,6 +35,9 @@ public:
     virtual VertexBuffer* MakeVertexBuffer() const override;
     virtual RenderTarget* MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& resolution) const override;
 
+    // Release Functions
+    virtual void ReleaseSwapchainRenderTarget(RenderTarget*) const override;
+
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
 

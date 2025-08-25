@@ -69,6 +69,8 @@ void Window::Shutdown()
         UnregisterEvents();
     }
 
+    g_rendererInterface->ReleaseSwapchainRenderTarget(m_renderTarget);
+
     if (IsValid())
     {
         SetWindowLongPtr((HWND) m_windowHandle, GWLP_USERDATA, 0);

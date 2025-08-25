@@ -28,6 +28,7 @@ DevConsoleInput::DevConsoleInput()
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleInput::~DevConsoleInput()
 {
+    m_vbo->ReleaseResources();
     delete m_vbo;
     m_vbo = nullptr;
 }

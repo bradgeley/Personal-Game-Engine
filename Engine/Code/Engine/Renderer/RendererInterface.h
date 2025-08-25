@@ -80,6 +80,9 @@ public:
     virtual VertexBuffer* MakeVertexBuffer() const = 0;
     virtual RenderTarget* MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& initialDims) const = 0;
 
+    // Release Functions
+    virtual void ReleaseSwapchainRenderTarget(RenderTarget*) const = 0;
+
     // Rendering Pipeline State
     void ResetRenderingPipelineState();
     void SetCameraConstants(CameraConstants const& cameraConstants);

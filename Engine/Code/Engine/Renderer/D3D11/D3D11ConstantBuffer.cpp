@@ -58,4 +58,8 @@ void D3D11ConstantBuffer::Initialize(size_t byteWidth)
     ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create constant buffer")
 
     m_gpuBufferByteWidth = byteWidth;
+
+    #if defined(_DEBUG)
+        m_handle->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT) strlen("D3D11ConstantBuffer"), "D3D11ConstantBuffer");
+    #endif
 }

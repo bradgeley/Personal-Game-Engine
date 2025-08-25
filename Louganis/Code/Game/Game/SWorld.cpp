@@ -50,7 +50,8 @@ void SWorld::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SWorld::Shutdown()
 {
-
+	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	world.ClearActiveChunks();
 }
 
 

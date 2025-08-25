@@ -24,6 +24,7 @@ DevConsoleLog::DevConsoleLog()
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleLog::~DevConsoleLog()
 {
+    m_vbo->ReleaseResources();
     delete m_vbo;
     m_vbo = nullptr;
 }

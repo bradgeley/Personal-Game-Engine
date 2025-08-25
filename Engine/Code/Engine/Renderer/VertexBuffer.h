@@ -25,11 +25,11 @@ protected:
 public:
 
     VertexBuffer(VertexBuffer const& copy) = delete;
-    virtual ~VertexBuffer();
+    virtual ~VertexBuffer() = default;
 
     virtual void Initialize(int numExpectedVerts = 3) = 0;
     virtual void UpdateGPUBuffer() = 0;
-    virtual void ReleaseResources();
+    virtual void ReleaseResources() = 0;
     
     virtual std::vector<Vertex_PCU> const& GetVerts() const;
     virtual std::vector<Vertex_PCU>& GetMutableVerts(bool setDirty = true);

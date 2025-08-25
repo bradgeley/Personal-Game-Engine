@@ -74,6 +74,5 @@ void SLoadChunks::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SLoadChunks::Shutdown()
 {
-	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-	world.ClearActiveChunks();
+
 }

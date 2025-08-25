@@ -18,9 +18,9 @@ class Texture
 public:
 
     Texture() = default;
-    virtual ~Texture();
+    virtual ~Texture() = default;
 
-    virtual void ReleaseResources();
+    virtual void ReleaseResources() = 0;
 
     virtual bool IsValid() const = 0;
     virtual IntVec2 GetDimensions() const;

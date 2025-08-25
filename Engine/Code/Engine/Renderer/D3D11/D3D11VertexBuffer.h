@@ -17,6 +17,8 @@ class D3D11VertexBuffer : public VertexBuffer
     
 public:
 
+    virtual ~D3D11VertexBuffer();
+
     virtual void Initialize(int numExpectedVerts = 3) override;
     virtual void UpdateGPUBuffer() override;
     virtual void ReleaseResources() override;

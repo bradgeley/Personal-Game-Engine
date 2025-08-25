@@ -51,5 +51,5 @@ public:
 	FastGrid<float, s_worldChunkSizePowerOfTwo> m_distanceField;
 	FastGrid<Vec2, s_worldChunkSizePowerOfTwo> m_gradient;
 	BitArray<(1 << s_worldChunkSizePowerOfTwo) * (1 << s_worldChunkSizePowerOfTwo)> m_consideredCells;
-	VertexBuffer* m_debugVBO;
+	VertexBuffer* m_debugVBO = nullptr;
 };

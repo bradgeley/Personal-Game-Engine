@@ -40,6 +40,25 @@ void Font::SetRendererState() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Font::ReleaseResources()
+{
+	if (m_shader)
+	{
+		m_shader->ReleaseResources();
+		delete m_shader;
+		m_shader = nullptr;
+	}
+	if (m_texture)
+	{
+		m_texture->ReleaseResources();
+		delete m_texture;
+		m_texture = nullptr;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Font::AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, float cellHeight,
 	std::string const& text, Rgba8 const& tint)
 {
@@ -201,18 +220,7 @@ Shader* Font::GetShader() const
 //----------------------------------------------------------------------------------------------------------------------
 Font::~Font()
 {
-	if (m_shader)
-	{
-		m_shader->ReleaseResources();
-		delete m_shader;
-		m_shader = nullptr;
-	}
-	if (m_texture)
-	{
-		m_texture->ReleaseResources();
-		delete m_texture;
-		m_texture = nullptr;
-	}
+	
 }
 
 

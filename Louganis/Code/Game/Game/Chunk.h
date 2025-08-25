@@ -31,8 +31,8 @@ public:
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
 	FastGrid<uint8_t, s_worldChunkSizePowerOfTwo> m_tileIDs;
-	VertexBuffer* m_vbo;
+	VertexBuffer* m_vbo = nullptr;
 #if defined(_DEBUG)
-	VertexBuffer* m_debugVBO;
+	VertexBuffer* m_debugVBO = nullptr;
 #endif
 };

@@ -205,6 +205,23 @@ RenderTarget* D3D11Renderer::MakeSwapchainRenderTarget(void* hwnd, IntVec2 const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void D3D11Renderer::ReleaseSwapchainRenderTarget(RenderTarget* renderTarget) const
+{
+	D3D11SwapchainRenderTarget* scrt = reinterpret_cast<D3D11SwapchainRenderTarget*>(renderTarget);
+	DX_SAFE_RELEASE(scrt->m_swapChain);
+
+	scrt->m_backbufferTexture->ReleaseResources();
+	delete scrt->m_backbufferTexture;
+	scrt->m_backbufferTexture = nullptr;
+
+	scrt->m_depthBuffer->ReleaseResources();
+	delete scrt->m_depthBuffer;
+	scrt->m_depthBuffer = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11Device* D3D11Renderer::GetDevice() const
 {
     return m_device;
@@ -501,6 +518,15 @@ void D3D11Renderer::CreateDefaultShader()
 	defaultShaderConfig.m_name = "DefaultShader";
 	m_defaultShader = new D3D11Shader(defaultShaderConfig);
 	reinterpret_cast<D3D11Shader*>(m_defaultShader)->CreateFromSource(s_HLSLDefaultShaderSource);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RendererInterface::CreateDefaultTexture()
+{
+	m_defaultTexture = MakeTexture();
+	m_defaultTexture->CreateUniformTexture(IntVec2(1, 1), Rgba8::White);
 }
 
 

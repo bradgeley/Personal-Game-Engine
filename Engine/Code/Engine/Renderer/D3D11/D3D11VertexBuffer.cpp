@@ -7,6 +7,14 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+D3D11VertexBuffer::~D3D11VertexBuffer()
+{
+    ReleaseResources();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void D3D11VertexBuffer::Initialize(int numExpectedVerts)
 {
     DX_SAFE_RELEASE(m_handle)
@@ -34,6 +42,10 @@ void D3D11VertexBuffer::Initialize(int numExpectedVerts)
     m_gpuBufferByteWidth = (size_t) byteWidth;
 
     m_verts.reserve(numExpectedVerts);
+
+    #if defined(_DEBUG)
+        m_handle->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT) strlen("D3D11VertexBuffer"), "D3D11VertexBuffer");
+    #endif
 }
 
 
@@ -81,5 +93,5 @@ void D3D11VertexBuffer::UpdateGPUBuffer()
 void D3D11VertexBuffer::ReleaseResources()
 {
     DX_SAFE_RELEASE(m_handle)
-        m_gpuBufferByteWidth = 0;
+    m_gpuBufferByteWidth = 0;
 }

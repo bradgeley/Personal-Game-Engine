@@ -71,6 +71,5 @@ void SUnloadChunks::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SUnloadChunks::Shutdown()
 {
-	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-	world.ClearActiveChunks();
+
 }

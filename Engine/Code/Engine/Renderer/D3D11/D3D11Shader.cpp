@@ -98,21 +98,25 @@ bool D3D11Shader::CompileAsVertexShader(std::string const& sourceCode)
 			nullptr,
 			&m_vertexShader);
 
-		ASSERT_OR_DIE(SUCCEEDED(vertexShaderResult), "Failed to compile vertex shader.")
+		ASSERT_OR_DIE(SUCCEEDED(vertexShaderResult), "Failed to compile vertex shader.");
 
-			// Copy off the byte code for use in making the input layout
-			m_vertexByteCode.resize(byteCode->GetBufferSize());
+		#if defined(_DEBUG)
+			m_vertexShader->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT) strlen("VertexShader"), "VertexShader");
+		#endif
+
+		// Copy off the byte code for use in making the input layout
+		m_vertexByteCode.resize(byteCode->GetBufferSize());
 		memcpy(m_vertexByteCode.data(), byteCode->GetBufferPointer(), byteCode->GetBufferSize());
 	}
 	else
 	{
 		char const* errorString = (char const*) errorBuffer->GetBufferPointer();
-		ERROR_AND_DIE(errorString)
+		ERROR_AND_DIE(errorString);
 	}
 
-	DX_SAFE_RELEASE(byteCode)
-		DX_SAFE_RELEASE(errorBuffer)
-		return true;
+	DX_SAFE_RELEASE(byteCode);
+	DX_SAFE_RELEASE(errorBuffer);
+	return true;
 }
 
 
@@ -147,7 +151,11 @@ bool D3D11Shader::CompileAsPixelShader(std::string const& sourceCode)
 			nullptr,
 			&m_pixelShader);
 
-		ASSERT_OR_DIE(SUCCEEDED(pixelShaderResult), "Failed to compile pixel shader.")
+		ASSERT_OR_DIE(SUCCEEDED(pixelShaderResult), "Failed to compile pixel shader.");
+
+		#if defined(_DEBUG)
+			m_pixelShader->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT) strlen("PixelShader"), "PixelShader");
+		#endif
 	}
 	else
 	{
@@ -155,9 +163,9 @@ bool D3D11Shader::CompileAsPixelShader(std::string const& sourceCode)
 		ERROR_AND_DIE(errorString)
 	}
 
-	DX_SAFE_RELEASE(byteCode)
-		DX_SAFE_RELEASE(errorBuffer)
-		return true;
+	DX_SAFE_RELEASE(byteCode);
+	DX_SAFE_RELEASE(errorBuffer);
+	return true;
 }
 
 
@@ -204,7 +212,7 @@ ID3D11InputLayout* D3D11Shader::CreateInputLayoutFor_Vertex_PCU()
 		&m_inputLayout
 	);
 
-	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create input layout for vertex PCU")
+	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create input layout for vertex PCU");
 
 	return m_inputLayout;
 }

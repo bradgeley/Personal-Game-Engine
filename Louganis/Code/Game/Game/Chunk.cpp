@@ -84,9 +84,11 @@ void Chunk::Destroy()
 {
 	m_tileIDs.Clear();
 
+	m_vbo->ReleaseResources();
 	delete m_vbo;
 	m_vbo = nullptr;
 #if defined(_DEBUG)
+	m_debugVBO->ReleaseResources();
 	delete m_debugVBO;
 	m_debugVBO = nullptr;
 #endif

@@ -44,6 +44,7 @@ void SRenderEntities::Run(SystemContext const& context)
 
     g_rendererInterface->SetModelConstants(ModelConstants());
 
+    vbo->ReleaseResources();
     delete vbo;
 }
 

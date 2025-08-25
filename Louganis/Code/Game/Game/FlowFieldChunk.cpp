@@ -37,6 +37,7 @@ FlowFieldChunk::~FlowFieldChunk()
 	}
 	if (m_debugVBO)
 	{
+		m_debugVBO->ReleaseResources();
 		delete m_debugVBO;
 		m_debugVBO = nullptr;
 	}

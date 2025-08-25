@@ -122,8 +122,10 @@ void PerformanceDebugWindow::Shutdown()
         g_input->m_keyUpEvent.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleMainWindowKeyUp);
     }
 
+    m_textVBO->ReleaseResources();
     delete m_textVBO;
     m_textVBO = nullptr;
+    m_untexturedVBO->ReleaseResources();
     delete m_untexturedVBO;
     m_untexturedVBO = nullptr;
 

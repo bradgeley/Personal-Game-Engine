@@ -184,7 +184,7 @@ void DevConsole::Shutdown()
 
     g_window->m_windowSizeChanged.UnsubscribeMethod(this, &DevConsole::WindowSizeChanged);
 
-    for (auto& bgdTex : m_backgroundImages)
+    for (Texture* bgdTex : m_backgroundImages)
     {
         bgdTex->ReleaseResources();
         delete bgdTex;
@@ -195,6 +195,7 @@ void DevConsole::Shutdown()
     delete m_camera;
     m_camera = nullptr;
 
+    m_vbo->ReleaseResources();
     delete m_vbo;
     m_vbo = nullptr;
 }

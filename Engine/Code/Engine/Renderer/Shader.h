@@ -29,9 +29,9 @@ protected:
 public:
 
 	Shader(Shader const& copy) = delete;
-    virtual ~Shader();
+    virtual ~Shader() = default;
 
-    virtual void ReleaseResources();
+    virtual void ReleaseResources() = 0;
 
     virtual bool CreateFromSource(std::string const& sourceCode) = 0;
 

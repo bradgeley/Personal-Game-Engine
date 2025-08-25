@@ -61,6 +61,7 @@ public:
     void LoadFNT(const char* fntFilepath);
     
 	void SetRendererState() const;
+    void ReleaseResources();
     
     // Add Verts
     void AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);

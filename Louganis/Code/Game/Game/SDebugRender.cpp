@@ -230,6 +230,8 @@ void SDebugRender::Run(SystemContext const& context)
 void SDebugRender::Shutdown()
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+
+    scDebug.m_frameVerts->ReleaseResources();
     delete scDebug.m_frameVerts;
     scDebug.m_frameVerts = nullptr;
 

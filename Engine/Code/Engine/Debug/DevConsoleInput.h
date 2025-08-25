@@ -55,6 +55,6 @@ protected:
     int m_selectionStartIndex = -1; // -1 means not selecting anything
     float m_caretAnimationFraction = 0.f;
     DevConsoleLine m_input;
-    VertexBuffer* m_vbo;
+    VertexBuffer* m_vbo = nullptr;
 };
 

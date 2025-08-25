@@ -17,9 +17,9 @@ protected:
 public:
 
     ConstantBuffer(ConstantBuffer const& copy) = delete;
-    virtual ~ConstantBuffer();
+    virtual ~ConstantBuffer() = default;
 
-    virtual void ReleaseResources();
+    virtual void ReleaseResources() = 0;
     
     virtual void Update(void const* data, size_t byteWidth) = 0;
 
