@@ -3,7 +3,7 @@
 #include "SCWorld.h"
 #include "Chunk.h"
 #include "CCamera.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Window.h"
@@ -23,14 +23,14 @@ void DrawChunk(Chunk* chunk)
         return;
     }
 
-    g_rendererInterface->BindTexture(nullptr);
-    g_rendererInterface->BindShader(nullptr);
-    g_rendererInterface->DrawVertexBuffer(chunk->m_vbo);
+    g_renderer->BindTexture(nullptr);
+    g_renderer->BindShader(nullptr);
+    g_renderer->DrawVertexBuffer(chunk->m_vbo);
 
 #if defined(_DEBUG)
-    g_rendererInterface->BindTexture(nullptr);
-    g_rendererInterface->BindShader(nullptr);
-    g_rendererInterface->DrawVertexBuffer(chunk->m_debugVBO);
+    g_renderer->BindTexture(nullptr);
+    g_renderer->BindShader(nullptr);
+    g_renderer->DrawVertexBuffer(chunk->m_debugVBO);
 #endif
 }
 
@@ -39,7 +39,7 @@ void DrawChunk(Chunk* chunk)
 //----------------------------------------------------------- -----------------------------------------------------------
 void SRenderWorld::Startup()
 {
-    AddWriteDependencies<SCWorld, RendererInterface>();
+    AddWriteDependencies<SCWorld, Renderer>();
     AddReadDependencies<CCamera>();
 }
 

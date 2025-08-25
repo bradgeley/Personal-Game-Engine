@@ -12,7 +12,7 @@ class Texture;
 //
 class Swapchain
 {
-    friend class RendererInterface;
+    friend class Renderer;
 
 protected:
 

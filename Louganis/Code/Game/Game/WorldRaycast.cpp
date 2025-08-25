@@ -2,7 +2,7 @@
 #include "WorldRaycast.h"
 #include "SCWorld.h"
 #include "Chunk.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Math/MathUtils.h"
@@ -238,7 +238,7 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 //----------------------------------------------------------------------------------------------------------------------
 void DebugDrawRaycast(WorldRaycastResult const& result)
 {
-    VertexBuffer* vbo = g_rendererInterface->MakeVertexBuffer();
+    VertexBuffer* vbo = g_renderer->MakeVertexBuffer();
     vbo->Initialize(1024);
 
     AddVertsForDisc2D(vbo->GetMutableVerts(), result.m_raycast.m_start, 0.1f, 16, Rgba8::Yellow);
@@ -259,9 +259,9 @@ void DebugDrawRaycast(WorldRaycastResult const& result)
         AddVertsForArrow2D(vbo->GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Yellow);
     }
 
-    g_rendererInterface->BindTexture(nullptr);
-    g_rendererInterface->BindShader(nullptr);
-    g_rendererInterface->DrawVertexBuffer(vbo);
+    g_renderer->BindTexture(nullptr);
+    g_renderer->BindShader(nullptr);
+    g_renderer->DrawVertexBuffer(vbo);
 
     vbo->ReleaseResources();
     delete vbo;

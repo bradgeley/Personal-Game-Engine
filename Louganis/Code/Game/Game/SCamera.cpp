@@ -3,7 +3,7 @@
 #include "CCamera.h"
 #include "CRender.h"
 #include "Engine/Renderer/Window.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 
 
 
@@ -31,6 +31,6 @@ void SCamera::Run(SystemContext const& context)
         camera.m_camera.SetOrthoBounds2D(cameraBounds);
         camera.m_camera.SetPosition2D(render.m_pos);
 
-        g_rendererInterface->BeginCameraAndWindow(&camera.m_camera, g_window);
+        g_renderer->BeginCameraAndWindow(&camera.m_camera, g_window);
     }
 }

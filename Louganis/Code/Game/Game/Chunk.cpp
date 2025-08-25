@@ -1,7 +1,7 @@
 // Bradley Christensen - 2024
 #include "Chunk.h"
 #include "WorldSettings.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Math/Noise.h"
@@ -49,7 +49,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	}
 
 	// Generate Vbo
-	m_vbo = g_rendererInterface->MakeVertexBuffer();
+	m_vbo = g_renderer->MakeVertexBuffer();
 	m_vbo->Initialize(6 * numTilesInChunk);
 	auto& verts = m_vbo->GetMutableVerts();
 	for (int y = 0; y < numTilesInRow; ++y)
@@ -71,7 +71,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	}
 
 #if defined(_DEBUG)
-	m_debugVBO = g_rendererInterface->MakeVertexBuffer();
+	m_debugVBO = g_renderer->MakeVertexBuffer();
 	AddVertsForWireGrid(m_debugVBO->GetMutableVerts(), m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
 	AddVertsForWireBox2D(m_debugVBO->GetMutableVerts(), m_chunkBounds, 0.03f, Rgba8::Red);
 #endif

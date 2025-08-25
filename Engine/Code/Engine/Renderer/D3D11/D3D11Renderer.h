@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #pragma once
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "D3D11Utils.h"
 #include <unordered_map>
 
@@ -14,7 +14,7 @@ struct NamedProperties;
 //----------------------------------------------------------------------------------------------------------------------
 // D3D11 Renderer
 //
-class D3D11Renderer : public RendererInterface
+class D3D11Renderer : public Renderer
 {
 public:
 

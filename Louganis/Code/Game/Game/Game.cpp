@@ -14,7 +14,7 @@
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
 #include "Engine/Renderer/Window.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Camera.h"
 
 #include "AllComponents.h"
@@ -127,8 +127,8 @@ void Game::ConfigureEngine(Engine* engine)
     engine->RegisterSubsystem(g_audioSystem);
 
     RendererConfig rendererConfig;
-    g_rendererInterface = RendererInterface::MakeRendererInterface(rendererConfig);
-    engine->RegisterSubsystem(g_rendererInterface);
+    g_renderer = Renderer::MakeRendererInterface(rendererConfig);
+    engine->RegisterSubsystem(g_renderer);
 
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Project Louganis";
@@ -197,7 +197,7 @@ void Game::ConfigureECS()
 
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();
-    g_ecs->RegisterResourceByType<RendererInterface>();
+    g_ecs->RegisterResourceByType<Renderer>();
     g_ecs->RegisterResourceByType<AudioSystem>();
 
 

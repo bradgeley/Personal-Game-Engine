@@ -8,7 +8,7 @@
 //
 class ConstantBuffer
 {
-    friend class RendererInterface;
+    friend class Renderer;
 
 protected:
 

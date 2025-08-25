@@ -3,7 +3,7 @@
 #include "Chunk.h"
 #include "SCWorld.h"
 #include "Engine/Renderer/VertexBuffer.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 
 
 
@@ -23,7 +23,7 @@ FlowFieldChunk::FlowFieldChunk(Chunk* chunk, SCWorld* world) :
 	m_consideredCells(false)
 {
 	m_chunk->m_destroyed.SubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
-	m_debugVBO = g_rendererInterface->MakeVertexBuffer();
+	m_debugVBO = g_renderer->MakeVertexBuffer();
 }
 
 

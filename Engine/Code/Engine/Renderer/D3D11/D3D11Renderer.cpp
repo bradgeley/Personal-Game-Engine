@@ -22,7 +22,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-D3D11Renderer::D3D11Renderer(RendererConfig const& config) : RendererInterface(config)
+D3D11Renderer::D3D11Renderer(RendererConfig const& config) : Renderer(config)
 {
 
 }
@@ -32,7 +32,7 @@ D3D11Renderer::D3D11Renderer(RendererConfig const& config) : RendererInterface(c
 //----------------------------------------------------------------------------------------------------------------------
 D3D11Renderer* D3D11Renderer::Get()
 {
-    return reinterpret_cast<D3D11Renderer*>(g_rendererInterface);
+    return reinterpret_cast<D3D11Renderer*>(g_renderer);
 }
 
 
@@ -343,7 +343,7 @@ MSAASettings D3D11Renderer::GetMaxSupportedMSAASettings(DXGI_FORMAT format)
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::Draw(int vertexCount, int vertexOffset)
 {
-	RendererInterface::Draw(vertexCount, vertexOffset);
+	Renderer::Draw(vertexCount, vertexOffset);
 	m_deviceContext->Draw(vertexCount, vertexOffset);
 }
 
@@ -543,7 +543,7 @@ void D3D11Renderer::CreateDefaultShader()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::CreateDefaultTexture()
+void Renderer::CreateDefaultTexture()
 {
 	m_defaultTexture = MakeTexture();
 	m_defaultTexture->CreateUniformTexture(IntVec2(1, 1), Rgba8::White);

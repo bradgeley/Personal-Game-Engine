@@ -9,7 +9,7 @@
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Performance/ScopedTimer.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Texture.h"
 
 
@@ -69,7 +69,7 @@ void Window::Shutdown()
         UnregisterEvents();
     }
 
-    g_rendererInterface->ReleaseSwapchainRenderTarget(m_renderTarget);
+    g_renderer->ReleaseSwapchainRenderTarget(m_renderTarget);
 
     if (IsValid())
     {
@@ -508,7 +508,7 @@ void Window::MakeWindow()
 
     m_windowHandle = hwnd;
     m_displayContext = GetDC(hwnd);
-    m_renderTarget = g_rendererInterface->MakeSwapchainRenderTarget(m_windowHandle, windowResolution);
+    m_renderTarget = g_renderer->MakeSwapchainRenderTarget(m_windowHandle, windowResolution);
 
     if (m_config.m_takeFocusWhenCreated)
     {
@@ -589,7 +589,7 @@ void Window::WindowModeChanged(WindowMode previousMode)
 
     if (IsFullscreen())
     {
-        bool succeeded = g_rendererInterface->SetFullscreenState(m_renderTarget, false);
+        bool succeeded = g_renderer->SetFullscreenState(m_renderTarget, false);
         ASSERT_OR_DIE(succeeded, "Failed to set fullscreen.");
     }
 
@@ -622,11 +622,11 @@ void Window::WindowModeChanged(WindowMode previousMode)
 
     if (IsFullscreen())
     {
-        bool succeeded = g_rendererInterface->SetFullscreenState(m_renderTarget, true);
+        bool succeeded = g_renderer->SetFullscreenState(m_renderTarget, true);
         ASSERT_OR_DIE(succeeded, "Failed to set fullscreen.");
     }
 
-    g_rendererInterface->ResizeSwapChainRenderTarget(m_renderTarget, GetRenderResolution());
+    g_renderer->ResizeSwapChainRenderTarget(m_renderTarget, GetRenderResolution());
 
     NamedProperties args;
     args.Set("previousMode", previousMode);
@@ -677,7 +677,7 @@ void Window::WindowSizeChanged()
 
     if (m_renderTarget != INVALID_RENDER_TARGET_ID)
     {
-        g_rendererInterface->ResizeSwapChainRenderTarget(m_renderTarget, GetRenderResolution());
+        g_renderer->ResizeSwapChainRenderTarget(m_renderTarget, GetRenderResolution());
     }
 
     NamedProperties args;

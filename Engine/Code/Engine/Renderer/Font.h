@@ -48,7 +48,7 @@ struct GlyphData
 //----------------------------------------------------------------------------------------------------------------------
 class Font
 {
-    friend class RendererInterface;
+    friend class Renderer;
 
 public:
 

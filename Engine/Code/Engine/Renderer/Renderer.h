@@ -31,7 +31,7 @@ extern uint32_t INVALID_RENDER_TARGET_ID;
 //----------------------------------------------------------------------------------------------------------------------
 // THE Renderer
 //
-extern class RendererInterface* g_rendererInterface;
+extern class Renderer* g_renderer;
 
 
 
@@ -48,11 +48,11 @@ struct RendererConfig
 //
 // The game's renderer! Hardware/Platform abstracted
 //
-class RendererInterface : public EngineSubsystem
+class Renderer : public EngineSubsystem
 {
 public:
 
-    RendererInterface(RendererConfig const& config);
+    Renderer(RendererConfig const& config);
     
     virtual void Startup() override;
     virtual void Render() const override;
@@ -82,7 +82,7 @@ public:
     virtual void BindConstantBuffer(ConstantBuffer const* cbo, int slot) const = 0;
 
     // Factory Functions
-    static RendererInterface* MakeRendererInterface(RendererConfig const& config);
+    static Renderer* MakeRendererInterface(RendererConfig const& config);
     virtual Texture* MakeTexture() const = 0;
     virtual Shader* MakeShader(ShaderConfig const& config) const = 0;
     virtual ConstantBuffer* MakeConstantBuffer() const = 0;

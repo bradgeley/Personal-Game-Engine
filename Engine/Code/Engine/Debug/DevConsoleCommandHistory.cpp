@@ -6,7 +6,7 @@
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/Font.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 
@@ -15,8 +15,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleCommandHistory::DevConsoleCommandHistory()
 {
-    m_textVerts = g_rendererInterface->MakeVertexBuffer();
-    m_untexturedVerts = g_rendererInterface->MakeVertexBuffer();
+    m_textVerts = g_renderer->MakeVertexBuffer();
+    m_untexturedVerts = g_renderer->MakeVertexBuffer();
 }
 
 
@@ -83,7 +83,7 @@ bool DevConsoleCommandHistory::IsActive() const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
 {
-    Font* font = g_rendererInterface->GetDefaultFont(); // todo: let change fonts
+    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
 
     // Draw Background
     m_untexturedVerts->ClearVerts();
@@ -113,12 +113,12 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
         linesRendered += 1.f;
     }
 
-    g_rendererInterface->BindShader(nullptr);
-    g_rendererInterface->BindTexture(nullptr);
-    g_rendererInterface->DrawVertexBuffer(m_untexturedVerts);
+    g_renderer->BindShader(nullptr);
+    g_renderer->BindTexture(nullptr);
+    g_renderer->DrawVertexBuffer(m_untexturedVerts);
 
     font->SetRendererState();
-    g_rendererInterface->DrawVertexBuffer(m_textVerts);
+    g_renderer->DrawVertexBuffer(m_textVerts);
 }
 
 

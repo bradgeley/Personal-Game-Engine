@@ -1,5 +1,5 @@
 ﻿// Bradley Christensen - 2022-2023
-#include "RendererInterface.h"
+#include "Renderer.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Debug/DebugDrawUtils.h"
 #include "Engine/Events/EventSystem.h"
@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // THE Renderer
 //
-RendererInterface* g_rendererInterface = nullptr;
+Renderer* g_renderer = nullptr;
 
 
 
@@ -29,7 +29,7 @@ uint32_t INVALID_RENDER_TARGET_ID = UINT32_MAX;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RendererInterface::RendererInterface(RendererConfig const& config) : EngineSubsystem("Renderer"), m_config(config)
+Renderer::Renderer(RendererConfig const& config) : EngineSubsystem("Renderer"), m_config(config)
 {
     
 }
@@ -37,7 +37,7 @@ RendererInterface::RendererInterface(RendererConfig const& config) : EngineSubsy
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::Startup()
+void Renderer::Startup()
 {
 	CreateDebugLayer();
 	CreateDevice();
@@ -55,7 +55,7 @@ void RendererInterface::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::Render() const
+void Renderer::Render() const
 {
 
 }
@@ -63,7 +63,7 @@ void RendererInterface::Render() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::Shutdown()
+void Renderer::Shutdown()
 {
 	DestroyDefaultFont();
 	DestroyDefaultShader();
@@ -83,7 +83,7 @@ void RendererInterface::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::BeginFrame()
+void Renderer::BeginFrame()
 {
 	m_numFrameDrawCalls = 0;
 }
@@ -91,7 +91,7 @@ void RendererInterface::BeginFrame()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::EndFrame()
+void Renderer::EndFrame()
 {
 	if (m_currentCamera)
 	{
@@ -111,7 +111,7 @@ void RendererInterface::EndFrame()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::BeginWindow(Window const* window)
+void Renderer::BeginWindow(Window const* window)
 {
 	ASSERT_OR_DIE(window, "Renderer::BeginWindow - trying to begin a null window.");
 
@@ -121,7 +121,7 @@ void RendererInterface::BeginWindow(Window const* window)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::EndWindow(Window const* window)
+void Renderer::EndWindow(Window const* window)
 {
 	ASSERT_OR_DIE(window, "Renderer::EndWindow - trying to end a null window.");
 	ASSERT_OR_DIE(window->GetRenderTarget() == m_currentRenderTarget, "Renderer::EndWindow - window does not match m_currentRenderTarget");
@@ -132,7 +132,7 @@ void RendererInterface::EndWindow(Window const* window)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::BeginCamera(Camera const* camera)
+void Renderer::BeginCamera(Camera const* camera)
 {
 	ASSERT_OR_DIE(camera, "Renderer::BeginCamera - trying to begin a null camera.");
 
@@ -147,7 +147,7 @@ void RendererInterface::BeginCamera(Camera const* camera)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::EndCamera(Camera const* camera)
+void Renderer::EndCamera(Camera const* camera)
 {
 	ASSERT_OR_DIE(camera, "Renderer::EndCamera - trying to end null camera.");
 	ASSERT_OR_DIE(camera == m_currentCamera, "Renderer::EndCamera - camera is not equal to m_currentCamera.");
@@ -158,7 +158,7 @@ void RendererInterface::EndCamera(Camera const* camera)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Camera const* RendererInterface::GetCurrentCamera() const
+Camera const* Renderer::GetCurrentCamera() const
 {
 	return m_currentCamera;
 }
@@ -166,7 +166,7 @@ Camera const* RendererInterface::GetCurrentCamera() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::BeginCameraAndWindow(Camera const* camera, Window const* window)
+void Renderer::BeginCameraAndWindow(Camera const* camera, Window const* window)
 {
 	BeginWindow(window);
 	BeginCamera(camera);
@@ -175,7 +175,7 @@ void RendererInterface::BeginCameraAndWindow(Camera const* camera, Window const*
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::EndCameraAndWindow(Camera const* camera, Window const* window)
+void Renderer::EndCameraAndWindow(Camera const* camera, Window const* window)
 {
 	EndCamera(camera);
 	EndWindow(window);
@@ -184,7 +184,7 @@ void RendererInterface::EndCameraAndWindow(Camera const* camera, Window const* w
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RendererPerUserSettings RendererInterface::GetPerUserSettings() const
+RendererPerUserSettings Renderer::GetPerUserSettings() const
 {
     return m_perUserSettings;
 }
@@ -192,7 +192,7 @@ RendererPerUserSettings RendererInterface::GetPerUserSettings() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::DrawVertexBuffer(VertexBuffer* vbo)
+void Renderer::DrawVertexBuffer(VertexBuffer* vbo)
 {
 	if (vbo->IsDirty())
 	{
@@ -220,7 +220,7 @@ void RendererInterface::DrawVertexBuffer(VertexBuffer* vbo)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::ResetRenderingPipelineState()
+void Renderer::ResetRenderingPipelineState()
 {
 	// Only reset the dirty settings, so changes will be detected and applied on Draw
 	m_dirtySettings = RendererSettings();
@@ -231,7 +231,7 @@ void RendererInterface::ResetRenderingPipelineState()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetCameraConstants(CameraConstants const& cameraConstants)
+void Renderer::SetCameraConstants(CameraConstants const& cameraConstants)
 {
 	m_dirtySettings.m_cameraConstants = cameraConstants;
 }
@@ -239,7 +239,7 @@ void RendererInterface::SetCameraConstants(CameraConstants const& cameraConstant
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetModelConstants(ModelConstants const& modelConstants)
+void Renderer::SetModelConstants(ModelConstants const& modelConstants)
 {
 	m_dirtySettings.m_modelConstants = modelConstants;
 }
@@ -247,7 +247,7 @@ void RendererInterface::SetModelConstants(ModelConstants const& modelConstants)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetFontConstants(FontConstants const& fontConstants)
+void Renderer::SetFontConstants(FontConstants const& fontConstants)
 {
 	m_dirtySettings.m_fontConstants = fontConstants;
 }
@@ -255,7 +255,7 @@ void RendererInterface::SetFontConstants(FontConstants const& fontConstants)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetModelMatrix(Mat44 const& modelMatrix)
+void Renderer::SetModelMatrix(Mat44 const& modelMatrix)
 {
 	m_dirtySettings.m_modelConstants.m_modelMatrix = modelMatrix;
 }
@@ -263,7 +263,7 @@ void RendererInterface::SetModelMatrix(Mat44 const& modelMatrix)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetModelTint(Rgba8 const& modelTint)
+void Renderer::SetModelTint(Rgba8 const& modelTint)
 {
 	modelTint.GetAsFloats(m_dirtySettings.m_modelConstants.m_modelRgba);
 }
@@ -271,7 +271,7 @@ void RendererInterface::SetModelTint(Rgba8 const& modelTint)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetBlendMode(BlendMode blendMode)
+void Renderer::SetBlendMode(BlendMode blendMode)
 {
 	m_dirtySettings.m_blendMode = blendMode;
 }
@@ -279,7 +279,7 @@ void RendererInterface::SetBlendMode(BlendMode blendMode)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetSamplerMode(SamplerFilter filter, SamplerAddressMode addressMode)
+void Renderer::SetSamplerMode(SamplerFilter filter, SamplerAddressMode addressMode)
 {
 	m_dirtySettings.m_samplerFilter = filter;
 	m_dirtySettings.m_samplerAddressMode = addressMode;
@@ -288,7 +288,7 @@ void RendererInterface::SetSamplerMode(SamplerFilter filter, SamplerAddressMode 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetCullMode(CullMode cullMode)
+void Renderer::SetCullMode(CullMode cullMode)
 {
 	m_dirtySettings.m_cullMode = cullMode;
 }
@@ -296,7 +296,7 @@ void RendererInterface::SetCullMode(CullMode cullMode)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetWindingOrder(Winding winding)
+void Renderer::SetWindingOrder(Winding winding)
 {
 	m_dirtySettings.m_winding = winding;
 }
@@ -304,7 +304,7 @@ void RendererInterface::SetWindingOrder(Winding winding)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::SetFillMode(FillMode fillMode)
+void Renderer::SetFillMode(FillMode fillMode)
 {
 	m_dirtySettings.m_fillMode = fillMode;
 }
@@ -312,7 +312,7 @@ void RendererInterface::SetFillMode(FillMode fillMode)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::BindTexture(Texture* texture)
+void Renderer::BindTexture(Texture* texture)
 {
 	m_dirtySettings.m_texture = texture;
 }
@@ -320,7 +320,7 @@ void RendererInterface::BindTexture(Texture* texture)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::BindShader(Shader* shader)
+void Renderer::BindShader(Shader* shader)
 {
 	m_dirtySettings.m_shader = shader;
 }
@@ -328,7 +328,7 @@ void RendererInterface::BindShader(Shader* shader)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UnbindRenderTarget(RenderTargetID)
+void Renderer::UnbindRenderTarget(RenderTargetID)
 {
 	m_currentRenderTarget = INVALID_RENDER_TARGET_ID;
 }
@@ -336,7 +336,7 @@ void RendererInterface::UnbindRenderTarget(RenderTargetID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int RendererInterface::GetNumFrameDrawCalls() const
+int Renderer::GetNumFrameDrawCalls() const
 {
 	return m_numFrameDrawCalls;
 }
@@ -344,7 +344,7 @@ int RendererInterface::GetNumFrameDrawCalls() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Font* RendererInterface::GetDefaultFont() const
+Font* Renderer::GetDefaultFont() const
 {
 	return m_defaultFont;
 }
@@ -352,7 +352,7 @@ Font* RendererInterface::GetDefaultFont() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::Draw(int, int)
+void Renderer::Draw(int, int)
 {
 	UpdateRenderingPipelineState();
 	m_numFrameDrawCalls++;
@@ -361,7 +361,7 @@ void RendererInterface::Draw(int, int)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateRenderingPipelineState(bool force /*= false*/)
+void Renderer::UpdateRenderingPipelineState(bool force /*= false*/)
 {
 	UpdateRasterizerState(force);
 	UpdateDepthStencilState(force);
@@ -377,7 +377,7 @@ void RendererInterface::UpdateRenderingPipelineState(bool force /*= false*/)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateRasterizerState(bool force)
+void Renderer::UpdateRasterizerState(bool force)
 {
 	if (force ||
 		m_dirtySettings.m_cullMode != m_settings.m_cullMode ||
@@ -395,7 +395,7 @@ void RendererInterface::UpdateRasterizerState(bool force)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateDepthStencilState(bool force)
+void Renderer::UpdateDepthStencilState(bool force)
 {
 	if (force ||
 		m_dirtySettings.m_writeDepth != m_settings.m_writeDepth ||
@@ -411,7 +411,7 @@ void RendererInterface::UpdateDepthStencilState(bool force)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateModelConstants(bool force)
+void Renderer::UpdateModelConstants(bool force)
 {
 	if (force || m_dirtySettings.m_modelConstants != m_settings.m_modelConstants)
 	{
@@ -424,7 +424,7 @@ void RendererInterface::UpdateModelConstants(bool force)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateCameraConstants(bool force)
+void Renderer::UpdateCameraConstants(bool force)
 {
 	if (force || m_dirtySettings.m_cameraConstants != m_settings.m_cameraConstants)
 	{
@@ -437,7 +437,7 @@ void RendererInterface::UpdateCameraConstants(bool force)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateFontConstants(bool force)
+void Renderer::UpdateFontConstants(bool force)
 {
 	if (force || m_dirtySettings.m_fontConstants != m_settings.m_fontConstants)
 	{
@@ -450,7 +450,7 @@ void RendererInterface::UpdateFontConstants(bool force)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateBlendMode(bool force)
+void Renderer::UpdateBlendMode(bool force)
 {
 	if (force || m_dirtySettings.m_blendMode != m_settings.m_blendMode)
 	{
@@ -463,7 +463,7 @@ void RendererInterface::UpdateBlendMode(bool force)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateSamplerState(bool force)
+void Renderer::UpdateSamplerState(bool force)
 {
 	if (force ||
 		m_dirtySettings.m_samplerFilter != m_settings.m_samplerFilter ||
@@ -479,7 +479,7 @@ void RendererInterface::UpdateSamplerState(bool force)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateTexture(bool force)
+void Renderer::UpdateTexture(bool force)
 {
 	if (force || m_dirtySettings.m_texture != m_settings.m_texture)
 	{
@@ -497,7 +497,7 @@ void RendererInterface::UpdateTexture(bool force)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UpdateShader(bool force)
+void Renderer::UpdateShader(bool force)
 {
 	if (force || m_dirtySettings.m_shader != m_settings.m_shader)
 	{
@@ -515,7 +515,7 @@ void RendererInterface::UpdateShader(bool force)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::CreateConstantBuffers()
+void Renderer::CreateConstantBuffers()
 {
 	m_cameraConstantsGPU = MakeConstantBuffer();
 	m_modelConstantsGPU = MakeConstantBuffer();
@@ -533,7 +533,7 @@ void RendererInterface::CreateConstantBuffers()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::DestroyConstantBuffers()
+void Renderer::DestroyConstantBuffers()
 {
 	if (m_cameraConstantsGPU)
 	{
@@ -560,7 +560,7 @@ void RendererInterface::DestroyConstantBuffers()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::DestroyDefaultShader()
+void Renderer::DestroyDefaultShader()
 {
 	m_defaultShader->ReleaseResources();
 	delete m_defaultShader;
@@ -570,7 +570,7 @@ void RendererInterface::DestroyDefaultShader()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::DestroyDefaultTexture()
+void Renderer::DestroyDefaultTexture()
 {
 	m_defaultTexture->ReleaseResources();
 	delete m_defaultTexture;
@@ -580,7 +580,7 @@ void RendererInterface::DestroyDefaultTexture()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::DestroyDefaultFont()
+void Renderer::DestroyDefaultFont()
 {
 	m_defaultFont->ReleaseResources();
 	delete m_defaultFont;
@@ -590,7 +590,7 @@ void RendererInterface::DestroyDefaultFont()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::ModelConstantsUpdated()
+void Renderer::ModelConstantsUpdated()
 {
 	m_modelConstantsGPU->Update(&m_settings.m_modelConstants, sizeof(ModelConstants));
 }
@@ -598,7 +598,7 @@ void RendererInterface::ModelConstantsUpdated()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::CameraConstantsUpdated()
+void Renderer::CameraConstantsUpdated()
 {
 	m_cameraConstantsGPU->Update(&m_settings.m_cameraConstants, sizeof(CameraConstants));
 }
@@ -606,7 +606,7 @@ void RendererInterface::CameraConstantsUpdated()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::FontConstantsUpdated()
+void Renderer::FontConstantsUpdated()
 {
 	m_fontConstantsGPU->Update(&m_settings.m_fontConstants, sizeof(FontConstants));
 }
@@ -614,33 +614,33 @@ void RendererInterface::FontConstantsUpdated()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::AddDevConsoleCommands()
+void Renderer::AddDevConsoleCommands()
 {
 	if (g_eventSystem)
 	{
-		g_eventSystem->SubscribeMethod("DebugDrawVertexBuffers", this, &RendererInterface::DebugDrawVertexBuffers);
-		g_eventSystem->SubscribeMethod("ToggleVSync", this, &RendererInterface::ToggleVSync);
-		g_eventSystem->SubscribeMethod("ToggleMSAA", this, &RendererInterface::ToggleMSAA);
+		g_eventSystem->SubscribeMethod("DebugDrawVertexBuffers", this, &Renderer::DebugDrawVertexBuffers);
+		g_eventSystem->SubscribeMethod("ToggleVSync", this, &Renderer::ToggleVSync);
+		g_eventSystem->SubscribeMethod("ToggleMSAA", this, &Renderer::ToggleMSAA);
 	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::RemoveDevConsoleCommands()
+void Renderer::RemoveDevConsoleCommands()
 {
 	if (g_eventSystem)
 	{
-		g_eventSystem->UnsubscribeMethod("DebugDrawVertexBuffers", this, &RendererInterface::DebugDrawVertexBuffers);
-		g_eventSystem->UnsubscribeMethod("ToggleVSync", this, &RendererInterface::ToggleVSync);
-		g_eventSystem->UnsubscribeMethod("ToggleMSAA", this, &RendererInterface::ToggleMSAA);
+		g_eventSystem->UnsubscribeMethod("DebugDrawVertexBuffers", this, &Renderer::DebugDrawVertexBuffers);
+		g_eventSystem->UnsubscribeMethod("ToggleVSync", this, &Renderer::ToggleVSync);
+		g_eventSystem->UnsubscribeMethod("ToggleMSAA", this, &Renderer::ToggleMSAA);
 	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool RendererInterface::DebugDrawVertexBuffers(NamedProperties&)
+bool Renderer::DebugDrawVertexBuffers(NamedProperties&)
 {
 	#if defined(_DEBUG)
 		m_debugDrawVertexBuffers = !m_debugDrawVertexBuffers;
@@ -654,7 +654,7 @@ bool RendererInterface::DebugDrawVertexBuffers(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool RendererInterface::ToggleVSync(NamedProperties&)
+bool Renderer::ToggleVSync(NamedProperties&)
 {
 	m_perUserSettings.m_vsyncEnabled = !m_perUserSettings.m_vsyncEnabled;
 	return false;
@@ -670,7 +670,7 @@ bool RendererInterface::ToggleVSync(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RendererInterface* RendererInterface::MakeRendererInterface(RendererConfig const& config)
+Renderer* Renderer::MakeRendererInterface(RendererConfig const& config)
 {
 	return new D3D11Renderer(config);
 }

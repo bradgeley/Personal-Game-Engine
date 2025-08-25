@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Engine/Debug/DebugDrawUtils.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 
@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, Rgba8 tint)
 {
-    VertexBuffer* vbo = g_rendererInterface->MakeVertexBuffer();
+    VertexBuffer* vbo = g_renderer->MakeVertexBuffer();
     auto& verts = vbo->GetMutableVerts();
 
     // For each triangle, draw 18 verts, so for each vert in "triangles" we push 6 verts
@@ -26,9 +26,9 @@ void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, 
         AddVertsForLine2D(verts, Vec2(v3.pos), Vec2(v1.pos), thickness, tint);
     }
 
-    g_rendererInterface->BindTexture(nullptr);
-    g_rendererInterface->BindShader(nullptr);
-    g_rendererInterface->DrawVertexBuffer(vbo);
+    g_renderer->BindTexture(nullptr);
+    g_renderer->BindShader(nullptr);
+    g_renderer->DrawVertexBuffer(vbo);
 
     vbo->ReleaseResources();
     delete vbo;

@@ -223,7 +223,7 @@
     <ClCompile Include="Renderer\D3D11\D3D11Utils.cpp">
       <Filter>Renderer\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\RendererInterface.cpp">
+    <ClCompile Include="Renderer\Renderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\D3D11\D3D11Renderer.cpp">
@@ -495,7 +495,7 @@
     <ClInclude Include="Renderer\D3D11\D3D11Utils.h">
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\RendererInterface.h">
+    <ClInclude Include="Renderer\Renderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\D3D11\D3D11Renderer.h">

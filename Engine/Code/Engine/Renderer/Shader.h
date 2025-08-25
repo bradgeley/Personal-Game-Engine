@@ -20,7 +20,7 @@ struct ShaderConfig
 //----------------------------------------------------------------------------------------------------------------------
 class Shader
 {
-    friend class RendererInterface;
+    friend class Renderer;
 
 protected:
 

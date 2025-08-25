@@ -236,7 +236,7 @@
     <ClCompile Include="Renderer\D3D11\D3D11VertexBuffer.cpp" />
     <ClCompile Include="Renderer\EngineConstantBuffers.cpp" />
     <ClCompile Include="Renderer\Font.cpp" />
-    <ClCompile Include="Renderer\RendererInterface.cpp" />
+    <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RenderTarget.cpp" />
     <ClCompile Include="Renderer\Rgba8.cpp" />
     <ClCompile Include="Renderer\Shader.cpp" />
@@ -330,7 +330,7 @@
     <ClInclude Include="Renderer\D3D11\HLSLDefaultShaderSource.h" />
     <ClInclude Include="Renderer\EngineConstantBuffers.h" />
     <ClInclude Include="Renderer\Font.h" />
-    <ClInclude Include="Renderer\RendererInterface.h" />
+    <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Renderer\RendererSettings.h" />
     <ClInclude Include="Renderer\RenderTarget.h" />
     <ClInclude Include="Renderer\Rgba8.h" />

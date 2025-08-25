@@ -11,7 +11,7 @@
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Font.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Window.h"
@@ -56,8 +56,8 @@ void PerformanceDebugWindow::Startup()
 {
     std::unique_lock lock(m_mutex);
 
-    m_untexturedVBO = g_rendererInterface->MakeVertexBuffer();
-    m_textVBO = g_rendererInterface->MakeVertexBuffer();
+    m_untexturedVBO = g_renderer->MakeVertexBuffer();
+    m_textVBO = g_renderer->MakeVertexBuffer();
 
     if (m_config.m_startOpen)
     {
@@ -306,8 +306,8 @@ void PerformanceDebugWindow::EngineFrameCompleted()
         return;
     }
 
-    g_rendererInterface->BeginCameraAndWindow(m_camera, m_window);
-    g_rendererInterface->ClearScreen(Rgba8::LightGray);
+    g_renderer->BeginCameraAndWindow(m_camera, m_window);
+    g_renderer->ClearScreen(Rgba8::LightGray);
 
     m_untexturedVBO->ClearVerts();
 
@@ -321,16 +321,16 @@ void PerformanceDebugWindow::EngineFrameCompleted()
     GetGraphOutline(graphOutline);
     AddVertsForWireBox2D(m_untexturedVBO->GetMutableVerts(), graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
 
-    g_rendererInterface->DrawVertexBuffer(m_untexturedVBO);
+    g_renderer->DrawVertexBuffer(m_untexturedVBO);
 
     // Title
     m_textVBO->ClearVerts();
-    Font* font = g_rendererInterface->GetDefaultFont();
+    Font* font = g_renderer->GetDefaultFont();
     font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
 
     // FPS Counter
     float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
-    std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_rendererInterface->GetNumFrameDrawCalls());
+    std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
     font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
 
     // X-Axis Frame Time
@@ -344,10 +344,10 @@ void PerformanceDebugWindow::EngineFrameCompleted()
     }
 
     font->SetRendererState();
-    g_rendererInterface->DrawVertexBuffer(m_textVBO);
+    g_renderer->DrawVertexBuffer(m_textVBO);
 
     // Custom present timing, so that the main game window finishes rendering before we display on our secondary window
-    g_rendererInterface->Present();
+    g_renderer->Present();
 }
 
 
@@ -489,7 +489,7 @@ void PerformanceDebugWindow::AddTextVertsForSection(VertexBuffer& textVerts, Per
     sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
     sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
 
-    g_rendererInterface->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name.ToString());
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name.ToString());
 
     for (PerfRow const& row : section.m_perfRows)
     {
@@ -580,7 +580,7 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
         itemOutline.maxs.y = rowOutline.maxs.y;
     }
 
-    g_rendererInterface->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
 }
 
 

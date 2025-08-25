@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2023
 #include "SInitView.h"
 #include "CCamera.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Window.h"
 
 
@@ -10,7 +10,7 @@
 void SInitView::Startup()
 {
     AddReadDependencies<CCamera>();
-    AddWriteDependencies<RendererInterface>();
+    AddWriteDependencies<Renderer>();
 }
 
 
@@ -24,7 +24,7 @@ void SInitView::Run(SystemContext const& context)
     if (camIt.IsValid())
     {
         CCamera& camera = cameraStorage[camIt];
-        g_rendererInterface->BeginCameraAndWindow(&camera.m_camera, g_window);
-        g_rendererInterface->ClearScreen(Rgba8::LightGray);
+        g_renderer->BeginCameraAndWindow(&camera.m_camera, g_window);
+        g_renderer->ClearScreen(Rgba8::LightGray);
     }
 }

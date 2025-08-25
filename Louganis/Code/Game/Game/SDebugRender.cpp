@@ -14,7 +14,7 @@
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Camera.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Font.h"
@@ -28,7 +28,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugRender::Startup()
 {
-    AddWriteDependencies<CTransform, CPlayerController, RendererInterface>();
+    AddWriteDependencies<CTransform, CPlayerController, Renderer>();
     AddWriteDependencies<SCDebug>();
     AddReadDependencies<SCWorld, SCFlowField, InputSystem, CCamera>();
 
@@ -39,7 +39,7 @@ void SDebugRender::Startup()
     g_eventSystem->SubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
 
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
-    scDebug.m_frameVerts = g_rendererInterface->MakeVertexBuffer();
+    scDebug.m_frameVerts = g_renderer->MakeVertexBuffer();
 }
 
 
@@ -53,7 +53,7 @@ void SDebugRender::Run(SystemContext const& context)
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     SCFlowField const& scFlowfield = g_ecs->GetSingleton<SCFlowField>();
     FlowField const& flowField = scFlowfield.m_toPlayerFlowField;
-    Font* font = g_rendererInterface->GetDefaultFont();
+    Font* font = g_renderer->GetDefaultFont();
 
     if (g_window->HasFocus())
     {
@@ -151,9 +151,9 @@ void SDebugRender::Run(SystemContext const& context)
                 }
             }
 
-            g_rendererInterface->BindShader(nullptr);
-            g_rendererInterface->BindTexture(nullptr);
-            g_rendererInterface->DrawVertexBuffer(ffChunk->m_debugVBO);
+            g_renderer->BindShader(nullptr);
+            g_renderer->BindTexture(nullptr);
+            g_renderer->DrawVertexBuffer(ffChunk->m_debugVBO);
         }
     }
 
@@ -184,7 +184,7 @@ void SDebugRender::Run(SystemContext const& context)
             }
 
             font->SetRendererState();
-            g_rendererInterface->DrawVertexBuffer(ffChunk->m_debugVBO);
+            g_renderer->DrawVertexBuffer(ffChunk->m_debugVBO);
         }
     }
 
@@ -211,16 +211,16 @@ void SDebugRender::Run(SystemContext const& context)
                 }
             }
 
-            g_rendererInterface->BindTexture(0);
-            g_rendererInterface->BindShader(0);
-            g_rendererInterface->DrawVertexBuffer(ffChunk->m_debugVBO);
+            g_renderer->BindTexture(0);
+            g_renderer->BindShader(0);
+            g_renderer->DrawVertexBuffer(ffChunk->m_debugVBO);
         }
     }
     
     // Render debug verts 
-    g_rendererInterface->BindTexture(0);
-    g_rendererInterface->BindShader(0);
-    g_rendererInterface->DrawVertexBuffer(scDebug.m_frameVerts);
+    g_renderer->BindTexture(0);
+    g_renderer->BindShader(0);
+    g_renderer->DrawVertexBuffer(scDebug.m_frameVerts);
     scDebug.m_frameVerts->ClearVerts();
 }
 

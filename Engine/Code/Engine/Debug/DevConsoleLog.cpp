@@ -4,7 +4,7 @@
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Renderer/Font.h"
-#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 
 
@@ -16,7 +16,7 @@ const std::string LINE_PREFIX = "> ";
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleLog::DevConsoleLog()
 {
-    m_vbo = g_rendererInterface->MakeVertexBuffer();
+    m_vbo = g_renderer->MakeVertexBuffer();
 }
 
 
@@ -42,7 +42,7 @@ void DevConsoleLog::AddLine(DevConsoleLine const& line)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleLog::RenderToBox(AABB2 const& box) const
 {
-    Font* font = g_rendererInterface->GetDefaultFont(); // todo: let change fonts
+    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
 
     float lineThickness = box.GetHeight() / m_numLines;
     float maxLinesOnScreen = box.GetHeight() / lineThickness;
@@ -63,7 +63,7 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
     }
 
     font->SetRendererState();
-    g_rendererInterface->DrawVertexBuffer(m_vbo);
+    g_renderer->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
 }
 
