@@ -2,7 +2,7 @@
 #include "Engine/Renderer/Font.h"
 
 #include "Engine/Core/EngineCommon.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Shader.h"
@@ -29,12 +29,12 @@ Vec2 Font::AlignBottomLeft	= Vec2(0.f, 0.f);
 //----------------------------------------------------------------------------------------------------------------------
 void Font::SetRendererState() const
 {
-	g_renderer->SetCullMode(CullMode::None);
-	g_renderer->SetWindingOrder(Winding::CounterClockwise);
-	g_renderer->SetFillMode(FillMode::Solid);
-	g_renderer->SetBlendMode(BlendMode::Alpha);
-	g_renderer->BindTexture(m_texture);
-	g_renderer->BindShader(m_shader);
+	g_rendererInterface->SetCullMode(CullMode::None);
+	g_rendererInterface->SetWindingOrder(Winding::CounterClockwise);
+	g_rendererInterface->SetFillMode(FillMode::Solid);
+	g_rendererInterface->SetBlendMode(BlendMode::Alpha);
+	g_rendererInterface->BindTexture(m_texture);
+	g_rendererInterface->BindShader(m_shader);
 }
 
 
@@ -201,10 +201,18 @@ Shader* Font::GetShader() const
 //----------------------------------------------------------------------------------------------------------------------
 Font::~Font()
 {
-	delete m_shader;
-	m_shader = nullptr;
-	delete m_texture;
-	m_texture = nullptr;
+	if (m_shader)
+	{
+		m_shader->ReleaseResources();
+		delete m_shader;
+		m_shader = nullptr;
+	}
+	if (m_texture)
+	{
+		m_texture->ReleaseResources();
+		delete m_texture;
+		m_texture = nullptr;
+	}
 }
 
 
@@ -235,7 +243,7 @@ void Font::LoadFNT(const char* fntFilepath)
 		auto page = pagesElem->FirstChildElement("page");
 		auto filename = page->FindAttribute("file");
 		std::string fullFilePath = "Data/Fonts/" + std::string(filename->Value());
-    	m_texture = new Texture();
+    	m_texture = g_rendererInterface->MakeTexture();
     	bool loadedTexture = m_texture->LoadFromImageFile(fullFilePath.c_str(), false);
 		ASSERT_OR_DIE(loadedTexture, StringUtils::StringF("Font %s - Failed to load texture: %s", fntFilepath, fullFilePath.c_str()))
 

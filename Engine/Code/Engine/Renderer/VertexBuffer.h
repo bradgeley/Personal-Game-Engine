@@ -5,10 +5,6 @@
 
 
 
-struct ID3D11Buffer;
-
-
-
 //----------------------------------------------------------------------------------------------------------------------
 // VertexBuffer
 //
@@ -21,36 +17,37 @@ struct ID3D11Buffer;
 class VertexBuffer
 {
     friend class Renderer;
-    
-public:
-
-    VertexBuffer() = default;
-    VertexBuffer(VertexBuffer const& copy) = delete;
-    ~VertexBuffer();
-
-    void Initialize(int numExpectedVerts = 3);
-    void ReserveAdditional(int numExpectedAdditionalVerts);
-    void ReleaseResources();
-    
-    std::vector<Vertex_PCU> const& GetVerts() const;
-    std::vector<Vertex_PCU>& GetMutableVerts(bool setDirty = true);
-    
-    void AddVerts(std::vector<Vertex_PCU> const& verts);
-    void ClearVerts();
-    void UpdateGPUBuffer();
-
-    int GetStride() const;
-	int GetNumVerts() const;
-
-    bool IsDirty() const;
-    void SetDirty();
-    bool IsEmpty() const;
 
 protected:
 
-    bool m_isDirty = false;
-    std::vector<Vertex_PCU> m_verts;
+    VertexBuffer() = default;
     
-    ID3D11Buffer* m_handle = nullptr;
+public:
+
+    VertexBuffer(VertexBuffer const& copy) = delete;
+    virtual ~VertexBuffer();
+
+    virtual void Initialize(int numExpectedVerts = 3) = 0;
+    virtual void UpdateGPUBuffer() = 0;
+    virtual void ReleaseResources();
+    
+    virtual std::vector<Vertex_PCU> const& GetVerts() const;
+    virtual std::vector<Vertex_PCU>& GetMutableVerts(bool setDirty = true);
+    
+    virtual void AddVerts(std::vector<Vertex_PCU> const& verts);
+    virtual void ReserveAdditional(int numExpectedAdditionalVerts);
+    virtual void ClearVerts();
+
+    virtual int GetStride() const;
+	virtual int GetNumVerts() const;
+
+    virtual bool IsDirty() const;
+    virtual void SetDirty();
+    virtual bool IsEmpty() const;
+
+protected:
+
+    bool m_isDirty = true;
+    std::vector<Vertex_PCU> m_verts;
     size_t m_gpuBufferByteWidth = 0;
 };

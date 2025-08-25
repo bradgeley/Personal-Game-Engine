@@ -6,9 +6,32 @@
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/Font.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+DevConsoleCommandHistory::DevConsoleCommandHistory()
+{
+    m_textVerts = g_rendererInterface->MakeVertexBuffer();
+    m_untexturedVerts = g_rendererInterface->MakeVertexBuffer();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+DevConsoleCommandHistory::~DevConsoleCommandHistory()
+{
+    m_untexturedVerts->ReleaseResources();
+    delete m_untexturedVerts;
+    m_untexturedVerts = nullptr;
+
+    m_textVerts->ReleaseResources();
+    delete m_textVerts;
+    m_textVerts = nullptr;
+}
 
 
 
@@ -60,16 +83,14 @@ bool DevConsoleCommandHistory::IsActive() const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
 {
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font* font = g_rendererInterface->GetDefaultFont(); // todo: let change fonts
 
     // Draw Background
-    static VertexBuffer untexturedVerts;
-    untexturedVerts.ClearVerts();
-    AddVertsForAABB2(untexturedVerts.GetMutableVerts(), box, Rgba8(0, 0, 0, 200));
-    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), box, 0.0025f, Rgba8(255, 255, 255, 200));
+    m_untexturedVerts->ClearVerts();
+    AddVertsForAABB2(m_untexturedVerts->GetMutableVerts(), box, Rgba8(0, 0, 0, 200));
+    AddVertsForWireBox2D(m_untexturedVerts->GetMutableVerts(), box, 0.0025f, Rgba8(255, 255, 255, 200));
 
-    static VertexBuffer textVerts;
-    textVerts.ClearVerts();
+    m_textVerts->ClearVerts();
 
     float lineThickness = box.GetHeight() / (float) m_maxHistorySize;
 
@@ -84,20 +105,20 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
         
         if (m_selectedLineIndex == i)
         {
-            AddVertsForAABB2(untexturedVerts.GetMutableVerts(), textBox, Rgba8::Cerulean);
+            AddVertsForAABB2(m_untexturedVerts->GetMutableVerts(), textBox, Rgba8::Cerulean);
         }
         
-        font->AddVertsForText2D(textVerts.GetMutableVerts(), textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
+        font->AddVertsForText2D(m_textVerts->GetMutableVerts(), textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
         
         linesRendered += 1.f;
     }
 
-    g_renderer->BindShader(nullptr);
-    g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(&untexturedVerts);
+    g_rendererInterface->BindShader(nullptr);
+    g_rendererInterface->BindTexture(nullptr);
+    g_rendererInterface->DrawVertexBuffer(m_untexturedVerts);
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(&textVerts);
+    g_rendererInterface->DrawVertexBuffer(m_textVerts);
 }
 
 

@@ -5,10 +5,6 @@
 
 
 
-struct ID3D11InputLayout;
-struct ID3D11VertexShader;
-struct ID3D11PixelShader;
-
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -24,34 +20,24 @@ struct ShaderConfig
 //----------------------------------------------------------------------------------------------------------------------
 class Shader
 {
-	friend class Renderer;
+    friend class RendererInterface;
+
+protected:
+
+    explicit Shader(ShaderConfig const& config);
 
 public:
 
-    explicit Shader(ShaderConfig const& config);
 	Shader(Shader const& copy) = delete;
-    ~Shader();
+    virtual ~Shader();
 
-    ID3D11InputLayout* CreateOrGetInputLayout();
-    bool CreateFromSource(std::string const& sourceCode);
-	void ReleaseResources();
+    virtual void ReleaseResources();
 
-protected:
-    
-    bool CompileAsVertexShader(std::string const& sourceCode);
-    bool CompileAsPixelShader(std::string const& sourceCode);
-    
-    ID3D11InputLayout* CreateInputLayoutFor_Vertex_PCU();
+    virtual bool CreateFromSource(std::string const& sourceCode) = 0;
 
 protected:
 
     ShaderConfig const m_config;
-    
-    ID3D11InputLayout* m_inputLayout  = nullptr;
-    ID3D11VertexShader* m_vertexShader = nullptr;
-	ID3D11PixelShader* m_pixelShader  = nullptr;
-    
-    std::vector<uint8_t> m_vertexByteCode;
 
     static Shader const* const NullShader;
 };

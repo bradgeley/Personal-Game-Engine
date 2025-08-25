@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2023
 #include "SRenderEntities.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "CRender.h"
@@ -11,7 +11,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderEntities::Startup()
 {
-    AddWriteDependencies<CRender, Renderer>();
+    AddWriteDependencies<CRender, RendererInterface>();
     AddReadDependencies<CCamera>();
 }
 
@@ -22,8 +22,8 @@ void SRenderEntities::Run(SystemContext const& context)
 {
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 
-    VertexBuffer vbo;
-    AddVertsForDisc2D(vbo.GetMutableVerts(), Vec2(), 1, 128);
+    VertexBuffer* vbo = g_rendererInterface->MakeVertexBuffer();
+    AddVertsForDisc2D(vbo->GetMutableVerts(), Vec2(), 1, 128);
 
     // Render all things (1 draw call per entity = bad, todo: write sprite geometry shader)
     ModelConstants modelConstants;
@@ -36,13 +36,15 @@ void SRenderEntities::Run(SystemContext const& context)
         modelConstants.m_modelMatrix.AppendUniformScale2D(render.m_scale);
         render.m_tint.GetAsFloats(modelConstants.m_modelRgba);
 
-        g_renderer->SetModelConstants(modelConstants);
-        g_renderer->BindShader(nullptr);
-        g_renderer->BindTexture(nullptr);
-        g_renderer->DrawVertexBuffer(&vbo);
+        g_rendererInterface->SetModelConstants(modelConstants);
+        g_rendererInterface->BindShader(nullptr);
+        g_rendererInterface->BindTexture(nullptr);
+        g_rendererInterface->DrawVertexBuffer(vbo);
     }
 
-    g_renderer->SetModelConstants(ModelConstants());
+    g_rendererInterface->SetModelConstants(ModelConstants());
+
+    delete vbo;
 }
 
 

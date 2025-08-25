@@ -3,33 +3,31 @@
 
 
 
-struct ID3D11Buffer;
-
-
-
 //----------------------------------------------------------------------------------------------------------------------
 // Constant Buffer
 //
 class ConstantBuffer
 {
-    friend class Renderer;
+    friend class RendererInterface;
+
+protected:
+
+    ConstantBuffer() = default;
     
 public:
 
-    ConstantBuffer() = default;
     ConstantBuffer(ConstantBuffer const& copy) = delete;
-    ~ConstantBuffer();
+    virtual ~ConstantBuffer();
 
-    void ReleaseResources();
+    virtual void ReleaseResources();
     
-    void Update(void const* data, size_t byteWidth);
+    virtual void Update(void const* data, size_t byteWidth) = 0;
 
-private:
+protected:
 
-    void Initialize(size_t byteWidth);
+    virtual void Initialize(size_t byteWidth) = 0;
 
 protected:
     
-    ID3D11Buffer* m_handle = nullptr;
     size_t m_gpuBufferByteWidth = 0;
 };

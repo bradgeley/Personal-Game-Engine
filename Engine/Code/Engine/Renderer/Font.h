@@ -48,30 +48,29 @@ struct GlyphData
 //----------------------------------------------------------------------------------------------------------------------
 class Font
 {
-    friend class Renderer;
+    friend class RendererInterface;
 
 public:
+
+    Font() = default;
+    ~Font();
+
+    Texture* GetTexture() const;
+    Shader* GetShader() const;
+
+    void LoadFNT(const char* fntFilepath);
     
 	void SetRendererState() const;
     
-    void AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, float cellHeight,
-        std::string const& text, Rgba8 const& tint = Rgba8::Black);
-    
+    // Add Verts
+    void AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
+    void AddVertsForAlignedText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& pivot, Vec2 const& alignment, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
+    //void AddVertsForTextInBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, Vec2 const& textMaxs, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, Vec2 const& alignment = AlignCentered);
+
     float GetTextWidth(float cellHeight, std::string const& text);
-
-    void AddVertsForAlignedText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& pivot, Vec2 const& alignment,
-        float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
-
-    //void AddVertsForTextInBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, Vec2 const& textMaxs,
-    //    float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, Vec2 const& alignment = AlignCentered);
-    
     GlyphData const& GetGlyphData(uint8_t glyph) const;
     float GetKerning(uint8_t lhs, uint8_t rhs) const;
-
     float GetOffsetXOfCharIndex(std::string const& line, int index, float cellHeight, float aspectMultiplier = 1.f) const;
-    
-    Texture* GetTexture() const;
-    Shader* GetShader() const;
 
 public:
 
@@ -85,14 +84,7 @@ public:
     static Vec2 AlignBottomRight;
     static Vec2 AlignBottomLeft;
 
-protected:
-
-    Font() = default;
-    ~Font();
-
-    void LoadFNT(const char* fntFilepath);
-
-protected:
+public:
 
     Texture* m_texture = nullptr;
     Shader* m_shader = nullptr;

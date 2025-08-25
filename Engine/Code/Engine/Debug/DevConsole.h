@@ -14,7 +14,6 @@
 
 class Camera;
 class Texture;
-class VertexBuffer;
 struct JobID;
 struct NamedProperties;
 

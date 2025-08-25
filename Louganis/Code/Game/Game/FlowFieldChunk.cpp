@@ -2,6 +2,8 @@
 #include "FlowFieldChunk.h"
 #include "Chunk.h"
 #include "SCWorld.h"
+#include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Renderer/RendererInterface.h"
 
 
 
@@ -21,6 +23,7 @@ FlowFieldChunk::FlowFieldChunk(Chunk* chunk, SCWorld* world) :
 	m_consideredCells(false)
 {
 	m_chunk->m_destroyed.SubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
+	m_debugVBO = g_rendererInterface->MakeVertexBuffer();
 }
 
 
@@ -31,6 +34,11 @@ FlowFieldChunk::~FlowFieldChunk()
 	if (m_chunk)
 	{
 		m_chunk->m_destroyed.UnsubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
+	}
+	if (m_debugVBO)
+	{
+		delete m_debugVBO;
+		m_debugVBO = nullptr;
 	}
 }
 
@@ -43,7 +51,7 @@ void FlowFieldChunk::HardReset()
 	m_costField.SetAll(0);
 	m_distanceField.SetAll(MAX_DISTANCE);
 	m_gradient.SetAll(Vec2::ZeroVector);
-	m_debugVBO.ClearVerts();
+	m_debugVBO->ClearVerts();
 }
 
 
@@ -55,7 +63,7 @@ void FlowFieldChunk::SoftReset()
 	m_consideredCells.SetAll(false);
 	m_distanceField.SetAll(MAX_DISTANCE);
 	m_gradient.SetAll(Vec2());
-	m_debugVBO.ClearVerts();
+	m_debugVBO->ClearVerts();
 }
 
 

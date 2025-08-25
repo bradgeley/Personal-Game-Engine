@@ -11,7 +11,7 @@
 
 #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
 #include "Engine/Core/Time.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #endif
 
 

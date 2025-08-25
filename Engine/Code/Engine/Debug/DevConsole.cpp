@@ -7,7 +7,7 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Renderer/Camera.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/DataStructures/NamedProperties.h"
@@ -51,7 +51,7 @@ public:
     
     void Execute() override
     {
-        m_texture = new Texture();
+        m_texture = g_rendererInterface->MakeTexture();
         if (m_image.LoadFromFile(m_path.data()))
         {
             g_devConsole->LogSuccess(StringUtils::StringF("Loaded image: %s", m_path.data()));
@@ -109,7 +109,7 @@ void DevConsole::Startup()
     // Randomize the starting background image
     PickNextBackgroundImage();
 
-    m_vbo = new VertexBuffer();
+    m_vbo = g_rendererInterface->MakeVertexBuffer();
 }
 
 
@@ -142,11 +142,11 @@ void DevConsole::Render() const
     float devConsoleOffset = MathUtils::SmoothStart3(m_openCloseAnimationFraction);
 
     // Sets camera and renderer pipeline state
-    g_renderer->BeginCameraAndWindow(m_camera, g_window);
+    g_rendererInterface->BeginCameraAndWindow(m_camera, g_window);
 
     // Translate by the animation fraction
     Mat44 modelMatrix = Mat44::CreateTranslation3D(0.f, devConsoleOffset);
-    g_renderer->SetModelMatrix(modelMatrix);
+    g_rendererInterface->SetModelMatrix(modelMatrix);
 
     DrawTab();
 
@@ -162,8 +162,6 @@ void DevConsole::Render() const
     {
         DrawCommandHistory();
     }
-
-    g_renderer->EndCameraAndWindow(m_camera, g_window);
 }
 
 
@@ -755,9 +753,9 @@ void DevConsole::DrawBackground() const
 {
     AABB2 backgroundBox = m_camera->GetOrthoBounds2D();
     AddVertsForAABB2(m_vbo->GetMutableVerts(), backgroundBox, m_config.m_backgroundTint);
-    g_renderer->BindTexture(nullptr);
-    g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(m_vbo);
+    g_rendererInterface->BindTexture(nullptr);
+    g_rendererInterface->BindShader(nullptr);
+    g_rendererInterface->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
     
     if (m_backgroundImages.empty())
@@ -790,9 +788,9 @@ void DevConsole::DrawBackground() const
     }
     
     AddVertsForAABB2(m_vbo->GetMutableVerts(), imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
-    g_renderer->BindTexture(currentBkg);
-    g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(m_vbo);
+    g_rendererInterface->BindTexture(currentBkg);
+    g_rendererInterface->BindShader(nullptr);
+    g_rendererInterface->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
 }
 
@@ -818,15 +816,15 @@ void DevConsole::DrawTab() const
     tabDims.mins = tabDims.maxs - tabSize * Vec2(0.07f, 0.01f);
 
     AddVertsForAABB2(m_vbo->GetMutableVerts(), tabDims, m_config.m_backgroundTint);
-    g_renderer->BindTexture(nullptr);
-    g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(m_vbo);
+    g_rendererInterface->BindTexture(nullptr);
+    g_rendererInterface->BindShader(nullptr);
+    g_rendererInterface->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
 
-    auto font = g_renderer->GetDefaultFont();
+    auto font = g_rendererInterface->GetDefaultFont();
     font->AddVertsForAlignedText2D(m_vbo->GetMutableVerts(), tabDims.GetCenter(), Vec2::ZeroVector, tabDims.GetHeight(), "DevConsole (~)", Rgba8::White);
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(m_vbo);
+    g_rendererInterface->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
 }
 

@@ -1,19 +1,19 @@
-﻿// Bradley Christensen - 2022-2023
+﻿// Bradley Christensen - 2025
 #pragma once
-#include "D3D11Utils.h"
+#include "Engine/Math/IntVec2.h"
 
 
 
 class Texture;
-class Window;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct WindowRenderContext
+struct RenderTarget
 {
-    Window* m_window                = nullptr;
+    virtual ~RenderTarget() = default;
+
+    IntVec2 m_renderDimensions;
     Texture* m_backbufferTexture    = nullptr;
     Texture* m_depthBuffer          = nullptr;
-    IDXGISwapChain* m_swapChain     = nullptr;
 };

@@ -43,16 +43,10 @@
     <ClCompile Include="Renderer\ConstantBuffer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\D3D11Utils.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\EngineConstantBuffers.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Font.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\Renderer.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\Rgba8.cpp">
@@ -196,9 +190,6 @@
     <ClCompile Include="Core\XmlUtils.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\WindowRenderContext.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Debug\DevConsoleCommandInfo.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
@@ -228,6 +219,33 @@
     </ClCompile>
     <ClCompile Include="Audio\AudioUtils.cpp">
       <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11Utils.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\RendererInterface.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11Renderer.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11ConstantBuffer.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11Texture.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11Shader.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11VertexBuffer.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\RenderTarget.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11SwapchainRenderTarget.cpp">
+      <Filter>Renderer\D3D11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -276,22 +294,10 @@
     <ClInclude Include="Renderer\ConstantBuffer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\D3D11Utils.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\DefaultShaderSource.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\EngineConstantBuffers.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Font.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\FontShaderSource.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\Renderer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\RendererInternal.h">
@@ -447,9 +453,6 @@
     <ClInclude Include="Math\RandomNumberGenerator.h">
       <Filter>Math</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\WindowRenderContext.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Debug\DevConsoleCommandInfo.h">
       <Filter>Debug</Filter>
     </ClInclude>
@@ -488,6 +491,42 @@
     </ClInclude>
     <ClInclude Include="Audio\AudioUtils.h">
       <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11Utils.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RendererInterface.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11Renderer.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11ConstantBuffer.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11Internal.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\HLSLDefaultShaderSource.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11Texture.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11Shader.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\HLSLDefaultFontShaderSource.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11VertexBuffer.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\RenderTarget.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11SwapchainRenderTarget.h">
+      <Filter>Renderer\D3D11</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -538,6 +577,12 @@
     </Filter>
     <Filter Include="Audio\MiniAudio">
       <UniqueIdentifier>{e0ee9040-49e8-4e87-b9f7-10636fac74de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer\D3D11">
+      <UniqueIdentifier>{2adb5848-dafe-4a92-ac50-b0ceba9f2878}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer\WebGL">
+      <UniqueIdentifier>{3a1a9974-6e8a-4468-8830-b656cd8868ee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

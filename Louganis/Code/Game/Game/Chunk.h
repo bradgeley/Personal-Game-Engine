@@ -2,7 +2,6 @@
 #pragma once
 #include "Engine/Math/FastGrid.h"
 #include "Engine/Math/AABB2.h"
-#include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Events/EventDelegate.h"
 #include "WorldSettings.h"
 
@@ -10,6 +9,7 @@
 
 struct WorldSettings;
 class WorldCoords;
+class VertexBuffer;
 
 
 
@@ -31,8 +31,8 @@ public:
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
 	FastGrid<uint8_t, s_worldChunkSizePowerOfTwo> m_tileIDs;
-	VertexBuffer m_vbo;
+	VertexBuffer* m_vbo;
 #if defined(_DEBUG)
-	VertexBuffer m_debugVBO;
+	VertexBuffer* m_debugVBO;
 #endif
 };

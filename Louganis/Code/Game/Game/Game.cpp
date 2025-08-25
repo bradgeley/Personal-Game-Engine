@@ -1,25 +1,28 @@
 // Bradley Christensen - 2022-2023
 #include "Game.h"
-#include "GameCommon.h"
-#include "WindowsApplication.h"
+
+#include "Engine/Audio/AudioSystem.h"
+#include "Engine/Audio/AudioUtils.h"
 #include "Engine/Core/Engine.h"
-#include "Engine/Input/InputSystem.h"
-#include "Engine/Renderer/Window.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Camera.h"
 #include "Engine/Core/EngineCommon.h"
+#include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/ECS/AdminSystem.h"
 #include "Engine/Events/EventSystem.h"
+#include "Engine/Input/InputSystem.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
-#include "Engine/ECS/AdminSystem.h"
-#include "Engine/Audio/AudioSystem.h"
-#include "Engine/Audio/AudioUtils.h"
-#include "EntityDef.h"
-#include "TileDef.h"
+#include "Engine/Renderer/Window.h"
+#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/Camera.h"
+
 #include "AllComponents.h"
 #include "AllSystems.h"
+#include "EntityDef.h"
+#include "GameCommon.h"
+#include "TileDef.h"
+#include "WindowsApplication.h"
 
 
 
@@ -123,16 +126,16 @@ void Game::ConfigureEngine(Engine* engine)
     g_audioSystem = AudioUtils::MakeAudioSystem(audioConfig);
     engine->RegisterSubsystem(g_audioSystem);
 
+    RendererConfig rendererConfig;
+    g_rendererInterface = RendererInterface::MakeRendererInterface(rendererConfig);
+    engine->RegisterSubsystem(g_rendererInterface);
+
     WindowConfig windowConfig;
     windowConfig.m_windowTitle = "Project Louganis";
     windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Borderless;
     windowConfig.m_startupUserSettings.m_windowedResolution = IntVec2(500, 500);
     g_window = new Window(windowConfig);
     engine->RegisterSubsystem(g_window);
-
-    RendererConfig rendererConfig;
-    g_renderer = new Renderer(rendererConfig);
-    engine->RegisterSubsystem(g_renderer);
 
     // Dev console before input, so it steals input from the window when active
     DevConsoleConfig dcConfig;
@@ -194,7 +197,7 @@ void Game::ConfigureECS()
 
     // Other resource types
     g_ecs->RegisterResourceByType<InputSystem>();
-    g_ecs->RegisterResourceByType<Renderer>();
+    g_ecs->RegisterResourceByType<RendererInterface>();
     g_ecs->RegisterResourceByType<AudioSystem>();
 
 

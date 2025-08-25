@@ -5,12 +5,13 @@
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/DataStructures/BitArray.h"
+#include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/System.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Font.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Window.h"
@@ -54,6 +55,9 @@ PerformanceDebugWindow::PerformanceDebugWindow(PerformanceDebugWindowConfig cons
 void PerformanceDebugWindow::Startup()
 {
     std::unique_lock lock(m_mutex);
+
+    m_untexturedVBO = g_rendererInterface->MakeVertexBuffer();
+    m_textVBO = g_rendererInterface->MakeVertexBuffer();
 
     if (m_config.m_startOpen)
     {
@@ -118,8 +122,10 @@ void PerformanceDebugWindow::Shutdown()
         g_input->m_keyUpEvent.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleMainWindowKeyUp);
     }
 
-    m_textVBO.ReleaseResources();
-    m_untexturedVBO.ReleaseResources();
+    delete m_textVBO;
+    m_textVBO = nullptr;
+    delete m_untexturedVBO;
+    m_untexturedVBO = nullptr;
 
     for (PerfSection& ps : m_perfSections)
     {
@@ -175,8 +181,6 @@ bool PerformanceDebugWindow::OpenWindow()
     m_window->m_quit.SubscribeMethod(this, &PerformanceDebugWindow::HandleWindowQuit);
     m_window->m_windowSizeChanged.SubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
 
-    g_renderer->GetOrCreateWindowRenderContext(m_window);
-
     return true;
 }
 
@@ -190,11 +194,6 @@ bool PerformanceDebugWindow::CloseWindow()
         m_window->m_keyUpEvent.UnsubscribeMethod(this, &PerformanceDebugWindow::HandlePerfWindowKeyUp);
         m_window->m_quit.UnsubscribeMethod(this, &PerformanceDebugWindow::HandleWindowQuit);
         m_window->m_windowSizeChanged.UnsubscribeMethod(this, &PerformanceDebugWindow::WindowSizeChanged);
-
-        if (g_renderer)
-        {
-            g_renderer->DestroyWindowRenderContext(m_window);
-        }
 
         m_window->Shutdown();
         delete m_window;
@@ -305,48 +304,48 @@ void PerformanceDebugWindow::EngineFrameCompleted()
         return;
     }
 
-    g_renderer->BeginCameraAndWindow(m_camera, m_window);
-    g_renderer->ClearScreen(Rgba8::LightGray);
+    g_rendererInterface->BeginCameraAndWindow(m_camera, m_window);
+    g_rendererInterface->ClearScreen(Rgba8::LightGray);
 
-    m_untexturedVBO.ClearVerts();
+    m_untexturedVBO->ClearVerts();
 
     for (PerfSection const& section : m_perfSections)
     {
-        AddUntexturedVertsForSection(m_untexturedVBO, section);
+        AddUntexturedVertsForSection(*m_untexturedVBO, section);
     }
 
     // Graph Outline Box
     AABB2 graphOutline;
     GetGraphOutline(graphOutline);
-    AddVertsForWireBox2D(m_untexturedVBO.GetMutableVerts(), graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
+    AddVertsForWireBox2D(m_untexturedVBO->GetMutableVerts(), graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
 
-    g_renderer->DrawVertexBuffer(&m_untexturedVBO);
+    g_rendererInterface->DrawVertexBuffer(m_untexturedVBO);
 
     // Title
-    m_textVBO.ClearVerts();
-    Font* font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
+    m_textVBO->ClearVerts();
+    Font* font = g_rendererInterface->GetDefaultFont();
+    font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
 
     // FPS Counter
     float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
-    std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
-    font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
+    std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_rendererInterface->GetNumFrameDrawCalls());
+    font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
 
     // X-Axis Frame Time
     Vec2 frameBounds = GetItemFrameBounds();
-    font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.mins, Vec2(1.f, -1.f), FPS_COUNTER_FONT_SIZE, "0", Rgba8::Black);
-    font->AddVertsForAlignedText2D(m_textVBO.GetMutableVerts(), graphOutline.GetBottomRight(), Vec2(-1.f, -1.f), FPS_COUNTER_FONT_SIZE, StringUtils::StringF("%0.3fms", (frameBounds.y - frameBounds.x) * 1000.f), Rgba8::Black);
+    font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.mins, Vec2(1.f, -1.f), FPS_COUNTER_FONT_SIZE, "0", Rgba8::Black);
+    font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.GetBottomRight(), Vec2(-1.f, -1.f), FPS_COUNTER_FONT_SIZE, StringUtils::StringF("%0.3fms", (frameBounds.y - frameBounds.x) * 1000.f), Rgba8::Black);
 
     for (PerfSection const& section : m_perfSections)
     {
-        AddTextVertsForSection(m_textVBO, section);
+        AddTextVertsForSection(*m_textVBO, section);
     }
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(&m_textVBO);
+    g_rendererInterface->DrawVertexBuffer(m_textVBO);
 
     // Custom present timing, so that the main game window finishes rendering before we display on our secondary window
-    g_renderer->PresentWindow(m_window);
+    g_rendererInterface->Present();
 }
 
 
@@ -488,7 +487,7 @@ void PerformanceDebugWindow::AddTextVertsForSection(VertexBuffer& textVerts, Per
     sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
     sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name.ToString());
+    g_rendererInterface->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name.ToString());
 
     for (PerfRow const& row : section.m_perfRows)
     {
@@ -579,7 +578,7 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
         itemOutline.maxs.y = rowOutline.maxs.y;
     }
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
+    g_rendererInterface->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
 }
 
 

@@ -10,6 +10,7 @@
 
 
 class Texture;
+struct RenderTarget;
 
 
 
@@ -107,6 +108,8 @@ public:
 
     void MakeChildOf(Window* parentWindow);
 
+    RenderTarget* GetRenderTarget() const;
+
 private:
 
     void MakeWindow();
@@ -147,4 +150,6 @@ protected:
     bool m_hasFocus                 = false;
     bool m_isManuallyResizing       = false;
     bool m_isMinimized              = false;
+
+    RenderTarget* m_renderTarget    = nullptr;
 };

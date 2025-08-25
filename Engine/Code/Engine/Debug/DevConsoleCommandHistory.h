@@ -6,6 +6,7 @@
 
 
 struct AABB2;
+class VertexBuffer;
 
 
 
@@ -13,6 +14,9 @@ struct AABB2;
 class DevConsoleCommandHistory
 {
 public:
+
+    DevConsoleCommandHistory();
+    ~DevConsoleCommandHistory();
 
     void AddCommand(std::string const& command);
     std::string GetSelectedCommand() const;
@@ -37,4 +41,6 @@ protected:
     std::vector<std::string> m_log;
     int8_t m_maxHistorySize = 10;
     int8_t m_selectedLineIndex = -1;
+    VertexBuffer* m_untexturedVerts = nullptr;
+    VertexBuffer* m_textVerts = nullptr;
 };

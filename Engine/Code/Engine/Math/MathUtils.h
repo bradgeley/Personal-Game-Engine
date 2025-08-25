@@ -95,22 +95,24 @@ namespace MathUtils
 	//----------------------------------------------------------------------------------------------------------------------
 	// Simple Functions
 	//
-	int   IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
-	int   DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
-	float MinF(float a, float b);
-	float MaxF(float a, float b);
-	int   Min(int a, int b);
-	int   Max(int a, int b);
-	int   Pow(int base, int exp);
-	float PowF(float base, float exp);
-	int   FloorF(float val);
-	int   CeilingF(float val);
-	float SqrtF(float val);
-	int	  Abs(int val);
-	float AbsF(float val);
-	void  SwapF(float& a, float& b);
-	int	  Sign(int val);
-	float SignF(float val);
-	bool  IsNearlyEqual(float val, float comparison, float epsilon = 0.000001f);
-	bool  IsNearlyZero(float val, float epsilon = 0.000001f);
+	int		IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
+	int		DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
+	float	MinF(float a, float b);
+	float	MaxF(float a, float b);
+	int		Min(int a, int b);
+	int		Max(int a, int b);
+	int		Pow(int base, int exp);
+	float	PowF(float base, float exp);
+	double	Log(double val);
+	float	LogF(float val);
+	int		FloorF(float val);
+	int		CeilingF(float val);
+	float	SqrtF(float val);
+	int		Abs(int val);
+	float	AbsF(float val);
+	void	SwapF(float& a, float& b);
+	int		Sign(int val);
+	float	SignF(float val);
+	bool	IsNearlyEqual(float val, float comparison, float epsilon = 0.000001f);
+	bool	IsNearlyZero(float val, float epsilon = 0.000001f);
 }

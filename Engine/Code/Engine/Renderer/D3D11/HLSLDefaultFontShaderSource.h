@@ -2,7 +2,7 @@
 
 
 
-static char const* s_defaultFontShaderSource = R"(
+static char const* s_HLSLDefaultFontShaderSource = R"(
 
 struct vs_input_t
 {

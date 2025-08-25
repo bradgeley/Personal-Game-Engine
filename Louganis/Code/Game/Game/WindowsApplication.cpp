@@ -5,7 +5,7 @@
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/Time.h"
 #include "Engine/Input/InputSystem.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Engine/Renderer/Window.h"
 
 

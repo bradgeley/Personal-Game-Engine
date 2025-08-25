@@ -14,7 +14,7 @@
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Camera.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Font.h"
@@ -28,7 +28,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugRender::Startup()
 {
-    AddWriteDependencies<CTransform, CPlayerController, Renderer>();
+    AddWriteDependencies<CTransform, CPlayerController, RendererInterface>();
     AddWriteDependencies<SCDebug>();
     AddReadDependencies<SCWorld, SCFlowField, InputSystem, CCamera>();
 
@@ -37,6 +37,9 @@ void SDebugRender::Startup()
     g_eventSystem->SubscribeMethod("DebugRenderCostField", this, &SDebugRender::DebugRenderCostField);
     g_eventSystem->SubscribeMethod("DebugRenderDistanceField", this, &SDebugRender::DebugRenderDistanceField);
     g_eventSystem->SubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
+
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_frameVerts = g_rendererInterface->MakeVertexBuffer();
 }
 
 
@@ -50,7 +53,7 @@ void SDebugRender::Run(SystemContext const& context)
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     SCFlowField const& scFlowfield = g_ecs->GetSingleton<SCFlowField>();
     FlowField const& flowField = scFlowfield.m_toPlayerFlowField;
-    Font* font = g_renderer->GetDefaultFont();
+    Font* font = g_rendererInterface->GetDefaultFont();
 
     if (g_window->HasFocus())
     {
@@ -77,7 +80,7 @@ void SDebugRender::Run(SystemContext const& context)
             WorldRaycast raycast(playerLocation, playerToMouse.GetNormalized(), playerToMouse.GetLength());
             WorldRaycastResult result = Raycast(world, raycast);
 
-            AddVertsForRaycast(scDebug.m_frameVerts, result);
+            AddVertsForRaycast(*scDebug.m_frameVerts, result);
         }
     }
 
@@ -103,7 +106,7 @@ void SDebugRender::Run(SystemContext const& context)
             }
 
             AABB2 capsuleBounds = GeometryUtils::GetCapsuleBounds(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius);
-            AddVertsForWireBox2D(scDebug.m_frameVerts.GetMutableVerts(), capsuleBounds, 0.1f);
+            AddVertsForWireBox2D(scDebug.m_frameVerts->GetMutableVerts(), capsuleBounds, 0.1f);
             std::vector<Chunk*> chunks;
             world.GetChunksOverlappingAABB(chunks, capsuleBounds);
             for (auto& chunk : chunks)
@@ -111,17 +114,17 @@ void SDebugRender::Run(SystemContext const& context)
                 if (GeometryUtils::DoesCapsuleOverlapAABB(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, chunk->m_chunkBounds))
                 {
                     Rgba8 tint = Rgba8::Cyan;
-                    AddVertsForWireBox2D(scDebug.m_frameVerts.GetMutableVerts(), chunk->m_chunkBounds, 0.1f, tint);
+                    AddVertsForWireBox2D(scDebug.m_frameVerts->GetMutableVerts(), chunk->m_chunkBounds, 0.1f, tint);
                 }
             }
 
             world.ForEachWorldCoordsOverlappingCapsule(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, [&](WorldCoords& coords) 
             {
-                AddVertsForWireBox2D(scDebug.m_frameVerts.GetMutableVerts(), world.GetTileBounds(coords), 0.1f, Rgba8::Magenta);
+                AddVertsForWireBox2D(scDebug.m_frameVerts->GetMutableVerts(), world.GetTileBounds(coords), 0.1f, Rgba8::Magenta);
                 return true; 
             });
 
-            AddVertsForDiscCast(scDebug.m_frameVerts, result);
+            AddVertsForDiscCast(*scDebug.m_frameVerts, result);
         }
     }
 
@@ -134,7 +137,7 @@ void SDebugRender::Run(SystemContext const& context)
             WorldCoords currentWorldCoords;
             currentWorldCoords.m_chunkCoords = ffChunk->GetChunkCoords();
 
-            ffChunk->m_debugVBO.ClearVerts();
+            ffChunk->m_debugVBO->ClearVerts();
             for (int y = 0; y < ffChunk->m_costField.GetHeight(); ++y)
             {
                 for (int x = 0; x < ffChunk->m_costField.GetWidth(); ++x)
@@ -144,13 +147,13 @@ void SDebugRender::Run(SystemContext const& context)
                     uint8_t cost = ffChunk->m_costField.Get(x, y);
                     float t = MathUtils::RangeMapClamped((float) cost, 0.f, 255.f, 0.f, 1.f);
                     Rgba8 tint = Rgba8::Lerp(Rgba8(255, 255, 255, 150), Rgba8(0, 0, 0, 150), t);
-                    AddVertsForAABB2(ffChunk->m_debugVBO.GetMutableVerts(), tileBounds, tint);
+                    AddVertsForAABB2(ffChunk->m_debugVBO->GetMutableVerts(), tileBounds, tint);
                 }
             }
 
-            g_renderer->BindShader(nullptr);
-            g_renderer->BindTexture(nullptr);
-            g_renderer->DrawVertexBuffer(&ffChunk->m_debugVBO);
+            g_rendererInterface->BindShader(nullptr);
+            g_rendererInterface->BindTexture(nullptr);
+            g_rendererInterface->DrawVertexBuffer(ffChunk->m_debugVBO);
         }
     }
 
@@ -164,7 +167,7 @@ void SDebugRender::Run(SystemContext const& context)
             WorldCoords currentWorldCoords;
             currentWorldCoords.m_chunkCoords = ffChunk->GetChunkCoords();
 
-            ffChunk->m_debugVBO.ClearVerts();
+            ffChunk->m_debugVBO->ClearVerts();
             for (int y = 0; y < ffChunk->m_distanceField.GetHeight(); ++y)
             {
                 for (int x = 0; x < ffChunk->m_distanceField.GetWidth(); ++x)
@@ -176,12 +179,12 @@ void SDebugRender::Run(SystemContext const& context)
                     float t = MathUtils::RangeMapClamped(distance, 0.f, 10.f, 0.f, 1.f);
                     Rgba8 const& tint = Rgba8::Lerp(Rgba8::Green, Rgba8::Red, t);
                     std::string distanceText = StringUtils::StringF("%.2f", distance);
-                    font->AddVertsForAlignedText2D(ffChunk->m_debugVBO.GetMutableVerts(), tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, distanceText, tint);
+                    font->AddVertsForAlignedText2D(ffChunk->m_debugVBO->GetMutableVerts(), tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, distanceText, tint);
                 }
             }
 
             font->SetRendererState();
-            g_renderer->DrawVertexBuffer(&ffChunk->m_debugVBO);
+            g_rendererInterface->DrawVertexBuffer(ffChunk->m_debugVBO);
         }
     }
 
@@ -195,7 +198,7 @@ void SDebugRender::Run(SystemContext const& context)
             WorldCoords currentWorldCoords;
             currentWorldCoords.m_chunkCoords = ffChunk->GetChunkCoords();
 
-            ffChunk->m_debugVBO.ClearVerts();
+            ffChunk->m_debugVBO->ClearVerts();
             for (int y = 0; y < ffChunk->m_distanceField.GetHeight(); ++y)
             {
                 for (int x = 0; x < ffChunk->m_distanceField.GetWidth(); ++x)
@@ -204,21 +207,21 @@ void SDebugRender::Run(SystemContext const& context)
                     AABB2 tileBounds = world.GetTileBounds(currentWorldCoords);
                     Vec2 gradient = ffChunk->m_gradient.Get(x, y);
 
-                    AddVertsForArrow2D(ffChunk->m_debugVBO.GetMutableVerts(), tileBounds.GetCenter(), tileBounds.GetCenter() + gradient, 0.05f, Rgba8::Yellow);
+                    AddVertsForArrow2D(ffChunk->m_debugVBO->GetMutableVerts(), tileBounds.GetCenter(), tileBounds.GetCenter() + gradient, 0.05f, Rgba8::Yellow);
                 }
             }
 
-            g_renderer->BindTexture(0);
-            g_renderer->BindShader(0);
-            g_renderer->DrawVertexBuffer(&ffChunk->m_debugVBO);
+            g_rendererInterface->BindTexture(0);
+            g_rendererInterface->BindShader(0);
+            g_rendererInterface->DrawVertexBuffer(ffChunk->m_debugVBO);
         }
     }
     
     // Render debug verts 
-    g_renderer->BindTexture(0);
-    g_renderer->BindShader(0);
-    g_renderer->DrawVertexBuffer(&scDebug.m_frameVerts);
-    scDebug.m_frameVerts.ClearVerts();
+    g_rendererInterface->BindTexture(0);
+    g_rendererInterface->BindShader(0);
+    g_rendererInterface->DrawVertexBuffer(scDebug.m_frameVerts);
+    scDebug.m_frameVerts->ClearVerts();
 }
 
 
@@ -226,6 +229,10 @@ void SDebugRender::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugRender::Shutdown()
 {
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    delete scDebug.m_frameVerts;
+    scDebug.m_frameVerts = nullptr;
+
     g_eventSystem->UnsubscribeMethod("DebugRenderMouseRaycast", this, &SDebugRender::DebugRenderMouseRaycast);
     g_eventSystem->UnsubscribeMethod("DebugRenderCostField", this, &SDebugRender::DebugRenderCostField);
     g_eventSystem->UnsubscribeMethod("DebugRenderDistanceField", this, &SDebugRender::DebugRenderDistanceField);

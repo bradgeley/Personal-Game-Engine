@@ -2,7 +2,7 @@
 #include "WorldRaycast.h"
 #include "SCWorld.h"
 #include "Chunk.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Math/MathUtils.h"
@@ -238,30 +238,30 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 //----------------------------------------------------------------------------------------------------------------------
 void DebugDrawRaycast(WorldRaycastResult const& result)
 {
-    VertexBuffer vbo;
-    vbo.Initialize(1024);
+    VertexBuffer* vbo = g_rendererInterface->MakeVertexBuffer();
+    vbo->Initialize(1024);
 
-    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_raycast.m_start, 0.1f, 16, Rgba8::Yellow);
-    AddVertsForDisc2D(vbo.GetMutableVerts(), result.m_hitLocation, 0.1f, 16, Rgba8::Yellow);
+    AddVertsForDisc2D(vbo->GetMutableVerts(), result.m_raycast.m_start, 0.1f, 16, Rgba8::Yellow);
+    AddVertsForDisc2D(vbo->GetMutableVerts(), result.m_hitLocation, 0.1f, 16, Rgba8::Yellow);
 
     if (result.m_immediateHit)
     {
-        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Gray);
-        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_raycast.m_start, result.m_raycast.m_start + result.m_hitNormal, 0.05f, Rgba8::Orange);
+        AddVertsForArrow2D(vbo->GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Gray);
+        AddVertsForArrow2D(vbo->GetMutableVerts(), result.m_raycast.m_start, result.m_raycast.m_start + result.m_hitNormal, 0.05f, Rgba8::Orange);
     }
     else if (result.m_blockingHit)
     {
-        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Red);
-        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, 0.05f, Rgba8::Red);
+        AddVertsForArrow2D(vbo->GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Red);
+        AddVertsForArrow2D(vbo->GetMutableVerts(), result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, 0.05f, Rgba8::Red);
     }
     else
     {
-        AddVertsForArrow2D(vbo.GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Yellow);
+        AddVertsForArrow2D(vbo->GetMutableVerts(), result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Yellow);
     }
 
-    g_renderer->BindTexture(nullptr);
-    g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(&vbo);
+    g_rendererInterface->BindTexture(nullptr);
+    g_rendererInterface->BindShader(nullptr);
+    g_rendererInterface->DrawVertexBuffer(vbo);
 }
 
 

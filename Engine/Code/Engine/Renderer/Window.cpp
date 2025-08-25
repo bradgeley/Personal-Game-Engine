@@ -9,6 +9,7 @@
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Performance/ScopedTimer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Texture.h"
 
 
@@ -41,7 +42,9 @@ void Window::Startup()
     {
         RegisterEvents();
     }
+
     MakeWindow();
+
     if (m_config.m_takeFocusWhenCreated)
     {
         GiveFocus();
@@ -459,6 +462,14 @@ void Window::MakeChildOf(Window* parentWindow)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+RenderTarget* Window::GetRenderTarget() const
+{
+    return m_renderTarget;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Window::MakeWindow()
 {
     WNDCLASSEX wcex;
@@ -504,6 +515,7 @@ void Window::MakeWindow()
 
     m_windowHandle = hwnd;
     m_displayContext = GetDC(hwnd);
+    m_renderTarget = g_rendererInterface->MakeSwapchainRenderTarget(m_windowHandle, m_actualResolution);
 
     if (m_config.m_takeFocusWhenCreated)
     {

@@ -227,10 +227,17 @@
     <ClCompile Include="Performance\ScopedTimer.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\ConstantBuffer.cpp" />
-    <ClCompile Include="Renderer\D3D11Utils.cpp" />
+    <ClCompile Include="Renderer\D3D11\D3D11ConstantBuffer.cpp" />
+    <ClCompile Include="Renderer\D3D11\D3D11Renderer.cpp" />
+    <ClCompile Include="Renderer\D3D11\D3D11Shader.cpp" />
+    <ClCompile Include="Renderer\D3D11\D3D11SwapchainRenderTarget.cpp" />
+    <ClCompile Include="Renderer\D3D11\D3D11Texture.cpp" />
+    <ClCompile Include="Renderer\D3D11\D3D11Utils.cpp" />
+    <ClCompile Include="Renderer\D3D11\D3D11VertexBuffer.cpp" />
     <ClCompile Include="Renderer\EngineConstantBuffers.cpp" />
     <ClCompile Include="Renderer\Font.cpp" />
-    <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Renderer\RendererInterface.cpp" />
+    <ClCompile Include="Renderer\RenderTarget.cpp" />
     <ClCompile Include="Renderer\Rgba8.cpp" />
     <ClCompile Include="Renderer\Shader.cpp" />
     <ClCompile Include="Renderer\Texture.cpp" />
@@ -238,7 +245,6 @@
     <ClCompile Include="Renderer\VertexUtils.cpp" />
     <ClCompile Include="Renderer\Vertex_PCU.cpp" />
     <ClCompile Include="Renderer\Window.cpp" />
-    <ClCompile Include="Renderer\WindowRenderContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ThirdParty\miniaudio\miniaudio.h" />
@@ -311,14 +317,22 @@
     <ClInclude Include="Performance\ScopedTimer.h" />
     <ClInclude Include="Renderer\Camera.h" />
     <ClInclude Include="Renderer\ConstantBuffer.h" />
-    <ClInclude Include="Renderer\D3D11Utils.h" />
-    <ClInclude Include="Renderer\DefaultShaderSource.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11ConstantBuffer.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11Internal.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11Renderer.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11Shader.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11SwapchainRenderTarget.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11Texture.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11Utils.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11VertexBuffer.h" />
+    <ClInclude Include="Renderer\D3D11\HLSLDefaultFontShaderSource.h" />
+    <ClInclude Include="Renderer\D3D11\HLSLDefaultShaderSource.h" />
     <ClInclude Include="Renderer\EngineConstantBuffers.h" />
     <ClInclude Include="Renderer\Font.h" />
-    <ClInclude Include="Renderer\FontShaderSource.h" />
-    <ClInclude Include="Renderer\Renderer.h" />
+    <ClInclude Include="Renderer\RendererInterface.h" />
     <ClInclude Include="Renderer\RendererInternal.h" />
     <ClInclude Include="Renderer\RendererSettings.h" />
+    <ClInclude Include="Renderer\RenderTarget.h" />
     <ClInclude Include="Renderer\Rgba8.h" />
     <ClInclude Include="Renderer\Shader.h" />
     <ClInclude Include="Renderer\Texture.h" />
@@ -326,7 +340,6 @@
     <ClInclude Include="Renderer\VertexUtils.h" />
     <ClInclude Include="Renderer\Vertex_PCU.h" />
     <ClInclude Include="Renderer\Window.h" />
-    <ClInclude Include="Renderer\WindowRenderContext.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -9,7 +9,7 @@ struct Rgba8;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct CameraConstants
+struct alignas(16) CameraConstants
 {
     Mat44 m_gameToRender    = Mat44();  // Game to Render Matrix (Simple axis transpose so user can define game axes)
     Mat44 m_worldToCamera   = Mat44();  // View Matrix
@@ -22,7 +22,7 @@ struct CameraConstants
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct ModelConstants
+struct alignas(16) ModelConstants
 {
     Mat44 m_modelMatrix     = Mat44();
     float m_modelRgba[4]    = { 1.f, 1.f, 1.f, 1.f };
@@ -34,7 +34,7 @@ struct ModelConstants
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct FontConstants
+struct alignas(16) FontConstants
 {
     FontConstants() = default;
     FontConstants(Rgba8 const& tint, float boldness, float antiAlias, float outlineThickness);
@@ -43,7 +43,7 @@ struct FontConstants
     float m_boldness                    = 0.66f;
     float m_antiAliasAmount             = 0.5f;
     float m_outlineThickness            = 0.f;
-    float pad = (float) 0xFFFFFFFF;
+    float pad = 0.f;
     
     bool operator==(FontConstants const& rhs) const;
     bool operator!=(FontConstants const& rhs) const;

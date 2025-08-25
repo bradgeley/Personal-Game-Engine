@@ -1,6 +1,8 @@
 // Bradley Christensen - 2024
 #include "Chunk.h"
 #include "WorldSettings.h"
+#include "Engine/Renderer/RendererInterface.h"
+#include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Math/Noise.h"
 #include "Engine/Math/MathUtils.h"
@@ -47,8 +49,9 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	}
 
 	// Generate Vbo
-	m_vbo.Initialize(6 * numTilesInChunk);
-	auto& verts = m_vbo.GetMutableVerts();
+	m_vbo = g_rendererInterface->MakeVertexBuffer();
+	m_vbo->Initialize(6 * numTilesInChunk);
+	auto& verts = m_vbo->GetMutableVerts();
 	for (int y = 0; y < numTilesInRow; ++y)
 	{
 		for (int x = 0; x < numTilesInRow; ++x)
@@ -68,9 +71,9 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	}
 
 #if defined(_DEBUG)
-	auto& debugVerts = m_debugVBO.GetMutableVerts();
-	AddVertsForWireGrid(debugVerts, m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
-	AddVertsForWireBox2D(debugVerts, m_chunkBounds, 0.03f, Rgba8::Red);
+	m_debugVBO = g_rendererInterface->MakeVertexBuffer();
+	AddVertsForWireGrid(m_debugVBO->GetMutableVerts(), m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
+	AddVertsForWireBox2D(m_debugVBO->GetMutableVerts(), m_chunkBounds, 0.03f, Rgba8::Red);
 #endif
 }
 
@@ -80,7 +83,13 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 void Chunk::Destroy()
 {
 	m_tileIDs.Clear();
-	m_vbo.ClearVerts();
+
+	delete m_vbo;
+	m_vbo = nullptr;
+#if defined(_DEBUG)
+	delete m_debugVBO;
+	m_debugVBO = nullptr;
+#endif
 
 	NamedProperties args;
 	m_destroyed.Broadcast(args);

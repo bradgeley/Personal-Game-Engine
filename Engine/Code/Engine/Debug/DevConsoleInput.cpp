@@ -4,11 +4,12 @@
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/Font.h"
-#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/RendererInterface.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Window.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/DataStructures/NamedProperties.h"
 
 
 
@@ -19,7 +20,7 @@ const std::string LINE_PREFIX = " > ";
 //----------------------------------------------------------------------------------------------------------------------
 DevConsoleInput::DevConsoleInput()
 {
-    m_vbo = new VertexBuffer();
+    m_vbo = g_rendererInterface->MakeVertexBuffer();
 }
 
 
@@ -220,9 +221,9 @@ void DevConsoleInput::RenderBackground(AABB2 const& box) const
 {
     AddVertsForAABB2(m_vbo->GetMutableVerts(), box, Rgba8::DarkGray);
 
-    g_renderer->BindShader(nullptr);
-    g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(m_vbo);
+    g_rendererInterface->BindShader(nullptr);
+    g_rendererInterface->BindTexture(nullptr);
+    g_rendererInterface->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
 }
 
@@ -231,7 +232,7 @@ void DevConsoleInput::RenderBackground(AABB2 const& box) const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::RenderText(AABB2 const& box) const
 {
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font* font = g_rendererInterface->GetDefaultFont(); // todo: let change fonts
 
     std::string guess = g_devConsole->GuessCommandInput(m_input.m_line);
 
@@ -240,7 +241,7 @@ void DevConsoleInput::RenderText(AABB2 const& box) const
     font->AddVertsForText2D(m_vbo->GetMutableVerts(), box.mins, box.GetHeight(), LINE_PREFIX + m_input.m_line, Rgba8::White);
 
     font->SetRendererState();
-    g_renderer->DrawVertexBuffer(m_vbo);
+    g_rendererInterface->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
 }
 
@@ -254,7 +255,7 @@ void DevConsoleInput::RenderSelection(AABB2 const& box) const
         return;
     }
     
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font* font = g_rendererInterface->GetDefaultFont(); // todo: let change fonts
     
     float caretThickness = 1.f / (float) g_window->GetWidth();
     
@@ -270,7 +271,7 @@ void DevConsoleInput::RenderSelection(AABB2 const& box) const
     selectionBox.maxs.x += caretOffsetX + caretThickness;
     
     AddVertsForAABB2(m_vbo->GetMutableVerts(), selectionBox, Rgba8(0,171,240, 100));
-    g_renderer->DrawVertexBuffer(m_vbo);
+    g_rendererInterface->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
 }
 
@@ -279,7 +280,7 @@ void DevConsoleInput::RenderSelection(AABB2 const& box) const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::RenderCaret(AABB2 const& box) const
 {
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font* font = g_rendererInterface->GetDefaultFont(); // todo: let change fonts
 
     Rgba8 caretTint = Rgba8(255, 255, 255, (uint8_t) (m_caretAnimationFraction * 255.f));
     float textHeight = box.GetHeight();
@@ -294,9 +295,9 @@ void DevConsoleInput::RenderCaret(AABB2 const& box) const
     caretBox.maxs.x += caretOffsetX + caretThickness;
     
     AddVertsForAABB2(m_vbo->GetMutableVerts(), caretBox, caretTint);
-    g_renderer->BindShader(nullptr);
-    g_renderer->BindTexture(nullptr);
-    g_renderer->DrawVertexBuffer(m_vbo);
+    g_rendererInterface->BindShader(nullptr);
+    g_rendererInterface->BindTexture(nullptr);
+    g_rendererInterface->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
 }
 

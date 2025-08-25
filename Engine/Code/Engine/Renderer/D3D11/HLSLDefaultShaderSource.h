@@ -3,7 +3,7 @@
 
 
 
-static char const* s_defaultShaderSource = R"(
+static char const* s_HLSLDefaultShaderSource = R"(
 
 
 
