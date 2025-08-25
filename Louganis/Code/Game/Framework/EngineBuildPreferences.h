@@ -13,7 +13,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Performance
 //
-//#define DEBUG_MEMORY_LEAKS // << SLOW, especially slow for things like logging dev console lines
+//#define DEBUG_MEMORY_LEAKS // just does a dump at the end
 //#define PERF_WINDOW_DISPLAY_ENGINE_SECTION
 #define PERF_WINDOW_LOG_ENGINE_FRAME_DATA
 

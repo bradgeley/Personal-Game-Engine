@@ -98,7 +98,9 @@ public:
     void BindTexture(Texture* texture);
     void BindShader(Shader* shader);
     virtual void BindRenderTarget(RenderTarget* renderTarget) = 0;
+    virtual void ResizeSwapChainRenderTarget(RenderTarget* renderTarget, IntVec2 const& newSize) = 0;
     virtual void UnbindRenderTarget(RenderTarget* renderTarget);
+    virtual bool SetFullscreenState(RenderTarget* renderTarget, bool fullscreen) = 0;
 
     int GetNumFrameDrawCalls() const;
     Font* GetDefaultFont() const;

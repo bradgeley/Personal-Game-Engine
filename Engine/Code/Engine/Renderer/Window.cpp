@@ -284,12 +284,7 @@ void Window::SetHasFocus(bool hasFocus)
 {
     m_hasFocus = hasFocus;
 
-    RefreshWindowTitle();
-
-    NamedProperties args;
-    args.Set("hasFocus", hasFocus);
-    args.Set("window", this);
-    m_focusChanged.Broadcast(args);
+    WindowFocusChanged();
 }
 
 
@@ -425,11 +420,7 @@ void Window::HandleWindowResolutionChanged(int width, int height)
 
     m_actualResolution = IntVec2(width, height);
 
-    RefreshWindowTitle();
-
-    NamedProperties args;
-    args.Set("window", this);
-    m_windowSizeChanged.Broadcast(args);
+    WindowSizeChanged();
 }
 
 
@@ -517,7 +508,7 @@ void Window::MakeWindow()
 
     m_windowHandle = hwnd;
     m_displayContext = GetDC(hwnd);
-    m_renderTarget = g_rendererInterface->MakeSwapchainRenderTarget(m_windowHandle, m_actualResolution);
+    m_renderTarget = g_rendererInterface->MakeSwapchainRenderTarget(m_windowHandle, windowResolution);
 
     if (m_config.m_takeFocusWhenCreated)
     {
@@ -573,6 +564,130 @@ void Window::UnregisterEvents()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Window::WindowModeChanged(WindowMode previousMode)
+{
+    RefreshWindowTitle();
+
+    HWND hwnd = (HWND) m_windowHandle;
+
+    // Restore window if minimized
+    WINDOWPLACEMENT wp = {};
+    wp.length = sizeof(wp);
+    GetWindowPlacement(hwnd, &wp);
+    if (wp.showCmd == SW_SHOWMINIMIZED)
+    {
+        wp.showCmd = SW_SHOWNORMAL;
+        SetWindowPlacement(hwnd, &wp);
+    }
+
+    // Get monitor rect
+    RECT monitorRect = {};
+    HMONITOR hMon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
+    MONITORINFO mi = { sizeof(mi) };
+    GetMonitorInfo(hMon, &mi);
+    monitorRect = mi.rcMonitor;
+
+    if (IsFullscreen())
+    {
+        bool succeeded = g_rendererInterface->SetFullscreenState(m_renderTarget, false);
+        ASSERT_OR_DIE(succeeded, "Failed to set fullscreen.");
+    }
+
+    // Set style
+    DWORD style = GetWindowStyleFlags();
+    SetWindowLongPtr(hwnd, GWL_STYLE, style);
+
+    RECT targetRect = monitorRect;
+    if (IsWindowed())
+    {
+        IntVec2 lastKnownPos = GetLastKnownWindowedPos();
+        IntVec2 desiredResolution = GetDesiredWindowResolution();
+        targetRect.left = lastKnownPos.x;
+        targetRect.top = lastKnownPos.y;
+        targetRect.right = targetRect.left + desiredResolution.x;
+        targetRect.bottom = targetRect.top + desiredResolution.y;
+        bool adjusted = AdjustWindowRect(&targetRect, style, FALSE);
+
+        ASSERT_OR_DIE(adjusted, "Failed to adjust");
+    }
+
+    std::this_thread::yield();
+    bool setPos = SetWindowPos(hwnd, HWND_TOP,
+                               targetRect.left, targetRect.top,
+                               targetRect.right - targetRect.left,
+                               targetRect.bottom - targetRect.top,
+                               SWP_FRAMECHANGED | SWP_SHOWWINDOW);
+
+    ASSERT_OR_DIE(setPos, "Failed to set window Pos");
+
+    if (IsFullscreen())
+    {
+        bool succeeded = g_rendererInterface->SetFullscreenState(m_renderTarget, true);
+        ASSERT_OR_DIE(succeeded, "Failed to set fullscreen.");
+    }
+
+    g_rendererInterface->ResizeSwapChainRenderTarget(m_renderTarget, GetRenderResolution());
+
+    NamedProperties args;
+    args.Set("previousMode", previousMode);
+    args.Set("window", this);
+    args.Set("mode", m_userSettings.m_windowMode);
+    m_windowModeChanged.Broadcast(args);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::WindowFocusChanged()
+{
+    RefreshWindowTitle();
+
+    if (IsFullscreen())
+    {
+        if (!HasFocus())
+        {
+            Minimize();
+        }
+        else
+        {
+            ShowWindow((HWND) GetHWND(), SW_SHOW);
+        }
+    }
+    else
+    {
+        if (HasFocus())
+        {
+            SetForegroundWindow((HWND) GetHWND());
+            SetActiveWindow((HWND) GetHWND());
+        }
+    }
+
+    NamedProperties args;
+    args.Set("hasFocus", HasFocus());
+    args.Set("window", this);
+    m_focusChanged.Broadcast(args);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Window::WindowSizeChanged()
+{
+    RefreshWindowTitle();
+
+    if (m_renderTarget)
+    {
+        g_rendererInterface->ResizeSwapChainRenderTarget(m_renderTarget, GetRenderResolution());
+    }
+
+    NamedProperties args;
+    args.Set("window", this);
+    m_windowSizeChanged.Broadcast(args);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Window::SetWindowMode(NamedProperties& args)
 {
     WindowMode previousMode = m_userSettings.m_windowMode;
@@ -594,13 +709,7 @@ bool Window::SetWindowMode(NamedProperties& args)
 
     if (m_userSettings.m_windowMode != previousMode)
     {
-        RefreshWindowTitle();
-
-        args.Set("previousMode", previousMode);
-        args.Set("window", this);
-        args.Set("mode", m_userSettings.m_windowMode);
-
-        m_windowModeChanged.Broadcast(args);
+        WindowModeChanged(previousMode);
     }
     return false;
 }

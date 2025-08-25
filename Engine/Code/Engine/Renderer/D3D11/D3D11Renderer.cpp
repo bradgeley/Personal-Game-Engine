@@ -266,28 +266,40 @@ void D3D11Renderer::BindRenderTarget(RenderTarget* renderTarget)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::ResizeSwapChainRenderTarget(D3D11SwapchainRenderTarget* renderTarget)
+void D3D11Renderer::ResizeSwapChainRenderTarget(RenderTarget* renderTarget, IntVec2 const& newSize)
 {
-	renderTarget->m_backbufferTexture->ReleaseResources();
-	renderTarget->m_depthBuffer->ReleaseResources();
+	ASSERT_OR_DIE(renderTarget && renderTarget->m_backbufferTexture && renderTarget->m_depthBuffer, "Null render target.");
+	D3D11SwapchainRenderTarget* swapChainRT = reinterpret_cast<D3D11SwapchainRenderTarget*>(renderTarget);
+
+	swapChainRT->m_backbufferTexture->ReleaseResources();
+	swapChainRT->m_depthBuffer->ReleaseResources();
 
 	DXGI_SWAP_CHAIN_DESC desc = {};
-	renderTarget->m_swapChain->GetDesc(&desc);
+	swapChainRT->m_swapChain->GetDesc(&desc);
 
-	IntVec2 renderResolution = renderTarget->m_renderDimensions;
+	renderTarget->m_renderDimensions = newSize;
 
-	HRESULT hr = renderTarget->m_swapChain->ResizeBuffers(
+	HRESULT hr = swapChainRT->m_swapChain->ResizeBuffers(
 		desc.BufferCount,
-		renderResolution.x,
-		renderResolution.y,
+		renderTarget->m_renderDimensions.x,
+		renderTarget->m_renderDimensions.y,
 		desc.BufferDesc.Format,
 		desc.Flags
 	);
 
 	ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to resize buffers after window mode change.");
 
-	reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(renderTarget->m_swapChain);
-	reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(renderTarget->m_swapChain);
+	reinterpret_cast<D3D11Texture*>(swapChainRT->m_backbufferTexture)->InitAsBackbufferTexture(swapChainRT->m_swapChain);
+	reinterpret_cast<D3D11Texture*>(swapChainRT->m_depthBuffer)->InitAsDepthBuffer(swapChainRT->m_swapChain);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool D3D11Renderer::SetFullscreenState(RenderTarget* renderTarget, bool fullscreen)
+{
+	HRESULT hr = reinterpret_cast<D3D11SwapchainRenderTarget*>(renderTarget)->m_swapChain->SetFullscreenState((BOOL) fullscreen, nullptr);
+	return SUCCEEDED(hr);
 }
 
 

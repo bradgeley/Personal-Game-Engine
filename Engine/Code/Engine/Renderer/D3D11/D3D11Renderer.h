@@ -42,7 +42,8 @@ public:
     ID3D11DeviceContext* GetDeviceContext() const;
 
     virtual void BindRenderTarget(RenderTarget* renderTarget) override;
-    virtual void ResizeSwapChainRenderTarget(D3D11SwapchainRenderTarget* renderTarget);
+    virtual void ResizeSwapChainRenderTarget(RenderTarget* renderTarget, IntVec2 const& newSize) override;
+    virtual bool SetFullscreenState(RenderTarget* renderTarget, bool fullscreen) override;
 
     MSAASettings GetMaxSupportedMSAASettings(DXGI_FORMAT format);
 

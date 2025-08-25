@@ -117,6 +117,10 @@ private:
     void RegisterEvents();
     void UnregisterEvents();
 
+    void WindowModeChanged(WindowMode previousMode);
+    void WindowFocusChanged();
+    void WindowSizeChanged();
+
     bool SetWindowMode(NamedProperties& args);
     
 public:
