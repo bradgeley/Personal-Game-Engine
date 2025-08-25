@@ -32,7 +32,7 @@ D3D11Renderer::D3D11Renderer(RendererConfig const& config) : Renderer(config)
 //----------------------------------------------------------------------------------------------------------------------
 D3D11Renderer* D3D11Renderer::Get()
 {
-    return reinterpret_cast<D3D11Renderer*>(g_renderer);
+    return dynamic_cast<D3D11Renderer*>(g_renderer);
 }
 
 
@@ -55,7 +55,7 @@ void D3D11Renderer::ClearScreen(Rgba8 const& tint)
 	ASSERT_OR_DIE(renderTarget, "Tried to clear null render target.");
 	float colorAsFloats[4] = {};
 	tint.GetAsFloats(&colorAsFloats[0]);
-	ID3D11RenderTargetView* const renderTargetView = reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
+	ID3D11RenderTargetView* const renderTargetView = dynamic_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
 	m_deviceContext->ClearRenderTargetView(renderTargetView, colorAsFloats);
 }
 
@@ -66,7 +66,7 @@ void D3D11Renderer::ClearDepth(float depth)
 {
 	RenderTarget* renderTarget = m_renderTargets.at(m_currentRenderTarget);
 	ASSERT_OR_DIE(renderTarget && renderTarget->m_depthBuffer, "Tried to clear null depth buffer.");
-	ID3D11DepthStencilView* view = reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
+	ID3D11DepthStencilView* view = dynamic_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
 	m_deviceContext->ClearDepthStencilView(view, D3D11_CLEAR_DEPTH, depth, 0);
 }
 
@@ -81,12 +81,12 @@ void D3D11Renderer::BindVertexBuffer(VertexBuffer const* vbo) const
 	m_deviceContext->IASetVertexBuffers(
 		0,
 		1,
-		&reinterpret_cast<D3D11VertexBuffer const*>(vbo)->m_handle,
+		&dynamic_cast<D3D11VertexBuffer const*>(vbo)->m_handle,
 		&stride,
 		&offset
 	);
 
-	ID3D11InputLayout* vertexLayout = reinterpret_cast<D3D11Shader*>(m_defaultShader)->CreateOrGetInputLayout();
+	ID3D11InputLayout* vertexLayout = dynamic_cast<D3D11Shader*>(m_defaultShader)->CreateOrGetInputLayout();
 	m_deviceContext->IASetInputLayout(vertexLayout);
 }
 
@@ -95,8 +95,8 @@ void D3D11Renderer::BindVertexBuffer(VertexBuffer const* vbo) const
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::BindConstantBuffer(ConstantBuffer const* cbo, int slot) const
 {
-	m_deviceContext->VSSetConstantBuffers(slot, 1, &reinterpret_cast<D3D11ConstantBuffer const*>(cbo)->m_handle);
-	m_deviceContext->PSSetConstantBuffers(slot, 1, &reinterpret_cast<D3D11ConstantBuffer const*>(cbo)->m_handle);
+	m_deviceContext->VSSetConstantBuffers(slot, 1, &dynamic_cast<D3D11ConstantBuffer const*>(cbo)->m_handle);
+	m_deviceContext->PSSetConstantBuffers(slot, 1, &dynamic_cast<D3D11ConstantBuffer const*>(cbo)->m_handle);
 }
 
 
@@ -187,8 +187,8 @@ RenderTargetID D3D11Renderer::MakeSwapchainRenderTarget(void* hwnd, IntVec2 cons
 	DX_SAFE_RELEASE(adapter);
 	DX_SAFE_RELEASE(device);
 
-	reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(d3d11Swapchain->m_swapChain);
-	reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(d3d11Swapchain->m_swapChain);
+	dynamic_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(d3d11Swapchain->m_swapChain);
+	dynamic_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(d3d11Swapchain->m_swapChain);
 
 	RenderTargetID newID = RequestRenderTargetID();
 	renderTarget->m_id = newID;
@@ -246,8 +246,8 @@ void D3D11Renderer::BindRenderTarget(RenderTargetID renderTargetID)
 
 	ASSERT_OR_DIE(renderTarget && renderTarget->m_backbufferTexture && renderTarget->m_depthBuffer, "Null render target.");
 
-	ID3D11DepthStencilView* dsv = reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
-	ID3D11RenderTargetView* rtv = reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
+	ID3D11DepthStencilView* dsv = dynamic_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
+	ID3D11RenderTargetView* rtv = dynamic_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
 	m_deviceContext->OMSetRenderTargets(1, &rtv, dsv);
 
 	// Set viewport
@@ -292,8 +292,8 @@ void D3D11Renderer::ResizeSwapChainRenderTarget(RenderTargetID renderTargetID, I
 
 	ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to resize buffers after window mode change.");
 
-	reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(d3dSwapchain->m_swapChain);
-	reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(d3dSwapchain->m_swapChain);
+	dynamic_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(d3dSwapchain->m_swapChain);
+	dynamic_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(d3dSwapchain->m_swapChain);
 }
 
 
@@ -404,7 +404,7 @@ void D3D11Renderer::SamplerStateUpdated()
 void D3D11Renderer::BoundTextureUpdated()
 {
 	ASSERT_OR_DIE(m_settings.m_texture, "Tried to update null bound texture.");
-	ID3D11ShaderResourceView* srv = reinterpret_cast<D3D11Texture*>(m_settings.m_texture)->CreateOrGetShaderResourceView();
+	ID3D11ShaderResourceView* srv = dynamic_cast<D3D11Texture*>(m_settings.m_texture)->CreateOrGetShaderResourceView();
 
 	// todo: support multiple textures bound at the same time
 	m_deviceContext->PSSetShaderResources(0, 1, &srv);
@@ -417,9 +417,9 @@ void D3D11Renderer::BoundShaderUpdated()
 {
 	ASSERT_OR_DIE(m_settings.m_shader, "Tried to update null bound shader.");
 
-	ID3D11PixelShader* pixelShader = reinterpret_cast<D3D11Shader*>(m_settings.m_shader)->m_pixelShader;
+	ID3D11PixelShader* pixelShader = dynamic_cast<D3D11Shader*>(m_settings.m_shader)->m_pixelShader;
 	ASSERT_OR_DIE(pixelShader, "Shader has no valid pixel shader.");
-	ID3D11VertexShader* vertexShader = reinterpret_cast<D3D11Shader*>(m_settings.m_shader)->m_vertexShader;
+	ID3D11VertexShader* vertexShader = dynamic_cast<D3D11Shader*>(m_settings.m_shader)->m_vertexShader;
 	ASSERT_OR_DIE(vertexShader, "Shader has no valid vertex shader.");
 
 	m_deviceContext->VSSetShader(vertexShader, nullptr, 0);
@@ -537,7 +537,7 @@ void D3D11Renderer::CreateDefaultShader()
 	ShaderConfig defaultShaderConfig;
 	defaultShaderConfig.m_name = "DefaultShader";
 	m_defaultShader = new D3D11Shader(defaultShaderConfig);
-	reinterpret_cast<D3D11Shader*>(m_defaultShader)->CreateFromSource(s_HLSLDefaultShaderSource);
+	dynamic_cast<D3D11Shader*>(m_defaultShader)->CreateFromSource(s_HLSLDefaultShaderSource);
 }
 
 
