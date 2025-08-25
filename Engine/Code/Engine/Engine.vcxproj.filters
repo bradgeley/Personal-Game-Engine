@@ -244,7 +244,10 @@
     <ClCompile Include="Renderer\RenderTarget.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\D3D11\D3D11SwapchainRenderTarget.cpp">
+    <ClCompile Include="Renderer\Swapchain.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11Swapchain.cpp">
       <Filter>Renderer\D3D11</Filter>
     </ClCompile>
   </ItemGroup>
@@ -298,9 +301,6 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Font.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\RendererInternal.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\RendererSettings.h">
@@ -525,7 +525,10 @@
     <ClInclude Include="Renderer\RenderTarget.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\D3D11\D3D11SwapchainRenderTarget.h">
+    <ClInclude Include="Renderer\Swapchain.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11Swapchain.h">
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "D3D11Utils.h"
-#include "Engine/Renderer/RendererInternal.h"
+#include "D3D11Internal.h"
 #include "Engine/Core/ErrorUtils.h"
 
 

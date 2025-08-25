@@ -4,13 +4,13 @@
 #include "Engine/Events/EventDelegate.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
+#include "RenderTarget.h"
 #include <string>
 #include <vector>
 
 
 
 class Texture;
-struct RenderTarget;
 
 
 
@@ -108,7 +108,7 @@ public:
 
     void MakeChildOf(Window* parentWindow);
 
-    RenderTarget* GetRenderTarget() const;
+    RenderTargetID GetRenderTarget() const;
 
 private:
 
@@ -155,5 +155,5 @@ protected:
     bool m_isManuallyResizing       = false;
     bool m_isMinimized              = false;
 
-    RenderTarget* m_renderTarget    = nullptr;
+    RenderTargetID m_renderTarget   = INVALID_RENDER_TARGET_ID;
 };

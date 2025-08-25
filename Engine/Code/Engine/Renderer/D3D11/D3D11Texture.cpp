@@ -2,6 +2,7 @@
 #include "D3D11Texture.h"
 #include "D3D11Internal.h"
 #include "D3D11Renderer.h"
+#include "D3D11Swapchain.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/Image.h"
 #include "Engine/Core/StringUtils.h"
@@ -198,6 +199,32 @@ bool D3D11Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
     #endif
 
     return m_textureHandle != nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void D3D11Texture::CopyTo(Swapchain* swapchain)
+{
+    D3D11Swapchain* d3dSwapchain = dynamic_cast<D3D11Swapchain*>(swapchain);
+    ASSERT_OR_DIE(d3dSwapchain && d3dSwapchain->m_swapChain, "Invalid swapchain.");
+
+    ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
+    HRESULT hr = d3dSwapchain->m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&swapChainBackBufferTexture));
+    ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to get swapchain buffer.");
+
+    ID3D11DeviceContext* context = D3D11Renderer::Get()->GetDeviceContext();
+
+    // Paint onto the actual backbuffer texture using the texture that we've been rendering to at higher quality (lets us use MSAA)
+    context->ResolveSubresource(
+        swapChainBackBufferTexture, // actual backbuffer d3d texture
+        0,
+        m_textureHandle, // higher sample count texture that we've been rendering to
+        0,
+        DXGI_FORMAT_R8G8B8A8_UNORM
+    );
+
+    DX_SAFE_RELEASE(swapChainBackBufferTexture);
 }
 
 

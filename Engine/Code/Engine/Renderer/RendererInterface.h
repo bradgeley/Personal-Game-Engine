@@ -2,20 +2,29 @@
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
 #include "RendererSettings.h"
+#include <unordered_map>
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 class Camera;
 class ConstantBuffer;
 class Font;
 class Shader;
 class Texture;
+class Swapchain;
 class VertexBuffer;
 class Window;
 struct IntVec2;
 struct NamedProperties;
 struct RenderTarget;
 struct ShaderConfig;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+typedef uint32_t RenderTargetID;
+extern uint32_t INVALID_RENDER_TARGET_ID;
 
 
 
@@ -78,10 +87,11 @@ public:
     virtual Shader* MakeShader(ShaderConfig const& config) const = 0;
     virtual ConstantBuffer* MakeConstantBuffer() const = 0;
     virtual VertexBuffer* MakeVertexBuffer() const = 0;
-    virtual RenderTarget* MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& initialDims) const = 0;
+    virtual Swapchain* MakeSwapchain() const = 0;
+    virtual RenderTargetID MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& initialDims) = 0;
 
     // Release Functions
-    virtual void ReleaseSwapchainRenderTarget(RenderTarget*& renderTarget) const = 0;
+    virtual void ReleaseSwapchainRenderTarget(RenderTargetID renderTarget) = 0;
 
     // Rendering Pipeline State
     void ResetRenderingPipelineState();
@@ -97,10 +107,10 @@ public:
     void SetFillMode(FillMode fillMode);
     void BindTexture(Texture* texture);
     void BindShader(Shader* shader);
-    virtual void BindRenderTarget(RenderTarget* renderTarget) = 0;
-    virtual void ResizeSwapChainRenderTarget(RenderTarget* renderTarget, IntVec2 const& newSize) = 0;
-    virtual void UnbindRenderTarget(RenderTarget* renderTarget);
-    virtual bool SetFullscreenState(RenderTarget* renderTarget, bool fullscreen) = 0;
+    virtual void BindRenderTarget(RenderTargetID renderTarget) = 0;
+    virtual void ResizeSwapChainRenderTarget(RenderTargetID renderTarget, IntVec2 const& newSize) = 0;
+    virtual void UnbindRenderTarget(RenderTargetID renderTarget);
+    virtual bool SetFullscreenState(RenderTargetID renderTarget, bool fullscreen) = 0;
 
     int GetNumFrameDrawCalls() const;
     Font* GetDefaultFont() const;
@@ -168,7 +178,7 @@ protected:
     RendererPerUserSettings m_perUserSettings;
 
     // Renderer Pipeline State
-    RenderTarget* m_currentRenderTarget = nullptr;
+    RenderTargetID m_currentRenderTarget = INVALID_RENDER_TARGET_ID;
     Camera const* m_currentCamera = nullptr;
     RendererSettings m_settings;
     RendererSettings m_dirtySettings;
@@ -183,6 +193,8 @@ protected:
     Shader* m_defaultShader = nullptr;
     Texture* m_defaultTexture = nullptr;
     Font* m_defaultFont = nullptr;
+
+    std::unordered_map<RenderTargetID, RenderTarget*> m_renderTargets;
 
     // Debug
 #if defined(_DEBUG)

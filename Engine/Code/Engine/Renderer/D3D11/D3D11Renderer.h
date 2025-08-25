@@ -33,17 +33,21 @@ public:
     virtual Shader* MakeShader(ShaderConfig const& config) const override;
     virtual ConstantBuffer* MakeConstantBuffer() const override;
     virtual VertexBuffer* MakeVertexBuffer() const override;
-    virtual RenderTarget* MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& resolution) const override;
+    virtual Swapchain* MakeSwapchain() const override;
+    virtual RenderTargetID MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& resolution) override;
+
+    // ID Functions
+    RenderTargetID RequestRenderTargetID() const;
 
     // Release Functions
-    virtual void ReleaseSwapchainRenderTarget(RenderTarget*& renderTarget) const override;
+    virtual void ReleaseSwapchainRenderTarget(RenderTargetID renderTargetID) override;
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
 
-    virtual void BindRenderTarget(RenderTarget* renderTarget) override;
-    virtual void ResizeSwapChainRenderTarget(RenderTarget* renderTarget, IntVec2 const& newSize) override;
-    virtual bool SetFullscreenState(RenderTarget* renderTarget, bool fullscreen) override;
+    virtual void BindRenderTarget(RenderTargetID renderTargetID) override;
+    virtual void ResizeSwapChainRenderTarget(RenderTargetID renderTargetID, IntVec2 const& newSize) override;
+    virtual bool SetFullscreenState(RenderTargetID renderTargetID, bool fullscreen) override;
 
     MSAASettings GetMaxSupportedMSAASettings(DXGI_FORMAT format);
 

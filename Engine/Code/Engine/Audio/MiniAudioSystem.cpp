@@ -28,7 +28,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Mini Audio Sound
 //
-struct MiniAudioSoundImpl
+struct MiniAudioSound
 {
 	ma_sound m_sound;
 	ma_uint64 m_cursor = 0;
@@ -42,7 +42,7 @@ struct MiniAudioSoundImpl
 struct MiniAudioImpl
 {
 	ma_engine m_engine;
-	std::unordered_map<SoundID, MiniAudioSoundImpl> m_sounds;
+	std::unordered_map<SoundID, MiniAudioSound> m_sounds;
 };
 
 
@@ -158,7 +158,7 @@ bool MiniAudioSystem::IsSoundPaused(SoundID id) const
 SoundID MiniAudioSystem::PlaySoundFromFile(const char* filepath, bool looping /*= false*/, float volume /*= 1.f*/)
 {
 	SoundID newID = RequestSoundID();
-	MiniAudioSoundImpl& newSound = m_miniAudioImpl->m_sounds[newID];
+	MiniAudioSound& newSound = m_miniAudioImpl->m_sounds[newID];
 	ma_result result = ma_sound_init_from_file(&m_miniAudioImpl->m_engine, filepath, 0, nullptr, nullptr, &newSound.m_sound);
 	if (result == MA_SUCCESS)
 	{

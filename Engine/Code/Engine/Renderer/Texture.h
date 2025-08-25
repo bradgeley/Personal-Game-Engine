@@ -6,6 +6,7 @@
 
 
 class Image;
+class Swapchain;
 struct Rgba8;
 
 
@@ -28,6 +29,8 @@ public:
     virtual bool CreateUniformTexture(IntVec2 const& dims, Rgba8 const& tint);
     virtual bool CreateFromImage(Image const& image, bool createMipMap = true) = 0;
     virtual bool LoadFromImageFile(const char* imageSource, bool createMipMap = true);
+
+    virtual void CopyTo(Swapchain* swapchain) = 0;
 
 protected:
 

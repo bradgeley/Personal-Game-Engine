@@ -455,7 +455,7 @@ void Window::MakeChildOf(Window* parentWindow)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RenderTarget* Window::GetRenderTarget() const
+RenderTargetID Window::GetRenderTarget() const
 {
     return m_renderTarget;
 }
@@ -675,7 +675,7 @@ void Window::WindowSizeChanged()
 {
     RefreshWindowTitle();
 
-    if (m_renderTarget)
+    if (m_renderTarget != INVALID_RENDER_TARGET_ID)
     {
         g_rendererInterface->ResizeSwapChainRenderTarget(m_renderTarget, GetRenderResolution());
     }

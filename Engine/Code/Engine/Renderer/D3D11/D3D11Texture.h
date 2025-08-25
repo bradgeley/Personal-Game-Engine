@@ -31,6 +31,8 @@ public:
     bool InitAsBackbufferTexture(IDXGISwapChain* swapChain);
     bool InitAsDepthBuffer(IDXGISwapChain* swapChain);
 
+    virtual void CopyTo(Swapchain* swapchain) override;
+
     ID3D11DepthStencilView* CreateOrGetDepthStencilView();
     ID3D11RenderTargetView* CreateOrGetRenderTargetView();
     ID3D11ShaderResourceView* CreateOrGetShaderResourceView();

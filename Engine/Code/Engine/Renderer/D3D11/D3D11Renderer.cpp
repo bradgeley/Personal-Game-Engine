@@ -6,7 +6,7 @@
 #include "D3D11Texture.h"
 #include "D3D11Utils.h"
 #include "D3D11VertexBuffer.h"
-#include "D3D11SwapchainRenderTarget.h"
+#include "D3D11Swapchain.h"
 #include "HLSLDefaultShaderSource.h"
 #include "HLSLDefaultFontShaderSource.h"
 #include "Engine/Core/ErrorUtils.h"
@@ -40,32 +40,10 @@ D3D11Renderer* D3D11Renderer::Get()
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::Present() const
 {
-	ASSERT_OR_DIE(m_currentRenderTarget, "Present called with no render target bound.");
+	ASSERT_OR_DIE(m_currentRenderTarget != INVALID_RENDER_TARGET_ID, "Present called with no render target bound.");
 
-	// TODO: make so i dont have to reinterpret cast
-	D3D11SwapchainRenderTarget* swapchainRT = reinterpret_cast<D3D11SwapchainRenderTarget*>(m_currentRenderTarget);
-
-	// Get the backbuffer texture
-	ID3D11Texture2D* swapChainBackBufferTexture = nullptr;
-	HRESULT hr = swapchainRT->m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&swapChainBackBufferTexture));
-
-	ASSERT_OR_DIE(SUCCEEDED(hr), "Swap chain did not have a backbuffer texture.");
-
-	ID3D11DeviceContext* context = D3D11Renderer::Get()->GetDeviceContext();
-
-	// Paint onto the actual backbuffer texture using the texture that we've been rendering to at higher quality (lets us use MSAA)
-	context->ResolveSubresource(
-		swapChainBackBufferTexture, // actual backbuffer d3d texture
-		0,
-		reinterpret_cast<D3D11Texture*>(swapchainRT->m_backbufferTexture)->m_textureHandle, // higher sample count texture that we've been rendering to
-		0,
-		DXGI_FORMAT_R8G8B8A8_UNORM
-	);
-
-	DX_SAFE_RELEASE(swapChainBackBufferTexture);
-
-	UINT vsync = m_perUserSettings.m_vsyncEnabled ? 1 : 0;
-	swapchainRT->m_swapChain->Present(vsync, 0);
+	RenderTarget* renderTarget = m_renderTargets.at(m_currentRenderTarget);
+	renderTarget->Present();
 }
 
 
@@ -73,9 +51,11 @@ void D3D11Renderer::Present() const
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::ClearScreen(Rgba8 const& tint)
 {
+	RenderTarget* renderTarget = m_renderTargets.at(m_currentRenderTarget);
+	ASSERT_OR_DIE(renderTarget, "Tried to clear null render target.");
 	float colorAsFloats[4] = {};
 	tint.GetAsFloats(&colorAsFloats[0]);
-	ID3D11RenderTargetView* const renderTargetView = reinterpret_cast<D3D11Texture*>(m_currentRenderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
+	ID3D11RenderTargetView* const renderTargetView = reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
 	m_deviceContext->ClearRenderTargetView(renderTargetView, colorAsFloats);
 }
 
@@ -84,8 +64,9 @@ void D3D11Renderer::ClearScreen(Rgba8 const& tint)
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::ClearDepth(float depth)
 {
-	ASSERT_OR_DIE(m_currentRenderTarget && m_currentRenderTarget->m_depthBuffer, "Tried to clear null depth buffer.");
-	ID3D11DepthStencilView* view = reinterpret_cast<D3D11Texture*>(m_currentRenderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
+	RenderTarget* renderTarget = m_renderTargets.at(m_currentRenderTarget);
+	ASSERT_OR_DIE(renderTarget && renderTarget->m_depthBuffer, "Tried to clear null depth buffer.");
+	ID3D11DepthStencilView* view = reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
 	m_deviceContext->ClearDepthStencilView(view, D3D11_CLEAR_DEPTH, depth, 0);
 }
 
@@ -153,12 +134,22 @@ VertexBuffer* D3D11Renderer::MakeVertexBuffer() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RenderTarget* D3D11Renderer::MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& resolution) const
+Swapchain* D3D11Renderer::MakeSwapchain() const
 {
-	D3D11SwapchainRenderTarget* renderTarget = new D3D11SwapchainRenderTarget();
+	return new D3D11Swapchain();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+RenderTargetID D3D11Renderer::MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& resolution)
+{
+	RenderTarget* renderTarget = new RenderTarget();
 	renderTarget->m_renderDimensions = resolution;
 	renderTarget->m_backbufferTexture = new D3D11Texture();
 	renderTarget->m_depthBuffer = new D3D11Texture();
+	D3D11Swapchain* d3d11Swapchain = new D3D11Swapchain();
+	renderTarget->m_swapchain = d3d11Swapchain;
 
 	// Create the swap chain
 	IDXGIDevice* device;
@@ -183,43 +174,50 @@ RenderTarget* D3D11Renderer::MakeSwapchainRenderTarget(void* hwnd, IntVec2 const
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.SampleDesc.Count = 1;
 
-	HRESULT result = factory->CreateSwapChain(m_device, &swapChainDesc, &renderTarget->m_swapChain);
+	HRESULT result = factory->CreateSwapChain(m_device, &swapChainDesc, &d3d11Swapchain->m_swapChain);
 	if (!SUCCEEDED(result))
 	{
 		delete renderTarget->m_backbufferTexture;
 		delete renderTarget->m_depthBuffer;
 		delete renderTarget;
-		return nullptr;
+		return INVALID_RENDER_TARGET_ID;
 	}
 
 	DX_SAFE_RELEASE(factory);
 	DX_SAFE_RELEASE(adapter);
 	DX_SAFE_RELEASE(device);
 
-	reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(renderTarget->m_swapChain);
-	reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(renderTarget->m_swapChain);
+	reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(d3d11Swapchain->m_swapChain);
+	reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(d3d11Swapchain->m_swapChain);
 
-	return renderTarget;
+	RenderTargetID newID = RequestRenderTargetID();
+	renderTarget->m_id = newID;
+	m_renderTargets[newID] = renderTarget;
+
+	return newID;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::ReleaseSwapchainRenderTarget(RenderTarget*& renderTarget) const
+RenderTargetID D3D11Renderer::RequestRenderTargetID() const
 {
-	D3D11SwapchainRenderTarget* scrt = reinterpret_cast<D3D11SwapchainRenderTarget*>(renderTarget);
-	DX_SAFE_RELEASE(scrt->m_swapChain);
+	static RenderTargetID s_id;
+	return s_id++;
+}
 
-	scrt->m_backbufferTexture->ReleaseResources();
-	delete scrt->m_backbufferTexture;
-	scrt->m_backbufferTexture = nullptr;
 
-	scrt->m_depthBuffer->ReleaseResources();
-	delete scrt->m_depthBuffer;
-	scrt->m_depthBuffer = nullptr;
+
+//----------------------------------------------------------------------------------------------------------------------
+void D3D11Renderer::ReleaseSwapchainRenderTarget(RenderTargetID renderTargetID)
+{
+	auto renderTarget = m_renderTargets.at(renderTargetID);
+	renderTarget->ReleaseResources();
 
 	delete renderTarget;
 	renderTarget = nullptr;
+
+	m_renderTargets.erase(renderTargetID);
 }
 
 
@@ -241,17 +239,19 @@ ID3D11DeviceContext* D3D11Renderer::GetDeviceContext() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::BindRenderTarget(RenderTarget* renderTarget)
+void D3D11Renderer::BindRenderTarget(RenderTargetID renderTargetID)
 {
-	ASSERT_OR_DIE(renderTarget && renderTarget->m_backbufferTexture && renderTarget->m_depthBuffer, "Null render target.");
-	m_currentRenderTarget = renderTarget;
+	m_currentRenderTarget = renderTargetID;
+	RenderTarget* renderTarget = m_renderTargets[renderTargetID];
 
-	ID3D11DepthStencilView* dsv = reinterpret_cast<D3D11Texture*>(m_currentRenderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
-	ID3D11RenderTargetView* rtv = reinterpret_cast<D3D11Texture*>(m_currentRenderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
+	ASSERT_OR_DIE(renderTarget && renderTarget->m_backbufferTexture && renderTarget->m_depthBuffer, "Null render target.");
+
+	ID3D11DepthStencilView* dsv = reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->CreateOrGetDepthStencilView();
+	ID3D11RenderTargetView* rtv = reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->CreateOrGetRenderTargetView();
 	m_deviceContext->OMSetRenderTargets(1, &rtv, dsv);
 
 	// Set viewport
-	IntVec2 renderResolution = m_currentRenderTarget->m_renderDimensions;
+	IntVec2 renderResolution = renderTarget->m_renderDimensions;
 
 	D3D11_VIEWPORT viewport;
 	viewport.TopLeftX = 0.f;
@@ -266,20 +266,23 @@ void D3D11Renderer::BindRenderTarget(RenderTarget* renderTarget)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::ResizeSwapChainRenderTarget(RenderTarget* renderTarget, IntVec2 const& newSize)
+void D3D11Renderer::ResizeSwapChainRenderTarget(RenderTargetID renderTargetID, IntVec2 const& newSize)
 {
+	RenderTarget* renderTarget = m_renderTargets[renderTargetID];
 	ASSERT_OR_DIE(renderTarget && renderTarget->m_backbufferTexture && renderTarget->m_depthBuffer, "Null render target.");
-	D3D11SwapchainRenderTarget* swapChainRT = reinterpret_cast<D3D11SwapchainRenderTarget*>(renderTarget);
 
-	swapChainRT->m_backbufferTexture->ReleaseResources();
-	swapChainRT->m_depthBuffer->ReleaseResources();
+	renderTarget->m_backbufferTexture->ReleaseResources();
+	renderTarget->m_depthBuffer->ReleaseResources();
+
+	D3D11Swapchain* d3dSwapchain = dynamic_cast<D3D11Swapchain*>(renderTarget->m_swapchain);
+	ASSERT_OR_DIE(d3dSwapchain, "Invalid swap chain.");
 
 	DXGI_SWAP_CHAIN_DESC desc = {};
-	swapChainRT->m_swapChain->GetDesc(&desc);
+	d3dSwapchain->m_swapChain->GetDesc(&desc);
 
 	renderTarget->m_renderDimensions = newSize;
 
-	HRESULT hr = swapChainRT->m_swapChain->ResizeBuffers(
+	HRESULT hr = d3dSwapchain->m_swapChain->ResizeBuffers(
 		desc.BufferCount,
 		renderTarget->m_renderDimensions.x,
 		renderTarget->m_renderDimensions.y,
@@ -289,16 +292,18 @@ void D3D11Renderer::ResizeSwapChainRenderTarget(RenderTarget* renderTarget, IntV
 
 	ASSERT_OR_DIE(SUCCEEDED(hr), "Failed to resize buffers after window mode change.");
 
-	reinterpret_cast<D3D11Texture*>(swapChainRT->m_backbufferTexture)->InitAsBackbufferTexture(swapChainRT->m_swapChain);
-	reinterpret_cast<D3D11Texture*>(swapChainRT->m_depthBuffer)->InitAsDepthBuffer(swapChainRT->m_swapChain);
+	reinterpret_cast<D3D11Texture*>(renderTarget->m_backbufferTexture)->InitAsBackbufferTexture(d3dSwapchain->m_swapChain);
+	reinterpret_cast<D3D11Texture*>(renderTarget->m_depthBuffer)->InitAsDepthBuffer(d3dSwapchain->m_swapChain);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool D3D11Renderer::SetFullscreenState(RenderTarget* renderTarget, bool fullscreen)
+bool D3D11Renderer::SetFullscreenState(RenderTargetID renderTargetID, bool fullscreen)
 {
-	HRESULT hr = reinterpret_cast<D3D11SwapchainRenderTarget*>(renderTarget)->m_swapChain->SetFullscreenState((BOOL) fullscreen, nullptr);
+	D3D11Swapchain* d3dSwapchain = dynamic_cast<D3D11Swapchain*>(m_renderTargets[renderTargetID]->m_swapchain);
+	ASSERT_OR_DIE(d3dSwapchain, "Invalid swap chain.");
+	HRESULT hr = d3dSwapchain->m_swapChain->SetFullscreenState((BOOL) fullscreen, nullptr);
 	return SUCCEEDED(hr);
 }
 
@@ -699,20 +704,10 @@ bool D3D11Renderer::ToggleMSAA(NamedProperties&)
 	m_perUserSettings.m_msaaEnabled = !m_perUserSettings.m_msaaEnabled;
 
 	// Recreate the depth buffer and backbuffer textures
-	//for (auto& wrcPair : m_windowRenderContexts)
-	//{
-	//	WindowRenderContext& wrc = wrcPair.second;
-	//	wrc.m_backbufferTexture->ReleaseResources();
-	//	wrc.m_depthBuffer->ReleaseResources();
-	//
-	//	D3D11Texture* backbufferTexture = new D3D11Texture();
-	//	backbufferTexture->InitAsBackbufferTexture(wrc.m_swapChain);
-	//	wrc.m_backbufferTexture = backbufferTexture;
-	//
-	//	D3D11Texture* depthBuffer = new D3D11Texture();
-	//	depthBuffer->InitAsDepthBuffer(wrc.m_swapChain);
-	//	wrc.m_depthBuffer = depthBuffer;
-	//}
+	for (auto& rt : m_renderTargets)
+	{
+		ResizeSwapChainRenderTarget(rt.second->m_id, rt.second->m_renderDimensions);
+	}
 
 	return false;
 }

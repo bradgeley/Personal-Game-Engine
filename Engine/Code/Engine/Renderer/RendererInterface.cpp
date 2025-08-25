@@ -24,6 +24,11 @@ RendererInterface* g_rendererInterface = nullptr;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+uint32_t INVALID_RENDER_TARGET_ID = UINT32_MAX;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 RendererInterface::RendererInterface(RendererConfig const& config) : EngineSubsystem("Renderer"), m_config(config)
 {
     
@@ -95,7 +100,7 @@ void RendererInterface::EndFrame()
 
 	Present();
 
-	if (m_currentRenderTarget)
+	if (m_currentRenderTarget != INVALID_RENDER_TARGET_ID)
 	{
 		UnbindRenderTarget(m_currentRenderTarget);
 	}
@@ -130,11 +135,6 @@ void RendererInterface::EndWindow(Window const* window)
 void RendererInterface::BeginCamera(Camera const* camera)
 {
 	ASSERT_OR_DIE(camera, "Renderer::BeginCamera - trying to begin a null camera.");
-
-	if (!m_currentRenderTarget)
-	{
-		BeginWindow(g_window);
-	}
 
 	m_currentCamera = camera;
 
@@ -328,9 +328,9 @@ void RendererInterface::BindShader(Shader* shader)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RendererInterface::UnbindRenderTarget(RenderTarget*)
+void RendererInterface::UnbindRenderTarget(RenderTargetID)
 {
-	m_currentRenderTarget = nullptr;
+	m_currentRenderTarget = INVALID_RENDER_TARGET_ID;
 }
 
 
