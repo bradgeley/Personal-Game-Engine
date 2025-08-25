@@ -59,7 +59,7 @@ void Font::ReleaseResources()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Font::AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, float cellHeight,
+void Font::AddVertsForText2D(VertexBuffer& out_verts, Vec2 const& textMins, float cellHeight,
 	std::string const& text, Rgba8 const& tint)
 {
 	float penPosition = 0.f;
@@ -105,38 +105,7 @@ void Font::AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& tex
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float Font::GetTextWidth(float cellHeight, std::string const& text)
-{
-	float penPosition = 0.f;
-	for (int glyphIndex = 0; glyphIndex < (int) text.size(); ++glyphIndex)
-	{
-		uint8_t const& currentChar = text[glyphIndex];
-		GlyphData& charData = m_glyphData[currentChar];
-		
-		float a = charData.a * cellHeight;
-		float glyphWidth = cellHeight * m_glyphData[currentChar].m_width;
-		float c = charData.c * cellHeight;
-		
-		penPosition += a;
-		penPosition += glyphWidth;
-		penPosition += c; // todo: don't add c for final character? seems right... maybe
-
-		if (glyphIndex < (int) text.size() - 1)
-		{
-			
-			uint8_t nextChar = text[glyphIndex + 1];
-			float kerning = GetKerning(currentChar, nextChar);
-			float scaledKerning = kerning * cellHeight;
-			penPosition += scaledKerning;
-		}
-	}
-	return penPosition;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Font::AddVertsForAlignedText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& pivot, Vec2 const& alignment,
+void Font::AddVertsForAlignedText2D(VertexBuffer& out_verts, Vec2 const& pivot, Vec2 const& alignment,
 	float cellHeight, std::string const& text, Rgba8 const& tint)
 {
 	float width = GetTextWidth(cellHeight, text);
@@ -160,6 +129,37 @@ void Font::AddVertsForAlignedText2D(std::vector<Vertex_PCU>& out_verts, Vec2 con
 //{
 //	
 //}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float Font::GetTextWidth(float cellHeight, std::string const& text)
+{
+	float penPosition = 0.f;
+	for (int glyphIndex = 0; glyphIndex < (int) text.size(); ++glyphIndex)
+	{
+		uint8_t const& currentChar = text[glyphIndex];
+		GlyphData& charData = m_glyphData[currentChar];
+
+		float a = charData.a * cellHeight;
+		float glyphWidth = cellHeight * m_glyphData[currentChar].m_width;
+		float c = charData.c * cellHeight;
+
+		penPosition += a;
+		penPosition += glyphWidth;
+		penPosition += c; // todo: don't add c for final character? seems right... maybe
+
+		if (glyphIndex < (int) text.size() - 1)
+		{
+
+			uint8_t nextChar = text[glyphIndex + 1];
+			float kerning = GetKerning(currentChar, nextChar);
+			float scaledKerning = kerning * cellHeight;
+			penPosition += scaledKerning;
+		}
+	}
+	return penPosition;
+}
 
 
 

@@ -72,7 +72,7 @@ public:
 
     virtual void Present() const = 0;
 
-    RendererPerUserSettings GetPerUserSettings() const;
+    RendererUserSettings GetPerUserSettings() const;
 
     virtual void ClearScreen(Rgba8 const& tint) = 0;
     void DrawVertexBuffer(VertexBuffer* vbo);
@@ -175,7 +175,7 @@ protected:
 
     // Configuration
     RendererConfig const m_config;
-    RendererPerUserSettings m_perUserSettings;
+    RendererUserSettings m_perUserSettings;
 
     // Renderer Pipeline State
     RenderTargetID m_currentRenderTarget = INVALID_RENDER_TARGET_ID;

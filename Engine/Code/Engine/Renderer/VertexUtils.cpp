@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2023
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine\Core\ErrorUtils.h"
@@ -9,7 +10,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForLine2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
+void AddVertsForLine2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
 {
     float halfThickness = thickness * 0.5f;
     Vec2 lineDir = (end - start).GetNormalized();
@@ -22,20 +23,22 @@ void AddVertsForLine2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start, Ve
     Vec2 topLeftCorner  = end + lineDir * halfThickness + lineRotated90 * halfThickness;
     
     // Push some verts
-    out_verts.reserve(out_verts.size() + 6);
-    out_verts.emplace_back(Vec3(botLeftCorner), tint);
-    out_verts.emplace_back(Vec3(botRightCorner), tint);
-    out_verts.emplace_back(Vec3(topRightCorner), tint);
-    
-    out_verts.emplace_back(Vec3(topRightCorner), tint);
-    out_verts.emplace_back(Vec3(topLeftCorner), tint);
-    out_verts.emplace_back(Vec3(botLeftCorner), tint);
+    out_verts.ReserveAdditional(6);
+    auto& verts = out_verts.GetMutableVerts();
+
+    verts.emplace_back(Vec3(botLeftCorner), tint);
+    verts.emplace_back(Vec3(botRightCorner), tint);
+    verts.emplace_back(Vec3(topRightCorner), tint);
+
+    verts.emplace_back(Vec3(topRightCorner), tint);
+    verts.emplace_back(Vec3(topLeftCorner), tint);
+    verts.emplace_back(Vec3(botLeftCorner), tint);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForArrow2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
+void AddVertsForArrow2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
 {
     float halfThickness = thickness * 0.5f;
     Vec2 lineDir = (end - start).GetNormalized();
@@ -57,25 +60,26 @@ void AddVertsForArrow2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start, V
     Vec2 rightWingTip = end - lineDir * tipLength - lineRotated90 * baseThickness;
 
     // Push some verts
-    out_verts.reserve(out_verts.size() + 9);
+    out_verts.ReserveAdditional(9);
+    auto& verts = out_verts.GetMutableVerts();
 
-    out_verts.emplace_back(Vec3(end), tint);
-    out_verts.emplace_back(Vec3(leftWingTip), tint);
-    out_verts.emplace_back(Vec3(rightWingTip), tint);
+    verts.emplace_back(Vec3(end), tint);
+    verts.emplace_back(Vec3(leftWingTip), tint);
+    verts.emplace_back(Vec3(rightWingTip), tint);
 
-    out_verts.emplace_back(Vec3(botLeftCorner), tint);
-    out_verts.emplace_back(Vec3(botRightCorner), tint);
-    out_verts.emplace_back(Vec3(topRightCorner), tint);
+    verts.emplace_back(Vec3(botLeftCorner), tint);
+    verts.emplace_back(Vec3(botRightCorner), tint);
+    verts.emplace_back(Vec3(topRightCorner), tint);
 
-    out_verts.emplace_back(Vec3(topRightCorner), tint);
-    out_verts.emplace_back(Vec3(topLeftCorner), tint);
-    out_verts.emplace_back(Vec3(botLeftCorner), tint);
+    verts.emplace_back(Vec3(topRightCorner), tint);
+    verts.emplace_back(Vec3(topLeftCorner), tint);
+    verts.emplace_back(Vec3(botLeftCorner), tint);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForAABB2(std::vector<Vertex_PCU>& out_verts, AABB2 const& square, Rgba8 const& tint, AABB2 const& UVs)
+void AddVertsForAABB2(VertexBuffer& out_verts, AABB2 const& square, Rgba8 const& tint, AABB2 const& UVs)
 {
     AddVertsForRect2D(out_verts, square.mins, square.maxs, tint, UVs);
 }
@@ -83,7 +87,7 @@ void AddVertsForAABB2(std::vector<Vertex_PCU>& out_verts, AABB2 const& square, R
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForRect2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint, AABB2 const& UVs)
+void AddVertsForRect2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint, AABB2 const& UVs)
 {
     // Get corners
     Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, 1.f);
@@ -98,20 +102,22 @@ void AddVertsForRect2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, Vec
     Vec2 topLeftUVs = Vec2(UVs.mins.x, UVs.maxs.y);
 
     // Push some verts
-    out_verts.reserve(out_verts.size() + 6);
-    out_verts.emplace_back(bottomLeftPoint, tint, bottomLeftUVs);
-    out_verts.emplace_back(bottomRightPoint, tint, bottomRightUVs);
-    out_verts.emplace_back(topRightPoint, tint, topRightUVs);
+    out_verts.ReserveAdditional(6);
+    auto& verts = out_verts.GetMutableVerts();
+
+    verts.emplace_back(bottomLeftPoint, tint, bottomLeftUVs);
+    verts.emplace_back(bottomRightPoint, tint, bottomRightUVs);
+    verts.emplace_back(topRightPoint, tint, topRightUVs);
     
-    out_verts.emplace_back(topRightPoint, tint, topRightUVs);
-    out_verts.emplace_back(topLeftPoint, tint, topLeftUVs);
-    out_verts.emplace_back(bottomLeftPoint, tint, bottomLeftUVs);
+    verts.emplace_back(topRightPoint, tint, topRightUVs);
+    verts.emplace_back(topLeftPoint, tint, topLeftUVs);
+    verts.emplace_back(bottomLeftPoint, tint, bottomLeftUVs);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& box, float lineThickness, Rgba8 const& tint)
+void AddVertsForWireBox2D(VertexBuffer& out_verts, AABB2 const& box, float lineThickness, Rgba8 const& tint)
 {
     AddVertsForWireBox2D(out_verts, box.mins, box.maxs, lineThickness, tint);
 }
@@ -119,15 +125,13 @@ void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, AABB2 const& box, 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, Vec2 const& maxs, float lineThickness, Rgba8 const& tint)
+void AddVertsForWireBox2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const& maxs, float lineThickness, Rgba8 const& tint)
 {
     // Get corners
     Vec2 const& topRightPoint = maxs;
     Vec2 const& bottomLeftPoint = mins;
     Vec2 bottomRightPoint = Vec2(maxs.x, mins.y);
     Vec2 topLeftPoint = Vec2(mins.x, maxs.y);
-
-    out_verts.reserve(out_verts.size() + (3 * 8));
 
     // Top and bottom
     AddVertsForLine2D(out_verts, topLeftPoint, topRightPoint, lineThickness, tint);
@@ -145,12 +149,10 @@ void AddVertsForWireBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& mins, 
 // Add lines for columns and rows to create a grid
 // There will be some overlap where lines intersect, but  
 //
-void AddVertsForWireGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint)
+void AddVertsForWireGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
     Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
-
-    out_verts.reserve(out_verts.size() + (size_t) dims.x * 6 + (size_t) dims.y * 6);
 
     // Add lines for columns
     for (int x = 0; x <= dims.x; ++x)
@@ -174,13 +176,12 @@ void AddVertsForWireGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundi
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, Rgba8 const& tint)
+void AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, Rgba8 const& tint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
 
     Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
 
-    out_verts.reserve(out_verts.size() + (size_t) dims.x * dims.y * 6);
     for (int y = 0; y < dims.y; ++y)
     {
         for (int x = 0; x < dims.x; ++x)
@@ -196,14 +197,13 @@ void AddVertsForGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAA
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAABB, Rgba8 const* colorsRowMajor, IntVec2 const& dims, Rgba8 const& gridLinesTint)
+void AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, Rgba8 const* colorsRowMajor, IntVec2 const& dims, Rgba8 const& gridLinesTint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
 
     Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
     float lineThickness = 0.1f * MathUtils::MinF(cellDims.x, cellDims.y);
 
-    out_verts.reserve(out_verts.size() + (size_t) dims.x * dims.y * 6);
     for (int y = 0; y < dims.y; ++y)
     {
         for (int x = 0; x < dims.x; ++x)
@@ -224,11 +224,12 @@ void AddVertsForGrid(std::vector<Vertex_PCU>& out_verts, AABB2 const& boundingAA
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForDisc2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint, AABB2 const& UVs)
+void AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint, AABB2 const& UVs)
 {
-    ASSERT_OR_DIE(radius > 0.f && numSides >= 3, StringUtils::StringF("Cannot add verts for a disc with: radius=%f numSides=%i", radius, numSides))
+    ASSERT_OR_DIE(radius > 0.f && numSides >= 3, StringUtils::StringF("Cannot add verts for a disc with: radius=%f numSides=%i", radius, numSides));
 
-    out_verts.reserve((size_t) 3 * numSides); // 3 Verts per side, each set of 3 making a pie slice
+    out_verts.ReserveAdditional(3 * numSides);
+    auto& verts = out_verts.GetMutableVerts();
 
     Vec2 uvCenter = UVs.GetCenter();
 
@@ -247,21 +248,22 @@ void AddVertsForDisc2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& center, f
         Vec2 uv1 = uvCenter + unitCirclePos1 * 0.5f;
         Vec2 uv2 = uvCenter + unitCirclePos2 * 0.5f;
 
-        out_verts.emplace_back(center, tint, uvCenter);
-        out_verts.emplace_back(cornerPt1, tint, uv1);
-        out_verts.emplace_back(cornerPt2, tint, uv2);
+        verts.emplace_back(center, tint, uvCenter);
+        verts.emplace_back(cornerPt1, tint, uv1);
+        verts.emplace_back(cornerPt2, tint, uv2);
     }
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForCapsule2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start, Vec2 const& end, float radius, Rgba8 const& tint)
+void AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float radius, Rgba8 const& tint)
 {
     if (radius <= 0)
     {
         return;
     }
+
 
     constexpr int numSidesOnEachEnd = 64;
 
@@ -274,14 +276,16 @@ void AddVertsForCapsule2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start,
     Vec2 topRightCorner = end - lineRotated90 * radius;
     Vec2 topLeftCorner = end + lineRotated90 * radius;
 
-    out_verts.reserve(out_verts.size() + 6 + (numSidesOnEachEnd * 3 * 2));
-    out_verts.emplace_back(Vec3(botLeftCorner), tint);
-    out_verts.emplace_back(Vec3(botRightCorner), tint);
-    out_verts.emplace_back(Vec3(topRightCorner), tint);
+    out_verts.ReserveAdditional(6 + (numSidesOnEachEnd * 3 * 2));
+    auto& verts = out_verts.GetMutableVerts();
 
-    out_verts.emplace_back(Vec3(topRightCorner), tint);
-    out_verts.emplace_back(Vec3(topLeftCorner), tint);
-    out_verts.emplace_back(Vec3(botLeftCorner), tint);
+    verts.emplace_back(Vec3(botLeftCorner), tint);
+    verts.emplace_back(Vec3(botRightCorner), tint);
+    verts.emplace_back(Vec3(topRightCorner), tint);
+
+    verts.emplace_back(Vec3(topRightCorner), tint);
+    verts.emplace_back(Vec3(topLeftCorner), tint);
+    verts.emplace_back(Vec3(botLeftCorner), tint);
 
     float startingTheta = lineRotated90.GetAngleDegrees();
     float thetaStepSize = 180.f / (float) numSidesOnEachEnd;
@@ -296,9 +300,9 @@ void AddVertsForCapsule2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start,
         Vec2 cornerPt1 = start + unitCirclePos1 * radius;
         Vec2 cornerPt2 = start + unitCirclePos2 * radius;
 
-        out_verts.emplace_back(start, tint);
-        out_verts.emplace_back(cornerPt1, tint);
-        out_verts.emplace_back(cornerPt2, tint);
+        verts.emplace_back(start, tint);
+        verts.emplace_back(cornerPt1, tint);
+        verts.emplace_back(cornerPt2, tint);
     }
 
     startingTheta += 180.f;
@@ -313,8 +317,8 @@ void AddVertsForCapsule2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& start,
         Vec2 cornerPt1 = end + unitCirclePos1 * radius;
         Vec2 cornerPt2 = end + unitCirclePos2 * radius;
 
-        out_verts.emplace_back(end, tint);
-        out_verts.emplace_back(cornerPt1, tint);
-        out_verts.emplace_back(cornerPt2, tint);
+        verts.emplace_back(end, tint);
+        verts.emplace_back(cornerPt1, tint);
+        verts.emplace_back(cornerPt2, tint);
     }
 }

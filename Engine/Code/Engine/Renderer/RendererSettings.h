@@ -117,11 +117,11 @@ struct RendererSettings
 
 
 //------------------------------------------------------------------------------------------------------------
-// Renderer Per User Settings
+// Renderer User Settings
 //
 // Settings that the user might set, such as Vsync enabled, filtering mode, etc.
 //
-struct RendererPerUserSettings
+struct RendererUserSettings
 {
     bool m_vsyncEnabled = false;
     bool m_msaaEnabled = true; // We just render at the highest msaa sample count possible for the machine

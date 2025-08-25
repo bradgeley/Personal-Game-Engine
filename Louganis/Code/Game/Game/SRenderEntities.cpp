@@ -23,7 +23,7 @@ void SRenderEntities::Run(SystemContext const& context)
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 
     VertexBuffer* vbo = g_renderer->MakeVertexBuffer();
-    AddVertsForDisc2D(vbo->GetMutableVerts(), Vec2(), 1, 128);
+    AddVertsForDisc2D(*vbo, Vec2(), 1, 128);
 
     // Render all things (1 draw call per entity = bad, todo: write sprite geometry shader)
     ModelConstants modelConstants;

@@ -319,24 +319,24 @@ void PerformanceDebugWindow::EngineFrameCompleted()
     // Graph Outline Box
     AABB2 graphOutline;
     GetGraphOutline(graphOutline);
-    AddVertsForWireBox2D(m_untexturedVBO->GetMutableVerts(), graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
+    AddVertsForWireBox2D(*m_untexturedVBO, graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
 
     g_renderer->DrawVertexBuffer(m_untexturedVBO);
 
     // Title
     m_textVBO->ClearVerts();
     Font* font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
+    font->AddVertsForAlignedText2D(*m_textVBO, graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
 
     // FPS Counter
     float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
     std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
-    font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
+    font->AddVertsForAlignedText2D(*m_textVBO, graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
 
     // X-Axis Frame Time
     Vec2 frameBounds = GetItemFrameBounds();
-    font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.mins, Vec2(1.f, -1.f), FPS_COUNTER_FONT_SIZE, "0", Rgba8::Black);
-    font->AddVertsForAlignedText2D(m_textVBO->GetMutableVerts(), graphOutline.GetBottomRight(), Vec2(-1.f, -1.f), FPS_COUNTER_FONT_SIZE, StringUtils::StringF("%0.3fms", (frameBounds.y - frameBounds.x) * 1000.f), Rgba8::Black);
+    font->AddVertsForAlignedText2D(*m_textVBO, graphOutline.mins, Vec2(1.f, -1.f), FPS_COUNTER_FONT_SIZE, "0", Rgba8::Black);
+    font->AddVertsForAlignedText2D(*m_textVBO, graphOutline.GetBottomRight(), Vec2(-1.f, -1.f), FPS_COUNTER_FONT_SIZE, StringUtils::StringF("%0.3fms", (frameBounds.y - frameBounds.x) * 1000.f), Rgba8::Black);
 
     for (PerfSection const& section : m_perfSections)
     {
@@ -461,7 +461,7 @@ void PerformanceDebugWindow::AddUntexturedVertsForSection(VertexBuffer& untextur
     AABB2 sectionOutline;
     sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
     sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
-    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), sectionOutline, GRAPH_SECTION_OUTLINE_THICKNESS, Rgba8::Black);
+    AddVertsForWireBox2D(untexturedVerts, sectionOutline, GRAPH_SECTION_OUTLINE_THICKNESS, Rgba8::Black);
 
     for (PerfRow const& row : section.m_perfRows)
     {
@@ -489,7 +489,7 @@ void PerformanceDebugWindow::AddTextVertsForSection(VertexBuffer& textVerts, Per
     sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
     sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name.ToString());
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts, sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name.ToString());
 
     for (PerfRow const& row : section.m_perfRows)
     {
@@ -535,10 +535,10 @@ void PerformanceDebugWindow::AddUntexturedVertsForRow(VertexBuffer& untexturedVe
         itemOutline.maxs.x = rowOutline.mins.x + rowOutline.GetWidth() * itemEndTimeFraction;
         itemOutline.maxs.y = rowOutline.maxs.y;
 
-        AddVertsForAABB2(untexturedVerts.GetMutableVerts(), itemOutline, item.m_tint);
+        AddVertsForAABB2(untexturedVerts, itemOutline, item.m_tint);
     }
 
-    AddVertsForWireBox2D(untexturedVerts.GetMutableVerts(), rowOutline, GRAPH_ROW_OUTLINE_THICKNESS, Rgba8::Black);
+    AddVertsForWireBox2D(untexturedVerts, rowOutline, GRAPH_ROW_OUTLINE_THICKNESS, Rgba8::Black);
 }
 
 
@@ -580,7 +580,7 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
         itemOutline.maxs.y = rowOutline.maxs.y;
     }
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts.GetMutableVerts(), rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
+    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
 }
 
 

@@ -10,6 +10,7 @@
 struct Vertex_PCU;
 class Shader;
 class Texture;
+class VertexBuffer;
 
 
 
@@ -63,10 +64,10 @@ public:
 	void SetRendererState() const;
     void ReleaseResources();
     
-    // Add Verts
-    void AddVertsForText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
-    void AddVertsForAlignedText2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& pivot, Vec2 const& alignment, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
-    //void AddVertsForTextInBox2D(std::vector<Vertex_PCU>& out_verts, Vec2 const& textMins, Vec2 const& textMaxs, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, Vec2 const& alignment = AlignCentered);
+    // Vert Helpers
+    void AddVertsForText2D(VertexBuffer& out_verts, Vec2 const& textMins, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
+    void AddVertsForAlignedText2D(VertexBuffer& out_verts, Vec2 const& pivot, Vec2 const& alignment, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
+    //void AddVertsForTextInBox2D(VertexBuffer& out_verts, Vec2 const& textMins, Vec2 const& textMaxs, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, Vec2 const& alignment = AlignCentered);
 
     float GetTextWidth(float cellHeight, std::string const& text);
     GlyphData const& GetGlyphData(uint8_t glyph) const;

@@ -56,7 +56,7 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
         AABB2 textBox = AABB2(box.mins.x, box.mins.y + yOffsetBot, box.maxs.x, box.mins.y + yOffsetTop);
         float squeeze = textBox.GetHeight() / 15.f;
         textBox.Squeeze(squeeze);
-        font->AddVertsForText2D(m_vbo->GetMutableVerts(), textBox.mins, textBox.GetHeight(), LINE_PREFIX + m_log[lineIndex].m_line, m_log[lineIndex].m_tint);
+        font->AddVertsForText2D(*m_vbo, textBox.mins, textBox.GetHeight(), LINE_PREFIX + m_log[lineIndex].m_line, m_log[lineIndex].m_tint);
         
         --lineIndex;
         linesRendered += 1.f;

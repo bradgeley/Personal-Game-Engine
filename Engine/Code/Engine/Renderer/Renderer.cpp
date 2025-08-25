@@ -184,7 +184,7 @@ void Renderer::EndCameraAndWindow(Camera const* camera, Window const* window)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RendererPerUserSettings Renderer::GetPerUserSettings() const
+RendererUserSettings Renderer::GetPerUserSettings() const
 {
     return m_perUserSettings;
 }

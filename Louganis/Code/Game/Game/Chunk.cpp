@@ -51,7 +51,6 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	// Generate Vbo
 	m_vbo = g_renderer->MakeVertexBuffer();
 	m_vbo->Initialize(6 * numTilesInChunk);
-	auto& verts = m_vbo->GetMutableVerts();
 	for (int y = 0; y < numTilesInRow; ++y)
 	{
 		for (int x = 0; x < numTilesInRow; ++x)
@@ -66,14 +65,14 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			Rgba8 const& tint = tileDef->m_tint;
 			Vec2 mins = chunkOrigin + Vec2(x, y) * worldSettings.m_tileWidth;
 			Vec2 maxs = mins + tileDims;
-			AddVertsForRect2D(verts, mins, maxs, tint);
+			AddVertsForRect2D(*m_vbo, mins, maxs, tint);
 		}
 	}
 
 #if defined(_DEBUG)
 	m_debugVBO = g_renderer->MakeVertexBuffer();
-	AddVertsForWireGrid(m_debugVBO->GetMutableVerts(), m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
-	AddVertsForWireBox2D(m_debugVBO->GetMutableVerts(), m_chunkBounds, 0.03f, Rgba8::Red);
+	AddVertsForWireGrid(*m_debugVBO, m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
+	AddVertsForWireBox2D(*m_debugVBO, m_chunkBounds, 0.03f, Rgba8::Red);
 #endif
 }
 

@@ -11,11 +11,14 @@ D3D11_FILTER GetD3D11SamplerFilter(SamplerFilter filter, float& out_maxAnisotrop
     out_maxAnisotropy = 0.f;
     switch (filter)
     {
-        case SamplerFilter::Point: return D3D11_FILTER_MIN_MAG_MIP_POINT;
+        case SamplerFilter::Point: 
+            return D3D11_FILTER_MIN_MAG_MIP_POINT;
         
-        case SamplerFilter::Bilinear: return D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+        case SamplerFilter::Bilinear: 
+            return D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
         
-        case SamplerFilter::Trilinear: return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        case SamplerFilter::Trilinear: 
+            return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
         
         case SamplerFilter::Anisotropic_2: 
             out_maxAnisotropy = 2.f;
@@ -46,8 +49,10 @@ D3D11_TEXTURE_ADDRESS_MODE GetD3D11SamplerAddressMode(SamplerAddressMode address
 {
     switch (addressMode)
     {
-        case SamplerAddressMode::Wrap: return D3D11_TEXTURE_ADDRESS_WRAP;
-        default: return D3D11_TEXTURE_ADDRESS_CLAMP;
+        case SamplerAddressMode::Wrap: 
+            return D3D11_TEXTURE_ADDRESS_WRAP;
+        default: 
+            return D3D11_TEXTURE_ADDRESS_CLAMP;
     }
 }
 
@@ -58,9 +63,12 @@ D3D11_CULL_MODE GetD3D11CullMode(CullMode cullMode)
 {
     switch (cullMode)
     {
-        case CullMode::Front: return D3D11_CULL_FRONT;
-        case CullMode::Back: return D3D11_CULL_BACK;
-        default: return D3D11_CULL_NONE;
+        case CullMode::Front:{}
+            return D3D11_CULL_FRONT;
+        case CullMode::Back: 
+            return D3D11_CULL_BACK;
+        default: 
+            return D3D11_CULL_NONE;
     }
 }
 
@@ -71,7 +79,9 @@ D3D11_FILL_MODE GetD3D11FillMode(FillMode fillMode)
 {
     switch (fillMode)
     {
-        case FillMode::Wireframe: return D3D11_FILL_WIREFRAME;
-        default: return D3D11_FILL_SOLID;
+        case FillMode::Wireframe: 
+            return D3D11_FILL_WIREFRAME;
+        default: 
+            return D3D11_FILL_SOLID;
     }
 }

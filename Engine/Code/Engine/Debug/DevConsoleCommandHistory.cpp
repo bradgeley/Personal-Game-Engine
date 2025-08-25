@@ -87,8 +87,8 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
 
     // Draw Background
     m_untexturedVerts->ClearVerts();
-    AddVertsForAABB2(m_untexturedVerts->GetMutableVerts(), box, Rgba8(0, 0, 0, 200));
-    AddVertsForWireBox2D(m_untexturedVerts->GetMutableVerts(), box, 0.0025f, Rgba8(255, 255, 255, 200));
+    AddVertsForAABB2(*m_untexturedVerts, box, Rgba8(0, 0, 0, 200));
+    AddVertsForWireBox2D(*m_untexturedVerts, box, 0.0025f, Rgba8(255, 255, 255, 200));
 
     m_textVerts->ClearVerts();
 
@@ -105,10 +105,10 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
         
         if (m_selectedLineIndex == i)
         {
-            AddVertsForAABB2(m_untexturedVerts->GetMutableVerts(), textBox, Rgba8::Cerulean);
+            AddVertsForAABB2(*m_untexturedVerts, textBox, Rgba8::Cerulean);
         }
         
-        font->AddVertsForText2D(m_textVerts->GetMutableVerts(), textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
+        font->AddVertsForText2D(*m_textVerts, textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
         
         linesRendered += 1.f;
     }

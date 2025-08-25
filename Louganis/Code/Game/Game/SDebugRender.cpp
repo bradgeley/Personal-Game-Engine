@@ -106,7 +106,7 @@ void SDebugRender::Run(SystemContext const& context)
             }
 
             AABB2 capsuleBounds = GeometryUtils::GetCapsuleBounds(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius);
-            AddVertsForWireBox2D(scDebug.m_frameVerts->GetMutableVerts(), capsuleBounds, 0.1f);
+            AddVertsForWireBox2D(*scDebug.m_frameVerts, capsuleBounds, 0.1f);
             std::vector<Chunk*> chunks;
             world.GetChunksOverlappingAABB(chunks, capsuleBounds);
             for (auto& chunk : chunks)
@@ -114,13 +114,13 @@ void SDebugRender::Run(SystemContext const& context)
                 if (GeometryUtils::DoesCapsuleOverlapAABB(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, chunk->m_chunkBounds))
                 {
                     Rgba8 tint = Rgba8::Cyan;
-                    AddVertsForWireBox2D(scDebug.m_frameVerts->GetMutableVerts(), chunk->m_chunkBounds, 0.1f, tint);
+                    AddVertsForWireBox2D(*scDebug.m_frameVerts, chunk->m_chunkBounds, 0.1f, tint);
                 }
             }
 
             world.ForEachWorldCoordsOverlappingCapsule(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, [&](WorldCoords& coords) 
             {
-                AddVertsForWireBox2D(scDebug.m_frameVerts->GetMutableVerts(), world.GetTileBounds(coords), 0.1f, Rgba8::Magenta);
+                AddVertsForWireBox2D(*scDebug.m_frameVerts, world.GetTileBounds(coords), 0.1f, Rgba8::Magenta);
                 return true; 
             });
 
@@ -147,7 +147,7 @@ void SDebugRender::Run(SystemContext const& context)
                     uint8_t cost = ffChunk->m_costField.Get(x, y);
                     float t = MathUtils::RangeMapClamped((float) cost, 0.f, 255.f, 0.f, 1.f);
                     Rgba8 tint = Rgba8::Lerp(Rgba8(255, 255, 255, 150), Rgba8(0, 0, 0, 150), t);
-                    AddVertsForAABB2(ffChunk->m_debugVBO->GetMutableVerts(), tileBounds, tint);
+                    AddVertsForAABB2(*ffChunk->m_debugVBO, tileBounds, tint);
                 }
             }
 
@@ -179,7 +179,7 @@ void SDebugRender::Run(SystemContext const& context)
                     float t = MathUtils::RangeMapClamped(distance, 0.f, 10.f, 0.f, 1.f);
                     Rgba8 const& tint = Rgba8::Lerp(Rgba8::Green, Rgba8::Red, t);
                     std::string distanceText = StringUtils::StringF("%.2f", distance);
-                    font->AddVertsForAlignedText2D(ffChunk->m_debugVBO->GetMutableVerts(), tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, distanceText, tint);
+                    font->AddVertsForAlignedText2D(*ffChunk->m_debugVBO, tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, distanceText, tint);
                 }
             }
 
@@ -207,7 +207,7 @@ void SDebugRender::Run(SystemContext const& context)
                     AABB2 tileBounds = world.GetTileBounds(currentWorldCoords);
                     Vec2 gradient = ffChunk->m_gradient.Get(x, y);
 
-                    AddVertsForArrow2D(ffChunk->m_debugVBO->GetMutableVerts(), tileBounds.GetCenter(), tileBounds.GetCenter() + gradient, 0.05f, Rgba8::Yellow);
+                    AddVertsForArrow2D(*ffChunk->m_debugVBO, tileBounds.GetCenter(), tileBounds.GetCenter() + gradient, 0.05f, Rgba8::Yellow);
                 }
             }
 

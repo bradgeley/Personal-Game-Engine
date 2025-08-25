@@ -17,7 +17,7 @@ void D3D11Swapchain::ReleaseResources()
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Swapchain::Present()
 {
-	RendererPerUserSettings perUserSettings = g_renderer->GetPerUserSettings();
+	RendererUserSettings perUserSettings = g_renderer->GetPerUserSettings();
 	UINT vsync = perUserSettings.m_vsyncEnabled ? 1 : 0;
 	m_swapChain->Present(vsync, 0);
 }

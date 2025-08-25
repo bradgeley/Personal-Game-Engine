@@ -122,7 +122,7 @@ bool D3D11Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
 
         m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
 
-    RendererPerUserSettings perUserSettings = g_renderer->GetPerUserSettings();
+    RendererUserSettings perUserSettings = g_renderer->GetPerUserSettings();
 
     // Create our own texture that we will render to, with MSAA enabled
 
@@ -172,7 +172,7 @@ bool D3D11Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
 
         m_dimensions = IntVec2((int) backbufferDesc.Width, (int) backbufferDesc.Height);
 
-    RendererPerUserSettings perUserSettings = g_renderer->GetPerUserSettings();
+    RendererUserSettings perUserSettings = g_renderer->GetPerUserSettings();
     MSAASettings msaaSettings = D3D11Renderer::Get()->GetMaxSupportedMSAASettings(DXGI_FORMAT_D24_UNORM_S8_UINT);
 
     D3D11_TEXTURE2D_DESC desc = {};

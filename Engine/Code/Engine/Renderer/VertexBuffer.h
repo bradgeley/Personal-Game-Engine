@@ -34,6 +34,7 @@ public:
     virtual std::vector<Vertex_PCU> const& GetVerts() const;
     virtual std::vector<Vertex_PCU>& GetMutableVerts(bool setDirty = true);
     
+    virtual void AddVert(Vertex_PCU const& vert);
     virtual void AddVerts(std::vector<Vertex_PCU> const& verts);
     virtual void ReserveAdditional(int numExpectedAdditionalVerts);
     virtual void ClearVerts();

@@ -27,6 +27,15 @@ std::vector<Vertex_PCU>& VertexBuffer::GetMutableVerts(bool setDirty /*= true*/)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void VertexBuffer::AddVert(Vertex_PCU const& vert)
+{
+    SetDirty();
+    m_verts.push_back(vert);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::AddVerts(std::vector<Vertex_PCU> const& verts)
 {
     SetDirty();

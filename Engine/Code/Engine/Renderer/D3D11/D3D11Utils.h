@@ -27,6 +27,7 @@ enum   D3D11_FILL_MODE				: int;
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 D3D11_FILTER GetD3D11SamplerFilter(SamplerFilter filter, float& out_maxAnisotropy);
 D3D11_TEXTURE_ADDRESS_MODE GetD3D11SamplerAddressMode(SamplerAddressMode addressMode);
 D3D11_CULL_MODE GetD3D11CullMode(CullMode cullMode);

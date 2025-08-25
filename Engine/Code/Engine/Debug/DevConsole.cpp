@@ -753,7 +753,7 @@ void DevConsole::UpdateBackgroundImage(float deltaSeconds)
 void DevConsole::DrawBackground() const
 {
     AABB2 backgroundBox = m_camera->GetOrthoBounds2D();
-    AddVertsForAABB2(m_vbo->GetMutableVerts(), backgroundBox, m_config.m_backgroundTint);
+    AddVertsForAABB2(*m_vbo, backgroundBox, m_config.m_backgroundTint);
     g_renderer->BindTexture(nullptr);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(m_vbo);
@@ -777,7 +777,7 @@ void DevConsole::DrawBackground() const
         imageBox.mins.x += (windowAspect - imageAspect);
         AABB2 fillerBox = backgroundBox;
         fillerBox.maxs.x = imageBox.mins.x;
-        AddVertsForAABB2(m_vbo->GetMutableVerts(), fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 0.f, 0.f, 1.f));
+        AddVertsForAABB2(*m_vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 0.f, 0.f, 1.f));
     }
     else
     {
@@ -785,10 +785,10 @@ void DevConsole::DrawBackground() const
         imageBox.maxs.y += (windowAspect - imageAspect);
         AABB2 fillerBox = backgroundBox;
         fillerBox.mins.y = imageBox.maxs.y;
-        AddVertsForAABB2(m_vbo->GetMutableVerts(), fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 1.f, 1.f, 1.f));
+        AddVertsForAABB2(*m_vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 1.f, 1.f, 1.f));
     }
     
-    AddVertsForAABB2(m_vbo->GetMutableVerts(), imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
+    AddVertsForAABB2(*m_vbo, imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
     g_renderer->BindTexture(currentBkg);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(m_vbo);
@@ -816,14 +816,14 @@ void DevConsole::DrawTab() const
     tabDims.maxs = backgroundBox.GetBottomRight();
     tabDims.mins = tabDims.maxs - tabSize * Vec2(0.07f, 0.01f);
 
-    AddVertsForAABB2(m_vbo->GetMutableVerts(), tabDims, m_config.m_backgroundTint);
+    AddVertsForAABB2(*m_vbo, tabDims, m_config.m_backgroundTint);
     g_renderer->BindTexture(nullptr);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
 
     auto font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(m_vbo->GetMutableVerts(), tabDims.GetCenter(), Vec2::ZeroVector, tabDims.GetHeight(), "DevConsole (~)", Rgba8::White);
+    font->AddVertsForAlignedText2D(*m_vbo, tabDims.GetCenter(), Vec2::ZeroVector, tabDims.GetHeight(), "DevConsole (~)", Rgba8::White);
     font->SetRendererState();
     g_renderer->DrawVertexBuffer(m_vbo);
     m_vbo->ClearVerts();
