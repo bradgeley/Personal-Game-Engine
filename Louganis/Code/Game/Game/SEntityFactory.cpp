@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2023
+﻿// Bradley Christensen - 2022-2025
 #include "SEntityFactory.h"
 #include "Engine/Core/XmlUtils.h"
 #include "EntityDef.h"

@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022
+﻿// Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/DataStructures/ThreadSafeQueue.h"

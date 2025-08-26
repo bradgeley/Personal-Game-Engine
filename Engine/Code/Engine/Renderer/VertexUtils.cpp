@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2023
+﻿// Bradley Christensen - 2022-2025
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Math/AABB2.h"

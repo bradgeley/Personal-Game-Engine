@@ -1,4 +1,4 @@
-// Bradley Christensen - 2024
+// Bradley Christensen - 2022-2025
 #include "ScopedTimer.h"
 #include "Engine/Core/Time.h"
 #include "Engine/Debug/DevConsole.h"

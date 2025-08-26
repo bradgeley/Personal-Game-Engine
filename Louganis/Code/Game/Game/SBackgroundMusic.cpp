@@ -1,4 +1,4 @@
-// Bradley Christensen - 2025
+// Bradley Christensen - 2022-2025
 #include "SBackgroundMusic.h"
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Events/EventSystem.h"

@@ -1,4 +1,4 @@
-// Bradley Christensen - 2024
+// Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/DataStructures/BitArray.h"
 #include "Engine/Math/AABB2.h"

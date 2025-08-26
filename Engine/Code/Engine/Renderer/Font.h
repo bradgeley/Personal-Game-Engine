@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2023
+﻿// Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/RendererUtils.h"

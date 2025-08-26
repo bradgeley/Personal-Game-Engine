@@ -1,4 +1,4 @@
-// Bradley Christensen - 2024
+// Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Renderer/Rgba8.h"
 #include "Engine/Core/Name.h"

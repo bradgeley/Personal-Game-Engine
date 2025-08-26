@@ -1,4 +1,4 @@
-// Bradley Christensen - 2024
+// Bradley Christensen - 2022-2025
 #include "WorldRaycast.h"
 #include "SCWorld.h"
 #include "Chunk.h"

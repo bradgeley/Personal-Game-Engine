@@ -1,4 +1,4 @@
-// Bradley Christensen - 2025
+// Bradley Christensen - 2022-2025
 #include "SSystemDebug.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Core/ErrorUtils.h"

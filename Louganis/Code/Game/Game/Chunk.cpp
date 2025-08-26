@@ -1,4 +1,4 @@
-// Bradley Christensen - 2024
+// Bradley Christensen - 2022-2025
 #include "Chunk.h"
 #include "WorldSettings.h"
 #include "Engine/Renderer/Renderer.h"

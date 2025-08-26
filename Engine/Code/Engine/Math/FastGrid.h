@@ -1,5 +1,5 @@
 #pragma once
-// Bradley Christensen - 2025
+// Bradley Christensen - 2022-2025
 #include <vector>
 #include "IntVec2.h"
 #include "MathUtils.h"

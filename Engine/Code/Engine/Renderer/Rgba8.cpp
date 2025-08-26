@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2023
+﻿// Bradley Christensen - 2022-2025
 #include "Engine/Renderer/Rgba8.h"
 
 #include "Engine/Math/MathUtils.h"

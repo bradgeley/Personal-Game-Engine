@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2023
+﻿// Bradley Christensen - 2022-2025
 #include "Engine/Core/Time.h"
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>

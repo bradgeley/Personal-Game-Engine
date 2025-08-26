@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2023
+﻿// Bradley Christensen - 2022-2025
 #include "Engine/Math/Plane2.h"
 #include "MathUtils.h"
 

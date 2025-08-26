@@ -1,4 +1,4 @@
-// Bradley Christensen - 2025
+// Bradley Christensen - 2022-2025
 #pragma once
 #include "Game/Framework/EngineBuildPreferences.h"
 

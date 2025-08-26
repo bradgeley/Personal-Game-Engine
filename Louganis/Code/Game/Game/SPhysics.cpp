@@ -1,4 +1,4 @@
-// Bradley Christensen - 2025
+// Bradley Christensen - 2022-2025
 #include "SPhysics.h"
 #include "CCollision.h"
 #include "CMovement.h"

@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2023
+﻿// Bradley Christensen - 2022-2025
 #include "SInput.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Math/MathUtils.h"

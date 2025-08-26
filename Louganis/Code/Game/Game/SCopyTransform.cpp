@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2023
+﻿// Bradley Christensen - 2022-2025
 #include "SCopyTransform.h"
 #include "CRender.h"
 #include "CTransform.h"

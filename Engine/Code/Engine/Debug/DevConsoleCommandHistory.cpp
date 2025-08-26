@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2023
+﻿// Bradley Christensen - 2022-2025
 #include "DevConsoleCommandHistory.h"
 
 #include "Engine/Core/FileUtils.h"

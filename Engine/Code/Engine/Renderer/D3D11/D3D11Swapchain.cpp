@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2025
+﻿// Bradley Christensen - 2022-2025
 #include "D3D11Swapchain.h"
 #include "D3D11Internal.h"
 #include "D3D11Renderer.h"
