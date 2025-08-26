@@ -10,7 +10,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForLine2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
+void VertexUtils::AddVertsForLine2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
 {
     float halfThickness = thickness * 0.5f;
     Vec2 lineDir = (end - start).GetNormalized();
@@ -38,7 +38,7 @@ void AddVertsForLine2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& e
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForArrow2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
+void VertexUtils::AddVertsForArrow2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
 {
     float halfThickness = thickness * 0.5f;
     Vec2 lineDir = (end - start).GetNormalized();
@@ -79,7 +79,7 @@ void AddVertsForArrow2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForAABB2(VertexBuffer& out_verts, AABB2 const& square, Rgba8 const& tint, AABB2 const& UVs)
+void VertexUtils::AddVertsForAABB2(VertexBuffer& out_verts, AABB2 const& square, Rgba8 const& tint, AABB2 const& UVs)
 {
     AddVertsForRect2D(out_verts, square.mins, square.maxs, tint, UVs);
 }
@@ -87,7 +87,7 @@ void AddVertsForAABB2(VertexBuffer& out_verts, AABB2 const& square, Rgba8 const&
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForRect2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint, AABB2 const& UVs)
+void VertexUtils::AddVertsForRect2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint, AABB2 const& UVs)
 {
     // Get corners
     Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, 1.f);
@@ -117,7 +117,7 @@ void AddVertsForRect2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const& ma
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForWireBox2D(VertexBuffer& out_verts, AABB2 const& box, float lineThickness, Rgba8 const& tint)
+void VertexUtils::AddVertsForWireBox2D(VertexBuffer& out_verts, AABB2 const& box, float lineThickness, Rgba8 const& tint)
 {
     AddVertsForWireBox2D(out_verts, box.mins, box.maxs, lineThickness, tint);
 }
@@ -125,7 +125,7 @@ void AddVertsForWireBox2D(VertexBuffer& out_verts, AABB2 const& box, float lineT
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForWireBox2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const& maxs, float lineThickness, Rgba8 const& tint)
+void VertexUtils::AddVertsForWireBox2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const& maxs, float lineThickness, Rgba8 const& tint)
 {
     // Get corners
     Vec2 const& topRightPoint = maxs;
@@ -149,7 +149,7 @@ void AddVertsForWireBox2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const&
 // Add lines for columns and rows to create a grid
 // There will be some overlap where lines intersect, but  
 //
-void AddVertsForWireGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint)
+void VertexUtils::AddVertsForWireGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, float lineThickness, Rgba8 const& tint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
     Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
@@ -176,7 +176,7 @@ void AddVertsForWireGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, Int
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, Rgba8 const& tint)
+void VertexUtils::AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, Rgba8 const& tint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
 
@@ -197,7 +197,7 @@ void AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, IntVec2
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, Rgba8 const* colorsRowMajor, IntVec2 const& dims, Rgba8 const& gridLinesTint)
+void VertexUtils::AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, Rgba8 const* colorsRowMajor, IntVec2 const& dims, Rgba8 const& gridLinesTint)
 {
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
 
@@ -224,7 +224,7 @@ void AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, Rgba8 c
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint, AABB2 const& UVs)
+void VertexUtils::AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint, AABB2 const& UVs)
 {
     ASSERT_OR_DIE(radius > 0.f && numSides >= 3, StringUtils::StringF("Cannot add verts for a disc with: radius=%f numSides=%i", radius, numSides));
 
@@ -257,7 +257,7 @@ void AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float radius, Rgba8 const& tint)
+void VertexUtils::AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float radius, Rgba8 const& tint)
 {
     if (radius <= 0)
     {
@@ -320,5 +320,22 @@ void AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const
         verts.emplace_back(end, tint);
         verts.emplace_back(cornerPt1, tint);
         verts.emplace_back(cornerPt2, tint);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void VertexUtils::AddVertsForWireMesh2D(VertexBuffer& out_verts, VertexBuffer const& triangles, float thickness, Rgba8 const& tint)
+{
+    for (size_t i = 0; i < triangles.GetVerts().size(); i += 3)
+    {
+        Vertex_PCU const& v1 = triangles.GetVerts()[i];
+        Vertex_PCU const& v2 = triangles.GetVerts()[i + 1];
+        Vertex_PCU const& v3 = triangles.GetVerts()[i + 2];
+
+        AddVertsForLine2D(out_verts, Vec2(v1.pos), Vec2(v2.pos), thickness, tint);
+        AddVertsForLine2D(out_verts, Vec2(v2.pos), Vec2(v3.pos), thickness, tint);
+        AddVertsForLine2D(out_verts, Vec2(v3.pos), Vec2(v1.pos), thickness, tint);
     }
 }

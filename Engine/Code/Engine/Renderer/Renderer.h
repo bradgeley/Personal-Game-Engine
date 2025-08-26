@@ -256,6 +256,7 @@ protected:
     // Debug
 #if defined(_DEBUG)
     bool m_debugDrawVertexBuffers = false;
+    VertexBufferID m_debugVertexBuffer = RendererUtils::InvalidID;
 #endif
 };
 

@@ -318,7 +318,7 @@ void PerformanceDebugWindow::EngineFrameCompleted()
     // Graph Outline Box
     AABB2 graphOutline;
     GetGraphOutline(graphOutline);
-    AddVertsForWireBox2D(untexturedVBO, graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
+    VertexUtils::AddVertsForWireBox2D(untexturedVBO, graphOutline, GRAPH_OUTLINE_THICKNESS, m_config.m_graphOutlineTint);
 
     g_renderer->DrawVertexBuffer(untexturedVBO);
 
@@ -459,7 +459,7 @@ void PerformanceDebugWindow::AddUntexturedVertsForSection(VertexBuffer& untextur
     AABB2 sectionOutline;
     sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
     sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
-    AddVertsForWireBox2D(untexturedVerts, sectionOutline, GRAPH_SECTION_OUTLINE_THICKNESS, Rgba8::Black);
+    VertexUtils::AddVertsForWireBox2D(untexturedVerts, sectionOutline, GRAPH_SECTION_OUTLINE_THICKNESS, Rgba8::Black);
 
     for (PerfRow const& row : section.m_perfRows)
     {
@@ -533,10 +533,10 @@ void PerformanceDebugWindow::AddUntexturedVertsForRow(VertexBuffer& untexturedVe
         itemOutline.maxs.x = rowOutline.mins.x + rowOutline.GetWidth() * itemEndTimeFraction;
         itemOutline.maxs.y = rowOutline.maxs.y;
 
-        AddVertsForAABB2(untexturedVerts, itemOutline, item.m_tint);
+        VertexUtils::AddVertsForAABB2(untexturedVerts, itemOutline, item.m_tint);
     }
 
-    AddVertsForWireBox2D(untexturedVerts, rowOutline, GRAPH_ROW_OUTLINE_THICKNESS, Rgba8::Black);
+    VertexUtils::AddVertsForWireBox2D(untexturedVerts, rowOutline, GRAPH_ROW_OUTLINE_THICKNESS, Rgba8::Black);
 }
 
 

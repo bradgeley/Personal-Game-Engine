@@ -25,4 +25,5 @@ protected:
     bool DebugRenderCostField(NamedProperties& args);
     bool DebugRenderDistanceField(NamedProperties& args);
     bool DebugRenderFlowField(NamedProperties& args);
+    bool DebugRenderSolidTiles(NamedProperties& args);
 };

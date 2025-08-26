@@ -27,11 +27,11 @@ void DrawChunk(Chunk* chunk)
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(chunk->m_vbo);
 
-#if defined(_DEBUG)
-    g_renderer->BindTexture(nullptr);
-    g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(chunk->m_debugVBO);
-#endif
+    #if defined(_DEBUG)
+        g_renderer->BindTexture(nullptr);
+        g_renderer->BindShader(nullptr);
+        g_renderer->DrawVertexBuffer(chunk->m_debugVBO);
+    #endif
 }
 
 

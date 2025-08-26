@@ -67,16 +67,16 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			Rgba8 const& tint = tileDef->m_tint;
 			Vec2 mins = chunkOrigin + Vec2(x, y) * worldSettings.m_tileWidth;
 			Vec2 maxs = mins + tileDims;
-			AddVertsForRect2D(vbo, mins, maxs, tint);
+			VertexUtils::AddVertsForRect2D(vbo, mins, maxs, tint);
 		}
 	}
 
-#if defined(_DEBUG)
-	m_debugVBO = g_renderer->MakeVertexBuffer();
-	VertexBuffer& debugVBO = *g_renderer->GetVertexBuffer(m_debugVBO);
-	AddVertsForWireGrid(debugVBO, m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
-	AddVertsForWireBox2D(debugVBO, m_chunkBounds, 0.03f, Rgba8::Red);
-#endif
+	#if defined(_DEBUG)
+		m_debugVBO = g_renderer->MakeVertexBuffer();
+		VertexBuffer& debugVBO = *g_renderer->GetVertexBuffer(m_debugVBO);
+		VertexUtils::AddVertsForWireGrid(debugVBO, m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
+		VertexUtils::AddVertsForWireBox2D(debugVBO, m_chunkBounds, 0.03f, Rgba8::Red);
+	#endif
 }
 
 
@@ -87,9 +87,9 @@ void Chunk::Destroy()
 	m_tileIDs.Clear();
 
 	g_renderer->ReleaseVertexBuffer(m_vbo);
-#if defined(_DEBUG)
-	g_renderer->ReleaseVertexBuffer(m_debugVBO);
-#endif
+	#if defined(_DEBUG)
+		g_renderer->ReleaseVertexBuffer(m_debugVBO);
+	#endif
 
 	NamedProperties args;
 	m_destroyed.Broadcast(args);

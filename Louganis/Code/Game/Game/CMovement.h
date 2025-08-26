@@ -12,9 +12,9 @@ struct CMovement
     CMovement(void const* xmlElement);
     
     // Transient Data
-    Vec2 m_frameMoveDir = Vec2::ZeroVector;
-    Vec2 m_frameMovement = Vec2::ZeroVector;
-    bool m_isSprinting = false;
+    Vec2 m_frameMoveDir                 = Vec2::ZeroVector;
+    Vec2 m_frameMovement                = Vec2::ZeroVector;
+    bool m_isSprinting                  = false;
 
     // Definition Data
     float m_movementSpeed               = 0.f;

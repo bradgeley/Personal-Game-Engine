@@ -220,7 +220,7 @@ void DevConsoleInput::RenderBackground(AABB2 const& box) const
 {
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
     vbo.ClearVerts();
-    AddVertsForAABB2(vbo, box, Rgba8::DarkGray);
+    VertexUtils::AddVertsForAABB2(vbo, box, Rgba8::DarkGray);
 
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
@@ -275,7 +275,7 @@ void DevConsoleInput::RenderSelection(AABB2 const& box) const
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
     vbo.ClearVerts();
     
-    AddVertsForAABB2(vbo, selectionBox, Rgba8(0,171,240, 100));
+    VertexUtils::AddVertsForAABB2(vbo, selectionBox, Rgba8(0,171,240, 100));
     g_renderer->DrawVertexBuffer(vbo);
 }
 
@@ -301,7 +301,7 @@ void DevConsoleInput::RenderCaret(AABB2 const& box) const
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
     vbo.ClearVerts();
     
-    AddVertsForAABB2(vbo, caretBox, caretTint);
+    VertexUtils::AddVertsForAABB2(vbo, caretBox, caretTint);
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
     g_renderer->DrawVertexBuffer(vbo);

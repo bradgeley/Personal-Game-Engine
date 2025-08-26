@@ -14,7 +14,7 @@ struct WorldSettings
     bool    m_randomWorldSeed                 = false;
     size_t  m_worldSeed                       = 69;
     float   m_tileWidth                       = 2.f;
-    float   m_chunkLoadRadius                 = 250.f;
+    float   m_chunkLoadRadius                 = 200.f;
     float   m_chunkUnloadRadius               = 300.f;
     float   m_flowFieldGenerationRadius       = 50.f;
     float   m_entityWallBuffer                = 0.01f;

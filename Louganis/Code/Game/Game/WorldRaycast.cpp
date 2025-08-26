@@ -242,22 +242,22 @@ void DebugDrawRaycast(WorldRaycastResult const& result)
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
     vbo.Initialize(1024);
 
-    AddVertsForDisc2D(vbo, result.m_raycast.m_start, 0.1f, 16, Rgba8::Yellow);
-    AddVertsForDisc2D(vbo, result.m_hitLocation, 0.1f, 16, Rgba8::Yellow);
+    VertexUtils::AddVertsForDisc2D(vbo, result.m_raycast.m_start, 0.1f, 16, Rgba8::Yellow);
+    VertexUtils::AddVertsForDisc2D(vbo, result.m_hitLocation, 0.1f, 16, Rgba8::Yellow);
 
     if (result.m_immediateHit)
     {
-        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Gray);
-        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_raycast.m_start + result.m_hitNormal, 0.05f, Rgba8::Orange);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Gray);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_raycast.m_start + result.m_hitNormal, 0.05f, Rgba8::Orange);
     }
     else if (result.m_blockingHit)
     {
-        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Red);
-        AddVertsForArrow2D(vbo, result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, 0.05f, Rgba8::Red);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Red);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, 0.05f, Rgba8::Red);
     }
     else
     {
-        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Yellow);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Yellow);
     }
 
     g_renderer->BindTexture(nullptr);
@@ -276,22 +276,22 @@ void AddVertsForRaycast(VertexBuffer& vbo, WorldRaycastResult const& result, flo
     static float pointRadius = 0.1f;
     static float arrowThickness = 0.05f;
 
-    AddVertsForDisc2D(vbo, result.m_raycast.m_start, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
-    AddVertsForDisc2D(vbo, result.m_hitLocation, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+    VertexUtils::AddVertsForDisc2D(vbo, result.m_raycast.m_start, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+    VertexUtils::AddVertsForDisc2D(vbo, result.m_hitLocation, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
 
     if (result.m_immediateHit)
     {
-        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Gray);
-        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_raycast.m_start + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Orange);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Gray);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_raycast.m_start + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Orange);
     }
     else if (result.m_blockingHit)
     {
-        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Red);
-        AddVertsForArrow2D(vbo, result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Red);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Red);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Red);
     }
     else
     {
-        AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Yellow);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, arrowThickness * scaleMultiplier, Rgba8::Yellow);
     }
 }
 
@@ -304,17 +304,17 @@ void AddVertsForDiscCast(VertexBuffer& vbo, WorldDiscCastResult const& result, f
     static float pointRadius = 0.1f;
     static float arrowThickness = 0.05f;
 
-    AddVertsForCapsule2D(vbo, result.m_discCast.m_start, result.m_discCast.m_start + result.m_discCast.m_direction * result.m_discCast.m_maxDistance, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 25));
-    AddVertsForCapsule2D(vbo, result.m_discCast.m_start, result.m_discCast.m_start + result.m_discCast.m_direction * result.m_discCast.m_maxDistance * result.m_t, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 127));
+    VertexUtils::AddVertsForCapsule2D(vbo, result.m_discCast.m_start, result.m_discCast.m_start + result.m_discCast.m_direction * result.m_discCast.m_maxDistance, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 25));
+    VertexUtils::AddVertsForCapsule2D(vbo, result.m_discCast.m_start, result.m_discCast.m_start + result.m_discCast.m_direction * result.m_discCast.m_maxDistance * result.m_t, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 127));
 
-    AddVertsForArrow2D(vbo, result.m_discCast.m_start, result.m_newDiscCenter, arrowThickness * scaleMultiplier, Rgba8::Yellow);
-    AddVertsForDisc2D(vbo, result.m_newDiscCenter, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+    VertexUtils::AddVertsForArrow2D(vbo, result.m_discCast.m_start, result.m_newDiscCenter, arrowThickness * scaleMultiplier, Rgba8::Yellow);
+    VertexUtils::AddVertsForDisc2D(vbo, result.m_newDiscCenter, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
 
     if (result.m_blockingHit)
     {
-        AddVertsForDisc2D(vbo, result.m_discCast.m_start, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
-        AddVertsForDisc2D(vbo, result.m_hitLocation, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+        VertexUtils::AddVertsForDisc2D(vbo, result.m_discCast.m_start, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
+        VertexUtils::AddVertsForDisc2D(vbo, result.m_hitLocation, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
 
-        AddVertsForArrow2D(vbo, result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Red);
+        VertexUtils::AddVertsForArrow2D(vbo, result.m_hitLocation, result.m_hitLocation + result.m_hitNormal, arrowThickness * scaleMultiplier, Rgba8::Red);
     }
 }

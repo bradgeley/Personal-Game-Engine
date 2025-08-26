@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32929.386
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProtoGame2D", "Code\Game\Game.vcxproj", "{90C669DA-98F2-4CD6-A348-A1C75E3880FF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Louganis", "Code\Game\Game.vcxproj", "{90C669DA-98F2-4CD6-A348-A1C75E3880FF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "..\Engine\Code\Engine\Engine.vcxproj", "{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}"
 EndProject
@@ -11,6 +11,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		FastBreak|x64 = FastBreak|x64
+		FastBreak|x86 = FastBreak|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
@@ -19,6 +21,10 @@ Global
 		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.Debug|x64.Build.0 = Debug|x64
 		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.Debug|x86.ActiveCfg = Debug|Win32
 		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.Debug|x86.Build.0 = Debug|Win32
+		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.FastBreak|x64.ActiveCfg = FastBreak|x64
+		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.FastBreak|x64.Build.0 = FastBreak|x64
+		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.FastBreak|x86.ActiveCfg = FastBreak|Win32
+		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.FastBreak|x86.Build.0 = FastBreak|Win32
 		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.Release|x64.ActiveCfg = Release|x64
 		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.Release|x64.Build.0 = Release|x64
 		{90C669DA-98F2-4CD6-A348-A1C75E3880FF}.Release|x86.ActiveCfg = Release|Win32
@@ -27,6 +33,10 @@ Global
 		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.Debug|x64.Build.0 = Debug|x64
 		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.Debug|x86.ActiveCfg = Debug|Win32
 		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.Debug|x86.Build.0 = Debug|Win32
+		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.FastBreak|x64.ActiveCfg = FastBreak|x64
+		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.FastBreak|x64.Build.0 = FastBreak|x64
+		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.FastBreak|x86.ActiveCfg = FastBreak|Win32
+		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.FastBreak|x86.Build.0 = FastBreak|Win32
 		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.Release|x64.ActiveCfg = Release|x64
 		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.Release|x64.Build.0 = Release|x64
 		{4B0FE23E-6E3B-45B1-9D7B-E516B2F43D51}.Release|x86.ActiveCfg = Release|Win32

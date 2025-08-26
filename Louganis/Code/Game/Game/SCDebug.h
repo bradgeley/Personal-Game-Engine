@@ -17,6 +17,7 @@ public:
 	bool m_debugRenderCostField = false;
 	bool m_debugRenderGradient = false;
 	bool m_debugRenderPreventativePhysicsRaycasts = false;
+	bool m_debugRenderSolidTiles = false;
 	Vec2 m_debugMouseLocation;
 };
 

@@ -18,9 +18,9 @@ void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, 
         Vertex_PCU const& v2 = triangles[i+1];
         Vertex_PCU const& v3 = triangles[i+2];
         
-        AddVertsForLine2D(vbo, Vec2(v1.pos), Vec2(v2.pos), thickness, tint);
-        AddVertsForLine2D(vbo, Vec2(v2.pos), Vec2(v3.pos), thickness, tint);
-        AddVertsForLine2D(vbo, Vec2(v3.pos), Vec2(v1.pos), thickness, tint);
+        VertexUtils::AddVertsForLine2D(vbo, Vec2(v1.pos), Vec2(v2.pos), thickness, tint);
+        VertexUtils::AddVertsForLine2D(vbo, Vec2(v2.pos), Vec2(v3.pos), thickness, tint);
+        VertexUtils::AddVertsForLine2D(vbo, Vec2(v3.pos), Vec2(v1.pos), thickness, tint);
     }
 
     g_renderer->BindTexture(nullptr);

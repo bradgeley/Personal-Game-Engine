@@ -754,7 +754,7 @@ void DevConsole::DrawBackground() const
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
     vbo.ClearVerts();
 
-    AddVertsForAABB2(vbo, backgroundBox, m_config.m_backgroundTint);
+    VertexUtils::AddVertsForAABB2(vbo, backgroundBox, m_config.m_backgroundTint);
     g_renderer->BindTexture(nullptr);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(m_vbo);
@@ -782,7 +782,7 @@ void DevConsole::DrawBackground() const
         imageBox.mins.x += (windowAspect - imageAspect);
         AABB2 fillerBox = backgroundBox;
         fillerBox.maxs.x = imageBox.mins.x;
-        AddVertsForAABB2(vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 0.f, 0.f, 1.f));
+        VertexUtils::AddVertsForAABB2(vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 0.f, 0.f, 1.f));
     }
     else
     {
@@ -790,10 +790,10 @@ void DevConsole::DrawBackground() const
         imageBox.maxs.y += (windowAspect - imageAspect);
         AABB2 fillerBox = backgroundBox;
         fillerBox.mins.y = imageBox.maxs.y;
-        AddVertsForAABB2(vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 1.f, 1.f, 1.f));
+        VertexUtils::AddVertsForAABB2(vbo, fillerBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)), AABB2(0.f, 1.f, 1.f, 1.f));
     }
     
-    AddVertsForAABB2(vbo, imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
+    VertexUtils::AddVertsForAABB2(vbo, imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
     g_renderer->BindTexture(currentBkg);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(vbo);
@@ -823,7 +823,7 @@ void DevConsole::DrawTab() const
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
     vbo.ClearVerts();
 
-    AddVertsForAABB2(vbo, tabDims, m_config.m_backgroundTint);
+    VertexUtils::AddVertsForAABB2(vbo, tabDims, m_config.m_backgroundTint);
     g_renderer->BindTexture(nullptr);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(vbo);

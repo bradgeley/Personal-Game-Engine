@@ -2,6 +2,7 @@
 #include "Renderer.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Debug/DebugDrawUtils.h"
+#include "Engine/Debug/DevConsole.h"
 #include "Engine/Events/EventSystem.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"
@@ -46,6 +47,10 @@ void Renderer::Startup()
 
 	UpdateRenderingPipelineState(true);
     AddDevConsoleCommands();
+
+	#if defined(_DEBUG)
+		m_debugVertexBuffer = MakeVertexBuffer();
+	#endif
 }
 
 
@@ -216,16 +221,23 @@ void Renderer::DrawVertexBuffer(VertexBuffer& vbo)
 		Draw(vbo.GetNumVerts(), 0);
 	}
 
-#if defined(_DEBUG)
-	if (m_debugDrawVertexBuffers)
-	{
-		float thickness = m_currentCamera->GetOrthoDimensions().GetLowestXY() / 1000.f;
+	#if defined(_DEBUG)
+		if (m_debugDrawVertexBuffers)
+		{
+			float thickness = m_currentCamera->GetOrthoDimensions().GetLowestXY() / 1000.f;
 
-		m_debugDrawVertexBuffers = false; // avoid infinite recursion
-		DebugDrawMesh2D(vbo.GetVerts(), thickness);
-		m_debugDrawVertexBuffers = true;
-	}
-#endif
+			VertexBuffer& debugVBO = *GetVertexBuffer(m_debugVertexBuffer);
+			AddVertsForWireMesh2D(debugVBO, vbo, thickness, Rgba8::Magenta);
+			BindShader(nullptr);
+			BindTexture(nullptr);
+
+			m_debugDrawVertexBuffers = false; // avoid infinite recursion
+			DrawVertexBuffer(debugVBO);
+			m_debugDrawVertexBuffers = true;
+
+			debugVBO.ClearVerts();
+		}
+	#endif
 }
 
 
@@ -945,6 +957,11 @@ void Renderer::DestroyVertexBuffers()
 		delete vb.second;
 	}
 	m_vertexBuffers.clear();
+
+
+	#if defined(_DEBUG)
+		m_debugVertexBuffer = RendererUtils::InvalidID;
+	#endif
 }
 
 

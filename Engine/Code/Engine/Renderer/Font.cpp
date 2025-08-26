@@ -85,7 +85,7 @@ void Font::AddVertsForText2D(VertexBuffer& out_verts, Vec2 const& textMins, floa
 		UVs.mins = m_glyphData[currentChar].m_uvMins;
 		UVs.maxs = m_glyphData[currentChar].m_uvMaxs;
 
-		AddVertsForAABB2(out_verts, bounds, tint, UVs);
+		VertexUtils::AddVertsForAABB2(out_verts, bounds, tint, UVs);
 		
 		penPosition += glyphWidth;
 		penPosition += c; // todo: don't add c for final character? seems right... maybe

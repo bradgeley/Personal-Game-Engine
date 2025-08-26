@@ -24,7 +24,7 @@ void SRenderEntities::Run(SystemContext const& context)
 
     VertexBufferID id = g_renderer->MakeVertexBuffer();
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
-    AddVertsForDisc2D(vbo, Vec2(), 1, 128);
+    VertexUtils::AddVertsForDisc2D(vbo, Vec2(), 1, 128);
 
     // Render all things (1 draw call per entity = bad, todo: write sprite geometry shader)
     ModelConstants modelConstants;
