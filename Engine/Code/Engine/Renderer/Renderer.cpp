@@ -227,7 +227,7 @@ void Renderer::DrawVertexBuffer(VertexBuffer& vbo)
 			float thickness = m_currentCamera->GetOrthoDimensions().GetLowestXY() / 1000.f;
 
 			VertexBuffer& debugVBO = *GetVertexBuffer(m_debugVertexBuffer);
-			AddVertsForWireMesh2D(debugVBO, vbo, thickness, Rgba8::Magenta);
+			VertexUtils::AddVertsForWireMesh2D(debugVBO, vbo, thickness, Rgba8::Magenta);
 			BindShader(nullptr);
 			BindTexture(nullptr);
 
