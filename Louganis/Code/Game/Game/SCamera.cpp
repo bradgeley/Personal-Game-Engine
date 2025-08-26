@@ -2,7 +2,7 @@
 #include "SCamera.h"
 #include "CCamera.h"
 #include "CRender.h"
-#include "Engine/Renderer/Window.h"
+#include "Engine/Window/Window.h"
 #include "Engine/Renderer/Renderer.h"
 
 

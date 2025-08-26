@@ -67,9 +67,6 @@
     <ClCompile Include="Renderer\VertexUtils.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\Window.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="DataStructures\NamedProperties.cpp">
       <Filter>DataStructures</Filter>
     </ClCompile>
@@ -253,6 +250,9 @@
     <ClCompile Include="Renderer\RendererUtils.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="Window\Window.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -325,9 +325,6 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\VertexUtils.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\Window.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="DataStructures\NamedProperties.h">
@@ -537,6 +534,9 @@
     <ClInclude Include="Renderer\RendererUtils.h">
       <Filter>Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Window\Window.h">
+      <Filter>Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">
@@ -592,6 +592,9 @@
     </Filter>
     <Filter Include="Renderer\WebGL">
       <UniqueIdentifier>{3a1a9974-6e8a-4468-8830-b656cd8868ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Window">
+      <UniqueIdentifier>{13d8db90-ad94-45d3-a386-2689d9547169}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

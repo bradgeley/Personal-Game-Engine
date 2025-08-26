@@ -2,7 +2,7 @@
 #include "InputSystem.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/DataStructures/NamedProperties.h"
-#include "Engine/Renderer/Window.h"
+#include "Engine/Window/Window.h"
 #include "Engine/Math/MathUtils.h"
 
 

@@ -2,7 +2,7 @@
 #include "SInitView.h"
 #include "CCamera.h"
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Window.h"
+#include "Engine/Window/Window.h"
 
 
 

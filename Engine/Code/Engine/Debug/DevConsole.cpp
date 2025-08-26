@@ -17,7 +17,7 @@
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Renderer/Texture.h"
-#include "Engine/Renderer/Window.h"
+#include "Engine/Window/Window.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/Font.h"
 #include "Game/Framework/EngineBuildPreferences.h"

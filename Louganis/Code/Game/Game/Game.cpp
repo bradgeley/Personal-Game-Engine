@@ -13,7 +13,7 @@
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
-#include "Engine/Renderer/Window.h"
+#include "Engine/Window/Window.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Camera.h"
 
