@@ -8,6 +8,7 @@
 #include "Config.h"
 #include "SystemSubgraph.h"
 #include "Engine/Core/Time.h"
+#include <algorithm>
 
 
 

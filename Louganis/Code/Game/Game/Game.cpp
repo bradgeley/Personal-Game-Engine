@@ -14,6 +14,7 @@
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
 #include "Engine/Window/Window.h"
+#include "Engine/Window/WindowUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Camera.h"
 
@@ -134,7 +135,7 @@ void Game::ConfigureEngine(Engine* engine)
     windowConfig.m_windowTitle = "Project Louganis";
     windowConfig.m_startupUserSettings.m_windowMode = WindowMode::Borderless;
     windowConfig.m_startupUserSettings.m_windowedResolution = IntVec2(500, 500);
-    g_window = new Window(windowConfig);
+	g_window = WindowUtils::MakeWindow(windowConfig);
     engine->RegisterSubsystem(g_window);
 
     // Dev console before input, so it steals input from the window when active
@@ -156,7 +157,6 @@ void Game::ConfigureEngine(Engine* engine)
     engine->RegisterSubsystem(g_jobSystem);
 
     PerformanceDebugWindowConfig perfDebugWindowConfig;
-    constexpr int i = sizeof(PerformanceDebugWindow);
     g_performanceDebugWindow = new PerformanceDebugWindow(perfDebugWindowConfig);
     engine->RegisterSubsystem(g_performanceDebugWindow);
 }

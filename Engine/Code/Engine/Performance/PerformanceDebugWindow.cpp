@@ -15,6 +15,7 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Window/Window.h"
+#include "Engine/Window/WindowUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
 
@@ -166,7 +167,7 @@ bool PerformanceDebugWindow::OpenWindow()
     windowConfig.m_startupUserSettings.m_windowedResolution = IntVec2(WINDOW_RESOLUTION_X, WINDOW_RESOLUTION_Y);
     windowConfig.m_startupUserSettings.m_renderResolutionMultiplier = 1.f;
 
-    m_window = new Window(windowConfig);
+	m_window = WindowUtils::MakeWindow(windowConfig);
     m_window->Startup();
 
     IntVec2 renderResolution = m_window->GetRenderResolution();

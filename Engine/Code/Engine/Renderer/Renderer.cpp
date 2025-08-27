@@ -4,6 +4,7 @@
 #include "Engine/Debug/DebugDrawUtils.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Events/EventSystem.h"
+#include "Engine/Window/Window.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"
 #include "Font.h"
@@ -13,7 +14,6 @@
 #include "Texture.h"
 #include "VertexBuffer.h"
 #include "VertexUtils.h"
-#include "Window.h"
 #include <thread>
 
 

@@ -22,6 +22,98 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+D3D11_FILTER GetD3D11SamplerFilter(SamplerFilter filter, float& out_maxAnisotropy);
+D3D11_TEXTURE_ADDRESS_MODE GetD3D11SamplerAddressMode(SamplerAddressMode addressMode);
+D3D11_CULL_MODE GetD3D11CullMode(CullMode cullMode);
+D3D11_FILL_MODE GetD3D11FillMode(FillMode fillMode);
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+D3D11_FILTER GetD3D11SamplerFilter(SamplerFilter filter, float& out_maxAnisotropy)
+{
+	out_maxAnisotropy = 0.f;
+	switch (filter)
+	{
+	case SamplerFilter::Point:
+		return D3D11_FILTER_MIN_MAG_MIP_POINT;
+
+	case SamplerFilter::Bilinear:
+		return D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+
+	case SamplerFilter::Trilinear:
+		return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+	case SamplerFilter::Anisotropic_2:
+		out_maxAnisotropy = 2.f;
+		return D3D11_FILTER_ANISOTROPIC;
+
+	case SamplerFilter::Anisotropic_4:
+		out_maxAnisotropy = 4.f;
+		return D3D11_FILTER_ANISOTROPIC;
+
+	case SamplerFilter::Anisotropic_8:
+		out_maxAnisotropy = 8.f;
+		return D3D11_FILTER_ANISOTROPIC;
+
+	case SamplerFilter::Anisotropic_16:
+		out_maxAnisotropy = 16.f;
+		return D3D11_FILTER_ANISOTROPIC;
+
+	default:
+		break;
+	}
+	ERROR_AND_DIE("SamplerFilter not supported.")
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+D3D11_TEXTURE_ADDRESS_MODE GetD3D11SamplerAddressMode(SamplerAddressMode addressMode)
+{
+	switch (addressMode)
+	{
+	case SamplerAddressMode::Wrap:
+		return D3D11_TEXTURE_ADDRESS_WRAP;
+	default:
+		return D3D11_TEXTURE_ADDRESS_CLAMP;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+D3D11_CULL_MODE GetD3D11CullMode(CullMode cullMode)
+{
+	switch (cullMode)
+	{
+	case CullMode::Front: {}
+						return D3D11_CULL_FRONT;
+	case CullMode::Back:
+		return D3D11_CULL_BACK;
+	default:
+		return D3D11_CULL_NONE;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+D3D11_FILL_MODE GetD3D11FillMode(FillMode fillMode)
+{
+	switch (fillMode)
+	{
+	case FillMode::Wireframe:
+		return D3D11_FILL_WIREFRAME;
+	default:
+		return D3D11_FILL_SOLID;
+	}
+}
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 D3D11Renderer::D3D11Renderer(RendererConfig const& config) : Renderer(config)
 {
 
@@ -321,9 +413,9 @@ void D3D11Renderer::ResizeSwapChainRenderTarget(RenderTargetID renderTargetID, I
 	D3D11Texture* depthBuffer = dynamic_cast<D3D11Texture*>(GetTexture(renderTarget->m_depthBuffer));
 	D3D11Swapchain* swapchain = dynamic_cast<D3D11Swapchain*>(GetSwapchain(renderTarget->m_swapchain));
 
-	ASSERT_OR_DIE(backBuffer, "Invalid backbuffer");
-	ASSERT_OR_DIE(depthBuffer, "Invalid depth buffer");
-	ASSERT_OR_DIE(swapchain, "Invalid swapchain");
+	ASSERT_OR_DIE(backBuffer, "Render target has an invalid backbuffer");
+	ASSERT_OR_DIE(depthBuffer, "Render target has an invalid depth buffer");
+	ASSERT_OR_DIE(swapchain, "Render target must have a swapchain to call ResizeSwapChainRenderTarget.");
 
 	backBuffer->ReleaseResources();
 	depthBuffer->ReleaseResources();
@@ -552,9 +644,9 @@ void D3D11Renderer::CreateDevice()
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::CreateBlendStates()
 {
-	m_blendStateByMode[(int) BlendMode::Opaque] = CreateBlendState(D3D11_BLEND_ONE, D3D11_BLEND_ZERO, D3D11_BLEND_OP_ADD);
-	m_blendStateByMode[(int) BlendMode::Alpha] = CreateBlendState(D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD);
-	m_blendStateByMode[(int) BlendMode::Additive] = CreateBlendState(D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD);
+	m_blendStateByMode[(int) BlendMode::Opaque]		= CreateBlendState(BlendMode::Opaque);		// D3D11_BLEND_ONE, D3D11_BLEND_ZERO, D3D11_BLEND_OP_ADD);
+	m_blendStateByMode[(int) BlendMode::Alpha]		= CreateBlendState(BlendMode::Alpha);		// D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD);
+	m_blendStateByMode[(int) BlendMode::Additive]	= CreateBlendState(BlendMode::Additive);	// D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD);
 
 	#ifdef _DEBUG
 		std::string opaqueName = StringUtils::StringF("Blend State (Opaque)");
@@ -647,8 +739,24 @@ void D3D11Renderer::CreateDefaultFont()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ID3D11BlendState* D3D11Renderer::CreateBlendState(D3D11_BLEND srcFactor, D3D11_BLEND dstFactor, D3D11_BLEND_OP op)
+// Opaque: D3D11_BLEND_ONE, D3D11_BLEND_ZERO, D3D11_BLEND_OP_ADD);
+// Alpha: D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD);
+// Additive: D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD);
+//
+ID3D11BlendState* D3D11Renderer::CreateBlendState(BlendMode blendMode)
 {
+	auto srcFactor = blendMode == BlendMode::Opaque ? D3D11_BLEND_ONE :
+					 blendMode == BlendMode::Alpha ? D3D11_BLEND_SRC_ALPHA :
+					 blendMode == BlendMode::Additive ? D3D11_BLEND_ONE : D3D11_BLEND_ONE;
+
+	auto dstFactor = blendMode == BlendMode::Opaque ? D3D11_BLEND_ZERO :
+					 blendMode == BlendMode::Alpha ? D3D11_BLEND_INV_SRC_ALPHA :
+					 blendMode == BlendMode::Additive ? D3D11_BLEND_ONE : D3D11_BLEND_ZERO;
+
+	auto op = blendMode == BlendMode::Opaque ? D3D11_BLEND_OP_ADD :
+			  blendMode == BlendMode::Alpha ? D3D11_BLEND_OP_ADD :
+			  blendMode == BlendMode::Additive ? D3D11_BLEND_OP_ADD : D3D11_BLEND_OP_ADD;
+
 	D3D11_BLEND_DESC blendDesc;
 	blendDesc.AlphaToCoverageEnable = false;
 	blendDesc.IndependentBlendEnable = false;

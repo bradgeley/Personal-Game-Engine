@@ -67,7 +67,7 @@ private:
     virtual void CreateDefaultFont() override;
 
     // D3D11 Specific State Creation
-    ID3D11BlendState* CreateBlendState(D3D11_BLEND srcFactor, D3D11_BLEND dstFactor, D3D11_BLEND_OP op);
+    ID3D11BlendState* CreateBlendState(BlendMode blendMode);
     ID3D11SamplerState* CreateSamplerState(SamplerFilter filter, SamplerAddressMode addressMode);
 
     // State cleanup

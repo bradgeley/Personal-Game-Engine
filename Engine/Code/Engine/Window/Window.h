@@ -3,7 +3,6 @@
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/Events/EventDelegate.h"
 #include "Engine/Math/IntVec2.h"
-#include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/RendererUtils.h"
 #include <string>
 #include <vector>
@@ -56,7 +55,7 @@ struct WindowConfig
 //----------------------------------------------------------------------------------------------------------------------
 // Window
 //
-// A Windows window, used for rendering stuff.
+// A window, used for rendering stuff.
 //
 class Window : public EngineSubsystem
 {
@@ -65,13 +64,11 @@ public:
     Window(WindowConfig const& config);
     
     virtual void Startup() override;
-    virtual void BeginFrame() override;
     virtual void Shutdown() override;
 
-    bool IsValid() const;
-    void SetWindowTitle(std::string const& newTitle);
+    virtual bool IsValid() const = 0;
+    virtual void SetWindowTitle(std::string const& newTitle) = 0;
 
-    void* GetHWND() const;
     int GetWidth() const;
     int GetHeight() const;
     float GetAspect() const;
@@ -80,45 +77,39 @@ public:
     bool IsFullscreen() const;
     bool IsBorderless() const;
     bool IsWindowed() const;
-    void Minimize();
+    virtual void Minimize() = 0;
     void SetIsMinimized(bool isMinimized);
     bool GetIsMinimized() const;
 
-    IntVec2 GetDesiredWindowResolution() const;
+    virtual IntVec2 GetDesiredWindowResolution() const = 0;
     IntVec2 GetActualWindowResolution() const;
     IntVec2 GetRenderResolution() const;
     IntVec2 GetLastKnownWindowedPos() const;
 
-    IntVec2 GetMouseClientPosition(bool originBottomLeft = true) const;
-    Vec2 GetMouseClientRelativePosition(bool originBottomLeft = true) const;
+    virtual IntVec2 GetMouseClientPosition(bool originBottomLeft = true) const = 0;
+    virtual Vec2 GetMouseClientRelativePosition(bool originBottomLeft = true) const = 0;
 
-    bool GiveFocus();
+    virtual bool GiveFocus() = 0;
     void SetHasFocus(bool hasFocus);
     bool HasFocus() const;
 
-    uint32_t GetWindowStyleFlags() const;
-    uint32_t GetWindowStyleExFlags() const;
-
     std::string GetWindowTitle() const;
     void RefreshWindowTitle();
-    void RefreshWindowSize();
+    virtual void RefreshWindowSize() = 0;
     void HandleWindowResolutionChanged(int width, int height);
     void ToggleUserManualResizing(bool isManuallyResizing);
-    void HandleManualMove();
-
-    void MakeChildOf(Window* parentWindow);
+    virtual void HandleManualMove() = 0;
 
     RenderTargetID GetRenderTarget() const;
 
 private:
 
-    void MakeWindow();
-    void RunMessagePump();
+    virtual void MakeWindow() = 0;
     void RegisterEvents();
     void UnregisterEvents();
 
-    void WindowModeChanged(WindowMode previousMode);
-    void WindowFocusChanged();
+    virtual void WindowModeChanged(WindowMode previousMode) = 0;
+    virtual void WindowFocusChanged() = 0;
     void WindowSizeChanged();
 
     bool SetWindowMode(NamedProperties& args);

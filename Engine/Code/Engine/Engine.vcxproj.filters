@@ -253,6 +253,12 @@
     <ClCompile Include="Window\Window.cpp">
       <Filter>Window</Filter>
     </ClCompile>
+    <ClCompile Include="Window\Win32\Win32Window.cpp">
+      <Filter>Window\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\WindowUtils.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -537,6 +543,12 @@
     <ClInclude Include="Window\Window.h">
       <Filter>Window</Filter>
     </ClInclude>
+    <ClInclude Include="Window\Win32\Win32Window.h">
+      <Filter>Window\Win32</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\WindowUtils.h">
+      <Filter>Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">
@@ -595,6 +607,9 @@
     </Filter>
     <Filter Include="Window">
       <UniqueIdentifier>{13d8db90-ad94-45d3-a386-2689d9547169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Window\Win32">
+      <UniqueIdentifier>{a8f3cd6d-1653-42f2-99f1-47ffd6160796}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
