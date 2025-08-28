@@ -3,7 +3,7 @@
 
 #if defined(__EMSCRIPTEN__)
 #include <emscripten.h>
-#include "Game/Game/Application.h"
+#include "WebApplication.h"
 
 
 
@@ -19,10 +19,9 @@ void MainGameLoop();
 //
 int main()
 {
-
-	g_app = new Application();
+	g_app = new WebApplication();
 	g_app->Startup();
-	empscripten_set_main_loop(MainGameLoop, 0, true);
+	emscripten_set_main_loop(MainGameLoop, 0, true);
 	g_app->Shutdown();
 	delete g_app;
 	g_app = nullptr;

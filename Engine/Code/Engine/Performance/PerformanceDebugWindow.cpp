@@ -18,6 +18,7 @@
 #include "Engine/Window/WindowUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
+#include <cfloat>
 
 
 

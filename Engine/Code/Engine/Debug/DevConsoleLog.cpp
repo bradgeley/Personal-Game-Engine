@@ -6,6 +6,7 @@
 #include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
+#include <cfloat>
 
 
 

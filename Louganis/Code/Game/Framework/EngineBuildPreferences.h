@@ -13,8 +13,9 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Performance
 //
+//#define DISABLE_ASSERTS
 //#define DEBUG_MEMORY_LEAKS // just does a dump at the end
-#define PERF_WINDOW_DISPLAY_ENGINE_SECTION
+//#define PERF_WINDOW_DISPLAY_ENGINE_SECTION
 #define PERF_WINDOW_LOG_ENGINE_FRAME_DATA
 
 
@@ -22,7 +23,9 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Renderer
 //
-#define RENDERER_D3D11
+#if defined(_WIN32)
+	#define RENDERER_D3D11
+#endif
 
 
 

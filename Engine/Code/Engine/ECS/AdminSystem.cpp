@@ -106,7 +106,7 @@ void AdminSystem::RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeco
 bool AdminSystem::DestroyEntity(EntityID entityID)
 {
 	m_entities.Unset((int) entityID);
-	m_entityComposition[entityID] = 0i64;
+	m_entityComposition[entityID] = (BitMask) 0;
 	for (auto it = m_componentStorage.begin(); it != m_componentStorage.end(); ++it)
 	{
 		BaseStorage* storage = it->second;
@@ -335,7 +335,7 @@ void AdminSystem::RegisterComponentBit(HashCode typeHash)
 	ASSERT_OR_DIE(m_componentBitMasks.size() < 64, "Max number of components reached.")
 
 	size_t componentIndex = m_componentBitMasks.size();
-	BitMask bitMask = (1i64 << componentIndex);
+	BitMask bitMask = ((BitMask) 1 << componentIndex);
 	m_componentBitMasks.emplace(typeHash, bitMask);
 }
 
@@ -414,7 +414,7 @@ void AdminSystem::DestroyAllEntities()
 	m_entities.SetAll(false);
 	for (BitMask& entityComp : m_entityComposition)
 	{
-		entityComp = 0i64;
+		entityComp = (BitMask) 0;
 	}
 	for (auto& storage : m_componentStorage)
 	{

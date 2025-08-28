@@ -7,12 +7,13 @@
 
 
 
+
 //----------------------------------------------------------------------------------------------------------------------
 void WebApplication::Shutdown()
 {
     Application::Shutdown();
 
-    emscripten_cancel_main_loop(0);
+    emscripten_cancel_main_loop();
 }
 
 #endif // __EMSCRIPTEN__

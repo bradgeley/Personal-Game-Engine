@@ -5,6 +5,7 @@
 #include "AABB2.h"
 #include "Plane2.h"
 #include "Engine/Core/ErrorUtils.h"
+#include <cfloat>
 
 
 

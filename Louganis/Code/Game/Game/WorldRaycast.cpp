@@ -8,6 +8,7 @@
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
+#include <cfloat>
 
 
 

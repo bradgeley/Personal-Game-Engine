@@ -1,7 +1,10 @@
 // Bradley Christensen - 2022-2025
 #include "BinaryUtils.h"
-#include <intrin.h>
 #include <cstdint>
+
+#if defined(_WIN32)
+#include <intrin.h>
+#endif
 
 
 
@@ -70,7 +73,7 @@ int BinaryUtils::FirstUnsetBit(size_t mask)
 	#elif defined(_WIN32)
 		foundUnsetBit = _BitScanForward(&firstUnsetBitIndex, static_cast<unsigned long>(~mask));
 	#elif defined(__clang__) || defined(__GNUC__)
-		foundSetBit = __builtin_ctzll(mask);
+		foundUnsetBit = __builtin_ctzll(mask);
 	#else
 		#error "No known bit scan for this compiler."
 	#endif

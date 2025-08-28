@@ -70,7 +70,7 @@ public:
 	SystemSubgraph& CreateOrGetSystemSubgraph(SystemSubgraphID subgraphID);
 
 	template <typename CType>
-	void RegisterComponent(ComponentStorageType storageType = ComponentStorageType::ARRAY);
+	void RegisterComponent(ComponentStorageType storageType = ComponentStorageType::Array);
 
 	template <typename CType>
 	void RegisterResourceByType();
@@ -247,7 +247,7 @@ void AdminSystem::RegisterSystem(SystemSubgraphID subgraphID)
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename CType>
-void AdminSystem::RegisterComponent(ComponentStorageType storageType /*= ComponentStorageType::ARRAY*/)
+void AdminSystem::RegisterComponent(ComponentStorageType storageType /*= ComponentStorageType::Array*/)
 {
 	HashCode typeHash = typeid(CType).hash_code();
 	if (m_componentStorage.find(typeHash) == m_componentStorage.end())

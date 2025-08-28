@@ -10,6 +10,7 @@
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Chunk.h"
+#include <cfloat>
 #include <queue>
 
 

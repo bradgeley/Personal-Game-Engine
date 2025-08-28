@@ -263,8 +263,8 @@ public:
 		// not relevant to singleton
 	}
 	
-	inline CType& operator [](EntityID [[maybe_unused]] id) { return m_data; }
-	inline CType& operator [](GroupIter const& [[maybe_unused]] it) { return m_data; }
+	inline CType& operator [](EntityID) { return m_data; }
+	inline CType& operator [](GroupIter const&) { return m_data; }
 
 public:
 
@@ -311,7 +311,7 @@ public:
 		return nullptr;
 	}
 	
-	virtual CType*			Add(EntityID eid, [[maybe_unused]] CType const& copy) override
+	virtual CType*			Add(EntityID eid, CType const&)			override
 	{
 		m_tags.Set(eid);
 		return nullptr;

@@ -3,13 +3,15 @@
 #include "Engine/Core/StringUtils.h"
 #include <mutex>
 
-
-
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(EMSCRIPTEN)
 #define PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #endif
+
+#if !defined(PLATFORM_WINDOWS)
+#include <iostream>
+#endif // PLATFORM_WINDOWS
 
 
 
@@ -33,44 +35,45 @@ UINT GetWindowsMessageBoxIconFlagForSeverityLevel(MsgSeverityLevel severity)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-__declspec(noreturn) void FatalError(char const* filePath, char const* functionName, int lineNum, std::string const& reasonForError, char const* conditionText)
+[[noreturn]] void FatalError(char const* filePath, char const* functionName, int lineNum, std::string const& reasonForError, char const* conditionText)
 {
 	static std::mutex errorMutex;
 	std::unique_lock scopeLock(errorMutex);
 	
-    std::string errorMessage = reasonForError;
-	if(reasonForError.empty())
-	{
-		if(conditionText)
-			errorMessage = StringUtils::StringF("ERROR: \"%s\" is false!", conditionText);
-		else
-			errorMessage = "Unspecified fatal error";
-	}
-
-	std::string appName = "Game"; // todo: get the correct app name
-	std::string fullMessageTitle = appName + " :: Error";
-	std::string fullMessageText = errorMessage;
-	fullMessageText += "\n\nThe application will now close.\n";
-	bool isDebuggerPresent = (IsDebuggerPresent() == TRUE);
-	if(isDebuggerPresent)
-	{
-		fullMessageText += "\nDEBUGGER DETECTED!\nWould you like to break and debug?\n  (Yes=debug, No=quit)\n";
-	}
-
-	fullMessageText += "\n---------- Debugging Details Follow ----------\n";
-	if (conditionText)
-	{
-		fullMessageText += StringUtils::StringF("\nThis error was triggered by a run-time condition check:\n  %s\n  from %s(), line %i in %s\n",
-			conditionText, functionName, lineNum, filePath);
-	}
-	else
-	{
-		fullMessageText += StringUtils::StringF("\nThis was an unconditional error triggered by reaching\n line %i of %s, in %s()\n",
-			lineNum, filePath, functionName);
-	}
 
 	#if defined(PLATFORM_WINDOWS)
 	{
+		std::string errorMessage = reasonForError;
+		if(reasonForError.empty())
+		{
+			if(conditionText)
+				errorMessage = StringUtils::StringF("ERROR: \"%s\" is false!", conditionText);
+			else
+				errorMessage = "Unspecified fatal error";
+		}
+
+		std::string appName = "Game"; // todo: get the correct app name
+		std::string fullMessageTitle = appName + " :: Error";
+		std::string fullMessageText = errorMessage;
+		fullMessageText += "\n\nThe application will now close.\n";
+		bool isDebuggerPresent = (IsDebuggerPresent() == TRUE);
+		if(isDebuggerPresent)
+		{
+			fullMessageText += "\nDEBUGGER DETECTED!\nWould you like to break and debug?\n  (Yes=debug, No=quit)\n";
+		}
+
+		fullMessageText += "\n---------- Debugging Details Follow ----------\n";
+		if (conditionText)
+		{
+			fullMessageText += StringUtils::StringF("\nThis error was triggered by a run-time condition check:\n  %s\n  from %s(), line %i in %s\n",
+				conditionText, functionName, lineNum, filePath);
+		}
+		else
+		{
+			fullMessageText += StringUtils::StringF("\nThis was an unconditional error triggered by reaching\n line %i of %s, in %s()\n",
+				lineNum, filePath, functionName);
+		}
+
 		if (isDebuggerPresent)
 		{
 			bool isAnswerYes = SystemDialogue_YesNo(fullMessageTitle, fullMessageText, MsgSeverityLevel::FATAL);
@@ -87,9 +90,13 @@ __declspec(noreturn) void FatalError(char const* filePath, char const* functionN
 			ShowCursor(TRUE);
 		}
 	}
+	#else
+		std::cerr << "Fatal error: " << reasonForError << "\n";
+		if (conditionText) std::cerr << "Condition: " << conditionText << "\n";
+		std::cerr << "At " << filePath << ":" << lineNum << " in " << functionName << "\n";
 	#endif
 
-	exit(0);
+	std::exit(EXIT_FAILURE);
 }
 
 

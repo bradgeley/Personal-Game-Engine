@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/Name.h"
 #include <unordered_map>
 #include <typeinfo>
@@ -81,11 +82,12 @@ void TypedPropertyBase<T>::Set(T const& value)
 template <typename T>
 size_t TypedPropertyBase<T>::StaticGetType()
 {
-    #ifndef _CPPRTTI
+    #ifndef RTTI_ENABLED
         // If RTTI is disabled, we can still get the type of the property base, it just limits the use of this class
         // to not be used across DLL's. If Set is called from engine code on a NP instance, then Get is called on that
         // same instance in game code, it will fail to match the types. That is pretty much unacceptable unfortunately.
-        return (size_t) &TypedPropertyBase<T>::GetType;
+        static const size_t typeId = reinterpret_cast<size_t>(&typeId);
+        return typeId;
     #else
         return typeid(T).hash_code();
     #endif

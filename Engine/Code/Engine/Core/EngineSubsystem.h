@@ -17,18 +17,18 @@ public:
     EngineSubsystem(const EngineSubsystem&) = delete;
     virtual ~EngineSubsystem() = default;
     
-    virtual void Startup()                                      {}
-    virtual void BeginFrame()                                   {}
-    virtual void Update([[maybe_unused]] float deltaSeconds)    {}
-    virtual void Render() const                                 {}
-    virtual void EndFrame()                                     {}
-    virtual void Shutdown()                                     {}
+    virtual void Startup();
+    virtual void BeginFrame();
+    virtual void Update(float deltaSeconds);
+    virtual void Render() const;
+    virtual void EndFrame();
+    virtual void Shutdown();
 
     Name GetName();
 
     bool IsEnabled() const;
     void SetEnabled(bool isEnabled);
-    virtual void OnSetEnabled([[maybe_unused]] bool isEnabled)  {}
+    virtual void OnSetEnabled(bool isEnabled);
 
 protected:
 

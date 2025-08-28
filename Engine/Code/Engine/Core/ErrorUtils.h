@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Game/Framework/EngineBuildPreferences.h"
 #include <string>
 
 
@@ -24,7 +25,7 @@ enum class MsgSeverityLevel
 
 
 //----------------------------------------------------------------------------------------------------------------------
-__declspec(noreturn) void FatalError(char const* filePath, char const* functionName, int lineNum, std::string const& reasonForError, char const* conditionText = nullptr);
+[[noreturn]] void FatalError(char const* filePath, char const* functionName, int lineNum, std::string const& reasonForError, char const* conditionText = nullptr);
 void SystemDialogue_Okay(std::string const& messageTitle, std::string const& messageText, MsgSeverityLevel severity);
 bool SystemDialogue_YesNo(std::string const& messageTitle, std::string const& messageText, MsgSeverityLevel severity);
 bool SystemDialogue_OkayCancel(std::string const& messageTitle, std::string const& messageText, MsgSeverityLevel severity);

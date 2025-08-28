@@ -89,8 +89,6 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
     g_devConsole->AddLine(StringUtils::StringF("Entity def loading: %s", m_name.ToCStr()));
 
-    //tinyxml2::XMLElement const* elem;
-
     // CCamera
     auto elem = xmlElement->FirstChildElement("Camera");
     if (elem)

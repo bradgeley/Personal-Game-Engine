@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Core/BinaryUtils.h"
 #include <cstdint>
+#include <cstddef>
 #include <string.h> // for memset
 
 
