@@ -50,3 +50,5 @@ Louganis/Run/Temp/Debug/DevConsoleCommandHistory.txt
 /Louganis/.vs/Louganis/v17
 /Louganis/.vs/Louganis/FileContentIndex
 /Louganis/.vs/Louganis/CopilotIndices/17.14.1091.29919
+
+build-wasm/
