@@ -286,7 +286,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Framework\Main_Windows.cpp" />
+    <ClCompile Include="Framework\Application.cpp" />
+    <ClCompile Include="Framework\WASM\main.cpp" />
+    <ClCompile Include="Framework\WASM\WebApplication.cpp" />
+    <ClCompile Include="Framework\Windows\Main_Windows.cpp" />
     <ClCompile Include="Game\CCamera.cpp" />
     <ClCompile Include="Game\CCollision.cpp" />
     <ClCompile Include="Game\Chunk.cpp" />
@@ -317,12 +320,13 @@
     <ClCompile Include="Game\SWorld.cpp" />
     <ClCompile Include="Game\SWorldCollision.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
-    <ClCompile Include="Game\WindowsApplication.cpp" />
     <ClCompile Include="Game\WorldCoords.cpp" />
     <ClCompile Include="Game\WorldRaycast.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\Application.h" />
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
+    <ClInclude Include="Framework\WASM\WebApplication.h" />
     <ClInclude Include="Game\AllComponents.h" />
     <ClInclude Include="Game\AllSingletonComponents.h" />
     <ClInclude Include="Game\AllSystems.h" />
@@ -364,7 +368,6 @@
     <ClInclude Include="Game\SWorldCollision.h" />
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
-    <ClInclude Include="Game\WindowsApplication.h" />
     <ClInclude Include="Game\WorldCoords.h" />
     <ClInclude Include="Game\WorldRaycast.h" />
     <ClInclude Include="Game\WorldSettings.h" />

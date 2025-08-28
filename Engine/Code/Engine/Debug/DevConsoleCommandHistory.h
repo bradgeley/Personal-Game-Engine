@@ -38,7 +38,7 @@ private:
 
 protected:
 
-    std::vector<std::string> m_log;
+    std::vector<std::string> m_commandHistory;
     int8_t m_maxHistorySize = 10;
     int8_t m_selectedLineIndex = -1;
     VertexBufferID m_untexturedVerts = RendererUtils::InvalidID;

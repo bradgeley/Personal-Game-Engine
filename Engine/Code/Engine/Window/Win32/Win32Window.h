@@ -2,7 +2,7 @@
 #pragma once
 #include "Engine/Window/Window.h"
 
-
+#if defined(_WIN32)
 
 //----------------------------------------------------------------------------------------------------------------------
 // Win32Window
@@ -54,3 +54,5 @@ protected:
     void* m_windowHandle            = nullptr; // HWND
     void* m_displayContext          = nullptr; // HDC
 };
+
+#endif // _WIN32

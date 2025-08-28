@@ -1,5 +1,9 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
 #include "Engine/Renderer/Swapchain.h"
 
 
@@ -31,3 +35,5 @@ protected:
 
     IDXGISwapChain* m_swapChain = nullptr;
 };
+
+#endif // RENDERER_D3D11

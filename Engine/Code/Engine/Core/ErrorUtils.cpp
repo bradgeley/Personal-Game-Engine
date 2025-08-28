@@ -68,21 +68,26 @@ __declspec(noreturn) void FatalError(char const* filePath, char const* functionN
 		fullMessageText += StringUtils::StringF("\nThis was an unconditional error triggered by reaching\n line %i of %s, in %s()\n",
 			lineNum, filePath, functionName);
 	}
-	
-	if (isDebuggerPresent)
+
+	#if defined(PLATFORM_WINDOWS)
 	{
-		bool isAnswerYes = SystemDialogue_YesNo(fullMessageTitle, fullMessageText, MsgSeverityLevel::FATAL);
-		ShowCursor(TRUE);
-		if(isAnswerYes)
+		if (isDebuggerPresent)
 		{
-			__debugbreak();
+			bool isAnswerYes = SystemDialogue_YesNo(fullMessageTitle, fullMessageText, MsgSeverityLevel::FATAL);
+
+			ShowCursor(TRUE);
+			if (isAnswerYes)
+			{
+				__debugbreak();
+			}
+		}
+		else
+		{
+			SystemDialogue_Okay(fullMessageTitle, fullMessageText, MsgSeverityLevel::FATAL);
+			ShowCursor(TRUE);
 		}
 	}
-	else
-	{
-		SystemDialogue_Okay(fullMessageTitle, fullMessageText, MsgSeverityLevel::FATAL);
-		ShowCursor(TRUE);
-	}
+	#endif
 
 	exit(0);
 }

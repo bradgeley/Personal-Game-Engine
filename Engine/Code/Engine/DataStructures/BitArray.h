@@ -12,7 +12,7 @@ constexpr int BIT_ARRAY_BYTE_MASK_LOWER_BITS		= BIT_ARRAY_NUM_BITS_PER_ROW - 1;
 
 // Shifting the index by this many bits is the same as dividing by the number of bits in a row, which gives us the index -> row conversion.
 // e.g. on 64 bit, index 100 >> 6 = 1, so we know that the bit is found in row index 1, or the second 64 bit row.
-#if defined(_M_X64) || defined(_WIN64)
+#if INTPTR_MAX == INT64_MAX
 constexpr int BIT_ARRAY_INDEX_TO_ROW_SHIFT = 6;
 #else
 constexpr int BIT_ARRAY_INDEX_TO_ROW_SHIFT = 5;
@@ -275,10 +275,14 @@ int BitArray<t_size>::CountSetBits() const
 	for (int i = 0; i < s_numRows; ++i)
 	{
 		size_t row = m_data[i];
-		#if defined(_M_X64) || defined(_WIN64)
+		#if defined(_WIN64)
 			count += (int) __popcnt64(static_cast<unsigned __int64>(row));
-		#else
+		#elif defined(_WIN32)
 			count += (int) __popcnt(static_cast<unsigned int>(row));
+		#elif defined(__clang__) || defined(__GNUC__)
+			count += __builtin_popcountll(row);
+		#else
+			#error "No known population count function for this platform/compiler."
 		#endif
 	}
 

@@ -1,10 +1,10 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "Engine/Renderer/Rgba8.h"
-
 #include "Engine/Math/MathUtils.h"
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 // REDS (darkest to lightest)
 Rgba8 const Rgba8::DarkRed(139, 0, 0);
 Rgba8 const Rgba8::Maroon(128, 0, 0);
@@ -16,6 +16,7 @@ Rgba8 const Rgba8::Salmon(250, 128, 114);
 Rgba8 const Rgba8::LightRed(255, 102, 102);
 Rgba8 const Rgba8::Tomato(255, 99, 71);
 
+//----------------------------------------------------------------------------------------------------------------------
 // ORANGES (darkest to lightest)
 Rgba8 const Rgba8::DarkOrange(255, 140, 0);
 Rgba8 const Rgba8::Chocolate(210, 105, 30);
@@ -24,6 +25,7 @@ Rgba8 const Rgba8::Orange(255, 165, 0);
 Rgba8 const Rgba8::Gold(255, 127, 0);
 Rgba8 const Rgba8::LightOrange(255, 200, 124);
 
+//----------------------------------------------------------------------------------------------------------------------
 // YELLOWS (darkest to lightest)
 Rgba8 const Rgba8::Goldenrod(218, 165, 32);
 Rgba8 const Rgba8::DarkGoldenrod(184, 134, 11);
@@ -31,6 +33,7 @@ Rgba8 const Rgba8::Yellow(255, 255, 0);
 Rgba8 const Rgba8::LightYellow(255, 255, 224);
 Rgba8 const Rgba8::LemonChiffon(255, 250, 205);
 
+//----------------------------------------------------------------------------------------------------------------------
 // GREENS (darkest to lightest)
 Rgba8 const Rgba8::DarkGreen(0, 127, 0);
 Rgba8 const Rgba8::Olive(128, 128, 0);
@@ -42,6 +45,7 @@ Rgba8 const Rgba8::Lime(0, 255, 0);
 Rgba8 const Rgba8::LightGreen(144, 238, 144);
 Rgba8 const Rgba8::Honeydew(240, 255, 240);
 
+//----------------------------------------------------------------------------------------------------------------------
 // BLUES (darkest to lightest)
 Rgba8 const Rgba8::DarkBlue(0, 0, 150);
 Rgba8 const Rgba8::Navy(0, 0, 128);
@@ -55,12 +59,14 @@ Rgba8 const Rgba8::LightBlue(51, 255, 255);
 Rgba8 const Rgba8::Cyan(0, 255, 255);
 Rgba8 const Rgba8::AliceBlue(240, 248, 255);
 
+//----------------------------------------------------------------------------------------------------------------------
 // INDIGOS (darkest to lightest)
 Rgba8 const Rgba8::DarkIndigo(46, 0, 77);
 Rgba8 const Rgba8::Indigo(75, 0, 130);
 Rgba8 const Rgba8::SlateBlue(106, 90, 205);
 Rgba8 const Rgba8::MediumSlateBlue(123, 104, 238);
 
+//----------------------------------------------------------------------------------------------------------------------
 // VIOLETS (darkest to lightest)
 Rgba8 const Rgba8::Purple(128, 0, 128);
 Rgba8 const Rgba8::DarkViolet(148, 0, 211);
@@ -69,6 +75,7 @@ Rgba8 const Rgba8::Magenta(255, 0, 255);
 Rgba8 const Rgba8::Violet(238, 130, 238);
 Rgba8 const Rgba8::Lavender(230, 230, 250);
 
+//----------------------------------------------------------------------------------------------------------------------
 // GRAYS & NEUTRALS (darkest to lightest)
 Rgba8 const Rgba8::Black(0, 0, 0);
 Rgba8 const Rgba8::DarkGray(50, 50, 50);

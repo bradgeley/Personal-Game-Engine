@@ -1,23 +1,22 @@
 // Bradley Christensen - 2022-2025
-#include "WindowsApplication.h"
+#include "Application.h"
+#include "Game/Game/Game.h"
 #include "Engine/Core/Engine.h"
-#include "Game.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/Time.h"
 #include "Engine/Input/InputSystem.h"
-#include "Engine/Renderer/Renderer.h"
 #include "Engine/Window/Window.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// THE APP
+// THE App
 //
-WindowsApplication* g_app = nullptr;
+Application* g_app = nullptr;
 
 
 
-void WindowsApplication::Startup()
+void Application::Startup()
 {
     g_engine = new Engine();
     m_game = new Game();
@@ -28,12 +27,13 @@ void WindowsApplication::Startup()
 
     g_engine->Startup(); // Start up the configured Engine with the game registered as the final subsystem
 
-    g_window->m_quit.SubscribeMethod(this, &WindowsApplication::HandleQuit);
+    g_window->m_quit.SubscribeMethod(this, &Application::HandleQuit);
 }
 
 
 
-void WindowsApplication::Run()
+//----------------------------------------------------------------------------------------------------------------------
+void Application::Run()
 {
     static float timeThen = GetCurrentTimeSecondsF();
     
@@ -54,21 +54,24 @@ void WindowsApplication::Run()
 
 
 
-void WindowsApplication::Shutdown()
+//----------------------------------------------------------------------------------------------------------------------
+void Application::Shutdown()
 {
     SHUTDOWN_AND_DESTROY(g_engine)
 }
 
 
 
-void WindowsApplication::Quit()
+//----------------------------------------------------------------------------------------------------------------------
+void Application::Quit()
 {
     m_isQuitting = true;
 }
 
 
 
-bool WindowsApplication::HandleQuit(NamedProperties&)
+//----------------------------------------------------------------------------------------------------------------------
+bool Application::HandleQuit(NamedProperties&)
 {
     Quit();
     return true;
@@ -76,7 +79,8 @@ bool WindowsApplication::HandleQuit(NamedProperties&)
 
 
 
-bool WindowsApplication::IsQuitting() const
+//----------------------------------------------------------------------------------------------------------------------
+bool Application::IsQuitting() const
 {
     return m_isQuitting;
 }

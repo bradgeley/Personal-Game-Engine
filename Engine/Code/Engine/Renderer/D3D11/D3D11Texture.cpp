@@ -1,4 +1,8 @@
 ﻿// Bradley Christensen - 2022-2025
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
 #include "D3D11Texture.h"
 #include "D3D11Internal.h"
 #include "D3D11Renderer.h"
@@ -287,3 +291,5 @@ ID3D11ShaderResourceView* D3D11Texture::CreateOrGetShaderResourceView()
     return m_shaderResourceView;
 }
 
+
+#endif // RENDERER_D3D11

@@ -1,6 +1,9 @@
 // Bradley Christensen - 2022-2025
 #pragma once
 
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
 
 
 #define WIN32_LEAN_AND_MEAN
@@ -18,3 +21,5 @@
 
 
 #define DX_SAFE_RELEASE(dxResource) if (dxResource) { (dxResource)->Release(); (dxResource) = nullptr; }
+
+#endif // RENDERER_D3D11

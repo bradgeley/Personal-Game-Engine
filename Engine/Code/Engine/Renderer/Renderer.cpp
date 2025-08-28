@@ -26,7 +26,7 @@ Renderer* g_renderer = nullptr;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Renderer::Renderer(RendererConfig const& config) : EngineSubsystem("Renderer"), m_config(config)
+Renderer::Renderer(RendererConfig const& config) : EngineSubsystem("Renderer"), m_config(config), m_userSettings(config.m_startupUserSettings)
 {
     
 }
@@ -191,7 +191,7 @@ void Renderer::EndCameraAndWindow(Camera const* camera, Window const* window)
 //----------------------------------------------------------------------------------------------------------------------
 RendererUserSettings Renderer::GetPerUserSettings() const
 {
-    return m_perUserSettings;
+    return m_userSettings;
 }
 
 
@@ -1075,23 +1075,8 @@ bool Renderer::DebugDrawVertexBuffers(NamedProperties&)
 //----------------------------------------------------------------------------------------------------------------------
 bool Renderer::ToggleVSync(NamedProperties&)
 {
-	m_perUserSettings.m_vsyncEnabled = !m_perUserSettings.m_vsyncEnabled;
+	m_userSettings.m_vsyncEnabled = !m_userSettings.m_vsyncEnabled;
 	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// TODO: Move factory function to its own file so the renderer interface doesnt have to have them all
-//
-#include "D3D11/D3D11Renderer.h"
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Renderer* Renderer::MakeRenderer(RendererConfig const& config)
-{
-	return new D3D11Renderer(config);
 }
 
 

@@ -594,9 +594,6 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
         }
     }
 
-    // Add to command history
-    m_commandHistory.AddCommand(command);
-
     // Fire the event
     std::string eventNameString = commandFragments[0];
     StringUtils::TrimWhitespace(eventNameString);
@@ -606,7 +603,10 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     {
         g_devConsole->LogWarning("No events bound to that command.");
         return true;
-    }  
+    }
+
+	// Add to command history (only if bound to an event)
+    m_commandHistory.AddCommand(command);
 
     DevConsoleCommandInfo const* info = GetDevConsoleCommandInfo(eventName);
 

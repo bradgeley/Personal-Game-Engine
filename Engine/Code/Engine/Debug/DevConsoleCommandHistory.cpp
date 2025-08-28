@@ -38,11 +38,11 @@ void DevConsoleCommandHistory::AddCommand(std::string const& command)
         return;
     }
     
-    if ((int8_t) m_log.size() == m_maxHistorySize)
+    if ((int8_t) m_commandHistory.size() == m_maxHistorySize)
     {
-        m_log.erase(m_log.begin());
+        m_commandHistory.erase(m_commandHistory.begin());
     }
-    m_log.emplace_back(command);
+    m_commandHistory.emplace_back(command);
 }
 
 
@@ -54,7 +54,7 @@ std::string DevConsoleCommandHistory::GetSelectedCommand() const
     {
         return "";
     }
-    return m_log[m_selectedLineIndex];
+    return m_commandHistory[m_selectedLineIndex];
 }
 
 
@@ -93,7 +93,7 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
     float lineThickness = box.GetHeight() / (float) m_maxHistorySize;
 
     float linesRendered = 0.f;
-    for (int i = (int) m_log.size() - 1; i >= 0; --i)
+    for (int i = (int) m_commandHistory.size() - 1; i >= 0; --i)
     {
         float yOffsetBot = linesRendered * lineThickness;
         float yOffsetTop = (linesRendered + 1.f) * lineThickness;
@@ -106,7 +106,7 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
             VertexUtils::AddVertsForAABB2(untexturedVerts, textBox, Rgba8::Cerulean);
         }
         
-        font->AddVertsForText2D(textVerts, textBox.mins, textBox.GetHeight(), "> " + m_log[i], Rgba8::White);
+        font->AddVertsForText2D(textVerts, textBox.mins, textBox.GetHeight(), "> " + m_commandHistory[i], Rgba8::White);
         
         linesRendered += 1.f;
     }
@@ -125,7 +125,7 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
 void DevConsoleCommandHistory::ArrowUp()
 {
     // Decrement on arrow up so the index is reversed when rendering
-    m_selectedLineIndex = (int8_t) MathUtils::DecrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
+    m_selectedLineIndex = (int8_t) MathUtils::DecrementIntInRange(m_selectedLineIndex, -1, (int) m_commandHistory.size() - 1, true);
 }
 
 
@@ -134,7 +134,7 @@ void DevConsoleCommandHistory::ArrowUp()
 void DevConsoleCommandHistory::ArrowDown()
 {
     // Decrement on arrow up so the index is reversed when rendering
-    m_selectedLineIndex = (int8_t) MathUtils::IncrementIntInRange(m_selectedLineIndex, -1, (int) m_log.size() - 1, true);
+    m_selectedLineIndex = (int8_t) MathUtils::IncrementIntInRange(m_selectedLineIndex, -1, (int) m_commandHistory.size() - 1, true);
 }
 
 
@@ -142,7 +142,7 @@ void DevConsoleCommandHistory::ArrowDown()
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleCommandHistory::Clear()
 {
-    m_log.clear();
+    m_commandHistory.clear();
     m_selectedLineIndex = -1;
 }
 
@@ -152,12 +152,16 @@ void DevConsoleCommandHistory::Clear()
 bool DevConsoleCommandHistory::LoadFrom(std::string const& filepath)
 {
     std::string fileContents;
-    if ((bool) FileReadToString(filepath, fileContents))
+    int bytesRead = FileUtils::FileReadToString(filepath, fileContents);
+    if (bytesRead > 0)
     {
         Strings strings = StringUtils::SplitStringOnDelimeter(fileContents, '\n');
         for (std::string const& splitString : strings)
         {
-            AddCommand(splitString);
+            if (!splitString.empty()) 
+            {
+                AddCommand(splitString);
+            }
         }
         return true;
     }
@@ -171,15 +175,21 @@ bool DevConsoleCommandHistory::LoadFrom(std::string const& filepath)
 bool DevConsoleCommandHistory::SaveTo(std::string const& filepath) const
 {
     std::string historyAsOneString;
-    for (std::string const& line : m_log)
+    for (std::string const& line : m_commandHistory)
     {
+        if (line.empty()) 
+        {
+			continue;
+        }
+
         historyAsOneString += line;
         historyAsOneString += '\n';
     }
 
     if (!historyAsOneString.empty())
     {
-        return (bool) FileWriteFromString(filepath, historyAsOneString);
+		int bytesWritten = FileUtils::FileWriteFromString(filepath, historyAsOneString);
+        return bytesWritten > 0;
     }
 
     // No history to write = succeeded
@@ -191,12 +201,12 @@ bool DevConsoleCommandHistory::SaveTo(std::string const& filepath) const
 //----------------------------------------------------------------------------------------------------------------------
 bool DevConsoleCommandHistory::TryMoveCommandToBottomOfList(std::string const& command)
 {
-    for (size_t i = 0; i < m_log.size(); ++i)
+    for (size_t i = 0; i < m_commandHistory.size(); ++i)
     {
-        if (m_log[i] == command)
+        if (m_commandHistory[i] == command)
         {
-            m_log.erase(m_log.begin() + i);
-            m_log.emplace_back(command);
+            m_commandHistory.erase(m_commandHistory.begin() + i);
+            m_commandHistory.emplace_back(command);
             return true;
         }
     }

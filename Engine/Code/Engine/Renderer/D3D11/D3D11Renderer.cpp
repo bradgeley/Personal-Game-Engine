@@ -1,4 +1,8 @@
 ﻿// Bradley Christensen - 2022-2025
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
 #include "D3D11Renderer.h"
 #include "D3D11ConstantBuffer.h"
 #include "D3D11Internal.h"
@@ -460,7 +464,7 @@ bool D3D11Renderer::SetFullscreenState(RenderTargetID renderTargetID, bool fulls
 MSAASettings D3D11Renderer::GetMaxSupportedMSAASettings(DXGI_FORMAT format)
 {
 	MSAASettings result;
-	if (!m_perUserSettings.m_msaaEnabled)
+	if (!m_userSettings.m_msaaEnabled)
 	{
 		return result;
 	}
@@ -891,7 +895,7 @@ void D3D11Renderer::ReportLiveObjects()
 //----------------------------------------------------------------------------------------------------------------------
 bool D3D11Renderer::ToggleMSAA(NamedProperties&)
 {
-	m_perUserSettings.m_msaaEnabled = !m_perUserSettings.m_msaaEnabled;
+	m_userSettings.m_msaaEnabled = !m_userSettings.m_msaaEnabled;
 
 	// Recreate the depth buffer and backbuffer textures
 	for (auto& rt : m_renderTargets)
@@ -901,3 +905,5 @@ bool D3D11Renderer::ToggleMSAA(NamedProperties&)
 
 	return false;
 }
+
+#endif // RENDERER_D3D11

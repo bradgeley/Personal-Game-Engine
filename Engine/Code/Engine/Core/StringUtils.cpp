@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "StringUtils.h"
-
 #include "ErrorUtils.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Math/IntVec2.h"

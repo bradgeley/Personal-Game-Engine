@@ -1,4 +1,8 @@
 ﻿// Bradley Christensen - 2022-2025
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
 #include "D3D11Shader.h"
 #include "D3D11Internal.h"
 #include "D3D11Renderer.h"
@@ -225,3 +229,5 @@ ID3D11InputLayout* D3D11Shader::CreateInputLayoutFor_Vertex_PCU()
 
 	return m_inputLayout;
 }
+
+#endif // RENDERER_D3D11

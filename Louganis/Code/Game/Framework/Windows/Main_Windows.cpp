@@ -1,7 +1,8 @@
 // Bradley Christensen - 2022-2025
-#include "Game/Game/WindowsApplication.h"
-#include "EngineBuildPreferences.h"
+#if defined(_WIN32)
 
+#include "Game/Framework/EngineBuildPreferences.h"
+#include "Game/Framework/Application.h"
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
@@ -17,16 +18,16 @@
 //----------------------------------------------------------------------------------------------------------------------
 // WinMain
 //
-// Simply creates the WindowsApplication and runs it until it decides to quit
+// Simply creates the Application and runs it until it decides to quit
 //
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
 	#if defined(DEBUG_MEMORY_LEAKS)
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 		//_CrtSetBreakAlloc(8240); // Specific memory leak
 	#endif 
 
-	g_app = new WindowsApplication();
+	g_app = new Application();
 	g_app->Startup();
 	g_app->Run();
 	g_app->Shutdown();
@@ -38,3 +39,5 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	#endif
 	return 0;
 }
+
+#endif // _WIN32

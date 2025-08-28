@@ -37,7 +37,7 @@ private:
     std::mutex m_randMutex;
     std::random_device m_randomDevice;
 
-#if defined(_M_X64) || defined(_WIN64)
+#if INTPTR_MAX == INT64_MAX
     std::mt19937_64 m_mersenneTwister;
 #else
     std::mt19937 m_mersenneTwister;

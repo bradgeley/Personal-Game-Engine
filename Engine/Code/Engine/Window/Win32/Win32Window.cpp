@@ -1,4 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
+
+#if defined(_WIN32)
+
 #define WIN32_LEAN_AND_MEAN
 #include "Windows.h"
 
@@ -619,3 +622,5 @@ LRESULT CALLBACK SharedWindowsMessageHandlingProcedure(HWND windowHandle, UINT w
 
     return ::DefWindowProc(windowHandle, wmMessageCode, wParam, lParam);
 }
+
+#endif // _WIN32

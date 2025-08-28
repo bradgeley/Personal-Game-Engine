@@ -43,6 +43,7 @@ struct alignas(16) FontConstants
     float m_boldness                    = 0.66f;
     float m_antiAliasAmount             = 0.5f;
     float m_outlineThickness            = 0.f;
+
     float pad = 0.f;
     
     bool operator==(FontConstants const& rhs) const;

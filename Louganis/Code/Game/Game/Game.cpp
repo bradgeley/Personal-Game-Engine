@@ -18,17 +18,17 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Camera.h"
 
+#include "Game/Framework/Application.h"
 #include "AllComponents.h"
 #include "AllSystems.h"
 #include "EntityDef.h"
 #include "GameCommon.h"
 #include "TileDef.h"
-#include "WindowsApplication.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::vector<std::string> g_framePhaseNames = { "PrePhysics", "Physics", "PostPhysics", "Render" }; // todo: write enum to string macro?
+std::vector<std::string> g_framePhaseNames = { "PrePhysics", "Physics", "PostPhysics", "Render", "PostRender"}; // todo: write enum to string macro?
 
 enum class FramePhase : int
 {
@@ -128,7 +128,9 @@ void Game::ConfigureEngine(Engine* engine)
     engine->RegisterSubsystem(g_audioSystem);
 
     RendererConfig rendererConfig;
-    g_renderer = Renderer::MakeRenderer(rendererConfig);
+	rendererConfig.m_startupUserSettings.m_vsyncEnabled = false;
+	rendererConfig.m_startupUserSettings.m_msaaEnabled = true;
+    g_renderer = RendererUtils::MakeRenderer(rendererConfig);
     engine->RegisterSubsystem(g_renderer);
 
     WindowConfig windowConfig;

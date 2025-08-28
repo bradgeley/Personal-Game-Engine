@@ -8,7 +8,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize, bool makeDirs)
+int FileUtils::FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, size_t bufferSize, bool makeDirs)
 {
     ASSERT_OR_DIE(!filepath.empty(), "Trying to write to empty filepath");
     ASSERT_OR_DIE(bufferSize > 0, "Trying to write a file of size 0");
@@ -34,7 +34,7 @@ int FileWriteFromBuffer(const std::string& filepath, const uint8_t* bufferData, 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FileWriteFromBuffer(const std::string& filepath, const std::vector<uint8_t>& buffer, bool makeDirs)
+int FileUtils::FileWriteFromBuffer(const std::string& filepath, const std::vector<uint8_t>& buffer, bool makeDirs)
 {
     return FileWriteFromBuffer(filepath, buffer.data(), buffer.size(), makeDirs);
 }
@@ -42,7 +42,7 @@ int FileWriteFromBuffer(const std::string& filepath, const std::vector<uint8_t>&
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FileWriteFromString(const std::string& filepath, const std::string& string, bool makeDirs)
+int FileUtils::FileWriteFromString(const std::string& filepath, const std::string& string, bool makeDirs)
 {
     return FileWriteFromBuffer(filepath, reinterpret_cast<const uint8_t*>(string.data()), string.size(), makeDirs);
 }
@@ -50,7 +50,7 @@ int FileWriteFromString(const std::string& filepath, const std::string& string, 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bufferSize)
+int FileUtils::FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bufferSize)
 {
     int fileMode = std::ios::in | std::ios::ate | std::ios::binary;
     std::fstream filestream(filepath.data(), fileMode);
@@ -70,7 +70,7 @@ int FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bu
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FileReadToBuffer(const std::string& filepath, std::vector<uint8_t>& buffer)
+int FileUtils::FileReadToBuffer(const std::string& filepath, std::vector<uint8_t>& buffer)
 {
     int fileSize = GetFileSize(filepath);
     if (fileSize > 0)
@@ -85,7 +85,7 @@ int FileReadToBuffer(const std::string& filepath, std::vector<uint8_t>& buffer)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int FileReadToString(const std::string& filepath, std::string& string)
+int FileUtils::FileReadToString(const std::string& filepath, std::string& string)
 {
     int fileSize = GetFileSize(filepath);
     if (fileSize > 0)
@@ -101,7 +101,7 @@ int FileReadToString(const std::string& filepath, std::string& string)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int GetFileSize(const std::string& filepath)
+int FileUtils::GetFileSize(const std::string& filepath)
 {
     int fileMode = std::ios::in | std::ios::ate | std::ios::binary;
     std::fstream filestream(filepath.data(), fileMode);
@@ -115,7 +115,7 @@ int GetFileSize(const std::string& filepath)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool FileMakeDirsInPath(const std::string& filepath)
+bool FileUtils::FileMakeDirsInPath(const std::string& filepath)
 {
     Strings pathSections = StringUtils::SplitStringOnDelimeter(filepath, '.');
     if (pathSections.size() == 2)

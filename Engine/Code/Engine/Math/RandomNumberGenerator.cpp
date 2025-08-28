@@ -12,7 +12,7 @@ RandomNumberGenerator* g_rng = nullptr;
 //----------------------------------------------------------------------------------------------------------------------
 RandomNumberGenerator::RandomNumberGenerator(size_t seed) : m_seed(seed)
 {
-    #if defined(_M_X64) || defined(_WIN64)
+    #if INTPTR_MAX == INT64_MAX
         m_mersenneTwister = std::mt19937_64();
     #else
         m_mersenneTwister = std::mt19937();
@@ -37,7 +37,7 @@ void RandomNumberGenerator::SetSeed(size_t seed)
 size_t RandomNumberGenerator::GenerateRandomSeed()
 {
     std::unique_lock lock(m_randMutex); // Makes rand() thread safe
-    #if defined(_M_X64) || defined(_WIN64)
+    #if INTPTR_MAX == INT64_MAX
         m_seed = (static_cast<size_t>(m_randomDevice()) << 32) | static_cast<size_t>(m_randomDevice());
     #else
         m_seed = static_cast<size_t>(m_randomDevice());

@@ -1,5 +1,9 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
 #include "Engine/Renderer/ConstantBuffer.h"
 
 
@@ -30,3 +34,4 @@ public:
 	ID3D11Buffer* m_handle = nullptr;
 };
 
+#endif // RENDERER_D3D11

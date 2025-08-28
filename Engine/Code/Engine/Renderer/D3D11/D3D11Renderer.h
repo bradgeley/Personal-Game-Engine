@@ -1,5 +1,9 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
 #include "Engine/Renderer/Renderer.h"
 #include "D3D11Utils.h"
 #include <unordered_map>
@@ -103,3 +107,4 @@ protected:
 #endif
 };
 
+#endif // RENDERER_D3D11

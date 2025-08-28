@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Core/Name.h"
 #include <atomic>
 #include <condition_variable>
 #include <string>
@@ -18,7 +19,7 @@ struct JobWorker
 
     int                     m_threadID      = -1;
     std::atomic<bool>       m_isRunning     = true;
-    std::string             m_name          = "Unnamed Worker";
+    Name                    m_name          = "Unnamed Worker";
     std::thread             m_thread;
     std::condition_variable m_condVar;
 };

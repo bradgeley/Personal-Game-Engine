@@ -6,6 +6,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct KeyButtonState
 {
+public:
+
 	KeyButtonState() = default;
 	~KeyButtonState() = default;
 

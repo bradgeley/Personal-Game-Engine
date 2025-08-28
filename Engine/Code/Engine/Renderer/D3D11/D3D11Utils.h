@@ -1,5 +1,9 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
 #include "Engine/Renderer/RendererSettings.h"
 #include <dxgiformat.h>
 
@@ -17,3 +21,5 @@ struct ID3D11BlendState;
 struct ID3D11RasterizerState;
 struct ID3D11DepthStencilState;
 struct ID3D11SamplerState;
+
+#endif // RENDERER_D3D11

@@ -1,4 +1,8 @@
 ﻿// Bradley Christensen - 2022-2025
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
 #include "D3D11ConstantBuffer.h"
 #include "D3D11Internal.h"
 #include "D3D11Renderer.h"
@@ -63,3 +67,5 @@ void D3D11ConstantBuffer::Initialize(size_t byteWidth)
         m_handle->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT) strlen("D3D11ConstantBuffer"), "D3D11ConstantBuffer");
     #endif
 }
+
+#endif // RENDERER_D3D11

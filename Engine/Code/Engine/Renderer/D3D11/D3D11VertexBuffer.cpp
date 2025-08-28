@@ -1,4 +1,8 @@
 ﻿// Bradley Christensen - 2022-2025
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
 #include "D3D11VertexBuffer.h"
 #include "D3D11Internal.h"
 #include "D3D11Renderer.h"
@@ -95,3 +99,5 @@ void D3D11VertexBuffer::ReleaseResources()
     DX_SAFE_RELEASE(m_handle)
     m_gpuBufferByteWidth = 0;
 }
+
+#endif // RENDERER_D3D11

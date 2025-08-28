@@ -34,7 +34,7 @@ extern class Renderer* g_renderer;
 //----------------------------------------------------------------------------------------------------------------------
 struct RendererConfig
 {
-
+	RendererUserSettings m_startupUserSettings;
 };
 
 
@@ -77,7 +77,6 @@ public:
     virtual void ClearDepth(float depth) = 0;
 
     // Factory Make Functions
-    static  Renderer*           MakeRenderer(RendererConfig const& config);
     virtual TextureID           MakeTexture() = 0;
     virtual ShaderID            MakeShader(ShaderConfig const& config) = 0;
     virtual ConstantBufferID    MakeConstantBuffer() = 0;
@@ -216,7 +215,7 @@ protected:
 
     // Configuration
     RendererConfig const m_config;
-    RendererUserSettings m_perUserSettings;
+    RendererUserSettings m_userSettings;
 
     // Renderer Pipeline State
     RenderTargetID m_currentRenderTarget       = RendererUtils::InvalidID;

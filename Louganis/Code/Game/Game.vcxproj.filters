@@ -1,13 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Framework\Main_Windows.cpp">
-      <Filter>Framework</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Game.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\WindowsApplication.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Game\SInput.cpp">
@@ -102,6 +96,18 @@
     </ClCompile>
     <ClCompile Include="Game\SBackgroundMusic.cpp">
       <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Windows\Main_Windows.cpp">
+      <Filter>Framework\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\WASM\main.cpp">
+      <Filter>Framework\WASM</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Application.cpp">
+      <Filter>Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\WASM\WebApplication.cpp">
+      <Filter>Framework\WASM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,9 +237,6 @@
     <ClInclude Include="Game\SCLoadChunks.h">
       <Filter>Singletons</Filter>
     </ClInclude>
-    <ClInclude Include="Game\WindowsApplication.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SCAudio.h">
       <Filter>Singletons</Filter>
     </ClInclude>
@@ -242,6 +245,12 @@
     </ClInclude>
     <ClInclude Include="Game\AllSingletonComponents.h">
       <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Application.h">
+      <Filter>Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\WASM\WebApplication.h">
+      <Filter>Framework\WASM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -271,6 +280,12 @@
     </Filter>
     <Filter Include="Game\World">
       <UniqueIdentifier>{f3245d75-7210-4e1c-b305-d73cfed64571}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Windows">
+      <UniqueIdentifier>{84961ddb-9242-48fe-ac7f-91b26e27a909}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\WASM">
+      <UniqueIdentifier>{ed0a3a35-08b9-4055-be04-f4fb2763f308}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

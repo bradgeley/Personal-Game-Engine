@@ -4,6 +4,11 @@
 
 
 
+class Renderer;
+struct RendererConfig;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 typedef uint32_t RenderTargetID;
 typedef uint32_t ConstantBufferID;
@@ -18,5 +23,7 @@ typedef uint32_t FontID;
 //----------------------------------------------------------------------------------------------------------------------
 namespace RendererUtils
 {
+	Renderer* MakeRenderer(RendererConfig const& config);
+
 	extern uint32_t InvalidID;
 }
