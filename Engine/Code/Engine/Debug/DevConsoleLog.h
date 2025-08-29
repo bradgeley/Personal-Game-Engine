@@ -15,8 +15,8 @@ class DevConsoleLog
 {
 public:
 
-    DevConsoleLog();
-    ~DevConsoleLog();
+    void Startup();
+    void Shutdown();
 
     void AddLine(DevConsoleLine const& line);
     void RenderToBox(AABB2 const& box) const;

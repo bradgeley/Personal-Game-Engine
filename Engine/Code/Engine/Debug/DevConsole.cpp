@@ -111,6 +111,10 @@ void DevConsole::Startup()
     PickNextBackgroundImage();
 
     m_vbo = g_renderer->MakeVertexBuffer();
+
+    m_log.Startup();
+    m_commandHistory.Startup();
+    m_inputLine.Startup();
 }
 
 
@@ -195,6 +199,9 @@ void DevConsole::Shutdown()
     m_camera = nullptr;
 
     g_renderer->ReleaseVertexBuffer(m_vbo);
+    m_log.Shutdown();
+    m_commandHistory.Shutdown();
+    m_inputLine.Shutdown();
 }
 
 

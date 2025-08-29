@@ -49,6 +49,8 @@ class Renderer : public EngineSubsystem
 public:
 
     Renderer(RendererConfig const& config);
+    Renderer(Renderer const& other) = delete;
+    virtual ~Renderer();
     
     virtual void Startup() override;
     virtual void Render() const override;

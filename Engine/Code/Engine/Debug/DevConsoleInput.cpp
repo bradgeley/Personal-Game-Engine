@@ -18,7 +18,7 @@ const std::string LINE_PREFIX = " > ";
 
 
 //----------------------------------------------------------------------------------------------------------------------
-DevConsoleInput::DevConsoleInput()
+void DevConsoleInput::Startup()
 {
     m_vbo = g_renderer->MakeVertexBuffer();
 }
@@ -26,7 +26,7 @@ DevConsoleInput::DevConsoleInput()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-DevConsoleInput::~DevConsoleInput()
+void DevConsoleInput::Shutdown()
 {
     g_renderer->ReleaseVertexBuffer(m_vbo);
 }

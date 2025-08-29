@@ -13,7 +13,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-DevConsoleCommandHistory::DevConsoleCommandHistory()
+void DevConsoleCommandHistory::Startup()
 {
     m_textVerts = g_renderer->MakeVertexBuffer();
     m_untexturedVerts = g_renderer->MakeVertexBuffer();
@@ -22,7 +22,7 @@ DevConsoleCommandHistory::DevConsoleCommandHistory()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-DevConsoleCommandHistory::~DevConsoleCommandHistory()
+void DevConsoleCommandHistory::Shutdown()
 {
     g_renderer->ReleaseVertexBuffer(m_textVerts);
     g_renderer->ReleaseVertexBuffer(m_untexturedVerts);

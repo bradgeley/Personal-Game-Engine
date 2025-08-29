@@ -701,6 +701,7 @@ void D3D11Renderer::CreateDefaultShader()
 {
 	ShaderConfig defaultShaderConfig;
 	defaultShaderConfig.m_name = "DefaultShader";
+
 	m_defaultShader = MakeShader(defaultShaderConfig);
 
 	D3D11Shader* defaultShader = dynamic_cast<D3D11Shader*>(GetDefaultShader());

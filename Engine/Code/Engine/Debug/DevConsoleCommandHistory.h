@@ -15,8 +15,8 @@ class DevConsoleCommandHistory
 {
 public:
 
-    DevConsoleCommandHistory();
-    ~DevConsoleCommandHistory();
+    void Startup();
+    void Shutdown();
 
     void AddCommand(std::string const& command);
     std::string GetSelectedCommand() const;

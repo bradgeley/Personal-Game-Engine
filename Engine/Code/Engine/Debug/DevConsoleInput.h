@@ -17,8 +17,8 @@ class DevConsoleInput
 {
 public:
 
-    DevConsoleInput();
-    ~DevConsoleInput();
+    void Startup();
+    void Shutdown();
 
     void SetOutputLog(DevConsoleLog* log);
     void Update(float deltaSeconds);
