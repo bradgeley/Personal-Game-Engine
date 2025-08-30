@@ -16,6 +16,7 @@ Application* g_app = nullptr;
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void Application::Startup()
 {
     g_engine = new Engine();
@@ -39,14 +40,8 @@ void Application::Run()
     
     while (!IsQuitting())
     {
-        // todo: move to system clock and world clock, etc
-        float timeNow = GetCurrentTimeSecondsF();
-        float deltaSeconds = timeNow - timeThen;
-        timeThen = timeNow;
-        //
-
         g_engine->BeginFrame();
-        g_engine->Update(deltaSeconds);
+        g_engine->Update();
         g_engine->Render();
         g_engine->EndFrame();
     }

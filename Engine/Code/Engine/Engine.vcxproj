@@ -246,6 +246,7 @@
     <ClCompile Include="Audio\AudioUtils.cpp" />
     <ClCompile Include="Audio\MiniAudioSystem.cpp" />
     <ClCompile Include="Core\BinaryUtils.cpp" />
+    <ClCompile Include="Core\Clock.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\EngineSubsystem.cpp" />
     <ClCompile Include="Core\ErrorUtils.cpp" />
@@ -336,6 +337,7 @@
     <ClInclude Include="Audio\AudioUtils.h" />
     <ClInclude Include="Audio\MiniAudioSystem.h" />
     <ClInclude Include="Core\BinaryUtils.h" />
+    <ClInclude Include="Core\Clock.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\EngineCommon.h" />
     <ClInclude Include="Core\EngineSubsystem.h" />

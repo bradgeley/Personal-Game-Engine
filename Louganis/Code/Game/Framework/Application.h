@@ -11,6 +11,7 @@ extern class Application* g_app;
 
 
 struct NamedProperties;
+class Clock;
 class Game;
 
 
@@ -38,6 +39,7 @@ private:
     bool m_isQuitting = false;
 
     Game* m_game = nullptr;
+    Clock* m_gameClock = nullptr;
 };
 
 

@@ -4,6 +4,7 @@
 #include "EngineSubsystem.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
+#include "Engine/Core/Clock.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/NameTable.h"
 
@@ -35,6 +36,7 @@ Engine::Engine()
 {
     g_nameTable = new NameTable();
     g_nameTable->Startup();
+    m_engineClock = new Clock();
 }
 
 
@@ -42,6 +44,8 @@ Engine::Engine()
 //----------------------------------------------------------------------------------------------------------------------
 Engine::~Engine()
 {
+    delete m_engineClock;
+    m_engineClock = nullptr;
     g_nameTable->Shutdown();
     delete g_nameTable;
     g_nameTable = nullptr;
@@ -73,8 +77,10 @@ void Engine::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::BeginFrame()
 {
+    m_engineClock->Update();
+
     #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
-        s_frameData.m_engineFrameStartTime = GetCurrentTimeSeconds();
+        s_frameData.m_engineFrameStartTime = m_engineClock->GetCurrentTimeSeconds();
     #endif
 
     #if defined(PERF_WINDOW_DISPLAY_ENGINE_SECTION)
@@ -93,8 +99,10 @@ void Engine::BeginFrame()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Engine::Update(float deltaSeconds)
+void Engine::Update()
 {
+    double deltaSeconds = m_engineClock->GetDeltaSeconds();
+
     #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
         s_frameData.m_actualDeltaSeconds = deltaSeconds;
     #endif
@@ -107,7 +115,7 @@ void Engine::Update(float deltaSeconds)
     {
         if (subsystem && subsystem->IsEnabled())
         {
-            subsystem->Update(deltaSeconds);
+            subsystem->Update(static_cast<float>(deltaSeconds));
         }
     } 
 }
@@ -189,4 +197,12 @@ void Engine::RegisterSubsystem(EngineSubsystem* system)
     }
 
     m_subsystems.push_back(system);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Clock* Engine::GetEngineClock() const
+{
+    return m_engineClock;
 }

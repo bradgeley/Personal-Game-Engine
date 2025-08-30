@@ -36,7 +36,7 @@ Renderer::Renderer(RendererConfig const& config) : EngineSubsystem("Renderer"), 
 //----------------------------------------------------------------------------------------------------------------------
 Renderer::~Renderer()
 {
-	__debugbreak(); // Must call Shutdown before destroying the renderer
+
 }
 
 

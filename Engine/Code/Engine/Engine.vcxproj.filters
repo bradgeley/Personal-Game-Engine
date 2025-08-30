@@ -259,6 +259,9 @@
     <ClCompile Include="Window\WindowUtils.cpp">
       <Filter>Window</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Clock.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -548,6 +551,9 @@
     </ClInclude>
     <ClInclude Include="Window\WindowUtils.h">
       <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Clock.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

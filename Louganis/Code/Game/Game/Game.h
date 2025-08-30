@@ -4,6 +4,7 @@
 
 
 
+class Clock;
 class Engine;
 class Window;
 struct NamedProperties;
@@ -16,6 +17,7 @@ class Game : public EngineSubsystem
 public:
 
     Game();
+    ~Game();
 
     void Startup() override;
     void BeginFrame() override;
@@ -33,5 +35,5 @@ protected:
 
 protected:
 
-    float m_currentTimeDilation = 1.f;
+    Clock* m_gameClock = nullptr;
 };

@@ -5,6 +5,7 @@
 
 
 
+class Clock;
 class EngineSubsystem;
 
 
@@ -40,16 +41,19 @@ public:
 
     void Startup();
     void BeginFrame();
-    void Update(float deltaSeconds);
+    void Update();
     void Render() const;
     void EndFrame();
     void Shutdown();
 
     void RegisterSubsystem(EngineSubsystem* system);
+
+    Clock* GetEngineClock() const;
     
 private:
     
     bool m_isActive = false;
+    Clock* m_engineClock = nullptr;
     std::vector<EngineSubsystem*> m_subsystems;
 };
 

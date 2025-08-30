@@ -3,8 +3,10 @@
 
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Audio/AudioUtils.h"
+#include "Engine/Core/Clock.h"
 #include "Engine/Core/Engine.h"
 #include "Engine/Core/EngineCommon.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/ECS/AdminSystem.h"
@@ -44,6 +46,17 @@ enum class FramePhase : int
 //----------------------------------------------------------------------------------------------------------------------
 Game::Game() : EngineSubsystem("Game")
 {
+    ASSERT_OR_DIE(g_engine != nullptr, "Null engine when constructing game");
+    m_gameClock = new Clock(g_engine->GetEngineClock());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Game::~Game()
+{
+    delete m_gameClock;
+    m_gameClock = nullptr;
 }
 
 
@@ -71,14 +84,14 @@ void Game::BeginFrame()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Game::Update(float deltaSeconds)
+void Game::Update(float)
 {
     if (g_input->WasKeyJustReleased(KeyCode::Escape))
     {
         g_app->Quit();
     }
 
-    g_ecs->RunFrame(deltaSeconds * m_currentTimeDilation);
+    g_ecs->RunFrame(m_gameClock->GetDeltaSecondsF());
 }
 
 
@@ -241,10 +254,12 @@ void Game::ConfigureECS()
 //----------------------------------------------------------------------------------------------------------------------
 bool Game::TimeDilation(NamedProperties& args)
 {
-    float t = args.Get("t", m_currentTimeDilation);
-    if (t != m_currentTimeDilation)
+    float currentTimeDilation = m_gameClock->GetLocalTimeDilationF();
+    float timeDilation = 1.f;
+    timeDilation = args.Get("t", timeDilation);
+    if (currentTimeDilation != timeDilation)
     {
-        m_currentTimeDilation = t;
+        m_gameClock->SetTimeDilation(timeDilation);
         g_devConsole->LogSuccess("time dilation successfully changed");
     }
     else
