@@ -121,8 +121,7 @@ Vec2 Vec2::GetProjectedOntoNormal(Vec2 const& normal) const
 Vec2 Vec2::GetProjectedOnto(Vec2 const& vector) const
 {
     float magnitudeInProjDir = MathUtils::DotProduct2D(*this, vector);
-    return magnitudeInProjDir * vector / GetLengthSquared();
-
+    return vector * (magnitudeInProjDir / vector.GetLengthSquared());
 }
 
 

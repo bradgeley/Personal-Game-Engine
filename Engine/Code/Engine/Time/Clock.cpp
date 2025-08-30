@@ -328,6 +328,7 @@ float Clock::GetLocalTimeDilationF() const
 #if defined(_DEBUG)
 
 #include <unordered_set>
+#include <thread>
 #include <functional>
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -472,6 +473,81 @@ void Clock::RunUnitTests()
 		ASSERT_OR_DIE(childToDetach->m_internalData->m_lastUpdatedTime == expectedTime, "Detached child's m_lastUpdatedTime was not updated correctly.");
 	}
 
+    // --- New check: Time dilation accumulation in a 3-level hierarchy ---
+    {
+		Clock* top = new Clock();
+		Clock* mid = new Clock(top);
+		Clock* bot = new Clock(mid);
+
+		top->SetLocalTimeDilation(0.5);
+		mid->SetLocalTimeDilation(0.5);
+		bot->SetLocalTimeDilation(0.5);
+
+		// Wait for 0.1 seconds using a busy-wait loop
+		auto start = std::chrono::high_resolution_clock::now();
+		while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() < 100) {}
+
+		top->Update();
+
+		double topDelta = top->GetDeltaSeconds();
+		double midDelta = mid->GetDeltaSeconds();
+		double botDelta = bot->GetDeltaSeconds();
+
+		// Acceptable error margin (5ms)
+		const double epsilon = 0.005;
+
+		ASSERT_OR_DIE(std::abs(topDelta - 0.05) < epsilon, "Top clock deltaSeconds not as expected for time dilation (expected ~0.05s)");
+		ASSERT_OR_DIE(std::abs(midDelta - 0.025) < epsilon, "Mid clock deltaSeconds not as expected for time dilation (expected ~0.025s)");
+		ASSERT_OR_DIE(std::abs(botDelta - 0.0125) < epsilon, "Bot clock deltaSeconds not as expected for time dilation (expected ~0.0125s)");
+
+		// --- Additional check: Current time is accurate after update ---
+		{
+		double expectedTopTime = topDelta;
+		double expectedMidTime = midDelta;
+		double expectedBotTime = botDelta;
+		ASSERT_OR_DIE(std::abs(top->GetCurrentTimeSeconds() - expectedTopTime) < epsilon, "Top clock current time not as expected after update.");
+		ASSERT_OR_DIE(std::abs(mid->GetCurrentTimeSeconds() - expectedMidTime) < epsilon, "Mid clock current time not as expected after update.");
+		ASSERT_OR_DIE(std::abs(bot->GetCurrentTimeSeconds() - expectedBotTime) < epsilon, "Bot clock current time not as expected after update.");
+		}
+
+		// --- Detach all clocks so they are independent, wait, and verify each delta is ~0.05s ---
+		bool detachedBot = bot->DetachFromParent();
+		bool detachedMid = mid->DetachFromParent();
+		ASSERT_OR_DIE(detachedBot, "Failed to detach bot clock from mid.");
+		ASSERT_OR_DIE(detachedMid, "Failed to detach mid clock from top.");
+		ASSERT_OR_DIE(mid->GetParentClock() == nullptr, "Mid clock should have no parent after detach.");
+		ASSERT_OR_DIE(bot->GetParentClock() == nullptr, "Bot clock should have no parent after detach.");
+		ASSERT_OR_DIE(top->GetParentClock() == nullptr, "Top clock should have no parent.");
+
+		// Wait for 0.1 seconds using a busy-wait loop
+		start = std::chrono::high_resolution_clock::now();
+		while (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() < 100) {}
+
+		top->Update();
+		mid->Update();
+		bot->Update();
+		double topDelta2 = top->GetDeltaSeconds();
+		double midDelta2 = mid->GetDeltaSeconds();
+		double botDelta2 = bot->GetDeltaSeconds();
+
+		ASSERT_OR_DIE(std::abs(topDelta2 - 0.05) < epsilon, "Top clock deltaSeconds not as expected after detaching (expected ~0.05s)");
+		ASSERT_OR_DIE(std::abs(midDelta2 - 0.05) < epsilon, "Mid clock deltaSeconds not as expected after detaching (expected ~0.05s)");
+		ASSERT_OR_DIE(std::abs(botDelta2 - 0.05) < epsilon, "Bot clock deltaSeconds not as expected after detaching (expected ~0.05s)");
+
+		// --- Additional check: Current time is accurate after update when independent ---
+		{
+		double expectedTopTime = topDelta + topDelta2;
+		double expectedMidTime = midDelta + midDelta2;
+		double expectedBotTime = botDelta + botDelta2;
+		ASSERT_OR_DIE(std::abs(top->GetCurrentTimeSeconds() - expectedTopTime) < epsilon, "Top clock current time not as expected after detaching and updating.");
+		ASSERT_OR_DIE(std::abs(mid->GetCurrentTimeSeconds() - expectedMidTime) < epsilon, "Mid clock current time not as expected after detaching and updating.");
+		ASSERT_OR_DIE(std::abs(bot->GetCurrentTimeSeconds() - expectedBotTime) < epsilon, "Bot clock current time not as expected after detaching and updating.");
+    }
+
+    delete bot;
+    delete mid;
+    delete top;
+    }
 	// Clean up all clocks (avoid double delete)
 	std::unordered_set<Clock*> deleted;
 	for (Clock* c : clocks)
@@ -488,5 +564,6 @@ void Clock::RunUnitTests()
 		delete newChild;
 	}
 }
+
 
 #endif // _DEBUG

@@ -56,3 +56,7 @@ build-wasm/
 Louganis/.vs/
 
 Louganis/enc_temp_folder/
+
+EngineUnitTests/.vs/
+
+EngineUnitTests/Run/
