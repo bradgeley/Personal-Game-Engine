@@ -34,9 +34,6 @@
     <ClCompile Include="Core\StringUtils.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Time.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\Camera.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
@@ -259,8 +256,14 @@
     <ClCompile Include="Window\WindowUtils.cpp">
       <Filter>Window</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Clock.cpp">
-      <Filter>Core</Filter>
+    <ClCompile Include="Time\Time.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Time\Clock.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Time\Timer.cpp">
+      <Filter>Time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -295,9 +298,6 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\StringUtils.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Time.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\XmlUtils.h">
@@ -552,8 +552,14 @@
     <ClInclude Include="Window\WindowUtils.h">
       <Filter>Window</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Clock.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="Time\Time.h">
+      <Filter>Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Time\Clock.h">
+      <Filter>Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Time\Timer.h">
+      <Filter>Time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -616,6 +622,9 @@
     </Filter>
     <Filter Include="Window\Win32">
       <UniqueIdentifier>{a8f3cd6d-1653-42f2-99f1-47ffd6160796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Time">
+      <UniqueIdentifier>{e3c325ca-d226-4bd0-8f29-b122e7151047}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

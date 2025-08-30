@@ -3,7 +3,7 @@
 #include "Game/Game/Game.h"
 #include "Engine/Core/Engine.h"
 #include "Engine/Core/EngineCommon.h"
-#include "Engine/Core/Time.h"
+#include "Engine/Time/Time.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Window/Window.h"
 

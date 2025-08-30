@@ -1,6 +1,6 @@
 // Bradley Christensen - 2022-2025
 #include "ScopedTimer.h"
-#include "Engine/Core/Time.h"
+#include "Engine/Time/Time.h"
 #include "Engine/Debug/DevConsole.h"
 #include "PerformanceDebugWindow.h"
 #include "Engine/Core/StringUtils.h"

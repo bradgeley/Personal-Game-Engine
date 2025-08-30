@@ -101,6 +101,22 @@ int MathUtils::ClampInt(int value, int min, int max)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+double MathUtils::Clamp(double value, double min, double max)
+{
+    if (value > max)
+    {
+        return max;
+    }
+    if (value < min)
+    {
+        return min;
+    }
+    return value;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::ClampF(float value, float min, float max)
 {
     if (value > max)
@@ -112,6 +128,14 @@ float MathUtils::ClampF(float value, float min, float max)
         return min;
     }
     return value;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+double MathUtils::Clamp01(double value)
+{
+    return Clamp(value, 0.0, 1.0);
 }
 
 

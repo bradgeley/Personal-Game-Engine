@@ -36,4 +36,7 @@ protected:
 protected:
 
     Clock* m_gameClock = nullptr;
+    Clock* m_gameClock2 = nullptr;
+    Clock* m_gameClock3 = nullptr;
+    Clock* m_gameClock4 = nullptr;
 };

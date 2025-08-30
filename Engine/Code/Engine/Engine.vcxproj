@@ -246,7 +246,6 @@
     <ClCompile Include="Audio\AudioUtils.cpp" />
     <ClCompile Include="Audio\MiniAudioSystem.cpp" />
     <ClCompile Include="Core\BinaryUtils.cpp" />
-    <ClCompile Include="Core\Clock.cpp" />
     <ClCompile Include="Core\Engine.cpp" />
     <ClCompile Include="Core\EngineSubsystem.cpp" />
     <ClCompile Include="Core\ErrorUtils.cpp" />
@@ -255,7 +254,6 @@
     <ClCompile Include="Core\Name.cpp" />
     <ClCompile Include="Core\NameTable.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
-    <ClCompile Include="Core\Time.cpp" />
     <ClCompile Include="Core\XmlUtils.cpp" />
     <ClCompile Include="DataStructures\BitArray.cpp" />
     <ClCompile Include="DataStructures\NamedProperties.cpp" />
@@ -325,6 +323,9 @@
     <ClCompile Include="Renderer\VertexBuffer.cpp" />
     <ClCompile Include="Renderer\VertexUtils.cpp" />
     <ClCompile Include="Renderer\Vertex_PCU.cpp" />
+    <ClCompile Include="Time\Clock.cpp" />
+    <ClCompile Include="Time\Time.cpp" />
+    <ClCompile Include="Time\Timer.cpp" />
     <ClCompile Include="Window\Win32\Win32Window.cpp" />
     <ClCompile Include="Window\Window.cpp" />
     <ClCompile Include="Window\WindowUtils.cpp" />
@@ -337,7 +338,6 @@
     <ClInclude Include="Audio\AudioUtils.h" />
     <ClInclude Include="Audio\MiniAudioSystem.h" />
     <ClInclude Include="Core\BinaryUtils.h" />
-    <ClInclude Include="Core\Clock.h" />
     <ClInclude Include="Core\Engine.h" />
     <ClInclude Include="Core\EngineCommon.h" />
     <ClInclude Include="Core\EngineSubsystem.h" />
@@ -347,7 +347,6 @@
     <ClInclude Include="Core\Name.h" />
     <ClInclude Include="Core\NameTable.h" />
     <ClInclude Include="Core\StringUtils.h" />
-    <ClInclude Include="Core\Time.h" />
     <ClInclude Include="Core\XmlUtils.h" />
     <ClInclude Include="DataStructures\BitArray.h" />
     <ClInclude Include="DataStructures\NamedProperties.h" />
@@ -424,6 +423,9 @@
     <ClInclude Include="Renderer\VertexBuffer.h" />
     <ClInclude Include="Renderer\VertexUtils.h" />
     <ClInclude Include="Renderer\Vertex_PCU.h" />
+    <ClInclude Include="Time\Clock.h" />
+    <ClInclude Include="Time\Time.h" />
+    <ClInclude Include="Time\Timer.h" />
     <ClInclude Include="Window\Win32\Win32Window.h" />
     <ClInclude Include="Window\Window.h" />
     <ClInclude Include="Window\WindowUtils.h" />

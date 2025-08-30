@@ -48,7 +48,9 @@ namespace MathUtils
 	// Utilities
 	//
 	int   ClampInt(int value, int min, int max);
+	double Clamp(double value, double min, double max);
 	float ClampF(float value, float min, float max);
+	double Clamp01(double value);
 	float Clamp01F(float value);
 
 

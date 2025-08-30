@@ -4,13 +4,11 @@
 
 
 
-struct ClockInternalData;
-
-
-
 //----------------------------------------------------------------------------------------------------------------------
 class Clock
 {
+	friend struct ClockInternalData;
+
 public:
 
 	Clock();
@@ -21,24 +19,30 @@ public:
 	// Only call on parent-most clocks
 	void Update();
 
-	double GetCurrentTimeSeconds() const;
-	float GetCurrentTimeSecondsF() const;
-
 	double GetDeltaSeconds() const;
 	float GetDeltaSecondsF() const;
 
-	void SetTimeDilation(double timeDilation);
-	void GetTimeDilation(double& out_timeDilation) const;
+	double GetCurrentTimeSeconds() const;
+	float GetCurrentTimeSecondsF() const;
 
 	double GetLocalTimeDilation() const;
 	float GetLocalTimeDilationF() const;
 
-	void AddChildClock(Clock* childClock);
-	void RemoveChildClock(Clock* childClock);
+	void SetLocalTimeDilation(double timeDilation);
+	void GetAggregateTimeDilation(double& out_timeDilation) const;
 
-protected:
+	Clock* GetParentClock() const;
+	Clock const* GetParentmostClock() const;
+	ClockInternalData* GetInternalData() const;
+	bool AttachChildClock(Clock* childClock);
+	bool Reparent(Clock* newParent);
+	bool DetachChildClock(Clock* childClock);
+	bool AttachToParent(Clock* parent);
+	bool DetachFromParent();
 
-	void UpdateInternal();
+#if defined(_DEBUG)
+	static void RunUnitTests();
+#endif
 
 protected:
 

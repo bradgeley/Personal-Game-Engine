@@ -4,14 +4,14 @@
 #include "EngineSubsystem.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
-#include "Engine/Core/Clock.h"
+#include "Engine/Time/Clock.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/NameTable.h"
 
 #include "Game/Framework/EngineBuildPreferences.h"
 
 #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
-#include "Engine/Core/Time.h"
+#include "Engine/Time/Time.h"
 #include "Engine/Renderer/Renderer.h"
 #endif
 

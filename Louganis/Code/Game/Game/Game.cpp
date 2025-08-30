@@ -3,7 +3,7 @@
 
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Audio/AudioUtils.h"
-#include "Engine/Core/Clock.h"
+#include "Engine/Time/Clock.h"
 #include "Engine/Core/Engine.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
@@ -259,7 +259,7 @@ bool Game::TimeDilation(NamedProperties& args)
     timeDilation = args.Get("t", timeDilation);
     if (currentTimeDilation != timeDilation)
     {
-        m_gameClock->SetTimeDilation(timeDilation);
+        m_gameClock->SetLocalTimeDilation(timeDilation);
         g_devConsole->LogSuccess("time dilation successfully changed");
     }
     else
