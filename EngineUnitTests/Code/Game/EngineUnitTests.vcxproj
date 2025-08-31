@@ -57,7 +57,7 @@
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Engine\Code\Engine;$(ProjectDir);$(ProjectDir)Tests;$(ProjectDir)Framework</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Engine\Code;$(ProjectDir);$(ProjectDir)Tests;$(ProjectDir)Framework</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -88,7 +88,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Engine\Code\Engine;$(ProjectDir);$(ProjectDir)Tests;$(ProjectDir)Framework</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Engine\Code;$(ProjectDir);$(ProjectDir)Tests;$(ProjectDir)Framework</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -108,6 +108,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Tests\Core\TestBinaryUtils.cpp" />
+    <ClCompile Include="Tests\Core\TestName.cpp" />
+    <ClCompile Include="Tests\Core\TestStringUtils.cpp" />
+    <ClCompile Include="Tests\DataStructures\TestBitArray.cpp" />
+    <ClCompile Include="Tests\DataStructures\TestNamedProperties.cpp" />
+    <ClCompile Include="Tests\DataStructures\TestThreadSafeQueue.cpp" />
     <ClCompile Include="Tests\Math\TestVec2.cpp" />
     <ClCompile Include="Tests\Math\TestVec3.cpp" />
   </ItemGroup>

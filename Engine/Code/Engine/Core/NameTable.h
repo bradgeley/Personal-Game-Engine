@@ -1,6 +1,6 @@
 // Bradley Christensen - 2022-2025
 #pragma once
-#include "Engine/Core/StringUtils.h"
+#include "StringUtils.h"
 #include <unordered_map>
 #include <vector>
 

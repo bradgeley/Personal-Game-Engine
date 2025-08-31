@@ -113,6 +113,14 @@ bool Name::operator==(Name const& other) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool Name::operator!=(Name const& other) const
+{
+    return m_nameIndex != other.m_nameIndex;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Name::Name(uint32_t index) : m_nameIndex(index)
 {
 }

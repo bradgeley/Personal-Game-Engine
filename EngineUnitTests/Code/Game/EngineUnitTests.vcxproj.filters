@@ -11,6 +11,21 @@
     <ClCompile Include="Tests\Core\TestBinaryUtils.cpp">
       <Filter>Tests\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Tests\Core\TestName.cpp">
+      <Filter>Tests\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Core\TestStringUtils.cpp">
+      <Filter>Tests\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\DataStructures\TestThreadSafeQueue.cpp">
+      <Filter>Tests\DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\DataStructures\TestBitArray.cpp">
+      <Filter>Tests\DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\DataStructures\TestNamedProperties.cpp">
+      <Filter>Tests\DataStructures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\pch.h" />
@@ -27,6 +42,9 @@
     </Filter>
     <Filter Include="Tests\Core">
       <UniqueIdentifier>{ff9b3087-b33f-4682-849e-84956c49a42d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\DataStructures">
+      <UniqueIdentifier>{cd0d216d-5a06-47ca-a4d6-10118c8a4eb7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

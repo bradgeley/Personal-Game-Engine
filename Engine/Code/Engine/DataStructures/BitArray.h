@@ -156,14 +156,19 @@ int BitArray<t_size>::GetFirstUnsetIndex() const
 {
 	for (int currentRowIndex = 0; currentRowIndex < s_numRows; ++currentRowIndex)
 	{
-		size_t& row = m_data[currentRowIndex];
+		size_t row = m_data[currentRowIndex];
 
+		if (currentRowIndex == s_numRows - 1)
+		{
+			row |= s_trailingBitMask; // fill the trailing bits so the bitscan doesnt see them
+		}
+		
 		int firstUnsetBit = BinaryUtils::FirstUnsetBit(row);
 
 		if (firstUnsetBit != -1)
 		{
-			return firstUnsetBit;
-	}
+			return BIT_ARRAY_NUM_BITS_PER_ROW * currentRowIndex + firstUnsetBit;
+		}
 	}
 	return -1;
 }
@@ -176,13 +181,13 @@ int BitArray<t_size>::GetFirstSetIndex() const
 {
 	for (int currentRowIndex = 0; currentRowIndex < s_numRows; ++currentRowIndex)
 	{
-		size_t& row = m_data[currentRowIndex];
+		size_t const& row = m_data[currentRowIndex];
 
 		int firstSetBit = BinaryUtils::FirstSetBit(row);
 
 		if (firstSetBit != -1)
 		{
-			return firstSetBit;
+			return BIT_ARRAY_NUM_BITS_PER_ROW * currentRowIndex + firstSetBit;
 		}
 	}
 	return -1;
@@ -199,7 +204,11 @@ int BitArray<t_size>::GetNextUnsetIndex(int queryIndex) const
 
 	for (int currentRowIndex = firstRowIndex; currentRowIndex < (int) s_numRows; ++currentRowIndex)
 	{
-		size_t const& row = m_data[currentRowIndex];
+		size_t row = m_data[currentRowIndex];
+		if (currentRowIndex == s_numRows - 1)
+		{
+			row |= s_trailingBitMask; // fill the trailing bits so the bitscan doesnt see them
+		}
 
 		int firstUnsetBit = -1;
 		if (currentRowIndex == firstRowIndex)
@@ -214,7 +223,7 @@ int BitArray<t_size>::GetNextUnsetIndex(int queryIndex) const
 
 		if (firstUnsetBit != -1)
 		{
-			return firstUnsetBit;
+			return BIT_ARRAY_NUM_BITS_PER_ROW * currentRowIndex + firstUnsetBit;
 		}
 	}
 	return -1;
@@ -260,7 +269,7 @@ int BitArray<t_size>::GetNextSetIndex(int queryIndex) const
 
 		if (firstSetBit != -1)
 		{
-			return firstSetBit;
+			return BIT_ARRAY_NUM_BITS_PER_ROW * currentRowIndex + firstSetBit;
 		}
 	}
 	return -1;

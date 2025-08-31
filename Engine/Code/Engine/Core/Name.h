@@ -24,7 +24,12 @@ public:
 	std::string const& ToString() const;
 	const char* ToCStr() const;
 
+#if defined(_DEBUG)
+	std::string const& GetDebugString() const { return m_debugString; };
+#endif // _DEBUG
+
 	bool operator==(Name const& other) const;
+	bool operator!=(Name const& other) const;
 
 protected:
 
