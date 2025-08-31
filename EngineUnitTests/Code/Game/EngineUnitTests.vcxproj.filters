@@ -2,8 +2,14 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Framework\pch.cpp" />
-    <ClCompile Include="Vec2.cpp">
+    <ClCompile Include="Tests\Math\TestVec2.cpp">
       <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestVec3.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Core\TestBinaryUtils.cpp">
+      <Filter>Tests\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -18,6 +24,9 @@
     </Filter>
     <Filter Include="Tests\Math">
       <UniqueIdentifier>{bf3d5f7c-70ec-440c-8c34-f29ae5b78c2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\Core">
+      <UniqueIdentifier>{ff9b3087-b33f-4682-849e-84956c49a42d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

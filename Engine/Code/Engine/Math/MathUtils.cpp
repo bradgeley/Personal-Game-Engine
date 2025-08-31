@@ -211,9 +211,33 @@ float MathUtils::GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float MathUtils::GetLength3D(const Vec3& vec)
+float MathUtils::GetLength3D(Vec3 const& vec)
 {
     return sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float MathUtils::GetDistance3D(Vec3 const& a, const Vec3& b)
+{
+    return MathUtils::GetLength3D(b - a);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float MathUtils::GetDistanceSquared3D(Vec3 const& a, const Vec3& b)
+{
+    return MathUtils::GetLengthSquared3D(b - a);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float MathUtils::GetLengthSquared3D(Vec3 const& vec)
+{
+    return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
 }
 
 

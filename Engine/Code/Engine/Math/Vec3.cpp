@@ -42,6 +42,30 @@ float Vec3::GetLength() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float Vec3::GetLengthSquared() const
+{
+    return MathUtils::GetLengthSquared3D(*this);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float Vec3::GetDistanceTo(Vec3 const& other) const
+{
+    return MathUtils::GetDistance3D(*this, other);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float Vec3::GetDistanceSquaredTo(Vec3 const& other) const
+{
+    return MathUtils::GetDistanceSquared3D(*this, other);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Vec3::Normalize()
 {
     MathUtils::NormalizeVector3D(*this);
@@ -55,6 +79,38 @@ Vec3 Vec3::GetNormalized() const
     Vec3 copy = *this;
     MathUtils::NormalizeVector3D(copy);
     return copy;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float Vec3::Dot(Vec3 const& other) const
+{
+    return x * other.x + y * other.y + z * other.z;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec3 Vec3::Cross(Vec3 const& other) const
+{
+    return Vec3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Vec3::IsZero() const
+{
+    return (x == 0.f) && (y == 0.f) && (z == 0.f);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Vec3::IsNearlyZero(float epsilon) const
+{
+    return (MathUtils::AbsF(x) < epsilon) && (MathUtils::AbsF(y) < epsilon) && (MathUtils::AbsF(z) < epsilon);
 }
 
 
@@ -237,4 +293,12 @@ void Vec3::operator/=(float divisor)
 bool Vec3::operator==(Vec3 const& rhs) const
 {
     return (x == rhs.x) && (y == rhs.y) && (z == rhs.z);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Vec3::operator!=(Vec3 const& rhs) const
+{
+    return (x != rhs.x) || (y != rhs.y) || (z != rhs.z);
 }

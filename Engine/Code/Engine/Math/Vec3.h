@@ -30,10 +30,18 @@ public:
 
 public:
 
-    float GetLength() const;
     void Normalize();
-    Vec3 GetNormalized() const;
 
+    float GetLength() const;
+	float GetLengthSquared() const;
+	float GetDistanceTo(Vec3 const& other) const;
+	float GetDistanceSquaredTo(Vec3 const& other) const;
+    Vec3 GetNormalized() const;
+	float Dot(Vec3 const& other) const;
+    Vec3 Cross(Vec3 const& other) const;
+
+    bool IsZero() const;
+	bool IsNearlyZero(float epsilon = 0.000001f) const;
     float GetLowest() const;
     float GetLowestXY() const;
     float GetHighest() const;
@@ -62,6 +70,7 @@ public:
     void operator/=(float divisor);
     
     bool operator==(Vec3 const& rhs) const;
+    bool operator!=(Vec3 const& rhs) const;
 
 public:
     

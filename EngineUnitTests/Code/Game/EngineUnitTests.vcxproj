@@ -107,7 +107,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Vec2.cpp" />
+    <ClCompile Include="Tests\Core\TestBinaryUtils.cpp" />
+    <ClCompile Include="Tests\Math\TestVec2.cpp" />
+    <ClCompile Include="Tests\Math\TestVec3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

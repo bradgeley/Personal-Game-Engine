@@ -49,7 +49,7 @@ int BinaryUtils::FirstSetBit(size_t mask, int firstValidIndex)
 
 	size_t& maskExcludingInvalidLowerBits = mask;
 
-	size_t firstRowMask = SIZE_MAX << firstValidIndex >> firstValidIndex; // zero's out the least significant n (firstValidIndex) bits
+	size_t firstRowMask = SIZE_MAX << firstValidIndex; // zero's out the least significant n (firstValidIndex) bits
 	maskExcludingInvalidLowerBits &= firstRowMask; // &= to force zero out the LSB in the mask
 
 	return FirstSetBit(maskExcludingInvalidLowerBits);
@@ -98,7 +98,7 @@ int BinaryUtils::FirstUnsetBit(size_t mask, int firstValidIndex)
 
 	size_t& maskExcludingInvalidLowerBits = mask;
 
-	size_t firstRowMask = SIZE_MAX >> firstValidIndex >> firstValidIndex; // zero's out the least significant n (firstValidIndex) bits
+	size_t firstRowMask = SIZE_MAX << firstValidIndex; // zero's out the least significant n (firstValidIndex) bits
 	firstRowMask = ~firstRowMask; // Turn all the LSB into 1's (0 would count as unset)
 	maskExcludingInvalidLowerBits |= firstRowMask;
 

@@ -69,7 +69,10 @@ namespace MathUtils
 	//----------------------------------------------------------------------------------------------------------------------
 	// 3D Vector
 	//
-	float GetLength3D(const Vec3& vec);
+	float GetLength3D(Vec3 const& vec);
+	float GetDistance3D(Vec3 const& a, const Vec3& b);
+	float GetDistanceSquared3D(Vec3 const& a, const Vec3& b);
+	float GetLengthSquared3D(Vec3 const& vec);
 	void  NormalizeVector3D(Vec3& vec);
 
 
