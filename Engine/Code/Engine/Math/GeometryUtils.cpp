@@ -174,10 +174,10 @@ AABB2 GeometryUtils::GetDiscBounds(Vec2 const& center, float radius)
 //----------------------------------------------------------------------------------------------------------------------
 AABB2 GeometryUtils::GetCapsuleBounds(Vec2 const& start, Vec2 const& end, float radius)
 {
-    float minX = MathUtils::MinF(start.x - radius, end.x - radius);
-    float minY = MathUtils::MinF(start.y - radius, end.y - radius);
-    float maxX = MathUtils::MaxF(start.x + radius, end.x + radius);
-    float maxY = MathUtils::MaxF(start.y + radius, end.y + radius);
+    float minX = MathUtils::Min(start.x - radius, end.x - radius);
+    float minY = MathUtils::Min(start.y - radius, end.y - radius);
+    float maxX = MathUtils::Max(start.x + radius, end.x + radius);
+    float maxY = MathUtils::Max(start.y + radius, end.y + radius);
     return AABB2(minX, minY, maxX, maxY);
 }
 
@@ -366,8 +366,8 @@ bool GeometryUtils::GetFirstLineAABBIntersection(Vec2 const& lineStart, Vec2 con
         float tEnterX = (box2D.mins.x - lineStart.x) * oneOverVelocity.x;
         float tExitX = (box2D.maxs.x - lineStart.x) * oneOverVelocity.x;
 
-        resultEntryT = MathUtils::MaxF(resultEntryT, MathUtils::MinF(tEnterX, tExitX));
-        resultExitT = MathUtils::MinF(resultExitT, MathUtils::MaxF(tEnterX, tExitX));
+        resultEntryT = MathUtils::Max(resultEntryT, MathUtils::Min(tEnterX, tExitX));
+        resultExitT = MathUtils::Min(resultExitT, MathUtils::Max(tEnterX, tExitX));
     }
 
     // then Y
@@ -384,8 +384,8 @@ bool GeometryUtils::GetFirstLineAABBIntersection(Vec2 const& lineStart, Vec2 con
         float tEnterY = (box2D.mins.y - lineStart.y) * oneOverVelocity.y;
         float tExitY = (box2D.maxs.y - lineStart.y) * oneOverVelocity.y;
 
-        resultEntryT = MathUtils::MaxF(resultEntryT, MathUtils::MinF(tEnterY, tExitY));
-        resultExitT = MathUtils::MinF(resultExitT, MathUtils::MaxF(tEnterY, tExitY));
+        resultEntryT = MathUtils::Max(resultEntryT, MathUtils::Min(tEnterY, tExitY));
+        resultExitT = MathUtils::Min(resultExitT, MathUtils::Max(tEnterY, tExitY));
     }
 
     if (resultExitT >= resultEntryT && resultExitT >= 0.0f)
@@ -483,10 +483,10 @@ float GeometryUtils::GetShortestDistanceSquaredBetweenLineSegments(Vec2 const& a
     float distSquaredToBEnd = nearestToBEnd.GetDistanceSquaredTo(bEnd);
 
     float shortestDistanceSquared = FLT_MAX;
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToAStart);
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToAEnd);
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToBStart);
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToBEnd);
+    shortestDistanceSquared = MathUtils::Min(shortestDistanceSquared, distSquaredToAStart);
+    shortestDistanceSquared = MathUtils::Min(shortestDistanceSquared, distSquaredToAEnd);
+    shortestDistanceSquared = MathUtils::Min(shortestDistanceSquared, distSquaredToBStart);
+    shortestDistanceSquared = MathUtils::Min(shortestDistanceSquared, distSquaredToBEnd);
 
     return shortestDistanceSquared;
 }
@@ -512,10 +512,10 @@ float GeometryUtils::GetShortestDistanceSquaredBetweenLineSegmentAndAABB(Vec2 co
 
     // Separating Axis Theorem    
     float shortestDistanceSquared = FLT_MAX;
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToTop);
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToRight);
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToLeft);
-    shortestDistanceSquared = MathUtils::MinF(shortestDistanceSquared, distSquaredToBottom);
+    shortestDistanceSquared = MathUtils::Min(shortestDistanceSquared, distSquaredToTop);
+    shortestDistanceSquared = MathUtils::Min(shortestDistanceSquared, distSquaredToRight);
+    shortestDistanceSquared = MathUtils::Min(shortestDistanceSquared, distSquaredToLeft);
+    shortestDistanceSquared = MathUtils::Min(shortestDistanceSquared, distSquaredToBottom);
 
     return shortestDistanceSquared;
 }
@@ -542,7 +542,7 @@ bool GeometryUtils::SweepDiscVsPoint(Vec2 const& discStart, Vec2 const& discEnd,
     }
     else if (numRoots == 2)
     {
-        t = MathUtils::MinF(root1, root2);
+        t = MathUtils::Min(root1, root2);
     }
     else
     {

@@ -49,13 +49,19 @@ int EventSystem::FireEvent(Name name, NamedProperties& args)
     auto it = m_events.find(name);
     if (it != m_events.end())
     {
+        int numExecuted = 0;
         std::vector<EventSubscriber*> const& subList = it->second;
         for (EventSubscriber* const& sub : subList)
         {
-            sub->Execute(args);
+            bool consumed = sub->Execute(args);
+            numExecuted++;
+            if (consumed) 
+            {
+                break;
+            }
         }
 
-        return (int) subList.size();
+        return numExecuted;
     }
 
     return 0;

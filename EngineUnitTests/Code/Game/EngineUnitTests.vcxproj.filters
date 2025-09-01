@@ -26,6 +26,43 @@
     <ClCompile Include="Tests\DataStructures\TestNamedProperties.cpp">
       <Filter>Tests\DataStructures</Filter>
     </ClCompile>
+    <ClCompile Include="Tests\Events\TestEvents.cpp">
+      <Filter>Tests\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Time\TestClock.cpp">
+      <Filter>Tests\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestAABB2.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\TestTemplate.cpp">
+      <Filter>Tests</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestGeometryUtils.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestIntVec2.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestMat44.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestMathUtils.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestNoise.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestPlane2.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestRNG.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Math\TestStatsUtils.cpp">
+      <Filter>Tests\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Time\TestTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\pch.h" />
@@ -45,6 +82,12 @@
     </Filter>
     <Filter Include="Tests\DataStructures">
       <UniqueIdentifier>{cd0d216d-5a06-47ca-a4d6-10118c8a4eb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\Events">
+      <UniqueIdentifier>{49b4aafa-b678-4fe1-b250-52cc40dbfbc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tests\Time">
+      <UniqueIdentifier>{6d8f395d-dcde-4565-a822-9cb3483eeff5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

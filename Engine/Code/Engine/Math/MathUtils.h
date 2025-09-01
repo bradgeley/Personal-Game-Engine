@@ -47,9 +47,6 @@ namespace MathUtils
 	//----------------------------------------------------------------------------------------------------------------------
 	// Utilities
 	//
-	int   ClampInt(int value, int min, int max);
-	double Clamp(double value, double min, double max);
-	float ClampF(float value, float min, float max);
 	double Clamp01(double value);
 	float Clamp01F(float value);
 
@@ -102,22 +99,130 @@ namespace MathUtils
 	//
 	int		IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
 	int		DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
-	float	MinF(float a, float b);
-	float	MaxF(float a, float b);
-	int		Min(int a, int b);
-	int		Max(int a, int b);
 	int		Pow(int base, int exp);
 	float	PowF(float base, float exp);
 	double	Log(double val);
 	float	LogF(float val);
 	int		FloorF(float val);
 	int		CeilingF(float val);
+	int		RoundF(float val);
 	float	SqrtF(float val);
 	int		Abs(int val);
 	float	AbsF(float val);
-	void	SwapF(float& a, float& b);
-	int		Sign(int val);
-	float	SignF(float val);
 	bool	IsNearlyEqual(float val, float comparison, float epsilon = 0.000001f);
 	bool	IsNearlyZero(float val, float epsilon = 0.000001f);
+
+	//----------------------------------------------------------------------------------------------------------------------
+	// Simple Templated Functions
+	//
+	template <typename T>
+	T Min(T const& a, T const& b);
+
+	template <typename T>
+	T Max(T const& a, T const& b);
+
+	template <typename T>
+	T Sign(T const& value);
+
+	template <typename T>
+	T Abs(T const& value);
+
+	template <typename T>
+	void Swap(T& a, T& b);
+
+	template <typename T>
+	T Clamp(T const& val, T const& rangeMin, T const& rangeMax);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+T MathUtils::Min(T const& a, T const& b)
+{
+	if (a <= b) 
+	{
+		return a;
+	}
+	else 
+	{
+		return b;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+T MathUtils::Max(T const& a, T const& b)
+{
+	if (a >= b)
+	{
+		return a;
+	}
+	else
+	{
+		return b;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+T MathUtils::Sign(T const& value)
+{
+	if (value > T(0)) 
+	{
+		return T(1);
+	}
+	if (value < T(0))
+	{
+		return T(-1);
+	}
+	return T(0);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+T MathUtils::Abs(T const& value)
+{
+	if (value < T(0))
+	{
+		return -value;
+	}
+	else
+	{
+		return value;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+T MathUtils::Clamp(T const& val, T const& rangeMin, T const& rangeMax)
+{
+	if (val < rangeMin) 
+	{
+		return rangeMin;
+	}
+	if (val > rangeMax) 
+	{
+		return rangeMax;
+	}
+	return val;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+void MathUtils::Swap(T& a, T& b)
+{
+	T intermediate = a;
+	a = b;
+	b = intermediate;
 }

@@ -74,6 +74,14 @@ void Vec2::Normalize()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool Vec2::IsNormalized() const
+{
+	return MathUtils::IsNearlyEqual(GetLengthSquared(), 1.f, 0.000001f);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 Vec2::GetNormalized() const
 {
     Vec2 copy = *this;
@@ -164,6 +172,14 @@ bool Vec2::IsZero() const
 bool Vec2::IsNearlyZero(float epsilon) const
 {
     return (MathUtils::AbsF(x) < epsilon) && (MathUtils::AbsF(y) < epsilon);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Vec2::IsNearlyEqual(Vec2 const& other, float epsilon /*= 0.000001f*/) const
+{
+    return (*this - other).IsNearlyZero(epsilon);
 }
 
 

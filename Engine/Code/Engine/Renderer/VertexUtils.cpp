@@ -202,7 +202,7 @@ void VertexUtils::AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& bounding
     ASSERT_OR_DIE(dims.x != 0 && dims.y != 0, "Cannot add verts for a grid with 0 for one of its dimensions.")
 
     Vec2 cellDims = boundingAABB.GetDimensions() / Vec2(dims);
-    float lineThickness = 0.1f * MathUtils::MinF(cellDims.x, cellDims.y);
+    float lineThickness = 0.1f * MathUtils::Min(cellDims.x, cellDims.y);
 
     for (int y = 0; y < dims.y; ++y)
     {

@@ -7,10 +7,13 @@
 #include <random>
 #include <gtest/gtest.h>
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 namespace TestName
 {
 
-    // Helper to setup/teardown NameTable for each test
+    //----------------------------------------------------------------------------------------------------------------------
     struct NameTableScope
     {
         NameTableScope()
@@ -25,6 +28,8 @@ namespace TestName
             g_nameTable = nullptr;
         }
     };
+
+
 
     //----------------------------------------------------------------------------------------------------------------------
     // Test 1: Simple Functionality
@@ -62,6 +67,8 @@ namespace TestName
     #endif
     }
 
+
+
     //----------------------------------------------------------------------------------------------------------------------
     // Test 2: Perf Test - Creation of 1000 unique names
     //
@@ -84,6 +91,8 @@ namespace TestName
             EXPECT_EQ(names[i].ToString(), "Name_" + std::to_string(i));
         }
     }
+
+
 
     //----------------------------------------------------------------------------------------------------------------------
     // Test 3: Perf Test - Equality of 100 random pairs from 100 names, 100000 times
@@ -117,6 +126,8 @@ namespace TestName
         }
     }
 
+
+
     //----------------------------------------------------------------------------------------------------------------------
     // Test 4: Case Insensitivity
     //
@@ -134,6 +145,8 @@ namespace TestName
         EXPECT_EQ(n1, n3);
     }
 
+
+
     //----------------------------------------------------------------------------------------------------------------------
     // Test 5: Invalid Name
     //
@@ -146,6 +159,8 @@ namespace TestName
         EXPECT_EQ(invalid, Name::s_invalidName);
         EXPECT_EQ(invalid.ToString(), Name::s_invalidNameString);
     }
+
+
 
     //----------------------------------------------------------------------------------------------------------------------
     // Test 6: ToCStr Consistency

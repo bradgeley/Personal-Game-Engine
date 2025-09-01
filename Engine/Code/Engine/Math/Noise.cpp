@@ -13,17 +13,17 @@ unsigned int GetRawNoise1D(int x, int seed)
 	unsigned int bits = (unsigned int) x;
 
 	// Randomly generated bits
-	int RANDOM_BITS_1 = 0b0110'0011'1110'1000'0111'1110'1010'0110;
-	int RANDOM_BITS_2 = 0b1111'0100'0000'0101'0100'0010'1111'0110;
-	int RANDOM_BITS_3 = 0b0011'1101'0110'1001'1010'1101'1111'1111;
+	unsigned int RANDOM_BITS_1 = 2440335539;
+	unsigned int RANDOM_BITS_2 = 3143968388;
+	unsigned int RANDOM_BITS_3 = 3939586176;
 
 	bits *= RANDOM_BITS_1;
-	bits ^= bits >> 7;
+	bits ^= bits >> 13;
 	bits += seed;
 	bits += RANDOM_BITS_2;
-	bits ^= bits >> 11;
+	bits ^= bits >> 19;
 	bits *= RANDOM_BITS_3;
-	bits ^= bits >> 17;
+	bits ^= bits >> 23;
 
 	return bits;
 }
@@ -44,7 +44,8 @@ size_t GetRawNoise1D_64(int x, size_t seed)
 {
 	size_t bits = static_cast<size_t>(x);
 
-	#if defined(_M_X64) || defined(_WIN64)
+	// Randomly generated bits
+	#if INTPTR_MAX == INT64_MAX
 		size_t RANDOM_BITS_1 = 16069955140179554870;
 		size_t RANDOM_BITS_2 = 12176651035439328948;
 		size_t RANDOM_BITS_3 = 15364385324645250847;
@@ -54,15 +55,13 @@ size_t GetRawNoise1D_64(int x, size_t seed)
 		size_t RANDOM_BITS_3 = 3939586176;
 	#endif
 
-	// Randomly generated bits
-
 	bits *= RANDOM_BITS_1;
-	bits ^= bits >> 7;
+	bits ^= bits >> 13;
 	bits += seed;
 	bits += RANDOM_BITS_2;
-	bits ^= bits >> 11;
+	bits ^= bits >> 19;
 	bits *= RANDOM_BITS_3;
-	bits ^= bits >> 17;
+	bits ^= bits >> 23;
 
 	return bits;
 }
@@ -92,10 +91,10 @@ float GetNoiseZeroToOne2D(int x, int y, int seed)
 //----------------------------------------------------------------------------------------------------------------------
 float GetFractalNoise1D(float position, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed)
 {
-	//float offset = 1.f; // todo
+	constexpr float OCTAVE_OFFSET = 0.636764989593174f; // Translation/bias to add to each octave
 
 	// Scale down the position if scale is very large, so that you traverse the noise slower. Steps of 1 become steps of 0.1 on scale 10
-	float relativePos = position * (1.f / scale);
+	float relativePos = position * (1.f / scale) + OCTAVE_OFFSET;
 
 	float totalNoise = 0.f;
 	float persistence = 1.f;
@@ -123,6 +122,7 @@ float GetFractalNoise1D(float position, float scale, unsigned int numOctaves, fl
 		maxAmplitude += persistence;
 
 		relativePos *= octaveScale;
+		relativePos += OCTAVE_OFFSET;
 
 		totalNoise += noiseNegOneToOne;
 
@@ -147,7 +147,8 @@ float GetFractalNoise1D(float position, float scale, unsigned int numOctaves, fl
 //----------------------------------------------------------------------------------------------------------------------
 float GetFractalNoise2D(float x, float y, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed)
 {
-	Vec2 relativePos = Vec2(x, y) * (1.f / scale);
+	static Vec2 OCTAVE_OFFSET = Vec2(0.636764989593174f, 0.636764989593174f); // Translation/bias to add to each octave
+	Vec2 relativePos = Vec2(x, y) * (1.f / scale) + OCTAVE_OFFSET;
 
 	float totalNoise = 0.f;
 	float persistence = 1.f;
@@ -181,6 +182,7 @@ float GetFractalNoise2D(float x, float y, float scale, unsigned int numOctaves, 
 		maxAmplitude += persistence;
 
 		relativePos *= octaveScale;
+		relativePos += OCTAVE_OFFSET;
 
 		totalNoise += noiseNegOneToOne;
 
@@ -205,50 +207,51 @@ float GetFractalNoise2D(float x, float y, float scale, unsigned int numOctaves, 
 //----------------------------------------------------------------------------------------------------------------------
 float GetPerlinNoise1D(float position, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed)
 {
-	//float offset = 1.f; // todo
-	const float gradients[2] = { -1.f, 1.f }; // Each point on the gradient line is either pointing left or right
-
+	constexpr float OCTAVE_OFFSET = 0.636764989593174f; // Translation/bias to add to each octave
+	constexpr float gradients[2] = { -1.f, 1.f }; // Each point on the gradient line is either pointing left or right
+	
 	// Scale down the position if scale is very large, so that you traverse the noise slower. Steps of 1 become steps of 0.1 on scale 10
-	float relativePos = position * (1.f / scale);
-
+	float relativePos = (position + OCTAVE_OFFSET) * (1.f / scale);
+	
 	float totalNoise = 0.f;
 	float persistence = 1.f;
 	float maxAmplitude = 0.f; // Each octave adds some theoretical max amplitude, usually starts at 1 then 1.5 then 1.75, for 3 octaves, etc.
-
+	
 	for (unsigned int octaveIndex = 0; octaveIndex < numOctaves; ++octaveIndex)
 	{
 		// Weighted average of the 2 to get the noise for this position
 		float relativeFloor = (float) MathUtils::FloorF(relativePos);
 		float distanceToWest = relativePos - relativeFloor;
 		float distanceToEast = distanceToWest - 1.f; // always negative
-
+	
 		int indexWest = static_cast<int>(relativeFloor);
 		int indexEast = indexWest + 1;
-
+	
 		float gradientWest = gradients[GetRawNoise1D(indexWest, seed) & 0x00000001];
 		float gradientEast = gradients[GetRawNoise1D(indexEast, seed) & 0x00000001];
-
+	
 		float dotWest = gradientWest * distanceToWest; // 1D "dot product"
 		float dotEast = gradientEast * distanceToEast;
-
+	
 		float weightEast = MathUtils::SmoothStep3(distanceToWest); // East weight inc as distance from west inc
 		float weightWest = 1.f - weightEast;
 		float noiseZeroToOne = (weightWest * dotWest) + (weightEast * dotEast);
 		float noiseThisOctave = 2.f * noiseZeroToOne; // 1D Perlin is in -.5,.5, map to -1,1
-
+	
 		// Diminish by the octave persistence
 		noiseThisOctave *= persistence;
 		maxAmplitude += persistence;
-
+	
 		relativePos *= octaveScale;
-
+		relativePos += OCTAVE_OFFSET;
+	
 		totalNoise += noiseThisOctave;
-
+	
 		// Set data for next iteration
 		persistence *= octavePersistence;
 		++seed;
 	}
-
+	
 	if (renormalize)
 	{
 		totalNoise /= maxAmplitude; // Get back into range -1,1 from the range -A,A (where A = max amplitude from octaves)
@@ -256,7 +259,7 @@ float GetPerlinNoise1D(float position, float scale, unsigned int numOctaves, flo
 		totalNoise = MathUtils::SmoothStep3(totalNoise);		// Octaves tend to make noise middly, this pushes edges towards -1 and 1 again
 		totalNoise = (totalNoise * 2.0f) - 1.f;		// Map back to -1,1
 	}
-
+	
 	return totalNoise;
 }
 
@@ -265,6 +268,7 @@ float GetPerlinNoise1D(float position, float scale, unsigned int numOctaves, flo
 //----------------------------------------------------------------------------------------------------------------------
 float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed)
 {
+	static Vec2 OCTAVE_OFFSET = Vec2(0.636764989593174f, 0.636764989593174f); // Translation/bias to add to each octave
 	static Vec2 const gradients[8] = // Normalized unit vectors in 8 quarter-cardinal directions
 	{
 		Vec2(+0.923879533f, +0.382683432f), //  22.5 degrees (ENE)
@@ -277,7 +281,7 @@ float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, f
 		Vec2(+0.923879533f, -0.382683432f)  // 337.5 degrees (ESE)
 	};
 
-	Vec2 sampleLocation = Vec2(x, y) * (1.f / scale);
+	Vec2 sampleLocation = (Vec2(x, y) / scale) + OCTAVE_OFFSET;
 	float totalNoise = 0.f;
 	float persistence = 1.f;
 	float maxAmplitude = 0.f; // Each octave adds some theoretical max amplitude, usually starts at 1 then 1.5 then 1.75, for 3 octaves, etc.
@@ -336,6 +340,7 @@ float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, f
 		maxAmplitude += persistence;
 
 		sampleLocation *= octaveScale;
+		sampleLocation += OCTAVE_OFFSET;
 
 		totalNoise += noiseThisOctave;
 

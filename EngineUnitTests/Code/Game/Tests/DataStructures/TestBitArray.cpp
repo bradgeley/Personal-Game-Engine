@@ -4,17 +4,28 @@
 #include <gtest/gtest.h>
 #include <random>
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Bit Array Tests
+//
 namespace TestBitArray
 {
 
-    // Helper for basic construction and size
+    //----------------------------------------------------------------------------------------------------------------------
+    // Basic construction and size
+    //
     TEST(BitArray, ConstructionAndSize)
     {
         BitArray<16> arr;
         EXPECT_EQ(arr.Size(), 16);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Test Set, Unset, Get, operator[]
+    //
     TEST(BitArray, SetUnsetGetOperator)
     {
         BitArray<8> arr;
@@ -31,7 +42,11 @@ namespace TestBitArray
         EXPECT_FALSE(arr[3]);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Test SetAll
+    //
     TEST(BitArray, SetAll)
     {
         BitArray<10> arr;
@@ -47,7 +62,11 @@ namespace TestBitArray
         }
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Test Flip
+    //
     TEST(BitArray, Flip)
     {
         BitArray<5> arr;
@@ -57,7 +76,11 @@ namespace TestBitArray
         EXPECT_FALSE(arr.Get(2));
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Test GetFirstUnsetIndex and GetFirstSetIndex
+    //
     TEST(BitArray, GetFirstUnsetAndSetIndex)
     {
         BitArray<8> arr(true);
@@ -78,7 +101,11 @@ namespace TestBitArray
         EXPECT_EQ(firstSetIdx, 4);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Test GetNextUnsetIndex and SetNextUnsetIndex
+    //
     TEST(BitArray, GetNextUnsetAndSetNextUnsetIndex)
     {
         BitArray<8> arr(true);
@@ -97,7 +124,11 @@ namespace TestBitArray
         EXPECT_EQ(idx, -1);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Test GetNextSetIndex
+    //
     TEST(BitArray, GetNextSetIndex)
     {
         BitArray<8> arr;
@@ -108,7 +139,11 @@ namespace TestBitArray
         EXPECT_EQ(arr.GetNextSetIndex(7), -1);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Test CountSetBits
+    //
     TEST(BitArray, CountSetBits)
     {
         BitArray<16> arr;
@@ -123,8 +158,11 @@ namespace TestBitArray
         EXPECT_EQ(arr.CountSetBits(), 0);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Test trailing bits are handled correctly (size not multiple of 8/64)
-    // Test trailing bits are handled correctly (size not multiple of 8/64)
+    //
     TEST(BitArray, TrailingBits)
     {
         BitArray<70> arr;
@@ -170,10 +208,10 @@ namespace TestBitArray
     }
 
 
-    // Stress tests for BitArray
 
-
+    //----------------------------------------------------------------------------------------------------------------------
     // Stress test: Set and unset all bits in a large array
+    //
     TEST(BitArray, StressSetUnsetAll)
     {
         constexpr int N = 10000;
@@ -196,7 +234,11 @@ namespace TestBitArray
         EXPECT_EQ(arr.CountSetBits(), 0);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Stress test: Randomly set and unset bits
+    //
     TEST(BitArray, StressRandomSetUnset)
     {
         constexpr int N = 10000;
@@ -232,7 +274,11 @@ namespace TestBitArray
         }
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Stress test: Flip bits randomly
+    //
     TEST(BitArray, StressRandomFlip)
     {
         constexpr int N = 10000;
@@ -255,7 +301,11 @@ namespace TestBitArray
         }
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Stress test: SetNextUnsetIndex and GetNextUnsetIndex
+    //
     TEST(BitArray, StressSetNextUnsetIndex)
     {
         constexpr int N = 75;
@@ -280,4 +330,128 @@ namespace TestBitArray
         }
         EXPECT_EQ(arr.CountSetBits(), 0);
     }
+
+
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Test: Fill and empty a 1000-bit BitArray
+    //
+    TEST(BitArray, FillAndEmpty1000Bits)
+    {
+        constexpr int N = 1000;
+        BitArray<N> arr;
+
+        // Initially all bits should be unset
+        for (int i = 0; i < N; ++i)
+        {
+            EXPECT_FALSE(arr.Get(i));
+        }
+        EXPECT_EQ(arr.CountSetBits(), 0);
+
+        // Set all bits
+        arr.SetAll(true);
+        for (int i = 0; i < N; ++i)
+        {
+            EXPECT_TRUE(arr.Get(i));
+        }
+        EXPECT_EQ(arr.CountSetBits(), N);
+
+        // Unset all bits
+        arr.SetAll(false);
+        for (int i = 0; i < N; ++i)
+        {
+            EXPECT_FALSE(arr.Get(i));
+        }
+        EXPECT_EQ(arr.CountSetBits(), 0);
+    }
+
+
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Test: BitArray with size divisible by 64 (or 32) and edge bit operations
+    //
+    TEST(BitArray, DivisibleByWordSize)
+    {
+        constexpr int N = 1024; 
+
+        BitArray<N> arr;
+
+        // Set first and last bits
+        arr.Set(0);
+        arr.Set(N - 1);
+        EXPECT_TRUE(arr.Get(0));
+        EXPECT_TRUE(arr.Get(N - 1));
+        EXPECT_EQ(arr.CountSetBits(), 2);
+
+        // Unset first, check only last is set
+        arr.Unset(0);
+        EXPECT_FALSE(arr.Get(0));
+        EXPECT_TRUE(arr.Get(N - 1));
+        EXPECT_EQ(arr.CountSetBits(), 1);
+
+        // Unset last, check none set
+        arr.Unset(N - 1);
+        EXPECT_FALSE(arr.Get(N - 1));
+        EXPECT_EQ(arr.CountSetBits(), 0);
+
+        // Set all, then unset all, check
+        arr.SetAll(true);
+        EXPECT_EQ(arr.CountSetBits(), N);
+        arr.SetAll(false);
+        EXPECT_EQ(arr.CountSetBits(), 0);
+    }
+
+
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Test: BitArray copy and assignment
+    //
+    TEST(BitArray, CopyAndAssignment)
+    {
+        constexpr int N = 128;
+        BitArray<N> arr1;
+        arr1.SetAll(true);
+        arr1.Unset(5);
+        arr1.Unset(127);
+
+        // Copy constructor
+        BitArray<N> arr2 = arr1;
+        for (int i = 0; i < N; ++i)
+        {
+            EXPECT_EQ(arr1.Get(i), arr2.Get(i));
+        }
+
+        // Assignment operator
+        BitArray<N> arr3;
+        arr3.SetAll(false);
+        arr3 = arr1;
+        for (int i = 0; i < N; ++i)
+        {
+            EXPECT_EQ(arr1.Get(i), arr3.Get(i));
+        }
+    }
+
+
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Test: BitArray operator[] const and non-const
+    //
+    TEST(BitArray, OperatorBracket)
+    {
+        constexpr int N = 32;
+        BitArray<N> arr;
+        for (int i = 0; i < N; ++i)
+        {
+            EXPECT_FALSE(arr[i]);
+            arr.Set(i);
+            EXPECT_TRUE(arr[i]);
+        }
+        arr.SetAll(false);
+        for (int i = 0; i < N; ++i)
+        {
+            EXPECT_FALSE(arr[i]);
+        }
+    }
+
+
 }

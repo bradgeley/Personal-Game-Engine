@@ -24,4 +24,7 @@ public:
     float GetAltitude(Vec2 const& point) const;
     float GetDistance(Vec2 const& point) const;
     bool Straddles(Vec2 const& a, Vec2 const& b) const;
+
+	bool operator==(Plane2 const& rhs) const;
+	bool operator!=(Plane2 const& rhs) const;
 };

@@ -11,8 +11,8 @@ AABB2 const AABB2::ZeroToOne = AABB2();
 
 //----------------------------------------------------------------------------------------------------------------------
 AABB2::AABB2(Vec2 const& mins, Vec2 const& maxs) :
-    mins(MathUtils::MinF(mins.x, maxs.x), MathUtils::MinF(mins.y, maxs.y)),
-    maxs(MathUtils::MaxF(mins.x, maxs.x), MathUtils::MaxF(mins.y, maxs.y))
+    mins(MathUtils::Min(mins.x, maxs.x), MathUtils::Min(mins.y, maxs.y)),
+    maxs(MathUtils::Max(mins.x, maxs.x), MathUtils::Max(mins.y, maxs.y))
 {
 }
 
@@ -20,8 +20,8 @@ AABB2::AABB2(Vec2 const& mins, Vec2 const& maxs) :
 
 //----------------------------------------------------------------------------------------------------------------------
 AABB2::AABB2(float minX, float minY, float maxX, float maxY) :
-    mins(MathUtils::MinF(minX, maxX), MathUtils::MinF(minY, maxY)),
-    maxs(MathUtils::MaxF(minX, maxX), MathUtils::MaxF(minY, maxY))
+    mins(MathUtils::Min(minX, maxX), MathUtils::Min(minY, maxY)),
+    maxs(MathUtils::Max(minX, maxX), MathUtils::Max(minY, maxY))
 {
 }
 
@@ -135,8 +135,8 @@ AABB2 AABB2::GetExpandedBy(float flatExpansionAmount) const
 Vec2 AABB2::GetNearestPoint(Vec2 const& point) const
 {
     Vec2 result = point;
-    result.x = MathUtils::ClampF(result.x, mins.x, maxs.x);
-    result.y = MathUtils::ClampF(result.y, mins.y, maxs.y);
+    result.x = MathUtils::Clamp(result.x, mins.x, maxs.x);
+    result.y = MathUtils::Clamp(result.y, mins.y, maxs.y);
     return result;
 }
 

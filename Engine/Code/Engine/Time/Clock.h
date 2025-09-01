@@ -33,16 +33,14 @@ public:
 
 	Clock* GetParentClock() const;
 	Clock const* GetParentmostClock() const;
+	std::vector<Clock*>& GetChildrenClocks();
+	std::vector<Clock*> const& GetChildrenClocks() const;
 	ClockInternalData* GetInternalData() const;
 	bool AttachChildClock(Clock* childClock);
 	bool Reparent(Clock* newParent);
 	bool DetachChildClock(Clock* childClock);
 	bool AttachToParent(Clock* parent);
 	bool DetachFromParent();
-
-#if defined(_DEBUG)
-	static void RunUnitTests();
-#endif
 
 protected:
 

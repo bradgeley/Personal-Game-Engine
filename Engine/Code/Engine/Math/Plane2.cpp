@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "Engine/Math/Plane2.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "MathUtils.h"
 
 
@@ -7,7 +8,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 Plane2::Plane2(Vec2 const& normal, float distance) : m_normal(normal), m_distance(distance)
 {
-    
+    ASSERT_OR_DIE(normal.IsNormalized(), "Plane2 constructor normal was not normalized.");
 }
 
 
@@ -43,4 +44,24 @@ float Plane2::GetDistance(Vec2 const& point) const
 bool Plane2::Straddles(Vec2 const& a, Vec2 const& b) const
 {
 	return GetAltitude(a) * GetAltitude(b) < 0.f;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Plane2::operator==(Plane2 const& rhs) const 
+{
+    constexpr float epsilon = 0.000001f;
+    return MathUtils::Abs(m_distance - rhs.m_distance) < epsilon 
+           && m_normal.IsNearlyEqual(rhs.m_normal, epsilon);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Plane2::operator!=(Plane2 const& rhs) const 
+{
+    constexpr float epsilon = 0.000001f;
+    return !MathUtils::IsNearlyEqual(m_distance, rhs.m_distance, epsilon)
+        || !m_normal.IsNearlyEqual(rhs.m_normal, epsilon);
 }

@@ -111,14 +111,14 @@ Mat44 Mat44::GetAppended(Mat44 const& appendThis) const
 void Mat44::Transpose()
 {
 	// Simply swap values along the diagonal
-	MathUtils::SwapF(m_values[Iy], m_values[Jx]);
-	MathUtils::SwapF(m_values[Iz], m_values[Kx]);
-	MathUtils::SwapF(m_values[Iw], m_values[Tx]);
+	MathUtils::Swap(m_values[Iy], m_values[Jx]);
+	MathUtils::Swap(m_values[Iz], m_values[Kx]);
+	MathUtils::Swap(m_values[Iw], m_values[Tx]);
 
-	MathUtils::SwapF(m_values[Jz], m_values[Ky]);
-	MathUtils::SwapF(m_values[Jw], m_values[Ty]);
+	MathUtils::Swap(m_values[Jz], m_values[Ky]);
+	MathUtils::Swap(m_values[Jw], m_values[Ty]);
 
-	MathUtils::SwapF(m_values[Kw], m_values[Tz]);
+	MathUtils::Swap(m_values[Kw], m_values[Tz]);
 }
 
 

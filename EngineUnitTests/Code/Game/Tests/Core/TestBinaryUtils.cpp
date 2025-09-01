@@ -6,15 +6,20 @@
 #include <cstdint>
 #include <cstring>
 
+
+
 //----------------------------------------------------------------------------------------------------------------------
 // BinaryUtils Unit Tests
 //
 namespace TestBinaryUtils
 {
-
     using namespace BinaryUtils;
 
-    // FirstSetBit(size_t mask)
+
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Test: FirstSetBit(size_t mask)
+    //
     TEST(BinaryUtils, FirstSetBit)
     {
         // Case 1: No bits set
@@ -33,7 +38,11 @@ namespace TestBinaryUtils
         EXPECT_EQ(FirstSetBit(static_cast<size_t>(-1)), 0);
     }
 
-    // FirstSetBit(size_t mask, int firstValidIndex)
+
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Test: FirstSetBit(size_t mask, int firstValidIndex)
+    //
     TEST(BinaryUtils, FirstSetBitWithFirstValidIndex)
     {
         // Case 1: No bits set
@@ -52,7 +61,11 @@ namespace TestBinaryUtils
         EXPECT_EQ(FirstSetBit(static_cast<size_t>(-1), 10), 10);
     }
 
-    // FirstUnsetBit(size_t mask)
+
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Test: FirstUnsetBit(size_t mask)
+    //
     TEST(BinaryUtils, FirstUnsetBit)
     {
         // Case 1: All bits set
@@ -71,7 +84,11 @@ namespace TestBinaryUtils
         EXPECT_EQ(FirstUnsetBit(static_cast<size_t>(1) << (sizeof(size_t) * 8 - 1)), 0);
     }
 
-    // FirstUnsetBit(size_t mask, int firstValidIndex)
+
+
+    //------------------------------------------------------------------------------------------------------------------
+    // Test: FirstUnsetBit(size_t mask, int firstValidIndex)
+    //
     TEST(BinaryUtils, FirstUnsetBitWithFirstValidIndex)
     {
         // Case 1: All bits set

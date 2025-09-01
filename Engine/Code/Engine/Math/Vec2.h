@@ -34,6 +34,7 @@ public:
     float GetLengthSquared() const;
     float GetAngleDegrees() const;
     void Normalize();
+    bool IsNormalized() const;
     Vec2 GetNormalized() const;
     Vec2 GetRotated90() const;
     Vec2 GetRotatedMinus90() const;
@@ -45,6 +46,7 @@ public:
     float GetDistanceSquaredTo(Vec2 const& other) const;
     bool IsZero() const;
     bool IsNearlyZero(float epsilon) const;
+    bool IsNearlyEqual(Vec2 const& other, float epsilon = 0.000001f) const;
     float Dot(Vec2 const& other) const;
     float Cross(Vec2 const& other) const;
     

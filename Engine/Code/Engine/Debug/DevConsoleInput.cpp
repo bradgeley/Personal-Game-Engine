@@ -142,7 +142,7 @@ void DevConsoleInput::MoveCaret(int offset, bool wantsToSelect)
     {
         // Normal case, not selecting and we don't already have something selected
         m_caretIndex += offset;
-        m_caretIndex = MathUtils::ClampInt(m_caretIndex, 0, (int) m_input.m_line.size());
+        m_caretIndex = MathUtils::Clamp(m_caretIndex, 0, (int) m_input.m_line.size());
     }
     
     else if (!wantsToSelect && IsSelecting())
@@ -150,14 +150,14 @@ void DevConsoleInput::MoveCaret(int offset, bool wantsToSelect)
         // We want to stop selecting, then move caret
         m_selectionStartIndex = -1;
         m_caretIndex += offset;
-        m_caretIndex = MathUtils::ClampInt(m_caretIndex, 0, (int) m_input.m_line.size());
+        m_caretIndex = MathUtils::Clamp(m_caretIndex, 0, (int) m_input.m_line.size());
     }
     
     else if (wantsToSelect && IsSelecting())
     {
         // Continue the selection normally
         m_caretIndex += offset;
-        m_caretIndex = MathUtils::ClampInt(m_caretIndex, 0, (int) m_input.m_line.size());
+        m_caretIndex = MathUtils::Clamp(m_caretIndex, 0, (int) m_input.m_line.size());
     }
     
     else if (wantsToSelect && !IsSelecting())
@@ -165,7 +165,7 @@ void DevConsoleInput::MoveCaret(int offset, bool wantsToSelect)
         // We want to begin selecting
         int caretIndexBefore = m_caretIndex;
         m_caretIndex += offset;
-        m_caretIndex = MathUtils::ClampInt(m_caretIndex, 0, (int) m_input.m_line.size());
+        m_caretIndex = MathUtils::Clamp(m_caretIndex, 0, (int) m_input.m_line.size());
         if (caretIndexBefore != m_caretIndex)
         {
             // We successfully moved the caret, so select

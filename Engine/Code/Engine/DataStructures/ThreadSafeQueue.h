@@ -38,7 +38,7 @@ private:
 
     std::atomic<bool>       m_isQuitting = false;
     
-    std::mutex mutable      m_lock;
+    mutable std::mutex      m_lock;
     std::condition_variable m_condVar;
     std::deque<T*>          m_queue;
 };
@@ -52,7 +52,7 @@ private:
 template<typename T>
 bool ThreadSafeQueue<T>::IsEmpty() const
 {
-    std::unique_lock uniqueLock(m_lock);
+    std::unique_lock<std::mutex> uniqueLock(m_lock);
     return m_queue.empty();
 }
 
@@ -62,7 +62,7 @@ bool ThreadSafeQueue<T>::IsEmpty() const
 template <typename T>
 int ThreadSafeQueue<T>::Count() const
 {
-    std::unique_lock uniqueLock(m_lock);
+    std::unique_lock<std::mutex> uniqueLock(m_lock);
     return (int) m_queue.size();
 }
 
@@ -72,7 +72,7 @@ int ThreadSafeQueue<T>::Count() const
 template <typename T>
 void ThreadSafeQueue<T>::Push(T* obj)
 {
-    std::unique_lock uniqueLock(m_lock);
+    std::unique_lock<std::mutex> uniqueLock(m_lock);
     m_queue.emplace_back(obj);
     uniqueLock.unlock(); // supposedly faster and still safe to unlock before notifying?
     m_condVar.notify_one();
@@ -86,7 +86,7 @@ T* ThreadSafeQueue<T>::Pop(bool blocking)
 {
     T* result = nullptr;
     
-    std::unique_lock uniqueLock(m_lock);
+    std::unique_lock<std::mutex> uniqueLock(m_lock);
     
     while (m_queue.empty() && !m_isQuitting)
     {

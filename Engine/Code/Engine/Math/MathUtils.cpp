@@ -85,54 +85,6 @@ float MathUtils::RadiansToDegrees(float radians)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int MathUtils::ClampInt(int value, int min, int max)
-{
-    if (value > max)
-    {
-        return max;
-    }
-    if (value < min)
-    {
-        return min;
-    }
-    return value;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-double MathUtils::Clamp(double value, double min, double max)
-{
-    if (value > max)
-    {
-        return max;
-    }
-    if (value < min)
-    {
-        return min;
-    }
-    return value;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-float MathUtils::ClampF(float value, float min, float max)
-{
-    if (value > max)
-    {
-        return max;
-    }
-    if (value < min)
-    {
-        return min;
-    }
-    return value;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 double MathUtils::Clamp01(double value)
 {
     return Clamp(value, 0.0, 1.0);
@@ -143,7 +95,7 @@ double MathUtils::Clamp01(double value)
 //----------------------------------------------------------------------------------------------------------------------
 float MathUtils::Clamp01F(float value)
 {
-    return ClampF(value, 0.f, 1.f);
+    return Clamp(value, 0.f, 1.f);
 }
 
 
@@ -265,7 +217,7 @@ float MathUtils::Interpolate(float a, float b, float t)
 //----------------------------------------------------------------------------------------------------------------------
 float MathUtils::InterpolateClamped(float a, float b, float t)
 {
-    t = ClampF(t, 0.f, 1.f);
+    t = Clamp(t, 0.f, 1.f);
     return (b - a) * t + a;
 }
 
@@ -282,7 +234,7 @@ int MathUtils::InterpolateInt(int a, int b, float t)
 //----------------------------------------------------------------------------------------------------------------------
 int MathUtils::InterpolateIntClamped(int a, int b, float t)
 {
-    t = ClampF(t, 0.f, 1.f);
+    t = Clamp(t, 0.f, 1.f);
     return (int) Interpolate((float) a, (float) b, t);
 }
 
@@ -348,7 +300,7 @@ float MathUtils::RangeMap(float valueInRangeA, float minRangeA, float maxRangeA,
 //----------------------------------------------------------------------------------------------------------------------
 float MathUtils::RangeMapClamped(float valueInRangeA, float minRangeA, float maxRangeA, float minRangeB, float maxRangeB)
 {
-    return ClampF(RangeMap(valueInRangeA, minRangeA, maxRangeA, minRangeB, maxRangeB), minRangeB, maxRangeB);
+    return Clamp(RangeMap(valueInRangeA, minRangeA, maxRangeA, minRangeB, maxRangeB), minRangeB, maxRangeB);
 }
 
 
@@ -394,38 +346,6 @@ int MathUtils::DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wra
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float MathUtils::MinF(float a, float b)
-{
-	return a <= b ? a : b;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-float MathUtils::MaxF(float a, float b)
-{
-	return a >= b ? a : b;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-int MathUtils::Min(int a, int b)
-{
-	return a <= b ? a : b;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-int MathUtils::Max(int a, int b)
-{
-	return a >= b ? a : b;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::Pow(int base, int exp)
 {
     return static_cast<int>(pow(base, exp));
@@ -461,7 +381,7 @@ float MathUtils::LogF(float val)
 int MathUtils::FloorF(float val)
 {
     double d = (double) val;
-    return (int) floor(d);
+    return static_cast<int>(floor(d));
 }
 
 
@@ -470,7 +390,15 @@ int MathUtils::FloorF(float val)
 int MathUtils::CeilingF(float val)
 {
     double d = (double) val;
-    return (int) ceil(d);
+    return static_cast<int>(ceil(d));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int MathUtils::RoundF(float val)
+{
+    return static_cast<int>(std::roundf(val));
 }
 
 
@@ -495,40 +423,6 @@ int MathUtils::Abs(int val)
 float MathUtils::AbsF(float val)
 {
     return fabsf(val);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void MathUtils::SwapF(float& a, float& b)
-{
-    float a_copy = a;
-    a = b;
-    b = a_copy;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-int MathUtils::Sign(int val)
-{
-    if (val >= 0)
-    {
-        return 1;
-    }
-    return -1;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-float MathUtils::SignF(float val)
-{
-    if (val >= 0.f)
-    {
-        return 1.f;
-    }
-    return -1.f;
 }
 
 

@@ -11,7 +11,7 @@ struct EventDelegate
 {
     ~EventDelegate();
 
-    void Broadcast(NamedProperties& args) const;
+    int Broadcast(NamedProperties& args) const;
     
     void SubscribeFunction(EventCallbackFunction callbackFunc);
     void UnsubscribeFunction(EventCallbackFunction callbackFunc);
@@ -33,7 +33,7 @@ protected:
 template <typename T_Object, typename T_Method>
 void EventDelegate::SubscribeMethod(T_Object* object, T_Method method)
 {
-    m_subs.emplace_back(new EventSubscriberMethod(object, method));
+    m_subs.emplace_back(new EventSubscriberMethod<T_Object>(object, method));
 }
 
 

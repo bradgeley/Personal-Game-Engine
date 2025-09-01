@@ -70,7 +70,8 @@ template <typename T_Object, typename T_Method>
 void EventSystem::SubscribeMethod(Name eventName, T_Object* object, T_Method method)
 {
     auto& subList = m_events[eventName];
-    subList.emplace_back(new EventSubscriberMethod(object, method));
+	auto sub = new EventSubscriberMethod<T_Object>(object, method);
+    subList.push_back(sub);
 }
 
 

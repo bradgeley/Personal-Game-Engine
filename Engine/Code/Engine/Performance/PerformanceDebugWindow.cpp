@@ -719,8 +719,8 @@ Vec2 PerformanceDebugWindow::GetItemFrameBounds() const
         {
             for (auto& item : row.m_perfItemData)
             {
-                earliestStartTime = MathUtils::MinF(earliestStartTime, (float) item.m_startTime);
-                latestEndTime = MathUtils::MaxF(latestEndTime, (float) item.m_endTime);
+                earliestStartTime = MathUtils::Min(earliestStartTime, (float) item.m_startTime);
+                latestEndTime = MathUtils::Max(latestEndTime, (float) item.m_endTime);
             }
         }
     }

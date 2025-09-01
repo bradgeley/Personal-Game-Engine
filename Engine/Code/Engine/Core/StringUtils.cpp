@@ -290,13 +290,13 @@ Rgba8 StringUtils::StringToRgba8(std::string const& rgba8AsString)
 
     if (asStrings.size() >= 3)
     {
-        result.r = (uint8_t) MathUtils::ClampInt(StringToInt(asStrings[0]), 0, 255);
-        result.g = (uint8_t) MathUtils::ClampInt(StringToInt(asStrings[1]), 0, 255);
-        result.b = (uint8_t) MathUtils::ClampInt(StringToInt(asStrings[2]), 0, 255);
+        result.r = (uint8_t) MathUtils::Clamp(StringToInt(asStrings[0]), 0, 255);
+        result.g = (uint8_t) MathUtils::Clamp(StringToInt(asStrings[1]), 0, 255);
+        result.b = (uint8_t) MathUtils::Clamp(StringToInt(asStrings[2]), 0, 255);
     }
     if (asStrings.size() >= 4)
     {
-        result.a = (uint8_t) MathUtils::ClampInt(StringToInt(asStrings[3]), 0, 255);
+        result.a = (uint8_t) MathUtils::Clamp(StringToInt(asStrings[3]), 0, 255);
     }
     return result;
 }

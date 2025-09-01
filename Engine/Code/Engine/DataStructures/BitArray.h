@@ -55,7 +55,11 @@ private:
 private:
 
 	static constexpr int s_numRows = (t_size / BIT_ARRAY_NUM_BITS_PER_ROW) + (t_size % BIT_ARRAY_NUM_BITS_PER_ROW > 0 ? 1 : 0);
-	static constexpr size_t s_trailingBitMask = (SIZE_MAX >> t_size % BIT_ARRAY_NUM_BITS_PER_ROW) << (t_size % BIT_ARRAY_NUM_BITS_PER_ROW);
+	static constexpr int s_remainderInLastRow = (t_size % BIT_ARRAY_NUM_BITS_PER_ROW);
+	static constexpr int s_numTrailingBits = BIT_ARRAY_NUM_BITS_PER_ROW - s_remainderInLastRow == BIT_ARRAY_NUM_BITS_PER_ROW ? 0 : BIT_ARRAY_NUM_BITS_PER_ROW - s_remainderInLastRow;
+	static constexpr bool s_hasTrailingBits = s_numTrailingBits != 0;
+	static constexpr size_t s_trailingBitsAreZeroes = (SIZE_MAX >> s_numTrailingBits);	// ...0000'0111 (This one confused me, the MOST SIGNIFICANT BITS are the "trailing" bits, since we count UP)
+	static constexpr size_t s_trailingBitsAreOnes = ~s_trailingBitsAreZeroes;			// ...1111'1000
 
 	size_t m_data[s_numRows] = { 0 };
 };
@@ -137,14 +141,9 @@ void BitArray<t_size>::SetAll(bool isSet)
 
 	memset(&m_data, fillValue, s_numRows * sizeof(size_t));
 
-	// Handle the trailing bits
-	if (isSet)
+	if (s_hasTrailingBits) 
 	{
-		m_data[s_numRows - 1] &= (~s_trailingBitMask); // make sure trailing values are all 0's so hamming weights are accurate
-	}
-	else
-	{
-		m_data[s_numRows - 1] &= (s_trailingBitMask); // make sure trailing values are all 0's so hamming weights are accurate
+		m_data[s_numRows - 1] &= s_trailingBitsAreZeroes; // no matter what, 0 out the trailing bits
 	}
 }
 
@@ -160,7 +159,7 @@ int BitArray<t_size>::GetFirstUnsetIndex() const
 
 		if (currentRowIndex == s_numRows - 1)
 		{
-			row |= s_trailingBitMask; // fill the trailing bits so the bitscan doesnt see them
+			row |= s_trailingBitsAreOnes; // fill the trailing bits so the bitscan doesnt see them
 		}
 		
 		int firstUnsetBit = BinaryUtils::FirstUnsetBit(row);
@@ -207,7 +206,7 @@ int BitArray<t_size>::GetNextUnsetIndex(int queryIndex) const
 		size_t row = m_data[currentRowIndex];
 		if (currentRowIndex == s_numRows - 1)
 		{
-			row |= s_trailingBitMask; // fill the trailing bits so the bitscan doesnt see them
+			row |= s_trailingBitsAreOnes; // fill the trailing bits so the bitscan doesnt see them
 		}
 
 		int firstUnsetBit = -1;
@@ -250,26 +249,26 @@ int BitArray<t_size>::SetNextUnsetIndex(int queryIndex)
 template<unsigned int t_size>
 int BitArray<t_size>::GetNextSetIndex(int queryIndex) const
 {
-	int firstRowIndex = GetRowNumber(queryIndex);
-	int firstRowStartingBitIndex = queryIndex - BIT_ARRAY_NUM_BITS_PER_ROW * firstRowIndex; // After the first row, we start from index 0 in each subsequent row.
+	int startingRowIndex = GetRowNumber(queryIndex);
+	int startingLocalBitIndex = queryIndex - BIT_ARRAY_NUM_BITS_PER_ROW * startingRowIndex; // After the first row, we start from index 0 in each subsequent row.
 
 	for (int currentRowIndex = GetRowNumber(queryIndex); currentRowIndex < s_numRows; ++currentRowIndex)
 	{
 		size_t const& row = m_data[currentRowIndex];
 
-		int firstSetBit = -1;
-		if (currentRowIndex == firstRowIndex)
+		int firstSetBitIndex = -1;
+		if (currentRowIndex == startingRowIndex)
 		{
-			firstSetBit = BinaryUtils::FirstSetBit(row, firstRowStartingBitIndex);
+			firstSetBitIndex = BinaryUtils::FirstSetBit(row, startingLocalBitIndex);
 		}
 		else
 		{
-			firstSetBit = BinaryUtils::FirstSetBit(row);
+			firstSetBitIndex = BinaryUtils::FirstSetBit(row);
 		}
 
-		if (firstSetBit != -1)
+		if (firstSetBitIndex != -1)
 		{
-			return BIT_ARRAY_NUM_BITS_PER_ROW * currentRowIndex + firstSetBit;
+			return BIT_ARRAY_NUM_BITS_PER_ROW * currentRowIndex + firstSetBitIndex;
 		}
 	}
 	return -1;

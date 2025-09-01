@@ -25,6 +25,8 @@ public:
 	explicit IntVec2(int x, int y);
 	explicit IntVec2(Vec2 const& fromVec2);
 
+    bool IsZero() const;
+
     int GetLowest() const;
     int GetHighest() const;
 
@@ -37,18 +39,24 @@ public:
     bool operator==(IntVec2 const& other) const;
     bool operator!=(IntVec2 const& other) const;
     bool operator<(IntVec2 const& other) const;
+    IntVec2 operator+(IntVec2 const& other) const;
+    IntVec2 operator-(IntVec2 const& other) const;
+    IntVec2 operator*(IntVec2 const& other) const;
+    IntVec2 operator/(IntVec2 const& other) const;
 
     IntVec2 operator-() const;
     IntVec2 operator/(int divisor) const;
     IntVec2 operator*(int multiplier) const;
     IntVec2 operator*(float multiplier) const;
 
-    IntVec2 operator+(IntVec2 const& other) const;
-    IntVec2 operator-(IntVec2 const& other) const;
 
     // Component-wise self changing operators
     void operator+=(IntVec2 const& other);
     void operator-=(IntVec2 const& other);
+    void operator*=(IntVec2 const& other);
+    void operator/=(IntVec2 const& other);
+    void operator*=(int multiplier);
+    void operator/=(int divisor);
 
 public:
     

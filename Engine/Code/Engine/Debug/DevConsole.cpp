@@ -132,7 +132,7 @@ void DevConsole::Update(float deltaSeconds)
 {
     float animSeconds = m_config.m_openCloseAnimationSpeed * deltaSeconds;
     m_openCloseAnimationFraction += (m_isShowing ? -animSeconds : animSeconds);
-    m_openCloseAnimationFraction = MathUtils::ClampF(m_openCloseAnimationFraction, 0.f, 1.f);
+    m_openCloseAnimationFraction = MathUtils::Clamp(m_openCloseAnimationFraction, 0.f, 1.f);
 
     UpdateBackgroundImage(deltaSeconds);
 

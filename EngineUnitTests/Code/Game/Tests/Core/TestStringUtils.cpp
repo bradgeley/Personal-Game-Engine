@@ -8,10 +8,17 @@
 #include <string>
 #include <vector>
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// String Utils Tests
+//
 namespace TestStringUtils
 {
 
+    //----------------------------------------------------------------------------------------------------------------------
     // SplitStringOnAnyDelimeter
+    //
     TEST(StringUtils, SplitStringOnAnyDelimeter)
     {
         std::string s = "a,b;c|d";
@@ -24,7 +31,11 @@ namespace TestStringUtils
         EXPECT_EQ(result[3], "d");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // SplitStringOnDelimeter
+    //
     TEST(StringUtils, SplitStringOnDelimeter)
     {
         std::string s = "a,b,c";
@@ -35,14 +46,22 @@ namespace TestStringUtils
         EXPECT_EQ(result[2], "c");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // GetToLower
+    //
     TEST(StringUtils, GetToLower)
     {
         EXPECT_EQ(StringUtils::GetToLower("AbC123!"), "abc123!");
         EXPECT_EQ(StringUtils::GetToLower(""), "");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // ToLower
+    //
     TEST(StringUtils, ToLower)
     {
         std::string s = "HeLLo";
@@ -50,7 +69,11 @@ namespace TestStringUtils
         EXPECT_EQ(s, "hello");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // ToLowerChar
+    //
     TEST(StringUtils, ToLowerChar)
     {
         EXPECT_EQ(StringUtils::ToLowerChar('A'), 'a');
@@ -58,7 +81,11 @@ namespace TestStringUtils
         EXPECT_EQ(StringUtils::ToLowerChar('1'), '1');
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // ToUpper
+    //
     TEST(StringUtils, ToUpper)
     {
         std::string s = "HeLLo";
@@ -66,7 +93,11 @@ namespace TestStringUtils
         EXPECT_EQ(s, "HELLO");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // ToUpperChar
+    //
     TEST(StringUtils, ToUpperChar)
     {
         EXPECT_EQ(StringUtils::ToUpperChar('a'), 'A');
@@ -74,7 +105,11 @@ namespace TestStringUtils
         EXPECT_EQ(StringUtils::ToUpperChar('1'), '1');
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // TrimWhitespace
+    //
     TEST(StringUtils, TrimWhitespace)
     {
         std::string s = " a b c ";
@@ -82,7 +117,11 @@ namespace TestStringUtils
         EXPECT_EQ(s, "abc");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // TrimEdgeWhitespace
+    //
     TEST(StringUtils, TrimEdgeWhitespace)
     {
         std::string s = "  hello world  ";
@@ -90,7 +129,11 @@ namespace TestStringUtils
         EXPECT_EQ(s, "hello world");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // TrimLeadingWhitespace
+    //
     TEST(StringUtils, TrimLeadingWhitespace)
     {
         std::string s = "   abc";
@@ -98,7 +141,11 @@ namespace TestStringUtils
         EXPECT_EQ(s, "abc");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // TrimTrailingWhitespace
+    //
     TEST(StringUtils, TrimTrailingWhitespace)
     {
         std::string s = "abc   ";
@@ -106,7 +153,11 @@ namespace TestStringUtils
         EXPECT_EQ(s, "abc");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // IsWhitespace
+    //
     TEST(StringUtils, IsWhitespace)
     {
         EXPECT_TRUE(StringUtils::IsWhitespace(' '));
@@ -115,7 +166,11 @@ namespace TestStringUtils
         EXPECT_FALSE(StringUtils::IsWhitespace('a'));
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // IsUpper
+    //
     TEST(StringUtils, IsUpper)
     {
         EXPECT_TRUE(StringUtils::IsUpper('A'));
@@ -124,7 +179,11 @@ namespace TestStringUtils
         EXPECT_FALSE(StringUtils::IsUpper('1'));
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // IsLower
+    //
     TEST(StringUtils, IsLower)
     {
         EXPECT_TRUE(StringUtils::IsLower('a'));
@@ -133,14 +192,22 @@ namespace TestStringUtils
         EXPECT_FALSE(StringUtils::IsLower('1'));
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // DoesStringContain
+    //
     TEST(StringUtils, DoesStringContain)
     {
         EXPECT_TRUE(StringUtils::DoesStringContain("hello", 'e'));
         EXPECT_FALSE(StringUtils::DoesStringContain("hello", 'x'));
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // StringToBool
+    //
     TEST(StringUtils, StringToBool)
     {
         EXPECT_TRUE(StringUtils::StringToBool("true"));
@@ -152,7 +219,11 @@ namespace TestStringUtils
         EXPECT_FALSE(StringUtils::StringToBool("notabool"));
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // StringToInt
+    //
     TEST(StringUtils, StringToInt)
     {
         EXPECT_EQ(StringUtils::StringToInt("123"), 123);
@@ -160,7 +231,11 @@ namespace TestStringUtils
         EXPECT_EQ(StringUtils::StringToInt("0"), 0);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // StringToFloat
+    //
     TEST(StringUtils, StringToFloat)
     {
         EXPECT_FLOAT_EQ(StringUtils::StringToFloat("3.14"), 3.14f);
@@ -168,7 +243,11 @@ namespace TestStringUtils
         EXPECT_FLOAT_EQ(StringUtils::StringToFloat("0"), 0.0f);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // StringToRgba8
+    //
     TEST(StringUtils, StringToRgba8)
     {
         Rgba8 c = StringUtils::StringToRgba8("255,128,64,32");
@@ -184,7 +263,11 @@ namespace TestStringUtils
         EXPECT_EQ(c2.a, 255);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // StringToVec2
+    //
     TEST(StringUtils, StringToVec2)
     {
         Vec2 v = StringUtils::StringToVec2("1.5,2.5");
@@ -192,7 +275,11 @@ namespace TestStringUtils
         EXPECT_FLOAT_EQ(v.y, 2.5f);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // StringToIntVec2
+    //
     TEST(StringUtils, StringToIntVec2)
     {
         IntVec2 v = StringUtils::StringToIntVec2("10,-20");
@@ -200,7 +287,11 @@ namespace TestStringUtils
         EXPECT_EQ(v.y, -20);
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // CSVToStrings
+    //
     TEST(StringUtils, CSVToStrings)
     {
         Strings s = StringUtils::CSVToStrings("a,b,c");
@@ -210,14 +301,22 @@ namespace TestStringUtils
         EXPECT_EQ(s[2], "c");
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // DoesStringContainChar
+    //
     TEST(StringUtils, DoesStringContainChar)
     {
         EXPECT_TRUE(StringUtils::DoesStringContainChar("abc", (uint8_t)'a'));
         EXPECT_FALSE(StringUtils::DoesStringContainChar("abc", (uint8_t)'z'));
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // CaseInsensitiveStringHash
+    //
     TEST(StringUtils, CaseInsensitiveStringHash)
     {
         StringUtils::CaseInsensitiveStringHash hash;
@@ -226,7 +325,11 @@ namespace TestStringUtils
         EXPECT_NE(hash("abc"), hash("def"));
     }
 
+
+
+    //----------------------------------------------------------------------------------------------------------------------
     // CaseInsensitiveStringEquals
+    //
     TEST(StringUtils, CaseInsensitiveStringEquals)
     {
         StringUtils::CaseInsensitiveStringEquals eq;

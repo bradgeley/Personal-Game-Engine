@@ -17,17 +17,20 @@ EventDelegate::~EventDelegate()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void EventDelegate::Broadcast(NamedProperties& args) const
+int EventDelegate::Broadcast(NamedProperties& args) const
 {
+	int numExecuted = 0;
 	bool consumed = false;
     for (EventSubscriber* const& sub : m_subs)
     {
         consumed = sub->Execute(args);
+		numExecuted++;
     	if (consumed)
     	{
-    		return;
+			break;
     	}
     }
+	return numExecuted;
 }
 
 

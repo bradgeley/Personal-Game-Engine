@@ -77,8 +77,8 @@ void DevConsoleLog::Scroll(int scrollAmount)
     float numLines = (float) m_log.size();
     float maxLines = m_numLines;
     float maxOffset = numLines - maxLines;
-    maxOffset = MathUtils::ClampF(maxOffset, 0, FLT_MAX);
-    m_scrollOffset = MathUtils::ClampF(m_scrollOffset, 0, maxOffset);
+    maxOffset = MathUtils::Clamp(maxOffset, 0.f, FLT_MAX);
+    m_scrollOffset = MathUtils::Clamp(m_scrollOffset, 0.f, maxOffset);
 }
 
 
