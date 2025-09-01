@@ -104,8 +104,8 @@ IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const
 	Vec2 relativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * GetChunkWidth());
 	Vec2 tileSpaceLocation = relativeLocation / m_worldSettings.m_tileWidth;
 	IntVec2 localTileCoords = IntVec2(tileSpaceLocation.GetFloor());
-	localTileCoords.x = MathUtils::ClampInt(localTileCoords.x, 0, GetNumTilesInRow() - 1);
-	localTileCoords.y = MathUtils::ClampInt(localTileCoords.y, 0, GetNumTilesInRow() - 1);
+	localTileCoords.x = MathUtils::Clamp(localTileCoords.x, 0, GetNumTilesInRow() - 1);
+	localTileCoords.y = MathUtils::Clamp(localTileCoords.y, 0, GetNumTilesInRow() - 1);
 	return localTileCoords;
 }
 
@@ -117,8 +117,8 @@ IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation, IntVec2
 	Vec2 relativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * GetChunkWidth());
 	Vec2 tileSpaceLocation = relativeLocation / m_worldSettings.m_tileWidth;
 	IntVec2 localTileCoords = IntVec2(tileSpaceLocation.GetFloor());
-	localTileCoords.x = MathUtils::ClampInt(localTileCoords.x, 0, GetNumTilesInRow() - 1);
-	localTileCoords.y = MathUtils::ClampInt(localTileCoords.y, 0, GetNumTilesInRow() - 1);
+	localTileCoords.x = MathUtils::Clamp(localTileCoords.x, 0, GetNumTilesInRow() - 1);
+	localTileCoords.y = MathUtils::Clamp(localTileCoords.y, 0, GetNumTilesInRow() - 1);
 	return localTileCoords;
 }
 

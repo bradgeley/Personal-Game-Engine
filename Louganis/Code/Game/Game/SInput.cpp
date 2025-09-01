@@ -64,7 +64,7 @@ void SInput::Run(SystemContext const& context)
         {
             float zoomMulti = 1.f + static_cast<float>(-1 * wheelChange) * camera.m_zoomMultiplier;
             camera.m_zoomAmount *= zoomMulti;
-            camera.m_zoomAmount = MathUtils::ClampF(camera.m_zoomAmount, camera.m_minZoom, camera.m_maxZoom);
+            camera.m_zoomAmount = MathUtils::Clamp(camera.m_zoomAmount, camera.m_minZoom, camera.m_maxZoom);
         }
     }
 }

@@ -186,7 +186,7 @@ protected:
     virtual void CreateBlendStates() = 0;
     virtual void CreateRasterizerState() = 0;
     virtual void CreateDefaultShader() = 0;
-    virtual void CreateDefaultTexture() = 0;
+    virtual void CreateDefaultTexture();
     virtual void CreateDefaultFont() = 0;
 
     // State cleanup

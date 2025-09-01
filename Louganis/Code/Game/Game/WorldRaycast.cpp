@@ -48,8 +48,8 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
     AABB2 startTileBounds = world.GetTileBounds(currentWorldCoords);
     Vec2 tileMinsToRayStart = raycast.m_start - startTileBounds.mins;
 
-    float stepX = MathUtils::SignF(raycast.m_direction.x);
-    float stepY = MathUtils::SignF(raycast.m_direction.y);
+    float stepX = MathUtils::Sign(raycast.m_direction.x);
+    float stepY = MathUtils::Sign(raycast.m_direction.y);
     
     float toLeadingEdgeX = stepX < 0.f ? tileMinsToRayStart.x : world.m_worldSettings.m_tileWidth - tileMinsToRayStart.x;
     float toLeadingEdgeY = stepY < 0.f ? tileMinsToRayStart.y : world.m_worldSettings.m_tileWidth - tileMinsToRayStart.y;

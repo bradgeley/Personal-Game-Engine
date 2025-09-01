@@ -268,7 +268,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
             }
             else
             {
-                calculatedNeighborDistance = MathUtils::MinF(dx + neighborCost, dy + neighborCost);
+                calculatedNeighborDistance = MathUtils::Min(dx + neighborCost, dy + neighborCost);
             }
 
             if (calculatedNeighborDistance < neighborChunk->m_distanceField.Get(neighborWorldCoords.m_localTileCoords))

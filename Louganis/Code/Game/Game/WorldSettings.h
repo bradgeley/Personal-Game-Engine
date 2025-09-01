@@ -12,7 +12,7 @@ constexpr uint8_t s_worldChunkSizePowerOfTwo = 3;
 //----------------------------------------------------------------------------------------------------------------------
 struct WorldSettings
 {
-    bool    m_randomWorldSeed                 = false;
+    bool    m_randomWorldSeed                 = true;
     size_t  m_worldSeed                       = 69;
     float   m_tileWidth                       = 2.f;
     float   m_chunkLoadRadius                 = 200.f;
