@@ -29,10 +29,11 @@ public:
     Name m_name = "Unnamed EntityDef";
 
     // Components
-    std::optional<CTransform>           m_transform;
+	std::optional<CAnimation>           m_animation;
     std::optional<CCamera>              m_camera;
-    std::optional<CMovement>            m_movement;
-    std::optional<CPlayerController>    m_playerController;
-	std::optional<CRender>              m_render;
 	std::optional<CCollision>           m_collision;
+    std::optional<CPlayerController>    m_playerController;
+    std::optional<CMovement>            m_movement;
+	std::optional<CRender>              m_render;
+    std::optional<CTransform>           m_transform;
 };

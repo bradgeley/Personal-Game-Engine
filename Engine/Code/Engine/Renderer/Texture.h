@@ -35,5 +35,5 @@ public:
 protected:
 
     std::string m_sourceImagePath;
-    IntVec2 m_dimensions;
+    IntVec2 m_dimensions = IntVec2::ZeroVector;
 };

@@ -62,5 +62,6 @@ public:
     
     // Commonly used Vec2's
     static IntVec2 ZeroVector;
+    static IntVec2 OneVector;
     static IntVec2 ZeroToOne;
 };

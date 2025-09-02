@@ -6,6 +6,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 IntVec2::ZeroVector = IntVec2(0, 0);
+IntVec2 IntVec2::OneVector = IntVec2(1, 1);
 IntVec2 IntVec2::ZeroToOne = IntVec2(0, 1);
 
 

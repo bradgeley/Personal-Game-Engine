@@ -89,8 +89,15 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
     g_devConsole->AddLine(StringUtils::StringF("Entity def loading: %s", m_name.ToCStr()));
 
+    // CAnimation
+    auto elem = xmlElement->FirstChildElement("Animation");
+    if (elem)
+    {
+        m_animation = CAnimation(elem);
+    }
+
     // CCamera
-    auto elem = xmlElement->FirstChildElement("Camera");
+    elem = xmlElement->FirstChildElement("Camera");
     if (elem)
     {
         m_camera = CCamera(elem);

@@ -192,12 +192,13 @@ void Game::ConfigureECS()
     // 
 
     // Array components
-    g_ecs->RegisterComponentArray<CTransform>();
+    g_ecs->RegisterComponentArray<CCollision>();
     g_ecs->RegisterComponentArray<CMovement>();
     g_ecs->RegisterComponentArray<CRender>();
-    g_ecs->RegisterComponentArray<CCollision>();
+    g_ecs->RegisterComponentArray<CTransform>();
 
     // Map components
+    g_ecs->RegisterComponentMap<CAnimation>();
     g_ecs->RegisterComponentMap<CCamera>();
     g_ecs->RegisterComponentMap<CPlayerController>();
 
@@ -210,10 +211,10 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCRender>();
     g_ecs->RegisterComponentSingleton<SCWorld>();
 
-    // Other resource types
+    // Other resource types (Engine Subsystems)
+    g_ecs->RegisterResourceByType<AudioSystem>();
     g_ecs->RegisterResourceByType<InputSystem>();
     g_ecs->RegisterResourceByType<Renderer>();
-    g_ecs->RegisterResourceByType<AudioSystem>();
 
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -236,6 +237,9 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
+
+    // Post-Physics
+    g_ecs->RegisterSystem<SAnimation>((int)FramePhase::PostPhysics);
 
     // Render
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);

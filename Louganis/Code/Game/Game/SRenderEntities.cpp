@@ -3,6 +3,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
+#include "CAnimation.h"
 #include "CRender.h"
 #include "CCamera.h"
 
@@ -12,7 +13,7 @@
 void SRenderEntities::Startup()
 {
     AddWriteDependencies<CRender, Renderer>();
-    AddReadDependencies<CCamera>();
+    AddReadDependencies<CCamera, CAnimation>();
 }
 
 
@@ -21,32 +22,41 @@ void SRenderEntities::Startup()
 void SRenderEntities::Run(SystemContext const& context)
 {
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-
-    VertexBufferID id = g_renderer->MakeVertexBuffer();
-    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
-    VertexUtils::AddVertsForDisc2D(vbo, Vec2(), 1, 128);
-
-    // Render all things (1 draw call per entity = bad, todo: write sprite geometry shader)
-    ModelConstants modelConstants;
-    for (auto renderIt = g_ecs->Iterate<CRender>(context); renderIt.IsValid(); ++renderIt)
-    {
-        const CRender& render = *renderStorage.Get(renderIt);
-        modelConstants.m_modelMatrix.Reset();
-        //modelConstants.m_modelMatrix.AppendZRotation(render.m_orientation);
-        modelConstants.m_modelMatrix.AppendTranslation2D(render.m_pos);
-        modelConstants.m_modelMatrix.AppendUniformScale2D(render.m_scale);
-        render.m_tint.GetAsFloats(modelConstants.m_modelRgba);
-
-        g_renderer->SetModelConstants(modelConstants);
-        g_renderer->BindShader(nullptr);
-        g_renderer->BindTexture(nullptr);
-        g_renderer->DrawVertexBuffer(vbo);
-    }
+    auto& animStorage = g_ecs->GetMapStorage<CAnimation>();
 
     g_renderer->SetModelConstants(ModelConstants());
 
-    // todo: make more efficient
-    g_renderer->ReleaseVertexBuffer(id);
+    for (auto renderIt = g_ecs->Iterate<CRender, CAnimation>(context); renderIt.IsValid(); ++renderIt)
+    {
+        CRender& render = *renderStorage.Get(renderIt);
+        CAnimation const& anim = *animStorage.Get(renderIt);
+
+        if (render.m_vbo == RendererUtils::InvalidID)
+        {
+            render.m_vbo = g_renderer->MakeVertexBuffer();
+        }
+
+        VertexBuffer& vbo = *g_renderer->GetVertexBuffer(render.m_vbo);
+        vbo.ClearVerts();
+
+        AABB2 spriteAABB;
+        float spriteAspect = anim.m_spriteSheet.GetSpriteAspect();
+        if (spriteAspect <= 1.f)
+        {
+            spriteAABB.mins = render.m_pos - Vec2(render.m_scale, render.m_scale);
+            spriteAABB.maxs = spriteAABB.mins + Vec2(2.f * render.m_scale, 2.f * render.m_scale / spriteAspect);
+        }
+        else
+        {
+            spriteAABB.mins = render.m_pos - Vec2(render.m_scale * spriteAspect, render.m_scale);
+            spriteAABB.maxs = spriteAABB.mins + Vec2(2.f * render.m_scale * spriteAspect, 2.f * render.m_scale);
+        }
+
+        VertexUtils::AddVertsForAABB2(vbo, spriteAABB, render.m_tint, anim.m_spriteSheet.GetSpriteUVs(anim.m_currentFrame));
+
+        anim.m_spriteSheet.SetRendererState();
+        g_renderer->DrawVertexBuffer(render.m_vbo);
+    }
 }
 
 

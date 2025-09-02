@@ -9,6 +9,7 @@
 #include "SCWorld.h"
 #include "SCDebug.h"
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
@@ -20,6 +21,7 @@
 void SPhysics::Startup()
 {
     AddWriteDependencies<CMovement, CTransform>();
+    AddWriteDependencies<SCDebug, Renderer>();
     AddReadDependencies<CCollision, SCWorld>();
 
     g_eventSystem->SubscribeMethod("DebugRenderPreventativePhysics", this, &SPhysics::DebugRenderPreventativePhysics);
@@ -34,6 +36,7 @@ void SPhysics::Run(SystemContext const& context)
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
     auto& scWorld = g_ecs->GetSingleton<SCWorld>();
+    auto& scDebug = g_ecs->GetSingleton<SCDebug>();
 
     for (auto it = g_ecs->Iterate<CMovement, CTransform>(context); it.IsValid(); ++it)
     {
@@ -48,7 +51,7 @@ void SPhysics::Run(SystemContext const& context)
 
         constexpr int maxNumBounces = 3;
         int numBounces = 0;
-        while (!frameMovement.IsNearlyZero(scWorld.m_worldSettings.m_entityMinimumMovement) && numBounces < maxNumBounces)
+        while (!frameMovement.IsNearlyZero(0.000001f) && numBounces < maxNumBounces)
         {
             WorldDiscCast discCast;
             discCast.m_start = transform.m_pos;
@@ -58,6 +61,11 @@ void SPhysics::Run(SystemContext const& context)
 
             WorldDiscCastResult result;
             result = DiscCast(scWorld, discCast);
+
+            if (scDebug.m_debugRenderPreventativePhysicsRaycasts) 
+            {
+				AddVertsForDiscCast(*g_renderer->GetVertexBuffer(scDebug.m_frameUntexVerts), result, 1.f);
+            }
 
             if (result.m_immediateHit)
             {

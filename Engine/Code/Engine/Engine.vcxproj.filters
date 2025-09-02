@@ -265,6 +265,12 @@
     <ClCompile Include="Time\Timer.cpp">
       <Filter>Time</Filter>
     </ClCompile>
+    <ClCompile Include="Assets\AssetManager.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\Sprites\GridSpriteSheet.cpp">
+      <Filter>Assets\Sprites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -561,6 +567,12 @@
     <ClInclude Include="Time\Timer.h">
       <Filter>Time</Filter>
     </ClInclude>
+    <ClInclude Include="Assets\AssetManager.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\Sprites\GridSpriteSheet.h">
+      <Filter>Assets\Sprites</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">
@@ -625,6 +637,12 @@
     </Filter>
     <Filter Include="Time">
       <UniqueIdentifier>{e3c325ca-d226-4bd0-8f29-b122e7151047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{8286429f-d90a-473d-8f0e-bc63d4085e8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Sprites">
+      <UniqueIdentifier>{0cdd3b3c-deec-4508-a9d0-bdf31b23cbfc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

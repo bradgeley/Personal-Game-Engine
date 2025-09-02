@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Renderer/EngineConstantBuffers.h"
 #include "Engine/Renderer/Rgba8.h"
+#include "Engine/Renderer/RendererUtils.h"
 #include "Engine/Math/Vec2.h"
 
 
@@ -17,4 +18,5 @@ struct CRender
     float m_scale                   = 1.f;
     Rgba8 m_tint                    = Rgba8::White;
     uint8_t m_shouldRenderThisFrame = 0; // TODO: bit flags?
+	VertexBufferID m_vbo            = RendererUtils::InvalidID;
 };

@@ -5,7 +5,7 @@
 
 
 
-constexpr uint8_t s_worldChunkSizePowerOfTwo = 3;
+constexpr uint8_t s_worldChunkSizePowerOfTwo = 4;
 
 
 
@@ -19,6 +19,5 @@ struct WorldSettings
     float   m_chunkUnloadRadius               = 300.f;
     float   m_flowFieldGenerationRadius       = 50.f;
     float   m_entityWallBuffer                = 0.01f;
-    float   m_entityMinimumMovement           = 0.000001f;
     int     m_maxNumChunksToLoadPerFrame      = 100;
 };
