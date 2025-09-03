@@ -25,9 +25,3 @@ constexpr float SYSTEM_MIN_TIME_STEP = 0.001f;
 //----------------------------------------------------------------------------------------------------------------------
 // Component bit mask, used to keep track of entity composition
 typedef size_t BitMask;
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// Component type hash code, taken from typeid(CType).hash_code()
-typedef size_t HashCode;

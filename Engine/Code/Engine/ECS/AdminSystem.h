@@ -8,6 +8,7 @@
 #include "Engine/Core/Name.h"
 #include <vector>
 #include <unordered_map>
+#include <typeindex>
 
 
 
@@ -89,7 +90,7 @@ public:
 
 private:
 
-	void RegisterComponentBit(HashCode typeHash);
+	void RegisterComponentBit(std::type_index typeIndex);
 
 //----------------------------------------------------------------------------------------------------------------------
 // CREATING/DESTROYING ENTITIES
@@ -142,7 +143,7 @@ public:
 	template <typename CType>
 	CType& GetSingleton() const;
 
-	inline BitMask GetComponentBit(HashCode componentTypeHash) const { return m_componentBitMasks.at(componentTypeHash); }
+	inline BitMask GetComponentBit(std::type_index type) const { return m_componentBitMasks.at(type); }
 
 	template <typename CType>
 	TypedBaseStorage<CType>* GetStorage() const;
@@ -223,8 +224,8 @@ protected:
 	BitArray<MAX_ENTITIES>			m_entities;
 	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 }; // Todo: if user needs more than 32 or 64 components, allow them to use a fixed size BitArray for entity composition, so the max component count would be uncapped
 
-	std::unordered_map<HashCode, BaseStorage*>	m_componentStorage;
-	std::unordered_map<HashCode, BitMask>		m_componentBitMasks;
+	std::unordered_map<std::type_index, BaseStorage*>	m_componentStorage;
+	std::unordered_map<std::type_index, BitMask>		m_componentBitMasks;
 };
 
 
@@ -249,25 +250,25 @@ void AdminSystem::RegisterSystem(SystemSubgraphID subgraphID)
 template <typename CType>
 void AdminSystem::RegisterComponent(ComponentStorageType storageType /*= ComponentStorageType::Array*/)
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	if (m_componentStorage.find(typeHash) == m_componentStorage.end())
+	std::type_index typeIndex(typeid(CType));
+	if (m_componentStorage.find(typeIndex) == m_componentStorage.end())
 	{
 		switch (storageType)
 		{
 		case ComponentStorageType::Map:
-			m_componentStorage.emplace(typeHash, new MapStorage<CType>());
+			m_componentStorage.emplace(typeIndex, new MapStorage<CType>());
 			break;
 		case ComponentStorageType::Singleton:
-			m_componentStorage.emplace(typeHash, new SingletonStorage<CType>());
+			m_componentStorage.emplace(typeIndex, new SingletonStorage<CType>());
 			break;
 		case ComponentStorageType::Tag:
-			m_componentStorage.emplace(typeHash, new TagStorage<CType>());
+			m_componentStorage.emplace(typeIndex, new TagStorage<CType>());
 			break;
 		default:
-			m_componentStorage.emplace(typeHash, new ArrayStorage<CType>());
+			m_componentStorage.emplace(typeIndex, new ArrayStorage<CType>());
 			break;
 		}
-		RegisterComponentBit(typeHash);
+		RegisterComponentBit(typeIndex);
 	}
 }
 
@@ -277,8 +278,8 @@ void AdminSystem::RegisterComponent(ComponentStorageType storageType /*= Compone
 template <typename CType>
 void AdminSystem::RegisterResourceByType()
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	RegisterComponentBit(typeHash);
+	std::type_index typeIndex(typeid(CType));
+	RegisterComponentBit(typeIndex);
 }
 
 
@@ -287,11 +288,11 @@ void AdminSystem::RegisterResourceByType()
 template <typename CType>
 void AdminSystem::RegisterComponentArray()
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	if (m_componentStorage.find(typeHash) == m_componentStorage.end())
+	std::type_index typeIndex(typeid(CType));
+	if (m_componentStorage.find(typeIndex) == m_componentStorage.end())
 	{
-		m_componentStorage.emplace(typeHash, new ArrayStorage<CType>());
-		RegisterComponentBit(typeHash);
+		m_componentStorage.emplace(typeIndex, new ArrayStorage<CType>());
+		RegisterComponentBit(typeIndex);
 	}
 }
 
@@ -301,11 +302,11 @@ void AdminSystem::RegisterComponentArray()
 template <typename CType>
 void AdminSystem::RegisterComponentMap()
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	if (m_componentStorage.find(typeHash) == m_componentStorage.end())
+	std::type_index typeIndex(typeid(CType));
+	if (m_componentStorage.find(typeIndex) == m_componentStorage.end())
 	{
-		m_componentStorage.emplace(typeHash, new MapStorage<CType>());
-		RegisterComponentBit(typeHash);
+		m_componentStorage.emplace(typeIndex, new MapStorage<CType>());
+		RegisterComponentBit(typeIndex);
 	}
 }
 
@@ -315,11 +316,11 @@ void AdminSystem::RegisterComponentMap()
 template <typename CType>
 void AdminSystem::RegisterTag()
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	if (m_componentStorage.find(typeHash) == m_componentStorage.end())
+	std::type_index typeIndex(typeid(CType));
+	if (m_componentStorage.find(typeIndex) == m_componentStorage.end())
 	{
-		m_componentStorage.emplace(typeHash, new TagStorage<CType>());
-		RegisterComponentBit(typeHash);
+		m_componentStorage.emplace(typeIndex, new TagStorage<CType>());
+		RegisterComponentBit(typeIndex);
 	}
 }
 
@@ -329,11 +330,11 @@ void AdminSystem::RegisterTag()
 template <typename CType>
 void AdminSystem::RegisterComponentSingleton()
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	if (m_componentStorage.find(typeHash) == m_componentStorage.end())
+	std::type_index typeIndex(typeid(CType));
+	if (m_componentStorage.find(typeIndex) == m_componentStorage.end())
 	{
-		m_componentStorage.emplace(typeHash, new SingletonStorage<CType>());
-		RegisterComponentBit(typeHash);
+		m_componentStorage.emplace(typeIndex, new SingletonStorage<CType>());
+		RegisterComponentBit(typeIndex);
 	}
 }
 
@@ -342,13 +343,13 @@ void AdminSystem::RegisterComponentSingleton()
 //----------------------------------------------------------------------------------------------------------------------
 template <typename CType, typename...Args>
 CType* AdminSystem::AddComponent(EntityID entityID, Args const& ...args)
-{
-	HashCode typeHash = typeid(CType).hash_code();
-	BitMask& componentBitMask = m_componentBitMasks.at(typeHash);
+{    
+	std::type_index typeIndex(typeid(CType));
+	BitMask& componentBitMask = m_componentBitMasks.at(typeIndex);
 	
 	m_entityComposition[entityID] |= (componentBitMask);
 
-	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeHash));
+	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
 	return typedStorage->Add(entityID, CType(args...));
 }
 
@@ -361,8 +362,8 @@ CType* AdminSystem::AddComponent(EntityID entityID, Args const& ...args)
 template <typename CType>
 CType* AdminSystem::GetComponent(EntityID entityID /*= ENTITY_ID_SINGLETON*/) const
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeHash));
+	std::type_index typeIndex(typeid(CType));
+	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
 	return typedStorage->Get(entityID);
 }
 
@@ -381,8 +382,8 @@ inline CType* AdminSystem::GetComponent(GroupIter const& it) const
 template <typename CType>
 CType& AdminSystem::GetSingleton() const
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeHash));
+	std::type_index typeIndex(typeid(CType));
+	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
 	return *typedStorage->Get(ENTITY_ID_SINGLETON);
 }
 
@@ -392,8 +393,8 @@ CType& AdminSystem::GetSingleton() const
 template <typename CType>
 TypedBaseStorage<CType>* AdminSystem::GetStorage() const
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	TypedBaseStorage<CType>* typedStorage = dynamic_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeHash));
+	std::type_index typeIndex(typeid(CType));
+	TypedBaseStorage<CType>* typedStorage = dynamic_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
 	return typedStorage;
 }
 
@@ -403,8 +404,8 @@ TypedBaseStorage<CType>* AdminSystem::GetStorage() const
 template <typename CType>
 ArrayStorage<CType>& AdminSystem::GetArrayStorage() const
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	ArrayStorage<CType>* typedStorage = dynamic_cast<ArrayStorage<CType>*>(m_componentStorage.at(typeHash));
+	std::type_index typeIndex(typeid(CType));
+	ArrayStorage<CType>* typedStorage = dynamic_cast<ArrayStorage<CType>*>(m_componentStorage.at(typeIndex));
 	return *typedStorage;
 }
 
@@ -414,8 +415,8 @@ ArrayStorage<CType>& AdminSystem::GetArrayStorage() const
 template <typename CType>
 MapStorage<CType>& AdminSystem::GetMapStorage() const
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	MapStorage<CType>* typedStorage = dynamic_cast<MapStorage<CType>*>(m_componentStorage.at(typeHash));
+	std::type_index typeIndex(typeid(CType));
+	MapStorage<CType>* typedStorage = dynamic_cast<MapStorage<CType>*>(m_componentStorage.at(typeIndex));
 	return *typedStorage;
 }
 
@@ -425,8 +426,8 @@ MapStorage<CType>& AdminSystem::GetMapStorage() const
 template <typename CType>
 TagStorage<CType>& AdminSystem::GetTagStorage() const
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	TagStorage<CType>* typedStorage = dynamic_cast<TagStorage<CType>*>(m_componentStorage.at(typeHash));
+	std::type_index typeIndex(typeid(CType));
+	TagStorage<CType>* typedStorage = dynamic_cast<TagStorage<CType>*>(m_componentStorage.at(typeIndex));
 	return *typedStorage;
 }
 
@@ -436,9 +437,9 @@ TagStorage<CType>& AdminSystem::GetTagStorage() const
 template <typename CType>
 void AdminSystem::RemoveComponent(EntityID entityID)
 {
-	HashCode typeHash = typeid(CType).hash_code();
+	std::type_index typeIndex(typeid(CType));
 	BitMask& entityComp = m_entityComposition[entityID];
-	BitMask& componentBitMask = m_componentBitMasks[typeHash];
+	BitMask& componentBitMask = m_componentBitMasks[typeIndex];
 	entityComp &= (~componentBitMask);
 }
 

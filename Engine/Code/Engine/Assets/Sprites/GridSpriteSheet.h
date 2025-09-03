@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Assets/Asset.h"
 #include "Engine/Renderer/RendererUtils.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/AABB2.h"
@@ -8,7 +9,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class GridSpriteSheet
+class GridSpriteSheet : public IAsset
 {
 public:
 

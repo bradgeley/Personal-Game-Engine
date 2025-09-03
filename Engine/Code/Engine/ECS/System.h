@@ -5,7 +5,7 @@
 #include "Engine/Renderer/Rgba8.h" // <-- may want to remove outside dependencies
 #include "Engine/Core/Name.h" // <-- may want to remove outside dependencies
 #include "Config.h"
-#include <typeinfo>
+#include <typeindex>
 
 
 
@@ -90,8 +90,8 @@ protected:
 template<typename CType>
 void System::AddResourceDependency(AccessType access)
 {
-	HashCode typeHash = typeid(CType).hash_code();
-	BitMask componentBit = g_ecs->GetComponentBit(typeHash); // all used components must be registered before this...
+	std::type_index typeIndex = std::type_index(typeid(CType));
+	BitMask componentBit = g_ecs->GetComponentBit(typeIndex); // all used components must be registered before this...
 
 	if (access == AccessType::WRITE)
 	{

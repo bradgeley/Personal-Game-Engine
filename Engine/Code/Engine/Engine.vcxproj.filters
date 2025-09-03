@@ -271,6 +271,9 @@
     <ClCompile Include="Assets\Sprites\GridSpriteSheet.cpp">
       <Filter>Assets\Sprites</Filter>
     </ClCompile>
+    <ClCompile Include="Assets\Sprites\SpriteAnimation.cpp">
+      <Filter>Assets\Sprites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -571,6 +574,9 @@
       <Filter>Assets</Filter>
     </ClInclude>
     <ClInclude Include="Assets\Sprites\GridSpriteSheet.h">
+      <Filter>Assets\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\Sprites\SpriteAnimation.h">
       <Filter>Assets\Sprites</Filter>
     </ClInclude>
   </ItemGroup>

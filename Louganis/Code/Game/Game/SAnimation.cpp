@@ -35,33 +35,6 @@ void SAnimation::Run(SystemContext const& context)
         anim.m_secondsPerFrame = 0.25f;
         anim.m_pingpong = true;
 
-		anim.m_timeAccumulated += context.m_deltaSeconds;
-
-        if (anim.m_timeAccumulated > anim.m_secondsPerFrame)
-        {
-            anim.m_timeAccumulated -= anim.m_secondsPerFrame;
-
-			// todo: move to animation class, pingpong type
-            if (anim.m_pingpong)
-            {
-                if (anim.m_currentFrame == 0 || anim.m_currentFrame == (int)anim.m_animationFrames.size() - 1)
-                {
-                    anim.m_isPingponging = !anim.m_isPingponging;
-				}
-
-                if (anim.m_isPingponging)
-                {
-                    anim.m_currentFrame = MathUtils::DecrementIntInRange(anim.m_currentFrame, 0, (int)anim.m_animationFrames.size() - 1, false);
-                }
-                else
-                {
-                    anim.m_currentFrame = MathUtils::IncrementIntInRange(anim.m_currentFrame, 0, (int)anim.m_animationFrames.size() - 1, false);
-                }
-            }
-            else
-            {
-                anim.m_currentFrame = MathUtils::IncrementIntInRange(anim.m_currentFrame, 0, (int)anim.m_animationFrames.size() - 1, true);
-            }
-        }
+		anim.m_animation.Update(context.m_deltaSeconds);
 	}
 }

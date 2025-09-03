@@ -285,7 +285,24 @@ namespace TestMathUtils
 
 
     //----------------------------------------------------------------------------------------------------------------------
-    // GetFractionWithinRange
+    // WrapInteger
+    //
+    TEST(MathUtils, WrapInteger)
+    {
+        EXPECT_EQ(WrapInteger(5, 0, 10), 5);
+        EXPECT_EQ(WrapInteger(3, 10, 0), 3);
+        EXPECT_EQ(WrapInteger(10, 0, 10), 0);
+        EXPECT_EQ(WrapInteger(11, 0, 10), 1);
+        EXPECT_EQ(WrapInteger(-1, 0, 10), 9);
+        EXPECT_EQ(WrapInteger(-11, 0, 10), 9);
+        EXPECT_EQ(WrapInteger(0, 0, 10), 0);
+        EXPECT_EQ(WrapInteger(20, 0, 10), 0);
+    }
+
+
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // GetFractionWithin
     //
     TEST(MathUtils, GetFractionWithin)
     {

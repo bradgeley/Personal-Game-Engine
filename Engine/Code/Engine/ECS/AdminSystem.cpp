@@ -324,9 +324,9 @@ SystemSubgraph& AdminSystem::CreateOrGetSystemSubgraph(SystemSubgraphID subgraph
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AdminSystem::RegisterComponentBit(HashCode typeHash)
+void AdminSystem::RegisterComponentBit(std::type_index typeIndex)
 {
-	if (m_componentBitMasks.find(typeHash) != m_componentBitMasks.end())
+	if (m_componentBitMasks.find(typeIndex) != m_componentBitMasks.end())
 	{
 		// Already registered
 		return;
@@ -336,7 +336,7 @@ void AdminSystem::RegisterComponentBit(HashCode typeHash)
 
 	size_t componentIndex = m_componentBitMasks.size();
 	BitMask bitMask = ((BitMask) 1 << componentIndex);
-	m_componentBitMasks.emplace(typeHash, bitMask);
+	m_componentBitMasks.emplace(typeIndex, bitMask);
 }
 
 

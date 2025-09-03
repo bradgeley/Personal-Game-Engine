@@ -1041,6 +1041,15 @@ void Renderer::FontConstantsUpdated()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Renderer::CreateDefaultTexture()
+{
+	m_defaultTexture = MakeTexture();
+	GetDefaultTexture()->CreateUniformTexture(IntVec2(1, 1), Rgba8::White);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::AddDevConsoleCommands()
 {
 	if (g_eventSystem)

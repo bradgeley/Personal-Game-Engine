@@ -97,6 +97,7 @@ namespace MathUtils
 	//----------------------------------------------------------------------------------------------------------------------
 	// Simple Functions
 	//
+	int		WrapInteger(int val, int rangeMin, int rangeMax);
 	int		IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
 	int		DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
 	int		Pow(int base, int exp);

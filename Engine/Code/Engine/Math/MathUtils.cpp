@@ -306,6 +306,35 @@ float MathUtils::RangeMapClamped(float valueInRangeA, float minRangeA, float max
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int MathUtils::WrapInteger(int val, int rangeMin, int rangeMax)
+{
+    int range = rangeMax - rangeMin;
+    if (range == 0)
+    {
+        return rangeMin;
+    }
+
+    if (range < 0)
+    {
+		Swap(rangeMin, rangeMax);
+        range = -range;
+    }
+
+    int remainder = (val - rangeMin) % range;
+    if (remainder < 0)
+    {
+        // Fell off the left end of the range, wrap back around to the top
+        return rangeMax + remainder;
+	}
+
+    // Either is within the range, or
+	// Fell off the right end of the range, wrap back around to the bottom
+    return rangeMin + remainder;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 int MathUtils::IncrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap)
 {
     ++val;
