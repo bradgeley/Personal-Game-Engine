@@ -51,8 +51,8 @@ namespace StringUtils
     //----------------------------------------------------------------------------------------------------------------------
     // Splits a string upon reaching any of the characters inside the delimeters string
     //
-    Strings SplitStringOnAnyDelimeter(std::string const& string, std::string const& delimiters);
-    Strings SplitStringOnDelimeter(std::string const& string, char delimeter);
+    Strings SplitStringOnAnyDelimiter(std::string const& string, std::string const& delimiters);
+    Strings SplitStringOnDelimiter(std::string const& string, char delimeter);
     bool DoesStringContainChar(std::string const& string, uint8_t character);
 
 

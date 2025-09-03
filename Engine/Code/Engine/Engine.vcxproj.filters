@@ -277,6 +277,12 @@
     <ClCompile Include="Assets\Asset.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
+    <ClCompile Include="Assets\AssetLoaders.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\AssetKey.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -583,6 +589,12 @@
       <Filter>Assets\Sprites</Filter>
     </ClInclude>
     <ClInclude Include="Assets\Asset.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\AssetLoaders.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\AssetKey.h">
       <Filter>Assets</Filter>
     </ClInclude>
   </ItemGroup>

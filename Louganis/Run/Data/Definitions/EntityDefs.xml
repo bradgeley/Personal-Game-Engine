@@ -7,14 +7,9 @@
     <PlayerController></PlayerController>
     <Collision radius="0.5"></Collision>
     <Render scale="0.5">
-      <GridSpriteSheet name="Soldier" filepath="Data/Images/Soldier.png" layout="3,4" edgePadding="0,0" innerPadding="0,0"></GridSpriteSheet>
+      <GridSpriteSheet name="Soldier"></GridSpriteSheet>
     </Render>
-    <Animation>
-      <SpriteAnimation name="southWalk" frames="0,1,2" type="pingpong" gridSpriteSheet="Soldier"></SpriteAnimation>
-      <SpriteAnimation name="westWalk" frames="3,4,5" type="pingpong" gridSpriteSheet="Soldier"></SpriteAnimation>
-      <SpriteAnimation name="eastWalk" frames="6,7,8" type="pingpong" gridSpriteSheet="Soldier"></SpriteAnimation>
-      <SpriteAnimation name="northwalk" frames="9,10,11" type="pingpong" gridSpriteSheet="Soldier"></SpriteAnimation>
-    </Animation>
+    <Animation></Animation>
   </EntityDef>
   
 </EntityDefs>

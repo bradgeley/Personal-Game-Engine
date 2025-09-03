@@ -193,6 +193,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Code/;$(SolutionDir)../Engine/Code/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -211,6 +212,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Code/;$(SolutionDir)../Engine/Code/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -231,6 +233,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Code/;$(SolutionDir)../Engine/Code/</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -243,6 +246,8 @@
   <ItemGroup>
     <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="Assets\Asset.cpp" />
+    <ClCompile Include="Assets\AssetKey.cpp" />
+    <ClCompile Include="Assets\AssetLoaders.cpp" />
     <ClCompile Include="Assets\AssetManager.cpp" />
     <ClCompile Include="Assets\Sprites\GridSpriteSheet.cpp" />
     <ClCompile Include="Assets\Sprites\SpriteAnimation.cpp" />
@@ -339,6 +344,8 @@
     <ClInclude Include="..\ThirdParty\stb\stb_image.h" />
     <ClInclude Include="..\ThirdParty\tinyxml2\tinyxml2.h" />
     <ClInclude Include="Assets\Asset.h" />
+    <ClInclude Include="Assets\AssetKey.h" />
+    <ClInclude Include="Assets\AssetLoaders.h" />
     <ClInclude Include="Assets\AssetManager.h" />
     <ClInclude Include="Assets\Sprites\GridSpriteSheet.h" />
     <ClInclude Include="Assets\Sprites\SpriteAnimation.h" />

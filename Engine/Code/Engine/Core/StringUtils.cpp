@@ -15,7 +15,7 @@ constexpr int ASCII_LOWER_TO_UPPER = 'A' - 'a'; // Dest (upper) - Source (lower)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Strings StringUtils::SplitStringOnAnyDelimeter(std::string const& string, std::string const& delimiters)
+Strings StringUtils::SplitStringOnAnyDelimiter(std::string const& string, std::string const& delimiters)
 {
     Strings result;
 
@@ -41,7 +41,7 @@ Strings StringUtils::SplitStringOnAnyDelimeter(std::string const& string, std::s
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Strings StringUtils::SplitStringOnDelimeter(std::string const& string, char delimeter)
+Strings StringUtils::SplitStringOnDelimiter(std::string const& string, char delimeter)
 {
     Strings result;
 
@@ -282,7 +282,7 @@ float StringUtils::StringToFloat(std::string const& floatAsString)
 Rgba8 StringUtils::StringToRgba8(std::string const& rgba8AsString)
 {
     Rgba8 result;
-    Strings asStrings = SplitStringOnDelimeter(rgba8AsString, ',');
+    Strings asStrings = SplitStringOnDelimiter(rgba8AsString, ',');
     if (asStrings.size() <= 2 || asStrings.size() >= 5)
     {
         g_devConsole->LogErrorF("StringToRgba8: Arg {%s} did not contain 3-4 numbers 0-255 separated by commas e.g. (255,255,255,50)", rgba8AsString.c_str());
@@ -307,7 +307,7 @@ Rgba8 StringUtils::StringToRgba8(std::string const& rgba8AsString)
 Vec2 StringUtils::StringToVec2(std::string const& vec2AsString)
 {
     Vec2 result;
-    Strings asStrings = SplitStringOnDelimeter(vec2AsString, ',');
+    Strings asStrings = SplitStringOnDelimiter(vec2AsString, ',');
     if (asStrings.size() <= 1 || asStrings.size() >= 3)
     {
         g_devConsole->LogErrorF("StringToVec2: Arg {%s} did not contain 2 floats separated by a commas e.g. {5.55,-6.876}", vec2AsString.c_str());
@@ -328,7 +328,7 @@ Vec2 StringUtils::StringToVec2(std::string const& vec2AsString)
 IntVec2 StringUtils::StringToIntVec2(std::string const& intVec2AsString)
 {
     IntVec2 result;
-    Strings asStrings = SplitStringOnDelimeter(intVec2AsString, ',');
+    Strings asStrings = SplitStringOnDelimiter(intVec2AsString, ',');
     if (asStrings.size() <= 1 || asStrings.size() >= 3)
     {
         g_devConsole->LogErrorF("StringToIntVec2: Arg {%s} did not contain 2 ints separated by a commas e.g. {5,-6}", intVec2AsString.c_str());
@@ -348,7 +348,7 @@ IntVec2 StringUtils::StringToIntVec2(std::string const& intVec2AsString)
 //----------------------------------------------------------------------------------------------------------------------
 Strings StringUtils::CSVToStrings(std::string const& stringsAsString)
 {
-    return SplitStringOnDelimeter(stringsAsString, ',');
+    return SplitStringOnDelimiter(stringsAsString, ',');
 }
 
 

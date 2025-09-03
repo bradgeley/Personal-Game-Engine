@@ -126,20 +126,6 @@ int AdminSystem::NumEntities() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::vector<System*> AdminSystem::GetSystems() const
-{
-	std::vector<System*> result;
-	result.reserve(64);
-	for (SystemSubgraph const& subgraph : m_systemSubgraphs)
-	{
-		result.insert(result.end(), subgraph.m_systems.begin(), subgraph.m_systems.end());
-	}
-	return result;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 System* AdminSystem::GetSystemByName(Name name) const
 {
 	for (SystemSubgraph const& subgraph : m_systemSubgraphs)

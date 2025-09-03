@@ -1,17 +1,22 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SAnimation.h"
 #include "CAnimation.h"
+#include "CMovement.h"
+#include "CTransform.h"
 #include "Engine/Assets/Sprites/GridSpriteSheet.h"
+#include "Engine/Assets/AssetManager.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Math/Constants.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SAnimation::Startup()
 {
-    AddWriteDependencies<CAnimation, Renderer>();
+	AddWriteDependencies<CAnimation, Renderer, AssetManager>();
+	AddReadDependencies<CMovement, CTransform>();
 }
 
 
@@ -19,22 +24,65 @@ void SAnimation::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAnimation::Run(SystemContext const& context)
 {
-    TextureID testTexture = g_renderer->MakeTexture();
-    Texture* tex = g_renderer->GetTexture(testTexture);
-    tex->LoadFromImageFile("Data/Images/Soldier.png");
-
-    static GridSpriteSheet spriteSheet;
-    spriteSheet.CreateFromTexture(testTexture, IntVec2(3, 4), IntVec2(0, 0), IntVec2(0, 0));
-
-    for (auto it = g_ecs->Iterate<CAnimation>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CAnimation, CMovement>(context); it.IsValid(); ++it)
     {
         CAnimation& anim = *g_ecs->GetComponent<CAnimation>(it);
+        CMovement& movement = *g_ecs->GetComponent<CMovement>(it);
+		CTransform& transform = *g_ecs->GetComponent<CTransform>(it);
 
-        // move to init step
-        anim.m_spriteSheet = spriteSheet;
-        anim.m_secondsPerFrame = 0.25f;
-        anim.m_pingpong = true;
+		// Initialize sprite sheet and animation instance if not already done
+        if (anim.m_gridSpriteSheet == INVALID_ASSET_ID)
+        {
+            anim.m_gridSpriteSheet = g_assetManager->Load<GridSpriteSheet>("Data/SpriteSheets/Soldier.xml"); // todo: move asset path to entity def
+        }
 
-		anim.m_animation.Update(context.m_deltaSeconds);
+        GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
+        if (!anim.m_animInstance.IsValid())
+        {
+            anim.m_animInstance = spriteSheet->GetAnimationDef("southIdle")->MakeAnimInstance(); // todo: move default/starting anim to entity def
+        }
+
+        Vec2 forward = Vec2::MakeFromUnitCircleDegrees(transform.m_orientation);
+        bool isMoving = !movement.m_frameMoveDir.IsZero();
+        if (!isMoving)
+        {
+            if (forward.Dot(Vec2(0, -1)) >= MathConstants::ROOT_2_OVER_2)
+            {
+                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("southIdle")), true);
+            }
+            else if (forward.Dot(Vec2(0, 1)) >= MathConstants::ROOT_2_OVER_2)
+            {
+                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("northIdle")), true);
+            }
+            else if (forward.Dot(Vec2(1, 0)) >= MathConstants::ROOT_2_OVER_2)
+            {
+                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("eastIdle")), true);
+            }
+            else
+            {
+                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("westIdle")), true);
+			}
+        }
+        else
+        {
+            if (forward.Dot(Vec2(0, -1)) >= MathConstants::ROOT_2_OVER_2)
+            {
+                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("southWalk")), false);
+            }
+            else if (forward.Dot(Vec2(0, 1)) >= MathConstants::ROOT_2_OVER_2)
+            {
+                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("northWalk")), false);
+            }
+            else if (forward.Dot(Vec2(1, 0)) >= MathConstants::ROOT_2_OVER_2)
+            {
+                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("eastWalk")), false);
+            }
+            else
+            {
+                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("westWalk")), false);
+            }
+        }
+
+		anim.m_animInstance.Update(context.m_deltaSeconds);
 	}
 }

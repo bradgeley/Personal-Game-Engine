@@ -100,7 +100,7 @@ Vec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribut
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
         std::string value = attrib->Value();
-        auto strings = StringUtils::SplitStringOnDelimeter(value, ',');
+        auto strings = StringUtils::SplitStringOnDelimiter(value, ',');
         if (strings.size() != 2)
         {
             g_devConsole->LogErrorF("Vec2 ParseXmlAttribute Error: %s - value: %s - (e.g. -40,30.5)", attributeName, attrib->Value());
@@ -117,12 +117,34 @@ Vec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribut
 
 
 //----------------------------------------------------------------------------------------------------------------------
+IntVec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, IntVec2 const& defaultValue)
+{
+    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    {
+        std::string value = attrib->Value();
+        auto strings = StringUtils::SplitStringOnDelimiter(value, ',');
+        if (strings.size() != 2)
+        {
+            g_devConsole->LogErrorF("IntVec2 ParseXmlAttribute Error: %s - value: %s - (e.g. -40,30)", attributeName, attrib->Value());
+            return defaultValue;
+        }
+        IntVec2 result;
+        tinyxml2::XMLUtil::ToInt(strings[0].c_str(), &result.x);
+        tinyxml2::XMLUtil::ToInt(strings[1].c_str(), &result.y);
+        return result;
+    }
+    return defaultValue;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Rgba8 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, Rgba8 const& defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
     {
         std::string value = attrib->Value();
-        Strings strings = StringUtils::SplitStringOnDelimeter(value, ',');
+        Strings strings = StringUtils::SplitStringOnDelimiter(value, ',');
         if (strings.size() < 3 || strings.size() > 4)
         {
             g_devConsole->LogErrorF("Rgba8 ParseXmlAttribute Error: %s - value: %s - (e.g. 40,30,255 or 255,255,255,255)", attributeName, attrib->Value());

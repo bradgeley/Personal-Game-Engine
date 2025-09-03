@@ -37,7 +37,7 @@ Name::Name(std::string const& string)
         m_nameIndex = static_cast<uint32_t>(it->second);
     }
 
-    #if defined(_DEBUG)
+    #if defined(NAME_USE_DEBUG_STRING)
         m_debugString = string;
     #endif
 }
@@ -47,7 +47,7 @@ Name::Name(std::string const& string)
 //----------------------------------------------------------------------------------------------------------------------
 Name::Name(const char* string) : Name(std::string(string))
 {
-    #if defined(_DEBUG)
+    #if defined(NAME_USE_DEBUG_STRING)
         m_debugString = string;
     #endif
 }
@@ -57,7 +57,7 @@ Name::Name(const char* string) : Name(std::string(string))
 //----------------------------------------------------------------------------------------------------------------------
 Name::Name(Name const& other) : m_nameIndex(other.m_nameIndex)
 {
-    #if defined(_DEBUG)
+    #if defined(NAME_USE_DEBUG_STRING)
         m_debugString = other.m_debugString;
     #endif
 }

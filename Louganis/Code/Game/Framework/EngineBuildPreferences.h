@@ -14,9 +14,18 @@
 // Performance
 //
 //#define DISABLE_ASSERTS
-//#define DEBUG_MEMORY_LEAKS // just does a dump at the end
 //#define PERF_WINDOW_DISPLAY_ENGINE_SECTION
 #define PERF_WINDOW_LOG_ENGINE_FRAME_DATA
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Debugging
+//
+//#define DEBUG_MEMORY_LEAKS
+#if defined(_DEBUG)
+	#define NAME_USE_DEBUG_STRING
+#endif
 
 
 

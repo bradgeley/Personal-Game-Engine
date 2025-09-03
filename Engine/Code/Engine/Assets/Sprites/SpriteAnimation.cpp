@@ -2,6 +2,69 @@
 #include "SpriteAnimation.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Core/XmlUtils.h"
+#include "Engine/Core/StringUtils.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SpriteAnimationDef::LoadFromXml(void const* xmlElement)
+{
+	XmlElement const* element = static_cast<XmlElement const*>(xmlElement);
+	ASSERT_OR_DIE(element != nullptr, "SpriteAnimationDef::LoadFromXml - xmlElement cannot be null");
+
+	m_name = XmlUtils::ParseXmlAttribute(*element, "name", Name::s_invalidName);
+	ASSERT_OR_DIE(m_name.IsValid(), "SpriteAnimationDef::LoadFromXml - Invalid name");
+
+	std::string typeStr = StringUtils::GetToLower(XmlUtils::ParseXmlAttribute(*element, "type", "Looping"));
+    if (typeStr == "looping")
+    {
+        m_type = SpriteAnimationType::Looping;
+    }
+    else if (typeStr == "pingpong")
+    {
+        m_type = SpriteAnimationType::PingPong;
+    }
+    else if (typeStr == "singleframe")
+    {
+        m_type = SpriteAnimationType::SingleFrame;
+    }
+    else
+    {
+        ERROR_AND_DIE("SpriteAnimationDef::LoadFromXml - Invalid animation type");
+	}
+
+	m_secondsPerFrame = XmlUtils::ParseXmlAttribute(*element, "secondsPerFrame", 1.f);
+
+	// Frames can be specified as a comma-separated list of integers or ranges of integers (e.g. "0,1,2,5-10")
+	std::string framesStr = XmlUtils::ParseXmlAttribute(*element, "frames", "");
+	Strings frameRangeTokens = StringUtils::SplitStringOnDelimiter(framesStr, ',');
+
+    for (std::string const& range : frameRangeTokens)
+    {
+		Strings frameTokens = StringUtils::SplitStringOnDelimiter(range, '-');
+        if (frameTokens.size() == 2)
+        {
+			// This is a range, e.g. "5-10"
+			int frameMin = StringUtils::StringToInt(frameTokens[0]);
+			int frameMax = StringUtils::StringToInt(frameTokens[1]);
+            for (int i = frameMin; i <= frameMax; i++)
+            {
+                m_frames.push_back(i);
+			}
+        }
+		else if (frameTokens.size() == 1)
+        {
+			// This is just a single frame csv, e.g. "3"
+			int frame = StringUtils::StringToInt(frameTokens[0]);
+			m_frames.push_back(frame);
+        }
+        else
+        {
+			ERROR_AND_DIE("SpriteAnimationDef::LoadFromXml - Invalid frame range format");
+        }
+    }
+}
 
 
 
@@ -18,9 +81,18 @@ void SpriteAnimationDef::Init(SpriteAnimationType type, std::vector<int> const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-SpriteAnimation SpriteAnimationDef::MakeAnimInstance(int startingFrame /*= 0*/, int startingDirection /*= 1*/) const
+Name SpriteAnimationDef::GetName() const
 {
-    return SpriteAnimation(*this);
+    return m_name;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+SpriteAnimation SpriteAnimationDef::MakeAnimInstance(int startingFrameIndex /*= 0*/, int startingDirection /*= 1*/) const
+{
+	SpriteAnimation animInstance(*this, startingFrameIndex, startingDirection);
+    return animInstance;
 }
 
 
@@ -34,19 +106,56 @@ SpriteAnimation::SpriteAnimation(SpriteAnimationDef const& def, int startingFram
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SpriteAnimation::IsValid() const
+{
+    return m_def != nullptr && !m_def->m_frames.empty();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SpriteAnimation::ChangeDef(SpriteAnimationDef const& newDef, bool restart /*= false*/)
+{
+	// todo: handle the case where the new definition has a different number of frames than the old one, and adjust the current frame accordingly
+    m_def = &newDef;
+    if (restart)
+    {
+		m_currentFrame = 0;
+		m_t = 0.f;
+    }
+    else
+    {
+	    m_currentFrame = MathUtils::Clamp(m_currentFrame, 0, (int) m_def->m_frames.size() - 1);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SpriteAnimation::Update(float deltaSeconds)
 {
-    if (m_def->m_type == SpriteAnimationType::SingleFrame)
+    if (m_def->m_type == SpriteAnimationType::SingleFrame || m_def->m_frames.size() <= 1)
     {
         // Single frame animations do not update
         return;
 	}
 
-    m_timeAccumulated += deltaSeconds;
-
-    if (m_timeAccumulated > m_def->m_secondsPerFrame)
+    float secondsPerFrame = GetSecondsPerFrame();
+    if (MathUtils::IsNearlyZero(secondsPerFrame))
     {
-        m_timeAccumulated -= m_def->m_secondsPerFrame;
+        // Animation either stopped or infinite speed
+        return;
+    }
+
+	float duration = m_def->m_frames.size() * secondsPerFrame;
+    deltaSeconds = MathUtils::Clamp(deltaSeconds, 0.f, duration);
+
+    m_t += deltaSeconds / secondsPerFrame;
+
+    while (m_t > 1.f)
+    {
+		// Because we clamp duration, should at most loop N times where N is the number of frames in the animation
+        m_t -= 1.f;
 
         if (m_def->m_type == SpriteAnimationType::PingPong)
         {
@@ -58,13 +167,63 @@ void SpriteAnimation::Update(float deltaSeconds)
             {
                 m_currentDirection = -1;
             }
-        }
 
-        m_currentFrame = MathUtils::WrapInteger(m_currentFrame + m_currentDirection, 0, (int) m_def->m_frames.size() - 1);
+            m_currentFrame = m_currentFrame + m_currentDirection;
+        }
+        else if (m_def->m_type == SpriteAnimationType::Looping)
+        {
+            if (m_currentDirection == 1)
+            {
+                m_currentFrame = MathUtils::IncrementIntInRange(m_currentFrame, 0, (int) m_def->m_frames.size() - 1);
+            }
+            else
+            {
+                m_currentFrame = MathUtils::DecrementIntInRange(m_currentFrame, 0, (int) m_def->m_frames.size() - 1);
+            }
+		}
     }
 }
 
-int SpriteAnimation::GetCurrentFrame() const
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int SpriteAnimation::GetCurrentSpriteIndex() const
 {
     return m_def->m_frames[m_currentFrame];
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int SpriteAnimation::GetCurrentFrameIndex() const
+{
+    return m_currentFrame;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int SpriteAnimation::GetCurrentDirection() const
+{
+    return m_currentDirection;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float SpriteAnimation::GetDuration() const
+{
+    return m_def->m_frames.size() * GetSecondsPerFrame();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float SpriteAnimation::GetSecondsPerFrame() const
+{
+    if (MathUtils::IsNearlyZero(m_speedMultiplier))
+    {
+        return 0.f;
+    }
+    return m_def->m_secondsPerFrame / m_speedMultiplier;
 }

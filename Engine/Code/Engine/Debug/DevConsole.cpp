@@ -291,7 +291,7 @@ void DevConsole::AddLine(std::string const& line, Rgba8 const& tint)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::AddMultiLine(std::string const& line, Rgba8 const& tint)
 {
-    Strings lines = StringUtils::SplitStringOnDelimeter(line, '\n');
+    Strings lines = StringUtils::SplitStringOnDelimiter(line, '\n');
     
     for (auto& splitLine : lines)
     {
@@ -586,7 +586,7 @@ bool DevConsole::HandleMouseWheel(NamedProperties& args)
 bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
 {
     std::string command = args.Get<std::string>("Command", "");
-    Strings commandFragments = StringUtils::SplitStringOnDelimeter(command, ' ');
+    Strings commandFragments = StringUtils::SplitStringOnDelimiter(command, ' ');
 
     // Remove empty fragments due to too much whitespace
     for (auto it = commandFragments.begin(); it != commandFragments.end();)
@@ -623,7 +623,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
     for (int i = 1; i < (int) commandFragments.size(); ++i)
     {
         auto& fragment = commandFragments[i];
-        Strings keyValue = StringUtils::SplitStringOnDelimeter(fragment, '=');
+        Strings keyValue = StringUtils::SplitStringOnDelimiter(fragment, '=');
 
         if (keyValue.size() == 1 || keyValue.size() == 2)
         {

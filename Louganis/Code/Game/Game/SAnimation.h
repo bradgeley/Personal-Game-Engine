@@ -5,6 +5,8 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+// Responsible for determining which animation should be playing for each entity, and updates those animation instances
+//
 class SAnimation : public System
 {
 public:

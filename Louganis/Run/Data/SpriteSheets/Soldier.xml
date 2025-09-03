@@ -1,0 +1,18 @@
+
+
+
+<GridSpriteSheet name="Soldier" path="Data/SpriteSheets/Soldier.png" layout="3,4" edgePadding="0,0" innerPadding="0,0">
+  
+  <!-- Walk Anims -->
+  <SpriteAnimation name="southWalk" frames="9-11" type="pingpong" secondsPerFrame="0.25"></SpriteAnimation>
+  <SpriteAnimation name="westWalk" frames="6-8" type="pingpong" secondsPerFrame="0.25"></SpriteAnimation>
+  <SpriteAnimation name="eastWalk" frames="3-5" type="pingpong" secondsPerFrame="0.25"></SpriteAnimation>
+  <SpriteAnimation name="northwalk" frames="0-2" type="pingpong" secondsPerFrame="0.25"></SpriteAnimation>
+  
+  <!-- Idle Anims -->
+  <SpriteAnimation name="southIdle" frames="10" type="SingleFrame"></SpriteAnimation>
+  <SpriteAnimation name="westIdle" frames="7" type="SingleFrame"></SpriteAnimation>
+  <SpriteAnimation name="eastIdle" frames="4" type="SingleFrame"></SpriteAnimation>
+  <SpriteAnimation name="northIdle" frames="1" type="SingleFrame"></SpriteAnimation>
+  
+</GridSpriteSheet>

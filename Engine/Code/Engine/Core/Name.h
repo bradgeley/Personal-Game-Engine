@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2025
 #pragma once
+#include "Game/Framework/EngineBuildPreferences.h"
 #include <string>
 #include <cstdint>
 
@@ -24,7 +25,7 @@ public:
 	std::string const& ToString() const;
 	const char* ToCStr() const;
 
-#if defined(_DEBUG)
+#if defined(NAME_USE_DEBUG_STRING)
 	std::string const& GetDebugString() const { return m_debugString; };
 #endif // _DEBUG
 
@@ -45,8 +46,8 @@ protected:
 
 	uint32_t m_nameIndex = s_invalidNameIndex;
 
-#if defined(_DEBUG)
-	// This is purely for debug visualization purposes. Custom natvis file did not work using ToString or ToCStr
+#if defined(NAME_USE_DEBUG_STRING)
+	// This is purely for easy debugging. Custom natvis file did not work using ToString or ToCStr
 	std::string m_debugString;
 #endif
 };

@@ -3,6 +3,8 @@
 
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Audio/AudioUtils.h"
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/Sprites/GridSpriteSheet.h"
 #include "Engine/Time/Clock.h"
 #include "Engine/Core/Engine.h"
 #include "Engine/Core/EngineCommon.h"
@@ -132,6 +134,11 @@ void Game::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 void Game::ConfigureEngine(Engine* engine)
 {
+	AssetManagerConfig assetManagerConfig;
+	g_assetManager = new AssetManager(assetManagerConfig);
+	g_assetManager->RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load);
+	engine->RegisterSubsystem(g_assetManager);
+
     EventSystemConfig eventSysConfig;
     g_eventSystem = new EventSystem(eventSysConfig);
     engine->RegisterSubsystem(g_eventSystem);
@@ -215,6 +222,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterResourceByType<AudioSystem>();
     g_ecs->RegisterResourceByType<InputSystem>();
     g_ecs->RegisterResourceByType<Renderer>();
+    g_ecs->RegisterResourceByType<AssetManager>();
 
 
     //----------------------------------------------------------------------------------------------------------------------

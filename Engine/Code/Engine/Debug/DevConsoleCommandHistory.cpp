@@ -155,7 +155,7 @@ bool DevConsoleCommandHistory::LoadFrom(std::string const& filepath)
     int bytesRead = FileUtils::FileReadToString(filepath, fileContents);
     if (bytesRead > 0)
     {
-        Strings strings = StringUtils::SplitStringOnDelimeter(fileContents, '\n');
+        Strings strings = StringUtils::SplitStringOnDelimiter(fileContents, '\n');
         for (std::string const& splitString : strings)
         {
             if (!splitString.empty()) 

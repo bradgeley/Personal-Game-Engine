@@ -3,6 +3,8 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Assets/Sprites/GridSpriteSheet.h"
+#include "Engine/Assets/AssetManager.h"
 #include "CAnimation.h"
 #include "CRender.h"
 #include "CCamera.h"
@@ -39,8 +41,10 @@ void SRenderEntities::Run(SystemContext const& context)
         VertexBuffer& vbo = *g_renderer->GetVertexBuffer(render.m_vbo);
         vbo.ClearVerts();
 
+        GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
+
         AABB2 spriteAABB;
-        float spriteAspect = anim.m_spriteSheet.GetSpriteAspect();
+        float spriteAspect = spriteSheet->GetSpriteAspect();
         if (spriteAspect <= 1.f)
         {
             spriteAABB.mins = render.m_pos - Vec2(render.m_scale, render.m_scale);
@@ -52,9 +56,9 @@ void SRenderEntities::Run(SystemContext const& context)
             spriteAABB.maxs = spriteAABB.mins + Vec2(2.f * render.m_scale * spriteAspect, 2.f * render.m_scale);
         }
 
-        VertexUtils::AddVertsForAABB2(vbo, spriteAABB, render.m_tint, anim.m_spriteSheet.GetSpriteUVs(anim.m_currentFrame));
+        VertexUtils::AddVertsForAABB2(vbo, spriteAABB, render.m_tint, spriteSheet->GetSpriteUVs(anim.m_animInstance.GetCurrentSpriteIndex()));
 
-        anim.m_spriteSheet.SetRendererState();
+        spriteSheet->SetRendererState();
         g_renderer->DrawVertexBuffer(render.m_vbo);
     }
 }

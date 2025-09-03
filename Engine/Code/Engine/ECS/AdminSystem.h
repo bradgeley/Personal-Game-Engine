@@ -190,7 +190,6 @@ public:
 //
 public:
 
-	std::vector<System*> GetSystems() const;
 	System* GetSystemByName(Name name) const;
 	System* GetSystemByGlobalPriority(int globalPriority) const;
 
@@ -467,11 +466,11 @@ BitMask AdminSystem::GetComponentBitMask() const
 
 	// Binary fold expression expands to:
 	// 
-	// result |= m_componentBitMasks.at(typeid(CTransform).hash_code()))
-	//        |= m_componentBitMasks.at(typeid(CPhysics).hash_code())); 
-	//        |= m_componentBitMasks.at(typeid(CMovement).hash_code()));
+	// result |= m_componentBitMasks.at(type_index(typeid(CType1)))
+	//        |= m_componentBitMasks.at(type_index(typeid(CType2))); 
+	//        |= m_componentBitMasks.at(type_index(typeid(CType3)));
 
-	(result |= ... |= m_componentBitMasks.at(typeid(CTypes).hash_code()));
+	(result |= ... |= m_componentBitMasks.at(std::type_index(typeid(CTypes))));
 	return result;
 }
 

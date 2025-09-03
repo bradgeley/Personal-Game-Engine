@@ -2,6 +2,7 @@
 #pragma once
 #include "ThirdParty/tinyxml2/tinyxml2.h"
 #include "Engine/Math/Vec2.h"
+#include "Engine/Math/IntVec2.h"
 #include "Engine/Renderer/Rgba8.h"
 #include "Engine/Core/Name.h"
 #include <string>
@@ -31,5 +32,6 @@ namespace XmlUtils
 	int ParseXmlAttribute(XmlElement const& element, char const* attributeName, int defaultValue);
 	uint8_t ParseXmlAttribute(XmlElement const& element, char const* attributeName, uint8_t defaultValue);
 	Vec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec2 const& defaultValue);
+	IntVec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, IntVec2 const& defaultValue);
 	Rgba8 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Rgba8 const& defaultValue);
 }
