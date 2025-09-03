@@ -242,6 +242,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="Assets\Asset.cpp" />
     <ClCompile Include="Assets\AssetManager.cpp" />
     <ClCompile Include="Assets\Sprites\GridSpriteSheet.cpp" />
     <ClCompile Include="Assets\Sprites\SpriteAnimation.cpp" />
@@ -337,6 +338,7 @@
     <ClInclude Include="..\ThirdParty\miniaudio\miniaudio.h" />
     <ClInclude Include="..\ThirdParty\stb\stb_image.h" />
     <ClInclude Include="..\ThirdParty\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="Assets\Asset.h" />
     <ClInclude Include="Assets\AssetManager.h" />
     <ClInclude Include="Assets\Sprites\GridSpriteSheet.h" />
     <ClInclude Include="Assets\Sprites\SpriteAnimation.h" />
