@@ -27,34 +27,40 @@ enum class JobStatus : uint8_t
 //
 class Job
 {
+    friend class JobSystem;
+
 public:
     
     virtual ~Job() = default;
     
-    JobDependencies const& GetJobDependencies() const { return m_jobDependencies; }
-    bool NeedsComplete() const { return m_needsComplete; }
-    bool DeleteAfterCompletion() const { return m_deleteAfterCompletion; }
-    int GetJobPriority() const { return m_priority; }
+    JobDependencies const& GetJobDependencies() const           { return m_jobDependencies; }
+    bool NeedsComplete() const                                  { return m_needsComplete; }
+    bool DeleteAfterCompletion() const                          { return m_deleteAfterCompletion; }
+    int GetJobPriority() const                                  { return m_priority; }
+
+	void SetNeedsComplete(bool needsComplete)                   { m_needsComplete = needsComplete; }
+	void SetDeleteAfterCompletion(bool deleteAfterCompletion)   { m_deleteAfterCompletion = deleteAfterCompletion; }
+	void SetPriority(int priority)                              { m_priority = priority; }
 
     bool IsValid() const;
     bool HasDependencies() const;
     uint32_t GetUniqueID() const;
 
+    bool operator<(Job const& rhs) const
+    {
+        return m_priority < rhs.m_priority;
+	}
+
 protected:
-    
-    friend class JobSystem;
 
-    virtual void Execute() {}
-    virtual void Complete() {}
+    virtual void Execute()                              {}
+    virtual void Complete()                             {}
 
-public:
+protected:
 
+    JobID               m_id                            = 0;
     JobDependencies     m_jobDependencies;
-    bool                m_needsComplete             = true;
-    bool                m_deleteAfterCompletion     = true;
-    int                 m_priority                  = -1;
-
-protected:
-
-    JobID               m_id                        = 0;
+    bool                m_needsComplete                 = true;
+    bool                m_deleteAfterCompletion         = true;
+    int                 m_priority                      = -1;       // Lower is better
 };

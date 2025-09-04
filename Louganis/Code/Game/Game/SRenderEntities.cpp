@@ -42,6 +42,10 @@ void SRenderEntities::Run(SystemContext const& context)
         vbo.ClearVerts();
 
         GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
+        if (!spriteSheet)
+        {
+            continue;
+        }
 
         AABB2 spriteAABB;
         float spriteAspect = spriteSheet->GetSpriteAspect();

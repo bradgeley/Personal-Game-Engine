@@ -264,9 +264,7 @@
     <ClCompile Include="Core\NameTable.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
     <ClCompile Include="Core\XmlUtils.cpp" />
-    <ClCompile Include="DataStructures\BitArray.cpp" />
     <ClCompile Include="DataStructures\NamedProperties.cpp" />
-    <ClCompile Include="DataStructures\ThreadSafeQueue.cpp" />
     <ClCompile Include="Debug\DebugDrawUtils.cpp" />
     <ClCompile Include="Debug\DevConsole.cpp" />
     <ClCompile Include="Debug\DevConsoleCommandHistory.cpp" />
@@ -365,6 +363,7 @@
     <ClInclude Include="Core\XmlUtils.h" />
     <ClInclude Include="DataStructures\BitArray.h" />
     <ClInclude Include="DataStructures\NamedProperties.h" />
+    <ClInclude Include="DataStructures\ThreadSafePrioQueue.h" />
     <ClInclude Include="DataStructures\ThreadSafeQueue.h" />
     <ClInclude Include="Debug\DebugDrawUtils.h" />
     <ClInclude Include="Debug\DevConsole.h" />

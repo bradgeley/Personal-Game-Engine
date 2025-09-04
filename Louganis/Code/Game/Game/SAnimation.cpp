@@ -33,10 +33,15 @@ void SAnimation::Run(SystemContext const& context)
 		// Initialize sprite sheet and animation instance if not already done
         if (anim.m_gridSpriteSheet == INVALID_ASSET_ID)
         {
-            anim.m_gridSpriteSheet = g_assetManager->Load<GridSpriteSheet>("Data/SpriteSheets/Soldier.xml"); // todo: move asset path to entity def
+            anim.m_gridSpriteSheet = g_assetManager->AsyncLoad<GridSpriteSheet>("Data/SpriteSheets/Soldier.xml"); // todo: move asset path to entity def
         }
 
         GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
+        if (!spriteSheet)
+        {
+			continue; // Wait until the sprite sheet is loaded before proceeding
+        }
+
         if (!anim.m_animInstance.IsValid())
         {
             anim.m_animInstance = spriteSheet->GetAnimationDef("southIdle")->MakeAnimInstance(); // todo: move default/starting anim to entity def
@@ -81,7 +86,17 @@ void SAnimation::Run(SystemContext const& context)
             {
                 anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("westWalk")), false);
             }
+
+            if (movement.m_isSprinting)
+            {
+                anim.m_animInstance.SetSpeedMultiplier(movement.m_sprintMoveSpeedMultiplier);
+            }
+            else
+            {
+                anim.m_animInstance.SetSpeedMultiplier(1.f);
+            }
         }
+
 
 		anim.m_animInstance.Update(context.m_deltaSeconds);
 	}

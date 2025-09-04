@@ -30,10 +30,13 @@ void JobSystem::Startup()
 {
     EngineSubsystem::Startup();
 
-    for (int id = 0; id < (int) m_config.m_threadCount; ++id)
+	int numGeneralThreads = (int) m_config.m_threadCount - m_config.m_deditatedLoadingWorker ? 1 : 0;
+    for (int id = 0; id < numGeneralThreads; ++id)
     {
         CreateJobWorker(id);
     }
+
+	CreateLoadingJobWorker(numGeneralThreads, "Loading Job Worker");
 }
 
 
@@ -50,6 +53,7 @@ void JobSystem::Shutdown()
     m_isRunning = false;
     
     m_jobQueue.Quit();
+    m_loadingJobQueue.Quit();
     
     // Shut down all workers
     for (auto& worker : m_workers)
@@ -77,6 +81,18 @@ void JobSystem::CreateJobWorker(int threadID, std::string const& name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void JobSystem::CreateLoadingJobWorker(int threadID, std::string const& name)
+{
+    JobWorker* worker = new JobWorker();
+    worker->m_threadID = threadID;
+    worker->m_thread = std::thread(&JobSystem::LoadingWorkerLoop, this, worker);
+    worker->m_name = (!name.empty()) ? name : StringUtils::StringF("JobSystemWorker: %i", threadID);
+    m_workers.emplace_back(worker);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 JobID JobSystem::PostJob(Job* job)
 {
     if (!job || !m_isRunning)
@@ -89,6 +105,30 @@ JobID JobSystem::PostJob(Job* job)
     
     ++m_numIncompleteJobs;
     m_jobQueue.Push(job);
+
+    return id;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+JobID JobSystem::PostLoadingJob(Job* job)
+{
+    if (!m_config.m_deditatedLoadingWorker)
+    {
+        return PostJob(job);
+	}
+
+    if (!job || !m_isRunning)
+    {
+        return JobID::Invalid;
+    }
+
+    JobID id = GetNextJobUniqueID();
+    job->m_id = id;
+
+    ++m_numIncompleteJobs;
+    m_loadingJobQueue.Push(job);
 
     return id;
 }
@@ -110,7 +150,7 @@ std::vector<JobID> JobSystem::PostJobs(std::vector<Job*>& jobs)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp)
+bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp /*= true*/)
 {
     do 
     {
@@ -144,7 +184,7 @@ bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool JobSystem::CompleteJobs(std::vector<JobID>& in_out_ids, bool blockAndHelp)
+bool JobSystem::CompleteJobs(std::vector<JobID>& in_out_ids, bool blockAndHelp /*= true*/)
 {
     do
     {
@@ -273,6 +313,15 @@ Job* JobSystem::PopFirstAvailableJob(bool blocking)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Job* JobSystem::PopFirstAvailableLoadingJob(bool blocking)
+{
+    Job* job = m_loadingJobQueue.Pop(blocking);
+    return job;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void JobSystem::WorkerLoop_ExecuteJob(JobWorker* worker, Job* job)
 {
     UNUSED(worker)
@@ -299,6 +348,34 @@ void JobSystem::WorkerLoop_ExecuteJob(JobWorker* worker, Job* job)
         }
         --m_numIncompleteJobs;
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void JobSystem::LoadingWorkerLoop(JobWorker* worker)
+{
+    while (m_isRunning && worker->m_isRunning)
+    {
+        if (!LoadingWorkerLoop_TryDoFirstAvailableJob(worker))
+        {
+            std::this_thread::yield();
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::LoadingWorkerLoop_TryDoFirstAvailableJob(JobWorker* worker, bool blocking)
+{
+    Job* job = PopFirstAvailableLoadingJob(blocking);
+    if (job)
+    {
+        WorkerLoop_ExecuteJob(worker, job);
+        return true;
+    }
+    return false;
 }
 
 

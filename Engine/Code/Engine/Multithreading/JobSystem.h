@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/DataStructures/ThreadSafeQueue.h"
+#include "Engine/DataStructures/ThreadSafePrioQueue.h"
 #include "Job.h"
 #include <atomic>
 #include <mutex>
@@ -26,6 +27,7 @@ extern class JobSystem* g_jobSystem;
 //----------------------------------------------------------------------------------------------------------------------
 struct JobSystemConfig
 {
+    bool m_deditatedLoadingWorker = true;
     uint32_t m_threadCount = std::thread::hardware_concurrency();
 };
 
@@ -49,8 +51,10 @@ public:
     virtual void Shutdown() override;
 
     void CreateJobWorker(int threadID, std::string const& name = "");
+    void CreateLoadingJobWorker(int threadID, std::string const& name = "");
     
     JobID PostJob(Job* job);
+    JobID PostLoadingJob(Job* job);
     std::vector<JobID> PostJobs(std::vector<Job*>& jobs);
 
     // Completing Jobs: returns true when all jobs in question are complete or don't exist
@@ -64,10 +68,16 @@ public:
 
 protected:
 
+    // General purpose workers
     void WorkerLoop(JobWorker* worker);
     bool WorkerLoop_TryDoFirstAvailableJob(JobWorker* worker, bool blocking = true);
     Job* PopFirstAvailableJob(bool blocking = true);
+    Job* PopFirstAvailableLoadingJob(bool blocking = true);
     void WorkerLoop_ExecuteJob(JobWorker* worker, Job* job);
+
+    // Loading worker
+    void LoadingWorkerLoop(JobWorker* worker);
+    bool LoadingWorkerLoop_TryDoFirstAvailableJob(JobWorker* worker, bool blocking = true);
 
     // While waiting to complete jobs, threads can try to complete the jobs they are waiting on, which may recur
     bool TryDoSpecificJob(JobID jobToExpedite);
@@ -88,22 +98,21 @@ protected:
     
 protected:
 
-    std::atomic<bool>       m_isRunning = true;
+    std::atomic<bool>           m_isRunning                 = true;
+    std::atomic<int>            m_numIncompleteJobs         = 0;
 
-    std::vector<JobWorker*> m_workers = {};
+    std::vector<JobWorker*>     m_workers;
 
-    // May need a mutex to guard m_numIncompleteJobs (if having issues with a random job not completing before shutdown look here first?)
-    std::atomic<int>        m_numIncompleteJobs = 0;
-
-    ThreadSafeQueue<Job>    m_jobQueue = {};
+    ThreadSafeQueue<Job>        m_jobQueue;                 // Can't use Prio queue because we need to be able to iterate over the list
+	ThreadSafePrioQueue<Job>    m_loadingJobQueue;          // Queue specifically for jobs that touch the disk, uses priority
     
-    std::mutex              m_inProgressJobsMutex;
-    std::vector<Job*>       m_inProgressJobs = {};
+    std::mutex                  m_inProgressJobsMutex;
+    std::vector<Job*>           m_inProgressJobs;
 
-    std::mutex              m_completedJobsMutex;
-    std::vector<Job*>       m_completedJobs = {};
+    std::mutex                  m_completedJobsMutex;
+    std::vector<Job*>           m_completedJobs;
 
-    std::atomic<uint32_t>   m_nextJobID = 0;
+    std::atomic<uint32_t>       m_nextJobID                 = 0;
 };
 
 

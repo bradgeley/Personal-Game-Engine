@@ -67,9 +67,6 @@
     <ClCompile Include="DataStructures\NamedProperties.cpp">
       <Filter>DataStructures</Filter>
     </ClCompile>
-    <ClCompile Include="DataStructures\ThreadSafeQueue.cpp">
-      <Filter>DataStructures</Filter>
-    </ClCompile>
     <ClCompile Include="Events\EventDelegate.cpp">
       <Filter>Events</Filter>
     </ClCompile>
@@ -141,9 +138,6 @@
     </ClCompile>
     <ClCompile Include="ECS\AdminSystem.cpp">
       <Filter>ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="DataStructures\BitArray.cpp">
-      <Filter>DataStructures</Filter>
     </ClCompile>
     <ClCompile Include="ECS\EntityID.cpp">
       <Filter>ECS</Filter>
@@ -596,6 +590,9 @@
     </ClInclude>
     <ClInclude Include="Assets\AssetKey.h">
       <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStructures\ThreadSafePrioQueue.h">
+      <Filter>DataStructures</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -62,6 +62,7 @@ public:
 	int GetCurrentDirection() const;
 	float GetDuration() const;
 	float GetSecondsPerFrame() const;
+	void SetSpeedMultiplier(float speedMultiplier);
 
 protected:
 

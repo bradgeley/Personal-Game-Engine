@@ -26,6 +26,7 @@
 #if defined(_DEBUG)
 	#define NAME_USE_DEBUG_STRING
 #endif
+#define DEBUG_ASSET_MANAGER
 
 
 

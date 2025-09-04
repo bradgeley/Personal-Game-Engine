@@ -24,6 +24,25 @@ AssetManager::AssetManager(AssetManagerConfig const& config) : m_config(config)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AssetManager::BeginFrame()
+{
+    for (auto it = m_futureAssets.begin(); it != m_futureAssets.end();)
+    {
+        FutureAsset const& futureAsset = it->second;
+        if (g_jobSystem->CompleteJob(futureAsset.m_jobID, false))
+        {
+            it = m_futureAssets.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AssetManager::Release(AssetID assetID)
 {
     auto it = m_loadedAssets.find(assetID);
@@ -65,7 +84,7 @@ AssetID AssetManager::RequestAssetID()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AssetManager::LogError(Name assetName, AssetManagerError errorType)
+void AssetManager::LogError(Name assetName, AssetManagerError errorType) const
 {
     switch (errorType)
     {
@@ -81,4 +100,32 @@ void AssetManager::LogError(Name assetName, AssetManagerError errorType)
             g_devConsole->LogErrorF("Asset '%s' encountered an unknown error.", assetName.ToCStr());
 			break;
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AsyncLoadAssetJob::Execute()
+{
+    #if defined(DEBUG_ASSET_MANAGER)
+        g_devConsole->LogSuccessF("- Async load job executing: %s", m_assetName.ToCStr());
+    #endif // DEBUG_ASSET_MANAGER
+
+    if (m_loaderFunc)
+    {
+        m_loadedAsset = m_loaderFunc(m_assetName);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AsyncLoadAssetJob::Complete()
+{
+    #if defined(DEBUG_ASSET_MANAGER)
+        g_devConsole->LogSuccessF("- Async load job completing: %s", m_assetName.ToCStr());
+    #endif // DEBUG_ASSET_MANAGER
+
+	g_assetManager->m_loadedAssets[m_assetID].m_asset = m_loadedAsset;
+	g_assetManager->m_loadedAssets[m_assetID].m_refCount = 1;
 }

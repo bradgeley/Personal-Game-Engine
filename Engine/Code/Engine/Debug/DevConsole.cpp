@@ -104,7 +104,8 @@ void DevConsole::Startup()
     {
         std::string path = "Data/Images/" + backgroundImage;
         LoadDevConsoleBackgroundImageJob* job = new LoadDevConsoleBackgroundImageJob(this, path);
-        m_backgroundImageLoadingJobs.emplace_back(g_jobSystem->PostJob(job));
+        job->SetPriority(-99999); // Extremely low (negative) prio
+        m_backgroundImageLoadingJobs.emplace_back(g_jobSystem->PostLoadingJob(job));
     }
 
     // Randomize the starting background image
@@ -711,10 +712,14 @@ bool DevConsole::WindowSizeChanged(NamedProperties&)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::UpdateBackgroundImage(float deltaSeconds)
 {
-    // Try to complete jobs
+    // Try to complete bgi loading jobs
     if (!m_backgroundImageLoadingJobs.empty())
     {
-        g_jobSystem->CompleteJobs(m_backgroundImageLoadingJobs, false);
+        // max 1 completion per frame
+        if (g_jobSystem->CompleteJob(m_backgroundImageLoadingJobs[m_backgroundImageLoadingJobs.size() - 1], false))
+        {
+            m_backgroundImageLoadingJobs.erase(m_backgroundImageLoadingJobs.end() - 1);
+        }
     }
 
     if (m_backgroundImages.size() <= 1)

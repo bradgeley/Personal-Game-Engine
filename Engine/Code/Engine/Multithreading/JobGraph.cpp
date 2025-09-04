@@ -10,8 +10,8 @@ void JobGraph::AddJob(Job* job)
     m_jobs.push_back(job);
     SortByPriority();
 
-    job->m_needsComplete = true; // all jobs in a job graph must be completed
-    job->m_deleteAfterCompletion = false; // job graphs may be recurring, so don't delete the jobs
+    job->SetNeedsComplete(true);            // all jobs in a job graph must be completed
+    job->SetDeleteAfterCompletion(false);   // job graphs may be recurring, so don't delete the jobs
 }
 
 

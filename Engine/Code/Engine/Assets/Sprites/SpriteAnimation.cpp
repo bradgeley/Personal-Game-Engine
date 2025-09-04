@@ -227,3 +227,11 @@ float SpriteAnimation::GetSecondsPerFrame() const
     }
     return m_def->m_secondsPerFrame / m_speedMultiplier;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SpriteAnimation::SetSpeedMultiplier(float speedMultiplier)
+{
+    m_speedMultiplier = speedMultiplier;
+}
