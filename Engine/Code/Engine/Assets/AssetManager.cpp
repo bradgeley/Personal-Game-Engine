@@ -175,6 +175,7 @@ void AsyncLoadAssetJob::Execute()
         {
 			g_assetManager->LogError(m_assetName, AssetManagerError::FailedToLoad);
         }
+        m_loadedAsset->m_name = m_assetName;
 	}
 }
 

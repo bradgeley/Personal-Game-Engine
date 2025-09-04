@@ -118,6 +118,9 @@ public:
     AssetID AsyncLoad(Name assetName);
 
     template<typename T>
+    bool AsyncReload(AssetID assetID);
+
+    template<typename T>
     static AssetKey GetAssetKey(Name assetName);
 
     void Release(AssetID assetID);
@@ -248,6 +251,71 @@ inline AssetID AssetManager::AsyncLoad(Name assetName)
 
     LogError(assetName, AssetManagerError::LoaderNotFound);
     return INVALID_ASSET_ID;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename T>
+inline bool AssetManager::AsyncReload(AssetID assetID)
+{
+    #if defined(DEBUG_ASSET_MANAGER)
+        g_devConsole->LogF(Rgba8::LightOceanBlue, "Async Reload requested: assetID(%i)", static_cast<int>(assetID));
+    #endif // DEBUG_ASSET_MANAGER
+
+    if (m_futureAssets.find(assetID) != m_futureAssets.end())
+    {
+        #if defined(DEBUG_ASSET_MANAGER)
+            g_devConsole->LogF(Rgba8::LightOceanBlue, "- Asset is already being async loaded: assetID(%i)", static_cast<int>(assetID));
+        #endif // DEBUG_ASSET_MANAGER
+        return false;
+	}
+
+	auto loadedAssetIt = m_loadedAssets.find(assetID);
+    if (loadedAssetIt == m_loadedAssets.end())
+    {
+        #if defined(DEBUG_ASSET_MANAGER)
+        g_devConsole->LogF(Rgba8::LightOceanBlue, "- Asset is not loaded, cannot async reload: assetID(%i)", static_cast<int>(assetID));
+        #endif // DEBUG_ASSET_MANAGER
+        return false;
+    }
+
+	Name loadedAssetName = loadedAssetIt->second.m_asset->m_name;
+    
+    #if defined(DEBUG_ASSET_MANAGER)
+        g_devConsole->LogF(Rgba8::DarkOceanBlue, "Unloading asset: assedID(%i)", static_cast<int>(assetID));
+    #endif // DEBUG_ASSET_MANAGER
+
+    // Delete loaded asset
+    delete loadedAssetIt->second.m_asset;
+    m_loadedAssets.erase(loadedAssetIt);
+
+    // Async load without creating a new asset ID
+    std::type_index typeIndex = std::type_index(typeid(T));
+    auto it = m_loaderFuncs.find(typeIndex);
+    if (it != m_loaderFuncs.end())
+    {
+        AsyncLoadAssetJob* loadJob = new AsyncLoadAssetJob();
+        loadJob->m_assetName = loadedAssetName;
+        loadJob->m_assetID = assetID;
+        loadJob->m_loaderFunc = it->second;
+        loadJob->SetPriority(0);
+
+        JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
+
+        #if defined(DEBUG_ASSET_MANAGER)
+            g_devConsole->LogF(Rgba8::LightOceanBlue, "- Async load %s job posted: name(%s) assetID(%i) jobID(%i)", m_loaderDebugNames[typeIndex].ToCStr(), loadedAssetName.ToCStr(), static_cast<int>(assetID), static_cast<int>(jobID.m_uniqueID));
+        #endif // DEBUG_ASSET_MANAGER
+
+        FutureAsset futureAsset;
+        futureAsset.m_jobID = jobID;
+        futureAsset.m_assetID = assetID;
+        m_futureAssets.emplace(futureAsset.m_assetID, futureAsset);
+
+        return true;
+    }
+
+    return false;
 }
 
 

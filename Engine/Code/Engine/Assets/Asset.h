@@ -13,7 +13,8 @@ constexpr AssetID INVALID_ASSET_ID = static_cast<AssetID>(UINT32_MAX);
 //----------------------------------------------------------------------------------------------------------------------
 class IAsset
 {
-	friend class AssetManager;
+	friend class AssetManager; 
+	friend class AsyncLoadAssetJob;
 
 protected:
 

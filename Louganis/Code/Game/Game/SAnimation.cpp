@@ -9,6 +9,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/Constants.h"
+#include "Engine/Input/InputSystem.h"
 
 
 
@@ -34,6 +35,11 @@ void SAnimation::Run(SystemContext const& context)
         if (anim.m_gridSpriteSheet == INVALID_ASSET_ID)
         {
             anim.m_gridSpriteSheet = g_assetManager->AsyncLoad<GridSpriteSheet>("Data/SpriteSheets/Soldier.xml"); // todo: move asset path to entity def
+        }
+
+        if (g_input->WasKeyJustPressed(KeyCode::Space))
+        {
+            g_assetManager->AsyncReload<GridSpriteSheet>(anim.m_gridSpriteSheet);
         }
 
         GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
