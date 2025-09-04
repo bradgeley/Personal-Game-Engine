@@ -150,6 +150,48 @@ std::vector<JobID> JobSystem::PostJobs(std::vector<Job*>& jobs)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::TryCancelJob(JobID jobID)
+{
+    m_jobQueue.Lock();
+    for (auto it = m_jobQueue.begin(); it != m_jobQueue.end(); ++it)
+    {
+        if ((*it)->m_id != jobID)
+        {
+            continue;
+		}
+        m_numIncompleteJobs--;
+        m_jobQueue.erase(it);
+        m_jobQueue.Unlock();
+        return true;
+    }
+    m_jobQueue.Unlock();
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool JobSystem::TryCancelLoadingJob(JobID jobID)
+{
+    m_loadingJobQueue.Lock();
+    for (auto it = m_loadingJobQueue.begin(); it != m_loadingJobQueue.end(); ++it)
+    {
+        if ((*it)->m_id != jobID)
+        {
+            continue;
+        }
+        m_numIncompleteJobs--;
+        m_loadingJobQueue.erase(it);
+        m_loadingJobQueue.Unlock();
+        return true;
+    }
+    m_loadingJobQueue.Unlock();
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp /*= true*/)
 {
     do 

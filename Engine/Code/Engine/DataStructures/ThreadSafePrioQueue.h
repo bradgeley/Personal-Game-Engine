@@ -1,8 +1,9 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include <algorithm>
 #include <atomic>
 #include <condition_variable>
-#include <queue>
+#include <vector>
 
 
 
@@ -23,6 +24,16 @@ public:
     void Quit();
     void Lock();
     void Unlock();
+
+    typedef typename std::vector<T*>::iterator iterator;
+    typedef typename std::vector<T*>::const_iterator const_iterator;
+
+    // Lock() before iterating!
+    iterator begin();
+    iterator end();
+    const_iterator begin() const;
+    const_iterator end() const;
+    iterator erase(iterator where);
     
 private:
 
@@ -30,7 +41,7 @@ private:
     
     mutable std::mutex      m_lock;
     std::condition_variable m_condVar;
-    std::priority_queue<T*> m_queue;
+    std::vector<T*>         m_heap;
 };
 
 
@@ -43,7 +54,7 @@ template<typename T>
 bool ThreadSafePrioQueue<T>::IsEmpty() const
 {
     std::unique_lock<std::mutex> uniqueLock(m_lock);
-    return m_queue.empty();
+    return m_heap.empty();
 }
 
 
@@ -53,7 +64,7 @@ template <typename T>
 int ThreadSafePrioQueue<T>::Count() const
 {
     std::unique_lock<std::mutex> uniqueLock(m_lock);
-    return (int) m_queue.size();
+    return (int) m_heap.size();
 }
 
 
@@ -63,7 +74,8 @@ template <typename T>
 void ThreadSafePrioQueue<T>::Push(T* obj)
 {
     std::unique_lock<std::mutex> uniqueLock(m_lock);
-    m_queue.push(obj);
+    m_heap.push_back(obj);
+	std::push_heap(m_heap.begin(), m_heap.end());
     uniqueLock.unlock(); // supposedly faster and still safe to unlock before notifying?
     m_condVar.notify_one();
 }
@@ -78,7 +90,7 @@ T* ThreadSafePrioQueue<T>::Pop(bool blocking)
     
     std::unique_lock<std::mutex> uniqueLock(m_lock);
     
-    while (m_queue.empty() && !m_isQuitting)
+    while (m_heap.empty() && !m_isQuitting)
     {
         if (blocking)
         {
@@ -87,10 +99,11 @@ T* ThreadSafePrioQueue<T>::Pop(bool blocking)
         else break;
     }
     
-    if (!m_queue.empty())
+    if (!m_heap.empty())
     {
-        result = m_queue.top();
-        m_queue.pop();
+        result = m_heap.front();
+		std::pop_heap(m_heap.begin(), m_heap.end());
+        m_heap.pop_back();
     }
  
     return result;
@@ -129,4 +142,56 @@ template <typename T>
 void ThreadSafePrioQueue<T>::Unlock()
 {
     m_lock.unlock();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+typename ThreadSafePrioQueue<T>::iterator ThreadSafePrioQueue<T>::begin()
+{
+    return m_heap.begin();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+typename ThreadSafePrioQueue<T>::iterator ThreadSafePrioQueue<T>::end()
+{
+    return m_heap.end();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+typename ThreadSafePrioQueue<T>::const_iterator ThreadSafePrioQueue<T>::begin() const
+{
+    return m_heap.begin();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+typename ThreadSafePrioQueue<T>::const_iterator ThreadSafePrioQueue<T>::end() const
+{
+    return m_heap.end();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+typename ThreadSafePrioQueue<T>::iterator ThreadSafePrioQueue<T>::erase(typename ThreadSafePrioQueue<T>::iterator where)
+{
+    if (where == m_heap.end())
+    {
+        return m_heap.end();
+    }
+    std::iter_swap(where, m_heap.end() - 1);
+    m_heap.pop_back();
+    std::make_heap(m_heap.begin(), m_heap.end());
+    return where;
 }

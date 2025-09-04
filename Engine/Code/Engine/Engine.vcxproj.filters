@@ -268,12 +268,6 @@
     <ClCompile Include="Assets\Sprites\SpriteAnimation.cpp">
       <Filter>Assets\Sprites</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\Asset.cpp">
-      <Filter>Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets\AssetLoaders.cpp">
-      <Filter>Assets</Filter>
-    </ClCompile>
     <ClCompile Include="Assets\AssetKey.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
@@ -585,7 +579,7 @@
     <ClInclude Include="Assets\Asset.h">
       <Filter>Assets</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\AssetLoaders.h">
+    <ClInclude Include="Assets\AssetLoaderFunction.h">
       <Filter>Assets</Filter>
     </ClInclude>
     <ClInclude Include="Assets\AssetKey.h">

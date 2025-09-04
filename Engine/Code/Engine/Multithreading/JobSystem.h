@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Core/EngineSubsystem.h"
-#include "Engine/DataStructures/ThreadSafeQueue.h"
 #include "Engine/DataStructures/ThreadSafePrioQueue.h"
 #include "Job.h"
 #include <atomic>
@@ -56,6 +55,8 @@ public:
     JobID PostJob(Job* job);
     JobID PostLoadingJob(Job* job);
     std::vector<JobID> PostJobs(std::vector<Job*>& jobs);
+	bool TryCancelJob(JobID jobID);
+	bool TryCancelLoadingJob(JobID jobID);
 
     // Completing Jobs: returns true when all jobs in question are complete or don't exist
     bool CompleteJob(JobID jobID, bool blockAndHelp = true);
@@ -103,8 +104,8 @@ protected:
 
     std::vector<JobWorker*>     m_workers;
 
-    ThreadSafeQueue<Job>        m_jobQueue;                 // Can't use Prio queue because we need to be able to iterate over the list
-	ThreadSafePrioQueue<Job>    m_loadingJobQueue;          // Queue specifically for jobs that touch the disk, uses priority
+    ThreadSafePrioQueue<Job>    m_jobQueue;
+	ThreadSafePrioQueue<Job>    m_loadingJobQueue;          // Queue specifically for jobs that touch the disk, always a dedicated worker
     
     std::mutex                  m_inProgressJobsMutex;
     std::vector<Job*>           m_inProgressJobs;

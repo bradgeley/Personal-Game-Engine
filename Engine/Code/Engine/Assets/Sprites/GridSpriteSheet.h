@@ -19,6 +19,7 @@ public:
 	~GridSpriteSheet() = default;
 
 	static IAsset* Load(Name assetName);
+	virtual void ReleaseResources() override;
 
 	bool CreateFromTexture(TextureID texture, IntVec2 const& layout, IntVec2 const& edgePadding = IntVec2::ZeroVector, IntVec2 const& innerPadding = IntVec2::ZeroVector);
 

@@ -1,13 +1,14 @@
 // Bradley Christensen - 2022-2025
 #include "GridSpriteSheet.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Texture.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Core/StringUtils.h"
 #include "Engine/Core/Image.h"
-#include "Engine/Debug/DevConsole.h"
-#include "ThirdParty/tinyxml2/tinyxml2.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
+#include "Engine/Debug/DevConsole.h"
+#include "Engine/Math/MathUtils.h"
+#include "Engine/Renderer/Texture.h"
+#include "Engine/Renderer/Renderer.h"
+#include "ThirdParty/tinyxml2/tinyxml2.h"
 
 
 
@@ -107,6 +108,14 @@ IAsset* GridSpriteSheet::Load(Name assetName)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void GridSpriteSheet::ReleaseResources()
+{
+	// Release texture
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AABB2 GridSpriteSheet::GetSpriteUVs(int spriteIndex) const
 {
 	if (m_spriteUVs.IsValidIndex(spriteIndex)) 
@@ -191,6 +200,10 @@ void GridSpriteSheet::ComputeSpriteUVs()
 			// Convert to UVs
 			uvs.mins /= Vec2(textureDims);
 			uvs.maxs /= Vec2(textureDims);
+
+			// Squeeze to avoid bleeding into neighboring sprites
+			float minDim = MathUtils::Min(uvs.GetWidth(), uvs.GetHeight());
+			uvs.Squeeze(minDim * 0.01f);
 
 			m_spriteUVs.Set(index, uvs);
 		}

@@ -18,6 +18,7 @@ class IAsset
 protected:
 
 	virtual ~IAsset() = default;
+	virtual void ReleaseResources() = 0;
 
 protected:
 

@@ -136,7 +136,7 @@ void Game::ConfigureEngine(Engine* engine)
 {
 	AssetManagerConfig assetManagerConfig;
 	g_assetManager = new AssetManager(assetManagerConfig);
-	g_assetManager->RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load);
+	g_assetManager->RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load, "GridSpriteSheet");
 	engine->RegisterSubsystem(g_assetManager);
 
     EventSystemConfig eventSysConfig;

@@ -7,7 +7,7 @@
 #include "Engine/Multithreading/Jobsystem.h"
 #include "Asset.h"
 #include "AssetKey.h"
-#include "AssetLoaders.h"
+#include "AssetLoaderFunction.h"
 #include <typeindex>
 #include <mutex>
 #include <unordered_map>
@@ -106,7 +106,7 @@ public:
     //void Shutdown() override;
 
 	template<typename T>
-    bool RegisterLoader(AssetLoaderFunction loader);
+    bool RegisterLoader(AssetLoaderFunction loader, Name debugName);
 
 	template<typename T>
     T* Get(AssetID assetID) const;
@@ -127,6 +127,8 @@ public:
 
 protected:
 
+	bool UnloadAsset(AssetID assetID);  
+
     void LogError(Name assetName, AssetManagerError errorType) const;
 
 protected:
@@ -137,6 +139,7 @@ protected:
 	AssetID m_nextAssetID = 0;
 
     std::unordered_map<std::type_index, AssetLoaderFunction> m_loaderFuncs;
+	std::unordered_map<std::type_index, Name> m_loaderDebugNames;
 
     std::unordered_map<AssetKey, AssetID, AssetKeyHash> m_assetIDs;
     std::unordered_map<AssetID, LoadedAsset> m_loadedAssets;
@@ -174,7 +177,8 @@ inline AssetID AssetManager::LoadSynchronous(Name assetName)
             return INVALID_ASSET_ID;
         }
 
-        AssetID assetID = RequestAssetID();
+		AssetID assetID = RequestAssetID();
+        m_assetIDs[assetKey] = assetID;
 
         #if defined(DEBUG_ASSET_MANAGER)
             g_devConsole->LogSuccessF("- Asset loaded: %s id(%i)", assetName.ToCStr(), static_cast<int>(assetID));
@@ -196,45 +200,47 @@ inline AssetID AssetManager::LoadSynchronous(Name assetName)
 template<typename T>
 inline AssetID AssetManager::AsyncLoad(Name assetName)
 {
-    #if defined(DEBUG_ASSET_MANAGER)
-        g_devConsole->AddLine(StringUtils::StringF("AssetManager::AsyncLoad: %s", assetName.ToCStr()));
-    #endif // DEBUG_ASSET_MANAGER
-
     if (!g_jobSystem)
     {
 		return LoadSynchronous<T>(assetName);
     }
+
+    #if defined(DEBUG_ASSET_MANAGER)
+        g_devConsole->LogF(Rgba8::LightOceanBlue, "Async Load requested: %s", assetName.ToCStr());
+    #endif // DEBUG_ASSET_MANAGER
 
     AssetKey assetKey = GetAssetKey<T>(assetName);
     auto assetID_it = m_assetIDs.find(assetKey);
     if (assetID_it != m_assetIDs.end())
     {
         #if defined(DEBUG_ASSET_MANAGER)
-            g_devConsole->AddLine(StringUtils::StringF("- Asset already loaded: %s", assetName.ToCStr()));
+            g_devConsole->LogF(Rgba8::LightOceanBlue, "- Asset already loaded: %s", assetName.ToCStr());
         #endif // DEBUG_ASSET_MANAGER
         return assetID_it->second;
     }
 
-    auto it = m_loaderFuncs.find(std::type_index(typeid(T)));
+    std::type_index typeIndex = std::type_index(typeid(T));
+    auto it = m_loaderFuncs.find(typeIndex);
     if (it != m_loaderFuncs.end())
     {
-        AssetID futureAssetID = RequestAssetID();
+        AssetID assetID = RequestAssetID();
+        m_assetIDs[assetKey] = assetID;
 
         AsyncLoadAssetJob* loadJob = new AsyncLoadAssetJob();
 		loadJob->m_assetName = assetName;
-		loadJob->m_assetID = futureAssetID;
+		loadJob->m_assetID = assetID;
         loadJob->m_loaderFunc = it->second;
         loadJob->SetPriority(0);
 
         JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
 
         #if defined(DEBUG_ASSET_MANAGER)
-            g_devConsole->LogSuccessF("- Async load job posted: %s assetID(%i) jobID(%i)", assetName.ToCStr(), static_cast<int>(futureAssetID), static_cast<int>(jobID.m_uniqueID));
+            g_devConsole->LogF(Rgba8::LightOceanBlue, "- Async load %s job posted: name(%s) assetID(%i) jobID(%i)", m_loaderDebugNames[typeIndex].ToCStr(), assetName.ToCStr(), static_cast<int>(assetID), static_cast<int>(jobID.m_uniqueID));
         #endif // DEBUG_ASSET_MANAGER
 
         FutureAsset futureAsset;
         futureAsset.m_jobID = jobID;
-        futureAsset.m_assetID = futureAssetID;
+        futureAsset.m_assetID = assetID;
 		m_futureAssets.emplace(futureAsset.m_assetID, futureAsset);
 
         return futureAsset.m_assetID;
@@ -257,7 +263,7 @@ inline AssetKey AssetManager::GetAssetKey(Name assetName)
 
 //----------------------------------------------------------------------------------------------------------------------
 template<typename T>
-inline bool AssetManager::RegisterLoader(AssetLoaderFunction loader)
+inline bool AssetManager::RegisterLoader(AssetLoaderFunction loader, Name debugName)
 {
 	std::type_index typeIndex(typeid(T));
     if (m_loaderFuncs.find(typeIndex) != m_loaderFuncs.end())
@@ -266,6 +272,7 @@ inline bool AssetManager::RegisterLoader(AssetLoaderFunction loader)
         return false;
 	}
 
+	m_loaderDebugNames.emplace(typeIndex, debugName);
 	m_loaderFuncs.emplace(typeIndex, loader);
     return true;
 }

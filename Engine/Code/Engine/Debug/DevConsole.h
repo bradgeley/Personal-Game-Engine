@@ -90,6 +90,8 @@ public:
 	void LogError(std::string const& line);
 
 	template<typename ...Args>
+	void LogF(Rgba8 tint, char const* format, Args... args);
+	template<typename ...Args>
 	void LogSuccessF(char const* format, Args... args);
 	template<typename ...Args>
 	void LogWarningF(char const* format, Args... args);
@@ -168,6 +170,17 @@ private:
 	// Vertex Buffers
 	VertexBufferID m_vbo = RendererUtils::InvalidID;
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename ...Args>
+inline void DevConsole::LogF(Rgba8 tint, char const* format, Args ...args)
+{
+	char buffer[1024];
+	snprintf(buffer, sizeof(buffer), format, args...);
+	AddLine(buffer, tint);
+}
 
 
 
