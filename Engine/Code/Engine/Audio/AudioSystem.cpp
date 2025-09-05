@@ -24,6 +24,14 @@ AudioSystem::AudioSystem(AudioSystemConfig const& config) : m_config(config)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AudioSystem::~AudioSystem()
+{
+	g_audioSystem = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 SoundID AudioSystem::RequestSoundID()
 {
 	return m_nextSoundId++;

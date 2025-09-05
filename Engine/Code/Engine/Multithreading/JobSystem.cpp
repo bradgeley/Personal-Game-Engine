@@ -26,6 +26,14 @@ JobSystem::JobSystem(JobSystemConfig const& config) : EngineSubsystem("JobSystem
 
 
 //----------------------------------------------------------------------------------------------------------------------
+JobSystem::~JobSystem()
+{
+	g_jobSystem = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void JobSystem::Startup()
 {
     EngineSubsystem::Startup();

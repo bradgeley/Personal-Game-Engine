@@ -79,12 +79,13 @@ class AssetManager : public EngineSubsystem
 public:
 
     explicit AssetManager(AssetManagerConfig const& config);
+    virtual ~AssetManager() override;
 
     //void Startup() override;
     void BeginFrame() override;
     //void Update(float deltaSeconds) override;
     //void EndFrame() override;
-    //void Shutdown() override;
+    void Shutdown() override;
 
     template<typename T>
     bool RegisterLoader(AssetLoaderFunction loader, Name debugName);

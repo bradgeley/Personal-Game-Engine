@@ -24,7 +24,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
 	#if defined(DEBUG_MEMORY_LEAKS)
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-		//_CrtSetBreakAlloc(8240); // Specific memory leak
+		//_CrtSetBreakAlloc(1080); // Specific memory leak
 	#endif 
 
 	g_app = new Application();
@@ -35,7 +35,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	g_app = nullptr;
 
 	#if defined(DEBUG_MEMORY_LEAKS)
-		_CrtDumpMemoryLeaks(); // Note: This catches some things that aren't really a huge problem, like static std::vector's that haven't been cleared out, etc.
+		//_CrtDumpMemoryLeaks(); // Note: This catches some things that aren't really a huge problem, like static std::vector's that haven't been cleared out, etc.
 	#endif
 	return 0;
 }

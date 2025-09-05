@@ -18,6 +18,14 @@ EventSystem::EventSystem(EventSystemConfig config) : EngineSubsystem("EventSyste
 
 
 //----------------------------------------------------------------------------------------------------------------------
+EventSystem::~EventSystem()
+{
+	g_eventSystem = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void EventSystem::Shutdown()
 {
     for (auto pair : m_events)

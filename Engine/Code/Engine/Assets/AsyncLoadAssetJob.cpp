@@ -30,4 +30,5 @@ void AsyncLoadAssetJob::Complete()
 {
 	ASSERT_OR_DIE(g_assetManager != nullptr, "AsyncLoadAssetJob::Complete - AssetManager is null");
     g_assetManager->m_loadedAssets[m_assetID].m_asset = m_loadedAsset;
+    g_assetManager->m_loadedAssets[m_assetID].m_asset->CompleteLoad();
 }

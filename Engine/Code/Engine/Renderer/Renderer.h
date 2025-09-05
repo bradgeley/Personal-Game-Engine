@@ -50,7 +50,7 @@ public:
 
     Renderer(RendererConfig const& config);
     Renderer(Renderer const& other) = delete;
-    virtual ~Renderer();
+    virtual ~Renderer() override;
     
     virtual void Startup() override;
     virtual void Render() const override;

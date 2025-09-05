@@ -36,6 +36,7 @@ class InputSystem : public EngineSubsystem
 public:
     
     explicit InputSystem(InputSystemConfig const& config);
+	virtual ~InputSystem() override;
     
     void Startup() override;
     void BeginFrame() override;

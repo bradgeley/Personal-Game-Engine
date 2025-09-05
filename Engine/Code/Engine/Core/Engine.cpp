@@ -49,6 +49,7 @@ Engine::~Engine()
     g_nameTable->Shutdown();
     delete g_nameTable;
     g_nameTable = nullptr;
+    g_engine = nullptr;
 }
 
 

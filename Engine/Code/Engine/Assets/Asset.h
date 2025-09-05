@@ -14,7 +14,9 @@ class IAsset
 protected:
 
 	virtual ~IAsset() = default;
-	virtual void ReleaseResources() = 0;
+
+	virtual bool CompleteLoad()			= 0;		// Called only by the main thread
+	virtual void ReleaseResources()		= 0;
 
 protected:
 

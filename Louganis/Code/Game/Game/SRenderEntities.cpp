@@ -72,5 +72,5 @@ void SRenderEntities::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderEntities::Shutdown()
 {
-    
+
 }

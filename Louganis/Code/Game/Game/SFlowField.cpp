@@ -177,7 +177,7 @@ void SFlowField::GenerateFlow(FlowField& flowField, WorldCoords const& destinati
 //----------------------------------------------------------------------------------------------------------------------
 void SFlowField::GenerateDistanceField(FlowField& flowField)
 {
-    ScopedTimer timer("- Generate Distance Field");
+    //ScopedTimer timer("- Generate Distance Field");
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 
     while (!flowField.m_openList.empty())
@@ -282,7 +282,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
 
 void SFlowField::GenerateGradient(FlowField& flowField)
 {
-    ScopedTimer timer("- Generate Gradient");
+    //ScopedTimer timer("- Generate Gradient");
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 
     flowField.ResetConsideredCells();

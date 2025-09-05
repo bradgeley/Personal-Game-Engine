@@ -19,6 +19,7 @@ public:
 	~GridSpriteSheet() = default;
 
 	static IAsset* Load(Name assetName);
+	virtual bool CompleteLoad() override;
 	virtual void ReleaseResources() override;
 
 	bool CreateFromTexture(TextureID texture, IntVec2 const& layout, IntVec2 const& edgePadding = IntVec2::ZeroVector, IntVec2 const& innerPadding = IntVec2::ZeroVector);
@@ -35,6 +36,7 @@ protected:
 
 protected:
 
+	AssetID		m_image			= INVALID_ASSET_ID;
 	TextureID	m_texture 		= RendererUtils::InvalidID;
 	IntVec2		m_layout		= IntVec2::ZeroVector;			// Dimensions in sprites (not pixels)
 	IntVec2		m_spriteDims	= IntVec2::ZeroVector;			// Dimensions of each sprite in pixels

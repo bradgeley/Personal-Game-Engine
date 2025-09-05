@@ -16,12 +16,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 bool GridSpriteSheet::CreateFromTexture(TextureID texture, IntVec2 const& layout, IntVec2 const& edgePadding, IntVec2 const& innerPadding)
 {
-	if (m_texture != RendererUtils::InvalidID) 
-	{
-		// Already initialized
-		return false;
-	}
-
 	m_texture = texture;
 	m_layout = layout;
 	m_spriteUVs.Initialize(layout, AABB2::ZeroToOne);
@@ -81,16 +75,12 @@ IAsset* GridSpriteSheet::Load(Name assetName)
 		return nullptr;
 	}
 
-	// Todo: move to AssetManager
-	TextureID textureID = g_renderer->MakeTexture();
-	g_renderer->GetTexture(textureID)->CreateFromImage(*image);
-
-	IntVec2 layout = XmlUtils::ParseXmlAttribute(*root, "layout", IntVec2(1, 1));
-	IntVec2 edgePadding = XmlUtils::ParseXmlAttribute(*root, "edgePadding", IntVec2(0, 0));
-	IntVec2 innerPadding = XmlUtils::ParseXmlAttribute(*root, "innerPadding", IntVec2(0, 0));
-
 	GridSpriteSheet* spriteSheet = new GridSpriteSheet();
-	spriteSheet->CreateFromTexture(textureID, layout, edgePadding, innerPadding);
+	spriteSheet->m_texture = g_renderer->MakeTexture();
+	spriteSheet->m_image = imageID;
+	spriteSheet->m_layout = XmlUtils::ParseXmlAttribute(*root, "layout", IntVec2(1, 1));
+	spriteSheet->m_edgePadding = XmlUtils::ParseXmlAttribute(*root, "edgePadding", IntVec2(0, 0));
+	spriteSheet->m_innerPadding = XmlUtils::ParseXmlAttribute(*root, "innerPadding", IntVec2(0, 0));
 
 	// Todo: Load animation defs into spriteSheet from XML
 	XmlElement* animationDefElem = root->FirstChildElement("SpriteAnimation");
@@ -104,6 +94,17 @@ IAsset* GridSpriteSheet::Load(Name assetName)
 	}
 
 	return spriteSheet;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool GridSpriteSheet::CompleteLoad()
+{
+	Image* image = g_assetManager->Get<Image>(m_image);
+	g_renderer->GetTexture(m_texture)->CreateFromImage(*image); // Texture creation must be on main thread
+	bool succeeded = CreateFromTexture(m_texture, m_layout, m_edgePadding, m_innerPadding);
+	return succeeded;
 }
 
 

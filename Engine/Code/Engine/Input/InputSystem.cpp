@@ -22,6 +22,14 @@ InputSystem::InputSystem(InputSystemConfig const& config) : EngineSubsystem("Inp
 
 
 //----------------------------------------------------------------------------------------------------------------------
+InputSystem::~InputSystem()
+{
+	g_input = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void InputSystem::Startup()
 {
     g_window->m_charInputEvent.SubscribeMethod(this, &InputSystem::HandleChar);

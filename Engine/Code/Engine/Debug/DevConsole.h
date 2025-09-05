@@ -61,6 +61,7 @@ class DevConsole : public EngineSubsystem
 public:
 
 	DevConsole(DevConsoleConfig const& config);
+	virtual ~DevConsole() override;
 
 	void Startup() override;
 	void BeginFrame() override;

@@ -36,6 +36,7 @@ class EventSystem : public EngineSubsystem
 public:
 
     EventSystem(EventSystemConfig config);
+    virtual ~EventSystem() override;
 
     virtual void Shutdown() override;
 

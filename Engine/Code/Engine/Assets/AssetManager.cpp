@@ -26,6 +26,14 @@ AssetManager::AssetManager(AssetManagerConfig const& config) : m_config(config)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AssetManager::~AssetManager()
+{
+    g_assetManager = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AssetManager::BeginFrame()
 {
     // Begin frame happens synchronously on the main thread, and we require that all loads be completed on the main thread,
@@ -42,6 +50,22 @@ void AssetManager::BeginFrame()
             ++it;
         }
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AssetManager::Shutdown()
+{
+    while (!m_futureAssets.empty())
+    {
+        TryCancelOrCompleteFuture(m_futureAssets.begin()->first);
+	}
+
+    while (m_loadedAssets.size() > 0)
+    {
+        UnloadAsset(m_loadedAssets.begin()->first);
+    }
 }
 
 
@@ -359,7 +383,7 @@ void AssetManager::ChangeRefCount(AssetID assetID, int32_t delta)
 bool AssetManager::UnloadAsset(AssetID assetID, bool isReloading /*= false*/)
 {
 	ASSERT_OR_DIE(!IsFuture(assetID), "AssetManager::UnloadAsset - This should be called after removing the asset from future.");
-	ASSERT_OR_DIE(!IsLoaded(assetID), "AssetManager::UnloadAsset - This should only be called if the asset is already loaded.");
+	ASSERT_OR_DIE(IsLoaded(assetID), "AssetManager::UnloadAsset - This should only be called if the asset is already loaded.");
 
 	AssetKey key = m_loadedAssets.at(assetID).m_key;
 
@@ -433,7 +457,7 @@ void AssetManager::LogLoaded(AssetKey key) const
     #if defined(DEBUG_ASSET_MANAGER)
         auto debugNameIt = m_loaderDebugNames.find(key.m_typeIndex);
         const char* debugNameStr = (debugNameIt != m_loaderDebugNames.end()) ? debugNameIt->second.ToCStr() : "Unknown Asset Type";
-        g_devConsole->LogF(Rgba8::LightOceanBlue, "Loaded %s '%s' successfully.", key.m_name.ToCStr(), debugNameStr);
+        g_devConsole->LogF(Rgba8::LightOceanBlue, "Loaded %s: '%s' successfully.", debugNameStr, key.m_name.ToCStr());
 	#endif // defined(DEBUG_ASSET_MANAGER)
 }
 
@@ -450,7 +474,7 @@ void AssetManager::LogUnloaded(AssetKey key) const
 	#if defined(DEBUG_ASSET_MANAGER)
         auto debugNameIt = m_loaderDebugNames.find(key.m_typeIndex);
         const char* debugNameStr = (debugNameIt != m_loaderDebugNames.end()) ? debugNameIt->second.ToCStr() : "Unknown Asset Type";
-        g_devConsole->LogF(Rgba8::DarkOceanBlue, "Unloaded %s '%s' successfully.", key.m_name.ToCStr(), debugNameStr);
+        g_devConsole->LogF(Rgba8::DarkOceanBlue, "Unloaded %s: '%s' successfully.", debugNameStr, key.m_name.ToCStr());
 	#endif // defined(DEBUG_ASSET_MANAGER)
 }
 

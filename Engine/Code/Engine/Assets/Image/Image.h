@@ -25,6 +25,7 @@ public:
     explicit Image(IntVec2 const& dimensions, Rgba8 const& color);
 
     static IAsset* Load(Name assetName);
+	virtual bool CompleteLoad() override;
 
     Name GetSourceImagePath() const;
     Grid<Rgba8> const& GetPixels() const;

@@ -24,6 +24,13 @@ void SMovement::Run(SystemContext const& context)
         CMovement& move = moveStorage[it];
 		CTransform& transform = transformStorage[it];
 
+        if (move.m_isTeleporting)
+        {
+            transform.m_pos += move.m_frameMovement;
+            move.m_frameMovement = Vec2::ZeroVector;
+            continue;
+        }
+
         move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * context.m_deltaSeconds;
         if (move.m_isSprinting)
         {

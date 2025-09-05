@@ -15,6 +15,7 @@ struct CMovement
     Vec2 m_frameMoveDir                 = Vec2::ZeroVector;
     Vec2 m_frameMovement                = Vec2::ZeroVector;
     bool m_isSprinting                  = false;
+	bool m_isTeleporting                = false;
 
     // Definition Data
     float m_movementSpeed               = 0.f;

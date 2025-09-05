@@ -6,20 +6,20 @@
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
-#include "Engine/Renderer/Camera.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/VertexBuffer.h"
-#include "Engine/Renderer/VertexUtils.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Input/InputUtils.h"
+#include "Engine/Performance/ScopedTimer.h"
+#include "Engine/Renderer/Camera.h"
+#include "Engine/Renderer/Font.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Texture.h"
+#include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
-#include "Engine/Renderer/Texture.h"
 #include "Engine/Window/Window.h"
-#include "Engine/Performance/ScopedTimer.h"
-#include "Engine/Renderer/Font.h"
 #include "Game/Framework/EngineBuildPreferences.h"
 
 #if defined(AUDIO_SYSTEM_ENABLED)
@@ -43,6 +43,14 @@ DevConsole::DevConsole(DevConsoleConfig const& config) : EngineSubsystem("DevCon
 
 
 //----------------------------------------------------------------------------------------------------------------------
+DevConsole::~DevConsole()
+{
+	g_devConsole = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 class LoadDevConsoleBackgroundImageJob : public Job
 {
 public:
@@ -53,14 +61,6 @@ public:
     {
         m_texture = g_renderer->MakeTexture();
         m_image = g_assetManager->LoadSynchronous<Image>(m_path);
-        if (g_assetManager->IsValid(m_image))
-        {
-            g_devConsole->LogSuccess(StringUtils::StringF("Loaded image: %s", m_path.ToCStr()));
-        }
-        else
-        {
-            g_devConsole->LogError(StringUtils::StringF("Failed to load image: %s", m_path.ToCStr()));
-        }
     }
     
     void Complete() override
