@@ -15,6 +15,6 @@ public:
 
 public:
 
-    uint64_t m_readDependencies  = 0;
-    uint64_t m_writeDependencies = 0;
+    uint64_t m_readDependencies     = 0;
+    uint64_t m_writeDependencies    = 0;
 };

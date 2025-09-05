@@ -184,44 +184,57 @@ AssetID AssetManager::GetAssetID(AssetKey const& key) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AssetID AssetManager::LoadSynchronousInternal(Name assetName, AssetKey key)
+AssetID AssetManager::LoadSynchronousInternal(AssetKey key)
 {
 	AssetID assetID = GetAssetID(key);
 
-    if (IsFuture(assetID))
+    if (IsValid(assetID))
     {
-		// May complete the load here if the asset is already being async loaded
-        TryCancelOrCompleteFuture(assetID);
-    }
+        // If the asset ID exists already, this asset is either loaded or future
+        if (IsFuture(assetID))
+        {
+            TryCancelOrCompleteFuture(assetID);
+        }
 
-    if (IsLoaded(assetID))
-    {
-        return assetID;
-    }
+		// At this point, either the asset was just loaded from the future, or it was already loaded
+        // If not loaded, we must have just cancelled the future, so fallthrough and load
+        if (IsLoaded(assetID))
+        {
+            ChangeRefCount(assetID, 1);
+            return assetID;
+        }
+	}
 
-    auto it = m_loaderFuncs.find(key.m_typeIndex);
-    if (it == m_loaderFuncs.end())
+    // At this point we know the asset is not loaded or future
+
+	AssetLoaderFunction loader = GetLoaderFunction(key.m_typeIndex);
+    if (!loader)
     {
-        LogError(assetName, AssetManagerError::LoaderNotFound);
+        LogError(key.m_name, AssetManagerError::LoaderNotFound);
 		return INVALID_ASSET_ID;
     }
 
-    AssetLoaderFunction loader = it->second;
-
     // ~Actually load the asset~
-    IAsset* asset = loader(assetName);
+    IAsset* asset = loader(key.m_name);
 
     if (!asset)
     {
-        LogError(assetName, AssetManagerError::FailedToLoad);
+        LogError(key.m_name, AssetManagerError::FailedToLoad);
         return INVALID_ASSET_ID;
     }
 
-    assetID = RequestAssetID();
-    m_assetIDs[key] = assetID;
+	LogLoaded(key);
+
+    if (!IsValid(assetID))
+    {
+        // The only cases where assetID could already be valid at this point is if it was a future that we cancelled in order to load now,
+        // or if we are reloading the asset
+        assetID = RequestAssetID();
+        m_assetIDs[key] = assetID;
+    }
 
     asset->m_assetID = assetID;
-    asset->m_name = assetName;
+    asset->m_name = key.m_name;
 
     LoadedAsset& loaded = m_loadedAssets[assetID];
     loaded.m_asset = asset;
@@ -233,84 +246,92 @@ AssetID AssetManager::LoadSynchronousInternal(Name assetName, AssetKey key)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AssetID AssetManager::AsyncLoadInternal(Name assetName, AssetKey key)
+AssetID AssetManager::AsyncLoadInternal(AssetKey key, int priority /*= 0*/)
 {
+    AssetID assetID = GetAssetID(key);
+    if (IsValid(assetID))
+    {
+        // Either loaded or future
+        return assetID;
+    }
+
     if (!g_jobSystem)
     {
-        return LoadSynchronousInternal(assetName, key);
+        return LoadSynchronousInternal(key);
     }
 
-    AssetID assetID = GetAssetID(key);
-
-    auto it = m_loaderFuncs.find(key.m_typeIndex);
-    if (it != m_loaderFuncs.end())
+	AssetLoaderFunction loader = GetLoaderFunction(key.m_typeIndex);
+    if (!loader)
     {
-        AssetID assetID = RequestAssetID();
-        m_assetIDs[key] = assetID;
-
-        AsyncLoadAssetJob* loadJob = new AsyncLoadAssetJob();
-        loadJob->m_assetName = assetName;
-        loadJob->m_assetID = assetID;
-        loadJob->m_loaderFunc = it->second;
-        loadJob->SetPriority(0);
-
-        JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
-
-        FutureAsset futureAsset(key);
-        futureAsset.m_jobID = jobID;
-        futureAsset.m_assetID = assetID;
-        m_futureAssets.emplace(futureAsset.m_assetID, futureAsset);
-
-        return futureAsset.m_assetID;
+		LogError(key.m_name, AssetManagerError::LoaderNotFound);
+		return INVALID_ASSET_ID;
     }
 
-    LogError(assetName, AssetManagerError::LoaderNotFound);
-    return INVALID_ASSET_ID;
+    assetID = RequestAssetID();
+    m_assetIDs[key] = assetID;
+
+    AsyncLoadAssetJob* loadJob = new AsyncLoadAssetJob();
+    loadJob->m_assetKey = key;
+    loadJob->m_assetID = assetID;
+    loadJob->m_loaderFunc = loader;
+    loadJob->SetPriority(priority);
+
+    JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
+
+    FutureAsset futureAsset;
+    futureAsset.m_jobID = jobID;
+    futureAsset.m_assetID = assetID;
+    futureAsset.m_key = key;
+    m_futureAssets.emplace(assetID, futureAsset);
+
+    return futureAsset.m_assetID;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AssetID AssetManager::AsyncReloadInternal(AssetID assetID, AssetKey key)
+AssetID AssetManager::AsyncReloadInternal(AssetID assetID, AssetKey key, int priority /*= 0*/)
 {
-    if (m_futureAssets.find(assetID) != m_futureAssets.end())
+    ASSERT_OR_DIE(IsValid(assetID) && (GetAssetID(key) == assetID), "AssetManager::AsyncReloadInternal - trying to reload an invalid assetID.");
+
+    if (IsFuture(assetID))
     {
-        return false;
+        // Already in the process of being async loaded, no need to restart it? or should we try to cancel and restart?
+        return assetID;
     }
 
-    auto loadedAssetIt = m_loadedAssets.find(assetID);
-    if (loadedAssetIt == m_loadedAssets.end())
+    // At this point we know the asset is already loaded
+	ASSERT_OR_DIE(IsLoaded(assetID), "AssetManager::AsyncReloadInternal - AssetID was valid, but asset was not future or loaded.");
+
+	UnloadAsset(assetID, true);
+
+    if (!g_jobSystem)
     {
-        return false;
+		return LoadSynchronousInternal(key);
     }
 
-    Name loadedAssetName = key.m_name;
-
-    // Delete loaded asset
-    delete loadedAssetIt->second.m_asset;
-    m_loadedAssets.erase(loadedAssetIt);
-
-    // Async load without creating a new asset ID
-    auto it = m_loaderFuncs.find(key.m_typeIndex);
-    if (it != m_loaderFuncs.end())
+	AssetLoaderFunction loader = GetLoaderFunction(key.m_typeIndex);
+    if (!loader)
     {
-        AsyncLoadAssetJob* loadJob = new AsyncLoadAssetJob();
-        loadJob->m_assetName = loadedAssetName;
-        loadJob->m_assetID = assetID;
-        loadJob->m_loaderFunc = it->second;
-        loadJob->SetPriority(0);
-
-        JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
-
-        FutureAsset futureAsset(key);
-        futureAsset.m_jobID = jobID;
-        futureAsset.m_assetID = assetID;
-        m_futureAssets.emplace(futureAsset.m_assetID, futureAsset);
-
-        return true;
+        LogError(key.m_name, AssetManagerError::LoaderNotFound);
+		return INVALID_ASSET_ID;
     }
 
-    return false;
+    AsyncLoadAssetJob* loadJob = new AsyncLoadAssetJob();
+    loadJob->m_assetKey = key;
+    loadJob->m_assetID = assetID;
+    loadJob->m_loaderFunc = loader;
+    loadJob->SetPriority(priority);
+
+    JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
+
+    FutureAsset futureAsset;
+    futureAsset.m_jobID = jobID;
+    futureAsset.m_assetID = assetID;
+	futureAsset.m_key = key;
+    m_futureAssets.emplace(assetID, futureAsset);
+
+    return true;
 }
 
 
@@ -335,31 +356,34 @@ void AssetManager::ChangeRefCount(AssetID assetID, int32_t delta)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AssetManager::UnloadAsset(AssetID assetID)
+bool AssetManager::UnloadAsset(AssetID assetID, bool isReloading /*= false*/)
 {
-    if (!IsLoaded(assetID))
-    {
-        return false;
-    }
+	ASSERT_OR_DIE(!IsFuture(assetID), "AssetManager::UnloadAsset - This should be called after removing the asset from future.");
+	ASSERT_OR_DIE(!IsLoaded(assetID), "AssetManager::UnloadAsset - This should only be called if the asset is already loaded.");
 
-	ASSERT_OR_DIE(m_futureAssets.find(assetID) == m_futureAssets.end(), "AssetManager::UnloadAsset - This should be called after removing the asset from future.");
+	AssetKey key = m_loadedAssets.at(assetID).m_key;
 
     // Delete loaded asset
     delete m_loadedAssets.at(assetID).m_asset;
     m_loadedAssets.erase(assetID);
 
-    // Delete asset ID from table
-    for (auto idIt = m_assetIDs.begin(); idIt != m_assetIDs.end(); ++idIt)
+	LogUnloaded(key);
+
+    // Delete asset ID from table, unless doing a reload in which case we want to keep the asset ID and ref count
+    if (!isReloading)
     {
-        if (idIt->second == assetID)
+        for (auto idIt = m_assetIDs.begin(); idIt != m_assetIDs.end(); ++idIt)
         {
-            m_assetIDs.erase(idIt);
-            break;
+            if (idIt->second == assetID)
+            {
+                m_assetIDs.erase(idIt);
+                break;
+            }
         }
-	}
-    
-	// Delete ref count entry
-	m_refCounts.erase(assetID);
+
+        // Delete ref count entry
+        m_refCounts.erase(assetID);
+    }
 
     return true;
 }
@@ -386,8 +410,59 @@ bool AssetManager::TryCancelOrCompleteFuture(AssetID assetID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AssetLoaderFunction AssetManager::GetLoaderFunction(std::type_index typeIndex) const
+{
+	auto loaderFuncIt = m_loaderFuncs.find(typeIndex);
+    if (loaderFuncIt != m_loaderFuncs.end())
+    {
+        return loaderFuncIt->second;
+	}
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AssetManager::LogLoaded(AssetKey key) const
+{
+    if (!g_devConsole)
+    {
+        return;
+    }
+
+    #if defined(DEBUG_ASSET_MANAGER)
+        auto debugNameIt = m_loaderDebugNames.find(key.m_typeIndex);
+        const char* debugNameStr = (debugNameIt != m_loaderDebugNames.end()) ? debugNameIt->second.ToCStr() : "Unknown Asset Type";
+        g_devConsole->LogF(Rgba8::LightOceanBlue, "Loaded %s '%s' successfully.", key.m_name.ToCStr(), debugNameStr);
+	#endif // defined(DEBUG_ASSET_MANAGER)
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AssetManager::LogUnloaded(AssetKey key) const
+{
+    if (!g_devConsole)
+    {
+        return;
+    }
+
+	#if defined(DEBUG_ASSET_MANAGER)
+        auto debugNameIt = m_loaderDebugNames.find(key.m_typeIndex);
+        const char* debugNameStr = (debugNameIt != m_loaderDebugNames.end()) ? debugNameIt->second.ToCStr() : "Unknown Asset Type";
+        g_devConsole->LogF(Rgba8::DarkOceanBlue, "Unloaded %s '%s' successfully.", key.m_name.ToCStr(), debugNameStr);
+	#endif // defined(DEBUG_ASSET_MANAGER)
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AssetManager::LogError(Name assetName, AssetManagerError errorType) const
 {
+    if (!g_devConsole)
+    {
+        return;
+    }
     switch (errorType)
     {
         case AssetManagerError::FailedToLoad:

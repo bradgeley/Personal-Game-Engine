@@ -39,7 +39,7 @@ struct LoadedAsset
 //----------------------------------------------------------------------------------------------------------------------
 struct FutureAsset
 {
-    FutureAsset(AssetKey const& key) : m_key(key) {}
+    FutureAsset() = default;
 
 	AssetKey m_key;                         // Stores type information
 	AssetID m_assetID = INVALID_ASSET_ID;   // Asset ID for the asset that will be loaded in the future
@@ -96,10 +96,10 @@ public:
     AssetID LoadSynchronous(Name assetName);
 
     template<typename T>
-    AssetID AsyncLoad(Name assetName);
+    AssetID AsyncLoad(Name assetName, int priority = 0);
 
     template<typename T>
-    bool AsyncReload(AssetID assetID);
+    bool AsyncReload(AssetID assetID, int priority = 0);
 
     template<typename T>
     static AssetKey GetAssetKey(Name assetName);
@@ -118,14 +118,18 @@ public:
 
 protected:
 
-    AssetID LoadSynchronousInternal(Name assetName, AssetKey key);
-    AssetID AsyncLoadInternal(Name assetName, AssetKey key);
-    AssetID AsyncReloadInternal(AssetID assetID, AssetKey key);
+    AssetID LoadSynchronousInternal(AssetKey key);
+    AssetID AsyncLoadInternal(AssetKey key, int priority = 0);
+    AssetID AsyncReloadInternal(AssetID assetID, AssetKey key, int priority = 0);
 
     void ChangeRefCount(AssetID assetID, int32_t delta);
-    bool UnloadAsset(AssetID assetID);
+    bool UnloadAsset(AssetID assetID, bool isReloading = false);
     bool TryCancelOrCompleteFuture(AssetID assetID);
 
+	AssetLoaderFunction GetLoaderFunction(std::type_index typeIndex) const;
+
+    void LogLoaded(AssetKey key) const;
+    void LogUnloaded(AssetKey key) const;
     void LogError(Name assetName, AssetManagerError errorType) const;
 
 protected:
@@ -151,29 +155,29 @@ protected:
 template<typename T>
 inline AssetID AssetManager::LoadSynchronous(Name assetName)
 {
-	return LoadSynchronousInternal(assetName, GetAssetKey<T>(assetName));
+	return LoadSynchronousInternal(GetAssetKey<T>(assetName));
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 template<typename T>
-inline AssetID AssetManager::AsyncLoad(Name assetName)
+inline AssetID AssetManager::AsyncLoad(Name assetName, int priority /*= 0*/)
 {
-    return AsyncLoadInternal(assetName, GetAssetKey<T>(assetName));
+    return AsyncLoadInternal(GetAssetKey<T>(assetName), priority);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 template<typename T>
-inline bool AssetManager::AsyncReload(AssetID assetID)
+inline bool AssetManager::AsyncReload(AssetID assetID, int priority /*= 0*/)
 {
 	AssetKey key;
 	bool found = FindAssetKey(assetID, key);
     if (found)
     {
-		AsyncReloadInternal(assetID, key);
+		AsyncReloadInternal(assetID, key, priority);
     }
     return false;
 }

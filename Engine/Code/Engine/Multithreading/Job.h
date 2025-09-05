@@ -33,28 +33,25 @@ public:
     
     virtual ~Job() = default;
     
-    JobDependencies const& GetJobDependencies() const           { return m_jobDependencies; }
-    bool NeedsComplete() const                                  { return m_needsComplete; }
-    bool DeleteAfterCompletion() const                          { return m_deleteAfterCompletion; }
-    int GetJobPriority() const                                  { return m_priority; }
+    int GetJobPriority() const;
+    bool GetNeedsComplete() const;
+    bool GetDeleteAfterCompletion() const;
+    JobDependencies const& GetJobDependencies() const;
 
-	void SetNeedsComplete(bool needsComplete)                   { m_needsComplete = needsComplete; }
-	void SetDeleteAfterCompletion(bool deleteAfterCompletion)   { m_deleteAfterCompletion = deleteAfterCompletion; }
-	void SetPriority(int priority)                              { m_priority = priority; }
+    void SetNeedsComplete(bool needsComplete);
+    void SetDeleteAfterCompletion(bool deleteAfterCompletion);
+    void SetPriority(int priority);
 
     bool IsValid() const;
     bool HasDependencies() const;
     uint32_t GetUniqueID() const;
 
-    bool operator<(Job const& rhs) const
-    {
-        return m_priority < rhs.m_priority;
-	}
+    bool operator<(Job const& rhs) const;
 
 protected:
 
-    virtual void Execute()                              {}
-    virtual void Complete()                             {}
+    virtual void Execute() = 0;
+    virtual void Complete();
 
 protected:
 

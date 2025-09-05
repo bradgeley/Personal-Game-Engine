@@ -202,7 +202,7 @@ bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp /*= true*/)
             job->Complete();
             --m_numIncompleteJobs;
 
-            if (job->DeleteAfterCompletion())
+            if (job->GetDeleteAfterCompletion())
             {
                 delete job;
             }
@@ -378,13 +378,13 @@ void JobSystem::WorkerLoop_ExecuteJob(JobWorker* worker, Job* job)
         RemoveJobFromInProgressQueue(job);
     #endif
 
-    if (job->NeedsComplete())
+    if (job->GetNeedsComplete())
     {
         AddJobToCompletedQueue(job);
     }
     else
     {
-        if (job->DeleteAfterCompletion())
+        if (job->GetDeleteAfterCompletion())
         {
             delete job;
         }

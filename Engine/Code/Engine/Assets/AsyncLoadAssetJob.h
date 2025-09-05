@@ -2,8 +2,12 @@
 #pragma once
 #include "AssetLoaderFunction.h"
 #include "AssetID.h"
-#include "Engine/Core/Name.h"
+#include "AssetKey.h"
 #include "Engine/Multithreading/Job.h"
+
+
+
+class IAsset;
 
 
 
@@ -17,7 +21,7 @@ public:
 
 public:
 
-    Name m_assetName                    = Name::s_invalidName;
+    AssetKey m_assetKey;
     AssetID m_assetID                   = INVALID_ASSET_ID;
     IAsset* m_loadedAsset               = nullptr;
     AssetLoaderFunction m_loaderFunc    = nullptr;
