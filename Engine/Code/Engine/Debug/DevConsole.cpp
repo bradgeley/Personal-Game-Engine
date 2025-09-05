@@ -1,8 +1,8 @@
 // Bradley Christensen - 2022-2025
 #include "Engine/Debug/DevConsole.h"
 #include "DebugDrawUtils.h"
-#include "Engine/Core/EngineCommon.h"
-#include "Engine/Core/Image.h"
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/Image/Image.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
@@ -52,13 +52,14 @@ public:
     void Execute() override
     {
         m_texture = g_renderer->MakeTexture();
-        if (m_image.LoadFromFile(m_path.data()))
+        m_image = g_assetManager->LoadSynchronous<Image>(m_path);
+        if (g_assetManager->IsValid(m_image))
         {
-            g_devConsole->LogSuccess(StringUtils::StringF("Loaded image: %s", m_path.data()));
+            g_devConsole->LogSuccess(StringUtils::StringF("Loaded image: %s", m_path.ToCStr()));
         }
         else
         {
-            g_devConsole->LogError(StringUtils::StringF("Failed to load image: %s", m_path.data()));
+            g_devConsole->LogError(StringUtils::StringF("Failed to load image: %s", m_path.ToCStr()));
         }
     }
     
@@ -66,14 +67,15 @@ public:
     {
         // Can only create textures in sync with the main thread
         Texture* texture = g_renderer->GetTexture(m_texture);
-        texture->CreateFromImage(m_image);
+		Image* image = g_assetManager->Get<Image>(m_image);
+        texture->CreateFromImage(*image);
         m_console->AddBackgroundImage(m_texture);
     }
 
-    Image m_image;
-    TextureID m_texture = RendererUtils::InvalidID;
-    DevConsole* m_console;
-    std::string m_path;
+    AssetID m_image         = INVALID_ASSET_ID;
+    TextureID m_texture     = RendererUtils::InvalidID;
+    DevConsole* m_console   = nullptr;
+    Name m_path             = Name::s_invalidName;
 };
 
 

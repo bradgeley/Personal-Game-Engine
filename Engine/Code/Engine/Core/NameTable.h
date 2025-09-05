@@ -2,7 +2,8 @@
 #pragma once
 #include "StringUtils.h"
 #include <unordered_map>
-#include <vector>
+#include <queue>
+#include <mutex>
 
 
 
@@ -28,8 +29,9 @@ public:
 
 protected:
 
+	std::mutex m_lookupTableMutex;
 	std::unordered_map<std::string, size_t, StringUtils::CaseInsensitiveStringHash, StringUtils::CaseInsensitiveStringEquals> m_lookupTable;
-	std::vector<std::string> m_nameTable;
+	std::deque<std::string> m_nameTable; // Deque to avoid reallocations that would invalidate pointers to strings in the table, for thread safety
 
 	friend struct Name;
 };

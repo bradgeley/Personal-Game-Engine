@@ -4,6 +4,7 @@
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Audio/AudioUtils.h"
 #include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/Image/Image.h"
 #include "Engine/Assets/Sprites/GridSpriteSheet.h"
 #include "Engine/Time/Clock.h"
 #include "Engine/Core/Engine.h"
@@ -137,6 +138,7 @@ void Game::ConfigureEngine(Engine* engine)
 	AssetManagerConfig assetManagerConfig;
 	g_assetManager = new AssetManager(assetManagerConfig);
 	g_assetManager->RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load, "GridSpriteSheet");
+	g_assetManager->RegisterLoader<Image>(Image::Load, "Image");
 	engine->RegisterSubsystem(g_assetManager);
 
     EventSystemConfig eventSysConfig;

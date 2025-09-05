@@ -7,8 +7,8 @@
 #include "D3D11Internal.h"
 #include "D3D11Renderer.h"
 #include "D3D11Swapchain.h"
+#include "Engine/Assets/Image/Image.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Core/Image.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Math/MathUtils.h"
 
@@ -40,7 +40,7 @@ bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap)
     auto context = D3D11Renderer::Get()->GetDeviceContext();
 
     m_sourceImagePath = image.GetSourceImagePath();
-    m_dimensions = image.GetDimensions();
+    m_dimensions = image.GetPixels().GetDimensions();
 
     D3D11_TEXTURE2D_DESC desc = {};
     desc.Width = m_dimensions.x;
@@ -56,8 +56,8 @@ bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap)
     desc.SampleDesc.Quality = 0;
 
     D3D11_SUBRESOURCE_DATA initialData = {};
-    initialData.pSysMem = image.GetRawData();
-    initialData.SysMemPitch = sizeof(Rgba8) * image.GetDimensions().x;
+    initialData.pSysMem = image.GetPixels().GetRawData();
+    initialData.SysMemPitch = sizeof(Rgba8) * image.GetPixels().GetDimensions().x;
     initialData.SysMemSlicePitch = 0;
 
     HRESULT result = device->CreateTexture2D(&desc, &initialData, &m_textureHandle);
@@ -103,7 +103,7 @@ bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap)
     }
 
     #ifdef _DEBUG
-        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.ToCStr());
         m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
@@ -152,7 +152,7 @@ bool D3D11Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
     #ifdef _DEBUG
         static int count = 0;
         m_sourceImagePath = StringUtils::StringF("Backbuffer Texture %i", ++count);
-        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.ToCStr());
         m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
@@ -198,7 +198,7 @@ bool D3D11Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
     #ifdef _DEBUG
         static int count = 0;
         m_sourceImagePath = StringUtils::StringF("Depth Buffer %i", ++count);
-        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.c_str());
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.ToCStr());
         m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
@@ -243,7 +243,7 @@ ID3D11DepthStencilView* D3D11Texture::CreateOrGetDepthStencilView()
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth stencil view");
 
         #ifdef _DEBUG
-            std::string name = StringUtils::StringF("Texture (Depth Stencil View). Source Image: %s", m_sourceImagePath.c_str());
+            std::string name = StringUtils::StringF("Texture (Depth Stencil View). Source Image: %s", m_sourceImagePath.ToCStr());
             m_depthStencilView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }
@@ -263,7 +263,7 @@ ID3D11RenderTargetView* D3D11Texture::CreateOrGetRenderTargetView()
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create rtv");
 
         #ifdef _DEBUG
-            std::string name = StringUtils::StringF("Texture (Render Target View). Source Image: %s", m_sourceImagePath.c_str());
+            std::string name = StringUtils::StringF("Texture (Render Target View). Source Image: %s", m_sourceImagePath.ToCStr());
             m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }
@@ -283,7 +283,7 @@ ID3D11ShaderResourceView* D3D11Texture::CreateOrGetShaderResourceView()
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create srv");
 
         #ifdef _DEBUG
-            std::string name = StringUtils::StringF("Texture (Shader Resource View). Source Image: %s", m_sourceImagePath.c_str());
+            std::string name = StringUtils::StringF("Texture (Shader Resource View). Source Image: %s", m_sourceImagePath.ToCStr());
             m_shaderResourceView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }

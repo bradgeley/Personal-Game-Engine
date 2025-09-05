@@ -1,7 +1,8 @@
 // Bradley Christensen - 2022-2025
 #include "GridSpriteSheet.h"
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/Image/Image.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Core/Image.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsole.h"
@@ -72,9 +73,9 @@ IAsset* GridSpriteSheet::Load(Name assetName)
 	Name name = XmlUtils::ParseXmlAttribute(*root, "name", Name::s_invalidName);
 	std::string path = XmlUtils::ParseXmlAttribute(*root, "path", "");
 
-	Image image;
-	bool imageLoaded = image.LoadFromFile(path.c_str());
-	if (!imageLoaded)
+	AssetID imageID = g_assetManager->LoadSynchronous<Image>(path);
+	Image* image = g_assetManager->Get<Image>(imageID);
+	if (!image)
 	{
 		g_devConsole->LogErrorF("GridSpriteSheet::Load - Failed to load image from file: %s", path.c_str());
 		return nullptr;
@@ -82,7 +83,7 @@ IAsset* GridSpriteSheet::Load(Name assetName)
 
 	// Todo: move to AssetManager
 	TextureID textureID = g_renderer->MakeTexture();
-	g_renderer->GetTexture(textureID)->CreateFromImage(image);
+	g_renderer->GetTexture(textureID)->CreateFromImage(*image);
 
 	IntVec2 layout = XmlUtils::ParseXmlAttribute(*root, "layout", IntVec2(1, 1));
 	IntVec2 edgePadding = XmlUtils::ParseXmlAttribute(*root, "edgePadding", IntVec2(0, 0));

@@ -248,6 +248,7 @@
     <ClCompile Include="Assets\AssetKey.cpp" />
     <ClCompile Include="Assets\AssetManager.cpp" />
     <ClCompile Include="Assets\AsyncLoadAssetJob.cpp" />
+    <ClCompile Include="Assets\Image\Image.cpp" />
     <ClCompile Include="Assets\Sprites\GridSpriteSheet.cpp" />
     <ClCompile Include="Assets\Sprites\SpriteAnimation.cpp" />
     <ClCompile Include="Audio\AudioSystem.cpp" />
@@ -258,7 +259,6 @@
     <ClCompile Include="Core\EngineSubsystem.cpp" />
     <ClCompile Include="Core\ErrorUtils.cpp" />
     <ClCompile Include="Core\FileUtils.cpp" />
-    <ClCompile Include="Core\Image.cpp" />
     <ClCompile Include="Core\Name.cpp" />
     <ClCompile Include="Core\NameTable.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
@@ -346,6 +346,7 @@
     <ClInclude Include="Assets\AssetLoaderFunction.h" />
     <ClInclude Include="Assets\AssetManager.h" />
     <ClInclude Include="Assets\AsyncLoadAssetJob.h" />
+    <ClInclude Include="Assets\Image\Image.h" />
     <ClInclude Include="Assets\Sprites\GridSpriteSheet.h" />
     <ClInclude Include="Assets\Sprites\SpriteAnimation.h" />
     <ClInclude Include="Audio\AudioSystem.h" />
@@ -357,7 +358,6 @@
     <ClInclude Include="Core\EngineSubsystem.h" />
     <ClInclude Include="Core\ErrorUtils.h" />
     <ClInclude Include="Core\FileUtils.h" />
-    <ClInclude Include="Core\Image.h" />
     <ClInclude Include="Core\Name.h" />
     <ClInclude Include="Core\NameTable.h" />
     <ClInclude Include="Core\StringUtils.h" />

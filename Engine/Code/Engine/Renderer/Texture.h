@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Math/IntVec2.h"
+#include "Engine/Core/Name.h"
 #include <string>
 
 
@@ -34,6 +35,6 @@ public:
 
 protected:
 
-    std::string m_sourceImagePath;
+    Name m_sourceImagePath;
     IntVec2 m_dimensions = IntVec2::ZeroVector;
 };

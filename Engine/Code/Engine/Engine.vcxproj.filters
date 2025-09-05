@@ -28,9 +28,6 @@
     <ClCompile Include="Core\FileUtils.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Image.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Core\StringUtils.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -274,6 +271,9 @@
     <ClCompile Include="Assets\AsyncLoadAssetJob.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
+    <ClCompile Include="Assets\Image\Image.cpp">
+      <Filter>Assets\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -301,9 +301,6 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\ErrorUtils.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Image.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\StringUtils.h">
@@ -597,6 +594,9 @@
     <ClInclude Include="Assets\AssetID.h">
       <Filter>Assets</Filter>
     </ClInclude>
+    <ClInclude Include="Assets\Image\Image.h">
+      <Filter>Assets\Image</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">
@@ -667,6 +667,9 @@
     </Filter>
     <Filter Include="Assets\Sprites">
       <UniqueIdentifier>{0cdd3b3c-deec-4508-a9d0-bdf31b23cbfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Image">
+      <UniqueIdentifier>{2fcd9a87-5172-404b-82d5-b8ae43dc3fc6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
