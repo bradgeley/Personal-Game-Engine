@@ -4,18 +4,12 @@
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Multithreading/Job.h"
-#include "Engine/Multithreading/Jobsystem.h"
 #include "Asset.h"
 #include "AssetKey.h"
 #include "AssetLoaderFunction.h"
 #include <typeindex>
 #include <mutex>
 #include <unordered_map>
-
-#if defined(DEBUG_ASSET_MANAGER)
-#include "Engine/Core/StringUtils.h"
-#include "Engine/Debug/DevConsole.h"
-#endif // DEBUG_ASSET_MANAGER
 
 
 
@@ -34,8 +28,10 @@ extern class AssetManager* g_assetManager;
 //----------------------------------------------------------------------------------------------------------------------
 struct LoadedAsset
 {
+	LoadedAsset() = default;
+
+    AssetKey m_key;                 // Stores type information
     IAsset* m_asset = nullptr;      // Pointer to the loaded asset data (e.g., GridSpriteSheet, Sound, etc.)
-	int m_refCount = 0;             // Reference count for managing asset lifetime
 };
 
 
@@ -43,26 +39,11 @@ struct LoadedAsset
 //----------------------------------------------------------------------------------------------------------------------
 struct FutureAsset
 {
+    FutureAsset(AssetKey const& key) : m_key(key) {}
+
+	AssetKey m_key;                         // Stores type information
 	AssetID m_assetID = INVALID_ASSET_ID;   // Asset ID for the asset that will be loaded in the future
 	JobID m_jobID = JobID::Invalid;         // Job ID for the loading job associated with this asset
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-class AsyncLoadAssetJob : public Job
-{
-public:
-
-    void Execute() override;
-    void Complete() override;
-
-public:
-
-    Name m_assetName;
-    AssetID m_assetID;
-    IAsset* m_loadedAsset = nullptr;
-    AssetLoaderFunction m_loaderFunc;
 };
 
 
@@ -93,22 +74,22 @@ struct AssetManagerConfig
 //
 class AssetManager : public EngineSubsystem
 {
-	friend class AsyncLoadAssetJob;
+    friend class AsyncLoadAssetJob;
 
 public:
-    
+
     explicit AssetManager(AssetManagerConfig const& config);
-    
+
     //void Startup() override;
     void BeginFrame() override;
     //void Update(float deltaSeconds) override;
     //void EndFrame() override;
     //void Shutdown() override;
 
-	template<typename T>
+    template<typename T>
     bool RegisterLoader(AssetLoaderFunction loader, Name debugName);
 
-	template<typename T>
+    template<typename T>
     T* Get(AssetID assetID) const;
 
     template<typename T>
@@ -123,14 +104,27 @@ public:
     template<typename T>
     static AssetKey GetAssetKey(Name assetName);
 
-    void Release(AssetID assetID);
-	bool IsValid(AssetID assetID) const;
+    bool FindAssetKey(AssetID assetID, AssetKey& out_key) const;
 
-	AssetID RequestAssetID();
+    void Release(AssetID assetID);
+    bool IsValid(AssetID assetID) const;
+    bool IsLoaded(AssetID assetID) const;
+    bool IsFuture(AssetID assetID) const;
+    bool TryCancelAsyncLoad(AssetID assetID);
+	uint32_t GetRefCount(AssetID assetID) const;
+
+    AssetID RequestAssetID();
+	AssetID GetAssetID(AssetKey const& key) const;
 
 protected:
 
-	bool UnloadAsset(AssetID assetID);  
+    AssetID LoadSynchronousInternal(Name assetName, AssetKey key);
+    AssetID AsyncLoadInternal(Name assetName, AssetKey key);
+    AssetID AsyncReloadInternal(AssetID assetID, AssetKey key);
+
+    void ChangeRefCount(AssetID assetID, int32_t delta);
+    bool UnloadAsset(AssetID assetID);
+    bool TryCancelOrCompleteFuture(AssetID assetID);
 
     void LogError(Name assetName, AssetManagerError errorType) const;
 
@@ -138,63 +132,26 @@ protected:
 
     AssetManagerConfig const m_config;
 
-	std::mutex m_assetIdMutex;
-	AssetID m_nextAssetID = 0;
+    std::mutex m_assetIdMutex;
+    AssetID m_nextAssetID = 0;
 
     std::unordered_map<std::type_index, AssetLoaderFunction> m_loaderFuncs;
-	std::unordered_map<std::type_index, Name> m_loaderDebugNames;
+    std::unordered_map<std::type_index, Name> m_loaderDebugNames;
 
-    std::unordered_map<AssetKey, AssetID, AssetKeyHash> m_assetIDs;
+    std::unordered_map<AssetKey, AssetID, AssetKeyHash> m_assetIDs; // Prevents trying to load the same asset multiple times (1 asset per name+type, e.g. Soldier.xml as a GridSpriteSheet)
     std::unordered_map<AssetID, LoadedAsset> m_loadedAssets;
     std::unordered_map<AssetID, FutureAsset> m_futureAssets;
+    std::unordered_map<AssetID, uint32_t>    m_refCounts;           // ref count for both loaded and future assets
 };
 
 
-
 //----------------------------------------------------------------------------------------------------------------------
+// Guaranteed to return the loaded asset if it exists.
+//
 template<typename T>
 inline AssetID AssetManager::LoadSynchronous(Name assetName)
 {
-    #if defined(DEBUG_ASSET_MANAGER)
-        g_devConsole->AddLine(StringUtils::StringF("AssetManager::LoadSynchronous: %s", assetName.ToCStr()));
-	#endif // DEBUG_ASSET_MANAGER
-
-	AssetKey assetKey = GetAssetKey<T>(assetName);
-	auto assetID_it = m_assetIDs.find(assetKey);
-    if (assetID_it != m_assetIDs.end())
-    {
-        #if defined(DEBUG_ASSET_MANAGER)
-            g_devConsole->AddLine(StringUtils::StringF("- Asset already loaded: %s", assetName.ToCStr()));
-        #endif // DEBUG_ASSET_MANAGER
-        return assetID_it->second;
-    }
-
-	auto it = m_loaderFuncs.find(std::type_index(typeid(T)));
-    if (it != m_loaderFuncs.end())
-    {
-        AssetLoaderFunction loader = it->second;
-        IAsset* asset = loader(assetName);
-        if (!asset)
-        {
-            LogError(assetName, AssetManagerError::FailedToLoad);
-            return INVALID_ASSET_ID;
-        }
-
-		AssetID assetID = RequestAssetID();
-        m_assetIDs[assetKey] = assetID;
-
-        #if defined(DEBUG_ASSET_MANAGER)
-            g_devConsole->LogSuccessF("- Asset loaded: %s id(%i)", assetName.ToCStr(), static_cast<int>(assetID));
-        #endif // DEBUG_ASSET_MANAGER
-
-        LoadedAsset& loaded = m_loadedAssets[assetID];
-        loaded.m_asset = asset;
-        loaded.m_refCount = 1;
-        return assetID;
-	}
-
-    LogError(assetName, AssetManagerError::LoaderNotFound);
-    return INVALID_ASSET_ID;
+	return LoadSynchronousInternal(assetName, GetAssetKey<T>(assetName));
 }
 
 
@@ -203,54 +160,7 @@ inline AssetID AssetManager::LoadSynchronous(Name assetName)
 template<typename T>
 inline AssetID AssetManager::AsyncLoad(Name assetName)
 {
-    if (!g_jobSystem)
-    {
-		return LoadSynchronous<T>(assetName);
-    }
-
-    #if defined(DEBUG_ASSET_MANAGER)
-        g_devConsole->LogF(Rgba8::LightOceanBlue, "Async Load requested: %s", assetName.ToCStr());
-    #endif // DEBUG_ASSET_MANAGER
-
-    AssetKey assetKey = GetAssetKey<T>(assetName);
-    auto assetID_it = m_assetIDs.find(assetKey);
-    if (assetID_it != m_assetIDs.end())
-    {
-        #if defined(DEBUG_ASSET_MANAGER)
-            g_devConsole->LogF(Rgba8::LightOceanBlue, "- Asset already loaded: %s", assetName.ToCStr());
-        #endif // DEBUG_ASSET_MANAGER
-        return assetID_it->second;
-    }
-
-    std::type_index typeIndex = std::type_index(typeid(T));
-    auto it = m_loaderFuncs.find(typeIndex);
-    if (it != m_loaderFuncs.end())
-    {
-        AssetID assetID = RequestAssetID();
-        m_assetIDs[assetKey] = assetID;
-
-        AsyncLoadAssetJob* loadJob = new AsyncLoadAssetJob();
-		loadJob->m_assetName = assetName;
-		loadJob->m_assetID = assetID;
-        loadJob->m_loaderFunc = it->second;
-        loadJob->SetPriority(0);
-
-        JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
-
-        #if defined(DEBUG_ASSET_MANAGER)
-            g_devConsole->LogF(Rgba8::LightOceanBlue, "- Async load %s job posted: name(%s) assetID(%i) jobID(%i)", m_loaderDebugNames[typeIndex].ToCStr(), assetName.ToCStr(), static_cast<int>(assetID), static_cast<int>(jobID.m_uniqueID));
-        #endif // DEBUG_ASSET_MANAGER
-
-        FutureAsset futureAsset;
-        futureAsset.m_jobID = jobID;
-        futureAsset.m_assetID = assetID;
-		m_futureAssets.emplace(futureAsset.m_assetID, futureAsset);
-
-        return futureAsset.m_assetID;
-    }
-
-    LogError(assetName, AssetManagerError::LoaderNotFound);
-    return INVALID_ASSET_ID;
+    return AsyncLoadInternal(assetName, GetAssetKey<T>(assetName));
 }
 
 
@@ -259,62 +169,12 @@ inline AssetID AssetManager::AsyncLoad(Name assetName)
 template<typename T>
 inline bool AssetManager::AsyncReload(AssetID assetID)
 {
-    #if defined(DEBUG_ASSET_MANAGER)
-        g_devConsole->LogF(Rgba8::LightOceanBlue, "Async Reload requested: assetID(%i)", static_cast<int>(assetID));
-    #endif // DEBUG_ASSET_MANAGER
-
-    if (m_futureAssets.find(assetID) != m_futureAssets.end())
+	AssetKey key;
+	bool found = FindAssetKey(assetID, key);
+    if (found)
     {
-        #if defined(DEBUG_ASSET_MANAGER)
-            g_devConsole->LogF(Rgba8::LightOceanBlue, "- Asset is already being async loaded: assetID(%i)", static_cast<int>(assetID));
-        #endif // DEBUG_ASSET_MANAGER
-        return false;
-	}
-
-	auto loadedAssetIt = m_loadedAssets.find(assetID);
-    if (loadedAssetIt == m_loadedAssets.end())
-    {
-        #if defined(DEBUG_ASSET_MANAGER)
-        g_devConsole->LogF(Rgba8::LightOceanBlue, "- Asset is not loaded, cannot async reload: assetID(%i)", static_cast<int>(assetID));
-        #endif // DEBUG_ASSET_MANAGER
-        return false;
+		AsyncReloadInternal(assetID, key);
     }
-
-	Name loadedAssetName = loadedAssetIt->second.m_asset->m_name;
-    
-    #if defined(DEBUG_ASSET_MANAGER)
-        g_devConsole->LogF(Rgba8::DarkOceanBlue, "Unloading asset: assedID(%i)", static_cast<int>(assetID));
-    #endif // DEBUG_ASSET_MANAGER
-
-    // Delete loaded asset
-    delete loadedAssetIt->second.m_asset;
-    m_loadedAssets.erase(loadedAssetIt);
-
-    // Async load without creating a new asset ID
-    std::type_index typeIndex = std::type_index(typeid(T));
-    auto it = m_loaderFuncs.find(typeIndex);
-    if (it != m_loaderFuncs.end())
-    {
-        AsyncLoadAssetJob* loadJob = new AsyncLoadAssetJob();
-        loadJob->m_assetName = loadedAssetName;
-        loadJob->m_assetID = assetID;
-        loadJob->m_loaderFunc = it->second;
-        loadJob->SetPriority(0);
-
-        JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
-
-        #if defined(DEBUG_ASSET_MANAGER)
-            g_devConsole->LogF(Rgba8::LightOceanBlue, "- Async load %s job posted: name(%s) assetID(%i) jobID(%i)", m_loaderDebugNames[typeIndex].ToCStr(), loadedAssetName.ToCStr(), static_cast<int>(assetID), static_cast<int>(jobID.m_uniqueID));
-        #endif // DEBUG_ASSET_MANAGER
-
-        FutureAsset futureAsset;
-        futureAsset.m_jobID = jobID;
-        futureAsset.m_assetID = assetID;
-        m_futureAssets.emplace(futureAsset.m_assetID, futureAsset);
-
-        return true;
-    }
-
     return false;
 }
 

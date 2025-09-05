@@ -1,12 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Core/Name.h"
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-typedef uint32_t AssetID;
-constexpr AssetID INVALID_ASSET_ID = static_cast<AssetID>(UINT32_MAX);
+#include "AssetID.h"
 
 
 
@@ -23,5 +18,6 @@ protected:
 
 protected:
 
-	Name m_name;
+	Name		m_name;
+	AssetID		m_assetID = INVALID_ASSET_ID;
 };

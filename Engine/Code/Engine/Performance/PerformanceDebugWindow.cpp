@@ -386,10 +386,23 @@ bool PerformanceDebugWindow::HandlePerfWindowKeyUp(NamedProperties& args)
 {
     std::unique_lock lock(m_mutex);
     unsigned char character = (unsigned char) args.Get("Key", -1);
-    if (character == (unsigned char) KeyCode::Escape)
+    if (character == 'F')
+    {
+        if (m_freezeLog)
+        {
+            g_devConsole->LogSuccess("Unfroze performance debug window.");
+        }
+        else
+        {
+            g_devConsole->LogSuccess("Froze performance debug window.");
+        }
+        m_freezeLog = !m_freezeLog;
+    }
+    else if (character == (unsigned char) KeyCode::Escape)
     {
         CloseWindow();
     }
+
     return false;
 }
 

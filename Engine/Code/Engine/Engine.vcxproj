@@ -247,6 +247,7 @@
     <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="Assets\AssetKey.cpp" />
     <ClCompile Include="Assets\AssetManager.cpp" />
+    <ClCompile Include="Assets\AsyncLoadAssetJob.cpp" />
     <ClCompile Include="Assets\Sprites\GridSpriteSheet.cpp" />
     <ClCompile Include="Assets\Sprites\SpriteAnimation.cpp" />
     <ClCompile Include="Audio\AudioSystem.cpp" />
@@ -340,9 +341,11 @@
     <ClInclude Include="..\ThirdParty\stb\stb_image.h" />
     <ClInclude Include="..\ThirdParty\tinyxml2\tinyxml2.h" />
     <ClInclude Include="Assets\Asset.h" />
+    <ClInclude Include="Assets\AssetID.h" />
     <ClInclude Include="Assets\AssetKey.h" />
     <ClInclude Include="Assets\AssetLoaderFunction.h" />
     <ClInclude Include="Assets\AssetManager.h" />
+    <ClInclude Include="Assets\AsyncLoadAssetJob.h" />
     <ClInclude Include="Assets\Sprites\GridSpriteSheet.h" />
     <ClInclude Include="Assets\Sprites\SpriteAnimation.h" />
     <ClInclude Include="Audio\AudioSystem.h" />

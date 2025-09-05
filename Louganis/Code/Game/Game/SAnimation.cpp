@@ -32,14 +32,9 @@ void SAnimation::Run(SystemContext const& context)
 		CTransform& transform = *g_ecs->GetComponent<CTransform>(it);
 
 		// Initialize sprite sheet and animation instance if not already done
-        if (anim.m_gridSpriteSheet == INVALID_ASSET_ID)
+        if (anim.m_gridSpriteSheet == INVALID_ASSET_ID && anim.m_spriteSheetName != Name::s_invalidName)
         {
-            anim.m_gridSpriteSheet = g_assetManager->AsyncLoad<GridSpriteSheet>("Data/SpriteSheets/Soldier.xml"); // todo: move asset path to entity def
-        }
-
-        if (g_input->WasKeyJustPressed(KeyCode::Space))
-        {
-            g_assetManager->AsyncReload<GridSpriteSheet>(anim.m_gridSpriteSheet);
+            anim.m_gridSpriteSheet = g_assetManager->AsyncLoad<GridSpriteSheet>(anim.m_spriteSheetName);
         }
 
         GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);

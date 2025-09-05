@@ -12,13 +12,10 @@ struct AssetKey
 	AssetKey() = default;
 	AssetKey(Name name, std::type_index type);
 
-    Name m_name; // Name or path of the asset
-    std::type_index m_typeIndex;
+    Name m_name                     = Name::s_invalidName;                  // Name or path of the asset
+    std::type_index m_typeIndex     = std::type_index(typeid(void));
 
-    bool operator==(const AssetKey& other) const
-    {
-        return m_name == other.m_name && m_typeIndex == other.m_typeIndex;
-    }
+    bool operator==(const AssetKey& other) const;
 };
 
 

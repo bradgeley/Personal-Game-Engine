@@ -190,7 +190,7 @@ void Game::ConfigureECS()
 {
     AdminSystemConfig ecsConfig;
     ecsConfig.m_maxDeltaSeconds = 0.1f;
-    ecsConfig.m_enableMultithreading = false;
+    ecsConfig.m_enableMultithreading = true;
     ecsConfig.m_autoMultithreadingEntityThreshold = 1;
     g_ecs = new AdminSystem(ecsConfig);
 

@@ -271,6 +271,9 @@
     <ClCompile Include="Assets\AssetKey.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
+    <ClCompile Include="Assets\AsyncLoadAssetJob.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -587,6 +590,12 @@
     </ClInclude>
     <ClInclude Include="DataStructures\ThreadSafePrioQueue.h">
       <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\AsyncLoadAssetJob.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\AssetID.h">
+      <Filter>Assets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
