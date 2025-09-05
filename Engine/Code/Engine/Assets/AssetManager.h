@@ -81,11 +81,8 @@ public:
     explicit AssetManager(AssetManagerConfig const& config);
     virtual ~AssetManager() override;
 
-    //void Startup() override;
-    void BeginFrame() override;
-    //void Update(float deltaSeconds) override;
-    //void EndFrame() override;
-    void Shutdown() override;
+    virtual void BeginFrame() override;
+    virtual void Shutdown() override;
 
     template<typename T>
     bool RegisterLoader(AssetLoaderFunction loader, Name debugName);
@@ -114,10 +111,10 @@ public:
     bool TryCancelAsyncLoad(AssetID assetID);
 	uint32_t GetRefCount(AssetID assetID) const;
 
-    AssetID RequestAssetID();
-	AssetID GetAssetID(AssetKey const& key) const;
-
 protected:
+
+    AssetID RequestAssetID();
+    AssetID GetAssetID(AssetKey const& key) const;
 
     AssetID LoadSynchronousInternal(AssetKey key);
     AssetID AsyncLoadInternal(AssetKey key, int priority = 0);

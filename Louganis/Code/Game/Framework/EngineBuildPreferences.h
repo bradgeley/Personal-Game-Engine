@@ -6,7 +6,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Engine Build Preferences
 //
-// #define's used to customize functionality in the engine
 
 
 
@@ -22,8 +21,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Debugging
 //
-//#define DEBUG_MEMORY_LEAKS
 #if defined(_DEBUG)
+	#define DEBUG_MEMORY_LEAKS
 	#define NAME_USE_DEBUG_STRING
 #endif
 #define DEBUG_ASSET_MANAGER
@@ -44,3 +43,10 @@
 //
 #define AUDIO_SYSTEM_ENABLED
 #define AUDIO_SYSTEM_USE_MINI_AUDIO
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Warning suppression
+//
+#pragma warning(disable: 4530) // Disables exception warning

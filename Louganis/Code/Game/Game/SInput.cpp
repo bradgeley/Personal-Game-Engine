@@ -6,7 +6,6 @@
 #include "CTransform.h"
 #include "CCamera.h"
 #include "CPlayerController.h"
-#include "SCWorld.h"
 
 
 
@@ -14,7 +13,7 @@
 void SInput::Startup()
 {
     AddWriteDependencies<CCamera, CMovement>();
-    AddReadDependencies<InputSystem, CPlayerController, CTransform, SCWorld>();
+    AddReadDependencies<InputSystem, CPlayerController, CTransform>();
 }
 
 
@@ -22,7 +21,6 @@ void SInput::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SInput::Run(SystemContext const& context)
 {
-	SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>();
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
     auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
