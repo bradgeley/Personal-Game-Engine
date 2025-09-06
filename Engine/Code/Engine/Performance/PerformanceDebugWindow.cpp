@@ -3,7 +3,7 @@
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
-#include "Engine/Debug/DevConsole.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/DataStructures/BitArray.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/ECS/AdminSystem.h"
@@ -361,11 +361,11 @@ bool PerformanceDebugWindow::HandleMainWindowKeyUp(NamedProperties& args)
     {
         if (m_freezeLog)
         {
-            g_devConsole->LogSuccess("Unfroze performance debug window.");
+			DevConsoleUtils::LogSuccess("Unfroze performance debug window.");
         }
         else
         {
-            g_devConsole->LogSuccess("Froze performance debug window.");
+            DevConsoleUtils::LogSuccess("Froze performance debug window.");
         }
         m_freezeLog = !m_freezeLog;
     }
@@ -390,11 +390,11 @@ bool PerformanceDebugWindow::HandlePerfWindowKeyUp(NamedProperties& args)
     {
         if (m_freezeLog)
         {
-            g_devConsole->LogSuccess("Unfroze performance debug window.");
+            DevConsoleUtils::LogSuccess("Unfroze performance debug window.");
         }
         else
         {
-            g_devConsole->LogSuccess("Froze performance debug window.");
+            DevConsoleUtils::LogSuccess("Froze performance debug window.");
         }
         m_freezeLog = !m_freezeLog;
     }

@@ -37,6 +37,6 @@ public:
 
 protected:
 
-	Name m_sourceName       = Name::s_invalidName;
+	Name m_sourceName       = Name::Invalid;
     IntVec2 m_dimensions    = IntVec2::ZeroVector;
 };

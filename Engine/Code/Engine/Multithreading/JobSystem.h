@@ -57,6 +57,7 @@ public:
     std::vector<JobID> PostJobs(std::vector<Job*>& jobs);
 	bool TryCancelJob(JobID jobID);
 	bool TryCancelLoadingJob(JobID jobID);
+	int TryCancelLoadingJobs(std::vector<JobID> const& jobIDs);
 
     // Completing Jobs: returns true when all jobs in question are complete or don't exist
     bool CompleteJob(JobID jobID, bool blockAndHelp = true);

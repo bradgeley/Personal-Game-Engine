@@ -6,4 +6,4 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-typedef std::function<class IAsset* (Name)> AssetLoaderFunction;
+typedef std::function<class Asset* (Name)> AssetLoaderFunction;

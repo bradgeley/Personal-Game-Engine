@@ -10,7 +10,6 @@
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Events/EventSystem.h"
-#include "Engine/Debug/DevConsole.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/Renderer.h"
 

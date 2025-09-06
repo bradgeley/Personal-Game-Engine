@@ -7,7 +7,7 @@
 #include "D3D11Internal.h"
 #include "D3D11Renderer.h"
 #include "D3D11Swapchain.h"
-#include "Engine/Assets/Image/Image.h"
+#include "Engine/Assets/Image.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Math/MathUtils.h"

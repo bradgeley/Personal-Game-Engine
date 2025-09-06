@@ -2,12 +2,14 @@
 #include "Engine/Debug/DevConsole.h"
 #include "DebugDrawUtils.h"
 #include "Engine/Assets/AssetManager.h"
-#include "Engine/Assets/Image/Image.h"
+#include "Engine/Assets/TextureAsset.h"
+#include "Engine/Assets/Image.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Events/EventSystem.h"
+#include "Engine/Events/EventUtils.h"
 #include "Engine/Input/InputUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/Camera.h"
@@ -51,33 +53,10 @@ DevConsole::~DevConsole()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class LoadDevConsoleBackgroundImageJob : public Job
+DevConsoleConfig const& DevConsole::GetConfig() const
 {
-public:
-    
-    LoadDevConsoleBackgroundImageJob(DevConsole* console, std::string const& path) : m_console(console), m_path(path) {}
-    
-    void Execute() override
-    {
-        m_texture = g_renderer->MakeTexture();
-        m_image = g_assetManager->LoadSynchronous<Image>(m_path);
-    }
-    
-    bool Complete() override
-    {
-        // Can only create textures in sync with the main thread
-        Texture* texture = g_renderer->GetTexture(m_texture);
-		Image* image = g_assetManager->Get<Image>(m_image);
-        texture->CreateFromImage(*image);
-        m_console->AddBackgroundImage(m_texture);
-        return true;
-    }
-
-    AssetID m_image         = INVALID_ASSET_ID;
-    TextureID m_texture     = RendererUtils::InvalidID;
-    DevConsole* m_console   = nullptr;
-    Name m_path             = Name::s_invalidName;
-};
+    return m_config;
+}
 
 
 
@@ -106,9 +85,7 @@ void DevConsole::Startup()
     for (auto& backgroundImage : m_config.m_backgroundImages)
     {
         std::string path = "Data/Images/" + backgroundImage;
-        LoadDevConsoleBackgroundImageJob* job = new LoadDevConsoleBackgroundImageJob(this, path);
-        job->SetPriority(-99999); // Extremely low (negative) prio
-        m_backgroundImageLoadingJobs.emplace_back(g_jobSystem->PostLoadingJob(job));
+        m_backgroundImages.emplace_back(g_assetManager->AsyncLoad<TextureAsset>(Name(path), -999));
     }
 
     // Randomize the starting background image
@@ -179,6 +156,11 @@ void DevConsole::Render() const
 void DevConsole::Shutdown()
 {
     SaveCommandHistory();
+
+    for (auto& backgroundImage : m_backgroundImages)
+    {
+        g_assetManager->Release(backgroundImage);
+	}
     
     g_window->m_charInputEvent.UnsubscribeMethod(this, &DevConsole::HandleChar);
     g_window->m_keyDownEvent.UnsubscribeMethod(this, &DevConsole::HandleKeyDown);
@@ -631,7 +613,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
 
         if (keyValue.size() == 1 || keyValue.size() == 2)
         {
-            Name argName = Name::s_invalidName;
+            Name argName = Name::Invalid;
             std::string argValue;
             
             if (keyValue.size() == 1)
@@ -715,16 +697,6 @@ bool DevConsole::WindowSizeChanged(NamedProperties&)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::UpdateBackgroundImage(float deltaSeconds)
 {
-    // Try to complete bgi loading jobs
-    if (!m_backgroundImageLoadingJobs.empty())
-    {
-        // max 1 completion per frame
-        if (g_jobSystem->CompleteJob(m_backgroundImageLoadingJobs[m_backgroundImageLoadingJobs.size() - 1], false))
-        {
-            m_backgroundImageLoadingJobs.erase(m_backgroundImageLoadingJobs.end() - 1);
-        }
-    }
-
     if (m_backgroundImages.size() <= 1)
     {
         return;
@@ -782,8 +754,14 @@ void DevConsole::DrawBackground() const
         return;
     }
 
-    TextureID currentBkg = m_backgroundImages[m_currentBackgroundImageIndex];
-    Texture* texture = g_renderer->GetTexture(currentBkg);
+	TextureAsset const* textureAsset = g_assetManager->Get<TextureAsset>(m_backgroundImages[m_currentBackgroundImageIndex]);
+    if (textureAsset == nullptr)
+    {
+        return;
+	}
+
+	TextureID textureID = textureAsset->GetTextureID();
+    Texture* texture = g_renderer->GetTexture(textureID);
 
     float alpha = GetBackgroundImageAlpha();
     
@@ -809,7 +787,7 @@ void DevConsole::DrawBackground() const
     }
     
     VertexUtils::AddVertsForAABB2(vbo, imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
-    g_renderer->BindTexture(currentBkg);
+    g_renderer->BindTexture(textureID);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(vbo);
 }

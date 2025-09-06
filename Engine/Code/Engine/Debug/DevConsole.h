@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Assets/AssetID.h"
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/Input/KeyButtonState.h"
 #include "Engine/Renderer/RendererUtils.h"
@@ -62,6 +63,8 @@ public:
 
 	DevConsole(DevConsoleConfig const& config);
 	virtual ~DevConsole() override;
+
+	DevConsoleConfig const& GetConfig() const;
 
 	void Startup() override;
 	void BeginFrame() override;
@@ -165,8 +168,7 @@ private:
 	EDevConsoleBGIState m_transitionState = EDevConsoleBGIState::Sustaining;
 	int m_currentBackgroundImageIndex = 0;
 	float m_backgroundAnimationSeconds = 0.f;
-	std::vector<TextureID> m_backgroundImages;
-	std::vector<JobID> m_backgroundImageLoadingJobs;
+	std::vector<AssetID> m_backgroundImages;
 
 	// Vertex Buffers
 	VertexBufferID m_vbo = RendererUtils::InvalidID;

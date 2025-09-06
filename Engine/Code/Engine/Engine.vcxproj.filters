@@ -259,26 +259,32 @@
     <ClCompile Include="Assets\AssetManager.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\Sprites\GridSpriteSheet.cpp">
-      <Filter>Assets\Sprites</Filter>
-    </ClCompile>
-    <ClCompile Include="Assets\Sprites\SpriteAnimation.cpp">
-      <Filter>Assets\Sprites</Filter>
-    </ClCompile>
     <ClCompile Include="Assets\AssetKey.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
     <ClCompile Include="Assets\AsyncLoadAssetJob.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\Image\Image.cpp">
-      <Filter>Assets\Image</Filter>
-    </ClCompile>
     <ClCompile Include="Assets\Asset.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\Texture\TextureAsset.cpp">
+    <ClCompile Include="Assets\AssetID.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\Image.cpp">
+      <Filter>Assets\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\TextureAsset.cpp">
       <Filter>Assets\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\GridSpriteSheet.cpp">
+      <Filter>Assets\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\SpriteAnimation.cpp">
+      <Filter>Assets\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug\DevConsoleUtils.cpp">
+      <Filter>Debug</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -576,12 +582,6 @@
     <ClInclude Include="Assets\AssetManager.h">
       <Filter>Assets</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\Sprites\GridSpriteSheet.h">
-      <Filter>Assets\Sprites</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets\Sprites\SpriteAnimation.h">
-      <Filter>Assets\Sprites</Filter>
-    </ClInclude>
     <ClInclude Include="Assets\Asset.h">
       <Filter>Assets</Filter>
     </ClInclude>
@@ -600,11 +600,26 @@
     <ClInclude Include="Assets\AssetID.h">
       <Filter>Assets</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\Image\Image.h">
+    <ClInclude Include="Assets\Image.h">
       <Filter>Assets\Image</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\Texture\TextureAsset.h">
+    <ClInclude Include="Assets\TextureAsset.h">
       <Filter>Assets\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\SpriteAnimation.h">
+      <Filter>Assets\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\GridSpriteSheet.h">
+      <Filter>Assets\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug\DevConsoleUtils.h">
+      <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\EventCallbackFunction.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug\DevConsoleArg.h">
+      <Filter>Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -674,14 +689,14 @@
     <Filter Include="Assets">
       <UniqueIdentifier>{8286429f-d90a-473d-8f0e-bc63d4085e8d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\Sprites">
-      <UniqueIdentifier>{0cdd3b3c-deec-4508-a9d0-bdf31b23cbfc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets\Image">
       <UniqueIdentifier>{2fcd9a87-5172-404b-82d5-b8ae43dc3fc6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets\Texture">
-      <UniqueIdentifier>{c7dcd3b9-d8a3-4ecd-9dec-a3bab673e5d1}</UniqueIdentifier>
+      <UniqueIdentifier>{14f16be1-833e-4513-9c09-9cc56830f4fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Sprites">
+      <UniqueIdentifier>{0212446e-53e6-4e7b-a25f-9843d1ae2eb5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

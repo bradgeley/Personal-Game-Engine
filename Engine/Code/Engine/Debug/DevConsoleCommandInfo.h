@@ -1,20 +1,9 @@
 // Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Core/Name.h"
+#include "Engine/Debug/DevConsoleArg.h"
 #include <string>
 #include <vector>
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-enum class DevConsoleArgType
-{
-	None,
-	Int,
-	Float,
-	Bool,
-	String,
-};
 
 
 

@@ -7,7 +7,7 @@
 
 
 
-class IAsset;
+class Asset;
 
 
 
@@ -22,7 +22,7 @@ public:
 public:
 
     AssetKey m_assetKey;
-    AssetID m_assetID                   = INVALID_ASSET_ID;
-    IAsset* m_loadedAsset               = nullptr;
+    AssetID m_assetID                   = AssetID::Invalid;
+    Asset* m_loadedAsset                = nullptr;
     AssetLoaderFunction m_loaderFunc    = nullptr;
 };

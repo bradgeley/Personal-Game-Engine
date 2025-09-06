@@ -27,7 +27,7 @@ void EntityDef::LoadFromXML()
     XmlElement* entityDefElem = root->FirstChildElement("EntityDef");
     while (entityDefElem)
     {
-        Name name = XmlUtils::ParseXmlAttribute(*entityDefElem, "name", Name::s_invalidName);
+        Name name = XmlUtils::ParseXmlAttribute(*entityDefElem, "name", Name::Invalid);
         if (GetEntityDefID(name) != -1)
         {
             g_devConsole->LogErrorF("Duplicate Entity Def: %s", name.ToCStr());

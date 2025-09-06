@@ -48,6 +48,7 @@ public:
 
     void RegisterSubsystem(EngineSubsystem* system);
 
+	bool GetIsActive() const;
     Clock* GetEngineClock() const;
     
 private:

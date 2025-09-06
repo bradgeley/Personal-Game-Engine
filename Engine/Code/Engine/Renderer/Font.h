@@ -92,8 +92,8 @@ public:
 
 public:
 
-	Name m_textureName = Name::s_invalidName;   
-	AssetID m_textureAsset = INVALID_ASSET_ID;
+	Name m_textureName = Name::Invalid;   
+	AssetID m_textureAsset = AssetID::Invalid;
     TextureID m_texture = RendererUtils::InvalidID;
     ShaderID m_shader = RendererUtils::InvalidID;
     GlyphData m_glyphData[MAX_GLYPHS];

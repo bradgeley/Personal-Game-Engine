@@ -1,15 +1,8 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Core/Name.h"
+#include "EventCallbackFunction.h"
 #include <string>
-
-
-
-struct NamedProperties;
-
-
-
-typedef bool (*EventCallbackFunction)(NamedProperties& args);
 
 
 

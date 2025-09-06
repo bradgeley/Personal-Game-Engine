@@ -1,7 +1,7 @@
 // Bradley Christensen - 2022-2025
 #include "ScopedTimer.h"
 #include "Engine/Time/Time.h"
-#include "Engine/Debug/DevConsole.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "PerformanceDebugWindow.h"
 #include "Engine/Core/StringUtils.h"
 
@@ -21,11 +21,8 @@ ScopedTimer::~ScopedTimer()
 	double endTimeSeconds = GetCurrentTimeSeconds();
 	double deltaSeconds = endTimeSeconds - m_startTimeSeconds;
 	deltaSeconds *= 1000.0;
-	if (g_devConsole)
-	{
-		std::string line = StringUtils::StringF("Scoped Timer: %s: %f%s", m_name.ToCStr(), deltaSeconds, "ms");
-		g_devConsole->AddLine(line);
-	}
+
+	DevConsoleUtils::Log(Rgba8::Orchid, "Scoped Timer: %s: %f%s", m_name.ToCStr(), deltaSeconds, "ms");
 }
 
 

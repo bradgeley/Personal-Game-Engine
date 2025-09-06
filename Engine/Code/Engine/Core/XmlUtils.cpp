@@ -1,7 +1,7 @@
 // Bradley Christensen - 2022-2025
 #include "XmlUtils.h"
 #include "StringUtils.h"
-#include "Engine/Debug/DevConsole.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 
 
 
@@ -85,7 +85,7 @@ uint8_t XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attri
         int intVal = attrib->IntValue();
         if (intVal < 0)
         {
-            g_devConsole->LogError("uint8_t ParseXmlAttribute Error: value is negative, but type is unsigned.");
+			DevConsoleUtils::LogError("uint8_t ParseXmlAttribute Error: value is negative, but type is unsigned.");
         }
         return static_cast<uint8_t>(intVal);
     }
@@ -103,7 +103,7 @@ Vec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribut
         auto strings = StringUtils::SplitStringOnDelimiter(value, ',');
         if (strings.size() != 2)
         {
-            g_devConsole->LogErrorF("Vec2 ParseXmlAttribute Error: %s - value: %s - (e.g. -40,30.5)", attributeName, attrib->Value());
+			DevConsoleUtils::LogError("Vec2 ParseXmlAttribute Error: %s - value: %s - (e.g. -40,30.5)", attributeName, attrib->Value());
             return defaultValue;
         }
         Vec2 result;
@@ -125,7 +125,7 @@ IntVec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attri
         auto strings = StringUtils::SplitStringOnDelimiter(value, ',');
         if (strings.size() != 2)
         {
-            g_devConsole->LogErrorF("IntVec2 ParseXmlAttribute Error: %s - value: %s - (e.g. -40,30)", attributeName, attrib->Value());
+			DevConsoleUtils::LogError("IntVec2 ParseXmlAttribute Error: %s - value: %s - (e.g. -40,30)", attributeName, attrib->Value());
             return defaultValue;
         }
         IntVec2 result;
@@ -147,7 +147,7 @@ Rgba8 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribu
         Strings strings = StringUtils::SplitStringOnDelimiter(value, ',');
         if (strings.size() < 3 || strings.size() > 4)
         {
-            g_devConsole->LogErrorF("Rgba8 ParseXmlAttribute Error: %s - value: %s - (e.g. 40,30,255 or 255,255,255,255)", attributeName, attrib->Value());
+			DevConsoleUtils::LogError("Rgba8 ParseXmlAttribute Error: %s - value: %s - (e.g. 40,30,255 or 255,255,255,255)", attributeName, attrib->Value());
             return defaultValue;
         }
 

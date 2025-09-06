@@ -1,6 +1,6 @@
 // Bradley Christensen - 2022-2025
 #include "SSystemDebug.h"
-#include "Engine/Debug/DevConsole.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Events/EventSystem.h"
@@ -18,10 +18,9 @@ SSystemDebug::SSystemDebug(Name name, Rgba8 const& debugTint) : System(name, deb
 //----------------------------------------------------------------------------------------------------------------------
 void SSystemDebug::Startup()
 {
-	ASSERT_OR_DIE(g_devConsole, "Dev Console doesn't exist.")
 	ASSERT_OR_DIE(g_eventSystem, "Event System doesn't exist.")
 
-	g_devConsole->AddDevConsoleCommandInfo("ToggleSystem", "name", DevConsoleArgType::String);
+	DevConsoleUtils::AddCommandInfo("ToggleSystem", "name", DevConsoleArgType::String);
 
 	g_eventSystem->SubscribeMethod("ToggleSystem", this, &SSystemDebug::ToggleSystem);
 	g_eventSystem->SubscribeMethod("PrintAllSystems", this, &SSystemDebug::PrintAllSystems);
@@ -32,10 +31,9 @@ void SSystemDebug::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SSystemDebug::Shutdown()
 {
-	ASSERT_OR_DIE(g_devConsole, "Dev Console doesn't exist.")
 	ASSERT_OR_DIE(g_eventSystem, "Event System doesn't exist.")
 
-	g_devConsole->RemoveDevConsoleCommandInfo("ToggleSystem");
+	DevConsoleUtils::RemoveCommandInfo("ToggleSystem");
 	g_eventSystem->UnsubscribeMethod("ToggleSystem", this, &SSystemDebug::ToggleSystem);
 }
 
@@ -53,7 +51,7 @@ bool SSystemDebug::ToggleSystem(NamedProperties& args)
 	}
 	else
 	{
-		g_devConsole->AddLine(StringUtils::StringF("System (%s) does not exist", name.c_str()));
+		DevConsoleUtils::LogError("System (%s) does not exist", name.c_str());
 	}
 	return false;
 }
@@ -68,12 +66,13 @@ bool SSystemDebug::PrintAllSystems(NamedProperties&)
 	for (int subgraphID = 0; subgraphID < (int) allSystemSubgraphs.size(); ++subgraphID)
 	{
 		SystemSubgraph const& subgraph = allSystemSubgraphs[subgraphID];
-		g_devConsole->AddLine(StringUtils::StringF("Subgraph %i", subgraphID), Rgba8::LightOceanBlue);
+
+		DevConsoleUtils::Log(Rgba8::LightOceanBlue, "Subgraph %i", subgraphID);
+
 		for (System* system : subgraph.m_systems)
 		{
 			std::string activeString = system->IsActive() ? "active" : "inactive";
-			std::string line = StringUtils::StringF("- %s: (%s)", system->GetName().ToCStr(), activeString.c_str());
-			g_devConsole->AddLine(line);
+			DevConsoleUtils::Log(Rgba8::LightOceanBlue, "- %s: (%s)", system->GetName().ToCStr(), activeString.c_str());
 		}
 	}
 	return false;

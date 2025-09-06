@@ -8,6 +8,11 @@
 //----------------------------------------------------------------------------------------------------------------------
 void AsyncLoadAssetJob::Execute()
 {
+    if (!g_assetManager->IsEnabled())
+    {
+        return;
+    }
+
 	ASSERT_OR_DIE(m_loaderFunc != nullptr, "AsyncLoadAssetJob::Execute - Loader function is null");
     ASSERT_OR_DIE(g_assetManager != nullptr, "AsyncLoadAssetJob::Execute - AssetManager is null");
     if (m_loaderFunc)
@@ -29,11 +34,30 @@ void AsyncLoadAssetJob::Execute()
 //----------------------------------------------------------------------------------------------------------------------
 bool AsyncLoadAssetJob::Complete()
 {
+    if (!g_assetManager->IsEnabled())
+    {
+        if (m_loadedAsset)
+        {
+            m_loadedAsset->ReleaseResources();
+            delete m_loadedAsset;
+        }
+
+        g_assetManager->m_futureAssets.erase(m_assetID);
+        return true;
+    }
+
 	ASSERT_OR_DIE(g_assetManager != nullptr, "AsyncLoadAssetJob::Complete - AssetManager is null");
+	ASSERT_OR_DIE(m_loadedAsset != nullptr, "AsyncLoadAssetJob::Complete - Loaded asset is null");
     bool completed = m_loadedAsset->CompleteAsyncLoad();
     if (completed)
     {
-        g_assetManager->m_loadedAssets[m_assetID].m_asset = m_loadedAsset;
+		LoadedAsset& loadedAssetEntry = g_assetManager->m_loadedAssets[m_assetID];
+		loadedAssetEntry.m_key = m_assetKey;
+        loadedAssetEntry.m_asset = m_loadedAsset;
+		loadedAssetEntry.m_asset->m_name = m_assetKey.m_name;
+        loadedAssetEntry.m_asset->m_assetID = m_assetID;
+
+		g_assetManager->m_futureAssets.erase(m_assetID);
     }
     return completed;
 }

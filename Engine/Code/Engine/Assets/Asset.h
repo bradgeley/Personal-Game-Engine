@@ -6,7 +6,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class IAsset
+class Asset
 {
 	friend class AssetManager; 
 	friend class AsyncLoadAssetJob;
@@ -17,7 +17,7 @@ public:
 
 protected:
 
-	virtual ~IAsset() = default;
+	virtual ~Asset() = default;
 
 	virtual bool CompleteAsyncLoad()	= 0;
 	virtual bool CompleteSyncLoad()		= 0;
@@ -26,5 +26,5 @@ protected:
 protected:
 
 	Name		m_name;
-	AssetID		m_assetID = INVALID_ASSET_ID;
+	AssetID		m_assetID = AssetID::Invalid;
 };

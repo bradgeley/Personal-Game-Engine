@@ -1,0 +1,55 @@
+// Bradley Christensen - 2022-2025
+#pragma once
+#include "Engine/Assets/Asset.h"
+#include "Engine/Renderer/RendererUtils.h"
+#include "Engine/Math/IntVec2.h"
+#include "Engine/Math/AABB2.h"
+#include "Engine/Math/Grid.h"
+#include "SpriteAnimation.h"
+#include <vector>
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+class GridSpriteSheet : public Asset
+{
+public:
+
+	GridSpriteSheet() = default;
+	~GridSpriteSheet() = default;
+
+	// Initialization
+	bool CreateFromTexture(TextureID texture, IntVec2 const& layout, IntVec2 const& edgePadding = IntVec2::ZeroVector, IntVec2 const& innerPadding = IntVec2::ZeroVector);
+
+	// Loading
+	static Asset* Load(Name assetName);
+	virtual bool CompleteAsyncLoad() override;
+	virtual bool CompleteSyncLoad() override;
+	virtual void ReleaseResources() override;
+
+	// Getters
+	AABB2 GetSpriteUVs(int spriteIndex) const;
+	float GetSpriteAspect() const;
+	SpriteAnimationDef const* GetAnimationDef(Name name) const;
+
+	// Setters
+	void SetRendererState() const;
+
+protected:
+
+	void ComputeSpriteUVs();
+
+protected:
+
+	TextureID	m_texture		= RendererUtils::InvalidID;		// Cached after load
+	IntVec2		m_layout		= IntVec2::ZeroVector;			// Dimensions in sprites (not pixels)
+	IntVec2		m_spriteDims	= IntVec2::ZeroVector;			// Dimensions of each sprite in pixels
+	Grid<AABB2> m_spriteUVs;									// Precomputed UVs for each sprite
+	IntVec2		m_edgePadding	= IntVec2::ZeroVector;			// Around the whole sheet
+	IntVec2		m_innerPadding	= IntVec2::ZeroVector;			// Between sprites
+	std::vector<SpriteAnimationDef> m_animations;				// Animations that use this sprite sheet, loaded from the xml
+
+	// Used during the load process
+	Name		m_textureName	= Name::Invalid;
+	AssetID		m_textureAsset	= AssetID::Invalid;				// Loaded texture asset id
+};

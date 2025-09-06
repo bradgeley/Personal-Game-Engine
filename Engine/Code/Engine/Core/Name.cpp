@@ -7,7 +7,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Name Name::s_invalidName = Name((uint32_t) 0);
+Name Name::Invalid = Name((uint32_t) 0);
 uint32_t Name::s_invalidNameIndex = 0;
 std::string Name::s_invalidNameString = "Invalid Name";
 

@@ -4,9 +4,9 @@
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Audio/AudioUtils.h"
 #include "Engine/Assets/AssetManager.h"
-#include "Engine/Assets/Image/Image.h"
-#include "Engine/Assets/Sprites/GridSpriteSheet.h"
-#include "Engine/Assets/Texture/TextureAsset.h"
+#include "Engine/Assets/Image.h"
+#include "Engine/Assets/GridSpriteSheet.h"
+#include "Engine/Assets/TextureAsset.h"
 #include "Engine/Time/Clock.h"
 #include "Engine/Core/Engine.h"
 #include "Engine/Core/EngineCommon.h"
@@ -69,8 +69,6 @@ Game::~Game()
 //----------------------------------------------------------------------------------------------------------------------
 void Game::Startup()
 {
-    g_rng = new RandomNumberGenerator();
-
     ConfigureECS();
     g_ecs->Startup();
 
@@ -127,9 +125,6 @@ void Game::Shutdown()
 
     delete g_ecs;
     g_ecs = nullptr;
-
-    delete g_rng;
-    g_rng = nullptr;
 }
 
 
@@ -137,6 +132,11 @@ void Game::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 void Game::ConfigureEngine(Engine* engine)
 {
+    JobSystemConfig jobSysConfig;
+    jobSysConfig.m_threadCount = std::thread::hardware_concurrency();
+    g_jobSystem = new JobSystem(jobSysConfig);
+    engine->RegisterSubsystem(g_jobSystem);
+
 	AssetManagerConfig assetManagerConfig;
 	g_assetManager = new AssetManager(assetManagerConfig);
 	g_assetManager->RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load, "GridSpriteSheet");
@@ -177,11 +177,6 @@ void Game::ConfigureEngine(Engine* engine)
     InputSystemConfig inputConfig;
     g_input = new InputSystem(inputConfig);
     engine->RegisterSubsystem(g_input);
-
-    JobSystemConfig jobSysConfig;
-    jobSysConfig.m_threadCount = std::thread::hardware_concurrency();
-    g_jobSystem = new JobSystem(jobSysConfig);
-    engine->RegisterSubsystem(g_jobSystem);
 
     PerformanceDebugWindowConfig perfDebugWindowConfig;
     g_performanceDebugWindow = new PerformanceDebugWindow(perfDebugWindowConfig);

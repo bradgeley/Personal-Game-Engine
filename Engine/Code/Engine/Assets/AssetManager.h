@@ -14,7 +14,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-typedef std::function<IAsset* (Name)> AssetLoaderFunction;
+typedef std::function<Asset* (Name)> AssetLoaderFunction;
 
 
 
@@ -31,7 +31,7 @@ struct LoadedAsset
 	LoadedAsset() = default;
 
     AssetKey m_key;                 // Stores type information
-    IAsset* m_asset = nullptr;      // Pointer to the loaded asset data (e.g., GridSpriteSheet, Sound, etc.)
+    Asset* m_asset = nullptr;      // Pointer to the loaded asset data (e.g., GridSpriteSheet, Sound, etc.)
 };
 
 
@@ -42,7 +42,7 @@ struct FutureAsset
     FutureAsset() = default;
 
 	AssetKey m_key;                         // Stores type information
-	AssetID m_assetID = INVALID_ASSET_ID;   // Asset ID for the asset that will be loaded in the future
+	AssetID m_assetID = AssetID::Invalid;   // Asset ID for the asset that will be loaded in the future
 	JobID m_jobID = JobID::Invalid;         // Job ID for the loading job associated with this asset
 };
 
@@ -88,7 +88,7 @@ public:
     bool RegisterLoader(AssetLoaderFunction loader, Name debugName);
 
     template<typename T>
-    T* Get(AssetID assetID) const;
+    T* Get(AssetID assetID);
 
     template<typename T>
     AssetID LoadSynchronous(Name assetName);
@@ -122,6 +122,7 @@ protected:
 
     void ChangeRefCount(AssetID assetID, int32_t delta);
     bool UnloadAsset(AssetID assetID, bool isReloading = false);
+    bool TryCompleteFuture(AssetID assetID, bool blocking);
     bool TryCancelOrCompleteFuture(AssetID assetID);
 
 	AssetLoaderFunction GetLoaderFunction(std::type_index typeIndex) const;
@@ -153,6 +154,10 @@ protected:
 template<typename T>
 inline AssetID AssetManager::LoadSynchronous(Name assetName)
 {
+    if (!g_assetManager->IsEnabled())
+    {
+        return AssetID::Invalid;
+    }
 	return LoadSynchronousInternal(GetAssetKey<T>(assetName));
 }
 
@@ -162,7 +167,13 @@ inline AssetID AssetManager::LoadSynchronous(Name assetName)
 template<typename T>
 inline AssetID AssetManager::AsyncLoad(Name assetName, int priority /*= 0*/)
 {
-    return AsyncLoadInternal(GetAssetKey<T>(assetName), priority);
+    if (!g_assetManager->IsEnabled())
+    {
+        return AssetID::Invalid;
+    }
+    AssetID id = AsyncLoadInternal(GetAssetKey<T>(assetName), priority);
+	ChangeRefCount(id, 1);
+    return id;
 }
 
 
@@ -171,6 +182,10 @@ inline AssetID AssetManager::AsyncLoad(Name assetName, int priority /*= 0*/)
 template<typename T>
 inline bool AssetManager::AsyncReload(AssetID assetID, int priority /*= 0*/)
 {
+    if (!g_assetManager->IsEnabled())
+    {
+        return false;
+    }
 	AssetKey key;
 	bool found = FindAssetKey(assetID, key);
     if (found)
@@ -211,8 +226,13 @@ inline bool AssetManager::RegisterLoader(AssetLoaderFunction loader, Name debugN
 
 //----------------------------------------------------------------------------------------------------------------------
 template<typename T>
-inline T* AssetManager::Get(AssetID assetID) const
+inline T* AssetManager::Get(AssetID assetID)
 {
+    if (m_futureAssets.find(assetID) != m_futureAssets.end())
+    {
+        TryCompleteFuture(assetID, false);
+    }
+
 	auto it = m_loadedAssets.find(assetID);
     if (it == m_loadedAssets.end())
     {

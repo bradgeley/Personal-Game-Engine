@@ -38,7 +38,7 @@ protected:
 
 public:
 
-	static Name s_invalidName;
+	static Name Invalid;
 	static std::string s_invalidNameString;
 	static uint32_t s_invalidNameIndex;
 

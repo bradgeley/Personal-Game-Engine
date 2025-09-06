@@ -246,13 +246,14 @@
   <ItemGroup>
     <ClCompile Include="..\ThirdParty\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="Assets\Asset.cpp" />
+    <ClCompile Include="Assets\AssetID.cpp" />
     <ClCompile Include="Assets\AssetKey.cpp" />
     <ClCompile Include="Assets\AssetManager.cpp" />
     <ClCompile Include="Assets\AsyncLoadAssetJob.cpp" />
-    <ClCompile Include="Assets\Image\Image.cpp" />
-    <ClCompile Include="Assets\Sprites\GridSpriteSheet.cpp" />
-    <ClCompile Include="Assets\Sprites\SpriteAnimation.cpp" />
-    <ClCompile Include="Assets\Texture\TextureAsset.cpp" />
+    <ClCompile Include="Assets\GridSpriteSheet.cpp" />
+    <ClCompile Include="Assets\Image.cpp" />
+    <ClCompile Include="Assets\SpriteAnimation.cpp" />
+    <ClCompile Include="Assets\TextureAsset.cpp" />
     <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Audio\AudioUtils.cpp" />
     <ClCompile Include="Audio\MiniAudioSystem.cpp" />
@@ -273,6 +274,7 @@
     <ClCompile Include="Debug\DevConsoleInput.cpp" />
     <ClCompile Include="Debug\DevConsoleLine.cpp" />
     <ClCompile Include="Debug\DevConsoleLog.cpp" />
+    <ClCompile Include="Debug\DevConsoleUtils.cpp" />
     <ClCompile Include="Debug\SSystemDebug.cpp" />
     <ClCompile Include="ECS\AdminSystem.cpp" />
     <ClCompile Include="ECS\Component.cpp" />
@@ -348,10 +350,10 @@
     <ClInclude Include="Assets\AssetLoaderFunction.h" />
     <ClInclude Include="Assets\AssetManager.h" />
     <ClInclude Include="Assets\AsyncLoadAssetJob.h" />
-    <ClInclude Include="Assets\Image\Image.h" />
-    <ClInclude Include="Assets\Sprites\GridSpriteSheet.h" />
-    <ClInclude Include="Assets\Sprites\SpriteAnimation.h" />
-    <ClInclude Include="Assets\Texture\TextureAsset.h" />
+    <ClInclude Include="Assets\GridSpriteSheet.h" />
+    <ClInclude Include="Assets\Image.h" />
+    <ClInclude Include="Assets\SpriteAnimation.h" />
+    <ClInclude Include="Assets\TextureAsset.h" />
     <ClInclude Include="Audio\AudioSystem.h" />
     <ClInclude Include="Audio\AudioUtils.h" />
     <ClInclude Include="Audio\MiniAudioSystem.h" />
@@ -371,11 +373,13 @@
     <ClInclude Include="DataStructures\ThreadSafeQueue.h" />
     <ClInclude Include="Debug\DebugDrawUtils.h" />
     <ClInclude Include="Debug\DevConsole.h" />
+    <ClInclude Include="Debug\DevConsoleArg.h" />
     <ClInclude Include="Debug\DevConsoleCommandHistory.h" />
     <ClInclude Include="Debug\DevConsoleCommandInfo.h" />
     <ClInclude Include="Debug\DevConsoleInput.h" />
     <ClInclude Include="Debug\DevConsoleLine.h" />
     <ClInclude Include="Debug\DevConsoleLog.h" />
+    <ClInclude Include="Debug\DevConsoleUtils.h" />
     <ClInclude Include="Debug\SSystemDebug.h" />
     <ClInclude Include="ECS\AdminSystem.h" />
     <ClInclude Include="ECS\Component.h" />
@@ -387,6 +391,7 @@
     <ClInclude Include="ECS\SystemContext.h" />
     <ClInclude Include="ECS\SystemScheduler.h" />
     <ClInclude Include="ECS\SystemSubgraph.h" />
+    <ClInclude Include="Events\EventCallbackFunction.h" />
     <ClInclude Include="Events\EventDelegate.h" />
     <ClInclude Include="Events\EventSubscriber.h" />
     <ClInclude Include="Events\EventSystem.h" />

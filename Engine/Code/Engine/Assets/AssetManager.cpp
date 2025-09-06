@@ -3,9 +3,9 @@
 #include "AsyncLoadAssetJob.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Assets/Sprites/GridSpriteSheet.h"
-#include "Engine/Assets/Sprites/SpriteAnimation.h"
-#include "Engine/Debug/DevConsole.h"
+#include "Engine/Assets/GridSpriteSheet.h"
+#include "Engine/Assets/SpriteAnimation.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Multithreading/Jobsystem.h"
 
 
@@ -43,7 +43,8 @@ void AssetManager::BeginFrame()
         FutureAsset const& futureAsset = it->second;
         if (g_jobSystem->CompleteJob(futureAsset.m_jobID, false))
         {
-            it = m_futureAssets.erase(it);
+            // Async loading job removes the item from future assets when it completes, so we need to restart the iterator from the beginning
+            it = m_futureAssets.begin();
         }
         else
         {
@@ -124,7 +125,7 @@ void AssetManager::Release(AssetID assetID)
 //----------------------------------------------------------------------------------------------------------------------
 bool AssetManager::IsValid(AssetID assetID) const
 {
-    return assetID != INVALID_ASSET_ID;
+    return assetID != AssetID::Invalid;
 }
 
 
@@ -185,7 +186,7 @@ uint32_t AssetManager::GetRefCount(AssetID assetID) const
 AssetID AssetManager::RequestAssetID()
 {
 	std::unique_lock<std::mutex> lock(m_assetIdMutex);
-    if (m_nextAssetID == INVALID_ASSET_ID)
+    if (m_nextAssetID == AssetID::Invalid)
     {
         ERROR_AND_DIE("AssetManager::RequestAssetID - Asset ID overflowed.");
 	}
@@ -202,7 +203,7 @@ AssetID AssetManager::GetAssetID(AssetKey const& key) const
     {
         return assetID_it->second;
     }
-	return INVALID_ASSET_ID;
+	return AssetID::Invalid;
 }
 
 
@@ -235,16 +236,16 @@ AssetID AssetManager::LoadSynchronousInternal(AssetKey key)
     if (!loader)
     {
         LogError(key.m_name, AssetManagerError::LoaderNotFound);
-		return INVALID_ASSET_ID;
+		return AssetID::Invalid;
     }
 
     // ~Actually load the asset~
-    IAsset* asset = loader(key.m_name);
+    Asset* asset = loader(key.m_name);
 
     if (!asset)
     {
         LogError(key.m_name, AssetManagerError::FailedToLoad);
-        return INVALID_ASSET_ID;
+        return AssetID::Invalid;
     }
 
     // ~Complete the load~
@@ -253,7 +254,7 @@ AssetID AssetManager::LoadSynchronousInternal(AssetKey key)
     {
         asset->ReleaseResources();
         m_loadedAssets.erase(assetID);
-		return INVALID_ASSET_ID;
+		return AssetID::Invalid;
     }
 
 	LogLoaded(key);
@@ -266,8 +267,8 @@ AssetID AssetManager::LoadSynchronousInternal(AssetKey key)
         m_assetIDs[key] = assetID;
     }
 
-    asset->m_assetID = assetID;
     asset->m_name = key.m_name;
+    asset->m_assetID = assetID;
 
     LoadedAsset& loaded = m_loadedAssets[assetID];
     loaded.m_asset = asset;
@@ -298,7 +299,7 @@ AssetID AssetManager::AsyncLoadInternal(AssetKey key, int priority /*= 0*/)
     if (!loader)
     {
 		LogError(key.m_name, AssetManagerError::LoaderNotFound);
-		return INVALID_ASSET_ID;
+		return AssetID::Invalid;
     }
 
     assetID = RequestAssetID();
@@ -348,7 +349,7 @@ AssetID AssetManager::AsyncReloadInternal(AssetID assetID, AssetKey key, int pri
     if (!loader)
     {
         LogError(key.m_name, AssetManagerError::LoaderNotFound);
-		return INVALID_ASSET_ID;
+		return AssetID::Invalid;
     }
 
     AsyncLoadAssetJob* loadJob = new AsyncLoadAssetJob();
@@ -425,6 +426,20 @@ bool AssetManager::UnloadAsset(AssetID assetID, bool isReloading /*= false*/)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool AssetManager::TryCompleteFuture(AssetID assetID, bool blocking /*= false*/)
+{
+    bool completed = false;
+    auto futureIt = m_futureAssets.find(assetID);
+    if (futureIt != m_futureAssets.end())
+    {
+        completed = g_jobSystem->CompleteJob(futureIt->second.m_jobID, blocking);
+    }
+    return completed;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool AssetManager::TryCancelOrCompleteFuture(AssetID assetID)
 {
     bool completed = false;
@@ -436,7 +451,12 @@ bool AssetManager::TryCancelOrCompleteFuture(AssetID assetID)
         {
             completed = g_jobSystem->CompleteJob(futureIt->second.m_jobID, true);
         }
-        m_futureAssets.erase(futureIt);
+
+        // CompleteJob should remove from future Assets, but we need to manually do it if it was cancelled
+        if (cancelled)
+        {
+            m_futureAssets.erase(futureIt);
+        }
     }
     return completed;
 }
@@ -459,15 +479,10 @@ AssetLoaderFunction AssetManager::GetLoaderFunction(std::type_index typeIndex) c
 //----------------------------------------------------------------------------------------------------------------------
 void AssetManager::LogLoaded(AssetKey key) const
 {
-    if (!g_devConsole)
-    {
-        return;
-    }
-
     #if defined(DEBUG_ASSET_MANAGER)
         auto debugNameIt = m_loaderDebugNames.find(key.m_typeIndex);
         const char* debugNameStr = (debugNameIt != m_loaderDebugNames.end()) ? debugNameIt->second.ToCStr() : "Unknown Asset Type";
-        g_devConsole->LogF(Rgba8::LightOceanBlue, "Loaded %s: '%s' successfully.", debugNameStr, key.m_name.ToCStr());
+        DevConsoleUtils::Log(Rgba8::LightOceanBlue, "Loaded %s: '%s' successfully.", debugNameStr, key.m_name.ToCStr());
 	#endif // defined(DEBUG_ASSET_MANAGER)
 }
 
@@ -476,15 +491,10 @@ void AssetManager::LogLoaded(AssetKey key) const
 //----------------------------------------------------------------------------------------------------------------------
 void AssetManager::LogUnloaded(AssetKey key) const
 {
-    if (!g_devConsole)
-    {
-        return;
-    }
-
 	#if defined(DEBUG_ASSET_MANAGER)
         auto debugNameIt = m_loaderDebugNames.find(key.m_typeIndex);
         const char* debugNameStr = (debugNameIt != m_loaderDebugNames.end()) ? debugNameIt->second.ToCStr() : "Unknown Asset Type";
-        g_devConsole->LogF(Rgba8::DarkOceanBlue, "Unloaded %s: '%s' successfully.", debugNameStr, key.m_name.ToCStr());
+        DevConsoleUtils::Log(Rgba8::DarkOceanBlue, "Unloaded %s: '%s' successfully.", debugNameStr, key.m_name.ToCStr());
 	#endif // defined(DEBUG_ASSET_MANAGER)
 }
 
@@ -493,22 +503,18 @@ void AssetManager::LogUnloaded(AssetKey key) const
 //----------------------------------------------------------------------------------------------------------------------
 void AssetManager::LogError(Name assetName, AssetManagerError errorType) const
 {
-    if (!g_devConsole)
-    {
-        return;
-    }
     switch (errorType)
     {
         case AssetManagerError::FailedToLoad:
-            g_devConsole->LogErrorF("Asset '%s' failed to load.", assetName.ToCStr());
+            DevConsoleUtils::LogError("Asset '%s' failed to load.", assetName.ToCStr());
 			break;
         case AssetManagerError::LoaderNotFound:
-			g_devConsole->LogErrorF("Asset loader for '%s' not found.", assetName.ToCStr());
+            DevConsoleUtils::LogError("Asset loader for '%s' not found.", assetName.ToCStr());
             break;
         case AssetManagerError::None:
             // Fallthrough
         default:
-            g_devConsole->LogErrorF("Asset '%s' encountered an unknown error.", assetName.ToCStr());
+            DevConsoleUtils::LogError("Asset '%s' encountered an unknown error.", assetName.ToCStr());
 			break;
     }
 }

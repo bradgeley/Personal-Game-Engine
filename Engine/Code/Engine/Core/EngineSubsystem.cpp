@@ -54,6 +54,7 @@ void EngineSubsystem::EndFrame()
 void EngineSubsystem::Shutdown()
 {
     // Empty
+    SetEnabled(false);
 }
 
 

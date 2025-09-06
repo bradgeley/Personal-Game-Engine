@@ -200,6 +200,40 @@ bool JobSystem::TryCancelLoadingJob(JobID jobID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int JobSystem::TryCancelLoadingJobs(std::vector<JobID> const& jobIDs)
+{
+    int numCancelled = 0;
+    m_loadingJobQueue.Lock();
+    for (auto it = m_loadingJobQueue.begin(); it != m_loadingJobQueue.end();)
+    {
+        bool cancelled = false;
+
+        for (JobID const& jobID : jobIDs)
+        {
+            if ((*it)->m_id != jobID)
+            {
+                continue;
+            }
+
+            cancelled = true;
+            numCancelled++;
+            m_numIncompleteJobs--;
+            it = m_loadingJobQueue.erase(it);
+            break;
+        }
+
+        if (!cancelled)
+        {
+            it++;
+        }
+    }
+    m_loadingJobQueue.Unlock();
+    return numCancelled;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp /*= true*/)
 {
     do 

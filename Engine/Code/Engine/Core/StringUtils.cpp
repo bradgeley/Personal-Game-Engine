@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "StringUtils.h"
 #include "ErrorUtils.h"
-#include "Engine/Debug/DevConsole.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/MathUtils.h"
 
@@ -253,10 +253,7 @@ bool StringUtils::StringToBool(std::string const& boolAsString)
         return false;
     }
 
-    if (g_devConsole)
-    {
-        g_devConsole->LogWarningF("StringToBool: Arg {%s} did not contain a valid bool string (true/false, 1/0, yes/no)", boolAsString.c_str());
-    }
+	DevConsoleUtils::LogError("StringToBool: Arg {%s} did not contain a valid bool string (true/false, 1/0, yes/no)", boolAsString.c_str());
     return false;
 }
 
@@ -285,7 +282,7 @@ Rgba8 StringUtils::StringToRgba8(std::string const& rgba8AsString)
     Strings asStrings = SplitStringOnDelimiter(rgba8AsString, ',');
     if (asStrings.size() <= 2 || asStrings.size() >= 5)
     {
-        g_devConsole->LogErrorF("StringToRgba8: Arg {%s} did not contain 3-4 numbers 0-255 separated by commas e.g. (255,255,255,50)", rgba8AsString.c_str());
+		DevConsoleUtils::LogError("StringToRgba8: Arg {%s} did not contain 3-4 numbers 0-255 separated by commas e.g. (255,255,255,50)", rgba8AsString.c_str());
     }
 
     if (asStrings.size() >= 3)
@@ -310,7 +307,7 @@ Vec2 StringUtils::StringToVec2(std::string const& vec2AsString)
     Strings asStrings = SplitStringOnDelimiter(vec2AsString, ',');
     if (asStrings.size() <= 1 || asStrings.size() >= 3)
     {
-        g_devConsole->LogErrorF("StringToVec2: Arg {%s} did not contain 2 floats separated by a commas e.g. {5.55,-6.876}", vec2AsString.c_str());
+		DevConsoleUtils::LogError("StringToVec2: Arg {%s} did not contain 2 floats separated by a commas e.g. {5.55,-6.876}", vec2AsString.c_str());
     }
 
     if (asStrings.size() >= 2)
@@ -331,7 +328,7 @@ IntVec2 StringUtils::StringToIntVec2(std::string const& intVec2AsString)
     Strings asStrings = SplitStringOnDelimiter(intVec2AsString, ',');
     if (asStrings.size() <= 1 || asStrings.size() >= 3)
     {
-        g_devConsole->LogErrorF("StringToIntVec2: Arg {%s} did not contain 2 ints separated by a commas e.g. {5,-6}", intVec2AsString.c_str());
+		DevConsoleUtils::LogError("StringToIntVec2: Arg {%s} did not contain 2 ints separated by a commas e.g. {5,-6}", intVec2AsString.c_str());
     }
 
     if (asStrings.size() >= 2)

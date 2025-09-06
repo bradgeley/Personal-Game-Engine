@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "Engine/Renderer/Font.h"
 #include "Engine/Assets/AssetManager.h"
-#include "Engine/Assets/Texture/TextureAsset.h"
+#include "Engine/Assets/TextureAsset.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
@@ -246,7 +246,7 @@ void Font::LoadFNT(const char* fntFilepath)
 		// Set up texture, but don't create gpu resources yet
 		m_textureName = fullFilePath;
 		m_textureAsset = g_assetManager->LoadSynchronous<TextureAsset>(fullFilePath);
-		ASSERT_OR_DIE(m_textureAsset != INVALID_ASSET_ID, StringUtils::StringF("Font %s: failed to load texture %s", fntFilepath, fullFilePath.c_str()));
+		ASSERT_OR_DIE(m_textureAsset != AssetID::Invalid, StringUtils::StringF("Font %s: failed to load texture %s", fntFilepath, fullFilePath.c_str()));
 
 		TextureAsset* asset = g_assetManager->Get<TextureAsset>(m_textureAsset);
 		m_texture = asset->GetTextureID();

@@ -2,7 +2,7 @@
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Assets/AssetManager.h"
-#include "Engine/Assets/Image/Image.h"
+#include "Engine/Assets/Image.h"
 
 
 

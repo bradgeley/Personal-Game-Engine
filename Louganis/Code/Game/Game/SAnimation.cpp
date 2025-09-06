@@ -3,7 +3,7 @@
 #include "CAnimation.h"
 #include "CMovement.h"
 #include "CTransform.h"
-#include "Engine/Assets/Sprites/GridSpriteSheet.h"
+#include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Renderer.h"
@@ -32,7 +32,7 @@ void SAnimation::Run(SystemContext const& context)
 		CTransform& transform = *g_ecs->GetComponent<CTransform>(it);
 
 		// Initialize sprite sheet and animation instance if not already done
-        if (anim.m_gridSpriteSheet == INVALID_ASSET_ID && anim.m_spriteSheetName != Name::s_invalidName)
+        if (anim.m_gridSpriteSheet == AssetID::Invalid && anim.m_spriteSheetName != Name::Invalid)
         {
             anim.m_gridSpriteSheet = g_assetManager->AsyncLoad<GridSpriteSheet>(anim.m_spriteSheetName);
         }

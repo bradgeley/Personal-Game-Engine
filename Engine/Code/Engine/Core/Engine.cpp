@@ -7,6 +7,7 @@
 #include "Engine/Time/Clock.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/NameTable.h"
+#include "Engine/Math/RandomNumberGenerator.h"
 
 #include "Game/Framework/EngineBuildPreferences.h"
 
@@ -37,6 +38,7 @@ Engine::Engine()
     g_nameTable = new NameTable();
     g_nameTable->Startup();
     m_engineClock = new Clock();
+    g_rng = new RandomNumberGenerator();
 }
 
 
@@ -50,6 +52,8 @@ Engine::~Engine()
     delete g_nameTable;
     g_nameTable = nullptr;
     g_engine = nullptr;
+    delete g_rng;
+    g_rng = nullptr;
 }
 
 
@@ -174,11 +178,14 @@ void Engine::EndFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Engine::Shutdown()
 {
+    m_isActive = false;
+
     for (int i = (int) m_subsystems.size() - 1; i >= 0; --i)
     {
         EngineSubsystem*& subsystem = m_subsystems[i];
         if (subsystem)
         {
+            subsystem->SetEnabled(false);
             subsystem->Shutdown();
             delete subsystem;
             subsystem = nullptr;
@@ -198,6 +205,14 @@ void Engine::RegisterSubsystem(EngineSubsystem* system)
     }
 
     m_subsystems.push_back(system);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Engine::GetIsActive() const
+{
+	return m_isActive;
 }
 
 
