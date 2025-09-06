@@ -51,7 +51,7 @@ public:
 protected:
 
     virtual void Execute() = 0;
-    virtual void Complete();
+    virtual bool Complete();
 
 protected:
 

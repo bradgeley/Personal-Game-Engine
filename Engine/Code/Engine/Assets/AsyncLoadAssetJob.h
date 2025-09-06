@@ -17,7 +17,7 @@ class AsyncLoadAssetJob : public Job
 public:
 
     void Execute() override;
-    void Complete() override;
+    bool Complete() override;
 
 public:
 

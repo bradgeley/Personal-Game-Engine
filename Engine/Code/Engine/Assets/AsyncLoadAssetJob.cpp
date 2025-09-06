@@ -19,6 +19,7 @@ void AsyncLoadAssetJob::Execute()
             return;
         }
         m_loadedAsset->m_name = m_assetKey.m_name;
+		m_loadedAsset->m_assetID = m_assetID;
 		g_assetManager->LogLoaded(m_assetKey);
     }
 }
@@ -26,9 +27,13 @@ void AsyncLoadAssetJob::Execute()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AsyncLoadAssetJob::Complete()
+bool AsyncLoadAssetJob::Complete()
 {
 	ASSERT_OR_DIE(g_assetManager != nullptr, "AsyncLoadAssetJob::Complete - AssetManager is null");
-    g_assetManager->m_loadedAssets[m_assetID].m_asset = m_loadedAsset;
-    g_assetManager->m_loadedAssets[m_assetID].m_asset->CompleteLoad();
+    bool completed = m_loadedAsset->CompleteAsyncLoad();
+    if (completed)
+    {
+        g_assetManager->m_loadedAssets[m_assetID].m_asset = m_loadedAsset;
+    }
+    return completed;
 }

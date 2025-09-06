@@ -67,8 +67,18 @@ IAsset* Image::Load(Name assetName)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Image::CompleteLoad()
+bool Image::CompleteAsyncLoad()
 {
+    // Empty, all work done in Load
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Image::CompleteSyncLoad()
+{
+    // Empty, all work done in Load
     return true;
 }
 

@@ -63,13 +63,14 @@ public:
         m_image = g_assetManager->LoadSynchronous<Image>(m_path);
     }
     
-    void Complete() override
+    bool Complete() override
     {
         // Can only create textures in sync with the main thread
         Texture* texture = g_renderer->GetTexture(m_texture);
 		Image* image = g_assetManager->Get<Image>(m_image);
         texture->CreateFromImage(*image);
         m_console->AddBackgroundImage(m_texture);
+        return true;
     }
 
     AssetID m_image         = INVALID_ASSET_ID;

@@ -274,6 +274,12 @@
     <ClCompile Include="Assets\Image\Image.cpp">
       <Filter>Assets\Image</Filter>
     </ClCompile>
+    <ClCompile Include="Assets\Asset.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\Texture\TextureAsset.cpp">
+      <Filter>Assets\Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -597,6 +603,9 @@
     <ClInclude Include="Assets\Image\Image.h">
       <Filter>Assets\Image</Filter>
     </ClInclude>
+    <ClInclude Include="Assets\Texture\TextureAsset.h">
+      <Filter>Assets\Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">
@@ -670,6 +679,9 @@
     </Filter>
     <Filter Include="Assets\Image">
       <UniqueIdentifier>{2fcd9a87-5172-404b-82d5-b8ae43dc3fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Texture">
+      <UniqueIdentifier>{c7dcd3b9-d8a3-4ecd-9dec-a3bab673e5d1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

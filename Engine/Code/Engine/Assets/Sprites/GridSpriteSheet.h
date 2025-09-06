@@ -19,7 +19,8 @@ public:
 	~GridSpriteSheet() = default;
 
 	static IAsset* Load(Name assetName);
-	virtual bool CompleteLoad() override;
+	virtual bool CompleteAsyncLoad() override;
+	virtual bool CompleteSyncLoad() override;
 	virtual void ReleaseResources() override;
 
 	bool CreateFromTexture(TextureID texture, IntVec2 const& layout, IntVec2 const& edgePadding = IntVec2::ZeroVector, IntVec2 const& innerPadding = IntVec2::ZeroVector);
@@ -36,8 +37,9 @@ protected:
 
 protected:
 
-	AssetID		m_image			= INVALID_ASSET_ID;
-	TextureID	m_texture 		= RendererUtils::InvalidID;
+	Name		m_textureName	= Name::s_invalidName;
+	AssetID		m_textureAsset	= INVALID_ASSET_ID;				// Loaded texture asset id
+	TextureID	m_texture		= RendererUtils::InvalidID;		// Cached after load
 	IntVec2		m_layout		= IntVec2::ZeroVector;			// Dimensions in sprites (not pixels)
 	IntVec2		m_spriteDims	= IntVec2::ZeroVector;			// Dimensions of each sprite in pixels
 	Grid<AABB2> m_spriteUVs;									// Precomputed UVs for each sprite

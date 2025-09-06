@@ -207,7 +207,14 @@ bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp /*= true*/)
         Job* job = RemoveJobFromCompletedQueue(jobID);
         if (job)
         {
-            job->Complete();
+            bool completedJob = job->Complete();
+            if (!completedJob)
+            {
+                // Allow us to retry later
+                AddJobToCompletedQueue(job);
+                continue;
+            }
+
             --m_numIncompleteJobs;
 
             if (job->GetDeleteAfterCompletion())

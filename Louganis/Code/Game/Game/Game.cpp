@@ -6,6 +6,7 @@
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/Image/Image.h"
 #include "Engine/Assets/Sprites/GridSpriteSheet.h"
+#include "Engine/Assets/Texture/TextureAsset.h"
 #include "Engine/Time/Clock.h"
 #include "Engine/Core/Engine.h"
 #include "Engine/Core/EngineCommon.h"
@@ -22,6 +23,7 @@
 #include "Engine/Window/WindowUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Camera.h"
+#include "Engine/Renderer/Font.h"
 
 #include "Game/Framework/Application.h"
 #include "AllComponents.h"
@@ -139,6 +141,7 @@ void Game::ConfigureEngine(Engine* engine)
 	g_assetManager = new AssetManager(assetManagerConfig);
 	g_assetManager->RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load, "GridSpriteSheet");
 	g_assetManager->RegisterLoader<Image>(Image::Load, "Image");
+	g_assetManager->RegisterLoader<TextureAsset>(TextureAsset::Load, "TextureAsset");
 	engine->RegisterSubsystem(g_assetManager);
 
     EventSystemConfig eventSysConfig;

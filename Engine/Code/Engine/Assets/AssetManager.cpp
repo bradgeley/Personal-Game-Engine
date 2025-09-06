@@ -247,6 +247,15 @@ AssetID AssetManager::LoadSynchronousInternal(AssetKey key)
         return INVALID_ASSET_ID;
     }
 
+    // ~Complete the load~
+    bool succeeded = asset->CompleteSyncLoad();
+    if (!succeeded)
+    {
+        asset->ReleaseResources();
+        m_loadedAssets.erase(assetID);
+		return INVALID_ASSET_ID;
+    }
+
 	LogLoaded(key);
 
     if (!IsValid(assetID))
@@ -263,6 +272,7 @@ AssetID AssetManager::LoadSynchronousInternal(AssetKey key)
     LoadedAsset& loaded = m_loadedAssets[assetID];
     loaded.m_asset = asset;
     loaded.m_key = key;
+
     ChangeRefCount(assetID, 1);
     return assetID;
 }

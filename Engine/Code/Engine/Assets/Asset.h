@@ -11,11 +11,16 @@ class IAsset
 	friend class AssetManager; 
 	friend class AsyncLoadAssetJob;
 
+public:
+
+	Name GetName() const;
+
 protected:
 
 	virtual ~IAsset() = default;
 
-	virtual bool CompleteLoad()			= 0;		// Called only by the main thread
+	virtual bool CompleteAsyncLoad()	= 0;
+	virtual bool CompleteSyncLoad()		= 0;
 	virtual void ReleaseResources()		= 0;
 
 protected:

@@ -93,7 +93,7 @@ bool Job::operator<(Job const& rhs) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Job::Complete()
+bool Job::Complete()
 {
-    // Empty
+    return true;
 }

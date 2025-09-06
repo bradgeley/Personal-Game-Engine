@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Assets/Asset.h"
+#include "Engine/Core/Name.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/RendererUtils.h"
 #include "Rgba8.h"
@@ -57,13 +59,14 @@ public:
     Font() = default;
     ~Font();
 
+	void ReleaseResources();
+
     TextureID GetTexture() const;
     ShaderID GetShader() const;
 
     void LoadFNT(const char* fntFilepath);
     
 	void SetRendererState() const;
-    void ReleaseResources();
     
     // Vert Helpers
     void AddVertsForText2D(VertexBuffer& out_verts, Vec2 const& textMins, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
@@ -89,6 +92,8 @@ public:
 
 public:
 
+	Name m_textureName = Name::s_invalidName;   
+	AssetID m_textureAsset = INVALID_ASSET_ID;
     TextureID m_texture = RendererUtils::InvalidID;
     ShaderID m_shader = RendererUtils::InvalidID;
     GlyphData m_glyphData[MAX_GLYPHS];

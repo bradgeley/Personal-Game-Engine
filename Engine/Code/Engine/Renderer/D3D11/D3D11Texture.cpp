@@ -39,7 +39,6 @@ bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap)
     auto device = D3D11Renderer::Get()->GetDevice();
     auto context = D3D11Renderer::Get()->GetDeviceContext();
 
-    m_sourceImagePath = image.GetSourceImagePath();
     m_dimensions = image.GetPixels().GetDimensions();
 
     D3D11_TEXTURE2D_DESC desc = {};
@@ -103,7 +102,7 @@ bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap)
     }
 
     #ifdef _DEBUG
-        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.ToCStr());
+        std::string name = StringUtils::StringF("Texture (Image). Source: %s", image.GetName().ToCStr());
         m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
@@ -151,8 +150,7 @@ bool D3D11Texture::InitAsBackbufferTexture(IDXGISwapChain* swapChain)
 
     #ifdef _DEBUG
         static int count = 0;
-        m_sourceImagePath = StringUtils::StringF("Backbuffer Texture %i", ++count);
-        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.ToCStr());
+        std::string name = StringUtils::StringF("Backbuffer Texture %i", ++count);
         m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
@@ -197,8 +195,7 @@ bool D3D11Texture::InitAsDepthBuffer(IDXGISwapChain* swapChain)
 
     #ifdef _DEBUG
         static int count = 0;
-        m_sourceImagePath = StringUtils::StringF("Depth Buffer %i", ++count);
-        std::string name = StringUtils::StringF("Texture (Image). Source: %s", m_sourceImagePath.ToCStr());
+        std::string name = StringUtils::StringF("Depth Buffer %i", ++count);
         m_textureHandle->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
     #endif
 
@@ -234,6 +231,14 @@ void D3D11Texture::CopyTo(Swapchain* swapchain)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Texture::SetSourceName(Name sourceName)
+{
+	m_sourceName = sourceName;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 ID3D11DepthStencilView* D3D11Texture::CreateOrGetDepthStencilView()
 {
     if (!m_depthStencilView)
@@ -243,7 +248,7 @@ ID3D11DepthStencilView* D3D11Texture::CreateOrGetDepthStencilView()
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create depth stencil view");
 
         #ifdef _DEBUG
-            std::string name = StringUtils::StringF("Texture (Depth Stencil View). Source Image: %s", m_sourceImagePath.ToCStr());
+            std::string name = StringUtils::StringF("Texture (Depth Stencil View)");
             m_depthStencilView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }
@@ -263,7 +268,7 @@ ID3D11RenderTargetView* D3D11Texture::CreateOrGetRenderTargetView()
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create rtv");
 
         #ifdef _DEBUG
-            std::string name = StringUtils::StringF("Texture (Render Target View). Source Image: %s", m_sourceImagePath.ToCStr());
+            std::string name = StringUtils::StringF("Texture (Render Target View)");
             m_renderTargetView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }
@@ -283,7 +288,7 @@ ID3D11ShaderResourceView* D3D11Texture::CreateOrGetShaderResourceView()
         ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create srv");
 
         #ifdef _DEBUG
-            std::string name = StringUtils::StringF("Texture (Shader Resource View). Source Image: %s", m_sourceImagePath.ToCStr());
+            std::string name = StringUtils::StringF("Texture (Shader Resource View)");
             m_shaderResourceView->SetPrivateData(WKPDID_D3DDebugObjectName, (int) name.size(), name.data());
         #endif
     }

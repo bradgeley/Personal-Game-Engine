@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "Engine/Renderer/Font.h"
-
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/Texture/TextureAsset.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
@@ -29,7 +30,16 @@ Vec2 Font::AlignBottomLeft	= Vec2(0.f, 0.f);
 //----------------------------------------------------------------------------------------------------------------------
 Font::~Font()
 {
-	ReleaseResources();
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Font::ReleaseResources()
+{
+	g_assetManager->Release(m_textureAsset);
+	g_renderer->ReleaseShader(m_shader);
 }
 
 
@@ -43,15 +53,6 @@ void Font::SetRendererState() const
 	g_renderer->SetBlendMode(BlendMode::Alpha);
 	g_renderer->BindTexture(m_texture);
 	g_renderer->BindShader(m_shader);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Font::ReleaseResources()
-{
-	g_renderer->ReleaseShader(m_shader);
-	g_renderer->ReleaseTexture(m_texture);
 }
 
 
@@ -241,10 +242,14 @@ void Font::LoadFNT(const char* fntFilepath)
 		auto page = pagesElem->FirstChildElement("page");
 		auto filename = page->FindAttribute("file");
 		std::string fullFilePath = "Data/Fonts/" + std::string(filename->Value());
-    	m_texture = g_renderer->MakeTexture();
-		Texture* texture = g_renderer->GetTexture(m_texture);
-    	bool loadedTexture = texture->LoadFromImageFile(fullFilePath.c_str(), false);
-		ASSERT_OR_DIE(loadedTexture, StringUtils::StringF("Font %s - Failed to load texture: %s", fntFilepath, fullFilePath.c_str()))
+
+		// Set up texture, but don't create gpu resources yet
+		m_textureName = fullFilePath;
+		m_textureAsset = g_assetManager->LoadSynchronous<TextureAsset>(fullFilePath);
+		ASSERT_OR_DIE(m_textureAsset != INVALID_ASSET_ID, StringUtils::StringF("Font %s: failed to load texture %s", fntFilepath, fullFilePath.c_str()));
+
+		TextureAsset* asset = g_assetManager->Get<TextureAsset>(m_textureAsset);
+		m_texture = asset->GetTextureID();
 
 		auto charsElem = fontElem->FirstChildElement("chars");
 		auto count = charsElem->FindAttribute("count");

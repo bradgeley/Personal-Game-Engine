@@ -2,6 +2,7 @@
 #include "GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/Image/Image.h"
+#include "Engine/Assets/Texture/TextureAsset.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
@@ -63,26 +64,16 @@ IAsset* GridSpriteSheet::Load(Name assetName)
 		g_devConsole->LogErrorF("GridSpriteSheet::Load - Could not find xml root: %s", xmlPath.c_str());
 		return nullptr;
 	}
-
-	Name name = XmlUtils::ParseXmlAttribute(*root, "name", Name::s_invalidName);
-	std::string path = XmlUtils::ParseXmlAttribute(*root, "path", "");
-
-	AssetID imageID = g_assetManager->LoadSynchronous<Image>(path);
-	Image* image = g_assetManager->Get<Image>(imageID);
-	if (!image)
-	{
-		g_devConsole->LogErrorF("GridSpriteSheet::Load - Failed to load image from file: %s", path.c_str());
-		return nullptr;
-	}
-
+	
 	GridSpriteSheet* spriteSheet = new GridSpriteSheet();
-	spriteSheet->m_texture = g_renderer->MakeTexture();
-	spriteSheet->m_image = imageID;
+	spriteSheet->m_name = XmlUtils::ParseXmlAttribute(*root, "name", Name::s_invalidName);
+	spriteSheet->m_textureName = XmlUtils::ParseXmlAttribute(*root, "texture", Name::s_invalidName);
 	spriteSheet->m_layout = XmlUtils::ParseXmlAttribute(*root, "layout", IntVec2(1, 1));
 	spriteSheet->m_edgePadding = XmlUtils::ParseXmlAttribute(*root, "edgePadding", IntVec2(0, 0));
 	spriteSheet->m_innerPadding = XmlUtils::ParseXmlAttribute(*root, "innerPadding", IntVec2(0, 0));
 
-	// Todo: Load animation defs into spriteSheet from XML
+	ASSERT_OR_DIE(spriteSheet->m_textureName != Name::s_invalidName, "GridSpriteSheet::Load - Sprite sheet texture name is invalid.");
+
 	XmlElement* animationDefElem = root->FirstChildElement("SpriteAnimation");
 	while (animationDefElem != nullptr)
 	{
@@ -99,11 +90,43 @@ IAsset* GridSpriteSheet::Load(Name assetName)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool GridSpriteSheet::CompleteLoad()
+bool GridSpriteSheet::CompleteAsyncLoad()
 {
-	Image* image = g_assetManager->Get<Image>(m_image);
-	g_renderer->GetTexture(m_texture)->CreateFromImage(*image); // Texture creation must be on main thread
+	if (m_textureAsset == RendererUtils::InvalidID)
+	{
+		m_textureAsset = g_assetManager->AsyncLoad<TextureAsset>(m_textureName);
+	}
+
+	TextureAsset* textureAsset = g_assetManager->Get<TextureAsset>(m_textureAsset);
+	if (textureAsset == nullptr)
+	{
+		return false;
+	}
+
+	m_texture = textureAsset->GetTextureID();
+
 	bool succeeded = CreateFromTexture(m_texture, m_layout, m_edgePadding, m_innerPadding);
+	ASSERT_OR_DIE(succeeded, "GridSpriteSheet::CompleteAsyncLoad - Failed to create sprite sheet from texture.");
+
+	return succeeded;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool GridSpriteSheet::CompleteSyncLoad()
+{
+	m_textureAsset = g_assetManager->LoadSynchronous<TextureAsset>(m_textureName);
+	TextureAsset* textureAsset = g_assetManager->Get<TextureAsset>(m_textureAsset);
+	if (textureAsset == nullptr)
+	{
+		return false;
+	}
+
+	m_texture = textureAsset->GetTextureID();
+	bool succeeded = CreateFromTexture(m_texture, m_layout, m_edgePadding, m_innerPadding);
+	ASSERT_OR_DIE(succeeded, "GridSpriteSheet::CompleteSyncLoad - Failed to create sprite sheet from texture.");
+
 	return succeeded;
 }
 
@@ -112,7 +135,9 @@ bool GridSpriteSheet::CompleteLoad()
 //----------------------------------------------------------------------------------------------------------------------
 void GridSpriteSheet::ReleaseResources()
 {
-	// Release texture
+	g_assetManager->Release(m_texture);
+	m_spriteUVs.Clear();
+	m_animations.clear();
 }
 
 
