@@ -155,6 +155,7 @@ protected:
 	// to have another way to disable the input system ONLY for the game but not DevConsole, which is awkward. Yay for events...
 	// todo: fix this
 	KeyButtonState m_shiftState; 
+	KeyButtonState m_ctrlState; 
 
 	bool m_isShowing = false;
 	Camera* m_camera = nullptr;

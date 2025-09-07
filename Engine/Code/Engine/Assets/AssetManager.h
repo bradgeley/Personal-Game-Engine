@@ -13,6 +13,10 @@
 
 
 
+struct NamedProperties;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 typedef std::function<Asset* (Name)> AssetLoaderFunction;
 
@@ -81,6 +85,7 @@ public:
     explicit AssetManager(AssetManagerConfig const& config);
     virtual ~AssetManager() override;
 
+	virtual void Startup() override;
     virtual void BeginFrame() override;
     virtual void Shutdown() override;
 
@@ -103,6 +108,7 @@ public:
     static AssetKey GetAssetKey(Name assetName);
 
     bool FindAssetKey(AssetID assetID, AssetKey& out_key) const;
+    bool FindAssetKeyByTypeName(Name name, Name type, AssetKey& out_key) const;
 
     void Release(AssetID assetID);
     bool IsValid(AssetID assetID) const;
@@ -127,9 +133,15 @@ protected:
 
 	AssetLoaderFunction GetLoaderFunction(std::type_index typeIndex) const;
 
+    void LogAsyncLoadStarted(AssetKey key) const;
+    void LogAsyncLoadCompleted(AssetKey key) const;
     void LogLoaded(AssetKey key) const;
     void LogUnloaded(AssetKey key) const;
     void LogError(Name assetName, AssetManagerError errorType) const;
+
+protected:
+
+    static bool StaticReload(NamedProperties& params);
 
 protected:
 

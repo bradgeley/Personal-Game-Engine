@@ -11,6 +11,11 @@
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/DataStructures/NamedProperties.h"
 
+#if defined(_WIN32)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif 
+
 
 
 const std::string LINE_PREFIX = " > ";
@@ -305,6 +310,49 @@ void DevConsoleInput::RenderCaret(AABB2 const& box) const
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
     g_renderer->DrawVertexBuffer(vbo);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsoleInput::CopyToClipboard() const
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsoleInput::PasteFromClipboard()
+{
+    std::string clipboardText;
+    #if defined(_WIN32)
+        if (!::OpenClipboard(nullptr))
+        {
+            return;
+        }
+
+        HANDLE clipboardHandle = ::GetClipboardData(CF_TEXT);
+        if (clipboardHandle == nullptr)
+        {
+            ::CloseClipboard();
+            return;
+        }
+
+        char* clipboardData = static_cast<char*>(::GlobalLock(clipboardHandle));
+        if (clipboardData == nullptr)
+        {
+            ::CloseClipboard();
+            return;
+        }
+
+        clipboardText = std::string(clipboardData);
+        ::GlobalUnlock(clipboardHandle);
+        ::CloseClipboard();
+
+		// Insert clipboard text at the current caret position
+		m_input.m_line.insert(m_input.m_line.begin() + m_caretIndex, clipboardText.begin(), clipboardText.end());
+    #endif // _WIN32
 }
 
 

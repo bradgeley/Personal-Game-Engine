@@ -51,7 +51,7 @@ public:
 protected:
 
     virtual void Execute() = 0;
-    virtual bool Complete();
+    virtual bool Complete();        // Called from the main thread only when the job is completed.
 
 protected:
 

@@ -20,7 +20,6 @@ void EventUtils::SubscribeEventCallbackFunction(Name eventName, EventCallbackFun
 //----------------------------------------------------------------------------------------------------------------------
 void EventUtils::UnsubscribeEventCallbackFunction(Name eventName, EventCallbackFunction callbackFunc)
 {
-    ASSERT_OR_DIE(g_eventSystem != nullptr, "Event system does not exist");
     if (g_eventSystem)
     {
         g_eventSystem->UnsubscribeFunction(eventName, callbackFunc);

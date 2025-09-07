@@ -40,6 +40,9 @@ public:
     void RenderSelection(AABB2 const& box) const;
     void RenderCaret(AABB2 const& box) const;
 
+	void CopyToClipboard() const;
+	void PasteFromClipboard();
+
 private:
 
     void DeleteSelection();

@@ -478,6 +478,14 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
     {
         m_shiftState.Press();
     }
+    else if (key == (uint8_t) KeyCode::Ctrl)
+    {
+		m_ctrlState.Press();
+    }
+    else if (key == 'V' && m_ctrlState.IsPressed())
+    {
+		m_inputLine.PasteFromClipboard();
+    }
     else if (key == (uint8_t) KeyCode::Enter)
     {
         m_inputLine.Enter();
@@ -533,6 +541,10 @@ bool DevConsole::HandleKeyUp(NamedProperties& args)
     if (key == (uint8_t) KeyCode::Shift)
     {
         m_shiftState.Release();
+    }
+    else if (key == (uint8_t) KeyCode::Ctrl)
+    {
+        m_ctrlState.Release();
     }
     return m_isShowing;
 }

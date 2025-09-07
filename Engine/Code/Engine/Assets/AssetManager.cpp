@@ -3,6 +3,7 @@
 #include "AsyncLoadAssetJob.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/SpriteAnimation.h"
 #include "Engine/Debug/DevConsoleUtils.h"
@@ -29,6 +30,16 @@ AssetManager::AssetManager(AssetManagerConfig const& config) : m_config(config)
 AssetManager::~AssetManager()
 {
     g_assetManager = nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AssetManager::Startup()
+{
+    DevConsoleUtils::AddDevConsoleCommand("ReloadAsset", &AssetManager::StaticReload, 
+                                          "type", DevConsoleArgType::String,
+                                          "name", DevConsoleArgType::String);
 }
 
 
@@ -67,6 +78,8 @@ void AssetManager::Shutdown()
     {
         UnloadAsset(m_loadedAssets.begin()->first);
     }
+
+    DevConsoleUtils::RemoveDevConsoleCommand("ReloadAsset", &AssetManager::StaticReload);
 }
 
 
@@ -92,6 +105,25 @@ bool AssetManager::FindAssetKey(AssetID assetID, AssetKey& out_key) const
             out_key = futureIt->second.m_key;
             return true;
         }
+    }
+
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AssetManager::FindAssetKeyByTypeName(Name name, Name type, AssetKey& out_key) const
+{
+    // Not an efficient function, only use for specific debugging purposes, like hot reloading a random asset in dev console.
+    for (auto pair : m_loaderDebugNames)
+    {
+        if (pair.second == type)
+        {
+            std::type_index typeIndex = pair.first;
+			out_key = AssetKey(name, typeIndex);
+            return true;
+		}
     }
 
     return false;
@@ -313,6 +345,8 @@ AssetID AssetManager::AsyncLoadInternal(AssetKey key, int priority /*= 0*/)
 
     JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
 
+    LogAsyncLoadStarted(key);
+
     FutureAsset futureAsset;
     futureAsset.m_jobID = jobID;
     futureAsset.m_assetID = assetID;
@@ -360,6 +394,8 @@ AssetID AssetManager::AsyncReloadInternal(AssetID assetID, AssetKey key, int pri
 
     JobID jobID = g_jobSystem->PostLoadingJob(loadJob);
 
+    LogAsyncLoadStarted(key);
+
     FutureAsset futureAsset;
     futureAsset.m_jobID = jobID;
     futureAsset.m_assetID = assetID;
@@ -397,6 +433,8 @@ bool AssetManager::UnloadAsset(AssetID assetID, bool isReloading /*= false*/)
 	ASSERT_OR_DIE(IsLoaded(assetID), "AssetManager::UnloadAsset - This should only be called if the asset is already loaded.");
 
 	AssetKey key = m_loadedAssets.at(assetID).m_key;
+
+    m_loadedAssets.at(assetID).m_asset->ReleaseResources();
 
     // Delete loaded asset
     delete m_loadedAssets.at(assetID).m_asset;
@@ -477,6 +515,30 @@ AssetLoaderFunction AssetManager::GetLoaderFunction(std::type_index typeIndex) c
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AssetManager::LogAsyncLoadStarted(AssetKey key) const
+{
+    #if defined(DEBUG_ASSET_MANAGER)
+        auto debugNameIt = m_loaderDebugNames.find(key.m_typeIndex);
+        const char* debugNameStr = (debugNameIt != m_loaderDebugNames.end()) ? debugNameIt->second.ToCStr() : "Unknown Asset Type";
+        DevConsoleUtils::Log(Rgba8::Goldenrod, "Started Async %s load: %s", debugNameStr, key.m_name.ToCStr());
+    #endif // defined(DEBUG_ASSET_MANAGER)
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AssetManager::LogAsyncLoadCompleted(AssetKey key) const
+{
+    #if defined(DEBUG_ASSET_MANAGER)
+        auto debugNameIt = m_loaderDebugNames.find(key.m_typeIndex);
+        const char* debugNameStr = (debugNameIt != m_loaderDebugNames.end()) ? debugNameIt->second.ToCStr() : "Unknown Asset Type";
+        DevConsoleUtils::Log(Rgba8::PastelGreen, "Completed Async %s Load: %s", debugNameStr, key.m_name.ToCStr());
+    #endif // defined(DEBUG_ASSET_MANAGER)
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AssetManager::LogLoaded(AssetKey key) const
 {
     #if defined(DEBUG_ASSET_MANAGER)
@@ -517,4 +579,27 @@ void AssetManager::LogError(Name assetName, AssetManagerError errorType) const
             DevConsoleUtils::LogError("Asset '%s' encountered an unknown error.", assetName.ToCStr());
 			break;
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AssetManager::StaticReload(NamedProperties& params)
+{
+    Name assetName = params.Get<std::string>("name", "");
+	Name assetTypeName = params.Get<std::string>("type", "");
+
+    if (g_assetManager)
+    {
+        AssetKey assetKey;
+        if (g_assetManager->FindAssetKeyByTypeName(assetTypeName, assetTypeName, assetKey))
+        {
+            assetKey.m_name = assetName;
+			AssetID assetID = g_assetManager->GetAssetID(assetKey);
+
+			g_assetManager->AsyncReloadInternal(assetID, assetKey, 0);
+            return true;
+        }
+    }
+    return false;
 }

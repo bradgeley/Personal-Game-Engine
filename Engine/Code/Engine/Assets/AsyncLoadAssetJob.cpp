@@ -25,7 +25,6 @@ void AsyncLoadAssetJob::Execute()
         }
         m_loadedAsset->m_name = m_assetKey.m_name;
 		m_loadedAsset->m_assetID = m_assetID;
-		g_assetManager->LogLoaded(m_assetKey);
     }
 }
 
@@ -36,10 +35,13 @@ bool AsyncLoadAssetJob::Complete()
 {
     if (!g_assetManager->IsEnabled())
     {
+        // The asset manager is disabled, so we know the engine is shutting down. We should not keep trying to load
+        // dependencies for this asset. Rather, just release it and return true;
         if (m_loadedAsset)
         {
             m_loadedAsset->ReleaseResources();
             delete m_loadedAsset;
+            m_loadedAsset = nullptr;
         }
 
         g_assetManager->m_futureAssets.erase(m_assetID);
@@ -58,6 +60,8 @@ bool AsyncLoadAssetJob::Complete()
         loadedAssetEntry.m_asset->m_assetID = m_assetID;
 
 		g_assetManager->m_futureAssets.erase(m_assetID);
+
+		g_assetManager->LogAsyncLoadCompleted(m_assetKey);
     }
     return completed;
 }
