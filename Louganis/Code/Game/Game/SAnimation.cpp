@@ -18,7 +18,7 @@
 void SAnimation::Startup()
 {
 	AddWriteDependencies<CAnimation, Renderer, AssetManager>();
-	AddReadDependencies<CMovement, CTransform>();
+	AddReadDependencies<CMovement, CTransform, CAbility>();
 }
 
 

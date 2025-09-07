@@ -36,7 +36,11 @@ void SInput::Run(SystemContext const& context)
 
         if (g_input->WasMouseButtonJustPressed(0))
         {
-			ability.m_isCastingAbility = true;
+			ability.m_wasCastButtonJustPressed = true;
+        }
+        else
+        {
+            ability.m_wasCastButtonJustPressed = false;
         }
 
         move.m_frameMoveDir = Vec2::ZeroVector;

@@ -31,8 +31,13 @@ void SAbility::Run(SystemContext const& context)
 
         Vec2 forward = Vec2::MakeFromUnitCircleDegrees(transform.m_orientation);
 
-		bool justStartedCasting = ability.m_isCastingAbility && !ability.m_wasCastingAbilityLastFrame;
-		ability.m_wasCastingAbilityLastFrame = ability.m_isCastingAbility;
+        bool wantsToCast = ability.m_wasCastButtonJustPressed;
+        bool justStartedCasting = false;
+        if (!ability.m_isCastingAbility && wantsToCast)
+        {
+            ability.m_isCastingAbility = true;
+            justStartedCasting = true;
+		}
 
         GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(animation.m_gridSpriteSheet);
         if (!spriteSheet)
