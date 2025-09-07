@@ -115,6 +115,12 @@
     <ClCompile Include="Game\SAnimation.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Game\CAbility.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SAbility.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -264,6 +270,12 @@
     <ClInclude Include="Game\SAnimation.h">
       <Filter>Systems</Filter>
     </ClInclude>
+    <ClInclude Include="Game\CAbility.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SAbility.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -311,6 +323,9 @@
       <Filter>Data</Filter>
     </Xml>
     <Xml Include="..\..\Run\Data\SpriteSheets\Soldier.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Adventurer.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
   </ItemGroup>

@@ -199,6 +199,7 @@ void Game::ConfigureECS()
     // 
 
     // Array components
+    g_ecs->RegisterComponentArray<CAbility>();
     g_ecs->RegisterComponentArray<CCollision>();
     g_ecs->RegisterComponentArray<CMovement>();
     g_ecs->RegisterComponentArray<CRender>();
@@ -232,6 +233,7 @@ void Game::ConfigureECS()
     // Pre Physics
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SAbility>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLoadChunks>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SUnloadChunks>((int) FramePhase::PrePhysics);

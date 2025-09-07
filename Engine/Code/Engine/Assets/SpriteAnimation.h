@@ -10,7 +10,8 @@
 enum class SpriteAnimationType
 {
 	None,
-	Looping,
+	Loop,
+	LoopOnce,
 	PingPong,
 	SingleFrame
 };
@@ -39,7 +40,7 @@ protected:
 	Name m_name;
 	float m_secondsPerFrame = 0.f;
 	std::vector<int> m_frames;
-	SpriteAnimationType m_type = SpriteAnimationType::Looping;
+	SpriteAnimationType m_type = SpriteAnimationType::Loop;
 };
 
 
@@ -62,6 +63,8 @@ public:
 	int GetCurrentDirection() const;
 	float GetDuration() const;
 	float GetSecondsPerFrame() const;
+	bool IsFinished() const;			// Returns true if the animation is finished (only applies to LoopOnce animations)
+	bool IsOnLastFrame() const;			
 	void SetSpeedMultiplier(float speedMultiplier);
 
 protected:

@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SAnimation.h"
+#include "CAbility.h"
 #include "CAnimation.h"
 #include "CMovement.h"
 #include "CTransform.h"
@@ -30,6 +31,7 @@ void SAnimation::Run(SystemContext const& context)
         CAnimation& anim = *g_ecs->GetComponent<CAnimation>(it);
         CMovement& movement = *g_ecs->GetComponent<CMovement>(it);
 		CTransform& transform = *g_ecs->GetComponent<CTransform>(it);
+		CAbility& ability = *g_ecs->GetComponent<CAbility>(it);
 
 		// Initialize sprite sheet and animation instance if not already done
         if (anim.m_gridSpriteSheet == AssetID::Invalid && anim.m_spriteSheetName != Name::Invalid)
@@ -50,45 +52,10 @@ void SAnimation::Run(SystemContext const& context)
 
         Vec2 forward = Vec2::MakeFromUnitCircleDegrees(transform.m_orientation);
         bool isMoving = !movement.m_frameMoveDir.IsZero();
-        if (!isMoving)
+		bool isCasting = ability.m_isCastingAbility; 
+        if (!isCasting)
         {
-            if (forward.Dot(Vec2(0, -1)) >= MathConstants::ROOT_2_OVER_2)
-            {
-                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("southIdle")), true);
-            }
-            else if (forward.Dot(Vec2(0, 1)) >= MathConstants::ROOT_2_OVER_2)
-            {
-                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("northIdle")), true);
-            }
-            else if (forward.Dot(Vec2(1, 0)) >= MathConstants::ROOT_2_OVER_2)
-            {
-                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("eastIdle")), true);
-            }
-            else
-            {
-                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("westIdle")), true);
-			}
-        }
-        else
-        {
-            if (forward.Dot(Vec2(0, -1)) >= MathConstants::ROOT_2_OVER_2)
-            {
-                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("southWalk")), false);
-            }
-            else if (forward.Dot(Vec2(0, 1)) >= MathConstants::ROOT_2_OVER_2)
-            {
-                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("northWalk")), false);
-            }
-            else if (forward.Dot(Vec2(1, 0)) >= MathConstants::ROOT_2_OVER_2)
-            {
-                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("eastWalk")), false);
-            }
-            else
-            {
-                anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("westWalk")), false);
-            }
-
-            if (movement.m_isSprinting)
+            if (isMoving && movement.m_isSprinting)
             {
                 anim.m_animInstance.SetSpeedMultiplier(movement.m_sprintMoveSpeedMultiplier);
             }
@@ -96,9 +63,48 @@ void SAnimation::Run(SystemContext const& context)
             {
                 anim.m_animInstance.SetSpeedMultiplier(1.f);
             }
+
+            if (!isMoving)
+            {
+                if (forward.Dot(Vec2(0, -1)) >= MathConstants::ROOT_2_OVER_2)
+                {
+                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("southIdle")), false);
+                }
+                else if (forward.Dot(Vec2(0, 1)) >= MathConstants::ROOT_2_OVER_2)
+                {
+                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("northIdle")), false);
+                }
+                else if (forward.Dot(Vec2(1, 0)) >= MathConstants::ROOT_2_OVER_2)
+                {
+                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("eastIdle")), false);
+                }
+                else
+                {
+                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("westIdle")), false);
+			    }
+                anim.m_animInstance.Update(context.m_deltaSeconds);
+            }
+            else
+            {
+                if (forward.Dot(Vec2(0, -1)) >= MathConstants::ROOT_2_OVER_2)
+                {
+                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("southWalk")), false);
+                }
+                else if (forward.Dot(Vec2(0, 1)) >= MathConstants::ROOT_2_OVER_2)
+                {
+                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("northWalk")), false);
+                }
+                else if (forward.Dot(Vec2(1, 0)) >= MathConstants::ROOT_2_OVER_2)
+                {
+                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("eastWalk")), false);
+                }
+                else
+                {
+                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("westWalk")), false);
+                }
+            }
         }
 
-
-		anim.m_animInstance.Update(context.m_deltaSeconds);
+        anim.m_animInstance.Update(context.m_deltaSeconds);
 	}
 }

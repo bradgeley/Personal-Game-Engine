@@ -17,6 +17,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Components
 //
+#include "CAbility.h"
 #include "CAnimation.h"
 #include "CCamera.h"
 #include "CCollision.h"

@@ -141,6 +141,8 @@ protected:
 
 protected:
 
+	// Hot reload from dev console, expects 2 String parameters "type" and "name",
+    // where "type" is the debug name of the asset type (e.g. "GridSpriteSheet") and "name" is the name of the asset to reload (e.g. "Data/SpriteSheets/Soldier.xml").
     static bool StaticReload(NamedProperties& params);
 
 protected:
@@ -158,6 +160,7 @@ protected:
     std::unordered_map<AssetID, FutureAsset> m_futureAssets;
     std::unordered_map<AssetID, uint32_t>    m_refCounts;           // ref count for both loaded and future assets
 };
+
 
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,29 @@
+
+
+
+<GridSpriteSheet name="Adventurer" texture="Data/SpriteSheets/Adventurer.png" layout="16,8" edgePadding="0,0" innerPadding="0,0">
+  
+  <!-- Walk Anims -->
+  <SpriteAnimation name="eastWalk" frames="0-7" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+  <SpriteAnimation name="northwalk" frames="8-15" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+  <SpriteAnimation name="southWalk" frames="16-23" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+  <SpriteAnimation name="westWalk" frames="24-31" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+  
+  <!-- Idle Anims -->
+  <SpriteAnimation name="eastIdle" frames="32-39" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+  <SpriteAnimation name="northIdle" frames="40-47" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+  <SpriteAnimation name="southIdle" frames="48-55" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+  <SpriteAnimation name="westIdle" frames="56-63" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+
+  <!-- Attack Anims -->
+  <SpriteAnimation name="eastAttack1" frames="64-71" type="loopOnce" secondsPerFrame="0.05"></SpriteAnimation>
+  <SpriteAnimation name="northAttack1" frames="72-79" type="loopOnce" secondsPerFrame="0.05"></SpriteAnimation>
+  <SpriteAnimation name="southAttack1" frames="80-87" type="loopOnce" secondsPerFrame="0.05"></SpriteAnimation>
+  <SpriteAnimation name="westAttack1" frames="88-95" type="loopOnce" secondsPerFrame="0.05"></SpriteAnimation>
+
+  <SpriteAnimation name="eastAttack2" frames="96-103" type="loopOnce" secondsPerFrame="0.05"></SpriteAnimation>
+  <SpriteAnimation name="northAttack2" frames="104-111" type="loopOnce" secondsPerFrame="0.05"></SpriteAnimation>
+  <SpriteAnimation name="southAttack2" frames="112-119" type="loopOnce" secondsPerFrame="0.05"></SpriteAnimation>
+  <SpriteAnimation name="westAttack2" frames="120-127" type="loopOnce" secondsPerFrame="0.05"></SpriteAnimation>
+  
+</GridSpriteSheet>

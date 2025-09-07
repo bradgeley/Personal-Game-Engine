@@ -29,6 +29,7 @@ public:
     Name m_name = "Unnamed EntityDef";
 
     // Components
+    std::optional<CAbility>             m_ability;
 	std::optional<CAnimation>           m_animation;
     std::optional<CCamera>              m_camera;
 	std::optional<CCollision>           m_collision;

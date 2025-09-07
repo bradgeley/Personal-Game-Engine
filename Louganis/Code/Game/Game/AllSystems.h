@@ -13,6 +13,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Game Systems
 //
+#include "SAbility.h"
 #include "SAnimation.h"
 #include "SBackgroundMusic.h"
 #include "SCamera.h"

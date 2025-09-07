@@ -4,7 +4,6 @@
 #include "Engine/Core/Name.h"
 #include "Engine/Math/Grid.h"
 #include "Engine/Renderer/Rgba8.h"
-#include <string>
 
 
 
@@ -24,7 +23,6 @@ public:
     Image() = default;
     explicit Image(IntVec2 const& dimensions, Rgba8 const& color);
 
-    Name GetSourceImagePath() const;
     Grid<Rgba8> const& GetPixels() const;
 
     // Loading functions
@@ -36,5 +34,4 @@ public:
 private:
 
     Grid<Rgba8> m_pixels;
-    Name m_sourceImagePath = Name::Invalid;
 };

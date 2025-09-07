@@ -31,7 +31,7 @@ void SMovement::Run(SystemContext const& context)
             continue;
         }
 
-        move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * context.m_deltaSeconds;
+        move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * move.m_movementSpeedMultiplier * context.m_deltaSeconds;
         if (move.m_isSprinting)
         {
             move.m_frameMovement *= move.m_sprintMoveSpeedMultiplier;

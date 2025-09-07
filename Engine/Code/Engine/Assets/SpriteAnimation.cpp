@@ -16,10 +16,14 @@ void SpriteAnimationDef::LoadFromXml(void const* xmlElement)
 	m_name = XmlUtils::ParseXmlAttribute(*element, "name", Name::Invalid);
 	ASSERT_OR_DIE(m_name.IsValid(), "SpriteAnimationDef::LoadFromXml - Invalid name");
 
-	std::string typeStr = StringUtils::GetToLower(XmlUtils::ParseXmlAttribute(*element, "type", "Looping"));
-    if (typeStr == "looping")
+	std::string typeStr = StringUtils::GetToLower(XmlUtils::ParseXmlAttribute(*element, "type", "Loop"));
+    if (typeStr == "loop")
     {
-        m_type = SpriteAnimationType::Looping;
+        m_type = SpriteAnimationType::Loop;
+    }
+    else if (typeStr == "looponce")
+    {
+        m_type = SpriteAnimationType::LoopOnce;
     }
     else if (typeStr == "pingpong")
     {
@@ -140,6 +144,12 @@ void SpriteAnimation::Update(float deltaSeconds)
         return;
 	}
 
+    if (m_def->m_type == SpriteAnimationType::LoopOnce && IsFinished())
+    {
+        // LoopOnce animations that are finished do not update
+        return;
+	}
+
     float secondsPerFrame = GetSecondsPerFrame();
     if (MathUtils::IsNearlyZero(secondsPerFrame))
     {
@@ -170,15 +180,30 @@ void SpriteAnimation::Update(float deltaSeconds)
 
             m_currentFrame = m_currentFrame + m_currentDirection;
         }
-        else if (m_def->m_type == SpriteAnimationType::Looping)
+        else if (m_def->m_type == SpriteAnimationType::Loop)
         {
             if (m_currentDirection == 1)
             {
-                m_currentFrame = MathUtils::IncrementIntInRange(m_currentFrame, 0, (int) m_def->m_frames.size() - 1);
+                m_currentFrame = MathUtils::IncrementIntInRange(m_currentFrame, 0, (int) m_def->m_frames.size() - 1, true);
             }
             else
             {
-                m_currentFrame = MathUtils::DecrementIntInRange(m_currentFrame, 0, (int) m_def->m_frames.size() - 1);
+                m_currentFrame = MathUtils::DecrementIntInRange(m_currentFrame, 0, (int) m_def->m_frames.size() - 1, true);
+            }
+		}
+        else if (m_def->m_type == SpriteAnimationType::LoopOnce)
+        {
+            if (IsOnLastFrame())
+            {
+                m_t = 1.f;
+            }
+            if (m_currentDirection == 1)
+            {
+                m_currentFrame = MathUtils::IncrementIntInRange(m_currentFrame, 0, (int) m_def->m_frames.size() - 1, false);
+            }
+            else
+            {
+                m_currentFrame = MathUtils::DecrementIntInRange(m_currentFrame, 0, (int) m_def->m_frames.size() - 1, false);
             }
 		}
     }
@@ -226,6 +251,36 @@ float SpriteAnimation::GetSecondsPerFrame() const
         return 0.f;
     }
     return m_def->m_secondsPerFrame / m_speedMultiplier;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SpriteAnimation::IsFinished() const
+{
+    if (m_currentDirection == 1)
+    {
+        return (m_currentFrame == m_def->m_frames.size() - 1) && MathUtils::IsNearlyEqual(m_t, 1.f);
+    }
+    else
+    {
+        return (m_currentFrame == 0) && MathUtils::IsNearlyEqual(m_t, 0.f);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SpriteAnimation::IsOnLastFrame() const
+{
+    if (m_currentDirection == 1)
+    {
+        return m_currentFrame == (int) m_def->m_frames.size() - 1;
+    }
+    else
+    {
+        return m_currentFrame == 0;
+	}
 }
 
 

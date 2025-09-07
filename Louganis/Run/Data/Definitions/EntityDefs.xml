@@ -6,8 +6,9 @@
     <Camera tileHeight="10" maxZoom ="1000"></Camera>
     <PlayerController></PlayerController>
     <Collision radius="0.5"></Collision>
-    <Render scale="0.5"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/Soldier.xml"></Animation>
+    <Render scale="1.2" offset="0,0.1"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/Adventurer.xml"></Animation>
+    <Ability></Ability>
   </EntityDef>
   
 </EntityDefs>

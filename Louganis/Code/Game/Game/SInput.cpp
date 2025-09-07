@@ -2,17 +2,18 @@
 #include "SInput.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Math/MathUtils.h"
-#include "CMovement.h"
-#include "CTransform.h"
+#include "CAbility.h"
 #include "CCamera.h"
 #include "CPlayerController.h"
+#include "CMovement.h"
+#include "CTransform.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SInput::Startup()
 {
-    AddWriteDependencies<CCamera, CMovement>();
+    AddWriteDependencies<CCamera, CMovement, CAbility>();
     AddReadDependencies<InputSystem, CPlayerController, CTransform>();
 }
 
@@ -23,13 +24,20 @@ void SInput::Run(SystemContext const& context)
 {
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
     auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
+    auto& abilityStorage = g_ecs->GetArrayStorage<CAbility>();
     auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
 
-    for (auto it = g_ecs->Iterate<CMovement, CCamera, CPlayerController>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CMovement, CCamera, CPlayerController, CAbility>(context); it.IsValid(); ++it)
     {
         CMovement& move = moveStorage[it];
         CCamera& camera = cameraStorage[it];
         CTransform const& transform = transformStorage[it];
+        CAbility& ability = abilityStorage[it];
+
+        if (g_input->WasMouseButtonJustPressed(0))
+        {
+			ability.m_isCastingAbility = true;
+        }
 
         move.m_frameMoveDir = Vec2::ZeroVector;
         if (g_input->IsKeyDown('W'))
@@ -50,7 +58,7 @@ void SInput::Run(SystemContext const& context)
         }
         move.m_frameMoveDir.Normalize();
 
-        if (g_input->IsKeyDown(KeyCode::Shift))
+        if (g_input->IsKeyDown(KeyCode::Shift) && !ability.m_isCastingAbility)
         {
             move.m_isSprinting = true;
         }
