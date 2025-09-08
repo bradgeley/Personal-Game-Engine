@@ -253,6 +253,7 @@
     <ClCompile Include="Assets\GridSpriteSheet.cpp" />
     <ClCompile Include="Assets\Image.cpp" />
     <ClCompile Include="Assets\SpriteAnimation.cpp" />
+    <ClCompile Include="Assets\SpriteAnimationGroup.cpp" />
     <ClCompile Include="Assets\TextureAsset.cpp" />
     <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Audio\AudioUtils.cpp" />
@@ -353,6 +354,7 @@
     <ClInclude Include="Assets\GridSpriteSheet.h" />
     <ClInclude Include="Assets\Image.h" />
     <ClInclude Include="Assets\SpriteAnimation.h" />
+    <ClInclude Include="Assets\SpriteAnimationGroup.h" />
     <ClInclude Include="Assets\TextureAsset.h" />
     <ClInclude Include="Audio\AudioSystem.h" />
     <ClInclude Include="Audio\AudioUtils.h" />

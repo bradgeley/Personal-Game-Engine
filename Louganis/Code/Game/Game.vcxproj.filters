@@ -328,5 +328,8 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\Adventurer.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

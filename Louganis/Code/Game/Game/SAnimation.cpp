@@ -6,6 +6,7 @@
 #include "CTransform.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Math/MathUtils.h"
@@ -47,7 +48,7 @@ void SAnimation::Run(SystemContext const& context)
 
         if (!anim.m_animInstance.IsValid())
         {
-            anim.m_animInstance = spriteSheet->GetAnimationDef("southIdle")->MakeAnimInstance(); // todo: move default/starting anim to entity def
+            anim.m_animInstance = spriteSheet->GetAnimationDef("eastIdle")->MakeAnimInstance(); // todo: move default/starting anim to entity def
         }
 
         Vec2 forward = Vec2::MakeFromUnitCircleDegrees(transform.m_orientation);
@@ -64,44 +65,21 @@ void SAnimation::Run(SystemContext const& context)
                 anim.m_animInstance.SetSpeedMultiplier(1.f);
             }
 
-            if (!isMoving)
+            if (isMoving)
             {
-                if (forward.Dot(Vec2(0, -1)) >= MathConstants::ROOT_2_OVER_2)
-                {
-                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("southIdle")), false);
-                }
-                else if (forward.Dot(Vec2(0, 1)) >= MathConstants::ROOT_2_OVER_2)
-                {
-                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("northIdle")), false);
-                }
-                else if (forward.Dot(Vec2(1, 0)) >= MathConstants::ROOT_2_OVER_2)
-                {
-                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("eastIdle")), false);
-                }
-                else
-                {
-                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("westIdle")), false);
-			    }
-                anim.m_animInstance.Update(context.m_deltaSeconds);
+				SpriteAnimationGroup const* walkGroup = spriteSheet->GetAnimationGroup("walk");
+				ASSERT_OR_DIE(walkGroup != nullptr, "SAnimation::Run - Sprite sheet does not have a walk animation group.");
+				SpriteAnimationDef const* bestAnim = walkGroup->GetBestAnimForDir(forward, anim.m_animInstance.GetDef().GetDirection());
+				ASSERT_OR_DIE(bestAnim != nullptr, "SAnimation::Run - No best animation found for direction in walk animation group.");
+				anim.m_animInstance.ChangeDef(*bestAnim, false);
             }
             else
             {
-                if (forward.Dot(Vec2(0, -1)) >= MathConstants::ROOT_2_OVER_2)
-                {
-                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("southWalk")), false);
-                }
-                else if (forward.Dot(Vec2(0, 1)) >= MathConstants::ROOT_2_OVER_2)
-                {
-                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("northWalk")), false);
-                }
-                else if (forward.Dot(Vec2(1, 0)) >= MathConstants::ROOT_2_OVER_2)
-                {
-                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("eastWalk")), false);
-                }
-                else
-                {
-                    anim.m_animInstance.ChangeDef(*spriteSheet->GetAnimationDef(Name("westWalk")), false);
-                }
+                SpriteAnimationGroup const* idleGroup = spriteSheet->GetAnimationGroup("idle");
+                ASSERT_OR_DIE(idleGroup != nullptr, "SAnimation::Run - Sprite sheet does not have a idle animation group.");
+                SpriteAnimationDef const* bestAnim = idleGroup->GetBestAnimForDir(forward, anim.m_animInstance.GetDef().GetDirection());
+                ASSERT_OR_DIE(bestAnim != nullptr, "SAnimation::Run - No best animation found for direction in idle animation group.");
+                anim.m_animInstance.ChangeDef(*bestAnim, false);
             }
         }
 

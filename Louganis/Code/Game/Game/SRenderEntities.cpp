@@ -33,6 +33,11 @@ void SRenderEntities::Run(SystemContext const& context)
         CRender& render = *renderStorage.Get(renderIt);
         CAnimation const& anim = *animStorage.Get(renderIt);
 
+        if (!anim.m_animInstance.IsValid())
+        {
+            continue;
+        }
+
         if (render.m_vbo == RendererUtils::InvalidID)
         {
             render.m_vbo = g_renderer->MakeVertexBuffer();

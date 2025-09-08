@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Assets/Asset.h"
 #include "Engine/Core/Name.h"
+#include "Engine/Math/Vec2.h"
 #include <vector>
 
 
@@ -11,7 +12,7 @@ enum class SpriteAnimationType
 {
 	None,
 	Loop,
-	LoopOnce,
+	Once,
 	PingPong,
 	SingleFrame
 };
@@ -33,14 +34,16 @@ public:
 	void Init(SpriteAnimationType type, std::vector<int> const& frames, float secondsPerFrame);
 
 	Name GetName() const;
+	Vec2 const& GetDirection() const;
 	SpriteAnimation MakeAnimInstance(int startingFrameIndex = 0, int startingDirection = 1) const;
 
 protected:
 
-	Name m_name;
-	float m_secondsPerFrame = 0.f;
-	std::vector<int> m_frames;
-	SpriteAnimationType m_type = SpriteAnimationType::Loop;
+	Name m_name;											// "name" in xml.
+	float m_secondsPerFrame = 0.f;							// "secondsPerFrame" in xml. How long each frame lasts in seconds
+	Vec2 m_direction = Vec2::ZeroVector;					// "dir" in xml. Direction associated with this animation, e.g. NSEW
+	std::vector<int> m_frames;								// "frames" in xml. List of sprite indices in the sprite sheet that make up this animation
+	SpriteAnimationType m_type = SpriteAnimationType::Loop;	// "type" in xml. How the animation plays (loop, once, pingpong, single frame)
 };
 
 
@@ -56,6 +59,7 @@ public:
 	SpriteAnimation(SpriteAnimationDef const& def, int startingFrame = 0, int startingDirection = 1);
 
 	bool IsValid() const;
+	SpriteAnimationDef const& GetDef() const;
 	void ChangeDef(SpriteAnimationDef const& newDef, bool restart = false);
 	void Update(float deltaSeconds);
 	int GetCurrentSpriteIndex() const;	// Which sprite index in the sprite sheet is currently being displayed

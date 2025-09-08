@@ -286,6 +286,9 @@
     <ClCompile Include="Debug\DevConsoleUtils.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Assets\SpriteAnimationGroup.cpp">
+      <Filter>Assets\Sprites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -620,6 +623,9 @@
     </ClInclude>
     <ClInclude Include="Debug\DevConsoleArg.h">
       <Filter>Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\SpriteAnimationGroup.h">
+      <Filter>Assets\Sprites</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

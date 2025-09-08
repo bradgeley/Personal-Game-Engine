@@ -16,14 +16,20 @@ void SpriteAnimationDef::LoadFromXml(void const* xmlElement)
 	m_name = XmlUtils::ParseXmlAttribute(*element, "name", Name::Invalid);
 	ASSERT_OR_DIE(m_name.IsValid(), "SpriteAnimationDef::LoadFromXml - Invalid name");
 
+	m_direction = XmlUtils::ParseXmlAttribute(*element, "dir", Vec2::ZeroVector);
+    if (!m_direction.IsZero())
+    {
+		m_direction.Normalize();
+    }
+
 	std::string typeStr = StringUtils::GetToLower(XmlUtils::ParseXmlAttribute(*element, "type", "Loop"));
     if (typeStr == "loop")
     {
         m_type = SpriteAnimationType::Loop;
     }
-    else if (typeStr == "looponce")
+    else if (typeStr == "once")
     {
-        m_type = SpriteAnimationType::LoopOnce;
+        m_type = SpriteAnimationType::Once;
     }
     else if (typeStr == "pingpong")
     {
@@ -93,6 +99,14 @@ Name SpriteAnimationDef::GetName() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Vec2 const& SpriteAnimationDef::GetDirection() const
+{
+    return m_direction;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 SpriteAnimation SpriteAnimationDef::MakeAnimInstance(int startingFrameIndex /*= 0*/, int startingDirection /*= 1*/) const
 {
 	SpriteAnimation animInstance(*this, startingFrameIndex, startingDirection);
@@ -113,6 +127,14 @@ SpriteAnimation::SpriteAnimation(SpriteAnimationDef const& def, int startingFram
 bool SpriteAnimation::IsValid() const
 {
     return m_def != nullptr && !m_def->m_frames.empty();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+SpriteAnimationDef const& SpriteAnimation::GetDef() const
+{
+    return *m_def;
 }
 
 
@@ -144,7 +166,7 @@ void SpriteAnimation::Update(float deltaSeconds)
         return;
 	}
 
-    if (m_def->m_type == SpriteAnimationType::LoopOnce && IsFinished())
+    if (m_def->m_type == SpriteAnimationType::Once && IsFinished())
     {
         // LoopOnce animations that are finished do not update
         return;
@@ -191,7 +213,7 @@ void SpriteAnimation::Update(float deltaSeconds)
                 m_currentFrame = MathUtils::DecrementIntInRange(m_currentFrame, 0, (int) m_def->m_frames.size() - 1, true);
             }
 		}
-        else if (m_def->m_type == SpriteAnimationType::LoopOnce)
+        else if (m_def->m_type == SpriteAnimationType::Once)
         {
             if (IsOnLastFrame())
             {

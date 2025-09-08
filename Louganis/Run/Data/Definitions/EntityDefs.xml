@@ -2,12 +2,12 @@
   
   <EntityDef name = "Player">
     <Transform></Transform>
-    <Movement moveSpeed="5" sprintMoveSpeedMultiplier="2"></Movement> // Debug value
+    <Movement moveSpeed="5" sprintMoveSpeedMultiplier="2"></Movement>
     <Camera tileHeight="10" maxZoom ="1000"></Camera>
     <PlayerController></PlayerController>
     <Collision radius="0.5"></Collision>
-    <Render scale="1.2" offset="0,0.1"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/Adventurer.xml"></Animation>
+    <Render scale="0.5" offset="0,0.1"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/Soldier.xml"></Animation>
     <Ability></Ability>
   </EntityDef>
   

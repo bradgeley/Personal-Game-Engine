@@ -393,6 +393,7 @@
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Adventurer.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Soldier.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

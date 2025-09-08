@@ -74,14 +74,14 @@ Asset* GridSpriteSheet::Load(Name assetName)
 
 	ASSERT_OR_DIE(spriteSheet->m_textureName != Name::Invalid, "GridSpriteSheet::Load - Sprite sheet texture name is invalid.");
 
-	XmlElement* animationDefElem = root->FirstChildElement("SpriteAnimation");
-	while (animationDefElem != nullptr)
+	XmlElement* animationGrpElem = root->FirstChildElement("SpriteAnimationGroup");
+	while (animationGrpElem != nullptr)
 	{
-		size_t newIndex = spriteSheet->m_animations.size();
-		spriteSheet->m_animations.emplace_back(SpriteAnimationDef());
-		spriteSheet->m_animations[newIndex].LoadFromXml(animationDefElem);
+		size_t newIndex = spriteSheet->m_animationGroups.size();
+		spriteSheet->m_animationGroups.emplace_back(SpriteAnimationGroup());
+		spriteSheet->m_animationGroups[newIndex].LoadFromXml(animationGrpElem);
 
-		animationDefElem = animationDefElem->NextSiblingElement("SpriteAnimation");
+		animationGrpElem = animationGrpElem->NextSiblingElement("SpriteAnimationGroup");
 	}
 
 	return spriteSheet;
@@ -147,7 +147,7 @@ void GridSpriteSheet::ReleaseResources()
 	}
 	g_assetManager->Release(m_textureAsset);
 	m_spriteUVs.Clear();
-	m_animations.clear();
+	m_animationGroups.clear();
 }
 
 
@@ -175,11 +175,29 @@ float GridSpriteSheet::GetSpriteAspect() const
 //----------------------------------------------------------------------------------------------------------------------
 SpriteAnimationDef const* GridSpriteSheet::GetAnimationDef(Name name) const
 {
-	for (SpriteAnimationDef const& animDef : m_animations)
+	for (SpriteAnimationGroup const& animGroup : m_animationGroups)
 	{
-		if (animDef.GetName() == name)
+		for (SpriteAnimationDef const& animDef : animGroup.GetAnimationDefs())
 		{
-			return &animDef;
+			if (animDef.GetName() == name)
+			{
+				return &animDef;
+			}
+		}
+	}
+	return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+SpriteAnimationGroup const* GridSpriteSheet::GetAnimationGroup(Name name) const
+{
+	for (auto& animGroup : m_animationGroups)
+	{
+		if (animGroup.GetName() == name)
+		{
+			return &animGroup;
 		}
 	}
 	return nullptr;
