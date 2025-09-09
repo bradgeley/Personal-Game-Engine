@@ -310,7 +310,9 @@
     <ClCompile Include="Game\SAnimation.cpp" />
     <ClCompile Include="Game\SBackgroundMusic.cpp" />
     <ClCompile Include="Game\SCamera.cpp" />
+    <ClCompile Include="Game\SCCollision.cpp" />
     <ClCompile Include="Game\SCollision.cpp" />
+    <ClCompile Include="Game\SCollisionHash.cpp" />
     <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
     <ClCompile Include="Game\SEntityFactory.cpp" />
@@ -357,11 +359,13 @@
     <ClInclude Include="Game\SBackgroundMusic.h" />
     <ClInclude Include="Game\SCamera.h" />
     <ClInclude Include="Game\SCAudio.h" />
+    <ClInclude Include="Game\SCCollision.h" />
     <ClInclude Include="Game\SCDebug.h" />
     <ClInclude Include="Game\SCEntityFactory.h" />
     <ClInclude Include="Game\SCFlowField.h" />
     <ClInclude Include="Game\SCLoadChunks.h" />
     <ClInclude Include="Game\SCollision.h" />
+    <ClInclude Include="Game\SCollisionHash.h" />
     <ClInclude Include="Game\SCRender.h" />
     <ClInclude Include="Game\SDebugRender.h" />
     <ClInclude Include="Game\SEntityFactory.h" />
@@ -393,7 +397,9 @@
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Adventurer.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Soldier.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\Zombie2.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -49,9 +49,9 @@ private:
 
 public:
 
-	Name		m_name		= "Unnamed TileDef";
-	AABB2		m_UVs;
-	TileTags	m_tags		= 0;
-	Rgba8		m_tint		= Rgba8::White;
-	uint8_t		m_cost		= 1;
+	Name		m_name			= "Unnamed TileDef";
+	uint8_t		m_spriteIndex	= 1;
+	TileTags	m_tags			= 0;
+	Rgba8		m_tint			= Rgba8::White;
+	uint8_t		m_cost			= 1;
 };

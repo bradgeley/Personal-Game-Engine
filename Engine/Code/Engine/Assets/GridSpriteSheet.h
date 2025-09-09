@@ -48,7 +48,7 @@ protected:
 	Grid<AABB2> m_spriteUVs;									// Precomputed UVs for each sprite
 	IntVec2		m_edgePadding	= IntVec2::ZeroVector;			// Around the whole sheet
 	IntVec2		m_innerPadding	= IntVec2::ZeroVector;			// Between sprites
-	std::vector<SpriteAnimationGroup> m_animationGroups;				// Animations that use this sprite sheet, loaded from the xml
+	std::vector<SpriteAnimationGroup> m_animationGroups;		// Animations that use this sprite sheet, loaded from the xml
 
 	// Used during the load process
 	Name		m_textureName	= Name::Invalid;

@@ -10,13 +10,15 @@
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Performance/ScopedTimer.h"
 
+// Experimental
+#include "SCEntityFactory.h"
+
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SLoadChunks::Startup()
 {
-	AddWriteDependencies<SCWorld, SCLoadChunks>();
-	AddReadDependencies<CTransform, CPlayerController>();
+	AddWriteAllDependencies();
 
 	TileDef::LoadFromXML();
 }
@@ -28,6 +30,9 @@ void SLoadChunks::Run(SystemContext const& context)
 {
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCLoadChunks& scLoadChunks = g_ecs->GetSingleton<SCLoadChunks>();
+
+	// Experimental
+	SCEntityFactory& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	scLoadChunks.m_numLoadedChunksThisFrame = 0;
 	if (!(scLoadChunks.m_unloadedChunksInRadius || world.GetPlayerChangedWorldCoordsThisFrame()))
@@ -53,7 +58,7 @@ void SLoadChunks::Run(SystemContext const& context)
 	{
 		CTransform& playerTransform = *transformStorage.Get(it);
 
- 		world.ForEachChunkCoordsInCircle(playerTransform.m_pos, chunkLoadRadius, [&world, &scLoadChunks](IntVec2 const& chunkCoords)
+ 		world.ForEachChunkCoordsInCircle(playerTransform.m_pos, chunkLoadRadius, [&world, &entityFactory, &scLoadChunks](IntVec2 const& chunkCoords)
 		{ 
 			bool shouldContinueLooping = true;
 			if (!world.IsChunkLoaded(chunkCoords))
@@ -63,6 +68,12 @@ void SLoadChunks::Run(SystemContext const& context)
 				bool hitLimit = scLoadChunks.m_numLoadedChunksThisFrame >= world.m_worldSettings.m_maxNumChunksToLoadPerFrame;
 				scLoadChunks.m_unloadedChunksInRadius = hitLimit;
 				shouldContinueLooping = !hitLimit;
+
+				// Experimental
+				SpawnInfo spawnInfo;
+				spawnInfo.m_def = EntityDef::GetEntityDef("BabyZombie");
+				spawnInfo.m_spawnPos = world.CalculateChunkCenter(chunkCoords.x, chunkCoords.y);
+				entityFactory.m_entitiesToSpawn.emplace_back(spawnInfo);
 			}
 			return shouldContinueLooping;
 		});

@@ -212,6 +212,7 @@ void Game::ConfigureECS()
 
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCAudio>();
+    g_ecs->RegisterComponentSingleton<SCCollision>();
     g_ecs->RegisterComponentSingleton<SCDebug>();
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
     g_ecs->RegisterComponentSingleton<SCFlowField>();
@@ -241,10 +242,11 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SFlowField>((int) FramePhase::PrePhysics);
 
     // Physics
-    SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
-    physics.m_timeStep = 0.00833f;
+    //SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
+    //physics.m_timeStep = 0.00833f;
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
 

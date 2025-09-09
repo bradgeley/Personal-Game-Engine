@@ -84,6 +84,21 @@ Asset* GridSpriteSheet::Load(Name assetName)
 		animationGrpElem = animationGrpElem->NextSiblingElement("SpriteAnimationGroup");
 	}
 
+	// Direct sprite animations that are not part of a group, just make a group for each
+	XmlElement* animationElem = root->FirstChildElement("SpriteAnimation");
+	while (animationElem != nullptr)
+	{
+		spriteSheet->m_animationGroups.emplace_back(SpriteAnimationGroup());
+		SpriteAnimationGroup& newAnimGroup = spriteSheet->m_animationGroups.back();
+		newAnimGroup.m_name = XmlUtils::ParseXmlAttribute(*animationElem, "name", Name::Invalid);
+
+		newAnimGroup.m_animationDefs.emplace_back(SpriteAnimationDef());
+		SpriteAnimationDef& newAnimDef = newAnimGroup.m_animationDefs.back();
+		newAnimDef.LoadFromXml(animationElem);
+
+		animationElem = animationElem->NextSiblingElement("SpriteAnimation");
+	}
+
 	return spriteSheet;
 }
 

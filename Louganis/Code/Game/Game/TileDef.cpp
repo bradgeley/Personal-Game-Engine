@@ -22,6 +22,7 @@ TileDef::TileDef(XmlElement const* tileDefXmlElement)
 
 	m_tint = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "tint", m_tint);
 	m_cost = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "cost", m_cost);
+	m_spriteIndex = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "spriteIndex", m_spriteIndex);
 }
 
 

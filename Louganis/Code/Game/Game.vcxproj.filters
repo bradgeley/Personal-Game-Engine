@@ -121,6 +121,12 @@
     <ClCompile Include="Game\SAbility.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SCollisionHash.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCCollision.cpp">
+      <Filter>Singletons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -276,6 +282,12 @@
     <ClInclude Include="Game\SAbility.h">
       <Filter>Systems</Filter>
     </ClInclude>
+    <ClInclude Include="Game\SCollisionHash.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCCollision.h">
+      <Filter>Singletons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -329,6 +341,12 @@
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Zombie2.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
   </ItemGroup>

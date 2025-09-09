@@ -18,6 +18,7 @@
 #include "SBackgroundMusic.h"
 #include "SCamera.h"
 #include "SCollision.h"
+#include "SCollisionHash.h"
 #include "SCopyTransform.h" 
 #include "SDebugRender.h"
 #include "SEntityFactory.h"

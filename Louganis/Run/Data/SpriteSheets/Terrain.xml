@@ -1,0 +1,10 @@
+
+
+
+<GridSpriteSheet name="Terrain" texture="Data/SpriteSheets/Terrain.png" layout="2,1" edgePadding="0,0" innerPadding="0,0">
+  
+  <!-- Tiles -->
+  <SpriteAnimation name="grass" frames="0" type="singleframe"></SpriteAnimation>
+  <SpriteAnimation name="stone" frames="1" type="singleframe"></SpriteAnimation>
+  
+</GridSpriteSheet>

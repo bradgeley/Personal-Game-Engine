@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include <functional>
 
 
 
@@ -65,3 +66,24 @@ public:
     static IntVec2 OneVector;
     static IntVec2 ZeroToOne;
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Custom hash specialization
+//
+namespace std
+{
+    template <>
+    struct hash<IntVec2>
+    {
+        size_t operator()(IntVec2 const& v) const noexcept
+        {
+            size_t h1 = std::hash<int>{}(v.x);
+            size_t h2 = std::hash<int>{}(v.y);
+
+            // Combine the hashes
+            return h1 ^ (h2 + 0x9e3779b9 + (h1 << 6) + (h1 >> 2));
+        }
+    };
+}

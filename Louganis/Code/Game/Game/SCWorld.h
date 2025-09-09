@@ -2,9 +2,9 @@
 #pragma once
 #include "WorldCoords.h"
 #include "WorldSettings.h"
+#include "Engine/Assets/AssetID.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/IntVec2.h"
-#include <functional>
 #include <map>
 
 
@@ -72,6 +72,8 @@ public:
 
     // lifetime owned by SWorld
     std::map<IntVec2, Chunk*> m_activeChunks;
+
+	AssetID m_worldSpriteSheet = AssetID::Invalid;
 
     // Tracks if the player has moved
     WorldCoords m_lastKnownPlayerWorldCoords = WorldCoords::s_invalidWorldCoords;

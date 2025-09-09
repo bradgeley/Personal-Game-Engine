@@ -99,6 +99,14 @@ Name SpriteAnimationDef::GetName() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Name SpriteAnimationDef::GetAnimGroupName() const
+{
+    return m_groupName;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 const& SpriteAnimationDef::GetDirection() const
 {
     return m_direction;

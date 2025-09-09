@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "Renderer.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Window/Window.h"
 #include "Camera.h"
@@ -1080,7 +1081,7 @@ bool Renderer::DebugDrawVertexBuffers(NamedProperties&)
 		m_debugDrawVertexBuffers = !m_debugDrawVertexBuffers;
 		return true;
 	#else
-		g_devConsole->LogError("Cannot debug draw vertex buffers in a Release build.");
+		DevConsoleUtils::LogError("Cannot debug draw vertex buffers in a Release build.");
 		return false;
 	#endif
 }

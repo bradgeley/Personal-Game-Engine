@@ -9,21 +9,6 @@
 
 
 
-namespace std
-{
-	template <>
-	struct hash<IntVec2>
-	{
-		size_t operator()(const IntVec2& v) const noexcept
-		{
-			// simple hash combine
-			return (std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1));
-		}
-	};
-}
-
-
-
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 s_neighborOffsets[8] =
 {

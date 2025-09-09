@@ -46,10 +46,7 @@ void SAnimation::Run(SystemContext const& context)
 			continue; // Wait until the sprite sheet is loaded before proceeding
         }
 
-        if (!anim.m_animInstance.IsValid())
-        {
-            anim.m_animInstance = spriteSheet->GetAnimationDef("eastIdle")->MakeAnimInstance(); // todo: move default/starting anim to entity def
-        }
+        SpriteAnimationDef const* bestAnim = nullptr;
 
         Vec2 forward = Vec2::MakeFromUnitCircleDegrees(transform.m_orientation);
         bool isMoving = !movement.m_frameMoveDir.IsZero();
@@ -69,17 +66,29 @@ void SAnimation::Run(SystemContext const& context)
             {
 				SpriteAnimationGroup const* walkGroup = spriteSheet->GetAnimationGroup("walk");
 				ASSERT_OR_DIE(walkGroup != nullptr, "SAnimation::Run - Sprite sheet does not have a walk animation group.");
-				SpriteAnimationDef const* bestAnim = walkGroup->GetBestAnimForDir(forward, anim.m_animInstance.GetDef().GetDirection());
+				bestAnim = walkGroup->GetBestAnimForDir(forward, anim.m_animInstance.GetDef().GetDirection());
 				ASSERT_OR_DIE(bestAnim != nullptr, "SAnimation::Run - No best animation found for direction in walk animation group.");
-				anim.m_animInstance.ChangeDef(*bestAnim, false);
             }
             else
             {
                 SpriteAnimationGroup const* idleGroup = spriteSheet->GetAnimationGroup("idle");
                 ASSERT_OR_DIE(idleGroup != nullptr, "SAnimation::Run - Sprite sheet does not have a idle animation group.");
-                SpriteAnimationDef const* bestAnim = idleGroup->GetBestAnimForDir(forward, anim.m_animInstance.GetDef().GetDirection());
+                bestAnim = idleGroup->GetBestAnimForDir(forward, anim.m_animInstance.GetDef().GetDirection());
                 ASSERT_OR_DIE(bestAnim != nullptr, "SAnimation::Run - No best animation found for direction in idle animation group.");
-                anim.m_animInstance.ChangeDef(*bestAnim, false);
+            }
+        }
+
+        if (bestAnim)
+        {
+            if (anim.m_animInstance.IsValid())
+            {
+				Name currentGroup = anim.m_animInstance.GetDef().GetAnimGroupName();
+                bool shouldRestart = (bestAnim->GetAnimGroupName() != currentGroup);
+                anim.m_animInstance.ChangeDef(*bestAnim, shouldRestart);
+            }
+            else
+            {
+				anim.m_animInstance = bestAnim->MakeAnimInstance(0, 1);
             }
         }
 

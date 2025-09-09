@@ -2,7 +2,6 @@
 #include "SWorldCollision.h"
 #include "CCollision.h"
 #include "CTransform.h"
-#include "CRender.h"
 #include "Chunk.h"
 #include "SCDebug.h"
 #include "SCWorld.h"
@@ -29,7 +28,7 @@ void SWorldCollision::Run(SystemContext const& context)
     auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
     auto& scWorld = g_ecs->GetSingleton<SCWorld>();
 
-    for (auto it = g_ecs->Iterate<CTransform, CCollision, CRender>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
     {
         CTransform& trans = transStorage[it];
         CCollision& coll = *collStorage.Get(it);

@@ -14,6 +14,8 @@ struct Vec2;
 //
 class SpriteAnimationGroup
 {
+	friend class GridSpriteSheet;
+
 public:
 
 	SpriteAnimationGroup() = default;
@@ -23,7 +25,7 @@ public:
 	Name GetName() const;
 	std::vector<SpriteAnimationDef> const& GetAnimationDefs() const;
 
-	// Current def is used as a tiebreaker if two animations have the same dot product with the direction vector, and are both equally good
+	// tiebreakerDir is used as a tiebreaker if two animations have the same dot product with 'direction'
 	SpriteAnimationDef const* GetBestAnimForDir(Vec2 const& direction, Vec2 const& tiebreakerDir) const;
 
 protected:

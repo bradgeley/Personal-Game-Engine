@@ -6,8 +6,17 @@
     <Camera tileHeight="10" maxZoom ="1000"></Camera>
     <PlayerController></PlayerController>
     <Collision radius="0.5"></Collision>
-    <Render scale="0.5" offset="0,0.1"></Render>
+    <Render scale="0.5"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Soldier.xml"></Animation>
+    <Ability></Ability>
+  </EntityDef>
+
+  <EntityDef name = "BabyZombie">
+    <Transform></Transform>
+    <Movement moveSpeed="1"></Movement>
+    <Collision radius="0.25"></Collision>
+    <Render scale="0.25"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/Zombie2.xml"></Animation>
     <Ability></Ability>
   </EntityDef>
   

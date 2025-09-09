@@ -1,6 +1,9 @@
 // Bradley Christensen - 2022-2025
 #include "Chunk.h"
 #include "WorldSettings.h"
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/GridSpriteSheet.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -52,6 +55,10 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	m_vbo = g_renderer->MakeVertexBuffer();
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
 
+	AssetID terrainID = g_assetManager->LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
+	GridSpriteSheet const* terrainSpriteSheet = g_assetManager->Get<GridSpriteSheet>(terrainID);
+	ASSERT_OR_DIE(terrainSpriteSheet != nullptr, "Chunk::Generate - Failed to load terrain sprite sheet");
+
 	vbo.Initialize(6 * numTilesInChunk);
 	for (int y = 0; y < numTilesInRow; ++y)
 	{
@@ -67,9 +74,12 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			Rgba8 const& tint = tileDef->m_tint;
 			Vec2 mins = chunkOrigin + Vec2(x, y) * worldSettings.m_tileWidth;
 			Vec2 maxs = mins + tileDims;
-			VertexUtils::AddVertsForRect2D(vbo, mins, maxs, tint);
+			AABB2 uvs = terrainSpriteSheet->GetSpriteUVs(tileDef->m_spriteIndex);
+			VertexUtils::AddVertsForRect2D(vbo, mins, maxs, tint, uvs);
 		}
 	}
+
+	g_assetManager->Release(terrainID);
 
 	#if defined(_DEBUG)
 		m_debugVBO = g_renderer->MakeVertexBuffer();

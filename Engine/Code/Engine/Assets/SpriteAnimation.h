@@ -25,6 +25,7 @@ enum class SpriteAnimationType
 class SpriteAnimationDef
 {
 	friend class SpriteAnimation;
+	friend class SpriteAnimationGroup;
 
 public:
 
@@ -34,12 +35,14 @@ public:
 	void Init(SpriteAnimationType type, std::vector<int> const& frames, float secondsPerFrame);
 
 	Name GetName() const;
+	Name GetAnimGroupName() const;
 	Vec2 const& GetDirection() const;
 	SpriteAnimation MakeAnimInstance(int startingFrameIndex = 0, int startingDirection = 1) const;
 
 protected:
 
 	Name m_name;											// "name" in xml.
+	Name m_groupName;										
 	float m_secondsPerFrame = 0.f;							// "secondsPerFrame" in xml. How long each frame lasts in seconds
 	Vec2 m_direction = Vec2::ZeroVector;					// "dir" in xml. Direction associated with this animation, e.g. NSEW
 	std::vector<int> m_frames;								// "frames" in xml. List of sprite indices in the sprite sheet that make up this animation

@@ -1,9 +1,9 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SCollision.h"
 #include "CCollision.h"
+#include "SCCollision.h"
 #include "CTransform.h"
 #include "Engine/Math/GeometryUtils.h"
-#include "Engine/Math/MathUtils.h"
 
 
 
@@ -11,43 +11,47 @@
 void SCollision::Startup()
 {
     AddWriteDependencies<CTransform>();
-    AddReadDependencies<CCollision>();
+    AddReadDependencies<SCCollision, CCollision>();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCollision::Run(SystemContext const& context)
+void SCollision::Run(SystemContext const&)
 {
-    // Naive collision, n^2 complexity
+    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
-    auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-    auto& collStorage  = g_ecs->GetArrayStorage<CCollision>();
+	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
 
-    GroupIter itA = g_ecs->Iterate<CTransform, CCollision>(context);
-    GroupIter itB = itA;
-
-    for (/*init above*/; itA.IsValid(); ++itA)
+    for (auto it = scCollision.m_chunkCollisionData.begin(); it != scCollision.m_chunkCollisionData.end(); ++it)
     {
-        CTransform& transA = transStorage[itA];
-        CCollision& collA = *collStorage.Get(itA);
+        std::vector<std::vector<EntityID>>& entitiesTouchingTiles = it->second.m_entitiesTouchingTile;
 
-        Vec2& posA = transA.m_pos;
-        float& radiusA = collA.m_radius;
-
-        // Start iterator B at one entity after iterator A (without copying a bunch of data every iteration by calling itB = itA;
-        itB.m_currentIndex = itA.m_currentIndex;
-        ++itB;
-
-        for (/*init above*/; itB.IsValid(); ++itB)
+        for (auto tileIt = entitiesTouchingTiles.begin(); tileIt != entitiesTouchingTiles.end(); ++tileIt)
         {
-            CTransform& transB = transStorage[itB];
-            CCollision& collB = *collStorage.Get(itB);
+            std::vector<EntityID>& entitiesInTile = *tileIt;
 
-            Vec2& posB = transB.m_pos;
-            float& radiusB = collB.m_radius;
+            // Handle collision inside tile
+            for (size_t a = 0; a < entitiesInTile.size(); ++a)
+            {
+                EntityID& entityA = entitiesInTile[a];
+                CTransform& transformA = transformStorage[entityA];
+                CCollision& collisionA = collisionStorage[entityA];
 
-            GeometryUtils::PushDiscsOutOfEachOther2D(posA, radiusA, posB, radiusB);
-        }
-    }
+                for (size_t b = a + 1; b < entitiesInTile.size(); ++b)
+                {
+                    EntityID& entityB = entitiesInTile[b];
+                    CTransform& transformB = transformStorage[entityB];
+                    CCollision& collisionB = collisionStorage[entityB];
+
+                    if (GeometryUtils::PushDiscsOutOfEachOther2D(transformA.m_pos, collisionA.m_radius, transformB.m_pos, collisionB.m_radius))
+                    {
+                        // Handle collision between entityA and entityB
+                    }
+                }
+            }
+		}
+
+	}
 }

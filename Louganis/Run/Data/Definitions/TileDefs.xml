@@ -1,8 +1,8 @@
 <TileDefs>
 
-  <TileDef name="grass" visible="true" solid="false" tint="0,200,0" cost="1" />
-  <TileDef name="wall" visible="true" solid="true"  tint="100,100,100" cost="99" />
+  <TileDef name="grass" visible="true" solid="false" tint="0,200,0" cost="1" spriteIndex="0"/>
+  <TileDef name="wall" visible="true" solid="true"  tint="100,100,100" cost="99" spriteIndex="1"/>
 
-  <TileDef name="error" visible="true" solid="true"  tint="255,0,255" cost="255" />
+  <TileDef name="error" visible="true" solid="true"  tint="255,0,255" cost="255" spriteIndex="-1"/>
   
 </TileDefs>

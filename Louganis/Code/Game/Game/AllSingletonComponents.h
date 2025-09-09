@@ -6,6 +6,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Singletons
 #include "SCAudio.h"
+#include "SCCollision.h"
 #include "SCDebug.h"
 #include "SCEntityFactory.h"
 #include "SCFlowField.h"

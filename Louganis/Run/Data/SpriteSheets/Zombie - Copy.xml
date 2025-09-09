@@ -1,0 +1,18 @@
+
+
+
+<GridSpriteSheet name="Zombie2" texture="Data/SpriteSheets/Zombie2.png" layout="3,1" edgePadding="0,0" innerPadding="0,0">
+  
+  <!-- Walk Anims -->
+  <SpriteAnimationGroup name="walk">
+    <SpriteAnimation name="westWalk" dir="-1,0" frames="0-3" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+    <SpriteAnimation name="eastWalk" dir="1,0" frames="4-7" type="loop" secondsPerFrame="0.1"></SpriteAnimation>
+  </SpriteAnimationGroup>
+  
+  <!-- Idle Anims -->
+  <SpriteAnimationGroup name="idle">
+    <SpriteAnimation name="westIdle" dir="-1,0" frames="0-3" type="pingpong"></SpriteAnimation>
+    <SpriteAnimation name="eastIdle" dir="1,0" frames="4-7" type="pingpong"></SpriteAnimation>
+  </SpriteAnimationGroup>
+  
+</GridSpriteSheet>
