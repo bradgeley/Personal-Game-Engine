@@ -159,6 +159,15 @@ WorldCoords SCWorld::GetWorldCoordsAtLocation(Vec2 const& worldLocation) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+WorldCoords SCWorld::GetWorldCoordsAtGlobalTileCoords(IntVec2 const& globalTileCoords) const
+{
+	Vec2 worldLocation = Vec2(globalTileCoords) * m_worldSettings.m_tileWidth;
+	return GetWorldCoordsAtLocation(worldLocation);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldCoords* eightNeighborsArray) const
 {
 	for (int i = 0; i < 8; ++i)
@@ -170,7 +179,7 @@ void SCWorld::GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldC
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords&)>& func) const
+void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
 	int tilesInChunk = GetNumTilesInChunk();
@@ -196,14 +205,100 @@ void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const
 				}
 			}
 		}
-		return true; 
+		return true;
 	});
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords&)>& func) const
+void SCWorld::ForEachWorldCoordsInCircle(Vec2 const& pos, float radius, const std::function<bool(WorldCoords const&)>& func) const
+{
+	AABB2 boundingBox = GeometryUtils::GetDiscBounds(pos, radius);
+
+	ForEachWorldCoordsOverlappingAABB(boundingBox, [&](WorldCoords const& worldCoords)
+	{
+		AABB2 tileBounds = GetTileBounds(worldCoords);
+		if (GeometryUtils::DoesDiscOverlapAABB(pos, radius, tileBounds))
+		{
+			if (!func(worldCoords))
+			{
+				return false;
+			}
+		}
+		return true;
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(WorldCoords const&)>& func) const
+{
+	// Start in bot left, and iterate in a grid pattern
+	IntVec2 startGlobalTileCoords = GetGlobalTileCoordsAtLocation(aabb.mins);
+	IntVec2 endGlobalTileCoords = GetGlobalTileCoordsAtLocation(aabb.maxs);
+
+	int startX = MathUtils::Min(startGlobalTileCoords.x, endGlobalTileCoords.x);
+	int endX = MathUtils::Max(startGlobalTileCoords.x, endGlobalTileCoords.x);
+
+	int startY = MathUtils::Min(startGlobalTileCoords.y, endGlobalTileCoords.y);
+	int endY = MathUtils::Max(startGlobalTileCoords.y, endGlobalTileCoords.y);
+
+	for (int x = startX; x <= endX; ++x)
+	{
+		for (int y = startY; y <= endY; ++y)
+		{
+			WorldCoords worldCoords = GetWorldCoordsAtGlobalTileCoords(IntVec2(x, y));
+			if (Chunk* chunk = GetActiveChunk(worldCoords))
+			{
+				if (!func(worldCoords))
+				{
+					return;
+				}
+			}
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachSolidWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(WorldCoords const&, Chunk*)>& func) const
+{
+	// Start in bot left, and iterate in a grid pattern
+	IntVec2 startGlobalTileCoords = GetGlobalTileCoordsAtLocation(aabb.mins);
+	IntVec2 endGlobalTileCoords = GetGlobalTileCoordsAtLocation(aabb.maxs);
+
+	int startX = MathUtils::Min(startGlobalTileCoords.x, endGlobalTileCoords.x);
+	int endX = MathUtils::Max(startGlobalTileCoords.x, endGlobalTileCoords.x);
+
+	int startY = MathUtils::Min(startGlobalTileCoords.y, endGlobalTileCoords.y);
+	int endY = MathUtils::Max(startGlobalTileCoords.y, endGlobalTileCoords.y);
+
+	for (int x = startX; x <= endX; ++x)
+	{
+		for (int y = startY; y <= endY; ++y)
+		{
+			WorldCoords worldCoords = GetWorldCoordsAtGlobalTileCoords(IntVec2(x, y));
+			if (Chunk* chunk = GetActiveChunk(worldCoords))
+			{
+				if (chunk->IsTileSolid(worldCoords.m_localTileCoords))
+				{
+					if (!func(worldCoords, chunk))
+					{
+						return;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
 	int tilesInChunk = GetNumTilesInChunk();
@@ -603,7 +698,7 @@ float SCWorld::GetChunkUnloadRadius() const
 //----------------------------------------------------------------------------------------------------------------------
 float SCWorld::GetChunkWidth() const
 {
-	return m_worldSettings.m_tileWidth * GetNumTilesInRow();
+	return m_chunkWidth;
 }
 
 

@@ -23,7 +23,7 @@ namespace GeometryUtils
 	// 2D Overlap Test
 	//
 	bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position2, float radius2);
-	bool IsDiscTouchingAABB(Vec2 const& discPos, float discRadius, AABB2 const& aabb);
+	bool DoesDiscOverlapAABB(Vec2 const& discPos, float discRadius, AABB2 const& aabb);
 	bool DoesCapsuleOverlapAABB(Vec2 const& capsuleStart, Vec2 const& capsuleEnd, float capsuleRadius, AABB2 const& aabb);
 
 
@@ -33,7 +33,7 @@ namespace GeometryUtils
 	//
 	bool PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point);
 	bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius);
-	bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB);
+	bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB, bool weightByRadius = true);
 	bool PushDiscOutOfAABB2D(Vec2& discPos, float discRadius, AABB2 const& aabb);
 
 

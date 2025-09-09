@@ -10,6 +10,8 @@ class SCollisionHash : public System
 public:
 
     SCollisionHash(Name name = "CollisionHash", Rgba8 const& debugTint = Rgba8::Maroon) : System(name, debugTint) {};
-    void Startup() override;
-    void Run(SystemContext const& context) override;
+    virtual void Startup() override;
+	virtual void PreRun() override;
+    virtual void Run(SystemContext const& context) override;
+	virtual void PostRun() override;
 };

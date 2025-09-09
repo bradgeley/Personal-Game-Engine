@@ -4,6 +4,7 @@
 #include "CPlayerController.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
+#include "SCCollision.h"
 #include "FlowField.h"
 #include "FlowFieldChunk.h"
 #include "Chunk.h"
@@ -30,7 +31,7 @@ void SDebugRender::Startup()
 {
     AddWriteDependencies<CTransform, CPlayerController, Renderer>();
     AddWriteDependencies<SCDebug>();
-    AddReadDependencies<SCWorld, SCFlowField, InputSystem, CCamera>();
+    AddReadDependencies<SCWorld, SCFlowField, SCCollision, InputSystem, CCamera>();
 
     g_eventSystem->SubscribeMethod("DebugRenderMouseRaycast", this, &SDebugRender::DebugRenderMouseRaycast);
     g_eventSystem->SubscribeMethod("DebugRenderMouseDiscCast", this, &SDebugRender::DebugRenderMouseDiscCast);
@@ -38,6 +39,7 @@ void SDebugRender::Startup()
     g_eventSystem->SubscribeMethod("DebugRenderDistanceField", this, &SDebugRender::DebugRenderDistanceField);
     g_eventSystem->SubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
     g_eventSystem->SubscribeMethod("DebugRenderSolidTiles", this, &SDebugRender::DebugRenderSolidTiles);
+    g_eventSystem->SubscribeMethod("DebugRenderCollision", this, &SDebugRender::DebugRenderCollision);
 
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_frameUntexVerts = g_renderer->MakeVertexBuffer();
@@ -124,7 +126,7 @@ void SDebugRender::Run(SystemContext const& context)
                 }
             }
 
-            world.ForEachWorldCoordsOverlappingCapsule(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, [&](WorldCoords& coords) 
+            world.ForEachWorldCoordsOverlappingCapsule(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, [&](WorldCoords const& coords)
             {
                 VertexUtils::AddVertsForWireBox2D(frameVerts, world.GetTileBounds(coords), 0.1f, Rgba8::Magenta);
                 return true; 
@@ -212,7 +214,7 @@ void SDebugRender::Run(SystemContext const& context)
     // Render Solid Tiles
     if (scDebug.m_debugRenderSolidTiles && playerCamera)
     {
-        world.ForEachChunkOverlappingAABB(playerCamera->m_camera.GetOrthoBounds2D(), [&world, &frameVerts](Chunk& chunk)
+        world.ForEachChunkOverlappingAABB(playerCamera->m_camera.GetTranslatedOrthoBounds2D(), [&world, &frameVerts](Chunk& chunk)
         {
             for (int tileID = 0; tileID < world.GetNumTilesInChunk(); ++tileID)
             {
@@ -226,6 +228,37 @@ void SDebugRender::Run(SystemContext const& context)
             }
             return true;
         });
+    }
+
+    // Render Collision Stuff
+    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
+    if (scDebug.m_debugRenderCollision)
+    {
+		VertexUtils::AddVertsForWireBox2D(frameVerts, scCollision.m_collisionUpdateBounds, 0.25f, Rgba8::Magenta);
+
+        for (auto const& chunkCollisionDataPair : scCollision.m_chunkCollisionData)
+        {
+            IntVec2 const& chunkCoords = chunkCollisionDataPair.first;
+			Chunk* chunk = world.GetActiveChunk(chunkCoords);
+            if (!chunk)
+            {
+                continue;
+            }
+            ChunkCollisionData const& chunkCollisionData = chunkCollisionDataPair.second;
+			auto& chunkBucket = chunkCollisionData.m_chunkBucket;
+			font->AddVertsForAlignedText2D(frameTextVerts, chunk->m_chunkBounds.GetCenter(), Vec2::ZeroVector, 0.5f, StringUtils::StringF("Chunk (%d, %d): Entities hashed: %d", chunkCoords.x, chunkCoords.y, chunkBucket.size()), Rgba8::White);
+			VertexUtils::AddVertsForWireBox2D(frameVerts, chunk->m_chunkBounds, 0.1f, Rgba8::Cyan);
+        
+            for (auto const& tileBucketPair : chunkCollisionData.m_tileBuckets)
+            {
+                int tileIndex = tileBucketPair.first;
+				EntityBucket const& tileBucket = tileBucketPair.second;
+				WorldCoords worldCoords = WorldCoords(chunkCoords, chunk->m_tileIDs.GetCoordsForIndex(tileIndex));
+                AABB2 tileBounds = world.GetTileBounds(worldCoords);
+				font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, StringUtils::StringF("%d", tileBucket.size()), Rgba8::White);
+                VertexUtils::AddVertsForWireBox2D(frameVerts, tileBounds, 0.05f, Rgba8::Yellow);
+            }
+		}
     }
 
     
@@ -252,9 +285,12 @@ void SDebugRender::Shutdown()
     g_renderer->ReleaseVertexBuffer(scDebug.m_frameUntexVerts);
 
     g_eventSystem->UnsubscribeMethod("DebugRenderMouseRaycast", this, &SDebugRender::DebugRenderMouseRaycast);
+    g_eventSystem->UnsubscribeMethod("DebugRenderMouseDiscCast", this, &SDebugRender::DebugRenderMouseDiscCast);
     g_eventSystem->UnsubscribeMethod("DebugRenderCostField", this, &SDebugRender::DebugRenderCostField);
     g_eventSystem->UnsubscribeMethod("DebugRenderDistanceField", this, &SDebugRender::DebugRenderDistanceField);
     g_eventSystem->UnsubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
+    g_eventSystem->UnsubscribeMethod("DebugRenderSolidTiles", this, &SDebugRender::DebugRenderSolidTiles);
+    g_eventSystem->UnsubscribeMethod("DebugRenderCollision", this, &SDebugRender::DebugRenderCollision);
 }
 
 
@@ -314,5 +350,15 @@ bool SDebugRender::DebugRenderSolidTiles(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderSolidTiles = !scDebug.m_debugRenderSolidTiles;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderCollision(NamedProperties&)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderCollision = !scDebug.m_debugRenderCollision;
     return false;
 }

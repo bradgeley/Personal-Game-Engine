@@ -12,6 +12,7 @@ class AdminSystem;
 //----------------------------------------------------------------------------------------------------------------------
 struct SystemContext
 {
+    SystemContext() = default;
     explicit SystemContext(System* system, float deltaSeconds);
 
     // Sets start and end entity based on which job this system context is out of the total jobs

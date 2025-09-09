@@ -69,7 +69,7 @@ void SPhysics::Run(SystemContext const& context)
 
             if (result.m_immediateHit)
             {
-                GeometryUtils::PushDiscOutOfPoint2D(transform.m_pos, radius, result.m_hitLocation);
+                GeometryUtils::PushDiscOutOfPoint2D(transform.m_pos, radius + scWorld.m_worldSettings.m_entityWallBuffer, result.m_hitLocation);
                 break;
             }
             else if (result.m_blockingHit)

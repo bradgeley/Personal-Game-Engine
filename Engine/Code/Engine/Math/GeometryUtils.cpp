@@ -39,7 +39,7 @@ bool GeometryUtils::DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool GeometryUtils::IsDiscTouchingAABB(Vec2 const& discPos, float discRadius, AABB2 const& aabb)
+bool GeometryUtils::DoesDiscOverlapAABB(Vec2 const& discPos, float discRadius, AABB2 const& aabb)
 {
     Vec2 nearestPointOnAABB = aabb.GetNearestPoint(discPos);
     return IsPointInsideDisc2D(nearestPointOnAABB, discPos, discRadius);
@@ -113,7 +113,7 @@ bool GeometryUtils::PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRad
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool GeometryUtils::PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB)
+bool GeometryUtils::PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB, bool weightByRadius /*= true*/)
 {
     if (discPosA == discPosB)
     {
@@ -132,8 +132,17 @@ bool GeometryUtils::PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA,
 
         AtoB /= distance; // Normalize
 
-        float weightA = discRadiusB / combinedRadii;
-        float weightB = 1.f - weightA;
+		float weightA, weightB;
+        if (weightByRadius)
+        {
+            weightA = discRadiusB / combinedRadii;
+            weightB = 1.f - weightA;
+        }
+        else
+        {
+			weightA = 0.5f;
+			weightB = 0.5f;
+        }
 
         Vec2 displacementA = AtoB * -1.f * overlapAmount * weightA;
         Vec2 displacementB = AtoB * overlapAmount * weightB;

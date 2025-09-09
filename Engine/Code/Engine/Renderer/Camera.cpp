@@ -216,6 +216,16 @@ AABB2 Camera::GetOrthoBounds2D() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AABB2 Camera::GetTranslatedOrthoBounds2D() const
+{
+	AABB2 bounds = GetOrthoBounds2D();
+	bounds.Translate(Vec2(m_position));
+    return bounds;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Vec3 Camera::GetOrthoDimensions() const
 {
     return m_maxs - m_mins;

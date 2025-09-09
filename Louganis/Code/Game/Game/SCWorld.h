@@ -31,11 +31,15 @@ public:
 
     WorldCoords GetWorldCoordsAtOffset(WorldCoords const& worldCoords, IntVec2 const& tileOffset) const;
     WorldCoords GetWorldCoordsAtLocation(Vec2 const& worldLocation) const;
+    WorldCoords GetWorldCoordsAtGlobalTileCoords(IntVec2 const& globalTileCoords) const;
     void GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldCoords* eightNeighborsArray) const;
 
     // For each - return false means stop iterating, true means keep iterating.
-    void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords&)>& func) const;
-    void ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords&)>& func) const;
+    void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const;
+    void ForEachWorldCoordsInCircle(Vec2 const& pos, float radius, const std::function<bool(WorldCoords const&)>& func) const;
+    void ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(WorldCoords const&)>& func) const;
+    void ForEachSolidWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(WorldCoords const&, Chunk*)>& func) const;
+    void ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const;
     void ForEachChunkOverlappingAABB(AABB2 const& aabb, const std::function<bool(Chunk&)>& func) const;
     void ForEachChunkCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachChunkCoordsInCircle(Vec2 const& circleCenter, float circleRadius, const std::function<bool(IntVec2 const&)>& func) const;
@@ -70,13 +74,13 @@ public:
 
     WorldSettings m_worldSettings;
 
-    // lifetime owned by SWorld
-    std::map<IntVec2, Chunk*> m_activeChunks;
+    std::map<IntVec2, Chunk*> m_activeChunks;                       // Owned by SWorld
 
-	AssetID m_worldSpriteSheet = AssetID::Invalid;
+    float m_chunkWidth                          = -1.f;             // cached in SWorld startup
+	AssetID m_worldSpriteSheet                  = AssetID::Invalid; // cached in SRenderWorld startup
 
-    // Tracks if the player has moved
-    WorldCoords m_lastKnownPlayerWorldCoords = WorldCoords::s_invalidWorldCoords;
-    bool m_playerChangedWorldCoordsThisFrame = true;
+    // Tracks if the player has moved. todo: move to maybe movement component?
+    bool m_playerChangedWorldCoordsThisFrame    = true;
+    WorldCoords m_lastKnownPlayerWorldCoords    = WorldCoords::s_invalidWorldCoords;
 };
 

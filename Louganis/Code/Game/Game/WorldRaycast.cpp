@@ -146,7 +146,7 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 
     // Check for initial hit
     float nearestDistSquared = FLT_MAX;
-    world.ForEachSolidWorldCoordsOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result, &nearestDistSquared](WorldCoords& coords)
+    world.ForEachSolidWorldCoordsOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result, &nearestDistSquared](WorldCoords const& coords)
     {
         AABB2 tileBounds = world.GetTileBounds(coords);
         Vec2 nearestPoint = tileBounds.GetNearestPoint(discCast.m_start);
@@ -168,7 +168,7 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
     });
 
     // Sweep against all the tiles in the path
-    world.ForEachSolidWorldCoordsOverlappingCapsule(discCast.m_start, discCastEndPoint, discCast.m_discRadius, [&world, &discCast, &result, &discCastEndPoint](WorldCoords& coords)
+    world.ForEachSolidWorldCoordsOverlappingCapsule(discCast.m_start, discCastEndPoint, discCast.m_discRadius, [&world, &discCast, &result, &discCastEndPoint](WorldCoords const& coords)
     {
         // Line vs. expanded tile bounds for sweep test
         AABB2 tileBounds = world.GetTileBounds(coords);

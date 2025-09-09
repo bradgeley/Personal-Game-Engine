@@ -69,11 +69,21 @@ void SLoadChunks::Run(SystemContext const& context)
 				scLoadChunks.m_unloadedChunksInRadius = hitLimit;
 				shouldContinueLooping = !hitLimit;
 
-				// Experimental
-				SpawnInfo spawnInfo;
-				spawnInfo.m_def = EntityDef::GetEntityDef("BabyZombie");
-				spawnInfo.m_spawnPos = world.CalculateChunkCenter(chunkCoords.x, chunkCoords.y);
-				entityFactory.m_entitiesToSpawn.emplace_back(spawnInfo);
+				if (Chunk* chunk = world.GetActiveChunk(chunkCoords))
+				{
+					for (int tileIndex = 0; tileIndex < world.GetNumTilesInChunk(); ++tileIndex)
+					{
+						if (!chunk->IsTileSolid(tileIndex))
+						{
+							// Experimental
+							SpawnInfo spawnInfo;
+							spawnInfo.m_def = EntityDef::GetEntityDef("BabyZombie");
+							WorldCoords worldCoords(chunkCoords, chunk->m_tileIDs.GetCoordsForIndex(tileIndex));
+							spawnInfo.m_spawnPos = world.GetTileBounds(worldCoords).GetCenter();
+							entityFactory.m_entitiesToSpawn.emplace_back(spawnInfo);
+						}
+					}
+				}
 			}
 			return shouldContinueLooping;
 		});

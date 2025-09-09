@@ -8,6 +8,7 @@
 #include "CAnimation.h"
 #include "CCamera.h"
 #include "CRender.h"
+#include "SCCollision.h"
 
 
 
@@ -15,7 +16,7 @@
 void SRenderEntities::Startup()
 {
     AddWriteDependencies<CRender, Renderer>();
-    AddReadDependencies<CCamera, CAnimation>();
+    AddReadDependencies<CCamera, CAnimation, SCCollision>();
 }
 
 
@@ -25,12 +26,18 @@ void SRenderEntities::Run(SystemContext const& context)
 {
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
     auto& animStorage = g_ecs->GetMapStorage<CAnimation>();
+	auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
     g_renderer->SetModelConstants(ModelConstants());
 
     for (auto renderIt = g_ecs->Iterate<CRender, CAnimation>(context); renderIt.IsValid(); ++renderIt)
     {
         CRender& render = *renderStorage.Get(renderIt);
+        if (!scCollision.m_collisionUpdateBounds.IsPointInside(render.m_pos))
+        {
+            continue;
+		}
+
         CAnimation const& anim = *animStorage.Get(renderIt);
 
         if (!anim.m_animInstance.IsValid())

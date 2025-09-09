@@ -3,6 +3,7 @@
 #include "CCollision.h"
 #include "CTransform.h"
 #include "Chunk.h"
+#include "SCCollision.h"
 #include "SCDebug.h"
 #include "SCWorld.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -15,7 +16,7 @@
 void SWorldCollision::Startup()
 {
     AddWriteDependencies<CTransform>();
-    AddReadDependencies<CCollision, SCWorld>();
+    AddReadDependencies<CCollision, SCWorld, SCCollision>();
     AddWriteDependencies<SCDebug>();
 }
 
@@ -27,20 +28,25 @@ void SWorldCollision::Run(SystemContext const& context)
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
     auto& scWorld = g_ecs->GetSingleton<SCWorld>();
+	auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
-    for (auto it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
+    scWorld.ForEachSolidWorldCoordsOverlappingAABB(scCollision.m_collisionUpdateBounds, [&](WorldCoords const& worldCoords, Chunk* chunk)
     {
-        CTransform& trans = transStorage[it];
-        CCollision& coll = *collStorage.Get(it);
-
-        Vec2& pos = trans.m_pos;
-        float& radius = coll.m_radius;
-
-        scWorld.ForEachSolidWorldCoordsOverlappingCapsule(pos, pos, radius, [&scWorld, &pos, &radius](WorldCoords& coords)
+        if (!chunk->IsTileSolid(worldCoords.m_localTileCoords))
         {
-            AABB2 tileBounds = scWorld.GetTileBounds(coords);
-            GeometryUtils::PushDiscOutOfAABB2D(pos, radius + scWorld.m_worldSettings.m_entityWallBuffer, tileBounds);
-            return true;
-        });
-    }
+            return true; // keep iterating
+        }
+
+        ChunkCollisionData& chunkCollisionData = scCollision.m_chunkCollisionData[worldCoords.m_chunkCoords];
+        auto& tileBuckets = chunkCollisionData.m_tileBuckets;
+		auto& tileBucket = tileBuckets[chunk->m_tileIDs.GetIndexForCoords(worldCoords.m_localTileCoords)];
+		AABB2 tileBounds = scWorld.GetTileBounds(worldCoords);
+        
+        for (auto entity : tileBucket)
+        {
+			GeometryUtils::PushDiscOutOfAABB2D(transStorage[entity].m_pos, collStorage[entity].m_radius, tileBounds);
+        }
+
+        return true; // keep iterating
+    });
 }

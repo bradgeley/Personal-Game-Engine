@@ -26,4 +26,5 @@ protected:
     bool DebugRenderDistanceField(NamedProperties& args);
     bool DebugRenderFlowField(NamedProperties& args);
     bool DebugRenderSolidTiles(NamedProperties& args);
+    bool DebugRenderCollision(NamedProperties& args);
 };

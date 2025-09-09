@@ -13,6 +13,7 @@ struct CCamera
     // Transient Data
     Camera m_camera;
     float m_zoomAmount = 1.f;
+	bool m_isActive = false; // only 1 camera may be active at a time in the game world
 
     // Definition Data
     float m_minZoom = 0.1f;

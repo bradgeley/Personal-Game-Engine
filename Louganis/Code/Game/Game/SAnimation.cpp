@@ -2,6 +2,7 @@
 #include "SAnimation.h"
 #include "CAbility.h"
 #include "CAnimation.h"
+#include "CCamera.h"
 #include "CMovement.h"
 #include "CTransform.h"
 #include "Engine/Assets/GridSpriteSheet.h"
@@ -19,7 +20,7 @@
 void SAnimation::Startup()
 {
 	AddWriteDependencies<CAnimation, Renderer, AssetManager>();
-	AddReadDependencies<CMovement, CTransform, CAbility>();
+	AddReadDependencies<CMovement, CTransform, CAbility, CCamera>();
 }
 
 
@@ -27,11 +28,27 @@ void SAnimation::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAnimation::Run(SystemContext const& context)
 {
+    AABB2 cameraBounds;
+    auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
+    for (auto it = g_ecs->Iterate<CCamera>(context); it.IsValid(); ++it)
+    {
+        auto& camera = cameraStorage[it];
+        if (camera.m_isActive)
+        {
+            cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
+        }
+    }
+
     for (auto it = g_ecs->Iterate<CAnimation, CMovement>(context); it.IsValid(); ++it)
     {
+		CTransform& transform = *g_ecs->GetComponent<CTransform>(it);
+        if (!cameraBounds.IsPointInside(transform.m_pos))
+        {
+            continue;
+        }
+
         CAnimation& anim = *g_ecs->GetComponent<CAnimation>(it);
         CMovement& movement = *g_ecs->GetComponent<CMovement>(it);
-		CTransform& transform = *g_ecs->GetComponent<CTransform>(it);
 		CAbility& ability = *g_ecs->GetComponent<CAbility>(it);
 
 		// Initialize sprite sheet and animation instance if not already done

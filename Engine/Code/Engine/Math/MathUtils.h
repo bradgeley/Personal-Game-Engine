@@ -133,6 +133,9 @@ namespace MathUtils
 
 	template <typename T>
 	T Clamp(T const& val, T const& rangeMin, T const& rangeMax);
+
+	template <typename T>
+	T ClampMin(T const& val, T const& rangeMin);
 }
 
 
@@ -213,6 +216,19 @@ T MathUtils::Clamp(T const& val, T const& rangeMin, T const& rangeMax)
 	if (val > rangeMax) 
 	{
 		return rangeMax;
+	}
+	return val;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+T MathUtils::ClampMin(T const& val, T const& rangeMin)
+{
+	if (val < rangeMin)
+	{
+		return rangeMin;
 	}
 	return val;
 }

@@ -36,11 +36,11 @@ public:
 	explicit System(Name name = "Unnamed System", Rgba8 const& debugTint = Rgba8::Magenta);
 	virtual ~System() = default;
 
-	virtual void Startup()											{}
-	virtual void PreRun()											{}
-	virtual void Run(SystemContext const&)							{}
-	virtual void PostRun()											{}
-	virtual void Shutdown()											{}
+	virtual void Startup()											{}  // Main thread, once per system
+	virtual void PreRun()											{}	// Main thread, once per system
+	virtual void Run(SystemContext const&)							{}  // Worker threads, depending on system splitting settings
+	virtual void PostRun()											{}  // Main thread, once per system
+	virtual void Shutdown()											{}  // Main thread, once per system
 
 	bool IsActive() const											{ return m_isActive; }
 	void SetActive(bool isActive)									{ m_isActive = isActive; }

@@ -39,6 +39,7 @@ public:
     Vec3 GetOrthoCenter() const;
     Vec2 GetOrthoCenter2D() const;
     AABB2 GetOrthoBounds2D() const;
+    AABB2 GetTranslatedOrthoBounds2D() const;
     Vec3 GetOrthoDimensions() const;
     Vec3 GetOrthoHalfDimensions() const;
     Vec2 ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const;
