@@ -16,12 +16,14 @@ class FlowField
 {
 public:
 
-	FlowFieldChunk* GetActiveChunk(IntVec2 const& chunkCoords);
+	FlowFieldChunk* GetActiveChunk(IntVec2 const& chunkCoords) const;
 	bool Seed(WorldCoords const& worldCoords);
 
 	void HardReset();
 	void SoftReset();
 	void ResetConsideredCells();
+
+	Vec2 GetFlowAtWorldCoords(WorldCoords const& worldCoords) const;
 
 public:
 

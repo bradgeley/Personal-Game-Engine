@@ -30,6 +30,7 @@ public:
 
     // Components
     std::optional<CAbility>             m_ability;
+    std::optional<CAIController>        m_ai;
 	std::optional<CAnimation>           m_animation;
     std::optional<CCamera>              m_camera;
 	std::optional<CCollision>           m_collision;

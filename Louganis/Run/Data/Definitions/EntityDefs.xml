@@ -17,6 +17,7 @@
     <Collision radius="0.25"></Collision>
     <Render scale="0.25"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Zombie2.xml"></Animation>
+    <AIController></AIController>
     <Ability></Ability>
   </EntityDef>
   

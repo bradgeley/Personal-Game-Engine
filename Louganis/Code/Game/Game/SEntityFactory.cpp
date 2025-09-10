@@ -74,6 +74,7 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
 
     // Add components that exist in the def
     if (def->m_transform.has_value())           g_ecs->AddComponent<CTransform>(id);
+    if (def->m_ai.has_value())                  g_ecs->AddComponent<CAIController>(id);
 	if (def->m_ability.has_value())             g_ecs->AddComponent<CAbility>(id, *def->m_ability);
 	if (def->m_animation.has_value())           g_ecs->AddComponent<CAnimation>(id, *def->m_animation);
     if (def->m_camera.has_value())              g_ecs->AddComponent<CCamera>(id, *def->m_camera);

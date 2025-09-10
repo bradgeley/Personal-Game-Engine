@@ -7,6 +7,7 @@
 #include "SCCollision.h"
 #include "Chunk.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Performance/ScopedTimer.h"
 #include <thread>
 
 
@@ -19,7 +20,8 @@ void SCollisionHash::Startup()
 
     // Hashing entities can be split, since it is a read only operation until the combine phase
     int numThreads = std::thread::hardware_concurrency() - 1;
-	m_systemSplittingNumJobs = MathUtils::ClampMin(numThreads, 0);
+	//m_systemSplittingNumJobs = MathUtils::ClampMin(numThreads, 0);
+    m_systemSplittingNumJobs = 5;
 }
 
 
@@ -27,6 +29,7 @@ void SCollisionHash::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::PreRun()
 {
+    ScopedTimer t("SCollisionHash::PreRun");
     auto& world = g_ecs->GetSingleton<SCWorld>();
     auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
@@ -82,6 +85,8 @@ void SCollisionHash::PreRun()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::Run(SystemContext const& context)
 {
+    ScopedTimer t("SCollisionHash::Run");
+
     auto& world = g_ecs->GetSingleton<SCWorld>();
     auto& scCollision = g_ecs->GetSingleton<SCCollision>();
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
@@ -124,6 +129,7 @@ void SCollisionHash::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::PostRun()
 {
+    ScopedTimer t("SCollisionHash::PostRun");
     auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
     int numEntitiesHashed = 0;

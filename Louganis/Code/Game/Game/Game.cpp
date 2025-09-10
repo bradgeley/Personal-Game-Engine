@@ -201,6 +201,7 @@ void Game::ConfigureECS()
 
     // Array components
     g_ecs->RegisterComponentArray<CAbility>();
+    g_ecs->RegisterComponentArray<CAIController>();
     g_ecs->RegisterComponentArray<CCollision>();
     g_ecs->RegisterComponentArray<CMovement>();
     g_ecs->RegisterComponentArray<CRender>();
@@ -241,6 +242,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SUnloadChunks>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SBackgroundMusic>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SFlowField>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SAIController>((int) FramePhase::PrePhysics);
 
     // Physics
     //SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);

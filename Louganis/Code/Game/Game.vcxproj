@@ -307,6 +307,7 @@
     <ClCompile Include="Game\FlowFieldChunk.cpp" />
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\SAbility.cpp" />
+    <ClCompile Include="Game\SAIController.cpp" />
     <ClCompile Include="Game\SAnimation.cpp" />
     <ClCompile Include="Game\SBackgroundMusic.cpp" />
     <ClCompile Include="Game\SCamera.cpp" />
@@ -340,6 +341,7 @@
     <ClInclude Include="Game\AllSingletonComponents.h" />
     <ClInclude Include="Game\AllSystems.h" />
     <ClInclude Include="Game\CAbility.h" />
+    <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
     <ClInclude Include="Game\CCamera.h" />
     <ClInclude Include="Game\CCollision.h" />
@@ -355,6 +357,7 @@
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\GameCommon.h" />
     <ClInclude Include="Game\SAbility.h" />
+    <ClInclude Include="Game\SAIController.h" />
     <ClInclude Include="Game\SAnimation.h" />
     <ClInclude Include="Game\SBackgroundMusic.h" />
     <ClInclude Include="Game\SCamera.h" />

@@ -127,6 +127,9 @@
     <ClCompile Include="Game\SCCollision.cpp">
       <Filter>Singletons</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SAIController.cpp">
+      <Filter>Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -287,6 +290,12 @@
     </ClInclude>
     <ClInclude Include="Game\SCCollision.h">
       <Filter>Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SAIController.h">
+      <Filter>Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CAIController.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

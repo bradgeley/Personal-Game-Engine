@@ -14,6 +14,7 @@
 // Game Systems
 //
 #include "SAbility.h"
+#include "SAIController.h"
 #include "SAnimation.h"
 #include "SBackgroundMusic.h"
 #include "SCamera.h"

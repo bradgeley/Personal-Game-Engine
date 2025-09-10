@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SAnimation.h"
-#include "CAbility.h"
 #include "CAnimation.h"
 #include "CCamera.h"
 #include "CMovement.h"
@@ -20,7 +19,7 @@
 void SAnimation::Startup()
 {
 	AddWriteDependencies<CAnimation, Renderer, AssetManager>();
-	AddReadDependencies<CMovement, CTransform, CAbility, CCamera>();
+	AddReadDependencies<CMovement, CTransform, CCamera>();
 }
 
 
@@ -39,7 +38,7 @@ void SAnimation::Run(SystemContext const& context)
         }
     }
 
-    for (auto it = g_ecs->Iterate<CAnimation, CMovement>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CAnimation, CMovement, CTransform>(context); it.IsValid(); ++it)
     {
 		CTransform& transform = *g_ecs->GetComponent<CTransform>(it);
         if (!cameraBounds.IsPointInside(transform.m_pos))
@@ -49,7 +48,6 @@ void SAnimation::Run(SystemContext const& context)
 
         CAnimation& anim = *g_ecs->GetComponent<CAnimation>(it);
         CMovement& movement = *g_ecs->GetComponent<CMovement>(it);
-		CAbility& ability = *g_ecs->GetComponent<CAbility>(it);
 
 		// Initialize sprite sheet and animation instance if not already done
         if (anim.m_gridSpriteSheet == AssetID::Invalid && anim.m_spriteSheetName != Name::Invalid)
@@ -67,32 +65,30 @@ void SAnimation::Run(SystemContext const& context)
 
         Vec2 forward = Vec2::MakeFromUnitCircleDegrees(transform.m_orientation);
         bool isMoving = !movement.m_frameMoveDir.IsZero();
-		bool isCasting = ability.m_isCastingAbility; 
-        if (!isCasting)
+        if (isMoving && movement.m_isSprinting)
         {
-            if (isMoving && movement.m_isSprinting)
-            {
-                anim.m_animInstance.SetSpeedMultiplier(movement.m_sprintMoveSpeedMultiplier);
-            }
-            else
-            {
-                anim.m_animInstance.SetSpeedMultiplier(1.f);
-            }
+            anim.m_animInstance.SetSpeedMultiplier(movement.m_sprintMoveSpeedMultiplier);
+        }
+        else
+        {
+            anim.m_animInstance.SetSpeedMultiplier(1.f);
+        }
 
-            if (isMoving)
-            {
-				SpriteAnimationGroup const* walkGroup = spriteSheet->GetAnimationGroup("walk");
-				ASSERT_OR_DIE(walkGroup != nullptr, "SAnimation::Run - Sprite sheet does not have a walk animation group.");
-				bestAnim = walkGroup->GetBestAnimForDir(forward, anim.m_animInstance.GetDef().GetDirection());
-				ASSERT_OR_DIE(bestAnim != nullptr, "SAnimation::Run - No best animation found for direction in walk animation group.");
-            }
-            else
-            {
-                SpriteAnimationGroup const* idleGroup = spriteSheet->GetAnimationGroup("idle");
-                ASSERT_OR_DIE(idleGroup != nullptr, "SAnimation::Run - Sprite sheet does not have a idle animation group.");
-                bestAnim = idleGroup->GetBestAnimForDir(forward, anim.m_animInstance.GetDef().GetDirection());
-                ASSERT_OR_DIE(bestAnim != nullptr, "SAnimation::Run - No best animation found for direction in idle animation group.");
-            }
+        if (isMoving)
+        {
+			SpriteAnimationGroup const* walkGroup = spriteSheet->GetAnimationGroup("walk");
+			ASSERT_OR_DIE(walkGroup != nullptr, "SAnimation::Run - Sprite sheet does not have a walk animation group.");
+            Vec2 prevDir = anim.m_animInstance.IsValid() ? anim.m_animInstance.GetDef().GetDirection() : Vec2::ZeroVector;
+			bestAnim = walkGroup->GetBestAnimForDir(forward, prevDir);
+			ASSERT_OR_DIE(bestAnim != nullptr, "SAnimation::Run - No best animation found for direction in walk animation group.");
+        }
+        else
+        {
+            SpriteAnimationGroup const* idleGroup = spriteSheet->GetAnimationGroup("idle");
+            ASSERT_OR_DIE(idleGroup != nullptr, "SAnimation::Run - Sprite sheet does not have a idle animation group.");
+            Vec2 prevDir = anim.m_animInstance.IsValid() ? anim.m_animInstance.GetDef().GetDirection() : Vec2::ZeroVector;
+            bestAnim = idleGroup->GetBestAnimForDir(forward, prevDir);
+            ASSERT_OR_DIE(bestAnim != nullptr, "SAnimation::Run - No best animation found for direction in idle animation group.");
         }
 
         if (bestAnim)

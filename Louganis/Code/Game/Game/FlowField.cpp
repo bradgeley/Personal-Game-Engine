@@ -5,7 +5,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-FlowFieldChunk* FlowField::GetActiveChunk(IntVec2 const& chunkCoords)
+FlowFieldChunk* FlowField::GetActiveChunk(IntVec2 const& chunkCoords) const
 {
 	auto it = m_activeFlowFieldChunks.find(chunkCoords);
 	if (it != m_activeFlowFieldChunks.end())
@@ -65,4 +65,17 @@ void FlowField::ResetConsideredCells()
 		FlowFieldChunk* chunk = it.second;
 		chunk->ResetConsideredCells();
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 FlowField::GetFlowAtWorldCoords(WorldCoords const& worldCoords) const
+{
+	FlowFieldChunk const* chunk = GetActiveChunk(worldCoords.m_chunkCoords);
+	if (chunk)
+	{
+		return chunk->m_gradient.Get(worldCoords.m_localTileCoords);
+	}
+	return Vec2::ZeroVector;
 }

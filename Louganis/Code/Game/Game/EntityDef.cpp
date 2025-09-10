@@ -96,6 +96,13 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
 		m_ability = CAbility(elem);
     }
 
+    // CAIController
+    elem = xmlElement->FirstChildElement("AIController");
+    if (elem)
+    {
+        m_ai = CAIController(elem);
+    }
+
     // CAnimation
     elem = xmlElement->FirstChildElement("Animation");
     if (elem)
