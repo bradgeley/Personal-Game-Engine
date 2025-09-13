@@ -13,7 +13,7 @@
 
   <EntityDef name = "BabyZombie">
     <Transform></Transform>
-    <Movement moveSpeed="1"></Movement>
+    <Movement moveSpeed="0.25"></Movement>
     <Collision radius="0.25"></Collision>
     <Render scale="0.25"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Zombie2.xml"></Animation>

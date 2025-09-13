@@ -33,7 +33,7 @@ namespace GeometryUtils
 	//
 	bool PushDiscOutOfPoint2D(Vec2& discPos, float radius, Vec2 const& point);
 	bool PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRadius, Vec2 const& staticDiscPos, float staticDiscRadius);
-	bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB, bool weightByRadius = true);
+	bool PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB, bool weightByRadius = true, float dampening = 1.f);
 	bool PushDiscOutOfAABB2D(Vec2& discPos, float discRadius, AABB2 const& aabb);
 
 

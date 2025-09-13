@@ -20,8 +20,7 @@ void SCollisionHash::Startup()
 
     // Hashing entities can be split, since it is a read only operation until the combine phase
     int numThreads = std::thread::hardware_concurrency() - 1;
-	//m_systemSplittingNumJobs = MathUtils::ClampMin(numThreads, 0);
-    m_systemSplittingNumJobs = 5;
+	m_systemSplittingNumJobs = MathUtils::ClampMin(numThreads, 0);
 }
 
 
@@ -29,7 +28,6 @@ void SCollisionHash::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::PreRun()
 {
-    ScopedTimer t("SCollisionHash::PreRun");
     auto& world = g_ecs->GetSingleton<SCWorld>();
     auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
@@ -85,8 +83,6 @@ void SCollisionHash::PreRun()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::Run(SystemContext const& context)
 {
-    ScopedTimer t("SCollisionHash::Run");
-
     auto& world = g_ecs->GetSingleton<SCWorld>();
     auto& scCollision = g_ecs->GetSingleton<SCCollision>();
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
@@ -108,13 +104,13 @@ void SCollisionHash::Run(SystemContext const& context)
 
 		std::unordered_map<IntVec2, ChunkCollisionData>& thisThreadCollisionData = scCollision.m_perThreadCollisionData[context.m_systemSplittingJobID];
 
-        world.ForEachChunkCoordsInCircle(pos, radius, [&](IntVec2 const& chunkCoords)
+        world.ForEachChunkCoordsOverlappingCircle(pos, radius, [&](IntVec2 const& chunkCoords)
         {
             thisThreadCollisionData[chunkCoords].m_chunkBucket.push_back(it.m_currentIndex);
             return true; // continue iterating
         });
 
-        world.ForEachWorldCoordsInCircle(pos, radius, [&](WorldCoords const& worldCoords)
+        world.ForEachWorldCoordsOverlappingCircle(pos, radius, [&](WorldCoords const& worldCoords)
         {
             ChunkCollisionData& threadChunkCollisionData = thisThreadCollisionData[worldCoords.m_chunkCoords];
             int tileIndex = world.GetActiveChunk(worldCoords.m_chunkCoords)->m_tileIDs.GetIndexForCoords(worldCoords.m_localTileCoords);
@@ -129,7 +125,6 @@ void SCollisionHash::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::PostRun()
 {
-    ScopedTimer t("SCollisionHash::PostRun");
     auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
     int numEntitiesHashed = 0;

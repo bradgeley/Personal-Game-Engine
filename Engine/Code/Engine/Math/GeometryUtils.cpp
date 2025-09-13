@@ -113,7 +113,7 @@ bool GeometryUtils::PushDiscOutOfDisc2D(Vec2& mobileDiscPos, float mobileDiscRad
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool GeometryUtils::PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB, bool weightByRadius /*= true*/)
+bool GeometryUtils::PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA, Vec2& discPosB, float discRadiusB, bool weightByRadius /*= true*/, float dampening /*= 1.f*/)
 {
     if (discPosA == discPosB)
     {
@@ -128,7 +128,7 @@ bool GeometryUtils::PushDiscsOutOfEachOther2D(Vec2& discPosA, float discRadiusA,
     if (distanceSquared < combinedRadiiSquared)
     {
         float distance = MathUtils::SqrtF(distanceSquared);
-        float overlapAmount = combinedRadii - distance;
+        float overlapAmount = (combinedRadii - distance) * dampening;
 
         AtoB /= distance; // Normalize
 

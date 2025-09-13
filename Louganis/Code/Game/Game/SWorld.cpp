@@ -17,7 +17,6 @@ void SWorld::Startup()
 	AddReadDependencies<CTransform, CPlayerController>();
 
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-	world.m_chunkWidth = world.m_worldSettings.m_tileWidth * world.GetNumTilesInRow();
 	if (world.m_worldSettings.m_randomWorldSeed)
 	{
 		world.m_worldSettings.m_worldSeed = g_rng->GenerateRandomSeed();

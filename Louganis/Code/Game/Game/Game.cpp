@@ -245,8 +245,8 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SAIController>((int) FramePhase::PrePhysics);
 
     // Physics
-    //SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
-    //physics.m_timeStep = 0.00833f;
+    SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
+    physics.m_timeStep = 0.01f;
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);

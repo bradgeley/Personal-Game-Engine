@@ -13,7 +13,8 @@
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
-#include "Engine/Debug/DevConsole.h"
+#include "Engine/Debug/DevConsoleUtils.h"
+#include <thread>
 
 
 
@@ -25,6 +26,9 @@ void SPhysics::Startup()
     AddReadDependencies<CCollision, SCWorld>();
 
     g_eventSystem->SubscribeMethod("DebugRenderPreventativePhysics", this, &SPhysics::DebugRenderPreventativePhysics);
+
+    int numThreads = std::thread::hardware_concurrency() - 1;
+    m_systemSplittingNumJobs = MathUtils::ClampMin(numThreads, 0);
 }
 
 

@@ -48,9 +48,20 @@ void SCollision::Run(SystemContext const& context)
                     CTransform& transformB = transformStorage[entityB];
                     CCollision& collisionB = collisionStorage[entityB];
 
-                    if (GeometryUtils::PushDiscsOutOfEachOther2D(transformA.m_pos, collisionA.m_radius, transformB.m_pos, collisionB.m_radius, false))
+					Vec2 newPosA = transformA.m_pos;
+					Vec2 newPosB = transformB.m_pos;
+
+                    if (GeometryUtils::PushDiscsOutOfEachOther2D(newPosA, collisionA.m_radius, newPosB, collisionB.m_radius, true, 0.75))
                     {
-                        // Handle collision between entityA and entityB
+                        // Make sure we didnt push into a wall
+                        if (!scWorld.IsPointInsideSolidTile(newPosA))
+                        {
+							transformA.m_pos = newPosA;
+                        }
+                        if (!scWorld.IsPointInsideSolidTile(newPosB))
+                        {
+                            transformB.m_pos = newPosB;
+                        }
                     }
                 }
             }

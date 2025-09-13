@@ -65,8 +65,7 @@ Chunk* SCWorld::GetActiveChunkAtLocation(Vec2 const& worldLocation) const
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 SCWorld::GetChunkCoordsAtLocation(Vec2 const& worldLocation) const
 {
-	float chunkWidth = GetChunkWidth();
-	Vec2 locationChunkSpace = worldLocation / chunkWidth;
+	Vec2 locationChunkSpace = worldLocation / s_chunkWidth;
 	IntVec2 chunkCoords = IntVec2(locationChunkSpace.GetFloor());
 	return chunkCoords;
 }
@@ -76,8 +75,8 @@ IntVec2 SCWorld::GetChunkCoordsAtLocation(Vec2 const& worldLocation) const
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 SCWorld::GetGlobalTileCoordsAtLocation(Vec2 const& worldLocation) const
 {
-	WorldCoords worldCoords = GetWorldCoordsAtLocation(worldLocation);
-	return worldCoords.GetGlobalTileCoords(GetNumTilesInRow());
+	Vec2 globalTileCoords = worldLocation * s_oneOverTileWidth;
+	return IntVec2(globalTileCoords.GetFloor());
 }
 
 
@@ -86,11 +85,11 @@ IntVec2 SCWorld::GetGlobalTileCoordsAtLocation(Vec2 const& worldLocation) const
 IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const
 {
 	IntVec2 chunkCoords = GetChunkCoordsAtLocation(worldLocation);
-	Vec2 relativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * GetChunkWidth());
-	Vec2 tileSpaceLocation = relativeLocation / m_worldSettings.m_tileWidth;
+	Vec2 chunkRelativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * s_chunkWidth);
+	Vec2 tileSpaceLocation = chunkRelativeLocation * s_oneOverTileWidth;
 	IntVec2 localTileCoords = IntVec2(tileSpaceLocation.GetFloor());
-	localTileCoords.x = MathUtils::Clamp(localTileCoords.x, 0, GetNumTilesInRow() - 1);
-	localTileCoords.y = MathUtils::Clamp(localTileCoords.y, 0, GetNumTilesInRow() - 1);
+	localTileCoords.x = MathUtils::Clamp(localTileCoords.x, 0, s_numTilesInRow - 1);
+	localTileCoords.y = MathUtils::Clamp(localTileCoords.y, 0, s_numTilesInRow - 1);
 	return localTileCoords;
 }
 
@@ -99,11 +98,11 @@ IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation, IntVec2 const& chunkCoords) const
 {
-	Vec2 relativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * GetChunkWidth());
-	Vec2 tileSpaceLocation = relativeLocation / m_worldSettings.m_tileWidth;
+	Vec2 chunkRelativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * s_chunkWidth);
+	Vec2 tileSpaceLocation = chunkRelativeLocation * s_oneOverTileWidth;
 	IntVec2 localTileCoords = IntVec2(tileSpaceLocation.GetFloor());
-	localTileCoords.x = MathUtils::Clamp(localTileCoords.x, 0, GetNumTilesInRow() - 1);
-	localTileCoords.y = MathUtils::Clamp(localTileCoords.y, 0, GetNumTilesInRow() - 1);
+	localTileCoords.x = MathUtils::Clamp(localTileCoords.x, 0, s_numTilesInRow - 1);
+	localTileCoords.y = MathUtils::Clamp(localTileCoords.y, 0, s_numTilesInRow - 1);
 	return localTileCoords;
 }
 
@@ -112,34 +111,32 @@ IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation, IntVec2
 //----------------------------------------------------------------------------------------------------------------------
 WorldCoords SCWorld::GetWorldCoordsAtOffset(WorldCoords const& worldCoords, IntVec2 const& tileOffset) const
 {
-	int numTilesPerRow = GetNumTilesInRow();
-
 	WorldCoords result;
 	result.m_chunkCoords = worldCoords.m_chunkCoords;
 	result.m_localTileCoords = worldCoords.m_localTileCoords + tileOffset;
 
 	// Check north movement
-	while (result.m_localTileCoords.y >= numTilesPerRow)
+	while (result.m_localTileCoords.y >= s_numTilesInRow)
 	{
-		result.m_localTileCoords.y -= numTilesPerRow;
+		result.m_localTileCoords.y -= s_numTilesInRow;
 		result.m_chunkCoords.y++;
 	}
 	// Check south movement
 	while (result.m_localTileCoords.y < 0)
 	{
-		result.m_localTileCoords.y += numTilesPerRow;
+		result.m_localTileCoords.y += s_numTilesInRow;
 		result.m_chunkCoords.y--;
 	}
 	// Check east movement
-	while (result.m_localTileCoords.x >= numTilesPerRow)
+	while (result.m_localTileCoords.x >= s_numTilesInRow)
 	{
-		result.m_localTileCoords.x -= numTilesPerRow;
+		result.m_localTileCoords.x -= s_numTilesInRow;
 		result.m_chunkCoords.x++;
 	}
 	// Check west movement
 	while (result.m_localTileCoords.x < 0)
 	{
-		result.m_localTileCoords.x += numTilesPerRow;
+		result.m_localTileCoords.x += s_numTilesInRow;
 		result.m_chunkCoords.x--;
 	}
 
@@ -161,8 +158,13 @@ WorldCoords SCWorld::GetWorldCoordsAtLocation(Vec2 const& worldLocation) const
 //----------------------------------------------------------------------------------------------------------------------
 WorldCoords SCWorld::GetWorldCoordsAtGlobalTileCoords(IntVec2 const& globalTileCoords) const
 {
-	Vec2 worldLocation = Vec2(globalTileCoords) * m_worldSettings.m_tileWidth;
-	return GetWorldCoordsAtLocation(worldLocation);
+	WorldCoords result;
+	Vec2 chunkCoordsF = Vec2(globalTileCoords) * s_oneOverNumTilesInRow;
+	result.m_chunkCoords = IntVec2(chunkCoordsF.GetFloor());
+
+	IntVec2 chunkOriginGlobalTileCoords = result.m_chunkCoords * s_numTilesInRow;
+	result.m_localTileCoords = globalTileCoords - chunkOriginGlobalTileCoords;
+	return result;
 }
 
 
@@ -182,27 +184,15 @@ void SCWorld::GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldC
 void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
-	int tilesInChunk = GetNumTilesInChunk();
 
-	ForEachChunkOverlappingAABB(boundingBox, [&](Chunk& chunk) 
+	ForEachWorldCoordsOverlappingAABB(boundingBox, [&](WorldCoords const& worldCoords) 
 	{ 
-		if (!GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, chunk.m_chunkBounds))
+		AABB2 tileBounds = GetTileBounds(worldCoords);
+		if (GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
 		{
-			return true;
-		}
-
-		WorldCoords worldCoords;
-		worldCoords.m_chunkCoords = chunk.m_chunkCoords;
-		for (int i = 0; i < tilesInChunk; ++i)
-		{
-			worldCoords.m_localTileCoords = chunk.m_tileIDs.GetCoordsForIndex(i);
-			AABB2 tileBounds = GetTileBounds(worldCoords);
-			if (GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
+			if (!func(worldCoords))
 			{
-				if (!func(worldCoords))
-				{
-					return false;
-				}
+				return false;
 			}
 		}
 		return true;
@@ -212,7 +202,7 @@ void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachWorldCoordsInCircle(Vec2 const& pos, float radius, const std::function<bool(WorldCoords const&)>& func) const
+void SCWorld::ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(WorldCoords const&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetDiscBounds(pos, radius);
 
@@ -301,31 +291,20 @@ void SCWorld::ForEachSolidWorldCoordsOverlappingAABB(AABB2 const& aabb, const st
 void SCWorld::ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
-	int tilesInChunk = GetNumTilesInChunk();
 
-	ForEachChunkOverlappingAABB(boundingBox, [&](Chunk& chunk)
+	ForEachSolidWorldCoordsOverlappingAABB(boundingBox, [&](WorldCoords const& coords, Chunk* chunk)
 	{
-		if (!GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, chunk.m_chunkBounds))
+		AABB2 tileBounds = GetTileBounds(coords);
+		if (!GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
 		{
 			return true;
 		}
 
-		WorldCoords worldCoords;
-		worldCoords.m_chunkCoords = chunk.m_chunkCoords;
-		for (int i = 0; i < tilesInChunk; ++i)
+		if (chunk->IsTileSolid(coords.m_localTileCoords))
 		{
-			if (!chunk.IsTileSolid(i))
+			if (!func(coords))
 			{
-				continue;
-			}
-			worldCoords.m_localTileCoords = chunk.m_tileIDs.GetCoordsForIndex(i);
-			AABB2 tileBounds = GetTileBounds(worldCoords);
-			if (GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
-			{
-				if (!func(worldCoords))
-				{
-					return false;
-				}
+				return false;
 			}
 		}
 		return true;
@@ -393,7 +372,7 @@ void SCWorld::ForEachChunkCoordsOverlappingAABB(AABB2 const& aabb, const std::fu
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachChunkCoordsInCircle(Vec2 const& circleCenter, float circleRadius, const std::function<bool(IntVec2 const&)>& func) const
+void SCWorld::ForEachChunkCoordsOverlappingCircle(Vec2 const& circleCenter, float circleRadius, const std::function<bool(IntVec2 const&)>& func) const
 {
 	std::queue<IntVec2> openList;
 	std::unordered_set<IntVec2> closedList;
@@ -438,41 +417,6 @@ void SCWorld::ForEachChunkCoordsInCircle(Vec2 const& circleCenter, float circleR
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::GetWorldCoordsOverlappingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const
-{
-	std::vector<Chunk*> chunks;
-	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
-	GetChunksOverlappingAABB(chunks, boundingBox);
-
-	// Conservative estimate
-	out_worldCoords.reserve((GetNumTilesInRow()) * chunks.size());
-
-	int tilesInChunk = GetNumTilesInChunk();
-
-	for (Chunk* chunk : chunks)
-	{
-		if (!GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, chunk->m_chunkBounds))
-		{
-			continue;
-		}
-
-		WorldCoords worldCoords;
-		worldCoords.m_chunkCoords = chunk->m_chunkCoords;
-		for (int i = 0; i < tilesInChunk; ++i)
-		{
-			worldCoords.m_localTileCoords = chunk->m_tileIDs.GetCoordsForIndex(i);
-			AABB2 tileBounds = GetTileBounds(worldCoords);
-			if (GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
-			{
-				out_worldCoords.push_back(worldCoords);
-			}
-		}
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::GetChunksOverlappingAABB(std::vector<Chunk*>& out_chunks, AABB2 const& aabb) const
 {
 	// Start in bot left, and iterate in a grid pattern
@@ -503,13 +447,25 @@ void SCWorld::GetChunksOverlappingAABB(std::vector<Chunk*>& out_chunks, AABB2 co
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::IsPointInsideSolidTile(Vec2 const& worldPos) const
+{
+	WorldCoords worldCoords = GetWorldCoordsAtLocation(worldPos);
+	Chunk* chunk = GetActiveChunk(worldCoords);
+	if (chunk)
+	{
+		return chunk->IsTileSolid(worldCoords.m_localTileCoords);
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AABB2 SCWorld::CalculateChunkBounds(int chunkX, int chunkY) const
 {
-	int numTilesInRow = GetNumTilesInRow();
-	float chunkWidth = m_worldSettings.m_tileWidth * numTilesInRow;
-	Vec2 chunkOrigin = Vec2(chunkX, chunkY) * chunkWidth;
-	Vec2 tileDims = Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);
-	AABB2 result = AABB2(chunkOrigin, chunkOrigin + tileDims * (float) numTilesInRow);
+	Vec2 chunkOrigin = Vec2(chunkX, chunkY) * s_chunkWidth;
+	Vec2 chunkDims = Vec2(s_chunkWidth, s_chunkWidth);
+	AABB2 result = AABB2(chunkOrigin, chunkOrigin + chunkDims);
 	return result;
 }
 
@@ -518,11 +474,9 @@ AABB2 SCWorld::CalculateChunkBounds(int chunkX, int chunkY) const
 //----------------------------------------------------------------------------------------------------------------------
 Vec2 SCWorld::CalculateChunkCenter(int chunkX, int chunkY) const
 {
-	int numTilesInRow = GetNumTilesInRow();
-	float chunkWidth = m_worldSettings.m_tileWidth * numTilesInRow;
-	float chunkHalfWidth = chunkWidth * 0.5f;
-	Vec2 chunkOrigin = Vec2(chunkX, chunkY) * chunkWidth;
-	Vec2 result = chunkOrigin + Vec2(chunkHalfWidth, chunkHalfWidth);
+	Vec2 chunkOrigin = Vec2(chunkX, chunkY) * s_chunkWidth;
+	Vec2 chunkHalfDims = Vec2(s_chunkHalfWidth, s_chunkHalfWidth);
+	Vec2 result = chunkOrigin + chunkHalfDims;
 	return result;
 
 }
@@ -533,9 +487,10 @@ Vec2 SCWorld::CalculateChunkCenter(int chunkX, int chunkY) const
 AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos) const
 {
 	IntVec2 worldTileCoords = GetGlobalTileCoordsAtLocation(worldPos);
+	Vec2 tileDims = Vec2(s_tileWidth, s_tileWidth);
 	AABB2 tileBounds;
-	tileBounds.mins = Vec2(worldTileCoords) * m_worldSettings.m_tileWidth;
-	tileBounds.maxs = tileBounds.mins + Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);
+	tileBounds.mins = Vec2(worldTileCoords) * s_tileWidth;
+	tileBounds.maxs = tileBounds.mins + tileDims;
 	return tileBounds;
 }
 
@@ -544,11 +499,11 @@ AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos) const
 //----------------------------------------------------------------------------------------------------------------------
 AABB2 SCWorld::GetTileBounds(WorldCoords const& worldCoords) const
 {
-	Vec2 chunkMins = Vec2(worldCoords.m_chunkCoords) * GetChunkWidth();
+	Vec2 chunkMins = Vec2(worldCoords.m_chunkCoords) * s_chunkWidth;
 	
 	AABB2 tileBounds;
-	tileBounds.mins = chunkMins + Vec2(worldCoords.m_localTileCoords) * m_worldSettings.m_tileWidth;
-	tileBounds.maxs = tileBounds.mins + Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);
+	tileBounds.mins = chunkMins + Vec2(worldCoords.m_localTileCoords) * s_tileWidth;
+	tileBounds.maxs = tileBounds.mins + Vec2(s_tileWidth, s_tileWidth);
 	return tileBounds;
 }
 
@@ -558,8 +513,8 @@ AABB2 SCWorld::GetTileBounds(WorldCoords const& worldCoords) const
 AABB2 SCWorld::GetTileBounds(IntVec2 const& worldTileCoords) const
 {
 	AABB2 tileBounds;
-	tileBounds.mins = Vec2(worldTileCoords) * m_worldSettings.m_tileWidth;
-	tileBounds.maxs = tileBounds.mins + Vec2(m_worldSettings.m_tileWidth, m_worldSettings.m_tileWidth);
+	tileBounds.mins = Vec2(worldTileCoords) * s_tileWidth;
+	tileBounds.maxs = tileBounds.mins + Vec2(s_tileWidth, s_tileWidth);
 	return tileBounds;
 }
 
@@ -663,23 +618,6 @@ void SCWorld::ClearActiveChunks()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int SCWorld::GetNumTilesInRow() const
-{
-	return MathUtils::Pow(2, s_worldChunkSizePowerOfTwo);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-int SCWorld::GetNumTilesInChunk() const
-{
-	int numInRow = GetNumTilesInRow();
-	return numInRow * numInRow;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 float SCWorld::GetChunkUnloadRadius() const
 {
 	float chunkLoadRadius = m_worldSettings.m_chunkLoadRadius;
@@ -691,14 +629,6 @@ float SCWorld::GetChunkUnloadRadius() const
 		chunkUnloadRadius = chunkLoadRadius;
 	}
 	return chunkUnloadRadius;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-float SCWorld::GetChunkWidth() const
-{
-	return m_chunkWidth;
 }
 
 

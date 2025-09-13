@@ -58,7 +58,7 @@ void SLoadChunks::Run(SystemContext const& context)
 	{
 		CTransform& playerTransform = *transformStorage.Get(it);
 
- 		world.ForEachChunkCoordsInCircle(playerTransform.m_pos, chunkLoadRadius, [&world, &entityFactory, &scLoadChunks](IntVec2 const& chunkCoords)
+ 		world.ForEachChunkCoordsOverlappingCircle(playerTransform.m_pos, chunkLoadRadius, [&world, &entityFactory, &scLoadChunks](IntVec2 const& chunkCoords)
 		{ 
 			bool shouldContinueLooping = true;
 			if (!world.IsChunkLoaded(chunkCoords))
@@ -71,7 +71,7 @@ void SLoadChunks::Run(SystemContext const& context)
 
 				if (Chunk* chunk = world.GetActiveChunk(chunkCoords))
 				{
-					for (int tileIndex = 0; tileIndex < world.GetNumTilesInChunk(); ++tileIndex)
+					for (int tileIndex = 0; tileIndex < s_numTilesInChunk; ++tileIndex)
 					{
 						if (!chunk->IsTileSolid(tileIndex))
 						{

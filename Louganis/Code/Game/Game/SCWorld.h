@@ -34,18 +34,19 @@ public:
     WorldCoords GetWorldCoordsAtGlobalTileCoords(IntVec2 const& globalTileCoords) const;
     void GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldCoords* eightNeighborsArray) const;
 
-    // For each - return false means stop iterating, true means keep iterating.
+    // For each func - return false means stop iterating, true means keep iterating.
     void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const;
-    void ForEachWorldCoordsInCircle(Vec2 const& pos, float radius, const std::function<bool(WorldCoords const&)>& func) const;
+    void ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(WorldCoords const&)>& func) const;
     void ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(WorldCoords const&)>& func) const;
     void ForEachSolidWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(WorldCoords const&, Chunk*)>& func) const;
     void ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const;
     void ForEachChunkOverlappingAABB(AABB2 const& aabb, const std::function<bool(Chunk&)>& func) const;
     void ForEachChunkCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachChunkCoordsInCircle(Vec2 const& circleCenter, float circleRadius, const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachChunkCoordsOverlappingCircle(Vec2 const& circleCenter, float circleRadius, const std::function<bool(IntVec2 const&)>& func) const;
 
-    void GetWorldCoordsOverlappingCapsule(std::vector<WorldCoords>& out_worldCoords, Vec2 const& start, Vec2 const& end, float radius) const;
     void GetChunksOverlappingAABB(std::vector<Chunk*>& out_chunks, AABB2 const& aabb) const;
+
+	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
 
     AABB2 CalculateChunkBounds(int chunkX, int chunkY) const;
     Vec2  CalculateChunkCenter(int chunkX, int chunkY) const;
@@ -62,11 +63,7 @@ public:
     void RemoveActiveChunks(std::vector<IntVec2> const& coordsList);
     void ClearActiveChunks();
 
-    int GetNumTilesInRow() const;
-    int GetNumTilesInChunk() const;
-
     float GetChunkUnloadRadius() const;
-    float GetChunkWidth() const;
 
     bool GetPlayerChangedWorldCoordsThisFrame() const;
 
@@ -76,7 +73,6 @@ public:
 
     std::map<IntVec2, Chunk*> m_activeChunks;                       // Owned by SWorld
 
-    float m_chunkWidth                          = -1.f;             // cached in SWorld startup
 	AssetID m_worldSpriteSheet                  = AssetID::Invalid; // cached in SRenderWorld startup
 
     // Tracks if the player has moved. todo: move to maybe movement component?

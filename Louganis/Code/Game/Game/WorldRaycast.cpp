@@ -51,8 +51,8 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
     float stepX = MathUtils::Sign(raycast.m_direction.x);
     float stepY = MathUtils::Sign(raycast.m_direction.y);
     
-    float toLeadingEdgeX = stepX < 0.f ? tileMinsToRayStart.x : world.m_worldSettings.m_tileWidth - tileMinsToRayStart.x;
-    float toLeadingEdgeY = stepY < 0.f ? tileMinsToRayStart.y : world.m_worldSettings.m_tileWidth - tileMinsToRayStart.y;
+    float toLeadingEdgeX = stepX < 0.f ? tileMinsToRayStart.x : s_tileWidth - tileMinsToRayStart.x;
+    float toLeadingEdgeY = stepY < 0.f ? tileMinsToRayStart.y : s_tileWidth - tileMinsToRayStart.y;
 
     float rayLengthPerStepX = MathUtils::AbsF(1.f / raycast.m_direction.x);
     float rayLengthPerStepY = MathUtils::AbsF(1.f / raycast.m_direction.y);
@@ -91,7 +91,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
                 return result;
             }
 
-            totalRayLengthX += rayLengthPerStepX * world.m_worldSettings.m_tileWidth; // prepare for next iteration
+            totalRayLengthX += rayLengthPerStepX * s_tileWidth; // prepare for next iteration
         }
         else
         {
@@ -119,7 +119,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
                 return result;
             }
 
-            totalRayLengthY += rayLengthPerStepY * world.m_worldSettings.m_tileWidth; // prepare for next iteration
+            totalRayLengthY += rayLengthPerStepY * s_tileWidth; // prepare for next iteration
         }
     }
 

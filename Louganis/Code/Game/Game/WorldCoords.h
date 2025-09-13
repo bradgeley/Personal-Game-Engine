@@ -15,7 +15,7 @@ public:
 	WorldCoords() = default;
 	WorldCoords(IntVec2 const& chunkCoords, IntVec2 const& localTileCoords);
 
-	IntVec2 GetGlobalTileCoords(int chunkTileWidth) const;
+	IntVec2 GetGlobalTileCoords() const;
 
 	bool IsValid() const;
 

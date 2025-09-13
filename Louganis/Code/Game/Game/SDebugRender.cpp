@@ -216,7 +216,7 @@ void SDebugRender::Run(SystemContext const& context)
     {
         world.ForEachChunkOverlappingAABB(playerCamera->m_camera.GetTranslatedOrthoBounds2D(), [&world, &frameVerts](Chunk& chunk)
         {
-            for (int tileID = 0; tileID < world.GetNumTilesInChunk(); ++tileID)
+            for (int tileID = 0; tileID < s_numTilesInChunk; ++tileID)
             {
                 if (chunk.IsTileSolid(tileID))
                 {
