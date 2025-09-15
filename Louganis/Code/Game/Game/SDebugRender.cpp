@@ -216,7 +216,7 @@ void SDebugRender::Run(SystemContext const& context)
     {
         world.ForEachChunkOverlappingAABB(playerCamera->m_camera.GetTranslatedOrthoBounds2D(), [&world, &frameVerts](Chunk& chunk)
         {
-            for (int tileID = 0; tileID < s_numTilesInChunk; ++tileID)
+            for (int tileID = 0; tileID < StaticWorldSettings::s_numTilesInChunk; ++tileID)
             {
                 if (chunk.IsTileSolid(tileID))
                 {
@@ -236,29 +236,29 @@ void SDebugRender::Run(SystemContext const& context)
     {
 		VertexUtils::AddVertsForWireBox2D(frameVerts, scCollision.m_collisionUpdateBounds, 0.25f, Rgba8::Magenta);
 
-        for (auto const& chunkCollisionDataPair : scCollision.m_chunkCollisionData)
-        {
-            IntVec2 const& chunkCoords = chunkCollisionDataPair.first;
-			Chunk* chunk = world.GetActiveChunk(chunkCoords);
-            if (!chunk)
-            {
-                continue;
-            }
-            ChunkCollisionData const& chunkCollisionData = chunkCollisionDataPair.second;
-			auto& chunkBucket = chunkCollisionData.m_chunkBucket;
-			font->AddVertsForAlignedText2D(frameTextVerts, chunk->m_chunkBounds.GetCenter(), Vec2::ZeroVector, 0.5f, StringUtils::StringF("Chunk (%d, %d): Entities hashed: %d", chunkCoords.x, chunkCoords.y, chunkBucket.size()), Rgba8::White);
-			VertexUtils::AddVertsForWireBox2D(frameVerts, chunk->m_chunkBounds, 0.1f, Rgba8::Cyan);
-        
-            for (auto const& tileBucketPair : chunkCollisionData.m_tileBuckets)
-            {
-                int tileIndex = tileBucketPair.first;
-				EntityBucket const& tileBucket = tileBucketPair.second;
-				WorldCoords worldCoords = WorldCoords(chunkCoords, chunk->m_tileIDs.GetCoordsForIndex(tileIndex));
-                AABB2 tileBounds = world.GetTileBounds(worldCoords);
-				font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, StringUtils::StringF("%d", tileBucket.size()), Rgba8::White);
-                VertexUtils::AddVertsForWireBox2D(frameVerts, tileBounds, 0.05f, Rgba8::Yellow);
-            }
-		}
+        //for (auto const& chunkCollisionDataPair : scCollision.m_chunkCollisionData)
+        //{
+        //    IntVec2 const& chunkCoords = chunkCollisionDataPair.first;
+		//	Chunk* chunk = world.GetActiveChunk(chunkCoords);
+        //    if (!chunk)
+        //    {
+        //        continue;
+        //    }
+        //    ChunkCollisionData const& chunkCollisionData = chunkCollisionDataPair.second;
+		//	auto& chunkBucket = chunkCollisionData.m_chunkBucket;
+		//	font->AddVertsForAlignedText2D(frameTextVerts, chunk->m_chunkBounds.GetCenter(), Vec2::ZeroVector, 0.5f, StringUtils::StringF("Chunk (%d, %d): Entities hashed: %d", chunkCoords.x, chunkCoords.y, chunkBucket.size()), Rgba8::White);
+		//	VertexUtils::AddVertsForWireBox2D(frameVerts, chunk->m_chunkBounds, 0.1f, Rgba8::Cyan);
+        //
+        //    for (auto const& tileBucketPair : chunkCollisionData.m_tileBuckets)
+        //    {
+        //        int tileIndex = tileBucketPair.first;
+		//		EntityBucket const& tileBucket = tileBucketPair.second;
+		//		WorldCoords worldCoords = WorldCoords(chunkCoords, chunk->m_tileIDs.GetCoordsForIndex(tileIndex));
+        //        AABB2 tileBounds = world.GetTileBounds(worldCoords);
+		//		font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, StringUtils::StringF("%d", tileBucket.size()), Rgba8::White);
+        //        VertexUtils::AddVertsForWireBox2D(frameVerts, tileBounds, 0.05f, Rgba8::Yellow);
+        //    }
+		//}
     }
 
     

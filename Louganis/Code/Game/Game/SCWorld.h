@@ -32,7 +32,6 @@ public:
     WorldCoords GetWorldCoordsAtOffset(WorldCoords const& worldCoords, IntVec2 const& tileOffset) const;
     WorldCoords GetWorldCoordsAtLocation(Vec2 const& worldLocation) const;
     WorldCoords GetWorldCoordsAtGlobalTileCoords(IntVec2 const& globalTileCoords) const;
-    void GetEightNeighborWorldCoords(WorldCoords const& worldCoords, WorldCoords* eightNeighborsArray) const;
 
     // For each func - return false means stop iterating, true means keep iterating.
     void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const;
@@ -42,7 +41,8 @@ public:
     void ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const;
     void ForEachChunkOverlappingAABB(AABB2 const& aabb, const std::function<bool(Chunk&)>& func) const;
     void ForEachChunkCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachChunkCoordsOverlappingCircle(Vec2 const& circleCenter, float circleRadius, const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachChunkCoordsOverlappingCircle_InRadialOrder(Vec2 const& circleCenter, float circleRadius, const std::function<bool(IntVec2 const&)>& func) const; // slower, center chunks first
+    void ForEachActiveChunkOverlappingCircle(Vec2 const& circleCenter, float circleRadius, const std::function<bool(Chunk const&)>& func) const;
 
     void GetChunksOverlappingAABB(std::vector<Chunk*>& out_chunks, AABB2 const& aabb) const;
 

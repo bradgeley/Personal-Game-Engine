@@ -19,7 +19,7 @@ WorldCoords::WorldCoords(IntVec2 const& chunkCoords, IntVec2 const& localTileCoo
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 WorldCoords::GetGlobalTileCoords() const
 {
-	return (m_chunkCoords * s_numTilesInRow) + m_localTileCoords;
+	return (m_chunkCoords * StaticWorldSettings::s_numTilesInRow) + m_localTileCoords;
 }
 
 

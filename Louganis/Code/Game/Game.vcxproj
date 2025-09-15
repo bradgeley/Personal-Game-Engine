@@ -399,6 +399,7 @@
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Adventurer.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\Marine-Gauss.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Soldier.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />

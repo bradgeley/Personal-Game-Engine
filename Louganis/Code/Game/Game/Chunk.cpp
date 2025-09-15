@@ -18,11 +18,11 @@
 void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings)
 {
 	m_chunkCoords = chunkCoords;
-	int numTilesInRow = MathUtils::Pow(2, s_worldChunkSizePowerOfTwo);
+	int numTilesInRow = MathUtils::Pow(2, StaticWorldSettings::s_worldChunkSizePowerOfTwo);
 	int numTilesInChunk = numTilesInRow * numTilesInRow;
-	float chunkWidth = s_tileWidth * numTilesInRow;
+	float chunkWidth = StaticWorldSettings::s_tileWidth * numTilesInRow;
 	Vec2 chunkOrigin = Vec2(chunkCoords.x, chunkCoords.y) * chunkWidth;
-	Vec2 tileDims = Vec2(s_tileWidth, s_tileWidth);
+	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 	m_chunkBounds = AABB2(chunkOrigin, chunkOrigin + tileDims * (float) numTilesInRow);
 
 	int grassTileDef = TileDef::GetTileDefID("grass");
@@ -72,7 +72,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 				tileDef = errorTileDef;
 			}
 			Rgba8 const& tint = tileDef->m_tint;
-			Vec2 mins = chunkOrigin + Vec2(x, y) * s_tileWidth;
+			Vec2 mins = chunkOrigin + Vec2(x, y) * StaticWorldSettings::s_tileWidth;
 			Vec2 maxs = mins + tileDims;
 			AABB2 uvs = terrainSpriteSheet->GetSpriteUVs(tileDef->m_spriteIndex);
 			VertexUtils::AddVertsForRect2D(vbo, mins, maxs, tint, uvs);

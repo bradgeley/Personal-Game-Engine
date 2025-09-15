@@ -358,5 +358,8 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Marine-Gauss.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

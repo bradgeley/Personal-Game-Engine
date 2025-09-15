@@ -30,7 +30,7 @@ public:
 	EventDelegate m_destroyed;
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
-	FastGrid<uint8_t, s_worldChunkSizePowerOfTwo> m_tileIDs;
+	FastGrid<uint8_t, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tileIDs;
 	VertexBufferID m_vbo = RendererUtils::InvalidID;
 #if defined(_DEBUG)
 	VertexBufferID m_debugVBO = RendererUtils::InvalidID;

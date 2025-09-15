@@ -47,9 +47,9 @@ protected:
 
 public:
 
-	FastGrid<uint8_t, s_worldChunkSizePowerOfTwo> m_costField;
-	FastGrid<float, s_worldChunkSizePowerOfTwo> m_distanceField;
-	FastGrid<Vec2, s_worldChunkSizePowerOfTwo> m_gradient;
-	BitArray<(1 << s_worldChunkSizePowerOfTwo) * (1 << s_worldChunkSizePowerOfTwo)> m_consideredCells;
+	FastGrid<uint8_t, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_costField;
+	FastGrid<float, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_distanceField;
+	FastGrid<Vec2, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_gradient;
+	BitArray<StaticWorldSettings::s_numTilesInChunk> m_consideredCells;
 	VertexBufferID m_debugVBO = RendererUtils::InvalidID;
 };

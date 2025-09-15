@@ -7,7 +7,7 @@
     <PlayerController></PlayerController>
     <Collision radius="0.5"></Collision>
     <Render scale="0.5"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/Soldier.xml"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Marine-Gauss.xml"></Animation>
     <Ability></Ability>
   </EntityDef>
 

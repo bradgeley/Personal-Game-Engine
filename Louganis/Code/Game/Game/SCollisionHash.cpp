@@ -28,8 +28,8 @@ void SCollisionHash::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::PreRun()
 {
-    auto& world = g_ecs->GetSingleton<SCWorld>();
-    auto& scCollision = g_ecs->GetSingleton<SCCollision>();
+    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
     // clear out stale data and remove any chunk entries that are no longer loaded
     for (auto it = scCollision.m_chunkCollisionData.begin(); it != scCollision.m_chunkCollisionData.end();)
@@ -61,7 +61,7 @@ void SCollisionHash::PreRun()
         }
     }
 
-    // Optimization: only update collision hashes for entities that are within the camera bounds (with some extra wiggle room)
+	// Optimization: only update collision hashes for entities that are within the collision hash radius of the active camera
     scCollision.m_collisionUpdateBounds = AABB2::ZeroToOne;
 
     SystemContext context;
@@ -71,7 +71,8 @@ void SCollisionHash::PreRun()
         if (camera.m_isActive)
         {
             scCollision.m_collisionUpdateBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
-            scCollision.m_collisionUpdateBounds.ExpandBy(10.f); // expand bounds to account for entities that are just outside the camera view
+            scCollision.m_collisionUpdateBounds.SetDimsAboutCenter(Vec2(world.m_worldSettings.m_collisionHashRadius * 2.f, world.m_worldSettings.m_collisionHashRadius * 2.f));
+            break;
         }
     }
 
@@ -102,11 +103,11 @@ void SCollisionHash::Run(SystemContext const& context)
             continue;
 		}
 
-		std::unordered_map<IntVec2, ChunkCollisionData>& thisThreadCollisionData = scCollision.m_perThreadCollisionData[context.m_systemSplittingJobID];
+		std::unordered_map<IntVec2, ChunkCollisionData>& thisThreadCollisionData = context.m_didSystemSplit ? scCollision.m_perThreadCollisionData[context.m_systemSplittingJobID] : scCollision.m_chunkCollisionData;
 
-        world.ForEachChunkCoordsOverlappingCircle(pos, radius, [&](IntVec2 const& chunkCoords)
+        world.ForEachActiveChunkOverlappingCircle(pos, radius, [&](Chunk const& chunk)
         {
-            thisThreadCollisionData[chunkCoords].m_chunkBucket.push_back(it.m_currentIndex);
+            thisThreadCollisionData[chunk.m_chunkCoords].m_chunkBucket.push_back(it.m_currentIndex);
             return true; // continue iterating
         });
 
