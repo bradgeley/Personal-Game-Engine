@@ -343,12 +343,6 @@
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml">
       <Filter>Data</Filter>
     </Xml>
-    <Xml Include="..\..\Run\Data\SpriteSheets\Soldier.xml">
-      <Filter>Data\SpriteSheets</Filter>
-    </Xml>
-    <Xml Include="..\..\Run\Data\SpriteSheets\Adventurer.xml">
-      <Filter>Data\SpriteSheets</Filter>
-    </Xml>
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>

@@ -49,4 +49,4 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Warning suppression
 //
-#pragma warning(disable: 4530) // Disables exception warning
+#pragma warning(disable: 4530) // Disables warning from exceptions being disabled

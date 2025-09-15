@@ -30,16 +30,16 @@ void SWorldCollision::Run(SystemContext const& context)
     auto& scWorld = g_ecs->GetSingleton<SCWorld>();
 	auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
-    scWorld.ForEachSolidWorldCoordsOverlappingAABB(scCollision.m_collisionUpdateBounds, [&](WorldCoords const& worldCoords, Chunk* chunk)
+    scWorld.ForEachSolidWorldCoordsOverlappingAABB(scCollision.m_collisionUpdateBounds, [&](WorldCoords const& worldCoords, Chunk& chunk)
     {
-        if (!chunk->IsTileSolid(worldCoords.m_localTileCoords))
+        if (!chunk.IsTileSolid(worldCoords.m_localTileCoords))
         {
             return true; // keep iterating
         }
 
         ChunkCollisionData& chunkCollisionData = scCollision.m_chunkCollisionData[worldCoords.m_chunkCoords];
         auto& tileBuckets = chunkCollisionData.m_tileBuckets;
-		auto& tileBucket = tileBuckets[chunk->m_tileIDs.GetIndexForCoords(worldCoords.m_localTileCoords)];
+		auto& tileBucket = tileBuckets[chunk.m_tileIDs.GetIndexForCoords(worldCoords.m_localTileCoords)];
 		AABB2 tileBounds = scWorld.GetTileBounds(worldCoords);
         
         for (auto entity : tileBucket)
