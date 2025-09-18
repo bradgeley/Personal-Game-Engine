@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
 #include "InputLayout.h"
+#include "Engine/Core/Name.h"
 #include <string>
 #include <vector>
 
@@ -11,9 +12,12 @@ struct InputLayout;
 //----------------------------------------------------------------------------------------------------------------------
 struct ShaderConfig
 {
-    std::string	m_name;
-    std::string	m_vertexEntryPoint  = "VertexMain";
-    std::string	m_pixelEntryPoint   = "PixelMain";
+	static ShaderConfig MakeFromXML(char const* xmlFilePath);
+
+    Name	    m_name;
+    std::string	m_vertexEntry  = "VertexMain";
+    std::string	m_pixelEntry   = "PixelMain";
+    std::string m_sourceFilePath = "";
     InputLayout m_inputLayout;
 };
 
@@ -35,7 +39,7 @@ public:
 
     virtual void ReleaseResources() = 0;
 
-    virtual bool CreateFromSource(std::string const& sourceCode) = 0;
+    virtual bool FullCompileFromSource(std::string const& sourceCode) = 0;
 
 protected:
 

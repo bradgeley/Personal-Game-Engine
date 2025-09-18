@@ -10,6 +10,7 @@
 #include "Engine/Multithreading/Jobsystem.h"
 #include "Image.h"
 #include "TextureAsset.h"
+#include "ShaderAsset.h"
 
 
 

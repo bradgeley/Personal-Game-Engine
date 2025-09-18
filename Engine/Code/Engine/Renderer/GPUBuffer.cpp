@@ -1,4 +1,5 @@
 ﻿// Bradley Christensen - 2022-2025
+#include "Game/Framework/EngineBuildPreferences.h"
 #include "Engine/Renderer/GPUBuffer.h"
 
 
@@ -76,8 +77,11 @@ void GPUBuffer::UpdateCPUBuffer(void const* data, size_t size)
 //----------------------------------------------------------------------------------------------------------------------
 void GPUBuffer::AddToCPUBuffer(void const* data, size_t size)
 {
-	size_t oldSize = m_cpuBuffer.size();
-	m_cpuBuffer.resize(oldSize + size);
-	memcpy(m_cpuBuffer.data() + oldSize, data, size);
+	if (size == 0)
+	{
+		return;
+	}
+	uint8_t const* byteData = static_cast<uint8_t const*>(data);
+	m_cpuBuffer.insert(m_cpuBuffer.end(), byteData, byteData + size);
 	m_isDirty = true;
 }

@@ -2,15 +2,14 @@
 #pragma once
 #include <cstddef>
 #include <vector>
+#include <string>
 
-
+// Todo enum to string macro?
 
 //----------------------------------------------------------------------------------------------------------------------
 enum class InputLayoutAttributeFormat
 {
-    Invalid,
-
-    Float1,
+    Float1 = 0,
     Float2,
     Float3,
     Float4,
@@ -19,6 +18,28 @@ enum class InputLayoutAttributeFormat
     Uint3,
     Uint4,
     Rgba8,
+
+    Count,
+    Invalid,
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+static std::string s_inputLayoutAttributeFormatNames[] =
+{
+    "Float1",
+    "Float2",
+    "Float3",
+    "Float4",
+    "Uint1",
+    "Uint2",
+    "Uint3",
+    "Uint4",
+    "Rgba8",
+
+    "COUNT",
+    "INVALID",
 };
 
 
@@ -26,9 +47,7 @@ enum class InputLayoutAttributeFormat
 //----------------------------------------------------------------------------------------------------------------------
 enum class InputLayoutSemantic
 {
-    Invalid,
-
-    Position,
+    Position = 0,
     Tint,
     Uvs,
     Normal,
@@ -38,15 +57,16 @@ enum class InputLayoutSemantic
     InstanceRotation,
     InstanceTint,
     Index,
+
+    Count,
+    Invalid,
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-static const char* s_inputLayoutSemanticNames[] =
+static std::string s_inputLayoutSemanticNames[] =
 {
-    "INVALID",
-
     "POSITION",
     "TINT",
     "UVS",
@@ -57,6 +77,9 @@ static const char* s_inputLayoutSemanticNames[] =
     "INSTANCEROTATION",
     "INSTANCETINT",
 	"INDEX",
+
+    "COUNT",
+    "INVALID",
 };
 
 
@@ -81,7 +104,9 @@ struct InputLayout
 {
 public:
 
-    static const char* GetInputLayoutSemanticName(InputLayoutSemantic semantic);
+    static std::string GetInputLayoutSemanticName(InputLayoutSemantic semantic);
+	static InputLayoutSemantic GetInputLayoutSemanticFromString(std::string const& str);
+	static InputLayoutAttributeFormat GetInputLayoutAttributeFormatFromString(std::string const& str);
 	static InputLayout Combine(InputLayout const& a, InputLayout const& b);
 	static InputLayout Combine(InputLayout const** ppData, size_t numLayouts);
 

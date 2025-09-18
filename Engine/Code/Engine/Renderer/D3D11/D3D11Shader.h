@@ -29,18 +29,15 @@ public:
 
     virtual void ReleaseResources() override;
 
-    virtual bool CreateFromSource(std::string const& sourceCode) override;
+    virtual bool FullCompileFromSource(std::string const& sourceCode) override;
 
-    ID3D11InputLayout* CreateOrGetD3D11InputLayout();
-
-protected:
-
-    bool CompileAsVertexShader(std::string const& sourceCode);
-    bool CompileAsPixelShader(std::string const& sourceCode);
+    ID3D11InputLayout* GetD3D11InputLayout();
 
 protected:
 
-    std::vector<uint8_t> m_vertexByteCode;
+	bool CreateInputLayout(void* byteCode, size_t byteCodeSize);
+
+protected:
 
     ID3D11InputLayout* m_inputLayout = nullptr;
     ID3D11VertexShader* m_vertexShader = nullptr;

@@ -42,7 +42,7 @@ void SWorldCollision::Run(SystemContext const&)
 		auto& tileBucket = tileBuckets[chunk.m_tileIDs.GetIndexForCoords(worldCoords.m_localTileCoords)];
 		AABB2 tileBounds = scWorld.GetTileBounds(worldCoords);
         
-        for (auto entity : tileBucket)
+        for (EntityID entity : tileBucket)
         {
 			GeometryUtils::PushDiscOutOfAABB2D(transStorage[entity].m_pos, collStorage[entity].m_radius, tileBounds);
         }

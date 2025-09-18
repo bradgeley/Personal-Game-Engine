@@ -662,7 +662,8 @@ void D3D11Renderer::BoundShaderUpdated()
 	m_deviceContext->VSSetShader(vertexShader, nullptr, 0);
 	m_deviceContext->PSSetShader(pixelShader, nullptr, 0);
 
-	ID3D11InputLayout* vertexLayout = boundShader->CreateOrGetD3D11InputLayout();
+	ID3D11InputLayout* vertexLayout = boundShader->GetD3D11InputLayout();
+	ASSERT_OR_DIE(vertexLayout, "Shader has no valid input layout.");
 	m_deviceContext->IASetInputLayout(vertexLayout);
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // todo: put into shader class?
 }
@@ -787,8 +788,8 @@ void D3D11Renderer::CreateDefaultShader()
 	D3D11Shader* defaultShader = dynamic_cast<D3D11Shader*>(GetDefaultShader());
 	ASSERT_OR_DIE(defaultShader, "Invalid default shader.");
 
-	defaultShader->CreateFromSource(s_HLSLDefaultShaderSource);
-	defaultShader->CreateOrGetD3D11InputLayout();
+	defaultShader->FullCompileFromSource(s_HLSLDefaultShaderSource);
+	defaultShader->GetD3D11InputLayout();
 }
 
 
@@ -811,7 +812,7 @@ void D3D11Renderer::CreateDefaultFont()
 	Shader* shader = GetShader(font->m_shader);
 	ASSERT_OR_DIE(shader, "Invalid default font shader.");
 
-	shader->CreateFromSource(s_HLSLDefaultFontShaderSource);
+	shader->FullCompileFromSource(s_HLSLDefaultFontShaderSource);
 }
 
 

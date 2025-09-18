@@ -252,7 +252,7 @@ AABB2 GridSpriteSheet::GetGenericSpriteQuad(float size /*= 1.f*/) const
 	float halfSize = size * 0.5f;
 	if (spriteAspect <= 1.f)
 	{
-		spriteAABB.mins = Vec2(-halfSize, -halfSize);
+		spriteAABB.mins = Vec2(-halfSize, -halfSize * spriteAspect);
 		spriteAABB.maxs = spriteAABB.mins + Vec2(2.f * halfSize, 2.f * halfSize / spriteAspect);
 	}
 	else
@@ -272,7 +272,6 @@ void GridSpriteSheet::SetRendererState() const
 	g_renderer->SetFillMode(FillMode::Solid);
 	g_renderer->SetBlendMode(BlendMode::Alpha);
 	g_renderer->BindTexture(m_texture);
-	g_renderer->BindShader(nullptr);
 }
 
 

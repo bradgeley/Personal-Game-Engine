@@ -3,16 +3,25 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct SpriteInstance
+struct VSInput
 {
+	// Vertex Data (0)
 	//------------------------------------------------------
-	float3	position		: INSTANCEPOSITION;	// 12 bytes
-    float	orientation		: INSTANCEROTATION; // 4 bytes
+    float3	position			: POSITION;
+    float4	tint				: TINT;
+    float2	uvs					: UVS;
 	//------------------------------------------------------
-	float	scale			: INSTANCESCALE;	// 4 bytes
-	uint	rgba			: INSTANCETINT;		// 4 bytes
-	uint	spriteIndex		: INDEX;			// 4 bytes
-	float	padding			: PADDING;			// 4 bytes
+	
+	// Instance Data (1)
+	//------------------------------------------------------
+	float3	instancePosition	: INSTANCEPOSITION;	// 12 bytes
+    float	instanceRotation	: INSTANCEROTATION; // 4 bytes
+	//------------------------------------------------------
+    float4	instanceTint		: INSTANCETINT;		// 16 bytes
+	//------------------------------------------------------
+	float	instanceScale		: INSTANCESCALE;	// 4 bytes
+	uint	spriteIndex			: INDEX;			// 4 bytes
+	//		padding									// 8 bytes
 	//------------------------------------------------------
 };
 
@@ -20,11 +29,6 @@ struct SpriteInstance
 
 //----------------------------------------------------------------------------------------------------------------------
 Texture2D<float4> SurfaceColorTexture : register(t0);
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-StructuredBuffer<SpriteInstance> g_spriteInstances : register(t1);
 
 
 
@@ -66,16 +70,6 @@ cbuffer SpriteSheetConstants : register(b5)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct VSInput
-{
-	float3 position			: POSITION;
-	float4 tint				: TINT;
-	float2 uvs				: UVS;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 struct VSOutput
 {
 	float4 position			: SV_Position;
@@ -88,13 +82,15 @@ struct VSOutput
 //----------------------------------------------------------------------------------------------------------------------
 VSOutput VertexMain(VSInput vin, uint instanceID : SV_InstanceID)
 {
-	SpriteInstance inst = g_spriteInstances[instanceID];
-	
 	float3 pos = vin.position;
-	float3 outPos = pos + inst.position;
+    float3 outPos = pos + vin.instancePosition;
 	
 	VSOutput output;
-	output.position = float4(outPos, 1.f);
+    output.position = float4(outPos, 1.f);
+    output.position = mul(gameToRender, output.position);
+    output.position = mul(worldToCamera, output.position);
+    output.position = mul(cameraToClip, output.position);
+	
 	output.tint = vin.tint;
 	output.uvs = vin.uvs;
 	return output;

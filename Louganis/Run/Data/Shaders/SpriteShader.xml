@@ -1,18 +1,18 @@
 
 
 
-<Shader name="SpriteShader" source="Data/Shaders/SpriteShader.hlsl" pixelEntry="PixelMain" vertexEntry="VertexMain">
+<Shader name="SpriteShader" source="Data/Shaders/SpriteShader.hlsl" pixel="PixelMain" vertex="VertexMain">
   <InputLayout>
     <!--Vertex Data-->
-    <InputLayoutAttribute semantic="POSITION" semanticIndex="0" format="float3" inputSlot="0" alignedByteOffset="0" perInstance="false"></InputLayoutAttribute>
-    <InputLayoutAttribute semantic="TINT" semanticIndex="0" format="float4" inputSlot="0" alignedByteOffset="0" perInstance="false"></InputLayoutAttribute>
-    <InputLayoutAttribute semantic="UVS" semanticIndex="0" format="float2" inputSlot="0" alignedByteOffset="0" perInstance="false"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="POSITION" semanticIndex="0" format="float3" inputSlot="0" alignedByteOffset="0" isPerInstance="false"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="TINT" semanticIndex="0" format="Rgba8" inputSlot="0" alignedByteOffset="0" isPerInstance="false"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="UVS" semanticIndex="0" format="float2" inputSlot="0" alignedByteOffset="0" isPerInstance="false"></InputLayoutAttribute>
 
     <!--Instance Data-->
-    <InputLayoutAttribute semantic="INSTANCEPOSITION" semanticIndex="0" format="float3" inputSlot="1" alignedByteOffset="0" perInstance="true"></InputLayoutAttribute>
-    <InputLayoutAttribute semantic="INSTANCEROTATION" semanticIndex="0" format="float1" inputSlot="1" alignedByteOffset="0" perInstance="true"></InputLayoutAttribute>
-    <InputLayoutAttribute semantic="INSTANCESCALE" semanticIndex="0" format="float1" inputSlot="1" alignedByteOffset="0" perInstance="true"></InputLayoutAttribute>
-    <InputLayoutAttribute semantic="INSTANCETINT" semanticIndex="0" format="rgba8" inputSlot="1" alignedByteOffset="0" perInstance="true"></InputLayoutAttribute>
-    <InputLayoutAttribute semantic="INDEX" semanticIndex="0" format="uint1" inputSlot="1" alignedByteOffset="0" perInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INSTANCEPOSITION" semanticIndex="0" format="float3" inputSlot="1" alignedByteOffset="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INSTANCEROTATION" semanticIndex="0" format="float1" inputSlot="1" alignedByteOffset="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INSTANCETINT" semanticIndex="0" format="Rgba8" inputSlot="1" alignedByteOffset="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INSTANCESCALE" semanticIndex="0" format="float1" inputSlot="1" alignedByteOffset="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INDEX" semanticIndex="0" format="uint1" inputSlot="1" alignedByteOffset="0" isPerInstance="true"></InputLayoutAttribute>
   </InputLayout>
 </Shader>
