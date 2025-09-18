@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "Renderer.h"
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Events/EventSystem.h"
@@ -7,6 +8,7 @@
 #include "Camera.h"
 #include "ConstantBuffer.h"
 #include "Font.h"
+#include "InstanceBuffer.h"
 #include "RenderTarget.h"
 #include "Shader.h"
 #include "Swapchain.h"
@@ -56,7 +58,7 @@ void Renderer::Startup()
     AddDevConsoleCommands();
 
 	#if defined(_DEBUG)
-		m_debugVertexBuffer = MakeVertexBuffer();
+		m_debugVertexBuffer = MakeVertexBuffer<Vertex_PCU>();
 	#endif
 }
 
@@ -77,6 +79,7 @@ void Renderer::Shutdown()
 	DestroyTextures();
 	DestroyConstantBuffers();
 	DestroyVertexBuffers();
+	DestroyInstanceBuffers();
 	DestroySwapchains();
 	DestroyRenderTargets();
 	DestroyFonts();
@@ -217,15 +220,11 @@ void Renderer::DrawVertexBuffer(VertexBufferID id)
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::DrawVertexBuffer(VertexBuffer& vbo)
 {
-	if (vbo.IsDirty())
+	size_t numVertsToDraw = vbo.GetNumVerts();
+	if (numVertsToDraw > 0)
 	{
-		vbo.UpdateGPUBuffer();
-	}
-	if (vbo.GetNumVerts() > 0)
-	{
-		// Only bother drawing it if there are verts to draw
 		BindVertexBuffer(vbo);
-		Draw(vbo.GetNumVerts(), 0);
+		Draw((int) numVertsToDraw, 0);
 	}
 
 	#if defined(_DEBUG)
@@ -245,6 +244,21 @@ void Renderer::DrawVertexBuffer(VertexBuffer& vbo)
 			debugVBO.ClearVerts();
 		}
 	#endif
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::DrawInstanced(VertexBuffer& vbo, InstanceBuffer& ibo)
+{
+	size_t numVertsToDraw = vbo.GetNumVerts();
+	size_t numInstances = ibo.GetNumInstances();
+	if (numVertsToDraw > 0 && numInstances > 0)
+	{
+		BindVertexBuffer(vbo);
+		BindInstanceBuffer(ibo);
+		DrawInstanced((int) numVertsToDraw, (int) numInstances);
+	}
 }
 
 
@@ -297,6 +311,20 @@ VertexBuffer* Renderer::GetVertexBuffer(VertexBufferID id) const
 	std::unique_lock lock(m_vertexBuffersMutex);
 	auto it = m_vertexBuffers.find(id);
 	if (it != m_vertexBuffers.end())
+	{
+		return it->second;
+	}
+	return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+InstanceBuffer* Renderer::GetInstanceBuffer(InstanceBufferID id) const
+{
+	std::unique_lock lock(m_instanceBuffersMutex);
+	auto it = m_instanceBuffers.find(id);
+	if (it != m_instanceBuffers.end())
 	{
 		return it->second;
 	}
@@ -406,6 +434,22 @@ void Renderer::ReleaseVertexBuffer(VertexBufferID id)
 		vb->ReleaseResources();
 		delete vb;
 		m_vertexBuffers.erase(pair);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::ReleaseInstanceBuffer(InstanceBufferID id)
+{
+	std::unique_lock lock(m_instanceBuffersMutex);
+	auto pair = m_instanceBuffers.find(id);
+	if (pair != m_instanceBuffers.end())
+	{
+		InstanceBuffer* ib = pair->second;
+		ib->ReleaseResources();
+		delete ib;
+		m_instanceBuffers.erase(pair);
 	}
 }
 
@@ -709,6 +753,15 @@ VertexBufferID Renderer::RequestVertexBufferID() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+InstanceBufferID Renderer::RequestInstanceBufferID() const
+{
+	static InstanceBufferID s_id = 0;
+	return s_id++;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 SwapchainID Renderer::RequestSwapchainID() const
 {
 	static SwapchainID s_id = 0;
@@ -736,10 +789,31 @@ FontID Renderer::RequestFontID() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::Draw(int, int)
+void Renderer::Draw(int vertexCount, int vertexOffset /*= 0*/)
 {
+	UNUSED(vertexCount);
+	UNUSED(vertexOffset);
+
 	UpdateRenderingPipelineState();
 	m_numFrameDrawCalls++;
+
+	// Rest of draw call overridden in child
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::DrawInstanced(int vertexCount, int instanceCount, int vertexOffset /*= 0*/, int instanceOffset /*= 0*/)
+{
+	UNUSED(vertexCount);
+	UNUSED(vertexOffset);
+	UNUSED(instanceCount);
+	UNUSED(instanceOffset);
+
+	UpdateRenderingPipelineState();
+	m_numFrameDrawCalls++;
+
+	// Rest of draw call overridden in child
 }
 
 
@@ -901,13 +975,9 @@ void Renderer::UpdateShader(bool force)
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::CreateConstantBuffers()
 {
-	m_cameraConstantsGPU = MakeConstantBuffer();
-	m_modelConstantsGPU = MakeConstantBuffer();
-	m_fontConstantsGPU = MakeConstantBuffer();
-
-	GetConstantBuffer(m_cameraConstantsGPU)->Initialize(sizeof(CameraConstants));
-	GetConstantBuffer(m_modelConstantsGPU)->Initialize(sizeof(ModelConstants));
-	GetConstantBuffer(m_fontConstantsGPU)->Initialize(sizeof(FontConstants));
+	m_cameraConstantsGPU = MakeConstantBuffer(sizeof(CameraConstants));
+	m_modelConstantsGPU = MakeConstantBuffer(sizeof(ModelConstants));
+	m_fontConstantsGPU = MakeConstantBuffer(sizeof(FontConstants));
 
 	BindConstantBuffer(m_cameraConstantsGPU, 2);
 	BindConstantBuffer(m_modelConstantsGPU, 3);
@@ -974,6 +1044,19 @@ void Renderer::DestroyVertexBuffers()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Renderer::DestroyInstanceBuffers()
+{
+	for (auto ib : m_instanceBuffers)
+	{
+		ib.second->ReleaseResources();
+		delete ib.second;
+	}
+	m_instanceBuffers.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroySwapchains()
 {
 	for (auto sc : m_swapchains)
@@ -1016,7 +1099,9 @@ void Renderer::DestroyFonts()
 void Renderer::ModelConstantsUpdated()
 {
 	ASSERT_OR_DIE(m_modelConstantsGPU != RendererUtils::InvalidID, "Updating invalid constant buffer.");
-	GetConstantBuffer(m_modelConstantsGPU)->Update(&m_settings.m_modelConstants, sizeof(ModelConstants));
+	ConstantBuffer* modelConstants = GetConstantBuffer(m_modelConstantsGPU);
+	ASSERT_OR_DIE(modelConstants, "Cannot find model constant buffer.");
+	modelConstants->Update(&m_settings.m_modelConstants, sizeof(ModelConstants));
 }
 
 
@@ -1025,7 +1110,9 @@ void Renderer::ModelConstantsUpdated()
 void Renderer::CameraConstantsUpdated()
 {
 	ASSERT_OR_DIE(m_cameraConstantsGPU != RendererUtils::InvalidID, "Updating invalid constant buffer.");
-	GetConstantBuffer(m_cameraConstantsGPU)->Update(&m_settings.m_cameraConstants, sizeof(CameraConstants));
+	ConstantBuffer* cameraConstants = GetConstantBuffer(m_cameraConstantsGPU);
+	ASSERT_OR_DIE(cameraConstants, "Cannot find camera constant buffer.");
+	cameraConstants->Update(&m_settings.m_cameraConstants, sizeof(CameraConstants));
 }
 
 
@@ -1034,7 +1121,9 @@ void Renderer::CameraConstantsUpdated()
 void Renderer::FontConstantsUpdated()
 {
 	ASSERT_OR_DIE(m_fontConstantsGPU != RendererUtils::InvalidID, "Updating invalid constant buffer.");
-	GetConstantBuffer(m_fontConstantsGPU)->Update(&m_settings.m_fontConstants, sizeof(FontConstants));
+	ConstantBuffer* fontConstants = GetConstantBuffer(m_fontConstantsGPU);
+	ASSERT_OR_DIE(fontConstants, "Cannot find font constant buffer.");
+	fontConstants->Update(&m_settings.m_fontConstants, sizeof(FontConstants));
 }
 
 
@@ -1105,4 +1194,26 @@ FontID Renderer::MakeFont()
 	FontID fontID = RequestFontID();
 	m_fonts[fontID] = fontResult;
 	return fontID;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+VertexBufferID Renderer::MakeTypedVertexBufferInternal(size_t vertSize, size_t numVerts)
+{
+	VertexBufferID id = MakeVertexBuffer();
+	VertexBuffer& vbo = *GetVertexBuffer(id);
+	vbo.InitializeInternal(vertSize, numVerts);
+	return id;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+InstanceBufferID Renderer::MakeTypedInstanceBufferInternal(size_t instanceSize, size_t numInstances)
+{
+	InstanceBufferID id = MakeInstanceBuffer();
+	InstanceBuffer& ibo = *GetInstanceBuffer(id);
+	ibo.InitializeInternal(instanceSize, numInstances);
+	return id;
 }

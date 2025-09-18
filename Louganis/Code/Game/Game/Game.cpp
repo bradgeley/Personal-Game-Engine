@@ -139,9 +139,6 @@ void Game::ConfigureEngine(Engine* engine)
 
 	AssetManagerConfig assetManagerConfig;
 	g_assetManager = new AssetManager(assetManagerConfig);
-	g_assetManager->RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load, "GridSpriteSheet");
-	g_assetManager->RegisterLoader<Image>(Image::Load, "Image");
-	g_assetManager->RegisterLoader<TextureAsset>(TextureAsset::Load, "TextureAsset");
 	engine->RegisterSubsystem(g_assetManager);
 
     EventSystemConfig eventSysConfig;
@@ -245,8 +242,8 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SAIController>((int) FramePhase::PrePhysics);
 
     // Physics
-    SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
-    physics.m_timeStep = 0.01f;
+    //SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
+    //physics.m_timeStep = 0.01f;
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);

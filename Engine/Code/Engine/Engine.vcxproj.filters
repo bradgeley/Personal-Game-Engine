@@ -214,16 +214,10 @@
     <ClCompile Include="Renderer\D3D11\D3D11Renderer.cpp">
       <Filter>Renderer\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\D3D11\D3D11ConstantBuffer.cpp">
-      <Filter>Renderer\D3D11</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\D3D11\D3D11Texture.cpp">
       <Filter>Renderer\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\D3D11\D3D11Shader.cpp">
-      <Filter>Renderer\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\D3D11\D3D11VertexBuffer.cpp">
       <Filter>Renderer\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\RenderTarget.cpp">
@@ -275,7 +269,7 @@
       <Filter>Assets\Image</Filter>
     </ClCompile>
     <ClCompile Include="Assets\TextureAsset.cpp">
-      <Filter>Assets\Texture</Filter>
+      <Filter>Assets\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Assets\GridSpriteSheet.cpp">
       <Filter>Assets\Sprites</Filter>
@@ -288,6 +282,30 @@
     </ClCompile>
     <ClCompile Include="Assets\SpriteAnimationGroup.cpp">
       <Filter>Assets\Sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\GPUBuffer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\InputLayout.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11GPUBuffer.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11VertexBuffer.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11ConstantBuffer.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\D3D11\D3D11InstanceBuffer.cpp">
+      <Filter>Renderer\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer\InstanceBuffer.cpp">
+      <Filter>Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\ShaderAsset.cpp">
+      <Filter>Assets\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -531,9 +549,6 @@
     <ClInclude Include="Renderer\D3D11\D3D11Renderer.h">
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\D3D11\D3D11ConstantBuffer.h">
-      <Filter>Renderer\D3D11</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\D3D11\D3D11Internal.h">
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
@@ -547,9 +562,6 @@
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\D3D11\HLSLDefaultFontShaderSource.h">
-      <Filter>Renderer\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\D3D11\D3D11VertexBuffer.h">
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\RenderTarget.h">
@@ -607,7 +619,7 @@
       <Filter>Assets\Image</Filter>
     </ClInclude>
     <ClInclude Include="Assets\TextureAsset.h">
-      <Filter>Assets\Texture</Filter>
+      <Filter>Assets\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Assets\SpriteAnimation.h">
       <Filter>Assets\Sprites</Filter>
@@ -626,6 +638,30 @@
     </ClInclude>
     <ClInclude Include="Assets\SpriteAnimationGroup.h">
       <Filter>Assets\Sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\GPUBuffer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\InputLayout.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11GPUBuffer.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11VertexBuffer.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11ConstantBuffer.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\D3D11\D3D11InstanceBuffer.h">
+      <Filter>Renderer\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\InstanceBuffer.h">
+      <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\ShaderAsset.h">
+      <Filter>Assets\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -698,11 +734,11 @@
     <Filter Include="Assets\Image">
       <UniqueIdentifier>{2fcd9a87-5172-404b-82d5-b8ae43dc3fc6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\Texture">
-      <UniqueIdentifier>{14f16be1-833e-4513-9c09-9cc56830f4fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets\Sprites">
       <UniqueIdentifier>{0212446e-53e6-4e7b-a25f-9843d1ae2eb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Rendering">
+      <UniqueIdentifier>{14f16be1-833e-4513-9c09-9cc56830f4fe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

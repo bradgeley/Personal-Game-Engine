@@ -239,9 +239,8 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 //----------------------------------------------------------------------------------------------------------------------
 void DebugDrawRaycast(WorldRaycastResult const& result)
 {
-    VertexBufferID id = g_renderer->MakeVertexBuffer();
+    VertexBufferID id = g_renderer->MakeVertexBuffer<Vertex_PCU>();
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
-    vbo.Initialize(1024);
 
     VertexUtils::AddVertsForDisc2D(vbo, result.m_raycast.m_start, 0.1f, 16, Rgba8::Yellow);
     VertexUtils::AddVertsForDisc2D(vbo, result.m_hitLocation, 0.1f, 16, Rgba8::Yellow);

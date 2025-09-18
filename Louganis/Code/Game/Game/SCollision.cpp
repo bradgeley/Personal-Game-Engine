@@ -18,7 +18,7 @@ void SCollision::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCollision::Run(SystemContext const& context)
+void SCollision::Run(SystemContext const&)
 {
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 

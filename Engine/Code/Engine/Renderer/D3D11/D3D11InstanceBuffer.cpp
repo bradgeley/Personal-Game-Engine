@@ -1,0 +1,31 @@
+﻿// Bradley Christensen - 2022-2025
+#include "Game/Framework/EngineBuildPreferences.h"
+
+#if defined(RENDERER_D3D11)
+
+#include "D3D11GPUBuffer.h"
+#include "D3D11InstanceBuffer.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void D3D11InstanceBuffer::InitializeInternal(size_t vertSize, size_t initialVertCount /*= 0*/)
+{
+	ReleaseResources();
+
+	m_instanceSize = vertSize;
+
+	GpuBufferConfig config;
+	config.m_bufferType = BufferType::InstanceBuffer;
+	m_gpuBuffer = new D3D11GPUBuffer(config);
+
+	if (vertSize > 0 && initialVertCount > 0)
+	{
+		// Only create the gpu buffer if we have data to put in it
+		// If not, that's ok and we can create it later after data is added.
+		m_gpuBuffer->Initialize(m_instanceSize * initialVertCount);
+	}
+}
+
+
+#endif // RENDERER_D3D11

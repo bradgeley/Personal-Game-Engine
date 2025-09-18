@@ -52,14 +52,14 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	}
 
 	// Generate Vbo
-	m_vbo = g_renderer->MakeVertexBuffer();
+	m_vbo = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
 
 	AssetID terrainID = g_assetManager->LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
 	GridSpriteSheet const* terrainSpriteSheet = g_assetManager->Get<GridSpriteSheet>(terrainID);
 	ASSERT_OR_DIE(terrainSpriteSheet != nullptr, "Chunk::Generate - Failed to load terrain sprite sheet");
 
-	vbo.Initialize(6 * numTilesInChunk);
+	vbo.Initialize<Vertex_PCU>(6 * numTilesInChunk);
 	for (int y = 0; y < numTilesInRow; ++y)
 	{
 		for (int x = 0; x < numTilesInRow; ++x)
@@ -82,7 +82,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	g_assetManager->Release(terrainID);
 
 	#if defined(_DEBUG)
-		m_debugVBO = g_renderer->MakeVertexBuffer();
+		m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 		VertexBuffer& debugVBO = *g_renderer->GetVertexBuffer(m_debugVBO);
 		VertexUtils::AddVertsForWireGrid(debugVBO, m_chunkBounds, IntVec2(numTilesInRow, numTilesInRow), 0.01f, Rgba8::Black);
 		VertexUtils::AddVertsForWireBox2D(debugVBO, m_chunkBounds, 0.03f, Rgba8::Red);

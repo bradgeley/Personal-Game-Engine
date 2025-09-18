@@ -3,11 +3,8 @@
 #include "Game/Framework/EngineBuildPreferences.h"
 
 #if defined(RENDERER_D3D11)
+
 #include "Engine/Renderer/VertexBuffer.h"
-
-
-
-struct ID3D11Buffer;
 
 
 
@@ -20,15 +17,7 @@ class D3D11VertexBuffer : public VertexBuffer
     
 public:
 
-    virtual ~D3D11VertexBuffer();
-
-    virtual void Initialize(int numExpectedVerts = 3) override;
-    virtual void UpdateGPUBuffer() override;
-    virtual void ReleaseResources() override;
-
-protected:
-    
-    ID3D11Buffer* m_handle = nullptr;
+    virtual void InitializeInternal(size_t vertSize, size_t initialVertCount) override;
 };
 
 #endif // RENDERER_D3D11

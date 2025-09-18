@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, Rgba8 tint)
 {
-    VertexBufferID id = g_renderer->MakeVertexBuffer();
+    VertexBufferID id = g_renderer->MakeVertexBuffer<Vertex_PCU>();
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
     
     for (size_t i = 0; i < triangles.size(); i += 3)

@@ -23,7 +23,7 @@ void SWorldCollision::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWorldCollision::Run(SystemContext const& context)
+void SWorldCollision::Run(SystemContext const&)
 {
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& collStorage = g_ecs->GetArrayStorage<CCollision>();

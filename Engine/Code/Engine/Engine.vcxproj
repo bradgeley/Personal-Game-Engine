@@ -252,6 +252,7 @@
     <ClCompile Include="Assets\AsyncLoadAssetJob.cpp" />
     <ClCompile Include="Assets\GridSpriteSheet.cpp" />
     <ClCompile Include="Assets\Image.cpp" />
+    <ClCompile Include="Assets\ShaderAsset.cpp" />
     <ClCompile Include="Assets\SpriteAnimation.cpp" />
     <ClCompile Include="Assets\SpriteAnimationGroup.cpp" />
     <ClCompile Include="Assets\TextureAsset.cpp" />
@@ -316,6 +317,8 @@
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\ConstantBuffer.cpp" />
     <ClCompile Include="Renderer\D3D11\D3D11ConstantBuffer.cpp" />
+    <ClCompile Include="Renderer\D3D11\D3D11GPUBuffer.cpp" />
+    <ClCompile Include="Renderer\D3D11\D3D11InstanceBuffer.cpp" />
     <ClCompile Include="Renderer\D3D11\D3D11Renderer.cpp" />
     <ClCompile Include="Renderer\D3D11\D3D11Shader.cpp" />
     <ClCompile Include="Renderer\D3D11\D3D11Swapchain.cpp" />
@@ -324,6 +327,9 @@
     <ClCompile Include="Renderer\D3D11\D3D11VertexBuffer.cpp" />
     <ClCompile Include="Renderer\EngineConstantBuffers.cpp" />
     <ClCompile Include="Renderer\Font.cpp" />
+    <ClCompile Include="Renderer\GPUBuffer.cpp" />
+    <ClCompile Include="Renderer\InputLayout.cpp" />
+    <ClCompile Include="Renderer\InstanceBuffer.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RendererUtils.cpp" />
     <ClCompile Include="Renderer\RenderTarget.cpp" />
@@ -353,6 +359,7 @@
     <ClInclude Include="Assets\AsyncLoadAssetJob.h" />
     <ClInclude Include="Assets\GridSpriteSheet.h" />
     <ClInclude Include="Assets\Image.h" />
+    <ClInclude Include="Assets\ShaderAsset.h" />
     <ClInclude Include="Assets\SpriteAnimation.h" />
     <ClInclude Include="Assets\SpriteAnimationGroup.h" />
     <ClInclude Include="Assets\TextureAsset.h" />
@@ -426,6 +433,8 @@
     <ClInclude Include="Renderer\Camera.h" />
     <ClInclude Include="Renderer\ConstantBuffer.h" />
     <ClInclude Include="Renderer\D3D11\D3D11ConstantBuffer.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11GPUBuffer.h" />
+    <ClInclude Include="Renderer\D3D11\D3D11InstanceBuffer.h" />
     <ClInclude Include="Renderer\D3D11\D3D11Internal.h" />
     <ClInclude Include="Renderer\D3D11\D3D11Renderer.h" />
     <ClInclude Include="Renderer\D3D11\D3D11Shader.h" />
@@ -437,6 +446,9 @@
     <ClInclude Include="Renderer\D3D11\HLSLDefaultShaderSource.h" />
     <ClInclude Include="Renderer\EngineConstantBuffers.h" />
     <ClInclude Include="Renderer\Font.h" />
+    <ClInclude Include="Renderer\GPUBuffer.h" />
+    <ClInclude Include="Renderer\InputLayout.h" />
+    <ClInclude Include="Renderer\InstanceBuffer.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Renderer\RendererSettings.h" />
     <ClInclude Include="Renderer\RendererUtils.h" />

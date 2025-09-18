@@ -88,6 +88,8 @@ IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const
 	Vec2 chunkRelativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * StaticWorldSettings::s_chunkWidth);
 	Vec2 tileSpaceLocation = chunkRelativeLocation * StaticWorldSettings::s_oneOverTileWidth;
 	IntVec2 localTileCoords = IntVec2(tileSpaceLocation.GetFloor());
+	localTileCoords.x = MathUtils::Clamp(localTileCoords.x, 0, StaticWorldSettings::s_numTilesInRowMinusOne);
+	localTileCoords.y = MathUtils::Clamp(localTileCoords.y, 0, StaticWorldSettings::s_numTilesInRowMinusOne);
 	return localTileCoords;
 }
 
@@ -96,9 +98,12 @@ IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation) const
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 SCWorld::GetLocalTileCoordsAtLocation(Vec2 const& worldLocation, IntVec2 const& chunkCoords) const
 {
-	Vec2 chunkRelativeLocation = worldLocation - (Vec2(chunkCoords.x, chunkCoords.y) * StaticWorldSettings::s_chunkWidth);
+	Vec2 chunkMins = Vec2(chunkCoords.x, chunkCoords.y) * StaticWorldSettings::s_chunkWidth;
+	Vec2 chunkRelativeLocation = worldLocation - chunkMins;
 	Vec2 tileSpaceLocation = chunkRelativeLocation * StaticWorldSettings::s_oneOverTileWidth;
 	IntVec2 localTileCoords = IntVec2(tileSpaceLocation.GetFloor());
+	localTileCoords.x = MathUtils::Clamp(localTileCoords.x, 0, StaticWorldSettings::s_numTilesInRowMinusOne);
+	localTileCoords.y = MathUtils::Clamp(localTileCoords.y, 0, StaticWorldSettings::s_numTilesInRowMinusOne);
 	return localTileCoords;
 }
 
@@ -144,9 +149,9 @@ WorldCoords SCWorld::GetWorldCoordsAtOffset(WorldCoords const& worldCoords, IntV
 //----------------------------------------------------------------------------------------------------------------------
 WorldCoords SCWorld::GetWorldCoordsAtLocation(Vec2 const& worldLocation) const
 {
-	IntVec2 chunkCoords = GetChunkCoordsAtLocation(worldLocation);
-	IntVec2 localTileCoords = GetLocalTileCoordsAtLocation(worldLocation, chunkCoords);
-	return WorldCoords(chunkCoords, localTileCoords);
+	IntVec2 globalTileCoords = GetGlobalTileCoordsAtLocation(worldLocation);
+	WorldCoords result = GetWorldCoordsAtGlobalTileCoords(globalTileCoords);
+	return result;
 }
 
 

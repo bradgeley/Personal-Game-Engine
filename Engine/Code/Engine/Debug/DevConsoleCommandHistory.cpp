@@ -15,8 +15,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleCommandHistory::Startup()
 {
-    m_textVerts = g_renderer->MakeVertexBuffer();
-    m_untexturedVerts = g_renderer->MakeVertexBuffer();
+    m_textVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
+    m_untexturedVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 }
 
 

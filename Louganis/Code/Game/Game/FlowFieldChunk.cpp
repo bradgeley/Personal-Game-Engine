@@ -23,7 +23,7 @@ FlowFieldChunk::FlowFieldChunk(Chunk* chunk, SCWorld* world) :
 	m_consideredCells(false)
 {
 	m_chunk->m_destroyed.SubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
-	m_debugVBO = g_renderer->MakeVertexBuffer();
+	m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 }
 
 

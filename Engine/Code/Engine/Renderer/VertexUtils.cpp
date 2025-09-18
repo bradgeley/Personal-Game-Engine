@@ -23,16 +23,13 @@ void VertexUtils::AddVertsForLine2D(VertexBuffer& out_verts, Vec2 const& start, 
     Vec2 topLeftCorner  = end + lineDir * halfThickness + lineRotated90 * halfThickness;
     
     // Push some verts
-    out_verts.ReserveAdditional(6);
-    auto& verts = out_verts.GetMutableVerts();
+	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(botRightCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner), tint));
 
-    verts.emplace_back(Vec3(botLeftCorner), tint);
-    verts.emplace_back(Vec3(botRightCorner), tint);
-    verts.emplace_back(Vec3(topRightCorner), tint);
-
-    verts.emplace_back(Vec3(topRightCorner), tint);
-    verts.emplace_back(Vec3(topLeftCorner), tint);
-    verts.emplace_back(Vec3(botLeftCorner), tint);
+	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(topLeftCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner), tint));
 }
 
 
@@ -60,20 +57,17 @@ void VertexUtils::AddVertsForArrow2D(VertexBuffer& out_verts, Vec2 const& start,
     Vec2 rightWingTip = end - lineDir * tipLength - lineRotated90 * baseThickness;
 
     // Push some verts
-    out_verts.ReserveAdditional(9);
-    auto& verts = out_verts.GetMutableVerts();
+	out_verts.AddVert(Vertex_PCU(Vec3(end), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(leftWingTip), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(rightWingTip), tint));
 
-    verts.emplace_back(Vec3(end), tint);
-    verts.emplace_back(Vec3(leftWingTip), tint);
-    verts.emplace_back(Vec3(rightWingTip), tint);
+	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(botRightCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner), tint));
 
-    verts.emplace_back(Vec3(botLeftCorner), tint);
-    verts.emplace_back(Vec3(botRightCorner), tint);
-    verts.emplace_back(Vec3(topRightCorner), tint);
-
-    verts.emplace_back(Vec3(topRightCorner), tint);
-    verts.emplace_back(Vec3(topLeftCorner), tint);
-    verts.emplace_back(Vec3(botLeftCorner), tint);
+	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(topLeftCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner), tint));
 }
 
 
@@ -102,16 +96,13 @@ void VertexUtils::AddVertsForRect2D(VertexBuffer& out_verts, Vec2 const& mins, V
     Vec2 topLeftUVs = Vec2(UVs.mins.x, UVs.maxs.y);
 
     // Push some verts
-    out_verts.ReserveAdditional(6);
-    auto& verts = out_verts.GetMutableVerts();
+    out_verts.AddVert(Vertex_PCU(Vec3(bottomLeftPoint), tint, bottomLeftUVs));
+    out_verts.AddVert(Vertex_PCU(Vec3(bottomRightPoint), tint, bottomRightUVs));
+    out_verts.AddVert(Vertex_PCU(Vec3(topRightPoint), tint, topRightUVs));
 
-    verts.emplace_back(bottomLeftPoint, tint, bottomLeftUVs);
-    verts.emplace_back(bottomRightPoint, tint, bottomRightUVs);
-    verts.emplace_back(topRightPoint, tint, topRightUVs);
-    
-    verts.emplace_back(topRightPoint, tint, topRightUVs);
-    verts.emplace_back(topLeftPoint, tint, topLeftUVs);
-    verts.emplace_back(bottomLeftPoint, tint, bottomLeftUVs);
+    out_verts.AddVert(Vertex_PCU(Vec3(topRightPoint), tint, topRightUVs));
+    out_verts.AddVert(Vertex_PCU(Vec3(topLeftPoint), tint, topLeftUVs));
+    out_verts.AddVert(Vertex_PCU(Vec3(bottomLeftPoint), tint, bottomLeftUVs));
 }
 
 
@@ -228,9 +219,6 @@ void VertexUtils::AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center,
 {
     ASSERT_OR_DIE(radius > 0.f && numSides >= 3, StringUtils::StringF("Cannot add verts for a disc with: radius=%f numSides=%i", radius, numSides));
 
-    out_verts.ReserveAdditional(3 * numSides);
-    auto& verts = out_verts.GetMutableVerts();
-
     Vec2 uvCenter = UVs.GetCenter();
 
     float thetaStepSize = 360.f / (float) numSides;
@@ -248,9 +236,9 @@ void VertexUtils::AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center,
         Vec2 uv1 = uvCenter + unitCirclePos1 * 0.5f;
         Vec2 uv2 = uvCenter + unitCirclePos2 * 0.5f;
 
-        verts.emplace_back(center, tint, uvCenter);
-        verts.emplace_back(cornerPt1, tint, uv1);
-        verts.emplace_back(cornerPt2, tint, uv2);
+        out_verts.AddVert(Vertex_PCU(center, tint, uvCenter));
+		out_verts.AddVert(Vertex_PCU(cornerPt1, tint, uv1));
+		out_verts.AddVert(Vertex_PCU(cornerPt2, tint, uv2));
     }
 }
 
@@ -276,16 +264,13 @@ void VertexUtils::AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& star
     Vec2 topRightCorner = end - lineRotated90 * radius;
     Vec2 topLeftCorner = end + lineRotated90 * radius;
 
-    out_verts.ReserveAdditional(6 + (numSidesOnEachEnd * 3 * 2));
-    auto& verts = out_verts.GetMutableVerts();
-
-    verts.emplace_back(Vec3(botLeftCorner), tint);
-    verts.emplace_back(Vec3(botRightCorner), tint);
-    verts.emplace_back(Vec3(topRightCorner), tint);
-
-    verts.emplace_back(Vec3(topRightCorner), tint);
-    verts.emplace_back(Vec3(topLeftCorner), tint);
-    verts.emplace_back(Vec3(botLeftCorner), tint);
+	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(botRightCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner), tint));
+    
+	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(topLeftCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner), tint));
 
     float startingTheta = lineRotated90.GetAngleDegrees();
     float thetaStepSize = 180.f / (float) numSidesOnEachEnd;
@@ -300,9 +285,9 @@ void VertexUtils::AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& star
         Vec2 cornerPt1 = start + unitCirclePos1 * radius;
         Vec2 cornerPt2 = start + unitCirclePos2 * radius;
 
-        verts.emplace_back(start, tint);
-        verts.emplace_back(cornerPt1, tint);
-        verts.emplace_back(cornerPt2, tint);
+		out_verts.AddVert(Vertex_PCU(Vec3(start), tint));
+		out_verts.AddVert(Vertex_PCU(Vec3(cornerPt1), tint));
+		out_verts.AddVert(Vertex_PCU(Vec3(cornerPt2), tint));
     }
 
     startingTheta += 180.f;
@@ -317,9 +302,9 @@ void VertexUtils::AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& star
         Vec2 cornerPt1 = end + unitCirclePos1 * radius;
         Vec2 cornerPt2 = end + unitCirclePos2 * radius;
 
-        verts.emplace_back(end, tint);
-        verts.emplace_back(cornerPt1, tint);
-        verts.emplace_back(cornerPt2, tint);
+		out_verts.AddVert(Vertex_PCU(Vec3(end), tint));
+		out_verts.AddVert(Vertex_PCU(Vec3(cornerPt1), tint));
+		out_verts.AddVert(Vertex_PCU(Vec3(cornerPt2), tint));
     }
 }
 
@@ -328,11 +313,11 @@ void VertexUtils::AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& star
 //----------------------------------------------------------------------------------------------------------------------
 void VertexUtils::AddVertsForWireMesh2D(VertexBuffer& out_verts, VertexBuffer const& triangles, float thickness, Rgba8 const& tint)
 {
-    for (size_t i = 0; i < triangles.GetVerts().size(); i += 3)
+    for (size_t i = 0; i < triangles.GetNumVerts(); i += 3)
     {
-        Vertex_PCU const& v1 = triangles.GetVerts()[i];
-        Vertex_PCU const& v2 = triangles.GetVerts()[i + 1];
-        Vertex_PCU const& v3 = triangles.GetVerts()[i + 2];
+        Vertex_PCU const& v1 = triangles.GetVert<Vertex_PCU>(i);
+        Vertex_PCU const& v2 = triangles.GetVert<Vertex_PCU>(i + 1);
+        Vertex_PCU const& v3 = triangles.GetVert<Vertex_PCU>(i + 2);
 
         AddVertsForLine2D(out_verts, Vec2(v1.pos), Vec2(v2.pos), thickness, tint);
         AddVertsForLine2D(out_verts, Vec2(v2.pos), Vec2(v3.pos), thickness, tint);

@@ -91,7 +91,7 @@ void DevConsole::Startup()
     // Randomize the starting background image
     PickNextBackgroundImage();
 
-    m_vbo = g_renderer->MakeVertexBuffer();
+    m_vbo = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 
     m_log.Startup();
     m_commandHistory.Startup();

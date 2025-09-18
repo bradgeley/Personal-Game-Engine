@@ -3,101 +3,29 @@
 
 #if defined(RENDERER_D3D11)
 
+#include "D3D11GPUBuffer.h"
 #include "D3D11VertexBuffer.h"
-#include "D3D11Internal.h"
-#include "D3D11Renderer.h"
-#include "Engine/Core/ErrorUtils.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-D3D11VertexBuffer::~D3D11VertexBuffer()
+void D3D11VertexBuffer::InitializeInternal(size_t vertSize, size_t initialVertCount /*= 0*/)
 {
-    ReleaseResources();
+	ReleaseResources();
+
+	m_vertSize = vertSize;
+
+	GpuBufferConfig config;
+	config.m_bufferType = BufferType::VertexBuffer;
+	m_gpuBuffer = new D3D11GPUBuffer(config);
+
+	if (vertSize > 0 && initialVertCount > 0)
+	{
+		// Only create the gpu buffer if we have data to put in it
+		// If not, that's ok and we can create it later after data is added.
+		m_gpuBuffer->Initialize(m_vertSize * initialVertCount);
+	}
 }
 
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void D3D11VertexBuffer::Initialize(int numExpectedVerts)
-{
-    DX_SAFE_RELEASE(m_handle)
-
-    // Release for reinitialization if already initialized
-    ASSERT_OR_DIE(numExpectedVerts > 0, "Cannot initialize vbo with 0 or fewer verts");
-
-    ID3D11Device* device = D3D11Renderer::Get()->GetDevice();
-    ASSERT_OR_DIE(device, "Renderer device is null, has Renderer called Startup yet?");
-
-    uint32_t byteWidth = numExpectedVerts * GetStride();
-    
-    D3D11_BUFFER_DESC desc;
-    desc.ByteWidth = byteWidth;
-    desc.Usage = D3D11_USAGE_DYNAMIC;
-    desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    desc.MiscFlags = 0;
-    desc.StructureByteStride = 0;
-
-    HRESULT result = device->CreateBuffer(&desc, nullptr, &m_handle);
-    
-    ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create gpu vertex buffer")
-
-    m_gpuBufferByteWidth = (size_t) byteWidth;
-
-    m_verts.reserve(numExpectedVerts);
-
-    #if defined(_DEBUG)
-        m_handle->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT) strlen("D3D11VertexBuffer"), "D3D11VertexBuffer");
-    #endif
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void D3D11VertexBuffer::UpdateGPUBuffer()
-{
-    m_isDirty = false;
-    
-    if (m_verts.empty())
-    {
-        ReleaseResources();
-        return;
-    }
-
-    size_t bytesNeeded = m_verts.size() * GetStride();
-    if (bytesNeeded > m_gpuBufferByteWidth)
-    {
-        Initialize((int) m_verts.size());
-    }
-
-    ID3D11DeviceContext* deviceContext = D3D11Renderer::Get()->GetDeviceContext();
-    
-    D3D11_MAPPED_SUBRESOURCE mapping;
-    ID3D11Buffer* gpuBuffer = m_handle;
-
-    HRESULT result = deviceContext->Map(
-        gpuBuffer,
-        0,
-        D3D11_MAP_WRITE_DISCARD,
-        0,
-        &mapping
-   );
-    
-	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to map vertex buffer to gpu buffer");
-    
-	memcpy(mapping.pData, m_verts.data(), bytesNeeded);
-
-    deviceContext->Unmap(gpuBuffer, 0);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void D3D11VertexBuffer::ReleaseResources()
-{
-    DX_SAFE_RELEASE(m_handle)
-    m_gpuBufferByteWidth = 0;
-}
 
 #endif // RENDERER_D3D11

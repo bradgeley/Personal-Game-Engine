@@ -8,6 +8,8 @@
 #include "Engine/Assets/SpriteAnimation.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Multithreading/Jobsystem.h"
+#include "Image.h"
+#include "TextureAsset.h"
 
 
 
@@ -21,7 +23,10 @@ AssetManager* g_assetManager = nullptr;
 //----------------------------------------------------------------------------------------------------------------------
 AssetManager::AssetManager(AssetManagerConfig const& config) : m_config(config)
 {
-
+    RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load, "GridSpriteSheet");
+    RegisterLoader<Image>(Image::Load, "Image");
+    RegisterLoader<TextureAsset>(TextureAsset::Load, "TextureAsset");
+    RegisterLoader<ShaderAsset>(ShaderAsset::Load, "ShaderAsset");
 }
 
 

@@ -31,14 +31,12 @@ public:
 
     virtual bool CreateFromSource(std::string const& sourceCode) override;
 
-    ID3D11InputLayout* CreateOrGetInputLayout();
+    ID3D11InputLayout* CreateOrGetD3D11InputLayout();
 
 protected:
 
     bool CompileAsVertexShader(std::string const& sourceCode);
     bool CompileAsPixelShader(std::string const& sourceCode);
-
-    ID3D11InputLayout* CreateInputLayoutFor_Vertex_PCU();
 
 protected:
 

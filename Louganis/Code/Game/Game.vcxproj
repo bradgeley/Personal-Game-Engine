@@ -324,6 +324,7 @@
     <ClCompile Include="Game\SMovement.cpp" />
     <ClCompile Include="Game\SCopyTransform.cpp" />
     <ClCompile Include="Game\SPhysics.cpp" />
+    <ClCompile Include="Game\SpriteShaderCPU.cpp" />
     <ClCompile Include="Game\SUnloadChunks.cpp" />
     <ClCompile Include="Game\SRenderEntities.cpp" />
     <ClCompile Include="Game\SRenderWorld.cpp" />
@@ -379,6 +380,7 @@
     <ClInclude Include="Game\SMovement.h" />
     <ClInclude Include="Game\SCopyTransform.h" />
     <ClInclude Include="Game\SPhysics.h" />
+    <ClInclude Include="Game\SpriteShaderCPU.h" />
     <ClInclude Include="Game\SUnloadChunks.h" />
     <ClInclude Include="Game\SRenderEntities.h" />
     <ClInclude Include="Game\SRenderWorld.h" />
@@ -398,10 +400,14 @@
   <ItemGroup>
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
+    <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Marine-Gauss.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie2.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

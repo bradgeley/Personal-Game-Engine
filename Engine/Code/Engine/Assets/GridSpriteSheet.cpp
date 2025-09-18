@@ -221,6 +221,51 @@ SpriteAnimationGroup const* GridSpriteSheet::GetAnimationGroup(Name name) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+IntVec2 GridSpriteSheet::GetLayout() const
+{
+	return m_layout;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 GridSpriteSheet::GetEdgePadding() const
+{
+	return m_edgePadding;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 GridSpriteSheet::GetInnerPadding() const
+{
+	return m_innerPadding;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 GridSpriteSheet::GetGenericSpriteQuad(float size /*= 1.f*/) const
+{
+	AABB2 spriteAABB;
+	float spriteAspect = GetSpriteAspect();
+	float halfSize = size * 0.5f;
+	if (spriteAspect <= 1.f)
+	{
+		spriteAABB.mins = Vec2(-halfSize, -halfSize);
+		spriteAABB.maxs = spriteAABB.mins + Vec2(2.f * halfSize, 2.f * halfSize / spriteAspect);
+	}
+	else
+	{
+		spriteAABB.mins = Vec2(-halfSize * spriteAspect, -halfSize);
+		spriteAABB.maxs = spriteAABB.mins + Vec2(2.f * halfSize * spriteAspect, 2.f * halfSize);
+	}
+	return spriteAABB;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void GridSpriteSheet::SetRendererState() const
 {
 	g_renderer->SetCullMode(CullMode::None);

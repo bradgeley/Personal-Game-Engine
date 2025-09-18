@@ -42,8 +42,8 @@ void SDebugRender::Startup()
     g_eventSystem->SubscribeMethod("DebugRenderCollision", this, &SDebugRender::DebugRenderCollision);
 
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
-    scDebug.m_frameUntexVerts = g_renderer->MakeVertexBuffer();
-    scDebug.m_frameDefaultFontVerts = g_renderer->MakeVertexBuffer();
+    scDebug.m_frameUntexVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
+    scDebug.m_frameDefaultFontVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 }
 
 
@@ -63,21 +63,37 @@ void SDebugRender::Run(SystemContext const& context)
     VertexBuffer& frameTextVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
     CCamera* playerCamera = nullptr;
 
-    if (g_window->HasFocus())
+    for (auto it = g_ecs->Iterate<CCamera>(context); it.IsValid(); ++it)
     {
-        auto it = g_ecs->Iterate<CTransform, CPlayerController>(context);
-        if (it.IsValid())
+        CCamera& camera = *cameraStorage.Get(it);
+        if (camera.m_isActive)
         {
-            playerCamera = cameraStorage.Get(it);
-            Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
-            scDebug.m_debugMouseLocation = playerCamera->m_camera.ScreenToWorldOrtho(relMousePos);
+            if (g_window->HasFocus())
+            {
+                Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
+                scDebug.m_debugMouseLocation = camera.m_camera.ScreenToWorldOrtho(relMousePos);
+            }
+            playerCamera = &camera;
+            break;
         }
     }
+
+    // Tile Coords
+    //#if defined(_DEBUG)
+    //    world.ForEachWorldCoordsOverlappingAABB(playerCamera->m_camera.GetTranslatedOrthoBounds2D(), [&](WorldCoords const& coords)
+    //    {
+    //        AABB2 tileBounds = world.GetTileBounds(coords);
+	//	    IntVec2 globalTileCoords = coords.GetGlobalTileCoords();
+	//	    std::string tileText = StringUtils::StringF("(%i, %i)", globalTileCoords.x, globalTileCoords.y);
+	//	    font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.25f, tileText);
+    //        return true;
+    //    });
+	//#endif // _DEBUG
 
     // Mouse Raycast
     if (scDebug.m_debugRenderToMouseRaycast)
     {
-        for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
+        for (auto it = g_ecs->Iterate<CTransform, CCamera>(context); it.IsValid(); ++it)
         {
             CTransform* playerTransform = transStorage.Get(it);
             CCamera* cameraComp = cameraStorage.Get(it);

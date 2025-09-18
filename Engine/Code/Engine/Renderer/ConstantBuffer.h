@@ -4,6 +4,10 @@
 
 
 
+class GPUBuffer;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 // Constant Buffer
 //
@@ -20,15 +24,13 @@ public:
     ConstantBuffer(ConstantBuffer const& copy) = delete;
     virtual ~ConstantBuffer() = default;
 
-    virtual void ReleaseResources() = 0;
-    
-    virtual void Update(void const* data, size_t byteWidth) = 0;
-
-protected:
-
     virtual void Initialize(size_t byteWidth) = 0;
 
-protected:
+    virtual void ReleaseResources();
     
-    size_t m_gpuBufferByteWidth = 0;
+    virtual void Update(void const* data, size_t byteWidth, bool updateGPU = true);
+
+protected:
+
+    GPUBuffer* m_gpuBuffer = nullptr;
 };

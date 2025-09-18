@@ -12,11 +12,14 @@
 class Camera;
 class ConstantBuffer;
 class Font;
+class GPUBuffer;
 class Shader;
 class Texture;
 class Swapchain;
 class VertexBuffer;
+class InstanceBuffer;
 class Window;
+struct GpuBufferConfig;
 struct IntVec2;
 struct NamedProperties;
 struct RenderTarget;
@@ -75,23 +78,33 @@ public:
     virtual void ClearScreen(Rgba8 const& tint) = 0;
     void DrawVertexBuffer(VertexBufferID id);
     void DrawVertexBuffer(VertexBuffer& vbo);
+    void DrawInstanced(VertexBuffer& vbo, InstanceBuffer& ibo);
 
     virtual void ClearDepth(float depth) = 0;
 
     // Factory Make Functions
     virtual TextureID           MakeTexture() = 0;
     virtual ShaderID            MakeShader(ShaderConfig const& config) = 0;
-    virtual ConstantBufferID    MakeConstantBuffer() = 0;
+    virtual ConstantBufferID    MakeConstantBuffer(size_t initialSize) = 0;
     virtual VertexBufferID      MakeVertexBuffer() = 0;
+    virtual InstanceBufferID    MakeInstanceBuffer() = 0;
     virtual SwapchainID         MakeSwapchain() = 0;
     virtual RenderTargetID      MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& initialDims) = 0;
     virtual FontID              MakeFont();
+	virtual GPUBuffer*          MakeGPUBuffer(GpuBufferConfig const& config) = 0;    // Does not own lifetime of this buffer
+
+    template<typename VertexType>
+    VertexBufferID MakeVertexBuffer(size_t numVerts = 0);
+
+    template<typename InstanceType>
+    InstanceBufferID MakeInstanceBuffer(size_t numInstances = 0);
 
     // Factory Get Functions
     Texture*                    GetTexture(TextureID id) const;
     Shader*                     GetShader(ShaderID id) const;
     ConstantBuffer*             GetConstantBuffer(ConstantBufferID id) const;
     VertexBuffer*               GetVertexBuffer(VertexBufferID id) const;
+    InstanceBuffer*             GetInstanceBuffer(InstanceBufferID id) const;
     Swapchain*                  GetSwapchain(SwapchainID id) const;
     RenderTarget*               GetRenderTarget(RenderTargetID id);
     Font*                       GetFont(FontID id);
@@ -101,6 +114,7 @@ public:
     void                        ReleaseShader(ShaderID id);
     void                        ReleaseConstantBuffer(ConstantBufferID id);
     void                        ReleaseVertexBuffer(VertexBufferID id);
+    void                        ReleaseInstanceBuffer(InstanceBufferID id);
     void                        ReleaseSwapchain(SwapchainID id);
     void                        ReleaseRenderTarget(RenderTargetID id);
     void                        ReleaseFont(FontID id);
@@ -126,6 +140,8 @@ public:
     virtual void BindRenderTarget(RenderTargetID renderTarget) = 0;
     virtual void BindVertexBuffer(VertexBufferID vbo) const = 0;
     virtual void BindVertexBuffer(VertexBuffer& vbo) const = 0;
+	virtual void BindInstanceBuffer(InstanceBufferID ibo) const = 0;
+	virtual void BindInstanceBuffer(InstanceBuffer& ibo) const = 0;
     virtual void BindConstantBuffer(ConstantBufferID cbo, int slot) const = 0;
 
     virtual void ResizeSwapChainRenderTarget(RenderTargetID renderTarget, IntVec2 const& newSize) = 0;
@@ -150,11 +166,16 @@ protected:
     ShaderID         RequestShaderID() const;
     ConstantBufferID RequestConstantBufferID() const;
     VertexBufferID   RequestVertexBufferID() const;
+    InstanceBufferID RequestInstanceBufferID() const;
     SwapchainID      RequestSwapchainID() const;
     RenderTargetID   RequestRenderTargetID() const;
     FontID           RequestFontID() const;
 
-    virtual void Draw(int vertexCount, int vertexOffset);
+    virtual VertexBufferID MakeTypedVertexBufferInternal(size_t vertSize, size_t numVerts);
+    virtual InstanceBufferID MakeTypedInstanceBufferInternal(size_t instanceSize, size_t numInstances);
+
+    virtual void Draw(int vertexCount, int vertexOffset = 0);
+    virtual void DrawInstanced(int vertexCount, int instanceCount, int vertexOffset = 0, int instanceOffset = 0);
 
     // Deferred pipeline updates
     void UpdateRenderingPipelineState(bool force = false);
@@ -202,6 +223,7 @@ protected:
     virtual void DestroyTextures();
     virtual void DestroyConstantBuffers();
     virtual void DestroyVertexBuffers();
+    virtual void DestroyInstanceBuffers();
     virtual void DestroySwapchains();
     virtual void DestroyRenderTargets();
     virtual void DestroyFonts();
@@ -243,6 +265,7 @@ protected:
     std::unordered_map<SwapchainID, Swapchain*> m_swapchains;
     std::unordered_map<VertexBufferID, VertexBuffer*> m_vertexBuffers;
     std::unordered_map<RenderTargetID, RenderTarget*> m_renderTargets;
+    std::unordered_map<InstanceBufferID, InstanceBuffer*> m_instanceBuffers;
     std::unordered_map<ConstantBufferID, ConstantBuffer*> m_constantBuffers;
 
     // Mutexes
@@ -252,6 +275,7 @@ protected:
     mutable std::mutex m_swapchainsMutex;
     mutable std::mutex m_vertexBuffersMutex;
     mutable std::mutex m_constantBuffersMutex;
+    mutable std::mutex m_instanceBuffersMutex;
     mutable std::mutex m_renderTargetsMutex;
 
     // Debug
@@ -261,3 +285,20 @@ protected:
 #endif
 };
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename VertexType>
+inline VertexBufferID Renderer::MakeVertexBuffer(size_t numVerts)
+{
+    return MakeTypedVertexBufferInternal(sizeof(VertexType), numVerts);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename InstanceType>
+inline InstanceBufferID Renderer::MakeInstanceBuffer(size_t numInstances)
+{
+    return MakeTypedInstanceBufferInternal(sizeof(InstanceType), numInstances);
+}

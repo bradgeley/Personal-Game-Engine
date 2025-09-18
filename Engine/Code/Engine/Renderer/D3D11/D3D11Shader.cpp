@@ -7,6 +7,7 @@
 #include "D3D11Internal.h"
 #include "D3D11Renderer.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Renderer/InputLayout.h"
 #include "Engine/Renderer/Vertex_PCU.h"
 
 
@@ -49,15 +50,73 @@ void D3D11Shader::ReleaseResources()
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+DXGI_FORMAT GetD3D11Format(InputLayoutAttributeFormat format)
+{
+	switch (format)
+	{
+	case InputLayoutAttributeFormat::Float1:   return DXGI_FORMAT_R32_FLOAT;
+	case InputLayoutAttributeFormat::Float2:   return DXGI_FORMAT_R32G32_FLOAT;
+	case InputLayoutAttributeFormat::Float3:   return DXGI_FORMAT_R32G32B32_FLOAT;
+	case InputLayoutAttributeFormat::Float4:   return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	case InputLayoutAttributeFormat::Rgba8:    return DXGI_FORMAT_R8G8B8A8_UNORM;
+	case InputLayoutAttributeFormat::Uint1:    return DXGI_FORMAT_R32_UINT;
+	case InputLayoutAttributeFormat::Uint2:    return DXGI_FORMAT_R32G32_UINT;
+	case InputLayoutAttributeFormat::Uint3:    return DXGI_FORMAT_R32G32B32_UINT;
+	case InputLayoutAttributeFormat::Uint4:    return DXGI_FORMAT_R32G32B32A32_UINT;
+	default:              
+		ERROR_AND_DIE("Unsupported InputLayoutAttributeFormat");
+		return DXGI_FORMAT_UNKNOWN;
+	}
+}
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
-ID3D11InputLayout* D3D11Shader::CreateOrGetInputLayout()
+ID3D11InputLayout* D3D11Shader::CreateOrGetD3D11InputLayout()
 {
 	if (m_inputLayout)
 	{
 		return m_inputLayout;
 	}
-	return CreateInputLayoutFor_Vertex_PCU();
+
+	ID3D11Device* device = D3D11Renderer::Get()->GetDevice();
+	ASSERT_OR_DIE(device, "No device found in D3D11Renderer");
+
+	constexpr int maxElements = 20;
+	D3D11_INPUT_ELEMENT_DESC vertexDesc[maxElements]; // 10 slots for now
+
+	int numElements = (int) m_config.m_inputLayout.m_attributes.size();
+	ASSERT_OR_DIE(numElements <= maxElements, "Too many input layout elements, raise the max.");
+
+	for (int i = 0; i < numElements; ++i)
+	{
+		InputLayoutAttribute const& attribute = m_config.m_inputLayout.m_attributes[i];
+		vertexDesc[i].SemanticName			= InputLayout::GetInputLayoutSemanticName(attribute.m_semantic);
+		vertexDesc[i].SemanticIndex			= attribute.m_semanticIndex;
+		vertexDesc[i].Format				= GetD3D11Format(attribute.m_format);
+		vertexDesc[i].InputSlot				= attribute.m_inputSlot;
+		vertexDesc[i].AlignedByteOffset		= attribute.m_alignedByteOffset;
+		vertexDesc[i].InputSlotClass		= attribute.m_isPerInstance ? D3D11_INPUT_PER_INSTANCE_DATA : D3D11_INPUT_PER_VERTEX_DATA;
+		vertexDesc[i].InstanceDataStepRate	= attribute.m_isPerInstance ? 1 : 0;
+	}
+
+	HRESULT result = device->CreateInputLayout(
+		vertexDesc,
+		numElements,
+		m_vertexByteCode.data(),
+		m_vertexByteCode.size(),
+		&m_inputLayout
+	);
+
+	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create input layout for vertex PCU");
+
+	#if defined(_DEBUG)
+	std::string inputLayoutString = "Input Layout (Vertex_PCU)";
+	m_inputLayout->SetPrivateData(WKPDID_D3DDebugObjectName, (int) inputLayoutString.size(), inputLayoutString.data());
+	#endif
+
+	return m_inputLayout;
 }
 
 
@@ -173,61 +232,6 @@ bool D3D11Shader::CompileAsPixelShader(std::string const& sourceCode)
 	DX_SAFE_RELEASE(byteCode);
 	DX_SAFE_RELEASE(errorBuffer);
 	return true;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-ID3D11InputLayout* D3D11Shader::CreateInputLayoutFor_Vertex_PCU()
-{
-	ID3D11Device* device = D3D11Renderer::Get()->GetDevice();
-
-	constexpr int NUM_ELEMENTS = 3;
-	D3D11_INPUT_ELEMENT_DESC vertexDesc[NUM_ELEMENTS];
-
-	// pos
-	vertexDesc[0].SemanticName = "POSITION";
-	vertexDesc[0].SemanticIndex = 0;
-	vertexDesc[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	vertexDesc[0].InputSlot = 0;
-	vertexDesc[0].AlignedByteOffset = offsetof(Vertex_PCU, pos);
-	vertexDesc[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	vertexDesc[0].InstanceDataStepRate = 0;
-
-	// tint
-	vertexDesc[1].SemanticName = "TINT";
-	vertexDesc[1].SemanticIndex = 0;
-	vertexDesc[1].Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	vertexDesc[1].InputSlot = 0;
-	vertexDesc[1].AlignedByteOffset = offsetof(Vertex_PCU, tint);
-	vertexDesc[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	vertexDesc[1].InstanceDataStepRate = 0;
-
-	// uvs
-	vertexDesc[2].SemanticName = "UVS";
-	vertexDesc[2].SemanticIndex = 0;
-	vertexDesc[2].Format = DXGI_FORMAT_R32G32_FLOAT;
-	vertexDesc[2].InputSlot = 0;
-	vertexDesc[2].AlignedByteOffset = offsetof(Vertex_PCU, uvs);
-	vertexDesc[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	vertexDesc[2].InstanceDataStepRate = 0;
-
-	HRESULT result = device->CreateInputLayout(
-		vertexDesc,
-		NUM_ELEMENTS,
-		m_vertexByteCode.data(),
-		m_vertexByteCode.size(),
-		&m_inputLayout
-	);
-
-	ASSERT_OR_DIE(SUCCEEDED(result), "Failed to create input layout for vertex PCU");
-
-	#if defined(_DEBUG)
-		std::string inputLayoutString = "Input Layout (Vertex_PCU)";
-		m_inputLayout->SetPrivateData(WKPDID_D3DDebugObjectName, (int) inputLayoutString.size(), inputLayoutString.data());
-	#endif
-
-	return m_inputLayout;
 }
 
 #endif // RENDERER_D3D11

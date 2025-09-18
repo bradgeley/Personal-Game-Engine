@@ -32,6 +32,10 @@ public:
 	float GetSpriteAspect() const;
 	SpriteAnimationDef const* GetAnimationDef(Name name) const;
 	SpriteAnimationGroup const* GetAnimationGroup(Name name) const;
+	IntVec2 GetLayout() const;
+	IntVec2 GetEdgePadding() const;
+	IntVec2 GetInnerPadding() const;
+	AABB2 GetGenericSpriteQuad(float size = 1.f) const;		// In NDC space, centered on origin, with correct aspect ratio
 
 	// Setters
 	void SetRendererState() const;

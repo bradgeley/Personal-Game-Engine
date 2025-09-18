@@ -1,0 +1,83 @@
+﻿// Bradley Christensen - 2022-2025
+#include "Engine/Renderer/GPUBuffer.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+GPUBuffer::GPUBuffer(GpuBufferConfig const& config) : m_config(config)
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool GPUBuffer::IsDirty() const
+{
+	return m_isDirty;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void GPUBuffer::Reserve(size_t byteWidth)
+{
+	m_cpuBuffer.reserve(byteWidth);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void GPUBuffer::ClearCPUBuffer()
+{
+	m_cpuBuffer.clear();
+	m_isDirty = true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+size_t GPUBuffer::GetCPUBufferSize() const
+{
+	return m_cpuBuffer.size();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+uint8_t const* GPUBuffer::GetCPUBufferData() const
+{
+	return m_cpuBuffer.data();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+uint8_t* GPUBuffer::GetCPUBufferData()
+{
+	return m_cpuBuffer.data();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void GPUBuffer::UpdateCPUBuffer(void const* data, size_t size)
+{
+	if (size > m_cpuBuffer.size())
+	{
+		m_cpuBuffer.resize(size);
+	}
+	memcpy(m_cpuBuffer.data(), data, size);
+	m_isDirty = true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void GPUBuffer::AddToCPUBuffer(void const* data, size_t size)
+{
+	size_t oldSize = m_cpuBuffer.size();
+	m_cpuBuffer.resize(oldSize + size);
+	memcpy(m_cpuBuffer.data() + oldSize, data, size);
+	m_isDirty = true;
+}

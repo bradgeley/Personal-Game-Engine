@@ -58,8 +58,8 @@ void PerformanceDebugWindow::Startup()
 {
     std::unique_lock lock(m_mutex);
 
-    m_untexturedVBO = g_renderer->MakeVertexBuffer();
-    m_textVBO = g_renderer->MakeVertexBuffer();
+    m_untexturedVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
+    m_textVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 
     if (m_config.m_startOpen)
     {

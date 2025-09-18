@@ -7,6 +7,6 @@
 struct CAIController
 {
     CAIController() = default;
-    CAIController(void const* xmlElement) {};
+    CAIController(void const*) {};
 };
 

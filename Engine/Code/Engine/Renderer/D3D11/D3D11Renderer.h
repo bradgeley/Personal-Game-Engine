@@ -31,15 +31,19 @@ public:
     virtual void ClearDepth(float depth) override;
     virtual void BindVertexBuffer(VertexBufferID vbo) const override;
     virtual void BindVertexBuffer(VertexBuffer& vbo) const override;
+	virtual void BindInstanceBuffer(InstanceBufferID ibo) const override;
+	virtual void BindInstanceBuffer(InstanceBuffer& ibo) const override;
     virtual void BindConstantBuffer(ConstantBufferID cbo, int slot) const override;
 
     // Factory Functions
     virtual TextureID MakeTexture() override;
     virtual ShaderID MakeShader(ShaderConfig const& config) override;
-    virtual ConstantBufferID MakeConstantBuffer() override;
+    virtual ConstantBufferID MakeConstantBuffer(size_t initialSize) override;
     virtual VertexBufferID MakeVertexBuffer() override;
+    virtual InstanceBufferID MakeInstanceBuffer() override;
     virtual SwapchainID MakeSwapchain() override;
     virtual RenderTargetID MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& resolution) override;
+    virtual GPUBuffer* MakeGPUBuffer(GpuBufferConfig const& config) override;    // Does not own lifetime of this buffer
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
@@ -53,6 +57,7 @@ public:
 private:
 
     virtual void Draw(int vertexCount, int vertexOffset) override;
+	virtual void DrawInstanced(int vertexCount, int instanceCount, int vertexOffset, int instanceOffset) override;
 
     // Deferred pipeline updates
     virtual void RasterizerStateUpdated() override;

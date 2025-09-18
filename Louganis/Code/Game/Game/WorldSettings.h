@@ -10,35 +10,36 @@
 //
 namespace StaticWorldSettings
 {
-    constexpr int s_worldChunkSizePowerOfTwo        = 4;        // In tiles
+    constexpr int   s_worldChunkSizePowerOfTwo      = 4;        // In tiles
     constexpr float s_tileWidth                     = 1.5f;     // In world units
 
 #if defined(_DEBUG)
-    constexpr float s_chunkLoadRadius = 50.f;
-    constexpr float s_chunkUnloadRadius = 750.f;
-    constexpr float s_collisionHashRadius = 25.f;
-    constexpr float s_flowFieldGenerationRadius = 25.f;
-    constexpr int   s_maxNumChunksToLoadPerFrame = 5;
+    constexpr float s_chunkLoadRadius               = 50.f;
+    constexpr float s_chunkUnloadRadius             = 750.f;
+    constexpr float s_collisionHashRadius           = 25.f;
+    constexpr float s_flowFieldGenerationRadius     = 25.f;
+    constexpr int   s_maxNumChunksToLoadPerFrame    = 5;
 #else
-    constexpr float s_chunkLoadRadius = 100.f;
-    constexpr float s_chunkUnloadRadius = 150.f;
-    constexpr float s_collisionHashRadius = 50.f;
-    constexpr float s_flowFieldGenerationRadius = 50.f;
-    constexpr int   s_maxNumChunksToLoadPerFrame = 50;
+    constexpr float s_chunkLoadRadius               = 100.f;
+    constexpr float s_chunkUnloadRadius             = 150.f;
+    constexpr float s_collisionHashRadius           = 50.f;
+    constexpr float s_flowFieldGenerationRadius     = 50.f;
+    constexpr int   s_maxNumChunksToLoadPerFrame    = 50;
 #endif // _DEBUG
 
     //----------------------------------------------------------------------------------------------------------------------
     // Derived Constants
     //
-    constexpr int   s_numTilesInRow = (1 << s_worldChunkSizePowerOfTwo);
-    constexpr float s_numTilesInRowF = static_cast<float>(s_numTilesInRow);
-    constexpr int   s_numTilesInChunk = (s_numTilesInRow * s_numTilesInRow);
-    constexpr float s_oneOverNumTilesInRow = 1.f / static_cast<float>(s_numTilesInRow);
-    constexpr float s_tileHalfWidth = s_tileWidth * 0.5f;
-    constexpr float s_oneOverTileWidth = 1.f / s_tileWidth;
-    constexpr float s_chunkWidth = s_tileWidth * s_numTilesInRowF;
-    constexpr float s_oneOverChunkWidth = 1.f / s_chunkWidth;
-    constexpr float s_chunkHalfWidth = s_chunkWidth * 0.5f;
+    constexpr int   s_numTilesInRow         = (1 << s_worldChunkSizePowerOfTwo);
+    constexpr int   s_numTilesInRowMinusOne = s_numTilesInRow - 1;
+    constexpr float s_numTilesInRowF        = static_cast<float>(s_numTilesInRow);
+    constexpr int   s_numTilesInChunk       = (s_numTilesInRow * s_numTilesInRow);
+    constexpr float s_oneOverNumTilesInRow  = 1.f / static_cast<float>(s_numTilesInRow);
+    constexpr float s_tileHalfWidth         = s_tileWidth * 0.5f;
+    constexpr float s_oneOverTileWidth      = 1.f / s_tileWidth;
+    constexpr float s_chunkWidth            = s_tileWidth * s_numTilesInRowF;
+    constexpr float s_oneOverChunkWidth     = 1.f / s_chunkWidth;
+    constexpr float s_chunkHalfWidth        = s_chunkWidth * 0.5f;
 
     //----------------------------------------------------------------------------------------------------------------------
     // Static Asserts

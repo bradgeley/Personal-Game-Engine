@@ -13,6 +13,7 @@ struct RendererConfig;
 typedef uint32_t RenderTargetID;
 typedef uint32_t ConstantBufferID;
 typedef uint32_t VertexBufferID;
+typedef uint32_t InstanceBufferID;
 typedef uint32_t ShaderID;
 typedef uint32_t TextureID;
 typedef uint32_t SwapchainID;

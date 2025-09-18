@@ -8,8 +8,10 @@
 #include "D3D11Internal.h"
 #include "D3D11Shader.h"
 #include "D3D11Texture.h"
+#include "D3D11GPUBuffer.h"
 #include "D3D11Utils.h"
 #include "D3D11VertexBuffer.h"
+#include "D3D11InstanceBuffer.h"
 #include "D3D11Swapchain.h"
 #include "HLSLDefaultShaderSource.h"
 #include "HLSLDefaultFontShaderSource.h"
@@ -192,8 +194,13 @@ void D3D11Renderer::BindVertexBuffer(VertexBufferID id) const
 //----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::BindVertexBuffer(VertexBuffer& vbo) const
 {
+	vbo.UpdateGPUBuffer();
+
 	D3D11VertexBuffer* d3dvbo = dynamic_cast<D3D11VertexBuffer*>(&vbo);
 	ASSERT_OR_DIE(d3dvbo, "Trying to draw non-d3d vbo.")
+
+	D3D11GPUBuffer* gpuBuffer = dynamic_cast<D3D11GPUBuffer*>(d3dvbo->m_gpuBuffer);
+	ASSERT_OR_DIE(gpuBuffer, "Trying to draw non-d3d gpu buffer.")
 
 	UINT stride = (UINT) vbo.GetStride();
 	UINT offset = 0;
@@ -201,13 +208,46 @@ void D3D11Renderer::BindVertexBuffer(VertexBuffer& vbo) const
 	m_deviceContext->IASetVertexBuffers(
 		0,
 		1,
-		&d3dvbo->m_handle,
+		&gpuBuffer->m_handle,
 		&stride,
 		&offset
 	);
+}
 
-	ID3D11InputLayout* vertexLayout = dynamic_cast<D3D11Shader*>(GetDefaultShader())->CreateOrGetInputLayout(); // todo: use bound shader instead of default? when I support other vertex layouts
-	m_deviceContext->IASetInputLayout(vertexLayout);
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void D3D11Renderer::BindInstanceBuffer(InstanceBufferID ibo) const
+{
+	InstanceBuffer* ibuffer = GetInstanceBuffer(ibo);
+	ASSERT_OR_DIE(ibuffer, "Binding invalid vertex buffer");
+
+	BindInstanceBuffer(*ibuffer);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void D3D11Renderer::BindInstanceBuffer(InstanceBuffer& ibo) const
+{
+	ibo.UpdateGPUBuffer();
+
+	D3D11InstanceBuffer* d3dibo = dynamic_cast<D3D11InstanceBuffer*>(&ibo);
+	ASSERT_OR_DIE(d3dibo, "Trying to draw null or non-d3d ibo.");
+
+	D3D11GPUBuffer* gpuBuffer = dynamic_cast<D3D11GPUBuffer*>(d3dibo->m_gpuBuffer);
+	ASSERT_OR_DIE(gpuBuffer, "Trying to draw non-d3d gpu buffer.");
+
+	UINT stride = (UINT) ibo.GetStride();
+	UINT offset = 0;
+
+	m_deviceContext->IASetVertexBuffers(
+		1,
+		1,
+		&gpuBuffer->m_handle,
+		&stride,
+		&offset
+	);
 }
 
 
@@ -217,8 +257,14 @@ void D3D11Renderer::BindConstantBuffer(ConstantBufferID id, int slot) const
 {
 	D3D11ConstantBuffer* cbo = dynamic_cast<D3D11ConstantBuffer*>(GetConstantBuffer(id));
 	ASSERT_OR_DIE(cbo, "Binding invalid constant buffer");
-	m_deviceContext->VSSetConstantBuffers(slot, 1, &cbo->m_handle);
-	m_deviceContext->PSSetConstantBuffers(slot, 1, &cbo->m_handle);
+
+	D3D11GPUBuffer* gpuBuffer = dynamic_cast<D3D11GPUBuffer*>(cbo->m_gpuBuffer);
+	ASSERT_OR_DIE(gpuBuffer, "Trying to draw non-d3d gpu buffer.")
+
+	gpuBuffer->UpdateGPUBuffer();
+
+	m_deviceContext->VSSetConstantBuffers(slot, 1, &gpuBuffer->m_handle);
+	m_deviceContext->PSSetConstantBuffers(slot, 1, &gpuBuffer->m_handle);
 }
 
 
@@ -248,9 +294,10 @@ ShaderID D3D11Renderer::MakeShader(ShaderConfig const& config)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ConstantBufferID D3D11Renderer::MakeConstantBuffer()
+ConstantBufferID D3D11Renderer::MakeConstantBuffer(size_t initialSize)
 {
 	auto cbResult = new D3D11ConstantBuffer();
+	cbResult->Initialize(initialSize);
 	std::unique_lock lock(m_constantBuffersMutex);
 	ConstantBufferID cbID = RequestConstantBufferID();
 	m_constantBuffers[cbID] = cbResult;
@@ -268,6 +315,18 @@ VertexBufferID D3D11Renderer::MakeVertexBuffer()
 	VertexBufferID vbID = RequestVertexBufferID();
 	m_vertexBuffers[vbID] = vbResult;
 	return vbID;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+InstanceBufferID D3D11Renderer::MakeInstanceBuffer()
+{
+	auto ibResult = new D3D11InstanceBuffer();
+	std::unique_lock lock(m_instanceBuffersMutex);
+	InstanceBufferID ibID = RequestInstanceBufferID();
+	m_instanceBuffers[ibID] = ibResult;
+	return ibID;
 }
 
 
@@ -354,6 +413,14 @@ RenderTargetID D3D11Renderer::MakeSwapchainRenderTarget(void* hwnd, IntVec2 cons
 	RenderTargetID newID = RequestRenderTargetID();
 	m_renderTargets[newID] = renderTarget;
 	return newID;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+GPUBuffer* D3D11Renderer::MakeGPUBuffer(GpuBufferConfig const& config)
+{
+	return new D3D11GPUBuffer(config);
 }
 
 
@@ -492,10 +559,19 @@ MSAASettings D3D11Renderer::GetMaxSupportedMSAASettings(DXGI_FORMAT format)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::Draw(int vertexCount, int vertexOffset)
+void D3D11Renderer::Draw(int vertexCount, int vertexOffset /*= 0*/)
 {
 	Renderer::Draw(vertexCount, vertexOffset);
 	m_deviceContext->Draw(vertexCount, vertexOffset);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void D3D11Renderer::DrawInstanced(int vertexCount, int instanceCount, int vertexOffset /*= 0*/, int instanceOffset /*= 0*/)
+{
+	Renderer::DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
+	m_deviceContext->DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
 }
 
 
@@ -585,7 +661,10 @@ void D3D11Renderer::BoundShaderUpdated()
 
 	m_deviceContext->VSSetShader(vertexShader, nullptr, 0);
 	m_deviceContext->PSSetShader(pixelShader, nullptr, 0);
-	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // todo: put into shader class
+
+	ID3D11InputLayout* vertexLayout = boundShader->CreateOrGetD3D11InputLayout();
+	m_deviceContext->IASetInputLayout(vertexLayout);
+	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // todo: put into shader class?
 }
 
 
@@ -701,6 +780,7 @@ void D3D11Renderer::CreateDefaultShader()
 {
 	ShaderConfig defaultShaderConfig;
 	defaultShaderConfig.m_name = "DefaultShader";
+	defaultShaderConfig.m_inputLayout = *Vertex_PCU::GetInputLayout();
 
 	m_defaultShader = MakeShader(defaultShaderConfig);
 
@@ -708,6 +788,7 @@ void D3D11Renderer::CreateDefaultShader()
 	ASSERT_OR_DIE(defaultShader, "Invalid default shader.");
 
 	defaultShader->CreateFromSource(s_HLSLDefaultShaderSource);
+	defaultShader->CreateOrGetD3D11InputLayout();
 }
 
 
@@ -723,6 +804,7 @@ void D3D11Renderer::CreateDefaultFont()
 	font->LoadFNT("Data/Fonts/Gypsy.fnt");
 
 	ShaderConfig config;
+	config.m_inputLayout = *Vertex_PCU::GetInputLayout();
 	config.m_name = "Default Font Shader";
 	font->m_shader = MakeShader(config);
 

@@ -2,44 +2,19 @@
 #include "VertexBuffer.h"
 #include "Renderer.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "GPUBuffer.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::vector<Vertex_PCU> const& VertexBuffer::GetVerts() const
+void VertexBuffer::ReleaseResources()
 {
-    return m_verts;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-std::vector<Vertex_PCU>& VertexBuffer::GetMutableVerts(bool setDirty /*= true*/)
-{
-    if (setDirty)
+    if (m_gpuBuffer)
     {
-        // By default, assume that the vertex array has been changed after this function call
-        SetDirty();
+        m_gpuBuffer->ReleaseResources();
+        delete m_gpuBuffer;
+        m_gpuBuffer = nullptr;
     }
-    return m_verts;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void VertexBuffer::AddVert(Vertex_PCU const& vert)
-{
-    SetDirty();
-    m_verts.push_back(vert);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void VertexBuffer::AddVerts(std::vector<Vertex_PCU> const& verts)
-{
-    SetDirty();
-    m_verts.insert(m_verts.end(), verts.begin(), verts.end());
 }
 
 
@@ -47,8 +22,9 @@ void VertexBuffer::AddVerts(std::vector<Vertex_PCU> const& verts)
 //----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::ReserveAdditional(int numExpectedAdditionalVerts)
 {
-    size_t numVerts = m_verts.size();
-    m_verts.reserve(numVerts + (size_t) numExpectedAdditionalVerts);
+	ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    size_t totalBytes = m_gpuBuffer->GetCPUBufferSize() + numExpectedAdditionalVerts * m_vertSize;
+    m_gpuBuffer->Reserve(totalBytes);
 }
 
 
@@ -56,8 +32,8 @@ void VertexBuffer::ReserveAdditional(int numExpectedAdditionalVerts)
 //----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::ClearVerts()
 {
-    SetDirty();
-    m_verts.clear();
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+	m_gpuBuffer->ClearCPUBuffer();
 }
 
 
@@ -65,7 +41,8 @@ void VertexBuffer::ClearVerts()
 //----------------------------------------------------------------------------------------------------------------------
 int VertexBuffer::GetStride() const
 {
-    return sizeof(Vertex_PCU); // todo: templatize for different vert layouts?
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    return (int) m_vertSize; // todo: templatize for different vert layouts?
 }
 
 
@@ -73,7 +50,8 @@ int VertexBuffer::GetStride() const
 //----------------------------------------------------------------------------------------------------------------------
 int VertexBuffer::GetNumVerts() const
 {
-    return (int) m_verts.size();  
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    return (int) (m_gpuBuffer->GetCPUBufferSize() / m_vertSize);
 }
 
 
@@ -81,15 +59,8 @@ int VertexBuffer::GetNumVerts() const
 //----------------------------------------------------------------------------------------------------------------------
 bool VertexBuffer::IsDirty() const
 {
-    return m_isDirty;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void VertexBuffer::SetDirty()
-{
-    m_isDirty = true;
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    return m_gpuBuffer->IsDirty();
 }
 
 
@@ -97,5 +68,61 @@ void VertexBuffer::SetDirty()
 //----------------------------------------------------------------------------------------------------------------------
 bool VertexBuffer::IsEmpty() const
 {
-    return m_verts.empty();
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    return m_gpuBuffer->GetCPUBufferSize() == 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void VertexBuffer::UpdateGPUBuffer()
+{
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    m_gpuBuffer->UpdateGPUBuffer();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void VertexBuffer::AddVertInternal(void const* vert, size_t vertSize)
+{
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+	ASSERT_OR_DIE(vertSize == m_vertSize, "VertexBuffer - Vertex size does not match the initialized vertex size.");
+    m_gpuBuffer->AddToCPUBuffer(vert, vertSize);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void VertexBuffer::AddVertsInternal(void const* vert, size_t vertSize, size_t numVerts)
+{
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    ASSERT_OR_DIE(vertSize == m_vertSize, "VertexBuffer - Vertex size does not match the initialized vertex size.");
+    m_gpuBuffer->AddToCPUBuffer(vert, vertSize * numVerts);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void* VertexBuffer::GetVertInternal(size_t vertSize, size_t index)
+{
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    ASSERT_OR_DIE(vertSize == m_vertSize, "VertexBuffer - Vertex size does not match the initialized vertex size.");
+    uint8_t* data = m_gpuBuffer->GetCPUBufferData();
+	size_t byteIndex = index * m_vertSize;
+	ASSERT_OR_DIE(data != nullptr && byteIndex < m_gpuBuffer->GetCPUBufferSize(), "VertexBuffer - Index out of bounds.");
+	return (void*) (data + byteIndex);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void const* VertexBuffer::GetVertInternal(size_t vertSize, size_t index) const
+{
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    ASSERT_OR_DIE(vertSize == m_vertSize, "VertexBuffer - Vertex size does not match the initialized vertex size.");
+    uint8_t* data = m_gpuBuffer->GetCPUBufferData();
+    size_t byteIndex = index * m_vertSize;
+    ASSERT_OR_DIE(data != nullptr && byteIndex < m_gpuBuffer->GetCPUBufferSize(), "VertexBuffer - Index out of bounds.");
+    return (void*) (data + byteIndex);
 }

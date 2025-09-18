@@ -17,7 +17,7 @@ const std::string LINE_PREFIX = "> ";
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleLog::Startup() 
 {
-    m_vbo = g_renderer->MakeVertexBuffer();
+    m_vbo = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 }
 
 
