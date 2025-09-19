@@ -32,6 +32,7 @@ ShaderConfig ShaderConfig::MakeFromXML(char const* xmlFilePath)
 	XmlElement const* inputLayoutElement = element->FirstChildElement("InputLayout");
 	if (inputLayoutElement)
 	{
+		int numBytesInInputLayoutSlot[20] = { 0 };
 		XmlElement const* attributeElement = inputLayoutElement->FirstChildElement("InputLayoutAttribute");
 		while (attributeElement)
 		{
@@ -42,7 +43,8 @@ ShaderConfig ShaderConfig::MakeFromXML(char const* xmlFilePath)
 			std::string formatString = XmlUtils::ParseXmlAttribute(*attributeElement, "format", "");
 			attribute.m_format = InputLayout::GetInputLayoutAttributeFormatFromString(formatString);
 			attribute.m_inputSlot = (uint32_t) XmlUtils::ParseXmlAttribute(*attributeElement, "inputSlot", 0);
-			attribute.m_alignedByteOffset = (uint32_t) XmlUtils::ParseXmlAttribute(*attributeElement, "alignedByteOffset", 0);
+			attribute.m_alignedByteOffset = numBytesInInputLayoutSlot[attribute.m_inputSlot];
+			numBytesInInputLayoutSlot[attribute.m_inputSlot] += InputLayout::GetNumBytesForFormat(attribute.m_format);
 			attribute.m_isPerInstance = XmlUtils::ParseXmlAttribute(*attributeElement, "isPerInstance", false);
 
 			result.m_inputLayout.m_attributes.push_back(attribute);

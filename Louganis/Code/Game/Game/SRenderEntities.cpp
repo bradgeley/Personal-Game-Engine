@@ -111,7 +111,7 @@ void SRenderEntities::Run(SystemContext const& context)
             VertexBufferID vboID = scRender.m_entityVBOsBySpriteSheet[anim.m_gridSpriteSheet];
 
             VertexBuffer* vbo = g_renderer->GetVertexBuffer(vboID);
-            VertexUtils::AddVertsForAABB2(*vbo, spriteSheet->GetGenericSpriteQuad(2.f), render.m_tint); // UVs will be passed deduced via information in the sprite instance data in the shader
+            VertexUtils::AddVertsForAABB2(*vbo, spriteSheet->GetGenericSpriteQuad(1.f), render.m_tint); // UVs will be passed deduced via information in the sprite instance data in the shader
         }
 
         // Get or create instance buffer for this sprite sheet
@@ -153,6 +153,7 @@ void SRenderEntities::Run(SystemContext const& context)
         spriteSheetConstants.m_layout = spriteSheet->GetLayout();
         spriteSheetConstants.m_edgePadding = spriteSheet->GetEdgePadding();
         spriteSheetConstants.m_innerPadding = spriteSheet->GetInnerPadding();
+		spriteSheetConstants.m_textureDims = spriteSheet->GetTextureDimensions();
 		spriteCbo->Update(&spriteSheetConstants, sizeof(spriteSheetConstants));
 
         g_renderer->SetModelConstants(ModelConstants());

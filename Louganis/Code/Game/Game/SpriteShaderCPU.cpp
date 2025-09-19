@@ -35,20 +35,21 @@ InputLayout* SpriteInstance::GetInputLayout()
 
         s_spriteInstanceInputLayout.m_attributes.push_back(InputLayoutAttribute
         {
+            InputLayoutSemantic::InstanceTint,                  // Semantic: INSTANCETINT
+            0,                                                  // Semantic index
+            InputLayoutAttributeFormat::Rgba8,                  // Format
+            1,                                                  // Input slot
+            (uint32_t) offsetof(SpriteInstance, m_rgba),        // Offset in struct
+            true                                                // Per-instance
+        });
+
+        s_spriteInstanceInputLayout.m_attributes.push_back(InputLayoutAttribute
+        {
             InputLayoutSemantic::InstanceScale,                 // Semantic: INSTANCESCALE
             0,                                                  // Semantic index
             InputLayoutAttributeFormat::Float1,                 // Format
             1,                                                  // Input slot
             (uint32_t) offsetof(SpriteInstance, m_scale),       // Offset in struct
-            true                                                // Per-instance
-        });
-        s_spriteInstanceInputLayout.m_attributes.push_back(InputLayoutAttribute
-        {
-			InputLayoutSemantic::InstanceTint,                  // Semantic: INSTANCETINT
-            0,                                                  // Semantic index
-            InputLayoutAttributeFormat::Rgba8,                  // Format
-            1,                                                  // Input slot
-            (uint32_t) offsetof(SpriteInstance, m_rgba),        // Offset in struct
             true                                                // Per-instance
         });
         s_spriteInstanceInputLayout.m_attributes.push_back(InputLayoutAttribute

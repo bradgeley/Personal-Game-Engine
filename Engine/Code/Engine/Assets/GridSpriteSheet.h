@@ -30,6 +30,7 @@ public:
 	// Getters
 	AABB2 GetSpriteUVs(int spriteIndex) const;
 	float GetSpriteAspect() const;
+	IntVec2 GetTextureDimensions() const;
 	SpriteAnimationDef const* GetAnimationDef(Name name) const;
 	SpriteAnimationGroup const* GetAnimationGroup(Name name) const;
 	IntVec2 GetLayout() const;

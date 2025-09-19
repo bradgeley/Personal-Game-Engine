@@ -109,6 +109,7 @@ public:
 	static InputLayoutAttributeFormat GetInputLayoutAttributeFormatFromString(std::string const& str);
 	static InputLayout Combine(InputLayout const& a, InputLayout const& b);
 	static InputLayout Combine(InputLayout const** ppData, size_t numLayouts);
+	static int GetNumBytesForFormat(InputLayoutAttributeFormat format);
 
 public:
 

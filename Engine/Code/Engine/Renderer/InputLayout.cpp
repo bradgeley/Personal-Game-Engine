@@ -71,3 +71,23 @@ InputLayout InputLayout::Combine(InputLayout const** ppData, size_t numLayouts)
 	}
     return result;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int InputLayout::GetNumBytesForFormat(InputLayoutAttributeFormat format)
+{
+    switch (format)
+    {
+		case InputLayoutAttributeFormat::Float1:    return 4;
+		case InputLayoutAttributeFormat::Float2:    return 8;
+		case InputLayoutAttributeFormat::Float3:    return 12;
+		case InputLayoutAttributeFormat::Float4:    return 16;
+		case InputLayoutAttributeFormat::Uint1:     return 4;
+		case InputLayoutAttributeFormat::Uint2:	    return 8;
+		case InputLayoutAttributeFormat::Uint3:	    return 12;
+        case InputLayoutAttributeFormat::Uint4:     return 16;
+		case InputLayoutAttributeFormat::Rgba8:     return 4;
+    }
+    return 0;
+}

@@ -188,6 +188,19 @@ float GridSpriteSheet::GetSpriteAspect() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+IntVec2 GridSpriteSheet::GetTextureDimensions() const
+{
+	Texture* texture = g_renderer->GetTexture(m_texture);
+	if (texture)
+	{
+		return texture->GetDimensions();
+	}
+	ERROR_AND_DIE("GridSpriteSheet::GetTextureDimensions: Cannot determine texture dimensions because texture is invalid.")
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 SpriteAnimationDef const* GridSpriteSheet::GetAnimationDef(Name name) const
 {
 	for (SpriteAnimationGroup const& animGroup : m_animationGroups)
