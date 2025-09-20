@@ -318,6 +318,7 @@
     <ClCompile Include="Game\SDebugRender.cpp" />
     <ClCompile Include="Game\SEntityFactory.cpp" />
     <ClCompile Include="Game\SFlowField.cpp" />
+    <ClCompile Include="Game\SHealth.cpp" />
     <ClCompile Include="Game\SInitView.cpp" />
     <ClCompile Include="Game\SInput.cpp" />
     <ClCompile Include="Game\SLoadChunks.cpp" />
@@ -374,6 +375,7 @@
     <ClInclude Include="Game\SDebugRender.h" />
     <ClInclude Include="Game\SEntityFactory.h" />
     <ClInclude Include="Game\SFlowField.h" />
+    <ClInclude Include="Game\SHealth.h" />
     <ClInclude Include="Game\SInitView.h" />
     <ClInclude Include="Game\SInput.h" />
     <ClInclude Include="Game\SLoadChunks.h" />

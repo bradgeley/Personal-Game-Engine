@@ -3,12 +3,14 @@
 #include "CAnimation.h"
 #include "CCamera.h"
 #include "CMovement.h"
+#include "CRender.h"
 #include "CTransform.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Math/GeometryUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/Constants.h"
 #include "Engine/Input/InputSystem.h"
@@ -19,7 +21,7 @@
 void SAnimation::Startup()
 {
 	AddWriteDependencies<CAnimation, Renderer, AssetManager>();
-	AddReadDependencies<CMovement, CTransform, CCamera>();
+	AddReadDependencies<CRender, CMovement, CTransform, CCamera>();
 }
 
 
@@ -28,26 +30,33 @@ void SAnimation::Startup()
 void SAnimation::Run(SystemContext const& context)
 {
     AABB2 cameraBounds;
-    auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
+
     for (auto it = g_ecs->Iterate<CCamera>(context); it.IsValid(); ++it)
     {
-        auto& camera = cameraStorage[it];
+		CCamera& camera = *g_ecs->GetComponent<CCamera>(it);
         if (camera.m_isActive)
         {
             cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
+            break;
         }
     }
 
-    for (auto it = g_ecs->Iterate<CAnimation, CMovement, CTransform>(context); it.IsValid(); ++it)
+	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
+	auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
+	auto& movementStorage = g_ecs->GetArrayStorage<CMovement>();
+
+    for (auto it = g_ecs->Iterate<CRender, CAnimation, CMovement, CTransform>(context); it.IsValid(); ++it)
     {
-		CTransform& transform = *g_ecs->GetComponent<CTransform>(it);
-        if (!cameraBounds.IsPointInside(transform.m_pos))
+		CTransform const& transform = transformStorage[it];
+        CRender const& render = renderStorage[it];
+		if (!GeometryUtils::DoesDiscOverlapAABB(transform.m_pos, 0.5f * render.m_scale, cameraBounds))
         {
             continue;
         }
 
-        CAnimation& anim = *g_ecs->GetComponent<CAnimation>(it);
-        CMovement& movement = *g_ecs->GetComponent<CMovement>(it);
+		CAnimation& anim = animStorage[it];
+        CMovement& movement = movementStorage[it];
 
 		// Initialize sprite sheet and animation instance if not already done
         if (anim.m_gridSpriteSheet == AssetID::Invalid && anim.m_spriteSheetName != Name::Invalid)

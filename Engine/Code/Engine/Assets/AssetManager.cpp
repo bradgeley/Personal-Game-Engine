@@ -26,8 +26,8 @@ AssetManager::AssetManager(AssetManagerConfig const& config) : m_config(config)
 {
     RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load, "GridSpriteSheet");
     RegisterLoader<Image>(Image::Load, "Image");
-    RegisterLoader<TextureAsset>(TextureAsset::Load, "TextureAsset");
-    RegisterLoader<ShaderAsset>(ShaderAsset::Load, "ShaderAsset");
+    RegisterLoader<TextureAsset>(TextureAsset::Load, "Texture");
+    RegisterLoader<ShaderAsset>(ShaderAsset::Load, "Shader");
 }
 
 

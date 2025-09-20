@@ -11,17 +11,17 @@
 namespace StaticWorldSettings
 {
     constexpr int   s_worldChunkSizePowerOfTwo      = 4;        // In tiles
-    constexpr float s_tileWidth                     = 1.5f;     // In world units
+    constexpr float s_tileWidth                     = 2.f;      // In world units
 
 #if defined(_DEBUG)
     constexpr float s_chunkLoadRadius               = 50.f;
-    constexpr float s_chunkUnloadRadius             = 750.f;
-    constexpr float s_collisionHashRadius           = 25.f;
-    constexpr float s_flowFieldGenerationRadius     = 25.f;
+    constexpr float s_chunkUnloadRadius             = 75.f;
+    constexpr float s_collisionHashRadius           = 32.f;
+    constexpr float s_flowFieldGenerationRadius     = 32.f;
     constexpr int   s_maxNumChunksToLoadPerFrame    = 5;
 #else
-    constexpr float s_chunkLoadRadius               = 100.f;
-    constexpr float s_chunkUnloadRadius             = 150.f;
+    constexpr float s_chunkLoadRadius               = 500.f;
+    constexpr float s_chunkUnloadRadius             = 650.f;
     constexpr float s_collisionHashRadius           = 50.f;
     constexpr float s_flowFieldGenerationRadius     = 50.f;
     constexpr int   s_maxNumChunksToLoadPerFrame    = 50;

@@ -112,7 +112,7 @@ float4 ComputeUVs(VSInput vin)
 //----------------------------------------------------------------------------------------------------------------------
 float3 GetRotatedBy(float3 vec, float degrees)
 {
-    float vectorLength = length(vec);
+    float vectorLength = length(vec.xy);
     float angleRad = atan2(vec.y, vec.x);
     float angleDegrees = angleRad * (180.f / 3.14159265358979323846f);
     angleDegrees += degrees;
@@ -129,8 +129,10 @@ float3 GetRotatedBy(float3 vec, float degrees)
 //----------------------------------------------------------------------------------------------------------------------
 VSOutput VertexMain(VSInput vin, uint instanceID : SV_InstanceID)
 {
-    float3 pos = vin.position * vin.instanceScale;
-    pos = GetRotatedBy(pos, vin.instanceRotation);
+    float3 pos = vin.position;
+    pos = GetRotatedBy(pos, vin.instanceRotation); // Rotate around Z axis
+    
+    pos = float3(pos.xy * vin.instanceScale, pos.z); // only scale XY
     float3 outPos = pos + vin.instancePosition;
 	
 	VSOutput output;

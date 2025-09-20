@@ -245,6 +245,41 @@ void VertexUtils::AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center,
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void VertexUtils::AddVertsForWireDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius, float thickness, int numSides, Rgba8 const& tint)
+{
+    ASSERT_OR_DIE(radius > 0.f && numSides >= 3, StringUtils::StringF("Cannot add verts for a disc with: radius=%f numSides=%i", radius, numSides));
+    float halfThickness = thickness * 0.5f;
+    float innerRadius = radius - halfThickness;
+    float outerRadius = radius + halfThickness;
+    float thetaStepSize = 360.f / (float)numSides;
+
+	std::vector<Vertex_PCU> verts;
+	verts.reserve(numSides * 6);
+    for (int i = 0; i < numSides; ++i)
+    {
+        float theta1 = i * thetaStepSize;
+        float theta2 = (i + 1) * thetaStepSize;
+        Vec2 unitCirclePos1 = Vec2::MakeFromUnitCircleDegrees(theta1);
+        Vec2 unitCirclePos2 = Vec2::MakeFromUnitCircleDegrees(theta2);
+        Vec2 innerPt1 = center + unitCirclePos1 * innerRadius;
+        Vec2 innerPt2 = center + unitCirclePos2 * innerRadius;
+        Vec2 outerPt1 = center + unitCirclePos1 * outerRadius;
+        Vec2 outerPt2 = center + unitCirclePos2 * outerRadius;
+
+		verts.emplace_back(Vec3(innerPt1), tint);
+		verts.emplace_back(Vec3(outerPt1), tint);
+		verts.emplace_back(Vec3(outerPt2), tint);
+		verts.emplace_back(Vec3(outerPt2), tint);
+		verts.emplace_back(Vec3(innerPt2), tint);
+        verts.emplace_back(Vec3(innerPt1), tint);
+	}
+
+	out_verts.AddVerts(verts);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void VertexUtils::AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float radius, Rgba8 const& tint)
 {
     if (radius <= 0)

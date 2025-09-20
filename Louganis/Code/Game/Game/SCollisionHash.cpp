@@ -20,7 +20,7 @@ void SCollisionHash::Startup()
 
     // Hashing entities can be split, since it is a read only operation until the combine phase
     int numThreads = std::thread::hardware_concurrency() - 1;
-	m_systemSplittingNumJobs = MathUtils::ClampMin(numThreads, 0);
+	m_systemSplittingNumJobs = 10;
 }
 
 

@@ -42,15 +42,17 @@ void SRenderEntities::Run(SystemContext const& context)
 {
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
     auto& scRender = g_ecs->GetSingleton<SCRender>();
-    auto& animStorage = g_ecs->GetMapStorage<CAnimation>();
+    auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
 
-    if (scRender.m_spriteShaderID == RendererUtils::InvalidID)
+    ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
+    if (spriteShaderAsset)
     {
-        ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
-        if (spriteShaderAsset)
-        {
-			scRender.m_spriteShaderID = spriteShaderAsset->GetShaderID();
-        }
+		scRender.m_spriteShaderID = spriteShaderAsset->GetShaderID();
+    }
+    else
+    {
+        scRender.m_spriteShaderID = RendererUtils::InvalidID;
+        return;
     }
 
     Camera* activeCamera = nullptr;

@@ -4,15 +4,6 @@
     <ClCompile Include="Game\Game.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SInput.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SMovement.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SRenderEntities.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
     <ClCompile Include="Game\CCamera.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -28,18 +19,6 @@
     <ClCompile Include="Game\CRender.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SCopyTransform.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SRenderWorld.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SCamera.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SCollision.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SEntityFactory.cpp">
       <Filter>Systems</Filter>
     </ClCompile>
@@ -49,26 +28,8 @@
     <ClCompile Include="Game\TileDef.cpp">
       <Filter>Definitions</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SWorld.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SLoadChunks.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SCWorld.cpp">
       <Filter>Singletons</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SInitView.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SUnloadChunks.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SDebugRender.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SFlowField.cpp">
-      <Filter>Systems</Filter>
     </ClCompile>
     <ClCompile Include="Game\FlowFieldChunk.cpp">
       <Filter>Game\FlowField</Filter>
@@ -88,15 +49,6 @@
     <ClCompile Include="Game\WorldCoords.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SWorldCollision.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SPhysics.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SBackgroundMusic.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\Windows\Main_Windows.cpp">
       <Filter>Framework\Windows</Filter>
     </ClCompile>
@@ -112,26 +64,77 @@
     <ClCompile Include="Game\CAnimation.cpp">
       <Filter>Components</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SAnimation.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
     <ClCompile Include="Game\CAbility.cpp">
       <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SAbility.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SCollisionHash.cpp">
-      <Filter>Systems</Filter>
     </ClCompile>
     <ClCompile Include="Game\SCCollision.cpp">
       <Filter>Singletons</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SAIController.cpp">
-      <Filter>Systems</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SpriteShaderCPU.cpp">
       <Filter>Data\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SDebugRender.cpp">
+      <Filter>Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRenderEntities.cpp">
+      <Filter>Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRenderWorld.cpp">
+      <Filter>Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SBackgroundMusic.cpp">
+      <Filter>Systems\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SAIController.cpp">
+      <Filter>Systems\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCollision.cpp">
+      <Filter>Systems\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCollisionHash.cpp">
+      <Filter>Systems\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SWorldCollision.cpp">
+      <Filter>Systems\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SWorld.cpp">
+      <Filter>Systems\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SUnloadChunks.cpp">
+      <Filter>Systems\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SLoadChunks.cpp">
+      <Filter>Systems\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SPhysics.cpp">
+      <Filter>Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SMovement.cpp">
+      <Filter>Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SHealth.cpp">
+      <Filter>Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SAnimation.cpp">
+      <Filter>Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCamera.cpp">
+      <Filter>Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCopyTransform.cpp">
+      <Filter>Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SAbility.cpp">
+      <Filter>Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SFlowField.cpp">
+      <Filter>Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SInitView.cpp">
+      <Filter>Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SInput.cpp">
+      <Filter>Systems\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -143,15 +146,6 @@
     </ClInclude>
     <ClInclude Include="Game\GameCommon.h">
       <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SRenderEntities.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SInput.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SMovement.h">
-      <Filter>Systems</Filter>
     </ClInclude>
     <ClInclude Include="Game\CCamera.h">
       <Filter>Components</Filter>
@@ -174,18 +168,6 @@
     <ClInclude Include="Game\AllSystems.h">
       <Filter>Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SCopyTransform.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SRenderWorld.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SCollision.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SCamera.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SEntityFactory.h">
       <Filter>Systems</Filter>
     </ClInclude>
@@ -201,26 +183,8 @@
     <ClInclude Include="Game\SCWorld.h">
       <Filter>Singletons</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SWorld.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SCDebug.h">
       <Filter>Singletons</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SLoadChunks.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SInitView.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SUnloadChunks.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SDebugRender.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SFlowField.h">
-      <Filter>Systems</Filter>
     </ClInclude>
     <ClInclude Include="Game\SCFlowField.h">
       <Filter>Singletons</Filter>
@@ -249,12 +213,6 @@
     <ClInclude Include="Game\WorldCoords.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SWorldCollision.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SPhysics.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SCRender.h">
       <Filter>Singletons</Filter>
     </ClInclude>
@@ -263,9 +221,6 @@
     </ClInclude>
     <ClInclude Include="Game\SCAudio.h">
       <Filter>Singletons</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SBackgroundMusic.h">
-      <Filter>Systems</Filter>
     </ClInclude>
     <ClInclude Include="Game\AllSingletonComponents.h">
       <Filter>Singletons</Filter>
@@ -279,29 +234,80 @@
     <ClInclude Include="Game\CAnimation.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SAnimation.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Game\CAbility.h">
       <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SAbility.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SCollisionHash.h">
-      <Filter>Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SCCollision.h">
       <Filter>Singletons</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SAIController.h">
-      <Filter>Systems</Filter>
     </ClInclude>
     <ClInclude Include="Game\CAIController.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="Game\SpriteShaderCPU.h">
       <Filter>Data\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderEntities.h">
+      <Filter>Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderWorld.h">
+      <Filter>Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SDebugRender.h">
+      <Filter>Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SBackgroundMusic.h">
+      <Filter>Systems\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SAIController.h">
+      <Filter>Systems\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCollision.h">
+      <Filter>Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCollisionHash.h">
+      <Filter>Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SWorldCollision.h">
+      <Filter>Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SWorld.h">
+      <Filter>Systems\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SUnloadChunks.h">
+      <Filter>Systems\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SLoadChunks.h">
+      <Filter>Systems\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SPhysics.h">
+      <Filter>Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SMovement.h">
+      <Filter>Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SHealth.h">
+      <Filter>Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SAnimation.h">
+      <Filter>Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCamera.h">
+      <Filter>Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCopyTransform.h">
+      <Filter>Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SAbility.h">
+      <Filter>Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SFlowField.h">
+      <Filter>Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SInitView.h">
+      <Filter>Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SInput.h">
+      <Filter>Systems\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -343,6 +349,27 @@
     </Filter>
     <Filter Include="Data\Shaders">
       <UniqueIdentifier>{aa8d2c65-24c6-4c90-a139-a7e0a9058556}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Rendering">
+      <UniqueIdentifier>{fb509ae0-b651-4cdb-aec5-694651657c7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Audio">
+      <UniqueIdentifier>{bc2b70eb-fe60-4d6c-953d-7a522822655f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\AI">
+      <UniqueIdentifier>{da6d99f2-e291-4972-836a-1dd3c2af137a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Collision">
+      <UniqueIdentifier>{570df623-a403-4192-9cf5-addefa253bbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Gameplay">
+      <UniqueIdentifier>{ab512c5e-0022-4036-80a2-af38df03f723}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\World">
+      <UniqueIdentifier>{9e8e9349-25e1-43b8-932e-c0fe828f75c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Systems\Input">
+      <UniqueIdentifier>{f599136e-4601-422f-972d-1c7fbb05716d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

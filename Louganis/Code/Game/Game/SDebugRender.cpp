@@ -1,16 +1,18 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugRender.h"
-#include "CTransform.h"
+#include "CCamera.h"
+#include "CCollision.h"
+#include "Chunk.h"
 #include "CPlayerController.h"
+#include "CTransform.h"
+#include "CRender.h"
+#include "FlowField.h"
+#include "FlowFieldChunk.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
 #include "SCCollision.h"
-#include "FlowField.h"
-#include "FlowFieldChunk.h"
-#include "Chunk.h"
-#include "WorldRaycast.h"
-#include "CCamera.h"
 #include "SCDebug.h"
+#include "WorldRaycast.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Input/InputSystem.h"
@@ -29,9 +31,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugRender::Startup()
 {
-    AddWriteDependencies<CTransform, CPlayerController, Renderer>();
-    AddWriteDependencies<SCDebug>();
-    AddReadDependencies<SCWorld, SCFlowField, SCCollision, InputSystem, CCamera>();
+    AddWriteAllDependencies();
 
     g_eventSystem->SubscribeMethod("DebugRenderMouseRaycast", this, &SDebugRender::DebugRenderMouseRaycast);
     g_eventSystem->SubscribeMethod("DebugRenderMouseDiscCast", this, &SDebugRender::DebugRenderMouseDiscCast);
@@ -52,6 +52,8 @@ void SDebugRender::Startup()
 void SDebugRender::Run(SystemContext const& context)
 {
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
+    auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
     auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
@@ -62,6 +64,7 @@ void SDebugRender::Run(SystemContext const& context)
     VertexBuffer& frameVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameUntexVerts);
     VertexBuffer& frameTextVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
     CCamera* playerCamera = nullptr;
+    AABB2 cameraBounds;
 
     for (auto it = g_ecs->Iterate<CCamera>(context); it.IsValid(); ++it)
     {
@@ -73,22 +76,11 @@ void SDebugRender::Run(SystemContext const& context)
                 Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
                 scDebug.m_debugMouseLocation = camera.m_camera.ScreenToWorldOrtho(relMousePos);
             }
+			cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
             playerCamera = &camera;
             break;
         }
     }
-
-    // Tile Coords
-    //#if defined(_DEBUG)
-    //    world.ForEachWorldCoordsOverlappingAABB(playerCamera->m_camera.GetTranslatedOrthoBounds2D(), [&](WorldCoords const& coords)
-    //    {
-    //        AABB2 tileBounds = world.GetTileBounds(coords);
-	//	    IntVec2 globalTileCoords = coords.GetGlobalTileCoords();
-	//	    std::string tileText = StringUtils::StringF("(%i, %i)", globalTileCoords.x, globalTileCoords.y);
-	//	    font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.25f, tileText);
-    //        return true;
-    //    });
-	//#endif // _DEBUG
 
     // Mouse Raycast
     if (scDebug.m_debugRenderToMouseRaycast)
@@ -176,7 +168,6 @@ void SDebugRender::Run(SystemContext const& context)
         }
     }
 
-
     // Render Flow Field
     if (scDebug.m_debugRenderDistanceField)
     {
@@ -202,7 +193,6 @@ void SDebugRender::Run(SystemContext const& context)
             }
         }
     }
-
 
     // Render Gradient
     if (scDebug.m_debugRenderGradient)
@@ -251,32 +241,26 @@ void SDebugRender::Run(SystemContext const& context)
     if (scDebug.m_debugRenderCollision)
     {
 		VertexUtils::AddVertsForWireBox2D(frameVerts, scCollision.m_collisionUpdateBounds, 0.25f, Rgba8::Magenta);
+		font->AddVertsForAlignedText2D(frameTextVerts, scCollision.m_collisionUpdateBounds.GetTopLeft() + Vec2(0.5f, -0.5f), Vec2(1, -1), 1.5f, "Collision Update Bounds", Rgba8::Magenta);
 
-        //for (auto const& chunkCollisionDataPair : scCollision.m_chunkCollisionData)
-        //{
-        //    IntVec2 const& chunkCoords = chunkCollisionDataPair.first;
-		//	Chunk* chunk = world.GetActiveChunk(chunkCoords);
-        //    if (!chunk)
-        //    {
-        //        continue;
-        //    }
-        //    ChunkCollisionData const& chunkCollisionData = chunkCollisionDataPair.second;
-		//	auto& chunkBucket = chunkCollisionData.m_chunkBucket;
-		//	font->AddVertsForAlignedText2D(frameTextVerts, chunk->m_chunkBounds.GetCenter(), Vec2::ZeroVector, 0.5f, StringUtils::StringF("Chunk (%d, %d): Entities hashed: %d", chunkCoords.x, chunkCoords.y, chunkBucket.size()), Rgba8::White);
-		//	VertexUtils::AddVertsForWireBox2D(frameVerts, chunk->m_chunkBounds, 0.1f, Rgba8::Cyan);
-        //
-        //    for (auto const& tileBucketPair : chunkCollisionData.m_tileBuckets)
-        //    {
-        //        int tileIndex = tileBucketPair.first;
-		//		EntityBucket const& tileBucket = tileBucketPair.second;
-		//		WorldCoords worldCoords = WorldCoords(chunkCoords, chunk->m_tileIDs.GetCoordsForIndex(tileIndex));
-        //        AABB2 tileBounds = world.GetTileBounds(worldCoords);
-		//		font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, StringUtils::StringF("%d", tileBucket.size()), Rgba8::White);
-        //        VertexUtils::AddVertsForWireBox2D(frameVerts, tileBounds, 0.05f, Rgba8::Yellow);
-        //    }
-		//}
+		VertexUtils::AddVertsForWireBox2D(frameVerts, cameraBounds, 0.25f, Rgba8::Cyan);
+		font->AddVertsForAlignedText2D(frameTextVerts, cameraBounds.GetTopLeft() + Vec2(cameraBounds.GetWidth() * 0.01f, cameraBounds.GetWidth() * -0.01f), Vec2(1, -1), cameraBounds.GetWidth() * 0.01f, "Camera Bounds", Rgba8::Cyan);
+
+        for (auto it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
+        {
+			CTransform const& transform = *transStorage.Get(it);
+			CCollision const& collision = *collStorage.Get(it);
+            CRender const* render = renderStorage.Get(it);
+            if (GeometryUtils::DoesDiscOverlapAABB(transform.m_pos, collision.m_radius, cameraBounds))
+            {
+                VertexUtils::AddVertsForWireDisc2D(frameVerts, transform.m_pos, collision.m_radius, 0.01f, 8, Rgba8::Magenta);
+			}
+            if (render && GeometryUtils::DoesDiscOverlapAABB(transform.m_pos, 0.5f * render->m_scale, cameraBounds))
+            {
+				VertexUtils::AddVertsForWireDisc2D(frameVerts, transform.m_pos, 0.5f * render->m_scale, 0.01f, 8, Rgba8::Cyan);
+			}
+        }
     }
-
     
     // Render->clear debug verts 
     g_renderer->BindTexture(nullptr);

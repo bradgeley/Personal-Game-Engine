@@ -2,6 +2,7 @@
 #pragma once
 #include "Game/Framework/EngineBuildPreferences.h"
 #include "Engine/Core/EngineSubsystem.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Multithreading/Job.h"
 #include "Asset.h"
@@ -34,7 +35,7 @@ struct LoadedAsset
 {
 	LoadedAsset() = default;
 
-    AssetKey m_key;                 // Stores type information
+    AssetKey m_key;                // Stores type information
     Asset* m_asset = nullptr;      // Pointer to the loaded asset data (e.g., GridSpriteSheet, Sound, etc.)
 };
 
@@ -203,6 +204,7 @@ inline bool AssetManager::AsyncReload(AssetID assetID, int priority /*= 0*/)
     }
 	AssetKey key;
 	bool found = FindAssetKey(assetID, key);
+	ASSERT_OR_DIE(key.m_typeIndex == std::type_index(typeid(T)), "AssetManager::AsyncReload - Found asset type does not match the requested type.");
     if (found)
     {
 		AsyncReloadInternal(assetID, key, priority);
@@ -254,5 +256,6 @@ inline T* AssetManager::Get(AssetID assetID)
         return nullptr;
     }
 
+	ASSERT_OR_DIE(it->second.m_key.m_typeIndex == std::type_index(typeid(T)), "AssetManager::Get - Asset type does not match the requested type.");
     return static_cast<T*>(it->second.m_asset);
 }

@@ -6,7 +6,7 @@
     <Camera tileHeight="10" maxZoom ="1000"></Camera>
     <PlayerController></PlayerController>
     <Collision radius="0.5"></Collision>
-    <Render scale="0.5"></Render>
+    <Render scale="1"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Marine-Gauss.xml"></Animation>
     <Ability></Ability>
   </EntityDef>
@@ -15,7 +15,7 @@
     <Transform></Transform>
     <Movement moveSpeed="0.25"></Movement>
     <Collision radius="0.25"></Collision>
-    <Render scale="0.25"></Render>
+    <Render scale="0.5"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Zombie2.xml"></Animation>
     <AIController></AIController>
     <Ability></Ability>

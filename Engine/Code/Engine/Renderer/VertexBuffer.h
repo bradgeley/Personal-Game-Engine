@@ -41,6 +41,9 @@ public:
     void AddVerts(std::vector<T> const& verts);
 
     template<typename T>
+    void AddVerts(T const* vertData, size_t numVerts);
+
+    template<typename T>
     T& GetVert(size_t index);
 
     template<typename T>
@@ -95,6 +98,15 @@ template<typename T>
 void VertexBuffer::AddVerts(std::vector<T> const& verts)
 {
 	AddVertsInternal(verts.data(), sizeof(T), verts.size());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename T>
+inline void VertexBuffer::AddVerts(T const* vertData, size_t numVerts)
+{
+    AddVertsInternal(vertData, sizeof(T), numVerts);
 }
 
 

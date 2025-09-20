@@ -15,9 +15,10 @@ Asset* ShaderAsset::Load(Name assetName)
 {
 	// Asset name here should be a .xml file path, e.g. "Data/Shaders/MyShader.xml"
 	Strings pathAndExtension = StringUtils::SplitStringOnDelimiter(assetName.ToString(), '.');
-	ASSERT_OR_DIE(pathAndExtension.size() == 2, StringUtils::StringF("Shader asset name must be a .xml file path, e.g. Data/Shaders/MyShader.xml. Got: %s", assetName.ToCStr()));
+	ASSERT_OR_DIE(pathAndExtension.size() == 2, StringUtils::StringF("Shader asset name must be a file path, e.g. Data/Shaders/MyShader.xml. Got: %s", assetName.ToCStr()));
 
-	std::string xmlFilePath = assetName.ToString();
+	ASSERT_OR_DIE(pathAndExtension[1] == "xml", StringUtils::StringF("Shader asset name must be a .xml file path, e.g. Data/Shaders/MyShader.xml. Got: %s", assetName.ToCStr()));
+	std::string const& xmlFilePath = assetName.ToString();
 
     ShaderAsset* shaderAsset = new ShaderAsset();
     shaderAsset->m_name = assetName;
@@ -61,6 +62,7 @@ ShaderID ShaderAsset::GetShaderID() const
 //----------------------------------------------------------------------------------------------------------------------
 bool ShaderAsset::CompleteAsyncLoad()
 {
+	// All work done in Load()
     return true;
 }
 
@@ -69,6 +71,7 @@ bool ShaderAsset::CompleteAsyncLoad()
 //----------------------------------------------------------------------------------------------------------------------
 bool ShaderAsset::CompleteSyncLoad()
 {
+    // All work done in Load()
     return true;
 }
 

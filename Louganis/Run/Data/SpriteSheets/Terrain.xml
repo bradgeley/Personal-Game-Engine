@@ -1,10 +1,14 @@
 
 
 
-<GridSpriteSheet name="Terrain" texture="Data/SpriteSheets/Terrain.png" layout="2,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Terrain" texture="Data/SpriteSheets/Terrain.png" layout="6,1" edgePadding="0,0" innerPadding="0,0">
   
   <!-- Tiles -->
   <SpriteAnimation name="grass" frames="0" type="singleframe"></SpriteAnimation>
   <SpriteAnimation name="stone" frames="1" type="singleframe"></SpriteAnimation>
+  <SpriteAnimation name="water" frames="2" type="singleframe"></SpriteAnimation>
+  <SpriteAnimation name="shallowWater" frames="3" type="singleframe"></SpriteAnimation>
+  <SpriteAnimation name="deepWater" frames="4" type="singleframe"></SpriteAnimation>
+  <SpriteAnimation name="sand" frames="5" type="singleframe"></SpriteAnimation>
   
 </GridSpriteSheet>

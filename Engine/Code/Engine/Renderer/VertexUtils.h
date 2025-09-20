@@ -31,6 +31,7 @@ namespace VertexUtils
 	void AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, IntVec2 const& dims, Rgba8 const& tint = Rgba8::Black);
 	void AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& boundingAABB, Rgba8 const* colorsRowMajor, IntVec2 const& dims, Rgba8 const& gridLinesTint = Rgba8::Black);
 	void AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint = Rgba8::White, AABB2 const& UVs = AABB2::ZeroToOne);
+	void AddVertsForWireDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius, float thickness, int numSides, Rgba8 const& tint = Rgba8::White);
 	void AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float radius, Rgba8 const& tint = Rgba8::White);
 	void AddVertsForWireMesh2D(VertexBuffer& out_verts, VertexBuffer const& triangles, float thickness, Rgba8 const& tint = Rgba8::White);
 }

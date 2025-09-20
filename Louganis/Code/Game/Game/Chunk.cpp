@@ -15,6 +15,16 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+constexpr float MOUNTAIN_TERRAIN_HEIGHT			= 0.75f;
+constexpr float GRASS_TERRAIN_HEIGHT			= 0.5f;
+constexpr float SAND_TERRAIN_HEIGHT				= 0.45f;
+constexpr float SHALLOW_WATER_TERRAIN_HEIGHT	= 0.4f;
+constexpr float WATER_TERRAIN_HEIGHT			= 0.35f;
+constexpr float DEEP_WATER_TERRAIN_HEIGHT		= 0.0f;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings)
 {
 	m_chunkCoords = chunkCoords;
@@ -27,6 +37,10 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 
 	int grassTileDef = TileDef::GetTileDefID("grass");
 	int wallTileDef  = TileDef::GetTileDefID("wall");
+	int waterTileDef  = TileDef::GetTileDefID("water");
+	int shallowWaterTileDef  = TileDef::GetTileDefID("shallowWater");
+	int deepWaterTileDef  = TileDef::GetTileDefID("deepWater");
+	int sandTileDef  = TileDef::GetTileDefID("sand");
 	TileDef const* errorTileDef = TileDef::GetTileDef("error");
 
 	// Generate tile IDs
@@ -43,10 +57,36 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			Vec2 worldTileCoords = chunkMinsTileCoords + Vec2(x, y);
 
 			int index = m_tileIDs.GetIndexForCoords(x, y);
-			float wallNoise = GetPerlinNoise2D(worldTileCoords.x, worldTileCoords.y, 100.f, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed));
-			if (wallNoise > 0.f)
+			float terrainHeightNoise = GetPerlinNoise2D_01(worldTileCoords.x, worldTileCoords.y, 100.f, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed));
+			float moistureNoise = GetPerlinNoise2D_01(worldTileCoords.x, worldTileCoords.y, 2500.f, 2, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 1));
+			float mountainNoise = GetPerlinNoise2D_01(worldTileCoords.x, worldTileCoords.y, 2500.f, 2, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 2));
+
+			terrainHeightNoise += mountainNoise;
+			terrainHeightNoise *= moistureNoise;
+
+			if (terrainHeightNoise >= MOUNTAIN_TERRAIN_HEIGHT)
 			{
 				m_tileIDs.Set(index, (uint8_t) wallTileDef);
+			}
+			else if (terrainHeightNoise >= GRASS_TERRAIN_HEIGHT)
+			{
+				m_tileIDs.Set(index, (uint8_t) grassTileDef);
+			}
+			else if (terrainHeightNoise >= SAND_TERRAIN_HEIGHT)
+			{
+				m_tileIDs.Set(index, (uint8_t) sandTileDef);
+			}
+			else if (terrainHeightNoise >= SHALLOW_WATER_TERRAIN_HEIGHT)
+			{
+				m_tileIDs.Set(index, (uint8_t) shallowWaterTileDef);
+			}
+			else if (terrainHeightNoise >= WATER_TERRAIN_HEIGHT)
+			{
+				m_tileIDs.Set(index, (uint8_t) waterTileDef);
+			}
+			else // (terrainHeightNoise >= DEEP_WATER_TERRAIN_HEIGHT)
+			{
+				m_tileIDs.Set(index, (uint8_t) deepWaterTileDef);
 			}
 		}
 	}

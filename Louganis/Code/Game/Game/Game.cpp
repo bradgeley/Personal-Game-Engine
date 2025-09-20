@@ -203,9 +203,9 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CMovement>();
     g_ecs->RegisterComponentArray<CRender>();
     g_ecs->RegisterComponentArray<CTransform>();
+    g_ecs->RegisterComponentArray<CAnimation>();
 
     // Map components
-    g_ecs->RegisterComponentMap<CAnimation>();
     g_ecs->RegisterComponentMap<CCamera>();
     g_ecs->RegisterComponentMap<CPlayerController>();
 
