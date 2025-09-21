@@ -6,6 +6,7 @@
   <TileDef name="shallowWater"  visible="true" solid="false"  tint="255,255,255"  cost="1"    spriteIndex="3"/>
   <TileDef name="deepWater"     visible="true" solid="false"  tint="255,255,255"  cost="20"   spriteIndex="4"/>
   <TileDef name="sand"          visible="true" solid="false"  tint="255,255,255"  cost="1"    spriteIndex="5"/>
+  <TileDef name="forestGrass"   visible="true" solid="false"  tint="255,255,255"  cost="1"    spriteIndex="6"/>
 
   <TileDef name="error"         visible="true" solid="true"   tint="255,0,255"    cost="255"  spriteIndex="255"/>
   

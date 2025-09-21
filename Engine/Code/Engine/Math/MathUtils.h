@@ -209,11 +209,13 @@ T MathUtils::Abs(T const& value)
 template <typename T>
 T MathUtils::Clamp(T const& val, T const& rangeMin, T const& rangeMax)
 {
-	if (val < rangeMin) 
+	T min = Min(rangeMin, rangeMax);
+	T max = Max(rangeMin, rangeMax);
+	if (val < min)
 	{
 		return rangeMin;
 	}
-	if (val > rangeMax) 
+	if (val > max)
 	{
 		return rangeMax;
 	}

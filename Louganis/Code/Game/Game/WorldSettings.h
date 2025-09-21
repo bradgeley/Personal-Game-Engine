@@ -20,8 +20,8 @@ namespace StaticWorldSettings
     constexpr float s_flowFieldGenerationRadius     = 32.f;
     constexpr int   s_maxNumChunksToLoadPerFrame    = 5;
 #else
-    constexpr float s_chunkLoadRadius               = 500.f;
-    constexpr float s_chunkUnloadRadius             = 650.f;
+    constexpr float s_chunkLoadRadius               = 2000.f;
+    constexpr float s_chunkUnloadRadius             = 2500.f;
     constexpr float s_collisionHashRadius           = 50.f;
     constexpr float s_flowFieldGenerationRadius     = 50.f;
     constexpr int   s_maxNumChunksToLoadPerFrame    = 50;

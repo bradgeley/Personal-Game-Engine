@@ -642,9 +642,6 @@
     <ClInclude Include="Renderer\GPUBuffer.h">
       <Filter>Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\InputLayout.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\D3D11\D3D11GPUBuffer.h">
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
@@ -662,6 +659,9 @@
     </ClInclude>
     <ClInclude Include="Assets\ShaderAsset.h">
       <Filter>Assets\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\InputLayout.h">
+      <Filter>Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
