@@ -161,14 +161,14 @@ void SDebugRender::Run(SystemContext const& context)
                     AABB2 tileBounds = world.GetTileBounds(currentWorldCoords);
                     uint8_t cost = ffChunk->m_costField.Get(x, y);
                     float t = MathUtils::RangeMapClamped((float) cost, 0.f, 255.f, 0.f, 1.f);
-                    Rgba8 tint = Rgba8::Lerp(Rgba8(255, 255, 255, 150), Rgba8(0, 0, 0, 150), t);
+                    Rgba8 tint = Rgba8::Lerp(Rgba8(0, 255, 0, 100), Rgba8(255, 0, 0, 100), t);
                     VertexUtils::AddVertsForAABB2(frameVerts, tileBounds, tint);
                 }
             }
         }
     }
 
-    // Render Flow Field
+    // Render Distance Field
     if (scDebug.m_debugRenderDistanceField)
     {
         for (auto it : flowField.m_activeFlowFieldChunks)
@@ -194,8 +194,8 @@ void SDebugRender::Run(SystemContext const& context)
         }
     }
 
-    // Render Gradient
-    if (scDebug.m_debugRenderGradient)
+    // Render Flow Field
+    if (scDebug.m_debugRenderFlowField)
     {
         for (auto it : flowField.m_activeFlowFieldChunks)
         {
@@ -339,7 +339,7 @@ bool SDebugRender::DebugRenderDistanceField(NamedProperties&)
 bool SDebugRender::DebugRenderFlowField(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
-    scDebug.m_debugRenderGradient = !scDebug.m_debugRenderGradient;
+    scDebug.m_debugRenderFlowField = !scDebug.m_debugRenderFlowField;
     return false;
 }
 

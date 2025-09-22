@@ -552,7 +552,8 @@ Chunk* SCWorld::GetOrCreateActiveChunk(int chunkX, int chunkY)
 Chunk* SCWorld::LoadChunk(IntVec2 const& chunkCoords)
 {
 	Chunk* chunk = new Chunk();
-	chunk->Generate(chunkCoords, m_worldSettings);
+	std::vector<SpawnInfo> entitiesToSpawn;
+	chunk->Generate(chunkCoords, m_worldSettings, entitiesToSpawn);
 	m_activeChunks.emplace(chunkCoords, chunk);
 	return chunk;
 }

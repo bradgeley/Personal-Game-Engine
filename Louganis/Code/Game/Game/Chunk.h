@@ -1,10 +1,14 @@
 // Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/ECS/EntityID.h"
 #include "Engine/Events/EventDelegate.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/FastGrid.h"
 #include "Engine/Renderer/RendererUtils.h"
+#include "SpawnInfo.h"
+#include "TileGeneratedData.h"
 #include "WorldSettings.h"
+#include <vector>
 
 
 
@@ -18,7 +22,8 @@ class Chunk
 {
 public:
 
-	void Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings);
+	void Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings, std::vector<SpawnInfo>& out_spawnInfos);
+	TileGeneratedData GenerateTileData(Vec2 const& worldTileLocation, WorldSettings const& worldSettings) const;
 	void Destroy();
 
 	bool IsTileSolid(IntVec2 const& localTileCoords) const;
@@ -27,11 +32,11 @@ public:
 
 public:
 
-	EventDelegate m_destroyed;
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
 	FastGrid<uint8_t, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tileIDs;
 	VertexBufferID m_vbo = RendererUtils::InvalidID;
+	std::vector<EntityID> m_spawnedEntities; 
 #if defined(_DEBUG)
 	VertexBufferID m_debugVBO = RendererUtils::InvalidID;
 #endif

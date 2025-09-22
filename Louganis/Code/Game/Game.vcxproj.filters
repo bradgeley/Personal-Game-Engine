@@ -309,6 +309,12 @@
     <ClInclude Include="Game\SInput.h">
       <Filter>Systems\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Game\SpawnInfo.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TileGeneratedData.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -393,6 +399,9 @@
     </Xml>
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml">
       <Filter>Data\Shaders</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Tree1.xml">
+      <Filter>Data\SpriteSheets</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

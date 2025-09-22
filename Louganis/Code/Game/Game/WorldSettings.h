@@ -62,6 +62,22 @@ struct WorldSettings
     float   m_entityWallBuffer                  = 0.01f;
     int     m_maxNumChunksToLoadPerFrame        = StaticWorldSettings::s_maxNumChunksToLoadPerFrame;
     float   m_collisionHashWiggleRoom           = 0.25f;      // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
+
+    // Generation Settings
+    float m_terrainHeightOffsetScale = 100.f;
+	float m_humidityScale = 2000.f;
+	float m_mountainnessScale = 2000.f;
+	float m_oceannessScale = 2000.f;
+	float m_oceanShallowWaterThreshold = 0.75f;
+	float m_oceanWaterThreshold = 0.76f;
+	float m_oceanDeepWaterThreshold = 0.77f;
+    float m_forestnessScale = 500.f;
+    float m_rivernessScale = 4000.f;
+    float m_riverThreshold = 0.01f;
+    float m_riverMaxDepth = 0.25f;
+    float m_desertRiverMaxDepth = 0.35f;
+    float m_riverToOceanTransitionSpeed = 10.f;
+    float m_riverToDesertTransitionSpeed = 10.f;
 };
 
 

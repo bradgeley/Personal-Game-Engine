@@ -381,6 +381,7 @@
     <ClInclude Include="Game\SLoadChunks.h" />
     <ClInclude Include="Game\SMovement.h" />
     <ClInclude Include="Game\SCopyTransform.h" />
+    <ClInclude Include="Game\SpawnInfo.h" />
     <ClInclude Include="Game\SPhysics.h" />
     <ClInclude Include="Game\SpriteShaderCPU.h" />
     <ClInclude Include="Game\SUnloadChunks.h" />
@@ -390,6 +391,7 @@
     <ClInclude Include="Game\SWorldCollision.h" />
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
+    <ClInclude Include="Game\TileGeneratedData.h" />
     <ClInclude Include="Game\WorldCoords.h" />
     <ClInclude Include="Game\WorldRaycast.h" />
     <ClInclude Include="Game\WorldSettings.h" />
@@ -405,6 +407,7 @@
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Marine-Gauss.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\Tree1.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie2.xml" />
   </ItemGroup>

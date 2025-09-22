@@ -28,10 +28,6 @@ void SWorld::Startup()
 	playerInfo.m_def = EntityDef::GetEntityDef("Player");
 	playerInfo.m_spawnPos = Vec2(1 + 0.1f, 1 + 0.1f);
 	entityFactory.m_entitiesToSpawn.push_back(playerInfo);
-
-	// Test for multiple player controlled things. Todo: implement death to test if 1 of those players dying swaps the camera over
-	playerInfo.m_spawnPos = Vec2(1 + 0.2f, 1 + 0.2f);
-	entityFactory.m_entitiesToSpawn.push_back(playerInfo);
 }
 
 

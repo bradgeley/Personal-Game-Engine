@@ -36,10 +36,6 @@ public:
 
 protected:
 
-	bool ChunkDestroyed(NamedProperties& args);
-
-protected:
-
 	SCWorld* m_world = nullptr;
 	Chunk* m_chunk = nullptr;
 	IntVec2 m_chunkCoords;

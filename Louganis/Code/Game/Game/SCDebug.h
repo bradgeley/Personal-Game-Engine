@@ -15,8 +15,8 @@ public:
 	bool m_debugRenderToMouseRaycast = false;
 	bool m_debugRenderToMouseDiscCast = false;
 	bool m_debugRenderCostField = false;
-	bool m_debugRenderGradient = false;
-	bool m_debugRenderPreventativePhysicsRaycasts = false;
+	bool m_debugRenderFlowField = false;
+	bool m_debugRenderPreventativePhysics = false;
 	bool m_debugRenderSolidTiles = false;
 	bool m_debugRenderCollision = false;
 	Vec2 m_debugMouseLocation;

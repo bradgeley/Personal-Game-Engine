@@ -22,7 +22,6 @@ FlowFieldChunk::FlowFieldChunk(Chunk* chunk, SCWorld* world) :
 	m_gradient(Vec2::ZeroVector),
 	m_consideredCells(false)
 {
-	m_chunk->m_destroyed.SubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
 	m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 }
 
@@ -31,11 +30,6 @@ FlowFieldChunk::FlowFieldChunk(Chunk* chunk, SCWorld* world) :
 //----------------------------------------------------------------------------------------------------------------------
 FlowFieldChunk::~FlowFieldChunk()
 {
-	if (m_chunk)
-	{
-		m_chunk->m_destroyed.UnsubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
-	}
-
 	g_renderer->ReleaseVertexBuffer(m_debugVBO);
 }
 
@@ -134,14 +128,4 @@ void FlowFieldChunk::GenerateCostField()
 void FlowFieldChunk::ResetConsideredCells()
 {
 	m_consideredCells.SetAll(false);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool FlowFieldChunk::ChunkDestroyed(NamedProperties&)
-{
-	m_chunk->m_destroyed.UnsubscribeMethod(this, &FlowFieldChunk::ChunkDestroyed);
-	m_chunk = nullptr;
-	return false;
 }

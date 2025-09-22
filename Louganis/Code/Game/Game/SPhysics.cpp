@@ -66,7 +66,7 @@ void SPhysics::Run(SystemContext const& context)
             WorldDiscCastResult result;
             result = DiscCast(scWorld, discCast);
 
-            if (scDebug.m_debugRenderPreventativePhysicsRaycasts) 
+            if (scDebug.m_debugRenderPreventativePhysics) 
             {
 				AddVertsForDiscCast(*g_renderer->GetVertexBuffer(scDebug.m_frameUntexVerts), result, 1.f);
             }
@@ -113,6 +113,6 @@ void SPhysics::Shutdown()
 bool SPhysics::DebugRenderPreventativePhysics(NamedProperties&)
 {
     auto& scDebug = g_ecs->GetSingleton<SCDebug>();
-    scDebug.m_debugRenderPreventativePhysicsRaycasts = !scDebug.m_debugRenderPreventativePhysicsRaycasts;
+    scDebug.m_debugRenderPreventativePhysics = !scDebug.m_debugRenderPreventativePhysics;
     return false;
 }
