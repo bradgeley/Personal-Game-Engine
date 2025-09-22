@@ -20,7 +20,7 @@ void SCollisionHash::Startup()
 
     // Hashing entities can be split, since it is a read only operation until the combine phase
     int numThreads = std::thread::hardware_concurrency() - 1;
-	m_systemSplittingNumJobs = 10;
+	m_systemSplittingNumJobs = numThreads - 1;
 }
 
 
@@ -71,7 +71,7 @@ void SCollisionHash::PreRun()
         if (camera.m_isActive)
         {
             scCollision.m_collisionUpdateBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
-            scCollision.m_collisionUpdateBounds.SetDimsAboutCenter(Vec2(world.m_worldSettings.m_collisionHashRadius * 2.f, world.m_worldSettings.m_collisionHashRadius * 2.f));
+            scCollision.m_collisionUpdateBounds.SetDimsAboutCenter(Vec2(StaticWorldSettings::s_collisionHashRadius * 2.f, StaticWorldSettings::s_collisionHashRadius * 2.f));
             break;
         }
     }

@@ -1,12 +1,15 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SWorld.h"
-#include "SCWorld.h"
-#include "SCEntityFactory.h"
-#include "CTransform.h"
+#include "Chunk.h"
 #include "CPlayerController.h"
+#include "CTransform.h"
 #include "EntityDef.h"
+#include "SCEntityFactory.h"
+#include "SCWorld.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Math/Noise.h"
 #include "Engine/Math/RandomNumberGenerator.h"
+#include "TileGeneratedData.h"
 
 
 
@@ -15,6 +18,8 @@ void SWorld::Startup()
 {
 	AddWriteDependencies<SCWorld>();
 	AddReadDependencies<CTransform, CPlayerController>();
+
+	DevConsoleUtils::AddDevConsoleCommand("DumpTileGenData", &SWorld::DumpTileGenData);
 
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	if (world.m_worldSettings.m_randomWorldSeed)
@@ -52,6 +57,8 @@ void SWorld::Shutdown()
 {
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	world.ClearActiveChunks();
+
+	DevConsoleUtils::RemoveDevConsoleCommand("DumpTileGenData", &SWorld::DumpTileGenData);
 }
 
 
@@ -67,4 +74,21 @@ void SWorld::UpdateLastKnownPlayerLocation(SCWorld& world, Vec2 const& playerLoc
 		world.m_lastKnownPlayerWorldCoords = playerWorldCoords;
 		world.m_playerChangedWorldCoordsThisFrame = true;
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SWorld::DumpTileGenData(NamedProperties&)
+{
+	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	SystemContext context;
+	auto it = g_ecs->Iterate<CTransform, CPlayerController>(context);
+	if (it.IsValid())
+	{
+		Vec2 playerLocation = g_ecs->GetComponent<CTransform>(it)->m_pos;
+		TileGeneratedData tileGenData = Chunk::GenerateTileData(playerLocation, world.m_worldSettings);
+		DevConsoleUtils::Log(Rgba8::White, tileGenData.ToString().c_str());
+	}
+	return false;
 }

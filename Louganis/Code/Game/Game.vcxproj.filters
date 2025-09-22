@@ -136,6 +136,9 @@
     <ClCompile Include="Game\SInput.cpp">
       <Filter>Systems\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Game\TileGeneratedData.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">

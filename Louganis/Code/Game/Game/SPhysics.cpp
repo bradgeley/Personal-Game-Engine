@@ -28,7 +28,7 @@ void SPhysics::Startup()
     g_eventSystem->SubscribeMethod("DebugRenderPreventativePhysics", this, &SPhysics::DebugRenderPreventativePhysics);
 
     int numThreads = std::thread::hardware_concurrency() - 1;
-    m_systemSplittingNumJobs = 0;
+    m_systemSplittingNumJobs = numThreads - 1;
 }
 
 

@@ -65,7 +65,7 @@ void SLoadChunks::Run(SystemContext const& context)
 			{
 				world.LoadChunk(chunkCoords);
 				scLoadChunks.m_numLoadedChunksThisFrame++;
-				bool hitLimit = scLoadChunks.m_numLoadedChunksThisFrame >= world.m_worldSettings.m_maxNumChunksToLoadPerFrame;
+				bool hitLimit = scLoadChunks.m_numLoadedChunksThisFrame >= StaticWorldSettings::s_maxNumChunksToLoadPerFrame;
 				scLoadChunks.m_unloadedChunksInRadius = hitLimit;
 				shouldContinueLooping = !hitLimit;
 

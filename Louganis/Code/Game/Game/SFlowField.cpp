@@ -86,18 +86,15 @@ int SFlowField::CreateMissingFlowFieldChunks(Vec2 const& anchorLocation)
 
     int numCreated = 0;
 
-    float flowFieldGenerationRadius = world.m_worldSettings.m_flowFieldGenerationRadius;
-    float flowFieldGenerationRadiusSquared = flowFieldGenerationRadius * flowFieldGenerationRadius;
-
-    AABB2 flowFieldBounds = AABB2(anchorLocation - Vec2(flowFieldGenerationRadius, flowFieldGenerationRadius), anchorLocation + Vec2(flowFieldGenerationRadius, flowFieldGenerationRadius));
-    world.ForEachChunkOverlappingAABB(flowFieldBounds, [&flowField, &world, flowFieldGenerationRadiusSquared, &numCreated, &anchorLocation](Chunk& chunk)
+    AABB2 flowFieldBounds = AABB2(anchorLocation - Vec2(StaticWorldSettings::s_flowFieldGenerationRadius, StaticWorldSettings::s_flowFieldGenerationRadius), anchorLocation + Vec2(StaticWorldSettings::s_flowFieldGenerationRadius, StaticWorldSettings::s_flowFieldGenerationRadius));
+    world.ForEachChunkOverlappingAABB(flowFieldBounds, [&flowField, &world, &numCreated, &anchorLocation](Chunk& chunk)
     {
         FlowFieldChunk* flowFieldChunk = flowField.GetActiveChunk(chunk.m_chunkCoords);
         if (!flowFieldChunk)
         {
             float distanceSquared = chunk.m_chunkBounds.GetCenter().GetDistanceSquaredTo(anchorLocation);
             
-            if (distanceSquared < flowFieldGenerationRadiusSquared)
+            if (distanceSquared < StaticWorldSettings::s_flowFieldGenerationRadius)
             {
                 flowFieldChunk = new FlowFieldChunk(&chunk, &world);
                 flowFieldChunk->GenerateCostField();
@@ -119,8 +116,6 @@ int SFlowField::DestroyStaleFlowFieldChunks(Vec2 const& anchorLocation)
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
     FlowField& flowField = scFlowField.m_toPlayerFlowField;
 
-    float flowFieldGenerationRadiusSquared = world.m_worldSettings.m_flowFieldGenerationRadius * world.m_worldSettings.m_flowFieldGenerationRadius;
-
     // Destroy flow field chunks that no longer have a valid chunk
     static std::vector<IntVec2> coordsToRemove;
     coordsToRemove.clear();
@@ -137,7 +132,7 @@ int SFlowField::DestroyStaleFlowFieldChunks(Vec2 const& anchorLocation)
         {
             float distanceSquared = flowFieldChunk->GetChunkBounds().GetCenter().GetDistanceSquaredTo(anchorLocation);
 
-            if (distanceSquared > flowFieldGenerationRadiusSquared)
+            if (distanceSquared > StaticWorldSettings::s_flowFieldGenerationRadiusSquared)
             {
                 coordsToRemove.push_back(flowFieldChunk->GetChunkCoords());
             }

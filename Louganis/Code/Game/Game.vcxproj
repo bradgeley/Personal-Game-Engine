@@ -332,6 +332,7 @@
     <ClCompile Include="Game\SWorld.cpp" />
     <ClCompile Include="Game\SWorldCollision.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
+    <ClCompile Include="Game\TileGeneratedData.cpp" />
     <ClCompile Include="Game\WorldCoords.cpp" />
     <ClCompile Include="Game\WorldRaycast.cpp" />
   </ItemGroup>

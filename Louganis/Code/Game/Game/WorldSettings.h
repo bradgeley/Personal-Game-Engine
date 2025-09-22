@@ -10,22 +10,25 @@
 //
 namespace StaticWorldSettings
 {
-    constexpr int   s_worldChunkSizePowerOfTwo      = 4;        // In tiles
-    constexpr float s_tileWidth                     = 2.f;      // In world units
+    constexpr int   s_worldChunkSizePowerOfTwo              = 4;        // In tiles
+    constexpr float s_tileWidth                             = 2.f;      // In world units
 
 #if defined(_DEBUG)
-    constexpr float s_chunkLoadRadius               = 50.f;
-    constexpr float s_chunkUnloadRadius             = 75.f;
-    constexpr float s_collisionHashRadius           = 32.f;
-    constexpr float s_flowFieldGenerationRadius     = 32.f;
-    constexpr int   s_maxNumChunksToLoadPerFrame    = 5;
+    constexpr float s_defaultChunkLoadRadius                = 50.f;
+    constexpr float s_defaultChunkUnloadRadius              = 75.f;
+    constexpr float s_collisionHashRadius                   = 32.f;
+    constexpr float s_flowFieldGenerationRadius             = 32.f;
+    constexpr int   s_maxNumChunksToLoadPerFrame            = 5;
 #else
-    constexpr float s_chunkLoadRadius               = 2000.f;
-    constexpr float s_chunkUnloadRadius             = 2500.f;
-    constexpr float s_collisionHashRadius           = 50.f;
-    constexpr float s_flowFieldGenerationRadius     = 50.f;
-    constexpr int   s_maxNumChunksToLoadPerFrame    = 50;
+    constexpr float s_defaultChunkLoadRadius                = 2000.f;
+    constexpr float s_defaultChunkUnloadRadius              = 2500.f;
+    constexpr float s_collisionHashRadius                   = 50.f;
+    constexpr float s_flowFieldGenerationRadius             = 50.f;
+    constexpr int   s_maxNumChunksToLoadPerFrame            = 100;
 #endif // _DEBUG
+
+    constexpr float s_flowFieldGenerationRadiusSquared      = s_flowFieldGenerationRadius * s_flowFieldGenerationRadius;
+    constexpr float s_collisionHashRadiusSquared            = s_collisionHashRadius * s_collisionHashRadius;
 
     //----------------------------------------------------------------------------------------------------------------------
     // Derived Constants
@@ -55,29 +58,40 @@ struct WorldSettings
 {
     bool    m_randomWorldSeed                   = true;
     size_t  m_worldSeed                         = 69;
-    float   m_chunkLoadRadius                   = StaticWorldSettings::s_chunkLoadRadius;
-    float   m_chunkUnloadRadius                 = StaticWorldSettings::s_chunkUnloadRadius;
-    float   m_collisionHashRadius               = StaticWorldSettings::s_collisionHashRadius;             // How far to generate collision hashes around the player
-    float   m_flowFieldGenerationRadius         = StaticWorldSettings::s_flowFieldGenerationRadius;       // How far to generate flow field around the player
+    float   m_chunkLoadRadius                   = StaticWorldSettings::s_defaultChunkLoadRadius;
+    float   m_chunkUnloadRadius                 = StaticWorldSettings::s_defaultChunkUnloadRadius;
     float   m_entityWallBuffer                  = 0.01f;
-    int     m_maxNumChunksToLoadPerFrame        = StaticWorldSettings::s_maxNumChunksToLoadPerFrame;
     float   m_collisionHashWiggleRoom           = 0.25f;      // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
 
+    //----------------------------------------------------------------------------------------------------------------------
     // Generation Settings
+
     float m_terrainHeightOffsetScale = 100.f;
-	float m_humidityScale = 2000.f;
-	float m_mountainnessScale = 2000.f;
-	float m_oceannessScale = 2000.f;
-	float m_oceanShallowWaterThreshold = 0.75f;
-	float m_oceanWaterThreshold = 0.76f;
-	float m_oceanDeepWaterThreshold = 0.77f;
-    float m_forestnessScale = 500.f;
-    float m_rivernessScale = 4000.f;
-    float m_riverThreshold = 0.01f;
-    float m_riverMaxDepth = 0.25f;
-    float m_desertRiverMaxDepth = 0.35f;
-    float m_riverToOceanTransitionSpeed = 10.f;
-    float m_riverToDesertTransitionSpeed = 10.f;
+
+    // Biomes
+	float m_humidityScale                       = 20000.f;
+	float m_mountainnessScale                   = 2000.f;
+	float m_oceannessScale                      = 1000.f;
+    float m_rivernessScale                      = 4000.f;
+    float m_forestnessScale                     = 500.f;
+	float m_islandnessScale                     = 20000.f;
+	float m_temperatureScale                    = 20000.f;
+
+    // Ocean settings
+	float m_oceanSandThreshold                  = 0.72f;
+	float m_oceanShallowWaterThreshold          = 0.75f;
+	float m_oceanWaterThreshold                 = 0.76f;
+	float m_oceanDeepWaterThreshold             = 0.77f;
+
+    // River settings
+    float m_riverThreshold                      = 0.01f;
+    float m_riverMaxDepth                       = 0.25f;
+    float m_desertRiverMaxDepth                 = 0.35f;
+    float m_riverToOceanTransitionSpeed         = 10.f;
+    float m_riverToDesertTransitionSpeed        = 10.f;
+
+    // Island settings
+	float m_islandThreshold                     = 0.75f;    
 };
 
 

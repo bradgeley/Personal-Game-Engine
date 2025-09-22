@@ -7,8 +7,8 @@
 
 class Chunk;
 class SCWorld;
+struct NamedProperties;
 struct Vec2;
-
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -24,4 +24,8 @@ public:
 protected:
 
     void UpdateLastKnownPlayerLocation(SCWorld& world, Vec2 const& playerLocation) const;
+
+protected:
+
+    static bool DumpTileGenData(NamedProperties& args);
 };

@@ -23,7 +23,7 @@ class Chunk
 public:
 
 	void Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings, std::vector<SpawnInfo>& out_spawnInfos);
-	TileGeneratedData GenerateTileData(Vec2 const& worldTileLocation, WorldSettings const& worldSettings) const;
+	static TileGeneratedData GenerateTileData(Vec2 const& worldTileLocation, WorldSettings const& worldSettings);
 	void Destroy();
 
 	bool IsTileSolid(IntVec2 const& localTileCoords) const;
