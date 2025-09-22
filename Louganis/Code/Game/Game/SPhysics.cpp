@@ -49,6 +49,8 @@ void SPhysics::Run(SystemContext const& context)
         const CCollision& collision = collisionStorage[it];
         const float& radius = collision.m_radius;
 
+		Vec2 collisionPos = transform.m_pos + collision.m_offset;
+
         // This is how much movement we want to do this frame, total
         Vec2 originalFrameMovement = move.m_frameMovement;
         Vec2& frameMovement = move.m_frameMovement;
@@ -58,7 +60,7 @@ void SPhysics::Run(SystemContext const& context)
         while (!frameMovement.IsNearlyZero(0.000001f) && numBounces < maxNumBounces)
         {
             WorldDiscCast discCast;
-            discCast.m_start = transform.m_pos;
+            discCast.m_start = collisionPos;
             discCast.m_direction = frameMovement.GetNormalized();
             discCast.m_maxDistance = frameMovement.GetLength();
             discCast.m_discRadius = radius;
@@ -73,13 +75,14 @@ void SPhysics::Run(SystemContext const& context)
 
             if (result.m_immediateHit)
             {
-                GeometryUtils::PushDiscOutOfPoint2D(transform.m_pos, radius + scWorld.m_worldSettings.m_entityWallBuffer, result.m_hitLocation);
+                GeometryUtils::PushDiscOutOfPoint2D(collisionPos, radius + scWorld.m_worldSettings.m_entityWallBuffer, result.m_hitLocation);
                 break;
             }
             else if (result.m_blockingHit)
             {
-                transform.m_pos = result.m_newDiscCenter;
-                transform.m_pos -= discCast.m_direction * scWorld.m_worldSettings.m_entityWallBuffer;
+                collisionPos = result.m_newDiscCenter;
+                collisionPos -= discCast.m_direction * scWorld.m_worldSettings.m_entityWallBuffer;
+				transform.m_pos = collisionPos - collision.m_offset;
                 Vec2 lostMomentum = frameMovement.GetProjectedOntoNormal(result.m_hitNormal);
                 frameMovement -= lostMomentum;
                 numBounces++;

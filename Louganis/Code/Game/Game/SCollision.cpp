@@ -42,25 +42,43 @@ void SCollision::Run(SystemContext const&)
                 CTransform& transformA = transformStorage[entityA];
                 CCollision& collisionA = collisionStorage[entityA];
 
+                bool canBpushA = !collisionA.IsImmovable();
+
                 for (size_t b = a + 1; b < tileBucket.size(); ++b)
                 {
                     EntityID& entityB = tileBucket[b];
                     CTransform& transformB = transformStorage[entityB];
                     CCollision& collisionB = collisionStorage[entityB];
 
-					Vec2 newPosA = transformA.m_pos;
-					Vec2 newPosB = transformB.m_pos;
+					Vec2 newPosA = transformA.m_pos + collisionA.m_offset;
+					Vec2 newPosB = transformB.m_pos + collisionB.m_offset;
 
-                    if (GeometryUtils::PushDiscsOutOfEachOther2D(newPosA, collisionA.m_radius, newPosB, collisionB.m_radius, true, 0.75))
+                    bool canApushB = !collisionB.IsImmovable();
+
+                    bool collisionResolved = false;
+                    if (canApushB && canBpushA)
+                    {
+                        collisionResolved = GeometryUtils::PushDiscsOutOfEachOther2D(newPosA, collisionA.m_radius, newPosB, collisionB.m_radius, true, 0.75);
+                    }
+                    else if (canApushB) // && !canBpushA
+                    {
+                        collisionResolved = GeometryUtils::PushDiscOutOfDisc2D(newPosB, collisionB.m_radius, newPosA, collisionA.m_radius);
+                    }
+                    else if (canBpushA) // && !canApushB
+                    {
+                        collisionResolved = GeometryUtils::PushDiscOutOfDisc2D(newPosA, collisionA.m_radius, newPosB, collisionB.m_radius);
+                    }
+
+                    if (collisionResolved)
                     {
                         // Make sure we didnt push into a wall
                         if (!scWorld.IsPointInsideSolidTile(newPosA))
                         {
-							transformA.m_pos = newPosA;
+                            transformA.m_pos = newPosA - collisionA.m_offset;
                         }
                         if (!scWorld.IsPointInsideSolidTile(newPosB))
                         {
-                            transformB.m_pos = newPosB;
+                            transformB.m_pos = newPosB - collisionB.m_offset;
                         }
                     }
                 }

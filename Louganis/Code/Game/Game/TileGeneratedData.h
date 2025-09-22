@@ -20,6 +20,7 @@ struct TileGeneratedData
 	float	m_islandness				= 0.f; // 0 to 1
 	float	m_temperature				= 0.f; // 0 to 1
 	float	m_treeness					= 0.f; // 0 to 1
+	float	m_treeScale					= 1.f; // non-zero positive
 
 	// Cached bools
 	bool	m_isIsland					= false;

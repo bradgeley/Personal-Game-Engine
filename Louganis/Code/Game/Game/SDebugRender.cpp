@@ -251,11 +251,14 @@ void SDebugRender::Run(SystemContext const& context)
 			CTransform const& transform = *transStorage.Get(it);
 			CCollision const& collision = *collStorage.Get(it);
             CRender const* render = renderStorage.Get(it);
-            if (GeometryUtils::DoesDiscOverlapAABB(transform.m_pos, collision.m_radius, cameraBounds))
+
+            Vec2 collisionPos = transform.m_pos + collision.m_offset;
+
+            if (GeometryUtils::DoesDiscOverlapAABB(collisionPos, collision.m_radius, cameraBounds))
             {
-                VertexUtils::AddVertsForWireDisc2D(frameVerts, transform.m_pos, collision.m_radius, 0.01f, 8, Rgba8::Magenta);
+                VertexUtils::AddVertsForWireDisc2D(frameVerts, collisionPos, collision.m_radius, 0.01f, 8, Rgba8::Magenta);
 			}
-            if (render && GeometryUtils::DoesDiscOverlapAABB(transform.m_pos, 0.5f * render->m_scale, cameraBounds))
+            if (render && GeometryUtils::DoesDiscOverlapAABB(collisionPos, 0.5f * render->m_scale, cameraBounds))
             {
 				VertexUtils::AddVertsForWireDisc2D(frameVerts, transform.m_pos, 0.5f * render->m_scale, 0.01f, 8, Rgba8::Cyan);
 			}

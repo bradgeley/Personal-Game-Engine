@@ -85,3 +85,33 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
 
     return id;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EntityID SEntityFactory::SpawnEntity(SpawnInfo const& spawnInfo)
+{
+    EntityID id = SEntityFactory::CreateEntityFromDef(spawnInfo.m_def);
+    if (id == ENTITY_ID_INVALID)
+    {
+        return ENTITY_ID_INVALID;
+    }
+
+    if (CTransform* transform = g_ecs->GetComponent<CTransform>(id))
+    {
+        transform->m_pos = spawnInfo.m_spawnPos;
+        transform->m_orientation = spawnInfo.m_spawnOrientation;
+    }
+
+    if (CCollision* collision = g_ecs->GetComponent<CCollision>(id))
+    {
+        collision->m_radius *= spawnInfo.m_spawnScale;
+		collision->m_offset *= spawnInfo.m_spawnScale;
+    }
+
+    if (CRender* render = g_ecs->GetComponent<CRender>(id))
+    {
+        render->m_scale *= spawnInfo.m_spawnScale;
+    }
+    return id;
+}

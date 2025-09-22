@@ -95,7 +95,7 @@ void SCollisionHash::Run(SystemContext const& context)
         CTransform& trans = transStorage[it];
         CCollision& coll = *collStorage.Get(it);
 
-        Vec2& pos = trans.m_pos;
+        Vec2 pos = trans.m_pos + coll.m_offset;
         float radius = coll.m_radius + world.m_worldSettings.m_collisionHashWiggleRoom;
 
         if (!scCollision.m_collisionUpdateBounds.IsPointInside(pos))

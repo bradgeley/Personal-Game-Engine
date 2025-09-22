@@ -126,7 +126,7 @@ void SRenderEntities::Run(SystemContext const& context)
 		InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
 
         SpriteInstance instance;
-		float instanceDepth = MathUtils::RangeMapClamped(render.m_pos.y, cameraBounds.mins.y, cameraBounds.maxs.y, 0.05f, 0.95f);
+		float instanceDepth = MathUtils::RangeMap(render.m_pos.y - (render.m_scale * 0.5f), cameraBounds.mins.y - 100.f, cameraBounds.maxs.y + 100.f, 0.05f, 0.95f);
 		instance.m_position = Vec3(render.m_pos, instanceDepth); // todo: z-order
 		instance.m_orientation = render.m_orientation;
 		instance.m_scale = render.m_scale;

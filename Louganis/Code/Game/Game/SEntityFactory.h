@@ -5,6 +5,7 @@
 
 
 struct EntityDef;
+struct SpawnInfo;
 
 
 
@@ -19,6 +20,7 @@ public:
     void Shutdown() override;
 
     static EntityID CreateEntityFromDef(EntityDef const* def);
+	static EntityID SpawnEntity(SpawnInfo const& spawnInfo); // Usage requires write all dependencies
 
 private:
 

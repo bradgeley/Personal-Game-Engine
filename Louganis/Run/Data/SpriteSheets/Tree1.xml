@@ -1,7 +1,7 @@
 
 
 
-<GridSpriteSheet name="Tree1" texture="Data/SpriteSheets/Tree1.png" layout="1,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Tree1" texture="Data/SpriteSheets/Tree2.png" layout="1,1" edgePadding="0,0" innerPadding="0,0">
   
   <SpriteAnimation name="idle" frames="0" type="singleFrame"></SpriteAnimation>
   

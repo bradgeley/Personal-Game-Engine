@@ -87,7 +87,8 @@ bool SWorld::DumpTileGenData(NamedProperties&)
 	if (it.IsValid())
 	{
 		Vec2 playerLocation = g_ecs->GetComponent<CTransform>(it)->m_pos;
-		TileGeneratedData tileGenData = Chunk::GenerateTileData(playerLocation, world.m_worldSettings);
+		IntVec2 globalTileCoords = world.GetGlobalTileCoordsAtLocation(playerLocation);
+		TileGeneratedData tileGenData = Chunk::GenerateTileData(globalTileCoords, world.m_worldSettings);
 		DevConsoleUtils::Log(Rgba8::White, tileGenData.ToString().c_str());
 	}
 	return false;

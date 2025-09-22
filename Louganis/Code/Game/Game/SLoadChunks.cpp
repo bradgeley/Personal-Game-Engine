@@ -33,9 +33,6 @@ void SLoadChunks::Run(SystemContext const& context)
 	SCLoadChunks& scLoadChunks = g_ecs->GetSingleton<SCLoadChunks>();
 	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 
-	// Experimental
-	SCEntityFactory& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
-
 	scLoadChunks.m_numLoadedChunksThisFrame = 0;
 	if (!(scLoadChunks.m_unloadedChunksInRadius || world.GetPlayerChangedWorldCoordsThisFrame()))
 	{
@@ -54,36 +51,35 @@ void SLoadChunks::Run(SystemContext const& context)
 		chunkUnloadRadius = chunkLoadRadius;
 	}
 
+	// Shared storage to avoid extra allocations
+	std::vector<SpawnInfo> sharedEntitiesToSpawn;
+	sharedEntitiesToSpawn.reserve(100);
+
 	scLoadChunks.m_unloadedChunksInRadius = false;
 	for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
 	{
 		CTransform& playerTransform = *transformStorage.Get(it);
 
- 		world.ForEachChunkCoordsOverlappingCircle_InRadialOrder(playerTransform.m_pos, chunkLoadRadius, [&world, &entityFactory, &scLoadChunks, &transformStorage](IntVec2 const& chunkCoords)
+ 		world.ForEachChunkCoordsOverlappingCircle_InRadialOrder(playerTransform.m_pos, chunkLoadRadius, [&world, &scLoadChunks, &sharedEntitiesToSpawn](IntVec2 const& chunkCoords)
 		{ 
 			bool shouldContinueLooping = true;
 			if (!world.IsChunkLoaded(chunkCoords))
 			{
-				std::vector<SpawnInfo> entitiesToSpawn;
-				Chunk* chunk = world.LoadChunk(chunkCoords, entitiesToSpawn);
+				Chunk* chunk = world.LoadChunk(chunkCoords, sharedEntitiesToSpawn);
 				scLoadChunks.m_numLoadedChunksThisFrame++;
 				bool hitLimit = scLoadChunks.m_numLoadedChunksThisFrame >= StaticWorldSettings::s_maxNumChunksToLoadPerFrame;
 				scLoadChunks.m_unloadedChunksInRadius = hitLimit;
 				shouldContinueLooping = !hitLimit;
 
-				for (SpawnInfo const& spawnInfo : entitiesToSpawn)
+				for (SpawnInfo const& spawnInfo : sharedEntitiesToSpawn)
 				{
-					EntityID id = SEntityFactory::CreateEntityFromDef(spawnInfo.m_def);
-					if (id == ENTITY_ID_INVALID)
+					EntityID spawnedEntity = SEntityFactory::SpawnEntity(spawnInfo);
+					if (spawnedEntity != ENTITY_ID_INVALID)
 					{
-						continue;
+						chunk->m_spawnedEntities.push_back(spawnedEntity);
 					}
-					chunk->m_spawnedEntities.push_back(id);
-
-					CTransform& transform = transformStorage[id];
-					transform.m_pos = spawnInfo.m_spawnPos;
-					transform.m_orientation = spawnInfo.m_spawnOrientation;
 				}
+				sharedEntitiesToSpawn.clear();
 			}
 			return shouldContinueLooping;
 		});

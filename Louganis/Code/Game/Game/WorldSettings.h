@@ -66,7 +66,7 @@ struct WorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Generation Settings
 
-    float m_terrainHeightOffsetScale = 100.f;
+    float m_terrainHeightOffsetScale            = 100.f;
 
     // Biomes
 	float m_humidityScale                       = 20000.f;
@@ -77,6 +77,10 @@ struct WorldSettings
     float m_treeBaseScale                       = 10.f;
 	float m_islandnessScale                     = 20000.f;
 	float m_temperatureScale                    = 20000.f;
+
+    float m_coldThreshold                       = 0.2f;
+    float m_forestThreshold                     = 0.5f;
+    float m_deepForestThreshold                 = 0.75f;
 
     // Ocean settings
 	float m_oceanSandThreshold                  = 0.72f;
