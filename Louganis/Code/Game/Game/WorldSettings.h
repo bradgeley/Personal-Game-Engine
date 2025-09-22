@@ -20,8 +20,8 @@ namespace StaticWorldSettings
     constexpr float s_flowFieldGenerationRadius             = 32.f;
     constexpr int   s_maxNumChunksToLoadPerFrame            = 5;
 #else
-    constexpr float s_defaultChunkLoadRadius                = 2000.f;
-    constexpr float s_defaultChunkUnloadRadius              = 2500.f;
+    constexpr float s_defaultChunkLoadRadius                = 100.f;
+    constexpr float s_defaultChunkUnloadRadius              = 150.f;
     constexpr float s_collisionHashRadius                   = 50.f;
     constexpr float s_flowFieldGenerationRadius             = 50.f;
     constexpr int   s_maxNumChunksToLoadPerFrame            = 100;
@@ -74,6 +74,7 @@ struct WorldSettings
 	float m_oceannessScale                      = 1000.f;
     float m_rivernessScale                      = 4000.f;
     float m_forestnessScale                     = 500.f;
+    float m_treeBaseScale                       = 10.f;
 	float m_islandnessScale                     = 20000.f;
 	float m_temperatureScale                    = 20000.f;
 

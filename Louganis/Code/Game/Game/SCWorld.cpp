@@ -536,24 +536,10 @@ AABB2 SCWorld::GetTileBounds(IntVec2 const& worldTileCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Chunk* SCWorld::GetOrCreateActiveChunk(int chunkX, int chunkY)
-{
-	Chunk* chunk = GetActiveChunk(chunkX, chunkY);
-	if (chunk)
-	{
-		return chunk;	
-	}
-	return LoadChunk(IntVec2(chunkX, chunkY));
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Chunk* SCWorld::LoadChunk(IntVec2 const& chunkCoords)
+Chunk* SCWorld::LoadChunk(IntVec2 const& chunkCoords, std::vector<SpawnInfo>& out_entitiesToSpawn)
 {
 	Chunk* chunk = new Chunk();
-	std::vector<SpawnInfo> entitiesToSpawn;
-	chunk->Generate(chunkCoords, m_worldSettings, entitiesToSpawn);
+	chunk->Generate(chunkCoords, m_worldSettings, out_entitiesToSpawn);
 	m_activeChunks.emplace(chunkCoords, chunk);
 	return chunk;
 }

@@ -81,13 +81,13 @@ void VertexUtils::AddVertsForAABB2(VertexBuffer& out_verts, AABB2 const& square,
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void VertexUtils::AddVertsForRect2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint, AABB2 const& UVs)
+void VertexUtils::AddVertsForRect2D(VertexBuffer& out_verts, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint, AABB2 const& UVs /*= AABB2::ZeroToOne*/, float z /*= 0.f*/)
 {
     // Get corners
-    Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, 1.f);
-    Vec3 topRightPoint = Vec3(maxs.x, maxs.y, 1.f);
-    Vec3 bottomLeftPoint = Vec3(mins.x, mins.y, 1.f);
-    Vec3 topLeftPoint = Vec3(mins.x, maxs.y, 1.f);
+    Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, z);
+    Vec3 topRightPoint = Vec3(maxs.x, maxs.y, z);
+    Vec3 bottomLeftPoint = Vec3(mins.x, mins.y, z);
+    Vec3 topLeftPoint = Vec3(mins.x, maxs.y, z);
 
     // Get UVs
     Vec2 const& topRightUVs = UVs.maxs;
@@ -96,13 +96,13 @@ void VertexUtils::AddVertsForRect2D(VertexBuffer& out_verts, Vec2 const& mins, V
     Vec2 topLeftUVs = Vec2(UVs.mins.x, UVs.maxs.y);
 
     // Push some verts
-    out_verts.AddVert(Vertex_PCU(Vec3(bottomLeftPoint), tint, bottomLeftUVs));
-    out_verts.AddVert(Vertex_PCU(Vec3(bottomRightPoint), tint, bottomRightUVs));
-    out_verts.AddVert(Vertex_PCU(Vec3(topRightPoint), tint, topRightUVs));
+    out_verts.AddVert(Vertex_PCU(bottomLeftPoint, tint, bottomLeftUVs));
+    out_verts.AddVert(Vertex_PCU(bottomRightPoint, tint, bottomRightUVs));
+    out_verts.AddVert(Vertex_PCU(topRightPoint, tint, topRightUVs));
 
-    out_verts.AddVert(Vertex_PCU(Vec3(topRightPoint), tint, topRightUVs));
-    out_verts.AddVert(Vertex_PCU(Vec3(topLeftPoint), tint, topLeftUVs));
-    out_verts.AddVert(Vertex_PCU(Vec3(bottomLeftPoint), tint, bottomLeftUVs));
+    out_verts.AddVert(Vertex_PCU(topRightPoint, tint, topRightUVs));
+    out_verts.AddVert(Vertex_PCU(topLeftPoint, tint, topLeftUVs));
+    out_verts.AddVert(Vertex_PCU(bottomLeftPoint, tint, bottomLeftUVs));
 }
 
 

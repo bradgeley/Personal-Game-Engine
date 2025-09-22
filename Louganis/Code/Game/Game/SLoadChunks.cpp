@@ -6,6 +6,7 @@
 #include "CTransform.h"
 #include "EntityDef.h"
 #include "Chunk.h"
+#include "SEntityFactory.h"
 #include "TileDef.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Performance/ScopedTimer.h"
@@ -30,6 +31,7 @@ void SLoadChunks::Run(SystemContext const& context)
 {
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCLoadChunks& scLoadChunks = g_ecs->GetSingleton<SCLoadChunks>();
+	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 
 	// Experimental
 	SCEntityFactory& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
@@ -43,7 +45,6 @@ void SLoadChunks::Run(SystemContext const& context)
 		return;
 	}
 
-	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	WorldSettings const& worldSettings = world.m_worldSettings;
 	float chunkLoadRadius = worldSettings.m_chunkLoadRadius;
 	float chunkUnloadRadius = worldSettings.m_chunkUnloadRadius;
@@ -58,32 +59,31 @@ void SLoadChunks::Run(SystemContext const& context)
 	{
 		CTransform& playerTransform = *transformStorage.Get(it);
 
- 		world.ForEachChunkCoordsOverlappingCircle_InRadialOrder(playerTransform.m_pos, chunkLoadRadius, [&world, &entityFactory, &scLoadChunks](IntVec2 const& chunkCoords)
+ 		world.ForEachChunkCoordsOverlappingCircle_InRadialOrder(playerTransform.m_pos, chunkLoadRadius, [&world, &entityFactory, &scLoadChunks, &transformStorage](IntVec2 const& chunkCoords)
 		{ 
 			bool shouldContinueLooping = true;
 			if (!world.IsChunkLoaded(chunkCoords))
 			{
-				world.LoadChunk(chunkCoords);
+				std::vector<SpawnInfo> entitiesToSpawn;
+				Chunk* chunk = world.LoadChunk(chunkCoords, entitiesToSpawn);
 				scLoadChunks.m_numLoadedChunksThisFrame++;
 				bool hitLimit = scLoadChunks.m_numLoadedChunksThisFrame >= StaticWorldSettings::s_maxNumChunksToLoadPerFrame;
 				scLoadChunks.m_unloadedChunksInRadius = hitLimit;
 				shouldContinueLooping = !hitLimit;
 
-				//f (Chunk* chunk = world.GetActiveChunk(chunkCoords))
-				//
-				//	for (int tileIndex = 0; tileIndex < StaticWorldSettings::s_numTilesInChunk; ++tileIndex)
-				//	{
-				//		if (!chunk->IsTileSolid(tileIndex))
-				//		{
-				//			// Experimental
-				//			SpawnInfo spawnInfo;
-				//			spawnInfo.m_def = EntityDef::GetEntityDef("BabyZombie");
-				//			WorldCoords worldCoords(chunkCoords, chunk->m_tileIDs.GetCoordsForIndex(tileIndex));
-				//			spawnInfo.m_spawnPos = world.GetTileBounds(worldCoords).GetCenter();
-				//			entityFactory.m_entitiesToSpawn.emplace_back(spawnInfo);
-				//		}
-				//	}
-				//
+				for (SpawnInfo const& spawnInfo : entitiesToSpawn)
+				{
+					EntityID id = SEntityFactory::CreateEntityFromDef(spawnInfo.m_def);
+					if (id == ENTITY_ID_INVALID)
+					{
+						continue;
+					}
+					chunk->m_spawnedEntities.push_back(id);
+
+					CTransform& transform = transformStorage[id];
+					transform.m_pos = spawnInfo.m_spawnPos;
+					transform.m_orientation = spawnInfo.m_spawnOrientation;
+				}
 			}
 			return shouldContinueLooping;
 		});

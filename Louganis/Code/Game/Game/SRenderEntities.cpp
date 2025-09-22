@@ -5,6 +5,7 @@
 #include "Engine/Assets/ShaderAsset.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Math/GeometryUtils.h"
+#include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/InstanceBuffer.h"
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/Renderer.h"
@@ -125,7 +126,8 @@ void SRenderEntities::Run(SystemContext const& context)
 		InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
 
         SpriteInstance instance;
-		instance.m_position = Vec3(render.m_pos, 0.f); // todo: z-order
+		float instanceDepth = MathUtils::RangeMapClamped(render.m_pos.y, cameraBounds.mins.y, cameraBounds.maxs.y, 0.05f, 0.95f);
+		instance.m_position = Vec3(render.m_pos, instanceDepth); // todo: z-order
 		instance.m_orientation = render.m_orientation;
 		instance.m_scale = render.m_scale;
         instance.m_rgba = render.m_tint;

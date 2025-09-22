@@ -179,5 +179,9 @@ float4 PixelMain(VSOutput input) : SV_Target0
 	
 	float4 tint = input.tint;
 	float4 finalColor = tint * surfaceColor;
+    
+    if (finalColor.a <= 0.0f)  // or some threshold
+        discard;
+    
 	return finalColor;
 }

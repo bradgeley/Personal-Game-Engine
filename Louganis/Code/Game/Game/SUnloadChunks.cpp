@@ -1,10 +1,11 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SUnloadChunks.h"
-#include "SCWorld.h"
+#include "Chunk.h"
 #include "CPlayerController.h"
 #include "CTransform.h"
 #include "EntityDef.h"
-#include "Chunk.h"
+#include "SCEntityFactory.h"
+#include "SCWorld.h"
 #include "TileDef.h"
 #include "Engine/Debug/DevConsole.h"
 
@@ -13,7 +14,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SUnloadChunks::Startup()
 {
-	AddWriteDependencies<SCWorld, SCLoadChunks>();
+	AddWriteDependencies<SCWorld, SCLoadChunks, SCEntityFactory>();
 	AddReadDependencies<CTransform, CPlayerController>();
 }
 
@@ -24,6 +25,7 @@ void SUnloadChunks::Run(SystemContext const& context)
 {
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCLoadChunks& scLoadChunks = g_ecs->GetSingleton<SCLoadChunks>();
+	SCEntityFactory& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
 	scLoadChunks.m_numUnloadedChunksThisFrame = 0;
 
 	if (!world.GetPlayerChangedWorldCoordsThisFrame())
@@ -53,6 +55,7 @@ void SUnloadChunks::Run(SystemContext const& context)
 		if (chunkCenter.GetDistanceSquaredTo(playerTransform.m_pos) > unloadRadiusSquared)
 		{
 			chunkIt = world.m_activeChunks.erase(chunkIt);
+			entityFactory.m_entitiesToDestroy.insert(entityFactory.m_entitiesToDestroy.end(), chunk->m_spawnedEntities.begin(), chunk->m_spawnedEntities.end());
 			chunk->Destroy();
 			delete chunk;
 			numChunksUnloaded++;

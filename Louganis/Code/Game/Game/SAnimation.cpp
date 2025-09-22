@@ -46,7 +46,7 @@ void SAnimation::Run(SystemContext const& context)
 	auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
 	auto& movementStorage = g_ecs->GetArrayStorage<CMovement>();
 
-    for (auto it = g_ecs->Iterate<CRender, CAnimation, CMovement, CTransform>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CRender, CAnimation, CTransform>(context); it.IsValid(); ++it)
     {
 		CTransform const& transform = transformStorage[it];
         CRender const& render = renderStorage[it];
@@ -56,7 +56,7 @@ void SAnimation::Run(SystemContext const& context)
         }
 
 		CAnimation& anim = animStorage[it];
-        CMovement& movement = movementStorage[it];
+        CMovement* movement = movementStorage.Get(it);
 
 		// Initialize sprite sheet and animation instance if not already done
         if (anim.m_gridSpriteSheet == AssetID::Invalid && anim.m_spriteSheetName != Name::Invalid)
@@ -73,10 +73,11 @@ void SAnimation::Run(SystemContext const& context)
         SpriteAnimationDef const* bestAnim = nullptr;
 
         Vec2 forward = Vec2::MakeFromUnitCircleDegrees(transform.m_orientation);
-        bool isMoving = !movement.m_frameMoveDir.IsZero();
-        if (isMoving && movement.m_isSprinting)
+        bool isMoving = movement ? !movement->m_frameMoveDir.IsZero() : false;
+		bool isSprinting = movement ? movement->m_isSprinting : false;
+        if (isMoving && isSprinting)
         {
-            anim.m_animInstance.SetSpeedMultiplier(movement.m_sprintMoveSpeedMultiplier);
+            anim.m_animInstance.SetSpeedMultiplier(movement->m_sprintMoveSpeedMultiplier);
         }
         else
         {

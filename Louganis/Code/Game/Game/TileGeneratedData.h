@@ -19,6 +19,7 @@ struct TileGeneratedData
 	float	m_forestness				= 0.f; // 0 to 1
 	float	m_islandness				= 0.f; // 0 to 1
 	float	m_temperature				= 0.f; // 0 to 1
+	float	m_treeness					= 0.f; // 0 to 1
 
 	// Cached bools
 	bool	m_isIsland					= false;
@@ -32,4 +33,6 @@ struct TileGeneratedData
 	bool	m_isForest					= false;
 	bool	m_isDeepForest				= false;
 	bool	m_isCold					= false;
+	bool	m_canGrowTrees				= false;
+	bool	m_hasTree					= false;
 };

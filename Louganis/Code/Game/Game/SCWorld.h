@@ -1,11 +1,13 @@
 // Bradley Christensen - 2022-2025
 #pragma once
+#include "SpawnInfo.h"
 #include "WorldCoords.h"
 #include "WorldSettings.h"
 #include "Engine/Assets/AssetID.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/IntVec2.h"
 #include <map>
+#include <vector>
 
 
 
@@ -54,8 +56,7 @@ public:
     AABB2 GetTileBounds(WorldCoords const& worldCoords) const;
     AABB2 GetTileBounds(IntVec2 const& worldTileCoords) const;
     
-    Chunk* GetOrCreateActiveChunk(int chunkX, int chunkY);
-    Chunk* LoadChunk(IntVec2 const& chunkCoords);
+    Chunk* LoadChunk(IntVec2 const& chunkCoords, std::vector<SpawnInfo>& out_entitiesToSpawn);
     bool UnloadChunk(Chunk* chunk);
     bool IsChunkLoaded(IntVec2 const& chunkCoords) const;
     bool RemoveActiveChunk(IntVec2 const& coords);

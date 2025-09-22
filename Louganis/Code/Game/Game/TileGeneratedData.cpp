@@ -26,5 +26,6 @@ std::string TileGeneratedData::ToString() const
 	result += StringUtils::StringF("Forestness: %.3f\n", m_forestness);
 	result += StringUtils::StringF("Islandness: %.3f\n", m_islandness);
 	result += StringUtils::StringF("Temperature: %.3f\n", m_temperature);
+	result += StringUtils::StringF("Treeness: %.3f\n", m_treeness);
 	return result;
 }

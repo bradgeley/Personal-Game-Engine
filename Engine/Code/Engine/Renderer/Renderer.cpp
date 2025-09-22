@@ -509,6 +509,7 @@ void Renderer::ResetRenderingPipelineState()
 {
 	// Only reset the dirty settings, so changes will be detected and applied on Draw
 	m_dirtySettings = RendererSettings();
+	ClearDepth(1.f);
 	BindShader(m_defaultShader);
 	BindTexture(m_defaultTexture);
 }

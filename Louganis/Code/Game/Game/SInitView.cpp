@@ -26,8 +26,5 @@ void SInitView::Run(SystemContext const& context)
         CCamera& camera = cameraStorage[camIt];
         g_renderer->BeginCameraAndWindow(&camera.m_camera, g_window);
         g_renderer->ClearScreen(Rgba8::LightGray);
-
-		// Game space is X left, Y up, Z coming out of the screen
-        camera.m_camera.DefineGameSpace(Vec3(0.f, 0.f, -1.f), Vec3(-1.f, 0.f, 0.f), Vec3(0.f, 1.f, 0.f));
     }
 }

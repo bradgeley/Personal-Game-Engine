@@ -33,7 +33,7 @@
   <EntityDef name = "Tree1">
     <Transform></Transform>
     <Collision radius="0.5"></Collision>
-    <Render scale="1"></Render>
+    <Render scale="2.5"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Tree1.xml"></Animation>
   </EntityDef>
 
