@@ -128,6 +128,29 @@ void Clock::Update()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Clock::Update(double deltaSeconds)
+{
+	ASSERT_OR_DIE(m_parentClock == nullptr, "Update called on a child clock");
+
+	// This func overrides the automatic functionality of Update(), by manually setting deltaSeconds then updating
+	// all children with that value. The children clocks don't use "now", and parent clocks wont use the last updated time
+	// so long as the clock is updating using this function instead of Update().
+
+	m_deltaSeconds = deltaSeconds * m_timeDilation;
+
+	std::chrono::high_resolution_clock clock;
+	std::chrono::time_point<std::chrono::high_resolution_clock> now = clock.now();
+
+	for (Clock*& childClock : m_childClocks)
+	{
+		ASSERT_OR_DIE(childClock != nullptr, "Child clock was somehow nullptr");
+		ClockInternalData::UpdateInternal(*childClock, now);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 double Clock::GetCurrentTimeSeconds() const
 {
 	return m_currentTimeSeconds;

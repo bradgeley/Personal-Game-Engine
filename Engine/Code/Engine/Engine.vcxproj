@@ -341,6 +341,7 @@
     <ClCompile Include="Renderer\VertexUtils.cpp" />
     <ClCompile Include="Renderer\Vertex_PCU.cpp" />
     <ClCompile Include="Time\Clock.cpp" />
+    <ClCompile Include="Time\IndependentClock.cpp" />
     <ClCompile Include="Time\Time.cpp" />
     <ClCompile Include="Time\Timer.cpp" />
     <ClCompile Include="Window\Win32\Win32Window.cpp" />
@@ -461,6 +462,7 @@
     <ClInclude Include="Renderer\VertexUtils.h" />
     <ClInclude Include="Renderer\Vertex_PCU.h" />
     <ClInclude Include="Time\Clock.h" />
+    <ClInclude Include="Time\IndependentClock.h" />
     <ClInclude Include="Time\Time.h" />
     <ClInclude Include="Time\Timer.h" />
     <ClInclude Include="Window\Win32\Win32Window.h" />

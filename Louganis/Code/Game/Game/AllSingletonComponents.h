@@ -12,4 +12,5 @@
 #include "SCFlowField.h"
 #include "SCLoadChunks.h"
 #include "SCRender.h"
+#include "SCTime.h"
 #include "SCWorld.h"

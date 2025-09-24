@@ -315,6 +315,8 @@
     <ClCompile Include="Game\SCollision.cpp" />
     <ClCompile Include="Game\SCollisionHash.cpp" />
     <ClCompile Include="Game\SCWorld.cpp" />
+    <ClCompile Include="Game\SDebugCommands.cpp" />
+    <ClCompile Include="Game\STime.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
     <ClCompile Include="Game\SEntityFactory.cpp" />
     <ClCompile Include="Game\SFlowField.cpp" />
@@ -352,6 +354,7 @@
     <ClInclude Include="Game\CMovement.h" />
     <ClInclude Include="Game\CPlayerController.h" />
     <ClInclude Include="Game\CRender.h" />
+    <ClInclude Include="Game\CTime.h" />
     <ClInclude Include="Game\CTransform.h" />
     <ClInclude Include="Game\EntityDef.h" />
     <ClInclude Include="Game\FlowGenerationCoords.h" />
@@ -366,6 +369,7 @@
     <ClInclude Include="Game\SCamera.h" />
     <ClInclude Include="Game\SCAudio.h" />
     <ClInclude Include="Game\SCCollision.h" />
+    <ClInclude Include="Game\SCTime.h" />
     <ClInclude Include="Game\SCDebug.h" />
     <ClInclude Include="Game\SCEntityFactory.h" />
     <ClInclude Include="Game\SCFlowField.h" />
@@ -373,6 +377,8 @@
     <ClInclude Include="Game\SCollision.h" />
     <ClInclude Include="Game\SCollisionHash.h" />
     <ClInclude Include="Game\SCRender.h" />
+    <ClInclude Include="Game\SDebugCommands.h" />
+    <ClInclude Include="Game\STime.h" />
     <ClInclude Include="Game\SDebugRender.h" />
     <ClInclude Include="Game\SEntityFactory.h" />
     <ClInclude Include="Game\SFlowField.h" />

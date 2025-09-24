@@ -208,6 +208,7 @@ void Game::ConfigureECS()
     // Map components
     g_ecs->RegisterComponentMap<CCamera>();
     g_ecs->RegisterComponentMap<CPlayerController>();
+    g_ecs->RegisterComponentMap<CTime>();
 
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCAudio>();
@@ -217,6 +218,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCFlowField>();
     g_ecs->RegisterComponentSingleton<SCLoadChunks>();
     g_ecs->RegisterComponentSingleton<SCRender>();
+    g_ecs->RegisterComponentSingleton<SCTime>();
     g_ecs->RegisterComponentSingleton<SCWorld>();
 
     // Other resource types (Engine Subsystems)
@@ -231,6 +233,7 @@ void Game::ConfigureECS()
     // 
 
     // Pre Physics
+    g_ecs->RegisterSystem<STime>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SAbility>((int) FramePhase::PrePhysics);
@@ -262,6 +265,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 
     // debug
+    g_ecs->RegisterSystem<SDebugCommands>((int) FramePhase::PostRender);
     g_ecs->RegisterSystem<SSystemDebug>((int) FramePhase::PostRender);
 }
 

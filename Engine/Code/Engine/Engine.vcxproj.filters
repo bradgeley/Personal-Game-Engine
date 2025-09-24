@@ -307,6 +307,9 @@
     <ClCompile Include="Assets\ShaderAsset.cpp">
       <Filter>Assets\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Time\IndependentClock.cpp">
+      <Filter>Time</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -662,6 +665,9 @@
     </ClInclude>
     <ClInclude Include="Renderer\InputLayout.h">
       <Filter>Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Time\IndependentClock.h">
+      <Filter>Time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

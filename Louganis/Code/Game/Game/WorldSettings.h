@@ -14,17 +14,17 @@ namespace StaticWorldSettings
     constexpr float s_tileWidth                             = 2.f;      // In world units
 
 #if defined(_DEBUG)
-    constexpr float s_defaultChunkLoadRadius                = 50.f;
+    constexpr float s_defaultChunkLoadRadius                = 64.f;
     constexpr float s_defaultChunkUnloadRadius              = 75.f;
-    constexpr float s_collisionHashRadius                   = 32.f;
-    constexpr float s_flowFieldGenerationRadius             = 32.f;
+    constexpr float s_collisionHashRadius                   = 64.f;
+    constexpr float s_flowFieldGenerationRadius             = 64.f;
     constexpr int   s_maxNumChunksToLoadPerFrame            = 5;
 #else
-    constexpr float s_defaultChunkLoadRadius                = 100.f;
-    constexpr float s_defaultChunkUnloadRadius              = 150.f;
+    constexpr float s_defaultChunkLoadRadius                = 500.f;
+    constexpr float s_defaultChunkUnloadRadius              = 550.f;
     constexpr float s_collisionHashRadius                   = 50.f;
     constexpr float s_flowFieldGenerationRadius             = 50.f;
-    constexpr int   s_maxNumChunksToLoadPerFrame            = 100;
+    constexpr int   s_maxNumChunksToLoadPerFrame            = 10;
 #endif // _DEBUG
 
     constexpr float s_flowFieldGenerationRadiusSquared      = s_flowFieldGenerationRadius * s_flowFieldGenerationRadius;
@@ -73,7 +73,7 @@ struct WorldSettings
 	float m_mountainnessScale                   = 2000.f;
 	float m_oceannessScale                      = 1000.f;
     float m_rivernessScale                      = 4000.f;
-    float m_forestnessScale                     = 500.f;
+    float m_forestnessScale                     = 5000.f;
     float m_treeBaseScale                       = 10.f;
 	float m_islandnessScale                     = 20000.f;
 	float m_temperatureScale                    = 20000.f;

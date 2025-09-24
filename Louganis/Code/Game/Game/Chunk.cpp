@@ -152,6 +152,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 				SpawnInfo spawnInfo;
 				spawnInfo.m_def = EntityDef::GetEntityDef("Tree1");
 				spawnInfo.m_spawnPos = mins + (tileDims * 0.5f);
+				spawnInfo.m_spawnPos.y += tileGenData.m_treeScale;
 				spawnInfo.m_spawnScale = tileGenData.m_treeScale;
 				out_spawnInfos.push_back(spawnInfo);
 			}
@@ -272,7 +273,8 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 			tileGenData.m_terrainHeightOffset = MathUtils::RangeMapClamped(tileGenData.m_oceanness, worldSettings.m_oceanSandThreshold, worldSettings.m_oceanShallowWaterThreshold, seaLevelOffset, shallowWaterOffset);
 		}
 
-		tileGenData.m_terrainHeight = SEA_LEVEL + tileGenData.m_terrainHeightOffset;
+		float terrainHeight = SEA_LEVEL + tileGenData.m_terrainHeightOffset;
+		tileGenData.m_terrainHeight = terrainHeight;
 
 		if (tileGenData.m_isDesert && tileGenData.m_isOcean)
 		{
@@ -295,7 +297,7 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 		}
 	}
 
-	tileGenData.m_canGrowTrees = !tileGenData.m_isOcean && !tileGenData.m_isRiver && tileGenData.m_terrainHeight < MOUNTAIN_TERRAIN_HEIGHT;
+	tileGenData.m_canGrowTrees = tileGenData.m_terrainHeight >= GRASS_TERRAIN_HEIGHT && tileGenData.m_terrainHeight < MOUNTAIN_TERRAIN_HEIGHT;
 
 	if (tileGenData.m_canGrowTrees)
 	{

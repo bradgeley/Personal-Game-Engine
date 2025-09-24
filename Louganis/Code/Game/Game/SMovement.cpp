@@ -2,6 +2,7 @@
 #include "SMovement.h"
 #include "CMovement.h"
 #include "CTransform.h"
+#include "CTime.h"
 
 
 
@@ -9,6 +10,7 @@
 void SMovement::Startup()
 {
     AddWriteDependencies<CMovement, CTransform>();
+    AddReadDependencies<CTime>();
 }
 
 
@@ -18,8 +20,9 @@ void SMovement::Run(SystemContext const& context)
 {
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
     auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
+    auto& timeStorage = g_ecs->GetMapStorage<CTime>();
 
-    for (auto it = g_ecs->Iterate<CMovement, CTransform>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CMovement, CTransform, CTime>(context); it.IsValid(); ++it)
     {
         CMovement& move = moveStorage[it];
 		CTransform& transform = transformStorage[it];
@@ -31,7 +34,8 @@ void SMovement::Run(SystemContext const& context)
             continue;
         }
 
-        move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * move.m_movementSpeedMultiplier * context.m_deltaSeconds;
+        CTime& time = timeStorage[it];
+        move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * move.m_movementSpeedMultiplier * time.m_clock.GetDeltaSecondsF();
         if (move.m_isSprinting)
         {
             move.m_frameMovement *= move.m_sprintMoveSpeedMultiplier;

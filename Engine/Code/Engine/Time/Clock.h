@@ -18,6 +18,7 @@ public:
 
 	// Only call on parent-most clocks
 	void Update();
+	void Update(double deltaSeconds);
 
 	double GetDeltaSeconds() const;
 	float GetDeltaSecondsF() const;

@@ -25,6 +25,7 @@
 #include "CMovement.h"
 #include "CPlayerController.h"
 #include "CRender.h"
+#include "CTime.h"
 #include "CTransform.h"
 
 

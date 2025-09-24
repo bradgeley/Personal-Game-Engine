@@ -12,6 +12,7 @@
     <Render scale="1"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Marine-Gauss.xml"></Animation>
     <Ability></Ability>
+    <Time></Time>
   </EntityDef>
 
   <!-- ==================================================================================================================== -->
@@ -25,6 +26,7 @@
     <Animation spriteSheet="Data/SpriteSheets/Zombie2.xml"></Animation>
     <AIController></AIController>
     <Ability></Ability>
+    <Time></Time>
   </EntityDef>
 
   <!-- ==================================================================================================================== -->

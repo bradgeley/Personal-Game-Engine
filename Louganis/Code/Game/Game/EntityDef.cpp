@@ -145,6 +145,13 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_render = CRender(elem);
     }
 
+    // CTime
+    elem = xmlElement->FirstChildElement("Time");
+    if (elem)
+    {
+        m_time.emplace(CTime());
+    }
+
     // CTransform
     elem = xmlElement->FirstChildElement("Transform");
     if (elem)

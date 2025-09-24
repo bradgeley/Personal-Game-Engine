@@ -94,7 +94,7 @@ int SFlowField::CreateMissingFlowFieldChunks(Vec2 const& anchorLocation)
         {
             float distanceSquared = chunk.m_chunkBounds.GetCenter().GetDistanceSquaredTo(anchorLocation);
             
-            if (distanceSquared < StaticWorldSettings::s_flowFieldGenerationRadius)
+            if (distanceSquared < StaticWorldSettings::s_flowFieldGenerationRadiusSquared)
             {
                 flowFieldChunk = new FlowFieldChunk(&chunk, &world);
                 flowFieldChunk->GenerateCostField();
