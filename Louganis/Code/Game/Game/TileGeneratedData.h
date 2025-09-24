@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
 #include "WorldCoords.h"
+#include "Engine/Renderer/Rgba8.h"
 #include <string>
 
 
@@ -21,6 +22,7 @@ struct TileGeneratedData
 	float	m_temperature				= 0.f; // 0 to 1
 	float	m_treeness					= 0.f; // 0 to 1
 	float	m_treeScale					= 1.f; // non-zero positive
+	Rgba8	m_treeTint					= Rgba8::White;
 
 	// Cached bools
 	bool	m_isIsland					= false;

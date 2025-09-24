@@ -366,5 +366,5 @@ float GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, f
 float GetPerlinNoise2D_01(float x, float y, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed)
 {
 	float noise = GetPerlinNoise2D(x, y, scale, numOctaves, octavePersistence, octaveScale, renormalize, seed);
-	return MathUtils::GetFractionWithinF(noise, -1.f, 1.f);
+	return noise * 0.5f + 0.5f;
 }

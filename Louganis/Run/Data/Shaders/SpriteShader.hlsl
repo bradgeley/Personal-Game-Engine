@@ -141,7 +141,7 @@ VSOutput VertexMain(VSInput vin, uint instanceID : SV_InstanceID)
     output.position = mul(worldToCamera, output.position);
     output.position = mul(cameraToClip, output.position);
 	
-	output.tint = vin.tint;
+    output.tint = vin.tint * vin.instanceTint;
     output.uvs = vin.uvs;
 	
     float4 spriteUVs = ComputeUVs(vin);

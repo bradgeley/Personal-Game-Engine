@@ -36,7 +36,7 @@ void SDebugCommands::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 bool SDebugCommands::SlowPlayer(NamedProperties& args)
 {
-	bool slow = args.Get("slow", false);
+	bool slow = args.Get("slow", true);
 	SystemContext context;
 	for (auto it = g_ecs->Iterate<CPlayerController, CTime>(context); it.IsValid(); ++it)
 	{

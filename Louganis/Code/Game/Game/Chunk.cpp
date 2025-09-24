@@ -154,6 +154,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 				spawnInfo.m_spawnPos = mins + (tileDims * 0.5f);
 				spawnInfo.m_spawnPos.y += tileGenData.m_treeScale;
 				spawnInfo.m_spawnScale = tileGenData.m_treeScale;
+				spawnInfo.m_spawnTint = tileGenData.m_treeTint;
 				out_spawnInfos.push_back(spawnInfo);
 			}
 		}
@@ -329,8 +330,11 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 		float* max = StatisticsUtils::GetMax(neighborTreeness, 8);
 		tileGenData.m_hasTree = tileGenData.m_treeness > *max;
 		float averageTreeHeight = 2.f + tileGenData.m_forestness * 2.f;
-		float treeHeightOffset = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, tileGenData.m_forestness, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed)) * 2.f;
+		float treeHeightOffset = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, tileGenData.m_forestness, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed));
 		tileGenData.m_treeScale = averageTreeHeight + treeHeightOffset;
+		float t = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, 25.f, 2, 0.5f, 2.f, true, worldSettings.m_worldSeed);
+		t = t * 0.5f;
+		tileGenData.m_treeTint = Rgba8::Lerp(Rgba8::White, Rgba8::ForestGreen, t);
 	}
 
 	return tileGenData;

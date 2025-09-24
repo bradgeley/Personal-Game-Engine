@@ -113,6 +113,7 @@ EntityID SEntityFactory::SpawnEntity(SpawnInfo const& spawnInfo)
     if (CRender* render = g_ecs->GetComponent<CRender>(id))
     {
         render->m_scale *= spawnInfo.m_spawnScale;
+		render->m_tint = spawnInfo.m_spawnTint;
     }
     return id;
 }
