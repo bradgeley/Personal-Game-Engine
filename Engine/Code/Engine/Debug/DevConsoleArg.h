@@ -11,4 +11,5 @@ enum class DevConsoleArgType
 	Float,
 	Bool,
 	String,
+	Vec2,
 };

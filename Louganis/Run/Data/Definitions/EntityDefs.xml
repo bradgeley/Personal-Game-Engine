@@ -6,7 +6,7 @@
   <EntityDef name = "Player">
     <Transform></Transform>
     <Movement moveSpeed="5" sprintMoveSpeedMultiplier="2"></Movement>
-    <Camera tileHeight="10" maxZoom ="1000"></Camera>
+    <Camera tileHeight="10" minZoom="0.5" maxZoom ="100"></Camera>
     <PlayerController></PlayerController>
     <Collision radius="0.5"></Collision>
     <Render scale="1"></Render>
@@ -37,6 +37,20 @@
     <Collision radius="0.25" immovable="true" offset="0,-1"></Collision>
     <Render scale="2.5"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Tree1.xml"></Animation>
+  </EntityDef>
+
+  <EntityDef name = "DeadTree1">
+    <Transform></Transform>
+    <Collision radius="0.25" immovable="true" offset="0,-1"></Collision>
+    <Render scale="2.5"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/DeadTree1.xml"></Animation>
+  </EntityDef>
+
+  <EntityDef name = "Cactus1">
+    <Transform></Transform>
+    <Collision radius="0.25" immovable="true" offset="0,-1"></Collision>
+    <Render scale="2.5"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/Cactus1.xml"></Animation>
   </EntityDef>
 
   <!-- ==================================================================================================================== -->

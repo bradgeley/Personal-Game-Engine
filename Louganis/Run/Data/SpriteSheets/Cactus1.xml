@@ -1,0 +1,8 @@
+
+
+
+<GridSpriteSheet name="Cactus1" texture="Data/SpriteSheets/Cactus1.png" layout="1,1" edgePadding="0,0" innerPadding="0,0">
+  
+  <SpriteAnimation name="idle" frames="0" type="singleFrame"></SpriteAnimation>
+  
+</GridSpriteSheet>

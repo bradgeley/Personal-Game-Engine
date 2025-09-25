@@ -145,6 +145,15 @@
     <ClCompile Include="Game\SDebugCommands.cpp">
       <Filter>ECS\Systems\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SDebugInput.cpp">
+      <Filter>ECS\Systems\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\TimeOfDay.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRenderTimeOfDay.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -335,6 +344,15 @@
     </ClInclude>
     <ClInclude Include="Game\SDebugCommands.h">
       <Filter>ECS\Systems\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SDebugInput.h">
+      <Filter>ECS\Systems\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TimeOfDay.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderTimeOfDay.h">
+      <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

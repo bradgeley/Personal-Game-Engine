@@ -6,6 +6,7 @@
 #include "EntityDef.h"
 #include "SCEntityFactory.h"
 #include "SCWorld.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Math/Noise.h"
 #include "Engine/Math/RandomNumberGenerator.h"
@@ -89,6 +90,8 @@ bool SWorld::DumpTileGenData(NamedProperties&)
 		Vec2 playerLocation = g_ecs->GetComponent<CTransform>(it)->m_pos;
 		IntVec2 globalTileCoords = world.GetGlobalTileCoordsAtLocation(playerLocation);
 		TileGeneratedData tileGenData = Chunk::GenerateTileData(globalTileCoords, world.m_worldSettings);
+		DevConsoleUtils::Log(Rgba8::White, StringUtils::StringF("Player Location: (%.02f, %.02f)", playerLocation.x, playerLocation.y).c_str());
+		DevConsoleUtils::Log(Rgba8::White, StringUtils::StringF("Seed: %i", world.m_worldSettings.m_worldSeed).c_str());
 		DevConsoleUtils::Log(Rgba8::White, tileGenData.ToString().c_str());
 	}
 	return false;

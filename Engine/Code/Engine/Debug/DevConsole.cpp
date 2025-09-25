@@ -665,6 +665,9 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
                     case DevConsoleArgType::Bool:
                         eventProperties.Set(argName, StringUtils::StringToBool(argValue));
                         break;
+                    case DevConsoleArgType::Vec2:
+                        eventProperties.Set(argName, StringUtils::StringToVec2(argValue));
+                        break;
                     default:
                         eventProperties.Set(argName, argValue);
                         break;

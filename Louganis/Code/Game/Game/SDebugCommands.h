@@ -20,5 +20,7 @@ public:
 
 protected:
 
+    static bool Goto(NamedProperties& args);
+    static bool SetSeed(NamedProperties& args);
     static bool SlowPlayer(NamedProperties& args);
 };

@@ -45,7 +45,7 @@ v2p_t VertexMain(vs_input_t input)
     position = mul(cameraToClip,  position);
 
     v2p.position = position;
-    v2p.tint = input.tint * modelTint;
+    v2p.tint = (input.tint * modelTint);
     v2p.uvs = input.uvs;
 
     return v2p;

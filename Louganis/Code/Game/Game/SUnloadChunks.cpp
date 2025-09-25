@@ -28,7 +28,7 @@ void SUnloadChunks::Run(SystemContext const& context)
 	SCEntityFactory& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
 	scLoadChunks.m_numUnloadedChunksThisFrame = 0;
 
-	if (!world.GetPlayerChangedWorldCoordsThisFrame())
+	if (!world.GetPlayerChangedWorldCoordsThisFrame() && !world.m_isWorldSeedDirty)
 	{
 		return;
 	}
@@ -52,7 +52,7 @@ void SUnloadChunks::Run(SystemContext const& context)
 		IntVec2 const& chunkCoords = chunkIt->first;
 		Vec2 chunkCenter = world.CalculateChunkCenter(chunkCoords.x, chunkCoords.y);
 
-		if (chunkCenter.GetDistanceSquaredTo(playerTransform.m_pos) > unloadRadiusSquared)
+		if (chunkCenter.GetDistanceSquaredTo(playerTransform.m_pos) > unloadRadiusSquared || world.m_isWorldSeedDirty)
 		{
 			chunkIt = world.m_activeChunks.erase(chunkIt);
 			entityFactory.m_entitiesToDestroy.insert(entityFactory.m_entitiesToDestroy.end(), chunk->m_spawnedEntities.begin(), chunk->m_spawnedEntities.end());

@@ -71,16 +71,14 @@ std::string DevConsoleCommandInfo::ArgTypeToString(DevConsoleArgType argType)
 	{
 		case DevConsoleArgType::Int:
 			return "Int";
-			break;
 		case DevConsoleArgType::Float:
 			return "Float";
-			break;
 		case DevConsoleArgType::Bool:
 			return "Bool";
-			break;
 		case DevConsoleArgType::String:
 			return "String";
-			break;
+		case DevConsoleArgType::Vec2:
+			return "Vec2";
 		default:
 			break;
 	}

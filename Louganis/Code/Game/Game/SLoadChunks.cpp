@@ -34,12 +34,17 @@ void SLoadChunks::Run(SystemContext const& context)
 	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 
 	scLoadChunks.m_numLoadedChunksThisFrame = 0;
-	if (!(scLoadChunks.m_unloadedChunksInRadius || world.GetPlayerChangedWorldCoordsThisFrame()))
+	if (!world.m_isWorldSeedDirty && !(scLoadChunks.m_unloadedChunksInRadius || world.GetPlayerChangedWorldCoordsThisFrame()))
 	{
 		// This loop needs to run if:
 		// A - chunk loading was completely finished
 		// B - player moved coords, so maybe we need to load more chunks
 		return;
+	}
+
+	if (world.m_activeChunks.empty())
+	{
+		world.m_isWorldSeedDirty = false;
 	}
 
 	WorldSettings const& worldSettings = world.m_worldSettings;
@@ -63,7 +68,7 @@ void SLoadChunks::Run(SystemContext const& context)
  		world.ForEachChunkCoordsOverlappingCircle_InRadialOrder(playerTransform.m_pos, chunkLoadRadius, [&world, &scLoadChunks, &sharedEntitiesToSpawn](IntVec2 const& chunkCoords)
 		{ 
 			bool shouldContinueLooping = true;
-			if (!world.IsChunkLoaded(chunkCoords))
+			if (!world.IsChunkLoaded(chunkCoords) && !world.m_isWorldSeedDirty)
 			{
 				Chunk* chunk = world.LoadChunk(chunkCoords, sharedEntitiesToSpawn);
 				scLoadChunks.m_numLoadedChunksThisFrame++;

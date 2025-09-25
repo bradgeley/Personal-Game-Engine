@@ -51,13 +51,13 @@ void SFlowField::Run(SystemContext const& context)
     bool playerChangedCoords = world.GetPlayerChangedWorldCoordsThisFrame();
 
     int chunksCreated = 0;
-    if (playerChangedCoords || scLoadChunks.m_numLoadedChunksThisFrame > 0)
+    if (world.m_isWorldSeedDirty || playerChangedCoords || scLoadChunks.m_numLoadedChunksThisFrame > 0)
     {
         DestroyStaleFlowFieldChunks(firstPlayerLocation);
         chunksCreated = CreateMissingFlowFieldChunks(firstPlayerLocation);
     }
 
-    if (playerChangedCoords || chunksCreated > 0)
+    if (world.m_isWorldSeedDirty || playerChangedCoords || chunksCreated > 0)
     {
         flowField.SoftReset();
         GenerateFlow(flowField, world.m_lastKnownPlayerWorldCoords);

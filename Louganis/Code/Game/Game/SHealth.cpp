@@ -12,7 +12,7 @@ void SHealth::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SHealth::Run(SystemContext const& context)
+void SHealth::Run(SystemContext const&)
 {
 
 }

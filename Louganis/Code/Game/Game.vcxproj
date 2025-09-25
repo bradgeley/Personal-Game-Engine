@@ -316,6 +316,8 @@
     <ClCompile Include="Game\SCollisionHash.cpp" />
     <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\SDebugCommands.cpp" />
+    <ClCompile Include="Game\SDebugInput.cpp" />
+    <ClCompile Include="Game\SRenderTimeOfDay.cpp" />
     <ClCompile Include="Game\STime.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
     <ClCompile Include="Game\SEntityFactory.cpp" />
@@ -335,6 +337,7 @@
     <ClCompile Include="Game\SWorldCollision.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
     <ClCompile Include="Game\TileGeneratedData.cpp" />
+    <ClCompile Include="Game\TimeOfDay.cpp" />
     <ClCompile Include="Game\WorldCoords.cpp" />
     <ClCompile Include="Game\WorldRaycast.cpp" />
   </ItemGroup>
@@ -378,6 +381,8 @@
     <ClInclude Include="Game\SCollisionHash.h" />
     <ClInclude Include="Game\SCRender.h" />
     <ClInclude Include="Game\SDebugCommands.h" />
+    <ClInclude Include="Game\SDebugInput.h" />
+    <ClInclude Include="Game\SRenderTimeOfDay.h" />
     <ClInclude Include="Game\STime.h" />
     <ClInclude Include="Game\SDebugRender.h" />
     <ClInclude Include="Game\SEntityFactory.h" />
@@ -399,6 +404,7 @@
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
     <ClInclude Include="Game\TileGeneratedData.h" />
+    <ClInclude Include="Game\TimeOfDay.h" />
     <ClInclude Include="Game\WorldCoords.h" />
     <ClInclude Include="Game\WorldRaycast.h" />
     <ClInclude Include="Game\WorldSettings.h" />

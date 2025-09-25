@@ -141,7 +141,7 @@ VSOutput VertexMain(VSInput vin, uint instanceID : SV_InstanceID)
     output.position = mul(worldToCamera, output.position);
     output.position = mul(cameraToClip, output.position);
 	
-    output.tint = vin.tint * vin.instanceTint;
+    output.tint = (vin.tint * vin.instanceTint);
     output.uvs = vin.uvs;
 	
     float4 spriteUVs = ComputeUVs(vin);
@@ -178,7 +178,7 @@ float4 PixelMain(VSOutput input) : SV_Target0
 	float4 surfaceColor = SurfaceColorTexture.Sample(SurfaceSampler, texCoord);
 	
 	float4 tint = input.tint;
-	float4 finalColor = tint * surfaceColor;
+    float4 finalColor = (tint * surfaceColor);
     
     if (finalColor.a <= 0.0f)  // or some threshold
         discard;

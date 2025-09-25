@@ -236,6 +236,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<STime>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SDebugInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SAbility>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLoadChunks>((int) FramePhase::PrePhysics);
@@ -262,6 +263,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SInitView>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderTimeOfDay>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 
     // debug

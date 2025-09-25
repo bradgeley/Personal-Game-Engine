@@ -81,6 +81,7 @@ struct WorldSettings
     float m_coldThreshold                       = 0.2f;
     float m_forestThreshold                     = 0.5f;
     float m_deepForestThreshold                 = 0.75f;
+	float m_desertHumidityThreshold             = 0.1f;
 
     // Ocean settings
 	float m_oceanSandThreshold                  = 0.72f;
@@ -96,7 +97,10 @@ struct WorldSettings
     float m_riverToDesertTransitionSpeed        = 10.f;
 
     // Island settings
-	float m_islandThreshold                     = 0.75f;    
+	float m_islandThreshold                     = 0.75f;  
+
+    // Forest settings
+	float m_desertTreeMultiplier                = 0.1f;    
 };
 
 

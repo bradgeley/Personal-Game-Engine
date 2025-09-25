@@ -547,21 +547,6 @@ Chunk* SCWorld::LoadChunk(IntVec2 const& chunkCoords, std::vector<SpawnInfo>& ou
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SCWorld::UnloadChunk(Chunk* chunk)
-{
-	if (chunk)
-	{
-		m_activeChunks.erase(chunk->m_chunkCoords);
-		chunk->Destroy();
-		delete chunk;
-		return true;
-	}
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsChunkLoaded(IntVec2 const& chunkCoords) const
 {
 	return m_activeChunks.find(chunkCoords) != m_activeChunks.end();

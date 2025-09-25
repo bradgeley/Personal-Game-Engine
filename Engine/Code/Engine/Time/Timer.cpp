@@ -15,12 +15,19 @@ Timer::Timer(Clock* parentClock /*= nullptr*/, double durationSeconds /*= 0.0*/,
 
 
 //-----------------------------------------------------------------------------------------------------------------------
+Timer::Timer(double durationSeconds, bool looping)
+	: m_parentClock(nullptr), m_durationSeconds(durationSeconds), m_remainingSeconds(durationSeconds), m_looping(looping)
+{
+}
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------
 bool Timer::Set(Clock* parentClock, double durationSeconds, bool looping /*= false*/)
 {
-	ASSERT_OR_DIE(m_parentClock != nullptr, "Cannot set timer on null clock.");
 	ASSERT_OR_DIE(durationSeconds > 0.0, "Timer being set with 0 or negative duration.");
 
-	if (m_parentClock == nullptr || durationSeconds <= 0.f)
+	if (durationSeconds <= 0.f)
 	{
 		return false;
 	}
@@ -46,13 +53,21 @@ bool Timer::Update()
 	}
 
 	double deltaSeconds = m_parentClock->GetDeltaSeconds();
+	return Update(deltaSeconds);
+}
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------
+bool Timer::Update(double deltaSeconds)
+{
 	m_remainingSeconds -= deltaSeconds;
 
 	if (m_remainingSeconds <= 0.0)
 	{
 		if (m_looping)
 		{
-			m_remainingSeconds += m_durationSeconds; 
+			m_remainingSeconds += m_durationSeconds;
 			if (m_remainingSeconds <= 0.0)
 			{
 				// We += for more accuracy in 99% of cases, but if we overshot in a single frame (really slow frames or low duration timer), just reset to duration

@@ -30,11 +30,14 @@ class Timer
 {
 public:
 
-	explicit Timer(Clock* parentClock = nullptr, double durationSeconds = 0.0, bool looping = false);
+	Timer() = default;
+	Timer(Clock* parentClock, double durationSeconds = 0.0, bool looping = false);
+	Timer(double durationSeconds, bool looping = false);
 
 	// Mutators
 	bool Set(Clock* parentClock, double durationSeconds, bool looping = false);
 	bool Update(); // returns whether or not the timer completed this frame
+	bool Update(double deltaSeconds); // returns whether or not the timer completed this frame
 
 	// Getters
 	Clock* GetParentClock() const;

@@ -57,7 +57,6 @@ public:
     AABB2 GetTileBounds(IntVec2 const& worldTileCoords) const;
     
     Chunk* LoadChunk(IntVec2 const& chunkCoords, std::vector<SpawnInfo>& out_entitiesToSpawn);
-    bool UnloadChunk(Chunk* chunk);
     bool IsChunkLoaded(IntVec2 const& chunkCoords) const;
     bool RemoveActiveChunk(IntVec2 const& coords);
     void RemoveActiveChunk(int chunkX, int chunkY);
@@ -70,9 +69,10 @@ public:
 
 public:
 
+    bool m_isWorldSeedDirty                     = true; // flag that is set when the world seed changes, so we can regenerate the world
     WorldSettings m_worldSettings;
 
-    std::map<IntVec2, Chunk*> m_activeChunks;                       // Owned by SWorld
+    std::map<IntVec2, Chunk*> m_activeChunks;   // Owned by SWorld
 
 	AssetID m_worldSpriteSheet                  = AssetID::Invalid; // cached in SRenderWorld startup
 
