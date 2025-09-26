@@ -29,6 +29,14 @@ void GPUBuffer::Reserve(size_t byteWidth)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void GPUBuffer::Resize(size_t byteWidth)
+{
+	m_cpuBuffer.resize(byteWidth);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void GPUBuffer::ClearCPUBuffer()
 {
 	m_cpuBuffer.clear();

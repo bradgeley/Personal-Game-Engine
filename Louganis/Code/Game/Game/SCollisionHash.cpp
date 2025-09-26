@@ -114,7 +114,7 @@ void SCollisionHash::Run(SystemContext const& context)
         world.ForEachWorldCoordsOverlappingCircle(pos, radius, [&](WorldCoords const& worldCoords)
         {
             ChunkCollisionData& threadChunkCollisionData = thisThreadCollisionData[worldCoords.m_chunkCoords];
-            int tileIndex = world.GetActiveChunk(worldCoords.m_chunkCoords)->m_tileIDs.GetIndexForCoords(worldCoords.m_localTileCoords);
+            int tileIndex = world.GetActiveChunk(worldCoords.m_chunkCoords)->m_tiles.GetIndexForCoords(worldCoords.m_localTileCoords);
             threadChunkCollisionData.m_tileBuckets[tileIndex].push_back(it.m_currentIndex);
             return true; // continue iterating
         });

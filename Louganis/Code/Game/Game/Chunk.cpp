@@ -41,30 +41,20 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 	m_chunkBounds = AABB2(chunkOrigin, chunkOrigin + tileDims * StaticWorldSettings::s_numTilesInRowF);
 
-	int grassTileDef			= TileDef::GetTileDefID("grass");
-	int forestGrassTileDef		= TileDef::GetTileDefID("forestGrass");
-	int deepForestGrassTileDef	= TileDef::GetTileDefID("deepForestGrass");
-	int stoneTileDef			= TileDef::GetTileDefID("stone");
-	int clayTileDef				= TileDef::GetTileDefID("clay");
-	int obsidianTileDef			= TileDef::GetTileDefID("obsidian");
-	int waterTileDef			= TileDef::GetTileDefID("islandWater");
-	int sandTileDef				= TileDef::GetTileDefID("sand");
-	int snowTileDef				= TileDef::GetTileDefID("snow");
-	int iceTileDef				= TileDef::GetTileDefID("ice");
-	TileDef const* errorTileDef = TileDef::GetTileDef("error");
+	Tile grassTile				= TileDef::GetDefaultTile("grass");
+	Tile forestGrassTile		= TileDef::GetDefaultTile("forestGrass");
+	Tile deepForestGrassTile	= TileDef::GetDefaultTile("deepForestGrass");
+	Tile stoneTile				= TileDef::GetDefaultTile("stone");
+	Tile clayTile				= TileDef::GetDefaultTile("clay");
+	Tile obsidianTile			= TileDef::GetDefaultTile("obsidian");
+	Tile waterTile				= TileDef::GetDefaultTile("islandWater");
+	Tile sandTile				= TileDef::GetDefaultTile("sand");
+	Tile snowTile				= TileDef::GetDefaultTile("snow");
+	Tile iceTile				= TileDef::GetDefaultTile("ice");
+	Tile errorTile				= TileDef::GetDefaultTile("error");
 
-	// Get VBO ready
-	m_vbo = g_renderer->MakeVertexBuffer<Vertex_PCU>();
-	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
-	vbo.Initialize<Vertex_PCU>(6 * StaticWorldSettings::s_numTilesInChunk);
-
-	// Get sprite sheet ready
-	AssetID terrainID = g_assetManager->LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
-	GridSpriteSheet const* terrainSpriteSheet = g_assetManager->Get<GridSpriteSheet>(terrainID);
-	ASSERT_OR_DIE(terrainSpriteSheet != nullptr, "Chunk::Generate - Failed to load terrain sprite sheet");
-
-	m_tileIDs.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), (uint8_t) grassTileDef);
-	Vec2 chunkMinsWorldLocation = Vec2(chunkCoords) * StaticWorldSettings::s_chunkWidth;
+	Tile& defaultTile = grassTile;
+	m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), defaultTile);
 
 	// Generate tile IDs
 	for (int y = 0; y < StaticWorldSettings::s_numTilesInRow; ++y)
@@ -73,95 +63,70 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 		{
 			WorldCoords tileWorldCoords = WorldCoords(m_chunkCoords, IntVec2(x, y));
 			TileGeneratedData tileGenData = GenerateTileData(tileWorldCoords.GetGlobalTileCoords(), worldSettings); // could cache this off but would increase the memory usage of each chunk by an order of magnitude or more
+			Vec2 tileOrigin = chunkOrigin + Vec2(x, y) * StaticWorldSettings::s_tileWidth;
 
-			int index = m_tileIDs.GetIndexForCoords(x, y);
+			int index = m_tiles.GetIndexForCoords(x, y);
 
+			if (tileGenData.m_terrainHeight >= OBSIDIAN_TERRAIN_HEIGHT)
+			{
+				m_tiles.Set(index, obsidianTile);
+			}
+			else if (tileGenData.m_terrainHeight >= STONE_TERRAIN_HEIGHT)
+			{
+				m_tiles.Set(index, stoneTile);
+			}
+			else if (tileGenData.m_terrainHeight >= CLAY_TERRAIN_HEIGHT)
+			{
+				m_tiles.Set(index, clayTile);
+			}
+			else if (tileGenData.m_terrainHeight >= GRASS_TERRAIN_HEIGHT)
+			{
+				if (tileGenData.m_isDeepForest)
+				{
+					m_tiles.Set(index, deepForestGrassTile);
+				}
+				else if (tileGenData.m_isForest)
+				{
+					m_tiles.Set(index, forestGrassTile);
+				}
+				else
+				{
+					m_tiles.Set(index, grassTile);
+				}
+			}
+			else if (tileGenData.m_terrainHeight >= SAND_TERRAIN_HEIGHT)
+			{
+				m_tiles.Set(index, sandTile);
+			}
+			else
+			{
+				m_tiles.Set(index, waterTile);
+			}
+
+			if (tileGenData.m_isDesert && tileGenData.m_terrainHeight >= GRASS_TERRAIN_HEIGHT && tileGenData.m_terrainHeight < MOUNTAIN_TERRAIN_HEIGHT)
+			{
+				m_tiles.Set(index, sandTile);
+			}
+			
+			// Handle ice and snow for now hackily
 			if (tileGenData.m_isCold)
 			{
-				if (tileGenData.m_terrainHeight < SAND_TERRAIN_HEIGHT)
+				if (tileGenData.m_terrainHeight < SEA_LEVEL)
 				{
-					m_tileIDs.Set(index, (uint8_t) iceTileDef);
+					m_tiles.Set(index, iceTile);
 				}
-				else
+				else if (tileGenData.m_terrainHeight < MOUNTAIN_TERRAIN_HEIGHT)
 				{
-					m_tileIDs.Set(index, (uint8_t) snowTileDef);
-				}
-			}
-			else 
-			{
-				if (tileGenData.m_terrainHeight >= OBSIDIAN_TERRAIN_HEIGHT)
-				{
-					m_tileIDs.Set(index, (uint8_t) obsidianTileDef);
-				}
-				else if (tileGenData.m_terrainHeight >= STONE_TERRAIN_HEIGHT)
-				{
-					m_tileIDs.Set(index, (uint8_t) stoneTileDef);
-				}
-				else if (tileGenData.m_terrainHeight >= CLAY_TERRAIN_HEIGHT)
-				{
-					m_tileIDs.Set(index, (uint8_t) clayTileDef);
-				}
-				else if (tileGenData.m_terrainHeight >= GRASS_TERRAIN_HEIGHT)
-				{
-					if (tileGenData.m_isDeepForest)
-					{
-						m_tileIDs.Set(index, (uint8_t) deepForestGrassTileDef);
-					}
-					else if (tileGenData.m_isForest)
-					{
-						m_tileIDs.Set(index, (uint8_t) forestGrassTileDef);
-					}
-					else
-					{
-						m_tileIDs.Set(index, (uint8_t) grassTileDef);
-					}
-				}
-				else if (tileGenData.m_terrainHeight >= SAND_TERRAIN_HEIGHT)
-				{
-					m_tileIDs.Set(index, (uint8_t) sandTileDef);
-				}
-				else
-				{
-					m_tileIDs.Set(index, (uint8_t) waterTileDef);
-				}
-
-				if (tileGenData.m_isDesert && tileGenData.m_terrainHeight >= GRASS_TERRAIN_HEIGHT && tileGenData.m_terrainHeight < MOUNTAIN_TERRAIN_HEIGHT)
-				{
-					m_tileIDs.Set(index, (uint8_t) sandTileDef);
+					m_tiles.Set(index, snowTile);
 				}
 			}
-
-			// Generate Chunk VBO
-			int tileID = (int) m_tileIDs.Get(index);
-			TileDef const* tileDef = TileDef::GetTileDef((uint8_t) tileID);
-			if (!tileDef)
-			{
-				tileDef = errorTileDef;
-			}
-
-			Rgba8 tint = tileDef->m_tint;
-			if (tileID == waterTileDef)
-			{
-				float depth = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, SEA_LEVEL, 0.f, 0.f, 1.f);
-				tint = Rgba8::Lerp(tint, Rgba8::DarkOceanBlue, depth);
-			}
-			else if (tileGenData.m_terrainHeight > MOUNTAIN_TERRAIN_HEIGHT)
-			{
-				float mtnHeight01 = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, MOUNTAIN_TERRAIN_HEIGHT, 1.f, 0.f, 1.f);
-				tint = Rgba8::Lerp(tint, Rgba8::DarkGray, mtnHeight01);
-			}
-
-			Vec2 mins = chunkOrigin + Vec2(x, y) * StaticWorldSettings::s_tileWidth;
-			Vec2 maxs = mins + tileDims;
-			AABB2 uvs = terrainSpriteSheet->GetSpriteUVs(tileDef->m_spriteIndex);
-			VertexUtils::AddVertsForRect2D(vbo, mins, maxs, tint, uvs, 1.f);
 
 			// Spawn Entities
 			if (tileGenData.m_treeDef != nullptr)
 			{
 				SpawnInfo spawnInfo;
 				spawnInfo.m_def = tileGenData.m_treeDef;
-				spawnInfo.m_spawnPos = mins + (tileDims * 0.5f);
+				spawnInfo.m_spawnPos = tileOrigin + (tileDims * 0.5f);
 				spawnInfo.m_spawnPos.y += tileGenData.m_treeScale;
 				spawnInfo.m_spawnScale = tileGenData.m_treeScale;
 				spawnInfo.m_spawnTint = tileGenData.m_treeTint;
@@ -170,14 +135,60 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 		}
 	}
 
-	g_assetManager->Release(terrainID);
-
 	#if defined(_DEBUG)
 		m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 		VertexBuffer& debugVBO = *g_renderer->GetVertexBuffer(m_debugVBO);
 		VertexUtils::AddVertsForWireGrid(debugVBO, m_chunkBounds, IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), 0.01f, Rgba8::Black);
 		VertexUtils::AddVertsForWireBox2D(debugVBO, m_chunkBounds, 0.03f, Rgba8::Red);
 	#endif
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Chunk::GenerateVBO()
+{
+	Vec2 chunkOrigin = Vec2(m_chunkCoords.x, m_chunkCoords.y) * StaticWorldSettings::s_chunkWidth;
+	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
+
+	// Get sprite sheet ready
+	AssetID terrainID = g_assetManager->LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
+	GridSpriteSheet const* terrainSpriteSheet = g_assetManager->Get<GridSpriteSheet>(terrainID);
+	ASSERT_OR_DIE(terrainSpriteSheet != nullptr, "Chunk::Generate - Failed to load terrain sprite sheet");
+
+	// Get VBO ready
+	if (m_vbo == RendererUtils::InvalidID)
+	{
+		m_vbo = g_renderer->MakeVertexBuffer<Vertex_PCU>(StaticWorldSettings::s_numVertsInChunk);
+	}
+
+	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+	vbo.Resize(StaticWorldSettings::s_numVertsInChunk);
+
+	for (int y = 0; y < StaticWorldSettings::s_numTilesInRow; ++y)
+	{
+		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x)
+		{
+			int index = m_tiles.GetIndexForCoords(x, y);
+			if (m_tiles.Get(index).IsDirty())
+			{
+				Tile& tile = m_tiles.GetRef(index);
+				TileDef const* tileDef = TileDef::GetTileDef((uint8_t) tile.m_id);
+				ASSERT_OR_DIE(tileDef != nullptr, "Chunk::Generate - Failed to find TileDef for tile id.");
+
+				Vec2 mins = chunkOrigin + Vec2(x, y) * StaticWorldSettings::s_tileWidth;
+				Vec2 maxs = mins + tileDims;
+				AABB2 uvs = terrainSpriteSheet->GetSpriteUVs(tileDef->m_spriteIndex);
+
+				int firstVertIndex = index * 6;
+				Vertex_PCU& firstVert = vbo.GetVert<Vertex_PCU>(firstVertIndex);
+				VertexUtils::WriteVertsForRect2D(&firstVert, mins, maxs, Rgba8::White, uvs, 1.f);
+				tile.SetDirty(false);
+			}
+		}
+	}
+
+	g_assetManager->Release(terrainID);
 }
 
 
@@ -210,7 +221,7 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 
 	// Riverness
 	float rivernessScale = worldSettings.m_rivernessScale;
-	tileGenData.m_riverness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, rivernessScale, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4));
+	tileGenData.m_riverness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, rivernessScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4));
 	tileGenData.m_riverness = MathUtils::AbsF(tileGenData.m_riverness);
 
 	// River runs through here
@@ -274,12 +285,19 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 	float terrainHeight = SEA_LEVEL + tileGenData.m_terrainHeightOffset;
 	tileGenData.m_terrainHeight = terrainHeight;
 
-	if (tileGenData.m_isOcean && tileGenData.m_terrainHeight >= WATER_TERRAIN_HEIGHT && tileGenData.m_isRiver)
+	if (tileGenData.m_isOcean && tileGenData.m_isRiver)
 	{
 		// Handle rivers transitioning into ocean
 		float riverHeight = SEA_LEVEL + MathUtils::RangeMapClamped(tileGenData.m_riverness, riverThreshold, 0.f, -0.05f, riverMaxDepth - SEA_LEVEL);
 		float oceanHeight = tileGenData.m_terrainHeight;
-		tileGenData.m_terrainHeight = MathUtils::InterpolateClamped(riverHeight, oceanHeight, MathUtils::RangeMapClamped(tileGenData.m_oceanness, worldSettings.m_oceanShallowWaterThreshold, 1.f, 0.f, worldSettings.m_riverToOceanTransitionSpeed));
+		if (oceanHeight < SEA_LEVEL && oceanHeight >= SAND_TERRAIN_HEIGHT)
+		{
+			tileGenData.m_terrainHeight = riverHeight; //  MathUtils::InterpolateClamped(riverHeight, oceanHeight, MathUtils::RangeMapClamped(tileGenData.m_oceanness, worldSettings.m_oceanShallowWaterThreshold, 1.f, 0.f, worldSettings.m_riverToOceanTransitionSpeed));
+		}
+		else
+		{
+			tileGenData.m_terrainHeight = oceanHeight;
+		}
 	}
 
 	// Trees
@@ -345,6 +363,21 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 		tileGenData.m_treeTint = Rgba8::Lerp(Rgba8::White, Rgba8::ForestGreen, t);
 	}
 
+	// Static lighting
+	if (tileGenData.m_terrainHeight < SEA_LEVEL)
+	{
+		// Get brighter as we go from deep water to sea level
+		tileGenData.m_staticLighting01 = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, 0.f, SEA_LEVEL, 0.f, 1.f);
+	}
+	else if (tileGenData.m_terrainHeight > MOUNTAIN_TERRAIN_HEIGHT)
+	{
+		tileGenData.m_staticLighting01 = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, MOUNTAIN_TERRAIN_HEIGHT, 1.f, 0.f, 1.f);
+	}
+	else
+	{
+		tileGenData.m_staticLighting01 = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, SEA_LEVEL, MOUNTAIN_TERRAIN_HEIGHT, 1.f, 0.75f);
+	}
+
 	return tileGenData;
 }
 
@@ -353,7 +386,7 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 //----------------------------------------------------------------------------------------------------------------------
 void Chunk::Destroy()
 {
-	m_tileIDs.Clear();
+	m_tiles.Clear();
 
 	g_renderer->ReleaseVertexBuffer(m_vbo);
 	#if defined(_DEBUG)
@@ -366,13 +399,8 @@ void Chunk::Destroy()
 //----------------------------------------------------------------------------------------------------------------------
 bool Chunk::IsTileSolid(IntVec2 const& localTileCoords) const
 {
-	uint8_t tileID = m_tileIDs.Get(localTileCoords);
-	TileDef const* tileDef = TileDef::GetTileDef(tileID);
-	if (tileDef)
-	{
-		return tileDef->IsSolid();
-	}
-	return false;
+	Tile tile = m_tiles.Get(localTileCoords);
+	return tile.IsSolid();
 }
 
 
@@ -380,13 +408,8 @@ bool Chunk::IsTileSolid(IntVec2 const& localTileCoords) const
 //----------------------------------------------------------------------------------------------------------------------
 bool Chunk::IsTileSolid(int localTileIndex) const
 {
-	uint8_t tileID = m_tileIDs.Get(localTileIndex);
-	TileDef const* tileDef = TileDef::GetTileDef(tileID);
-	if (tileDef)
-	{
-		return tileDef->IsSolid();
-	}
-	return false;
+	Tile tile = m_tiles.Get(localTileIndex);
+	return tile.IsSolid();
 }
 
 
@@ -394,8 +417,8 @@ bool Chunk::IsTileSolid(int localTileIndex) const
 //----------------------------------------------------------------------------------------------------------------------
 uint8_t Chunk::GetCost(int localTileIndex) const
 {
-	uint8_t tileID = m_tileIDs.Get(localTileIndex);
-	TileDef const* tileDef = TileDef::GetTileDef(tileID);
+	Tile tile = m_tiles.Get(localTileIndex);
+	TileDef const* tileDef = TileDef::GetTileDef(tile.m_id);
 	if (tileDef)
 	{
 		return tileDef->m_cost;

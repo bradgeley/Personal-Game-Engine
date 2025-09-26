@@ -20,6 +20,16 @@ void VertexBuffer::ReleaseResources()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void VertexBuffer::Resize(int numVerts)
+{
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    size_t totalBytes = numVerts * m_vertSize;
+    m_gpuBuffer->Resize(totalBytes);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void VertexBuffer::ReserveAdditional(int numExpectedAdditionalVerts)
 {
 	ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");

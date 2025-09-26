@@ -1,17 +1,17 @@
 <TileDefs>
 
-  <TileDef name="grass"             visible="true" solid="false"  tint="0,200,0"      cost="1"    spriteIndex="0"/>
-  <TileDef name="stone"             visible="true" solid="true"   tint="100,100,100"  cost="255"  spriteIndex="1"/>
-  <TileDef name="riverWater"        visible="true" solid="false"  tint="255,255,255"  cost="10"   spriteIndex="2"/>
-  <TileDef name="islandWater"       visible="true" solid="false"  tint="255,255,255"  cost="1"    spriteIndex="3"/>
-  <TileDef name="oceanWater"        visible="true" solid="true"   tint="255,255,255"  cost="50"   spriteIndex="4"/>
-  <TileDef name="sand"              visible="true" solid="false"  tint="255,255,255"  cost="1"    spriteIndex="5"/>
-  <TileDef name="forestGrass"       visible="true" solid="false"  tint="255,255,255"  cost="1"    spriteIndex="6"/>
-  <TileDef name="deepForestGrass"   visible="true" solid="false"  tint="255,255,255"  cost="1"    spriteIndex="7"/>
-  <TileDef name="snow"              visible="true" solid="false"  tint="255,255,255"  cost="1"    spriteIndex="8"/>
-  <TileDef name="ice"               visible="true" solid="false"  tint="255,255,255"  cost="1"    spriteIndex="9"/>
-  <TileDef name="clay"              visible="true" solid="true"   tint="255,255,255"  cost="255"  spriteIndex="10"/>
-  <TileDef name="obsidian"          visible="true" solid="true"   tint="255,255,255"  cost="255"  spriteIndex="11"/>
+  <TileDef name="grass"             visible="true" solid="false" opaque="true"  cost="1"    spriteIndex="0"/>
+  <TileDef name="stone"             visible="true" solid="true"  opaque="false" cost="255"  spriteIndex="1"/>
+  <TileDef name="riverWater"        visible="true" solid="false" opaque="true"  cost="10"   spriteIndex="2"/>
+  <TileDef name="islandWater"       visible="true" solid="false" opaque="true"  cost="1"    spriteIndex="3"/>
+  <TileDef name="oceanWater"        visible="true" solid="true"  opaque="true"  cost="50"   spriteIndex="4"/>
+  <TileDef name="sand"              visible="true" solid="false" opaque="true"  cost="1"    spriteIndex="5"/>
+  <TileDef name="forestGrass"       visible="true" solid="false" opaque="true"  cost="1"    spriteIndex="6"/>
+  <TileDef name="deepForestGrass"   visible="true" solid="false" opaque="true"  cost="1"    spriteIndex="7"/>
+  <TileDef name="snow"              visible="true" solid="false" opaque="true"  cost="1"    spriteIndex="8"/>
+  <TileDef name="ice"               visible="true" solid="false" opaque="true"  cost="1"    spriteIndex="9"/>
+  <TileDef name="clay"              visible="true" solid="true"  opaque="false" cost="255"  spriteIndex="10"/>
+  <TileDef name="obsidian"          visible="true" solid="true"  opaque="false" cost="255"  spriteIndex="11"/>
 
   <TileDef name="error"         visible="true" solid="true"   tint="255,0,255"    cost="255"  spriteIndex="255"/>
   

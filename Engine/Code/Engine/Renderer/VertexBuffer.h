@@ -49,6 +49,7 @@ public:
     template<typename T>
     T const& GetVert(size_t index) const;
 
+    virtual void Resize(int numVerts);
     virtual void ReserveAdditional(int numExpectedAdditionalVerts);
     virtual void ClearVerts();
 

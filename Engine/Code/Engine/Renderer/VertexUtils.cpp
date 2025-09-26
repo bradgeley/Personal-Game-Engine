@@ -359,3 +359,31 @@ void VertexUtils::AddVertsForWireMesh2D(VertexBuffer& out_verts, VertexBuffer co
         AddVertsForLine2D(out_verts, Vec2(v3.pos), Vec2(v1.pos), thickness, tint);
     }
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int VertexUtils::WriteVertsForRect2D(Vertex_PCU* writeLocation, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint, AABB2 const& UVs, float z)
+{
+    // Get corners
+    Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, z);
+    Vec3 topRightPoint = Vec3(maxs.x, maxs.y, z);
+    Vec3 bottomLeftPoint = Vec3(mins.x, mins.y, z);
+    Vec3 topLeftPoint = Vec3(mins.x, maxs.y, z);
+
+    // Get UVs
+    Vec2 const& topRightUVs = UVs.maxs;
+    Vec2 const& bottomLeftUVs = UVs.mins;
+    Vec2 bottomRightUVs = Vec2(UVs.maxs.x, UVs.mins.y);
+    Vec2 topLeftUVs = Vec2(UVs.mins.x, UVs.maxs.y);
+
+    // Write verts
+    writeLocation[0] = (Vertex_PCU(bottomLeftPoint, tint, bottomLeftUVs));
+    writeLocation[1] = (Vertex_PCU(bottomRightPoint, tint, bottomRightUVs));
+    writeLocation[2] = (Vertex_PCU(topRightPoint, tint, topRightUVs));
+
+    writeLocation[3] = (Vertex_PCU(topRightPoint, tint, topRightUVs));
+    writeLocation[4] = (Vertex_PCU(topLeftPoint, tint, topLeftUVs));
+    writeLocation[5] = (Vertex_PCU(bottomLeftPoint, tint, bottomLeftUVs));
+    return 6;
+}

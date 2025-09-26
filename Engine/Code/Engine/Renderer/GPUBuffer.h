@@ -60,6 +60,7 @@ public:
 
     bool IsDirty() const;
 	void Reserve(size_t byteWidth);
+	void Resize(size_t byteWidth);
 	void ClearCPUBuffer();
     size_t GetCPUBufferSize() const;
     uint8_t const* GetCPUBufferData() const;

@@ -39,7 +39,7 @@ void SWorldCollision::Run(SystemContext const&)
 
         ChunkCollisionData& chunkCollisionData = scCollision.m_chunkCollisionData[worldCoords.m_chunkCoords];
         auto& tileBuckets = chunkCollisionData.m_tileBuckets;
-		auto& tileBucket = tileBuckets[chunk.m_tileIDs.GetIndexForCoords(worldCoords.m_localTileCoords)];
+		auto& tileBucket = tileBuckets[chunk.m_tiles.GetIndexForCoords(worldCoords.m_localTileCoords)];
 		AABB2 tileBounds = scWorld.GetTileBounds(worldCoords);
         
         for (EntityID entity : tileBucket)

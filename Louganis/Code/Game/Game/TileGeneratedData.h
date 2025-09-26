@@ -28,6 +28,7 @@ struct TileGeneratedData
 	EntityDef const*	m_treeDef					= nullptr;
 	float				m_treeScale					= 1.f; // non-zero positive
 	Rgba8				m_treeTint					= Rgba8::White;
+	float				m_staticLighting01			= 0.f; // SEA_LEVEL is 1, min and max height are lower
 
 	// Cached bools
 	bool				m_isIsland					= false;

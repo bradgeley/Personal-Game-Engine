@@ -30,9 +30,9 @@ TileDef::TileDef(XmlElement const* tileDefXmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 void TileDef::SetTags(bool isVisible, bool isSolid, bool isOpaque)
 {
-	m_tags |= isVisible ? TileTag::Visible	: 0;
-	m_tags |= isSolid	? TileTag::Solid	: 0;
-	m_tags |= isOpaque	? TileTag::Opaque	: 0;
+	m_tags |= isVisible ? (uint8_t) TileTag::Visible	: 0;
+	m_tags |= isSolid	? (uint8_t) TileTag::Solid		: 0;
+	m_tags |= isOpaque	? (uint8_t) TileTag::Opaque		: 0;
 }
 
 
@@ -58,7 +58,7 @@ void TileDef::LoadFromXML()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TileDef const* TileDef::GetTileDef(uint8_t tileID)
+TileDef const* TileDef::GetTileDef(TileID tileID)
 {
 	size_t index = static_cast<size_t>(tileID);
 	if (index >= 0 && index <= s_tileDefs.size() - 1)
@@ -98,4 +98,23 @@ int TileDef::GetTileDefID(Name name)
 		}
 	}
 	return -1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Tile TileDef::GetDefaultTile(Name name)
+{
+	Tile result;
+	int defID = GetTileDefID(name);
+	if (defID != -1)
+	{
+		result.m_id = defID;
+		result.m_tags = GetTileDef((uint8_t) defID)->m_tags;
+		if (!result.IsOpaque())
+		{
+			result.m_lightingValue &= 0x0F; // Max out the dynamic lighting value (treat it as outdoors)
+		}
+	}
+	return result;
 }

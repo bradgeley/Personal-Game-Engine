@@ -37,6 +37,7 @@ namespace StaticWorldSettings
     constexpr int   s_numTilesInRowMinusOne = s_numTilesInRow - 1;
     constexpr float s_numTilesInRowF        = static_cast<float>(s_numTilesInRow);
     constexpr int   s_numTilesInChunk       = (s_numTilesInRow * s_numTilesInRow);
+    constexpr int   s_numVertsInChunk       = (6 * s_numTilesInChunk);
     constexpr float s_oneOverNumTilesInRow  = 1.f / static_cast<float>(s_numTilesInRow);
     constexpr float s_tileHalfWidth         = s_tileWidth * 0.5f;
     constexpr float s_oneOverTileWidth      = 1.f / s_tileWidth;
@@ -47,7 +48,7 @@ namespace StaticWorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Static Asserts
     //
-    static_assert(s_worldChunkSizePowerOfTwo > 0 && s_worldChunkSizePowerOfTwo < 8, "s_worldChunkSizePowerOfTwo must be between 1 and 7");
+    static_assert(s_worldChunkSizePowerOfTwo > 0 && s_worldChunkSizePowerOfTwo < 7, "s_worldChunkSizePowerOfTwo must be between 1 and 6");
     static_assert(s_tileWidth > 0.f && s_tileWidth < 999.f, "s_tileWidth must be greater than 0 and less than 999");
 }
 
@@ -69,19 +70,19 @@ struct WorldSettings
     float m_terrainHeightOffsetScale            = 100.f;
 
     // Biomes
-	float m_humidityScale                       = 20000.f;
+	float m_humidityScale                       = 10000.f;
 	float m_mountainnessScale                   = 500.f;
 	float m_oceannessScale                      = 1000.f;
     float m_rivernessScale                      = 4000.f;
     float m_forestnessScale                     = 5000.f;
     float m_treeBaseScale                       = 10.f;
-	float m_islandnessScale                     = 20000.f;
-	float m_temperatureScale                    = 20000.f;
+	float m_islandnessScale                     = 10000.f;
+	float m_temperatureScale                    = 10000.f;
 
     float m_coldThreshold                       = 0.2f;
     float m_forestThreshold                     = 0.5f;
     float m_deepForestThreshold                 = 0.75f;
-	float m_desertHumidityThreshold             = 0.1f;
+	float m_desertHumidityThreshold             = 0.2f;
 
     // Ocean settings
 	float m_oceanSandThreshold                  = 0.72f;

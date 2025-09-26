@@ -6,6 +6,7 @@
 #include "Engine/Math/FastGrid.h"
 #include "Engine/Renderer/RendererUtils.h"
 #include "SpawnInfo.h"
+#include "Tile.h"
 #include "TileGeneratedData.h"
 #include "WorldSettings.h"
 #include <vector>
@@ -23,6 +24,7 @@ class Chunk
 public:
 
 	void Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings, std::vector<SpawnInfo>& out_spawnInfos);
+	void GenerateVBO();
 	static TileGeneratedData GenerateTileData(IntVec2 const& globalTileCoords, WorldSettings const& worldSettings);
 	void Destroy();
 
@@ -34,8 +36,7 @@ public:
 
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
-	FastGrid<uint8_t, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tileIDs;
-	FastGrid<uint8_t, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tileLighting; // 4 bits indoor (XXXX0000), 4 outdoor (0000XXXX)
+	FastGrid<Tile, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tiles;
 	VertexBufferID m_vbo = RendererUtils::InvalidID;
 	std::vector<EntityID> m_spawnedEntities; 
 #if defined(_DEBUG)

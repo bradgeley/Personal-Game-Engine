@@ -7,6 +7,7 @@
 
 struct Vec2;
 struct AABB2;
+struct Vertex_PCU;
 class VertexBuffer;
 
 
@@ -34,5 +35,7 @@ namespace VertexUtils
 	void AddVertsForWireDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius, float thickness, int numSides, Rgba8 const& tint = Rgba8::White);
 	void AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float radius, Rgba8 const& tint = Rgba8::White);
 	void AddVertsForWireMesh2D(VertexBuffer& out_verts, VertexBuffer const& triangles, float thickness, Rgba8 const& tint = Rgba8::White);
+
+	int WriteVertsForRect2D(Vertex_PCU* writeLocation, Vec2 const& mins, Vec2 const& maxs, Rgba8 const& tint = Rgba8::White, AABB2 const& UVs = AABB2::ZeroToOne, float z = 0.f);
 }
 

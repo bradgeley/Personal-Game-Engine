@@ -228,7 +228,7 @@ void SDebugRender::Run(SystemContext const& context)
                 {
                     WorldCoords worldCoords;
                     worldCoords.m_chunkCoords = chunk.m_chunkCoords;
-                    worldCoords.m_localTileCoords = chunk.m_tileIDs.GetCoordsForIndex(tileID);
+                    worldCoords.m_localTileCoords = chunk.m_tiles.GetCoordsForIndex(tileID);
                     VertexUtils::AddVertsForAABB2(frameVerts, world.GetTileBounds(worldCoords));
                 }
             }

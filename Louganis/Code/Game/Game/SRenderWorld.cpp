@@ -33,6 +33,7 @@ void DrawChunk(Chunk* chunk, GridSpriteSheet* worldSpriteSheet)
 	    UNUSED(worldSpriteSheet);
     #endif
 
+    chunk->GenerateVBO();
     g_renderer->DrawVertexBuffer(chunk->m_vbo);
 
     #if defined(_DEBUG)
@@ -68,6 +69,10 @@ void SRenderWorld::Run(SystemContext const& context)
     if (worldSpriteSheet)
     {
         worldSpriteSheet->SetRendererState();
+    }
+    else
+    {
+        return;
     }
 
     auto cameraIt = g_ecs->Iterate<CCamera>(context);
