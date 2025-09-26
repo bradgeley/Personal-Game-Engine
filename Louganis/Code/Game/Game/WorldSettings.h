@@ -70,7 +70,7 @@ struct WorldSettings
 
     // Biomes
 	float m_humidityScale                       = 20000.f;
-	float m_mountainnessScale                   = 2000.f;
+	float m_mountainnessScale                   = 500.f;
 	float m_oceannessScale                      = 1000.f;
     float m_rivernessScale                      = 4000.f;
     float m_forestnessScale                     = 5000.f;

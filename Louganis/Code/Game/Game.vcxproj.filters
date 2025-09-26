@@ -154,6 +154,9 @@
     <ClCompile Include="Game\SRenderTimeOfDay.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Tile.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -354,6 +357,12 @@
     <ClInclude Include="Game\SRenderTimeOfDay.h">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Game\TimeOfDayConstants.h">
+      <Filter>Data\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Tile.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -451,6 +460,9 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Run\Data\Shaders\WorldShader.hlsl">
       <Filter>Data\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

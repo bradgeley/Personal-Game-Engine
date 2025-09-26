@@ -335,6 +335,7 @@
     <ClCompile Include="Game\SRenderWorld.cpp" />
     <ClCompile Include="Game\SWorld.cpp" />
     <ClCompile Include="Game\SWorldCollision.cpp" />
+    <ClCompile Include="Game\Tile.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
     <ClCompile Include="Game\TileGeneratedData.cpp" />
     <ClCompile Include="Game\TimeOfDay.cpp" />
@@ -401,6 +402,7 @@
     <ClInclude Include="Game\SRenderWorld.h" />
     <ClInclude Include="Game\SWorld.h" />
     <ClInclude Include="Game\SWorldCollision.h" />
+    <ClInclude Include="Game\Tile.h" />
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
     <ClInclude Include="Game\TileGeneratedData.h" />
@@ -408,6 +410,7 @@
     <ClInclude Include="Game\WorldCoords.h" />
     <ClInclude Include="Game\WorldRaycast.h" />
     <ClInclude Include="Game\WorldSettings.h" />
+    <ClInclude Include="Game\TimeOfDayConstants.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Engine\Code\Engine\Engine.vcxproj">
@@ -426,6 +429,11 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='FastBreak|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\..\Run\Data\Shaders\WorldShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='FastBreak|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

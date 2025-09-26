@@ -17,13 +17,19 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-constexpr float SEA_LEVEL						= 0.5f;
+constexpr float OBSIDIAN_TERRAIN_HEIGHT			= 0.95f;
+constexpr float STONE_TERRAIN_HEIGHT			= 0.7f;
+constexpr float CLAY_TERRAIN_HEIGHT				= 0.65f;
 constexpr float MOUNTAIN_TERRAIN_HEIGHT			= 0.65f;
+//----------------------------------------------------------------------------------------------------------------------
 constexpr float GRASS_TERRAIN_HEIGHT			= 0.5f;
+constexpr float SEA_LEVEL						= 0.5f;
+//----------------------------------------------------------------------------------------------------------------------
 constexpr float SAND_TERRAIN_HEIGHT				= 0.49f;
 constexpr float SHALLOW_WATER_TERRAIN_HEIGHT	= 0.4f;
 constexpr float WATER_TERRAIN_HEIGHT			= 0.35f;
 constexpr float DEEP_WATER_TERRAIN_HEIGHT		= 0.25f;
+//----------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -38,10 +44,10 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 	int grassTileDef			= TileDef::GetTileDefID("grass");
 	int forestGrassTileDef		= TileDef::GetTileDefID("forestGrass");
 	int deepForestGrassTileDef	= TileDef::GetTileDefID("deepForestGrass");
-	int wallTileDef				= TileDef::GetTileDefID("wall");
-	//int riverWaterTileDef		= TileDef::GetTileDefID("riverWater");
-	int islandWaterTileDef		= TileDef::GetTileDefID("islandWater");
-	//int oceanWaterTileDef		= TileDef::GetTileDefID("oceanWater");
+	int stoneTileDef			= TileDef::GetTileDefID("stone");
+	int clayTileDef				= TileDef::GetTileDefID("clay");
+	int obsidianTileDef			= TileDef::GetTileDefID("obsidian");
+	int waterTileDef			= TileDef::GetTileDefID("islandWater");
 	int sandTileDef				= TileDef::GetTileDefID("sand");
 	int snowTileDef				= TileDef::GetTileDefID("snow");
 	int iceTileDef				= TileDef::GetTileDefID("ice");
@@ -83,9 +89,17 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			}
 			else 
 			{
-				if (tileGenData.m_terrainHeight >= MOUNTAIN_TERRAIN_HEIGHT)
+				if (tileGenData.m_terrainHeight >= OBSIDIAN_TERRAIN_HEIGHT)
 				{
-					m_tileIDs.Set(index, (uint8_t) wallTileDef);
+					m_tileIDs.Set(index, (uint8_t) obsidianTileDef);
+				}
+				else if (tileGenData.m_terrainHeight >= STONE_TERRAIN_HEIGHT)
+				{
+					m_tileIDs.Set(index, (uint8_t) stoneTileDef);
+				}
+				else if (tileGenData.m_terrainHeight >= CLAY_TERRAIN_HEIGHT)
+				{
+					m_tileIDs.Set(index, (uint8_t) clayTileDef);
 				}
 				else if (tileGenData.m_terrainHeight >= GRASS_TERRAIN_HEIGHT)
 				{
@@ -108,7 +122,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 				}
 				else
 				{
-					m_tileIDs.Set(index, (uint8_t) islandWaterTileDef);
+					m_tileIDs.Set(index, (uint8_t) waterTileDef);
 				}
 
 				if (tileGenData.m_isDesert && tileGenData.m_terrainHeight >= GRASS_TERRAIN_HEIGHT && tileGenData.m_terrainHeight < MOUNTAIN_TERRAIN_HEIGHT)
@@ -126,10 +140,15 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			}
 
 			Rgba8 tint = tileDef->m_tint;
-			if (tileID == islandWaterTileDef)
+			if (tileID == waterTileDef)
 			{
 				float depth = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, SEA_LEVEL, 0.f, 0.f, 1.f);
 				tint = Rgba8::Lerp(tint, Rgba8::DarkOceanBlue, depth);
+			}
+			else if (tileGenData.m_terrainHeight > MOUNTAIN_TERRAIN_HEIGHT)
+			{
+				float mtnHeight01 = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, MOUNTAIN_TERRAIN_HEIGHT, 1.f, 0.f, 1.f);
+				tint = Rgba8::Lerp(tint, Rgba8::DarkGray, mtnHeight01);
 			}
 
 			Vec2 mins = chunkOrigin + Vec2(x, y) * StaticWorldSettings::s_tileWidth;
@@ -170,20 +189,20 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 
 	Vec2 worldTileLocation = Vec2(globalTileCoords);
 
+	// Mountainness
+	tileGenData.m_mountainness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, worldSettings.m_mountainnessScale, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed));
+	tileGenData.m_mountainness = MathUtils::AbsF(tileGenData.m_mountainness);
+	tileGenData.m_mountainness = MathUtils::SmoothStep3(tileGenData.m_mountainness);
+
 	// Terrain Height
-	tileGenData.m_terrainHeightOffset = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_terrainHeightOffsetScale, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed));
+	tileGenData.m_terrainHeightOffset = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_terrainHeightOffsetScale, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 1));
 	tileGenData.m_terrainHeightOffset *= tileGenData.m_mountainness;
 
 	// Humidity
-	tileGenData.m_humidity = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_humidityScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 1));
+	tileGenData.m_humidity = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_humidityScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 2));
 	tileGenData.m_humidity = MathUtils::SmoothStep3(tileGenData.m_humidity);
 	tileGenData.m_humidity *= -1.f; // Invert so higher moisture is lower value
 	tileGenData.m_humidity = MathUtils::RangeMapClamped(tileGenData.m_humidity, -1.f, 0.f, 0.f, 0.5f);
-
-	// Mountainness
-	tileGenData.m_mountainness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, worldSettings.m_mountainnessScale, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 2));
-	tileGenData.m_mountainness = MathUtils::AbsF(tileGenData.m_mountainness);
-	tileGenData.m_mountainness = MathUtils::SmoothStep3(tileGenData.m_mountainness);
 
 	// Oceanness
 	tileGenData.m_oceanness = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_oceannessScale, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 3));
@@ -191,7 +210,7 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 
 	// Riverness
 	float rivernessScale = worldSettings.m_rivernessScale;
-	tileGenData.m_riverness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, rivernessScale, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 5));
+	tileGenData.m_riverness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, rivernessScale, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4));
 	tileGenData.m_riverness = MathUtils::AbsF(tileGenData.m_riverness);
 
 	// River runs through here
@@ -199,15 +218,15 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 	float riverThreshold = MathUtils::RangeMapClamped(tileGenData.m_humidity, 1.f, 0.f, worldSettings.m_riverThreshold, 0.f);
 
 	// Island
-	tileGenData.m_islandness = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_islandnessScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 6));
+	tileGenData.m_islandness = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_islandnessScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 5));
 	tileGenData.m_islandness = MathUtils::SmoothStep3(tileGenData.m_islandness);
 
 	// Temperature
-	tileGenData.m_temperature = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_temperatureScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7));
+	tileGenData.m_temperature = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_temperatureScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 6));
 	tileGenData.m_temperature = MathUtils::SmoothStep3(tileGenData.m_temperature);
 
 	// Forestness
-	tileGenData.m_forestness = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4));
+	tileGenData.m_forestness = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7));
 	tileGenData.m_forestness = MathUtils::SmoothStep3(tileGenData.m_forestness);
 
 	tileGenData.m_isIsland = tileGenData.m_islandness > worldSettings.m_islandThreshold;
@@ -272,20 +291,20 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 	float localTreeness = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, treeScale, 5, tileGenData.m_forestness, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 8));
 	tileGenData.m_treeness = localTreeness;
 
-	tileGenData.m_canGrowTrees = tileGenData.m_terrainHeight >= GRASS_TERRAIN_HEIGHT && tileGenData.m_terrainHeight < MOUNTAIN_TERRAIN_HEIGHT;
+	tileGenData.m_canGrowTrees = tileGenData.m_terrainHeight >= SEA_LEVEL && tileGenData.m_terrainHeight < MOUNTAIN_TERRAIN_HEIGHT;
 
 	if (tileGenData.m_canGrowTrees)
 	{
 		float neighborForestness[8] =
 		{
-			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x + 1.f, worldTileLocation.y,	     worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4))),
-			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x - 1.f, worldTileLocation.y,	     worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4))),
-			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x,		  worldTileLocation.y + 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4))),
-			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x,		  worldTileLocation.y - 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4))),
-			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x + 1.f, worldTileLocation.y + 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4))),
-			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x + 1.f, worldTileLocation.y - 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4))),
-			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x - 1.f, worldTileLocation.y + 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4))),
-			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x - 1.f, worldTileLocation.y - 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4))),
+			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x + 1.f, worldTileLocation.y,	     worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7))),
+			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x - 1.f, worldTileLocation.y,	     worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7))),
+			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x,		  worldTileLocation.y + 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7))),
+			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x,		  worldTileLocation.y - 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7))),
+			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x + 1.f, worldTileLocation.y + 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7))),
+			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x + 1.f, worldTileLocation.y - 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7))),
+			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x - 1.f, worldTileLocation.y + 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7))),
+			MathUtils::SmoothStep3(GetPerlinNoise2D_01(worldTileLocation.x - 1.f, worldTileLocation.y - 1.f, worldSettings.m_forestnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 7))),
 		};
 
 		float neighborTreeness[8] =

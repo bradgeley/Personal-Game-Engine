@@ -263,7 +263,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SInitView>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SRenderTimeOfDay>((int) FramePhase::Render);
+    //g_ecs->RegisterSystem<SRenderTimeOfDay>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 
     // debug

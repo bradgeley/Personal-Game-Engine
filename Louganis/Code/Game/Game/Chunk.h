@@ -35,6 +35,7 @@ public:
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
 	FastGrid<uint8_t, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tileIDs;
+	FastGrid<uint8_t, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tileLighting; // 4 bits indoor (XXXX0000), 4 outdoor (0000XXXX)
 	VertexBufferID m_vbo = RendererUtils::InvalidID;
 	std::vector<EntityID> m_spawnedEntities; 
 #if defined(_DEBUG)
