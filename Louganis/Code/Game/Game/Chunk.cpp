@@ -453,6 +453,6 @@ void Chunk::SetTileDirty(int localTileIndex, bool isDirty)
 //----------------------------------------------------------------------------------------------------------------------
 void Chunk::SetTileDirty(Tile& tile, bool isDirty)
 {
-	tile.SetDirty(isDirty);
+	tile.SetVBODirty(isDirty);
 	m_numDirtyTiles += isDirty ? 1 : -1;
 }

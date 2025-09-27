@@ -635,15 +635,18 @@ void D3D11Renderer::SamplerStateUpdated()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::BoundTextureUpdated()
+void D3D11Renderer::BoundTextureUpdated(int slot /*= 0*/)
 {
-	D3D11Texture* boundTexture = dynamic_cast<D3D11Texture*>(GetBoundTexture());
-	ASSERT_OR_DIE(boundTexture, "Tried to update null or non-d3d texture.");
+	D3D11Texture* boundTexture = dynamic_cast<D3D11Texture*>(GetBoundTexture(slot));
 
-	ID3D11ShaderResourceView* srv = boundTexture->CreateOrGetShaderResourceView();
+	ID3D11ShaderResourceView* srv = nullptr;
+	if (boundTexture)
+	{
+		srv = boundTexture->CreateOrGetShaderResourceView();
+	}
 
-	// todo: support multiple textures bound at the same time
-	m_deviceContext->PSSetShaderResources(0, 1, &srv);
+	// Will bind the texture if not null, otherwise unbinds with a null srv
+	m_deviceContext->PSSetShaderResources(slot, 1, &srv);
 }
 
 

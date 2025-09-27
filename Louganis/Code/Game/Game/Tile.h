@@ -13,11 +13,11 @@ typedef uint8_t TileID;
 enum class TileTag : uint8_t
 {
 	None			= 0,
-	VBO_Dirty		= 1 << 1, // Means the lighting for this tile changed and its verts need to be recalculated
-	Lighting_Dirty	= 1 << 2, // Means the lighting for this tile changed and its verts need to be recalculated
-	Visible			= 1 << 3,
-	Solid			= 1 << 4,
-	Opaque			= 1 << 5,
+	VBO_Dirty		= 1 << 0, // Means the lighting for this tile changed and its verts need to be recalculated
+	Lighting_Dirty	= 1 << 1, // Means the lighting for this tile changed and its verts need to be recalculated
+	Visible			= 1 << 2,
+	Solid			= 1 << 3,
+	Opaque			= 1 << 4,
 };
 
 
@@ -40,12 +40,13 @@ protected:
 
 	friend class Chunk;
 
-	void SetDirty(bool dirty);
+	void SetVBODirty(bool dirty);
+	void SetLightingDirty(bool dirty);
 
 public:
 
 	TileID		m_id				= 0;
-	TileTags	m_tags				= (TileTags) TileTag::VBO_Dirty & (TileTags) TileTag::Lighting_Dirty;	// Start tiles off as dirty
+	TileTags	m_tags				= (TileTags) TileTag::VBO_Dirty | (TileTags) TileTag::Lighting_Dirty;	// Start tiles off as dirty
 	uint8_t		m_lightingValue		= 0;							// 4 bits indoor lighting (XXXX0000), 4 bits outdoor lighting (0000XXXX)
 	uint8_t		m_staticLighting	= 0;							// Brightness of this tile as determined by world generation (0-255)
 };

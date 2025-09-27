@@ -135,8 +135,8 @@ public:
     // Binding
     void BindShader(Shader* shader);
     void BindShader(ShaderID shader);
-    void BindTexture(Texture* texture);
-    void BindTexture(TextureID texture);
+    void BindTexture(Texture* texture, int slot = 0);
+    void BindTexture(TextureID texture, int slot = 0);
     virtual void BindRenderTarget(RenderTargetID renderTarget) = 0;
     virtual void BindVertexBuffer(VertexBufferID vbo) const = 0;
     virtual void BindVertexBuffer(VertexBuffer& vbo) const = 0;
@@ -157,7 +157,7 @@ public:
 
     // Get Bound
     Shader* GetBoundShader() const;
-    Texture* GetBoundTexture() const;
+    Texture* GetBoundTexture(int slot = 0) const;
 
 protected:
 
@@ -197,7 +197,7 @@ protected:
     virtual void FontConstantsUpdated();
     virtual void BlendModeUpdated() = 0;
     virtual void SamplerStateUpdated() = 0;
-    virtual void BoundTextureUpdated() = 0;
+    virtual void BoundTextureUpdated(int slot = 0) = 0;
     virtual void BoundShaderUpdated() = 0;
 
     // State creation

@@ -151,11 +151,11 @@
     <ClCompile Include="Game\TimeOfDay.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SRenderTimeOfDay.cpp">
-      <Filter>ECS\Systems\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Tile.cpp">
       <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SLighting.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -354,11 +354,11 @@
     <ClInclude Include="Game\TimeOfDay.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SRenderTimeOfDay.h">
-      <Filter>ECS\Systems\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Tile.h">
       <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SLighting.h">
+      <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

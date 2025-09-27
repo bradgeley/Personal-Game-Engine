@@ -317,7 +317,7 @@
     <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\SDebugCommands.cpp" />
     <ClCompile Include="Game\SDebugInput.cpp" />
-    <ClCompile Include="Game\SRenderTimeOfDay.cpp" />
+    <ClCompile Include="Game\SLighting.cpp" />
     <ClCompile Include="Game\STime.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
     <ClCompile Include="Game\SEntityFactory.cpp" />
@@ -383,7 +383,7 @@
     <ClInclude Include="Game\SCRender.h" />
     <ClInclude Include="Game\SDebugCommands.h" />
     <ClInclude Include="Game\SDebugInput.h" />
-    <ClInclude Include="Game\SRenderTimeOfDay.h" />
+    <ClInclude Include="Game\SLighting.h" />
     <ClInclude Include="Game\STime.h" />
     <ClInclude Include="Game\SDebugRender.h" />
     <ClInclude Include="Game\SEntityFactory.h" />

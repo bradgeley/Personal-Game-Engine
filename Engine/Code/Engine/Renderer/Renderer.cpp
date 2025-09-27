@@ -598,9 +598,47 @@ void Renderer::SetFillMode(FillMode fillMode)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::BindTexture(TextureID texture)
+void Renderer::BindTexture(TextureID texture, int slot /*= 0*/)
 {
-	m_dirtySettings.m_boundTexture = texture;
+	ASSERT_OR_DIE(slot >= 0 && slot < 16, "Texture slot out of range.");
+	m_dirtySettings.m_boundTextures[slot] = texture;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::BindTexture(Texture* texture, int slot /*= 0*/)
+{
+	ASSERT_OR_DIE(slot >= 0 && slot < 16, "Texture slot out of range.");
+	if (!texture && slot == 0)
+	{
+		if (slot == 0)
+		{
+			m_dirtySettings.m_boundTextures[slot] = m_defaultTexture;
+		}
+		else
+		{
+			m_dirtySettings.m_boundTextures[slot] = RendererUtils::InvalidID;
+		}
+		return;
+	}
+
+	for (auto it : m_textures)
+	{
+		if (it.second == texture)
+		{
+			m_dirtySettings.m_boundTextures[slot] = it.first;
+			return;
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::BindShader(ShaderID shader)
+{
+	m_dirtySettings.m_boundShader = shader;
 }
 
 
@@ -619,35 +657,6 @@ void Renderer::BindShader(Shader* shader)
 		if (it.second == shader)
 		{
 			m_dirtySettings.m_boundShader = it.first;
-			return;
-		}
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Renderer::BindShader(ShaderID shader)
-{
-	m_dirtySettings.m_boundShader = shader;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Renderer::BindTexture(Texture* texture)
-{
-	if (!texture)
-	{
-		m_dirtySettings.m_boundTexture = m_defaultTexture;
-		return;
-	}
-
-	for (auto it : m_textures)
-	{
-		if (it.second == texture)
-		{
-			m_dirtySettings.m_boundTexture = it.first;
 			return;
 		}
 	}
@@ -710,9 +719,10 @@ Shader* Renderer::GetBoundShader() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Texture* Renderer::GetBoundTexture() const
+Texture* Renderer::GetBoundTexture(int slot /*= 0*/) const
 {
-	return GetTexture(m_settings.m_boundTexture);
+	ASSERT_OR_DIE(slot >= 0 && slot < 16, "Texture slot out of range.");
+	return GetTexture(m_settings.m_boundTextures[slot]);
 }
 
 
@@ -940,16 +950,22 @@ void Renderer::UpdateSamplerState(bool force)
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::UpdateTexture(bool force)
 {
-	if (force || m_dirtySettings.m_boundTexture != m_settings.m_boundTexture)
+	for (int textureSlot = 0; textureSlot < 16; ++textureSlot)
 	{
-		if (m_dirtySettings.m_boundTexture == RendererUtils::InvalidID)
-		{
-			ASSERT_OR_DIE(m_defaultTexture != RendererUtils::InvalidID, "No default texture available.");
-			BindTexture(m_defaultTexture);
-		}
-		m_settings.m_boundTexture = m_dirtySettings.m_boundTexture;
+		TextureID& newTexture = m_dirtySettings.m_boundTextures[textureSlot];
+		TextureID& oldTexture = m_settings.m_boundTextures[textureSlot];
 
-		BoundTextureUpdated();
+		if (force || newTexture != oldTexture)
+		{
+			if (newTexture == RendererUtils::InvalidID && textureSlot == 0)
+			{
+				ASSERT_OR_DIE(m_defaultTexture != RendererUtils::InvalidID, "No default texture available.");
+				BindTexture(m_defaultTexture, 0);
+			}
+
+			oldTexture = newTexture;
+			BoundTextureUpdated(textureSlot);
+		}
 	}
 }
 

@@ -15,14 +15,29 @@ Tile::Tile(uint8_t tileID, uint8_t lighting, uint8_t flags) :
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Tile::SetDirty(bool dirty)
+void Tile::SetVBODirty(bool dirty)
 {
     if (dirty)
     {
-        m_tags |= static_cast<uint8_t>(TileTag::Dirty);
+        m_tags |= static_cast<uint8_t>(TileTag::VBO_Dirty);
     }
     else
     {
-        m_tags &= ~static_cast<uint8_t>(TileTag::Dirty);
+        m_tags &= ~static_cast<uint8_t>(TileTag::VBO_Dirty);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Tile::SetLightingDirty(bool dirty)
+{
+    if (dirty)
+    {
+        m_tags |= static_cast<uint8_t>(TileTag::Lighting_Dirty);
+    }
+    else
+    {
+        m_tags &= ~static_cast<uint8_t>(TileTag::Lighting_Dirty);
+    }
 }

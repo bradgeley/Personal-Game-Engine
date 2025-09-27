@@ -97,7 +97,7 @@ struct RendererSettings
     ModelConstants m_modelConstants;
     FontConstants m_fontConstants;
 
-    TextureID m_boundTexture                = RendererUtils::InvalidID;
+    TextureID m_boundTextures[16]           = { RendererUtils::InvalidID };
     ShaderID m_boundShader                  = RendererUtils::InvalidID;
     
     FillMode m_fillMode                     = FillMode::Solid;

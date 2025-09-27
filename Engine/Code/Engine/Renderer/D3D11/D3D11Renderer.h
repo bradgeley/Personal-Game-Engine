@@ -64,7 +64,7 @@ private:
     virtual void DepthStencilStateUpdated() override;
     virtual void BlendModeUpdated() override;
     virtual void SamplerStateUpdated() override;
-    virtual void BoundTextureUpdated() override;
+    virtual void BoundTextureUpdated(int slot = 0) override;
     virtual void BoundShaderUpdated() override;
 
     // State creation
