@@ -113,7 +113,7 @@ Tile TileDef::GetDefaultTile(Name name)
 		result.m_tags = GetTileDef((uint8_t) defID)->m_tags;
 		if (!result.IsOpaque())
 		{
-			result.m_lightingValue &= 0x0F; // Max out the dynamic lighting value (treat it as outdoors)
+			result.m_lightingValue &= 0x0F; // Max out the outdoor lighting value (treat it as outdoors)
 		}
 	}
 	return result;

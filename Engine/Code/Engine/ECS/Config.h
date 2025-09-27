@@ -9,7 +9,7 @@
 // Max entities is required for array storage, as they are preallocated
 // todo: move to EngineBuildPreferences.h
 #ifdef _DEBUG
-constexpr uint32_t MAX_ENTITIES = 1'000;
+constexpr uint32_t MAX_ENTITIES = 10'000;
 #else
 constexpr uint32_t MAX_ENTITIES = 100'000;
 #endif

@@ -17,7 +17,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-constexpr float OBSIDIAN_TERRAIN_HEIGHT			= 0.95f;
+constexpr float OBSIDIAN_TERRAIN_HEIGHT			= 0.93f;
 constexpr float STONE_TERRAIN_HEIGHT			= 0.7f;
 constexpr float CLAY_TERRAIN_HEIGHT				= 0.65f;
 constexpr float MOUNTAIN_TERRAIN_HEIGHT			= 0.65f;
@@ -121,6 +121,9 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 				}
 			}
 
+			Tile& tile = m_tiles.GetRef(index);
+			tile.m_staticLighting = static_cast<uint8_t>(tileGenData.m_staticLighting01 * 255.f);
+
 			// Spawn Entities
 			if (tileGenData.m_treeDef != nullptr)
 			{
@@ -148,6 +151,11 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 //----------------------------------------------------------------------------------------------------------------------
 void Chunk::GenerateVBO()
 {
+	if (m_numDirtyTiles == 0)
+	{
+		return;
+	}
+
 	Vec2 chunkOrigin = Vec2(m_chunkCoords.x, m_chunkCoords.y) * StaticWorldSettings::s_chunkWidth;
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 
@@ -170,7 +178,7 @@ void Chunk::GenerateVBO()
 		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x)
 		{
 			int index = m_tiles.GetIndexForCoords(x, y);
-			if (m_tiles.Get(index).IsDirty())
+			if (m_tiles.Get(index).IsVBODirty())
 			{
 				Tile& tile = m_tiles.GetRef(index);
 				TileDef const* tileDef = TileDef::GetTileDef((uint8_t) tile.m_id);
@@ -182,8 +190,10 @@ void Chunk::GenerateVBO()
 
 				int firstVertIndex = index * 6;
 				Vertex_PCU& firstVert = vbo.GetVert<Vertex_PCU>(firstVertIndex);
-				VertexUtils::WriteVertsForRect2D(&firstVert, mins, maxs, Rgba8::White, uvs, 1.f);
-				tile.SetDirty(false);
+				float staticLighting01 = static_cast<float>(tile.m_staticLighting) / 255.f;
+				Rgba8 tint = tileDef->m_tint * staticLighting01;
+				VertexUtils::WriteVertsForRect2D(&firstVert, mins, maxs, tint, uvs, 1.f);
+				SetTileDirty(tile, false);
 			}
 		}
 	}
@@ -300,6 +310,8 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 		}
 	}
 
+	tileGenData.m_terrainHeight = MathUtils::Clamp01F(tileGenData.m_terrainHeight);
+
 	// Trees
 	float treeScale = worldSettings.m_treeBaseScale;
 	if (tileGenData.m_isDesert)
@@ -369,14 +381,15 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 		// Get brighter as we go from deep water to sea level
 		tileGenData.m_staticLighting01 = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, 0.f, SEA_LEVEL, 0.f, 1.f);
 	}
-	else if (tileGenData.m_terrainHeight > MOUNTAIN_TERRAIN_HEIGHT)
+	else if (tileGenData.m_terrainHeight >= MOUNTAIN_TERRAIN_HEIGHT)
 	{
-		tileGenData.m_staticLighting01 = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, MOUNTAIN_TERRAIN_HEIGHT, 1.f, 0.f, 1.f);
+		tileGenData.m_staticLighting01 = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, MOUNTAIN_TERRAIN_HEIGHT, 1.f, 1.f, 0.25f);
 	}
 	else
 	{
 		tileGenData.m_staticLighting01 = MathUtils::RangeMapClamped(tileGenData.m_terrainHeight, SEA_LEVEL, MOUNTAIN_TERRAIN_HEIGHT, 1.f, 0.75f);
 	}
+
 
 	return tileGenData;
 }
@@ -424,4 +437,22 @@ uint8_t Chunk::GetCost(int localTileIndex) const
 		return tileDef->m_cost;
 	}
 	return (uint8_t)255;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Chunk::SetTileDirty(int localTileIndex, bool isDirty)
+{
+	Tile tile = m_tiles.Get(localTileIndex);
+	SetTileDirty(tile, isDirty);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Chunk::SetTileDirty(Tile& tile, bool isDirty)
+{
+	tile.SetDirty(isDirty);
+	m_numDirtyTiles += isDirty ? 1 : -1;
 }

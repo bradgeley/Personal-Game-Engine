@@ -37,7 +37,7 @@ public:
 
 	Name		m_name			= "Unnamed TileDef";
 	uint8_t		m_spriteIndex	= 0;
-	TileTags	m_tags			= (TileTags) TileTag::Dirty;	// Start tiles off as dirty
+	TileTags	m_tags = (TileTags) TileTag::VBO_Dirty & (TileTags) TileTag::Lighting_Dirty;	// Start tiles off as dirty
 	Rgba8		m_tint			= Rgba8::White;
 	uint8_t		m_cost			= 1;
 };

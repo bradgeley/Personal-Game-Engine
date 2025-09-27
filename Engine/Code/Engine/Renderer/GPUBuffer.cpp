@@ -31,6 +31,7 @@ void GPUBuffer::Reserve(size_t byteWidth)
 //----------------------------------------------------------------------------------------------------------------------
 void GPUBuffer::Resize(size_t byteWidth)
 {
+	m_isDirty = m_cpuBuffer.size() != byteWidth;
 	m_cpuBuffer.resize(byteWidth);
 }
 
@@ -39,8 +40,8 @@ void GPUBuffer::Resize(size_t byteWidth)
 //----------------------------------------------------------------------------------------------------------------------
 void GPUBuffer::ClearCPUBuffer()
 {
+	m_isDirty = !m_cpuBuffer.empty();
 	m_cpuBuffer.clear();
-	m_isDirty = true;
 }
 
 

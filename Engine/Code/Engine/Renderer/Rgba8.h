@@ -25,6 +25,8 @@ public:
     bool operator==(Rgba8 const& other) const;
     bool operator!=(Rgba8 const& other) const;
 
+	Rgba8 operator*(float scale) const;
+
 public:
     
     static Rgba8 Lerp(Rgba8 const& start, Rgba8 const& end, float t);

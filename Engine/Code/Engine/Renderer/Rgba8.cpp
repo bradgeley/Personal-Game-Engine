@@ -136,6 +136,19 @@ bool Rgba8::operator!=(Rgba8 const& other) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Rgba8 Rgba8::operator*(float scale) const
+{
+    Rgba8 result;
+    result.r = static_cast<uint8_t>(MathUtils::Clamp(static_cast<int>(static_cast<float>(r) * scale), 0, 255));
+    result.g = static_cast<uint8_t>(MathUtils::Clamp(static_cast<int>(static_cast<float>(g) * scale), 0, 255));
+    result.b = static_cast<uint8_t>(MathUtils::Clamp(static_cast<int>(static_cast<float>(b) * scale), 0, 255));
+    result.a = a;
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Rgba8 Rgba8::Lerp(Rgba8 const& start, Rgba8 const& end, float t)
 {
     Rgba8 result;
