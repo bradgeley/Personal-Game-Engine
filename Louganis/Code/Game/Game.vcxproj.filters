@@ -360,6 +360,9 @@
     <ClInclude Include="Game\SLighting.h">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Game\WorldShaderCPU.h">
+      <Filter>Data\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -454,9 +457,15 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\Tree1.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
+    <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml">
+      <Filter>Data\Shaders</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Run\Data\Shaders\WorldShader.hlsl">
       <Filter>Data\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

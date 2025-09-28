@@ -1118,7 +1118,7 @@ void Renderer::ModelConstantsUpdated()
 	ASSERT_OR_DIE(m_modelConstantsGPU != RendererUtils::InvalidID, "Updating invalid constant buffer.");
 	ConstantBuffer* modelConstants = GetConstantBuffer(m_modelConstantsGPU);
 	ASSERT_OR_DIE(modelConstants, "Cannot find model constant buffer.");
-	modelConstants->Update(&m_settings.m_modelConstants, sizeof(ModelConstants));
+	modelConstants->Update(m_settings.m_modelConstants);
 }
 
 
@@ -1129,7 +1129,7 @@ void Renderer::CameraConstantsUpdated()
 	ASSERT_OR_DIE(m_cameraConstantsGPU != RendererUtils::InvalidID, "Updating invalid constant buffer.");
 	ConstantBuffer* cameraConstants = GetConstantBuffer(m_cameraConstantsGPU);
 	ASSERT_OR_DIE(cameraConstants, "Cannot find camera constant buffer.");
-	cameraConstants->Update(&m_settings.m_cameraConstants, sizeof(CameraConstants));
+	cameraConstants->Update(m_settings.m_cameraConstants);
 }
 
 
@@ -1140,7 +1140,7 @@ void Renderer::FontConstantsUpdated()
 	ASSERT_OR_DIE(m_fontConstantsGPU != RendererUtils::InvalidID, "Updating invalid constant buffer.");
 	ConstantBuffer* fontConstants = GetConstantBuffer(m_fontConstantsGPU);
 	ASSERT_OR_DIE(fontConstants, "Cannot find font constant buffer.");
-	fontConstants->Update(&m_settings.m_fontConstants, sizeof(FontConstants));
+	fontConstants->Update(m_settings.m_fontConstants);
 }
 
 

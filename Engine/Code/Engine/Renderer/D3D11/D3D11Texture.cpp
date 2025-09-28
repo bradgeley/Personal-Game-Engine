@@ -36,6 +36,8 @@ bool D3D11Texture::IsValid() const
 //----------------------------------------------------------------------------------------------------------------------
 bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap)
 {
+    ReleaseResources();
+
     auto device = D3D11Renderer::Get()->GetDevice();
     auto context = D3D11Renderer::Get()->GetDeviceContext();
 

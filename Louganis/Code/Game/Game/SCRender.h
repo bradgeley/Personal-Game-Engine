@@ -11,10 +11,16 @@ class SCRender
 {
 public:
 
-	AssetID m_spriteShaderAsset = AssetID::Invalid;
-	ShaderID m_spriteShaderID = RendererUtils::InvalidID;
-	ConstantBufferID m_spriteSheetConstantsBuffer = RendererUtils::InvalidID;
-	VertexBufferID m_timeOfDayVBO = RendererUtils::InvalidID;
+	AssetID m_spriteShaderAsset = AssetID::Invalid;			// Owned by SRenderEntities
+	ShaderID m_spriteShaderID = RendererUtils::InvalidID;	// Owned by SRenderEntities
+
+	AssetID m_worldShaderAsset = AssetID::Invalid;			// Owned by SRenderWorld
+	ShaderID m_worldShaderID = RendererUtils::InvalidID;	// Owned by SRenderWorld
+
+	ConstantBufferID m_spriteSheetConstantsBuffer	= RendererUtils::InvalidID; // Owned by SRenderEntities
+	ConstantBufferID m_lightingConstantsBuffer		= RendererUtils::InvalidID; // Owned by SRenderWorld
+	ConstantBufferID m_staticWorldConstantsBuffer	= RendererUtils::InvalidID; // Owned by SRenderWorld
+
 	std::unordered_map<AssetID, VertexBufferID> m_entityVBOsBySpriteSheet; // Owned by SRenderEntities
 	std::unordered_map<AssetID, InstanceBufferID> instancesPerSpriteSheet; // Owned by SRenderEntities
 };

@@ -4,7 +4,9 @@
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Assets/Image.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Math/Noise.h"
@@ -144,6 +146,8 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 		VertexUtils::AddVertsForWireGrid(debugVBO, m_chunkBounds, IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), 0.01f, Rgba8::Black);
 		VertexUtils::AddVertsForWireBox2D(debugVBO, m_chunkBounds, 0.03f, Rgba8::Red);
 	#endif
+
+	GenerateVBO();
 }
 
 
@@ -151,11 +155,6 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 //----------------------------------------------------------------------------------------------------------------------
 void Chunk::GenerateVBO()
 {
-	if (m_numDirtyTiles == 0)
-	{
-		return;
-	}
-
 	Vec2 chunkOrigin = Vec2(m_chunkCoords.x, m_chunkCoords.y) * StaticWorldSettings::s_chunkWidth;
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 
@@ -193,12 +192,43 @@ void Chunk::GenerateVBO()
 				float staticLighting01 = static_cast<float>(tile.m_staticLighting) / 255.f;
 				Rgba8 tint = tileDef->m_tint * staticLighting01;
 				VertexUtils::WriteVertsForRect2D(&firstVert, mins, maxs, tint, uvs, 1.f);
-				SetTileDirty(tile, false);
 			}
 		}
 	}
 
 	g_assetManager->Release(terrainID);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Chunk::GenerateLightmap()
+{
+	Vec2 chunkOrigin = Vec2(m_chunkCoords.x, m_chunkCoords.y) * StaticWorldSettings::s_chunkWidth;
+	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
+
+	// Get lightmap ready
+	if (m_lightmap == RendererUtils::InvalidID)
+	{
+		m_lightmap = g_renderer->MakeTexture();
+	}
+
+
+	Image image(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), Rgba8::TransparentBlack); // +1 to avoid clamping artifacts
+	Grid<Rgba8>& pixelGrid = image.GetPixelsRef();
+
+	for (int y = 0; y < StaticWorldSettings::s_numTilesInRow; ++y)
+	{
+		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x)
+		{
+			int index = pixelGrid.GetIndexForCoords(x, y);
+			Tile& tile = m_tiles.GetRef(index);
+			pixelGrid.Set(index, Rgba8(tile.GetIndoorLighting(), tile.GetOutdoorLighting(), 0, 0));
+		}
+	}
+
+	Texture* lightmapTex = g_renderer->GetTexture(m_lightmap);
+	lightmapTex->CreateFromImage(image);
 }
 
 
@@ -401,6 +431,8 @@ void Chunk::Destroy()
 {
 	m_tiles.Clear();
 
+	g_renderer->ReleaseTexture(m_lightmap);
+
 	g_renderer->ReleaseVertexBuffer(m_vbo);
 	#if defined(_DEBUG)
 		g_renderer->ReleaseVertexBuffer(m_debugVBO);
@@ -437,22 +469,4 @@ uint8_t Chunk::GetCost(int localTileIndex) const
 		return tileDef->m_cost;
 	}
 	return (uint8_t)255;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Chunk::SetTileDirty(int localTileIndex, bool isDirty)
-{
-	Tile tile = m_tiles.Get(localTileIndex);
-	SetTileDirty(tile, isDirty);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Chunk::SetTileDirty(Tile& tile, bool isDirty)
-{
-	tile.SetVBODirty(isDirty);
-	m_numDirtyTiles += isDirty ? 1 : -1;
 }

@@ -36,6 +36,9 @@ public:
 	inline bool IsVBODirty()		const { return m_tags & static_cast<uint8_t>(TileTag::VBO_Dirty); }
 	inline bool IsLightingDirty()   const { return m_tags & static_cast<uint8_t>(TileTag::Lighting_Dirty); }
 
+	uint8_t GetIndoorLighting()		const { return (m_lightingValue & 0xF0) >> 4; } // Get the top 4 bits
+	uint8_t GetOutdoorLighting() 	const { return m_lightingValue & 0x0F; }        // Get the bottom 4 bits
+
 protected:
 
 	friend class Chunk;

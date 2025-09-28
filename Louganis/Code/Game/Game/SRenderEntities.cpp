@@ -158,7 +158,7 @@ void SRenderEntities::Run(SystemContext const& context)
         spriteSheetConstants.m_edgePadding = spriteSheet->GetEdgePadding();
         spriteSheetConstants.m_innerPadding = spriteSheet->GetInnerPadding();
 		spriteSheetConstants.m_textureDims = spriteSheet->GetTextureDimensions();
-		spriteCbo->Update(&spriteSheetConstants, sizeof(spriteSheetConstants));
+		spriteCbo->Update(spriteSheetConstants);
 
         g_renderer->SetModelConstants(ModelConstants());
 		g_renderer->BindConstantBuffer(scRender.m_spriteSheetConstantsBuffer, 5);

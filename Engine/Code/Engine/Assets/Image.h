@@ -24,6 +24,7 @@ public:
     explicit Image(IntVec2 const& dimensions, Rgba8 const& color);
 
     Grid<Rgba8> const& GetPixels() const;
+    Grid<Rgba8>& GetPixelsRef();
 
     // Loading functions
     static Asset* Load(Name assetName);

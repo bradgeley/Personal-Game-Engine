@@ -25,6 +25,7 @@ public:
 
 	void Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings, std::vector<SpawnInfo>& out_spawnInfos);
 	void GenerateVBO();
+	void GenerateLightmap();
 	static TileGeneratedData GenerateTileData(IntVec2 const& globalTileCoords, WorldSettings const& worldSettings);
 	void Destroy();
 
@@ -32,16 +33,13 @@ public:
 	bool IsTileSolid(int localTileIndex) const;
 	uint8_t GetCost(int localTileIndex) const;
 
-	void SetTileDirty(int localTileIndex, bool isDirty);
-	void SetTileDirty(Tile& tile, bool isDirty);
-
 public:
 
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
-	int m_numDirtyTiles = StaticWorldSettings::s_numTilesInChunk;
 	FastGrid<Tile, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tiles;
 	VertexBufferID m_vbo = RendererUtils::InvalidID;
+	TextureID m_lightmap = RendererUtils::InvalidID; // R8G8
 	std::vector<EntityID> m_spawnedEntities; 
 #if defined(_DEBUG)
 	VertexBufferID m_debugVBO = RendererUtils::InvalidID;

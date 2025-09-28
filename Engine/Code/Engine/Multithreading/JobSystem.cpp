@@ -188,7 +188,13 @@ bool JobSystem::TryCancelLoadingJob(JobID jobID)
         {
             continue;
         }
+
+        Job*& job = *it;
+        delete job;
+        job = nullptr;
+
         m_numIncompleteJobs--;
+
         m_loadingJobQueue.erase(it);
         m_loadingJobQueue.Unlock();
         return true;

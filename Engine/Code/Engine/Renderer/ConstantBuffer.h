@@ -30,7 +30,19 @@ public:
     
     virtual void Update(void const* data, size_t byteWidth, bool updateGPU = true);
 
+	template<typename T>
+    void Update(T const& data, bool updateGPU = true);
+
 protected:
 
     GPUBuffer* m_gpuBuffer = nullptr;
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename T>
+inline void ConstantBuffer::Update(T const& data, bool updateGPU /*= true*/)
+{
+    Update(&data, sizeof(T), updateGPU);
+}
