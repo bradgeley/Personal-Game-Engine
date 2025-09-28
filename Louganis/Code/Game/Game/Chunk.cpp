@@ -177,22 +177,20 @@ void Chunk::GenerateVBO()
 		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x)
 		{
 			int index = m_tiles.GetIndexForCoords(x, y);
-			if (m_tiles.Get(index).IsVBODirty())
-			{
-				Tile& tile = m_tiles.GetRef(index);
-				TileDef const* tileDef = TileDef::GetTileDef((uint8_t) tile.m_id);
-				ASSERT_OR_DIE(tileDef != nullptr, "Chunk::Generate - Failed to find TileDef for tile id.");
 
-				Vec2 mins = chunkOrigin + Vec2(x, y) * StaticWorldSettings::s_tileWidth;
-				Vec2 maxs = mins + tileDims;
-				AABB2 uvs = terrainSpriteSheet->GetSpriteUVs(tileDef->m_spriteIndex);
+			Tile& tile = m_tiles.GetRef(index);
+			TileDef const* tileDef = TileDef::GetTileDef((uint8_t) tile.m_id);
+			ASSERT_OR_DIE(tileDef != nullptr, "Chunk::Generate - Failed to find TileDef for tile id.");
 
-				int firstVertIndex = index * 6;
-				Vertex_PCU& firstVert = vbo.GetVert<Vertex_PCU>(firstVertIndex);
-				float staticLighting01 = static_cast<float>(tile.m_staticLighting) / 255.f;
-				Rgba8 tint = tileDef->m_tint * staticLighting01;
-				VertexUtils::WriteVertsForRect2D(&firstVert, mins, maxs, tint, uvs, 1.f);
-			}
+			Vec2 mins = chunkOrigin + Vec2(x, y) * StaticWorldSettings::s_tileWidth;
+			Vec2 maxs = mins + tileDims;
+			AABB2 uvs = terrainSpriteSheet->GetSpriteUVs(tileDef->m_spriteIndex);
+
+			int firstVertIndex = index * 6;
+			Vertex_PCU& firstVert = vbo.GetVert<Vertex_PCU>(firstVertIndex);
+			float staticLighting01 = static_cast<float>(tile.m_staticLighting) / 255.f;
+			Rgba8 tint = tileDef->m_tint * staticLighting01;
+			VertexUtils::WriteVertsForRect2D(&firstVert, mins, maxs, tint, uvs, 1.f);
 		}
 	}
 
@@ -204,6 +202,11 @@ void Chunk::GenerateVBO()
 //----------------------------------------------------------------------------------------------------------------------
 void Chunk::GenerateLightmap()
 {
+	if (!m_isLightingDirty)
+	{
+		return;
+	}
+
 	Vec2 chunkOrigin = Vec2(m_chunkCoords.x, m_chunkCoords.y) * StaticWorldSettings::s_chunkWidth;
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 
@@ -213,8 +216,7 @@ void Chunk::GenerateLightmap()
 		m_lightmap = g_renderer->MakeTexture();
 	}
 
-
-	Image image(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), Rgba8::TransparentBlack); // +1 to avoid clamping artifacts
+	Image image(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), Rgba8::TransparentBlack);
 	Grid<Rgba8>& pixelGrid = image.GetPixelsRef();
 
 	for (int y = 0; y < StaticWorldSettings::s_numTilesInRow; ++y)
@@ -228,7 +230,8 @@ void Chunk::GenerateLightmap()
 	}
 
 	Texture* lightmapTex = g_renderer->GetTexture(m_lightmap);
-	lightmapTex->CreateFromImage(image);
+	lightmapTex->CreateFromImage(image, false, false);
+	m_isLightingDirty = false;
 }
 
 

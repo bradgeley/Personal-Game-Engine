@@ -261,9 +261,9 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SCamera>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SInitView>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SLighting>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SLighting>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 
     // debug

@@ -10,10 +10,10 @@ Rgba8 TimeOfDayUtils::GetTimeOfDayTint(TimeOfDay const& timeOfDay)
 {
 	switch (timeOfDay)
 	{
-		case TimeOfDay::Dawn:   return Rgba8(255, 200, 124, 45);
-		case TimeOfDay::Day:    return Rgba8(255, 255, 255, 0);
-		case TimeOfDay::Dusk:   return Rgba8(50,   40,   0, 75);
-		case TimeOfDay::Night:  return Rgba8(0,     0,   0, 150);
+		case TimeOfDay::Dawn:   return Rgba8(255, 200, 124, 255);
+		case TimeOfDay::Day:    return Rgba8(255, 255, 255, 255);
+		case TimeOfDay::Dusk:   return Rgba8(200, 100, 100, 255);
+		case TimeOfDay::Night:  return Rgba8(50,   50,  50, 255);
 		default:            
 			return Rgba8::White;
 	}

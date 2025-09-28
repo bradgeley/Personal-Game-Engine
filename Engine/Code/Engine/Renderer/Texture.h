@@ -29,7 +29,7 @@ public:
     virtual IntVec2 GetDimensions() const;
 
     virtual bool CreateUniformTexture(IntVec2 const& dims, Rgba8 const& tint);
-    virtual bool CreateFromImage(Image const& image, bool createMipMap = true) = 0;
+    virtual bool CreateFromImage(Image const& image, bool createMipMap = true, bool isRenderTarget = false) = 0;
 
     virtual void CopyTo(Swapchain* swapchain) = 0;
 

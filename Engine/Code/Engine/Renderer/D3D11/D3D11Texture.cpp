@@ -34,7 +34,7 @@ bool D3D11Texture::IsValid() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap)
+bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap /*= true*/, bool isRenderTarget /*= false*/)
 {
     ReleaseResources();
 
@@ -50,7 +50,7 @@ bool D3D11Texture::CreateFromImage(Image const& image, bool createMipMap)
     desc.ArraySize = 1;
     desc.Usage = D3D11_USAGE_DEFAULT;
     desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | (isRenderTarget ? D3D11_BIND_RENDER_TARGET : 0);
     desc.CPUAccessFlags = 0;
     desc.MiscFlags = 0;
     desc.SampleDesc.Count = 1;

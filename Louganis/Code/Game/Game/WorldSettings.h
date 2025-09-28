@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Renderer/Rgba8.h"
 #include <cstddef>
 #include <cstdint>
 
@@ -30,6 +31,9 @@ namespace StaticWorldSettings
     constexpr float s_flowFieldGenerationRadiusSquared      = s_flowFieldGenerationRadius * s_flowFieldGenerationRadius;
     constexpr float s_collisionHashRadiusSquared            = s_collisionHashRadius * s_collisionHashRadius;
 
+	constexpr int s_maxOutdoorLighting                      = 15;       // 4 bits (0-15)
+	constexpr int s_maxIndoorLighting                       = 15;       // 4 bits (0-15)
+
     //----------------------------------------------------------------------------------------------------------------------
     // Derived Constants
     //
@@ -57,12 +61,27 @@ namespace StaticWorldSettings
 //----------------------------------------------------------------------------------------------------------------------
 struct WorldSettings
 {
+    //----------------------------------------------------------------------------------------------------------------------
+    // Seed
+
     bool    m_randomWorldSeed                   = true;
     size_t  m_worldSeed                         = 69;
+
     float   m_chunkLoadRadius                   = StaticWorldSettings::s_defaultChunkLoadRadius;
     float   m_chunkUnloadRadius                 = StaticWorldSettings::s_defaultChunkUnloadRadius;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Collision Settings
+
     float   m_entityWallBuffer                  = 0.01f;
     float   m_collisionHashWiggleRoom           = 0.25f;      // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Lighting Settings
+
+    Rgba8 m_timeOfDayTints[4]                   = { Rgba8(255, 153, 102), Rgba8::White, Rgba8(255, 102, 102), Rgba8(51, 102, 255) };    // Dawn, Day, Dusk, Night
+	double m_timeOfDayDurations[4]              = { 6.0, 12.0, 6.0, 12.0 }; // Dawn, Day, Dusk, Night
+    double m_timeOfDayTransitionDuration        = 10.f;
 
     //----------------------------------------------------------------------------------------------------------------------
     // Generation Settings

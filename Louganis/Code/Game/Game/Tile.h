@@ -13,11 +13,10 @@ typedef uint8_t TileID;
 enum class TileTag : uint8_t
 {
 	None			= 0,
-	VBO_Dirty		= 1 << 0, // Means the lighting for this tile changed and its verts need to be recalculated
-	Lighting_Dirty	= 1 << 1, // Means the lighting for this tile changed and its verts need to be recalculated
-	Visible			= 1 << 2,
-	Solid			= 1 << 3,
-	Opaque			= 1 << 4,
+	Lighting_Dirty	= 1 << 0, // Means the lighting for this tile changed and its verts need to be recalculated
+	Visible			= 1 << 1,
+	Solid			= 1 << 2,
+	Opaque			= 1 << 3,
 };
 
 
@@ -33,23 +32,20 @@ public:
 	inline bool IsVisible()			const { return m_tags & static_cast<uint8_t>(TileTag::Visible); }
 	inline bool IsSolid()			const { return m_tags & static_cast<uint8_t>(TileTag::Solid); }
 	inline bool IsOpaque()			const { return m_tags & static_cast<uint8_t>(TileTag::Opaque); }
-	inline bool IsVBODirty()		const { return m_tags & static_cast<uint8_t>(TileTag::VBO_Dirty); }
 	inline bool IsLightingDirty()   const { return m_tags & static_cast<uint8_t>(TileTag::Lighting_Dirty); }
 
-	uint8_t GetIndoorLighting()		const { return (m_lightingValue & 0xF0) >> 4; } // Get the top 4 bits
-	uint8_t GetOutdoorLighting() 	const { return m_lightingValue & 0x0F; }        // Get the bottom 4 bits
+	inline uint8_t GetIndoorLighting()		const { return (m_lightingValues & 0xF0) >> 4; } // Get the top 4 bits
+	inline uint8_t GetOutdoorLighting() 	const { return m_lightingValues & 0x0F; }        // Get the bottom 4 bits
 
-protected:
+	inline void SetIndoorLighting(uint8_t indoorLighting) { m_lightingValues = (m_lightingValues & 0x0F) | ((indoorLighting & 0x0F) << 4); } // Set the top 4 bits
+	inline void SetOutdoorLighting(uint8_t outdoorLighting) { m_lightingValues = (m_lightingValues & 0xF0) | (outdoorLighting & 0x0F); }     // Set the bottom 4 bits
 
-	friend class Chunk;
-
-	void SetVBODirty(bool dirty);
 	void SetLightingDirty(bool dirty);
 
 public:
-
+	 
 	TileID		m_id				= 0;
-	TileTags	m_tags				= (TileTags) TileTag::VBO_Dirty | (TileTags) TileTag::Lighting_Dirty;	// Start tiles off as dirty
-	uint8_t		m_lightingValue		= 0;							// 4 bits indoor lighting (XXXX0000), 4 bits outdoor lighting (0000XXXX)
-	uint8_t		m_staticLighting	= 0;							// Brightness of this tile as determined by world generation (0-255)
+	TileTags	m_tags				= (TileTags) TileTag::Lighting_Dirty;	// Start tiles off as lighting dirty
+	uint8_t		m_lightingValues	= 0;									// 4 bits indoor lighting (XXXX0000), 4 bits outdoor lighting (0000XXXX)
+	uint8_t		m_staticLighting	= 0;									// Brightness of this tile as determined by world generation (0-255)
 };

@@ -31,7 +31,7 @@ void DrawChunk(Chunk* chunk)
         return;
     }
 
-	chunk->GenerateLightmap();
+	chunk->GenerateLightmap(); // maybe move to SLighting?
 
 	g_renderer->BindTexture(chunk->m_lightmap, 1);
     g_renderer->DrawVertexBuffer(chunk->m_vbo);
@@ -46,7 +46,6 @@ void SRenderWorld::Startup()
     AddReadDependencies<CCamera, AssetManager>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-    scRender.m_lightingConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(LightingConstants));
 	scRender.m_staticWorldConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(StaticWorldConstants));
 
     StaticWorldConstants worldConstants;
@@ -95,8 +94,8 @@ void SRenderWorld::Run(SystemContext const& context)
     }
 
     g_renderer->BindShader(scRender.m_worldShaderID);
-	g_renderer->BindConstantBuffer(scRender.m_staticWorldConstantsBuffer, 5);
-	g_renderer->BindConstantBuffer(scRender.m_lightingConstantsBuffer, 6);
+	g_renderer->BindConstantBuffer(scRender.m_staticWorldConstantsBuffer, StaticWorldConstants::GetSlot());
+	g_renderer->BindConstantBuffer(scRender.m_lightingConstantsBuffer, LightingConstants::GetSlot());
 
     auto cameraIt = g_ecs->Iterate<CCamera>(context);
     if (cameraIt.IsValid())
@@ -138,5 +137,4 @@ void SRenderWorld::Shutdown()
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 	g_assetManager->Release(scRender.m_worldShaderAsset);
 	g_renderer->ReleaseConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
-	g_renderer->ReleaseConstantBuffer(scRender.m_lightingConstantsBuffer);
 }

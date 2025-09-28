@@ -29,7 +29,7 @@ public:
 
     virtual bool IsValid() const;
 
-    virtual bool CreateFromImage(Image const& image, bool createMipMap = true) override;
+    virtual bool CreateFromImage(Image const& image, bool createMipMap = true, bool isRenderTarget = false) override;
 
     // Renderer constructor for creating a texture from the swap chain backbuffer
     bool InitAsBackbufferTexture(IDXGISwapChain* swapChain);

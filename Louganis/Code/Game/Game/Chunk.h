@@ -37,6 +37,7 @@ public:
 
 	IntVec2 m_chunkCoords;
 	AABB2 m_chunkBounds;
+	bool m_isLightingDirty = true;
 	FastGrid<Tile, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tiles;
 	VertexBufferID m_vbo = RendererUtils::InvalidID;
 	TextureID m_lightmap = RendererUtils::InvalidID; // R8G8

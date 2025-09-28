@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2025
 #include "TileDef.h"
+#include "WorldSettings.h"
 #include "Engine/Renderer/Renderer.h"
 
 
@@ -87,17 +88,17 @@ TileDef const* TileDef::GetTileDef(Name tileName)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int TileDef::GetTileDefID(Name name)
+TileID TileDef::GetTileDefID(Name name)
 {
 	for (int i = 0; i < (int) s_tileDefs.size(); ++i)
 	{
 		auto& def = s_tileDefs[i];
 		if (def.m_name == name)
 		{
-			return i;
+			return static_cast<TileID>(i);
 		}
 	}
-	return -1;
+	return static_cast<TileID>(-1);
 }
 
 
@@ -106,14 +107,15 @@ int TileDef::GetTileDefID(Name name)
 Tile TileDef::GetDefaultTile(Name name)
 {
 	Tile result;
-	int defID = GetTileDefID(name);
+	TileID defID = GetTileDefID(name);
 	if (defID != -1)
 	{
 		result.m_id = defID;
 		result.m_tags = GetTileDef((uint8_t) defID)->m_tags;
 		if (!result.IsOpaque())
 		{
-			result.m_lightingValue &= 0x0F; // Max out the outdoor lighting value (treat it as outdoors)
+			result.SetOutdoorLighting(StaticWorldSettings::s_maxOutdoorLighting);
+			result.SetLightingDirty(true);
 		}
 	}
 	return result;

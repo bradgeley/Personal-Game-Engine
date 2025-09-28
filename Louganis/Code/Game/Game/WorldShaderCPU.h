@@ -4,8 +4,10 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct alignas(16) StaticWorldConstants // : register(b5)
+struct alignas(16) StaticWorldConstants // : register(b6)
 {
+	static int GetSlot() { return 6; }
+
 	//------------------------------------------------------
 	float	m_chunkWidth;			            // 4 bytes
 	float	m_tileWidth;		                // 4 bytes
@@ -17,16 +19,18 @@ struct alignas(16) StaticWorldConstants // : register(b5)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct alignas(16) LightingConstants // : register(b6)
+struct alignas(16) LightingConstants // : register(b7)
 {
+	static int GetSlot() { return 7; }
+
 	//------------------------------------------------------
-	float outdoorLightTint[4];                  // 16 bytes
+	float m_outdoorLightTint[4];                  // 16 bytes
 	//------------------------------------------------------
-	float indoorLightTint[4];					// 16 bytes
+	float m_indoorLightTint[4];					// 16 bytes
 	//------------------------------------------------------
-	float ambientLightTint[4];                  // 16 bytes
+	float m_ambientLightTint[4];                  // 16 bytes
 	//------------------------------------------------------
-	float ambientLightIntensity;                // 4 bytes
+	float m_ambientLightIntensity;                // 4 bytes
 	float padding[3];                           // 12 bytes
 	//------------------------------------------------------
 };

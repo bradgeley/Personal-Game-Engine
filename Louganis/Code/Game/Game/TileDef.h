@@ -20,7 +20,7 @@ public:
 	static void LoadFromXML();
 	static TileDef const* GetTileDef(TileID id);
 	static TileDef const* GetTileDef(Name name);
-	static int GetTileDefID(Name name);
+	static TileID GetTileDefID(Name name);
 	static Tile GetDefaultTile(Name name);
 
 	inline bool IsVisible() const { return m_tags & static_cast<uint8_t>(TileTag::Visible); }
@@ -37,7 +37,7 @@ public:
 
 	Name		m_name			= "Unnamed TileDef";
 	uint8_t		m_spriteIndex	= 0;
-	TileTags	m_tags			= (TileTags) TileTag::VBO_Dirty | (TileTags) TileTag::Lighting_Dirty;	// Start tiles off as dirty
+	TileTags	m_tags			= (TileTags) TileTag::Lighting_Dirty;	// Start tiles off as dirty
 	Rgba8		m_tint			= Rgba8::White;
 	uint8_t		m_cost			= 1;
 };
