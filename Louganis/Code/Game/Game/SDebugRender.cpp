@@ -23,6 +23,7 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Font.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Window/Window.h"
@@ -92,7 +93,11 @@ void SDebugRender::Run(SystemContext const& context)
         {
             g_renderer->BindTexture(nullptr);
             g_renderer->BindShader(nullptr);
-			g_renderer->DrawVertexBuffer(chunk.m_debugVBO);
+			#if defined(_DEBUG)
+			    g_renderer->DrawVertexBuffer(chunk.m_debugVBO);
+            #else 
+			    DevConsoleUtils::LogError("Debug render grid is _DEBUG only");
+			#endif // _DEBUG
             return true;
         });
     }
