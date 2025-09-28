@@ -20,6 +20,7 @@ public:
 	bool m_debugRenderSolidTiles = false;
 	bool m_debugRenderCollision = false;
 	bool m_debugRenderLighting = false;
+	bool m_debugRenderGrid = false;
 	Vec2 m_debugMouseLocation;
 };
 

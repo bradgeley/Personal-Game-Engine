@@ -52,7 +52,7 @@ namespace StaticWorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Static Asserts
     //
-    static_assert(s_worldChunkSizePowerOfTwo > 0 && s_worldChunkSizePowerOfTwo < 7, "s_worldChunkSizePowerOfTwo must be between 1 and 6");
+    static_assert(s_worldChunkSizePowerOfTwo > 0 && s_worldChunkSizePowerOfTwo < 5, "s_worldChunkSizePowerOfTwo must be between 1 and 4");
     static_assert(s_tileWidth > 0.f && s_tileWidth < 999.f, "s_tileWidth must be greater than 0 and less than 999");
 }
 

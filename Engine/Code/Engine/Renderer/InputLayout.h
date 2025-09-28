@@ -61,6 +61,7 @@ enum class InputLayoutSemantic
     Index,
     IndoorLight,
     OutdoorLight,
+    LightmapUVs,
 
     Count,
     Invalid,
@@ -83,6 +84,7 @@ static std::string s_inputLayoutSemanticNames[] =
 	"INDEX",
     "INDOORLIGHT",
     "OUTDOORLIGHT",
+    "LIGHTMAPUVS",
 
     "COUNT",
     "INVALID",

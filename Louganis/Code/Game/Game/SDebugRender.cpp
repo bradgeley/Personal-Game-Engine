@@ -42,6 +42,7 @@ void SDebugRender::Startup()
     g_eventSystem->SubscribeMethod("DebugRenderSolidTiles", this, &SDebugRender::DebugRenderSolidTiles);
     g_eventSystem->SubscribeMethod("DebugRenderCollision", this, &SDebugRender::DebugRenderCollision);
     g_eventSystem->SubscribeMethod("DebugRenderLighting", this, &SDebugRender::DebugRenderLighting);
+    g_eventSystem->SubscribeMethod("DebugRenderGrid", this, &SDebugRender::DebugRenderGrid);
 
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_frameUntexVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -83,6 +84,19 @@ void SDebugRender::Run(SystemContext const& context)
             break;
         }
     }
+
+    // Grid
+    if (scDebug.m_debugRenderGrid)
+    {
+        world.ForEachChunkOverlappingAABB(cameraBounds, [&](Chunk& chunk)
+        {
+            g_renderer->BindTexture(nullptr);
+            g_renderer->BindShader(nullptr);
+			g_renderer->DrawVertexBuffer(chunk.m_debugVBO);
+            return true;
+        });
+    }
+
 
     // Mouse Raycast
     if (scDebug.m_debugRenderToMouseRaycast)
@@ -290,6 +304,16 @@ void SDebugRender::Run(SystemContext const& context)
         {
             Image lightmap;
             chunk.GenerateLightmapImage(lightmap);
+            for (int i = 0; i < StaticWorldSettings::s_numTilesInChunk; ++i)
+            {
+                IntVec2 localTileCoords = chunk.m_tiles.GetCoordsForIndex(i);
+                WorldCoords worldCoords;
+                worldCoords.m_chunkCoords = chunk.m_chunkCoords;
+                worldCoords.m_localTileCoords = localTileCoords;
+                AABB2 tileBounds = world.GetTileBounds(worldCoords);
+                Rgba8 pixel = lightmap.GetPixels().Get(localTileCoords);
+                font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter() + Vec2(0.f, tileBounds.GetHeight() * 0.1f), Vec2(0.5f, 0.5f), tileBounds.GetHeight() * 0.2f, StringUtils::StringF("(%u,%u)", pixel.r, pixel.g), Rgba8::Magenta);
+			}
             return true;
         });
 
@@ -325,6 +349,7 @@ void SDebugRender::Shutdown()
     g_eventSystem->UnsubscribeMethod("DebugRenderSolidTiles", this, &SDebugRender::DebugRenderSolidTiles);
     g_eventSystem->UnsubscribeMethod("DebugRenderCollision", this, &SDebugRender::DebugRenderCollision);
     g_eventSystem->UnsubscribeMethod("DebugRenderLighting", this, &SDebugRender::DebugRenderLighting);
+    g_eventSystem->UnsubscribeMethod("DebugRenderGrid", this, &SDebugRender::DebugRenderGrid);
 }
 
 
@@ -404,5 +429,15 @@ bool SDebugRender::DebugRenderLighting(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderLighting = !scDebug.m_debugRenderLighting;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderGrid(NamedProperties& args)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderGrid = !scDebug.m_debugRenderGrid;
     return false;
 }

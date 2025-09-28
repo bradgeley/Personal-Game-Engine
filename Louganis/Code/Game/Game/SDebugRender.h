@@ -28,4 +28,5 @@ protected:
     bool DebugRenderSolidTiles(NamedProperties& args);
     bool DebugRenderCollision(NamedProperties& args);
     bool DebugRenderLighting(NamedProperties& args);
+    bool DebugRenderGrid(NamedProperties& args);
 };

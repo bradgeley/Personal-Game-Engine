@@ -341,6 +341,7 @@
     <ClCompile Include="Game\TimeOfDay.cpp" />
     <ClCompile Include="Game\WorldCoords.cpp" />
     <ClCompile Include="Game\WorldRaycast.cpp" />
+    <ClCompile Include="Game\WorldShaderCPU.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Application.h" />

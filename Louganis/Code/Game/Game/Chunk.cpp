@@ -15,6 +15,7 @@
 #include "Engine/DataStructures/NamedProperties.h"
 #include "EntityDef.h"
 #include "TileDef.h"
+#include "WorldShaderCPU.h"
 
 
 
@@ -158,6 +159,9 @@ void Chunk::GenerateVBO()
 	Vec2 chunkOrigin = Vec2(m_chunkCoords.x, m_chunkCoords.y) * StaticWorldSettings::s_chunkWidth;
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 
+	Vec2 lightmapUVsStepSize = Vec2(StaticWorldSettings::s_oneOverNumTilesInRow, StaticWorldSettings::s_oneOverNumTilesInRow);
+	Vec2 lightmapUVsHalfStepSize = lightmapUVsStepSize * 0.5f;
+
 	// Get sprite sheet ready
 	AssetID terrainID = g_assetManager->LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
 	GridSpriteSheet const* terrainSpriteSheet = g_assetManager->Get<GridSpriteSheet>(terrainID);
@@ -166,7 +170,7 @@ void Chunk::GenerateVBO()
 	// Get VBO ready
 	if (m_vbo == RendererUtils::InvalidID)
 	{
-		m_vbo = g_renderer->MakeVertexBuffer<Vertex_PCU>(StaticWorldSettings::s_numVertsInChunk);
+		m_vbo = g_renderer->MakeVertexBuffer<TerrainVertex>(StaticWorldSettings::s_numVertsInChunk);
 	}
 
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
@@ -186,11 +190,32 @@ void Chunk::GenerateVBO()
 			Vec2 maxs = mins + tileDims;
 			AABB2 uvs = terrainSpriteSheet->GetSpriteUVs(tileDef->m_spriteIndex);
 
-			int firstVertIndex = index * 6;
-			Vertex_PCU& firstVert = vbo.GetVert<Vertex_PCU>(firstVertIndex);
 			float staticLighting01 = static_cast<float>(tile.m_staticLighting) / 255.f;
 			Rgba8 tint = tileDef->m_tint * staticLighting01;
-			VertexUtils::WriteVertsForRect2D(&firstVert, mins, maxs, tint, uvs, 1.f);
+
+			float z = 1.f;
+			Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, z);
+			Vec3 topRightPoint = Vec3(maxs.x, maxs.y, z);
+			Vec3 bottomLeftPoint = Vec3(mins.x, mins.y, z);
+			Vec3 topLeftPoint = Vec3(mins.x, maxs.y, z);
+
+			// UVs
+			Vec2 const& topRightUVs = uvs.maxs;
+			Vec2 const& bottomLeftUVs = uvs.mins;
+			Vec2 bottomRightUVs = Vec2(uvs.maxs.x, uvs.mins.y);
+			Vec2 topLeftUVs = Vec2(uvs.mins.x, uvs.maxs.y);
+
+			// Lightmap UVs
+			Vec2 lightmapUVs = lightmapUVsHalfStepSize + Vec2(x, y) * lightmapUVsStepSize;
+
+			// Write verts
+			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(bottomLeftPoint), tint, bottomLeftUVs, lightmapUVs));
+			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(bottomRightPoint), tint, bottomRightUVs, lightmapUVs));
+			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(topRightPoint), tint, topRightUVs, lightmapUVs));
+
+			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(bottomLeftPoint), tint, bottomLeftUVs, lightmapUVs));
+			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(topRightPoint), tint, topRightUVs, lightmapUVs));
+			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(topLeftPoint), tint, topLeftUVs, lightmapUVs));
 		}
 	}
 
@@ -216,16 +241,14 @@ void Chunk::GenerateLightmap()
 		m_lightmap = g_renderer->MakeTexture();
 	}
 
-	Image image(IntVec2(StaticWorldSettings::s_numTilesInRow + 1, StaticWorldSettings::s_numTilesInRow + 1), Rgba8::TransparentBlack);
+	Image image(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), Rgba8::TransparentBlack);
 	Grid<Rgba8>& pixelGrid = image.GetPixelsRef();
 
-	for (int y = 0; y <= StaticWorldSettings::s_numTilesInRow; ++y)
+	for (int y = 0; y < StaticWorldSettings::s_numTilesInRow; ++y)
 	{
-		for (int x = 0; x <= StaticWorldSettings::s_numTilesInRow; ++x)
+		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x)
 		{
-			int clampedX = MathUtils::Clamp(x, 0, StaticWorldSettings::s_numTilesInRow - 1);
-			int clampedY = MathUtils::Clamp(y, 0, StaticWorldSettings::s_numTilesInRow - 1);
-			int index = m_tiles.GetIndexForCoords(clampedX, clampedY);
+			int index = m_tiles.GetIndexForCoords(x, y);
 			Tile& tile = m_tiles.GetRef(index);
 
 			pixelGrid.Set(x, y, Rgba8(tile.GetIndoorLighting255(), tile.GetOutdoorLighting255(), 0, 0));

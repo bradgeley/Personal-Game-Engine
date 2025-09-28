@@ -1,5 +1,32 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Math/Vec3.h"
+#include "Engine/Math/Vec2.h"
+#include "Engine/Renderer/Rgba8.h"
+
+
+
+struct InputLayout;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct TerrainVertex
+{
+public:
+
+	TerrainVertex() = default;
+	TerrainVertex(Vec3 const& pos, Rgba8 const& tint, Vec2 const& uvs, Vec2 const& lightmapUVs);
+
+	Vec3    m_pos;
+	Rgba8   m_tint;
+	Vec2    m_uvs;
+	Vec2    m_lightmapUVs;
+
+public:
+
+	static InputLayout* GetInputLayout();
+};
 
 
 

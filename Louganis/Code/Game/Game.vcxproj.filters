@@ -157,6 +157,9 @@
     <ClCompile Include="Game\SLighting.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Game\WorldShaderCPU.cpp">
+      <Filter>Data\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">

@@ -11,6 +11,7 @@ struct VSInput
     float3	position			: POSITION;
     float4	tint				: TINT;
     float2	uvs					: UVS;
+    float2	lightmapUVs			: LIGHTMAPUVS;
 	//------------------------------------------------------
 };
 
@@ -89,7 +90,7 @@ cbuffer LightingConstants : register(b7)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-VSOutput VertexMain(VSInput vin, uint instanceID : SV_InstanceID)
+VSOutput VertexMain(VSInput vin)
 {
 	VSOutput output;
     output.position = float4(vin.position, 1.f);
@@ -100,12 +101,7 @@ VSOutput VertexMain(VSInput vin, uint instanceID : SV_InstanceID)
     output.tint = vin.tint;
     output.uvs = vin.uvs;
 	
-    float2 halfTileWidth = float2(tileWidth * 0.5f, tileWidth * 0.5f);
-    float2 locationChunkSpace = vin.position.xy / chunkWidth;
-    float2 chunkCoords = floor(locationChunkSpace);
-    float2 chunkRelativeLocation = (vin.position.xy + halfTileWidth - (chunkCoords * chunkWidth));
-	
-    output.lightmapUVs = chunkRelativeLocation / chunkWidth; // 0-1 for x and y, how far are we in the chunk?
+    output.lightmapUVs = vin.lightmapUVs; // todo
 	
     return output;
 }
