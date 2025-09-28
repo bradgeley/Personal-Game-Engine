@@ -18,6 +18,7 @@ enum class InputLayoutAttributeFormat
     Uint3,
     Uint4,
     Rgba8,
+    R8_UNORM,
 
     Count,
     Invalid,
@@ -37,6 +38,7 @@ static std::string s_inputLayoutAttributeFormatNames[] =
     "Uint3",
     "Uint4",
     "Rgba8",
+	"R8_UNORM",
 
     "COUNT",
     "INVALID",
@@ -57,6 +59,8 @@ enum class InputLayoutSemantic
     InstanceRotation,
     InstanceTint,
     Index,
+    IndoorLight,
+    OutdoorLight,
 
     Count,
     Invalid,
@@ -77,6 +81,8 @@ static std::string s_inputLayoutSemanticNames[] =
     "INSTANCEROTATION",
     "INSTANCETINT",
 	"INDEX",
+    "INDOORLIGHT",
+    "OUTDOORLIGHT",
 
     "COUNT",
     "INVALID",

@@ -14,5 +14,7 @@
     <InputLayoutAttribute semantic="INSTANCETINT" semanticIndex="0" format="Rgba8" inputSlot="1" isPerInstance="true"></InputLayoutAttribute>
     <InputLayoutAttribute semantic="INSTANCESCALE" semanticIndex="0" format="float1" inputSlot="1" isPerInstance="true"></InputLayoutAttribute>
     <InputLayoutAttribute semantic="INDEX" semanticIndex="0" format="uint1" inputSlot="1" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INDOORLIGHT" semanticIndex="0" format="R8_UNORM" inputSlot="1" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="OUTDOORLIGHT" semanticIndex="0" format="R8_UNORM" inputSlot="1" isPerInstance="true"></InputLayoutAttribute>
   </InputLayout>
 </Shader>

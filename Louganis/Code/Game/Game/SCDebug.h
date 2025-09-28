@@ -19,6 +19,7 @@ public:
 	bool m_debugRenderPreventativePhysics = false;
 	bool m_debugRenderSolidTiles = false;
 	bool m_debugRenderCollision = false;
+	bool m_debugRenderLighting = false;
 	Vec2 m_debugMouseLocation;
 };
 

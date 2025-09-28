@@ -216,22 +216,50 @@ void Chunk::GenerateLightmap()
 		m_lightmap = g_renderer->MakeTexture();
 	}
 
-	Image image(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), Rgba8::TransparentBlack);
+	Image image(IntVec2(StaticWorldSettings::s_numTilesInRow + 1, StaticWorldSettings::s_numTilesInRow + 1), Rgba8::TransparentBlack);
 	Grid<Rgba8>& pixelGrid = image.GetPixelsRef();
 
-	for (int y = 0; y < StaticWorldSettings::s_numTilesInRow; ++y)
+	for (int y = 0; y <= StaticWorldSettings::s_numTilesInRow; ++y)
 	{
-		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x)
+		for (int x = 0; x <= StaticWorldSettings::s_numTilesInRow; ++x)
 		{
-			int index = pixelGrid.GetIndexForCoords(x, y);
+			int clampedX = MathUtils::Clamp(x, 0, StaticWorldSettings::s_numTilesInRow - 1);
+			int clampedY = MathUtils::Clamp(y, 0, StaticWorldSettings::s_numTilesInRow - 1);
+			int index = m_tiles.GetIndexForCoords(clampedX, clampedY);
 			Tile& tile = m_tiles.GetRef(index);
-			pixelGrid.Set(index, Rgba8(tile.GetIndoorLighting(), tile.GetOutdoorLighting(), 0, 0));
+
+			pixelGrid.Set(x, y, Rgba8(tile.GetIndoorLighting255(), tile.GetOutdoorLighting255(), 0, 0));
 		}
 	}
 
 	Texture* lightmapTex = g_renderer->GetTexture(m_lightmap);
 	lightmapTex->CreateFromImage(image, false, false);
 	m_isLightingDirty = false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Chunk::GenerateLightmapImage(Image& out_image)
+{
+	Vec2 chunkOrigin = Vec2(m_chunkCoords.x, m_chunkCoords.y) * StaticWorldSettings::s_chunkWidth;
+	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
+
+	out_image = Image(IntVec2(StaticWorldSettings::s_numTilesInRow + 1, StaticWorldSettings::s_numTilesInRow + 1), Rgba8::TransparentBlack);
+	Grid<Rgba8>& pixelGrid = out_image.GetPixelsRef();
+
+	for (int y = 0; y <= StaticWorldSettings::s_numTilesInRow; ++y)
+	{
+		for (int x = 0; x <= StaticWorldSettings::s_numTilesInRow; ++x)
+		{
+			int clampedX = MathUtils::Clamp(x, 0, StaticWorldSettings::s_numTilesInRow - 1);
+			int clampedY = MathUtils::Clamp(y, 0, StaticWorldSettings::s_numTilesInRow - 1);
+			int index = m_tiles.GetIndexForCoords(clampedX, clampedY);
+			Tile& tile = m_tiles.GetRef(index);
+
+			pixelGrid.Set(x, y, Rgba8(tile.GetIndoorLighting255(), tile.GetOutdoorLighting255(), 0, 0));
+		}
+	}
 }
 
 

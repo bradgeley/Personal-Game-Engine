@@ -14,8 +14,10 @@
 #include "Engine/Renderer/ConstantBuffer.h"
 #include "CAnimation.h"
 #include "CCamera.h"
+#include "Chunk.h"
 #include "CRender.h"
 #include "SCRender.h"
+#include "SCWorld.h"
 #include "SpriteShaderCPU.h"
 
 
@@ -24,7 +26,7 @@
 void SRenderEntities::Startup()
 {
     AddWriteDependencies<CRender, Renderer, SCRender>();
-    AddReadDependencies<CCamera, CAnimation>();
+    AddReadDependencies<SCWorld, CCamera, CAnimation>();
 
 	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
     scRender.m_spriteSheetConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(SpriteSheetConstants));
@@ -44,6 +46,7 @@ void SRenderEntities::Run(SystemContext const& context)
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
     auto& scRender = g_ecs->GetSingleton<SCRender>();
     auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
+	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
 
     ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
     if (spriteShaderAsset)
@@ -132,6 +135,15 @@ void SRenderEntities::Run(SystemContext const& context)
 		instance.m_scale = render.m_scale;
         instance.m_rgba = render.m_tint;
 		instance.m_spriteIndex = anim.m_animInstance.GetCurrentSpriteIndex();
+
+        WorldCoords worldCoords = scWorld.GetWorldCoordsAtLocation(render.m_pos);
+        Chunk* chunk = scWorld.GetActiveChunk(worldCoords);
+        if (chunk)
+        {
+			Tile& tile = chunk->m_tiles.GetRef(worldCoords.m_localTileCoords);
+			instance.m_indoorLighting  = tile.GetIndoorLighting255();
+			instance.m_outdoorLighting = tile.GetOutdoorLighting255();
+        }
 
 		ibo->AddInstance(instance);
     }

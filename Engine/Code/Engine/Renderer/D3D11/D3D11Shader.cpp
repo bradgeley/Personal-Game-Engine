@@ -64,6 +64,7 @@ DXGI_FORMAT GetD3D11Format(InputLayoutAttributeFormat format)
 	case InputLayoutAttributeFormat::Uint2:    return DXGI_FORMAT_R32G32_UINT;
 	case InputLayoutAttributeFormat::Uint3:    return DXGI_FORMAT_R32G32B32_UINT;
 	case InputLayoutAttributeFormat::Uint4:    return DXGI_FORMAT_R32G32B32A32_UINT;
+	case InputLayoutAttributeFormat::R8_UNORM: return DXGI_FORMAT_R8_UNORM;
 	default:              
 		ERROR_AND_DIE("Unsupported InputLayoutAttributeFormat");
 		//return DXGI_FORMAT_UNKNOWN;

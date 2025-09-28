@@ -56,6 +56,10 @@ cbuffer CameraConstants : register(b2)
 
 
 
+// Sprite sheet constants are b5 (unused here)
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 cbuffer StaticWorldConstants : register(b6)
 {
@@ -96,9 +100,10 @@ VSOutput VertexMain(VSInput vin, uint instanceID : SV_InstanceID)
     output.tint = vin.tint;
     output.uvs = vin.uvs;
 	
+    float2 halfTileWidth = float2(tileWidth * 0.5f, tileWidth * 0.5f);
     float2 locationChunkSpace = vin.position.xy / chunkWidth;
     float2 chunkCoords = floor(locationChunkSpace);
-    float2 chunkRelativeLocation = vin.position.xy - (chunkCoords * chunkWidth);
+    float2 chunkRelativeLocation = (vin.position.xy + halfTileWidth - (chunkCoords * chunkWidth));
 	
     output.lightmapUVs = chunkRelativeLocation / chunkWidth; // 0-1 for x and y, how far are we in the chunk?
 	
@@ -114,15 +119,15 @@ float4 PixelMain(VSOutput input) : SV_Target0
 	float4 surfaceColor = SurfaceColorTexture.Sample(SurfaceSampler, texCoord);
     float4 lightmapValue = ChunkLightmapTexture.Sample(SurfaceSampler, input.lightmapUVs);
 	
-    float indoorLightingBrightness = 1;
-	float outdoorLightingBrightness = 1;
+    //float indoorLightingBrightness = lightmapValue.x;
+    //float3 indoorLightContribution = indoorLightTint.rgb * indoorLightingBrightness;
+    //float3 ambientLightContribution = ambientLightTint.rgb * ambientLightIntensity;
 	
-    float3 indoorLightContribution = indoorLightTint.rgb * indoorLightingBrightness;
+    float outdoorLightingBrightness = lightmapValue.g;
     float3 outdoorLightContribution = outdoorLightTint.rgb * outdoorLightingBrightness;
-    float3 ambientLightContribution = ambientLightTint.rgb * ambientLightIntensity;
 	
-	float3 totalLightContribution = /*indoorLightContribution * */outdoorLightContribution + ambientLightContribution;
-	//totalLightContribution = saturate(totalLightContribution); // clamp to 0-1
+	float3 totalLightContribution = outdoorLightContribution;
+	totalLightContribution = saturate(totalLightContribution); // clamp to 0-1
 	
 	float4 tint = input.tint;
     float4 finalColor = (tint * surfaceColor * float4(totalLightContribution, 1.f));

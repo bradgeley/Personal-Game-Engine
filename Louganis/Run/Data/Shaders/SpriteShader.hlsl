@@ -23,8 +23,21 @@ struct VSInput
 	//------------------------------------------------------
 	float	instanceScale		: INSTANCESCALE;	// 4 bytes
 	uint	spriteIndex			: INDEX;			// 4 bytes
-	//		padding									// 8 bytes
+	float	indoorLight			: INDOORLIGHT;		// 4 bytes
+    float   outdoorLight        : OUTDOORLIGHT;     // 4 bytes
 	//------------------------------------------------------
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct VSOutput
+{
+    float4 position : SV_Position;
+    float4 tint : TINT;
+    float2 uvs : UVS;
+    float indoorLight : INDOORLIGHT;
+    float outdoorLight : OUTDOORLIGHT;
 };
 
 
@@ -72,11 +85,29 @@ cbuffer SpriteSheetConstants : register(b5)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct VSOutput
+cbuffer StaticWorldConstants : register(b6)
 {
-	float4 position			: SV_Position;
-	float4 tint				: TINT;
-	float2 uvs				: UVS;
+	//------------------------------------------------------
+    float chunkWidth; // 4 bytes
+    float tileWidth; // 4 bytes
+    int numTilesInRow; // 4 bytes
+	//------------------------------------------------------
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+cbuffer LightingConstants : register(b7)
+{
+	//------------------------------------------------------
+    float4 outdoorLightTint; // 16 bytes
+	//------------------------------------------------------
+    float4 indoorLightTint; // 16 bytes
+	//------------------------------------------------------
+    float4 ambientLightTint; // 16 bytes
+	//------------------------------------------------------
+    float ambientLightIntensity; // 4 bytes
+	//------------------------------------------------------
 };
 
 
@@ -143,6 +174,8 @@ VSOutput VertexMain(VSInput vin, uint instanceID : SV_InstanceID)
 	
     output.tint = (vin.tint * vin.instanceTint);
     output.uvs = vin.uvs;
+    output.indoorLight = vin.indoorLight;
+    output.outdoorLight = vin.outdoorLight;
 	
     float4 spriteUVs = ComputeUVs(vin);
     if (all(vin.uvs == float2(0.f, 0.f)))
@@ -177,7 +210,15 @@ float4 PixelMain(VSOutput input) : SV_Target0
 	float2 texCoord = input.uvs;
 	float4 surfaceColor = SurfaceColorTexture.Sample(SurfaceSampler, texCoord);
 	
-	float4 tint = input.tint;
+    //float3 indoorLightContribution = indoorLightTint.rgb * input.indoorLight;
+    //float3 ambientLightContribution = ambientLightTint.rgb * ambientLightIntensity;
+    
+    float3 outdoorLightContribution = outdoorLightTint.rgb * input.outdoorLight;
+	
+    float3 totalLightContribution = outdoorLightContribution;
+    totalLightContribution = saturate(totalLightContribution); // clamp to 0-1
+    
+    float4 tint = input.tint * float4(totalLightContribution, 1);
     float4 finalColor = (tint * surfaceColor);
     
     if (finalColor.a <= 0.0f)  // or some threshold

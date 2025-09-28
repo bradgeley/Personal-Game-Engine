@@ -13,6 +13,7 @@
 #include "SCCollision.h"
 #include "SCDebug.h"
 #include "WorldRaycast.h"
+#include "Engine/Assets/Image.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Input/InputSystem.h"
@@ -40,6 +41,7 @@ void SDebugRender::Startup()
     g_eventSystem->SubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
     g_eventSystem->SubscribeMethod("DebugRenderSolidTiles", this, &SDebugRender::DebugRenderSolidTiles);
     g_eventSystem->SubscribeMethod("DebugRenderCollision", this, &SDebugRender::DebugRenderCollision);
+    g_eventSystem->SubscribeMethod("DebugRenderLighting", this, &SDebugRender::DebugRenderLighting);
 
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_frameUntexVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -264,6 +266,34 @@ void SDebugRender::Run(SystemContext const& context)
 			}
         }
     }
+
+    // Lighting
+    if (scDebug.m_debugRenderLighting)
+    {
+        //world.ForEachWorldCoordsOverlappingAABB(cameraBounds, [&world, &frameVerts, &font, &frameTextVerts](WorldCoords const& coords)
+        //{
+        //    AABB2 tileBounds = world.GetTileBounds(coords);
+        //    Chunk* chunk = world.GetActiveChunk(coords);
+        //    if (chunk)
+        //    {
+        //        Tile const& tile = chunk->m_tiles.GetRef(coords.m_localTileCoords);
+        //        uint8_t outdoorLighting = tile.GetOutdoorLighting255();
+        //        uint8_t indoorLighting = tile.GetIndoorLighting255();
+        //        Rgba8 outdoorTint = Rgba8::Lerp(Rgba8::Black, Rgba8::White, (float) outdoorLighting / 15.f);
+        //        Rgba8 indoorTint = Rgba8::Lerp(Rgba8::Black, Rgba8::White, (float) indoorLighting / 15.f);
+        //        VertexUtils::AddVertsForAABB2(frameVerts, tileBounds, outdoorTint);
+        //        font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter() + Vec2(0.f, tileBounds.GetHeight() * 0.1f), Vec2(0.5f, 0.5f), tileBounds.GetHeight() * 0.2f, StringUtils::StringF("%u", outdoorLighting), Rgba8::Magenta);            
+        //    }
+        //    return true;
+		//});
+        world.ForEachChunkOverlappingAABB(cameraBounds, [&](Chunk& chunk)
+        {
+            Image lightmap;
+            chunk.GenerateLightmapImage(lightmap);
+            return true;
+        });
+
+    }
     
     // Render->clear debug verts 
     g_renderer->BindTexture(nullptr);
@@ -294,6 +324,7 @@ void SDebugRender::Shutdown()
     g_eventSystem->UnsubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
     g_eventSystem->UnsubscribeMethod("DebugRenderSolidTiles", this, &SDebugRender::DebugRenderSolidTiles);
     g_eventSystem->UnsubscribeMethod("DebugRenderCollision", this, &SDebugRender::DebugRenderCollision);
+    g_eventSystem->UnsubscribeMethod("DebugRenderLighting", this, &SDebugRender::DebugRenderLighting);
 }
 
 
@@ -363,5 +394,15 @@ bool SDebugRender::DebugRenderCollision(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderCollision = !scDebug.m_debugRenderCollision;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderLighting(NamedProperties&)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderLighting = !scDebug.m_debugRenderLighting;
     return false;
 }

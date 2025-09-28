@@ -36,6 +36,10 @@ public:
 
 	inline uint8_t GetIndoorLighting()		const { return (m_lightingValues & 0xF0) >> 4; } // Get the top 4 bits
 	inline uint8_t GetOutdoorLighting() 	const { return m_lightingValues & 0x0F; }        // Get the bottom 4 bits
+	inline float   GetOutdoorLighting01() const { return static_cast<float>(GetOutdoorLighting()) / 15.f; }
+	inline float   GetIndoorLighting01()  const { return static_cast<float>(GetIndoorLighting()) / 15.f; }
+	inline uint8_t GetIndoorLighting255() const { return GetIndoorLighting() * 17; }
+	inline uint8_t GetOutdoorLighting255() const { return GetOutdoorLighting() * 17; }
 
 	inline void SetIndoorLighting(uint8_t indoorLighting) { m_lightingValues = (m_lightingValues & 0x0F) | ((indoorLighting & 0x0F) << 4); } // Set the top 4 bits
 	inline void SetOutdoorLighting(uint8_t outdoorLighting) { m_lightingValues = (m_lightingValues & 0xF0) | (outdoorLighting & 0x0F); }     // Set the bottom 4 bits

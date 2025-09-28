@@ -15,6 +15,7 @@
 
 struct WorldSettings;
 class WorldCoords;
+class Image;
 
 
 
@@ -26,6 +27,7 @@ public:
 	void Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSettings, std::vector<SpawnInfo>& out_spawnInfos);
 	void GenerateVBO();
 	void GenerateLightmap();
+	void GenerateLightmapImage(Image& out_image);
 	static TileGeneratedData GenerateTileData(IntVec2 const& globalTileCoords, WorldSettings const& worldSettings);
 	void Destroy();
 

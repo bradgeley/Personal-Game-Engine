@@ -15,13 +15,15 @@ struct InputLayout;
 struct alignas(16) SpriteInstance
 {
 	//------------------------------------------------------
-	Vec3		m_position;		// POSITION		(12 bytes)
-	float		m_orientation;	// ORIENTATION	(4 bytes)
+	Vec3		m_position;			// POSITION		(12 bytes)
+	float		m_orientation;		// ORIENTATION	(4 bytes)
 	//------------------------------------------------------
-	Rgba8		m_rgba;			// TINT			(4 bytes)
-	float		m_scale;		// SCALE		(4 bytes)
-	uint32_t	m_spriteIndex;	// SPRITEINDEX	(4 bytes)
-	uint32_t	m_padding;		//				(4 bytes)		// Brightness for lighting?
+	Rgba8		m_rgba;				// TINT			(4 bytes)
+	float		m_scale;			// SCALE		(4 bytes)
+	uint32_t	m_spriteIndex;		// SPRITEINDEX	(4 bytes)
+	uint8_t		m_indoorLighting;	// INDOORLIGHT	(1 byte)
+	uint8_t		m_outdoorLighting;	// OUTDOORLIGHT	(1 byte)
+	uint8_t 	padding[2];			// PADDING		(2 bytes)
 	//------------------------------------------------------
 
 	static InputLayout* GetInputLayout();
