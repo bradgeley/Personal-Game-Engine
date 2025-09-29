@@ -13,7 +13,7 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/ConstantBuffer.h"
 #include "CAnimation.h"
-#include "CCamera.h"
+#include "SCCamera.h"
 #include "Chunk.h"
 #include "CRender.h"
 #include "SCRender.h"
@@ -26,15 +26,12 @@
 void SRenderEntities::Startup()
 {
     AddWriteDependencies<CRender, Renderer, SCRender>();
-    AddReadDependencies<SCWorld, CCamera, CAnimation>();
+    AddReadDependencies<SCWorld, SCCamera, CAnimation>();
 
 	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
     scRender.m_spriteSheetConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(SpriteSheetConstants));
 
     // Sprite Shader
-    ShaderConfig spriteShaderConfig;
-	spriteShaderConfig.m_name = "SpriteShader";
-	spriteShaderConfig.m_inputLayout = InputLayout::Combine(*Vertex_PCU::GetInputLayout(), *SpriteInstance::GetInputLayout());
 	scRender.m_spriteShaderAsset = g_assetManager->AsyncLoad<ShaderAsset>("Data/Shaders/SpriteShader.xml");
 }
 
@@ -46,6 +43,7 @@ void SRenderEntities::Run(SystemContext const& context)
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
     auto& scRender = g_ecs->GetSingleton<SCRender>();
     auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
+	SCCamera& scCamera = g_ecs->GetSingleton<SCCamera>();
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
 
     ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
@@ -59,23 +57,7 @@ void SRenderEntities::Run(SystemContext const& context)
         return;
     }
 
-    Camera* activeCamera = nullptr;
-    for (auto it = g_ecs->Iterate<CCamera>(context); it.IsValid(); ++it)
-    {
-        CCamera& camera = *g_ecs->GetComponent<CCamera>(it);
-        if (camera.m_isActive)
-        {
-            activeCamera = &camera.m_camera;
-            break;
-        }
-	}
-
-    if (!activeCamera)
-    {
-        return;
-    }
-
-	AABB2 cameraBounds = activeCamera->GetTranslatedOrthoBounds2D();
+	AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
 
     // Clear last frame's instances
     for (auto it : scRender.m_entityVBOsBySpriteSheet)
@@ -92,7 +74,7 @@ void SRenderEntities::Run(SystemContext const& context)
     for (auto renderIt = g_ecs->Iterate<CRender, CAnimation>(context); renderIt.IsValid(); ++renderIt)
     {
         CRender& render = *renderStorage.Get(renderIt);
-        if (!GeometryUtils::DoesDiscOverlapAABB(render.m_pos, render.m_scale, cameraBounds))
+        if (!GeometryUtils::DoesDiscOverlapAABB(render.GetRenderPosition(), render.m_scale, cameraBounds))
         {
             continue;
 		}
@@ -130,19 +112,19 @@ void SRenderEntities::Run(SystemContext const& context)
 
         SpriteInstance instance;
 		float instanceDepth = MathUtils::RangeMap(render.m_pos.y - (render.m_scale * 0.5f), cameraBounds.mins.y - 100.f, cameraBounds.maxs.y + 100.f, 0.05f, 0.95f);
-		instance.m_position = Vec3(render.m_pos, instanceDepth); // todo: z-order
+		instance.m_position = Vec3(render.GetRenderPosition(), instanceDepth); // todo: z-order
 		instance.m_orientation = render.m_orientation;
 		instance.m_scale = render.m_scale;
         instance.m_rgba = render.m_tint;
 		instance.m_spriteIndex = anim.m_animInstance.GetCurrentSpriteIndex();
 
-        WorldCoords worldCoords = scWorld.GetWorldCoordsAtLocation(render.m_pos);
+		WorldCoords worldCoords = scWorld.GetWorldCoordsAtLocation(render.m_pos); // actual pos here, lighting is from the tile the entity is standing on
         Chunk* chunk = scWorld.GetActiveChunk(worldCoords);
         if (chunk)
         {
 			Tile& tile = chunk->m_tiles.GetRef(worldCoords.m_localTileCoords);
-			instance.m_indoorLighting  = tile.GetIndoorLighting255();
-			instance.m_outdoorLighting = tile.GetOutdoorLighting255();
+			instance.m_indoorLight  = tile.GetIndoorLighting255();
+			instance.m_outdoorLight = tile.GetOutdoorLighting255();
         }
 
 		ibo->AddInstance(instance);

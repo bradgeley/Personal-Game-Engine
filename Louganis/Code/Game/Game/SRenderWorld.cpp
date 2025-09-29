@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SRenderWorld.h"
-#include "CCamera.h"
+#include "SCCamera.h"
 #include "Chunk.h"
 #include "SCRender.h"
 #include "SCWorld.h"
@@ -43,7 +43,7 @@ void DrawChunk(Chunk* chunk)
 void SRenderWorld::Startup()
 {
     AddWriteDependencies<SCRender, SCWorld, Renderer>();
-    AddReadDependencies<CCamera, AssetManager>();
+    AddReadDependencies<SCCamera, AssetManager>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 	scRender.m_staticWorldConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(StaticWorldConstants));
@@ -67,10 +67,11 @@ void SRenderWorld::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SRenderWorld::Run(SystemContext const& context)
+void SRenderWorld::Run(SystemContext const&)
 {
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+	SCCamera& scCamera = g_ecs->GetSingleton<SCCamera>();
 
 	GridSpriteSheet* worldSpriteSheet = g_assetManager->Get<GridSpriteSheet>(world.m_worldSpriteSheet);
     if (worldSpriteSheet)
@@ -97,32 +98,27 @@ void SRenderWorld::Run(SystemContext const& context)
 	g_renderer->BindConstantBuffer(scRender.m_staticWorldConstantsBuffer, StaticWorldConstants::GetSlot());
 	g_renderer->BindConstantBuffer(scRender.m_lightingConstantsBuffer, LightingConstants::GetSlot());
 
-    auto cameraIt = g_ecs->Iterate<CCamera>(context);
-    if (cameraIt.IsValid())
-    {
-        CCamera* cameraComponent = g_ecs->GetComponent<CCamera>(cameraIt);
-        AABB2 cameraOrthoBounds2D = cameraComponent->m_camera.GetTranslatedOrthoBounds2D();
+    AABB2 cameraOrthoBounds2D = scCamera.m_camera.GetTranslatedOrthoBounds2D();
 
-        if (cameraOrthoBounds2D.GetHeight() > world.m_worldSettings.m_chunkLoadRadius)
+    if (cameraOrthoBounds2D.GetHeight() > world.m_worldSettings.m_chunkLoadRadius)
+    {
+        for (auto& it : world.m_activeChunks)
         {
-            for (auto& it : world.m_activeChunks)
+            if (it.second->m_chunkBounds.IsOverlapping(cameraOrthoBounds2D))
             {
-                if (it.second->m_chunkBounds.IsOverlapping(cameraOrthoBounds2D))
-                {
-					Chunk* chunk = it.second;
-                    DrawChunk(chunk);
-                }
+				Chunk* chunk = it.second;
+                DrawChunk(chunk);
             }
         }
-        else
+    }
+    else
+    {
+        // This is faster if the camera bounds are small, slower (uncapped) if bounds are much bigger than the visible world.
+        world.ForEachChunkOverlappingAABB(cameraOrthoBounds2D, [worldSpriteSheet](Chunk& chunk)
         {
-            // This is faster if the camera bounds are small, slower (uncapped) if bounds are much bigger than the visible world.
-            world.ForEachChunkOverlappingAABB(cameraOrthoBounds2D, [worldSpriteSheet](Chunk& chunk)
-            {
-                DrawChunk(&chunk);
-                return true;
-            });
-        }
+            DrawChunk(&chunk);
+            return true;
+        });
     }
 }
 

@@ -133,7 +133,6 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 				SpawnInfo spawnInfo;
 				spawnInfo.m_def = tileGenData.m_treeDef;
 				spawnInfo.m_spawnPos = tileOrigin + (tileDims * 0.5f);
-				spawnInfo.m_spawnPos.y += tileGenData.m_treeScale;
 				spawnInfo.m_spawnScale = tileGenData.m_treeScale;
 				spawnInfo.m_spawnTint = tileGenData.m_treeTint;
 				out_spawnInfos.push_back(spawnInfo);
@@ -176,6 +175,8 @@ void Chunk::GenerateVBO()
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
 	vbo.Resize(StaticWorldSettings::s_numVertsInChunk);
 
+	TerrainVertex verts[StaticWorldSettings::s_numVertsInChunk];
+
 	for (int y = 0; y < StaticWorldSettings::s_numTilesInRow; ++y)
 	{
 		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x)
@@ -209,13 +210,15 @@ void Chunk::GenerateVBO()
 			Vec2 lightmapUVs = lightmapUVsHalfStepSize + Vec2(x, y) * lightmapUVsStepSize;
 
 			// Write verts
-			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(bottomLeftPoint), tint, bottomLeftUVs, lightmapUVs));
-			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(bottomRightPoint), tint, bottomRightUVs, lightmapUVs));
-			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(topRightPoint), tint, topRightUVs, lightmapUVs));
+			int firstVertIndex = index * 6;
+			TerrainVertex* firstVert = vbo.GetData<TerrainVertex>(firstVertIndex);
+			*firstVert = TerrainVertex(Vec3(bottomLeftPoint), tint, bottomLeftUVs, lightmapUVs);
+			*(firstVert + 1) = TerrainVertex(Vec3(bottomRightPoint), tint, bottomRightUVs, lightmapUVs);
+			*(firstVert + 2) = TerrainVertex(Vec3(topRightPoint), tint, topRightUVs, lightmapUVs);
+			*(firstVert + 3) = TerrainVertex(Vec3(bottomLeftPoint), tint, bottomLeftUVs, lightmapUVs);
+			*(firstVert + 4) = TerrainVertex(Vec3(topRightPoint), tint, topRightUVs, lightmapUVs);
+			*(firstVert + 5) = TerrainVertex(Vec3(topLeftPoint), tint, topLeftUVs, lightmapUVs);
 
-			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(bottomLeftPoint), tint, bottomLeftUVs, lightmapUVs));
-			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(topRightPoint), tint, topRightUVs, lightmapUVs));
-			vbo.AddVert<TerrainVertex>(TerrainVertex(Vec3(topLeftPoint), tint, topLeftUVs, lightmapUVs));
 		}
 	}
 
@@ -295,7 +298,7 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 	Vec2 worldTileLocation = Vec2(globalTileCoords);
 
 	// Mountainness
-	tileGenData.m_mountainness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, worldSettings.m_mountainnessScale, 8, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed));
+	tileGenData.m_mountainness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, worldSettings.m_mountainnessScale, 1, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed));
 	tileGenData.m_mountainness = MathUtils::AbsF(tileGenData.m_mountainness);
 	tileGenData.m_mountainness = MathUtils::SmoothStep3(tileGenData.m_mountainness);
 
@@ -304,7 +307,7 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 	tileGenData.m_terrainHeightOffset *= tileGenData.m_mountainness;
 
 	// Humidity
-	tileGenData.m_humidity = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_humidityScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 2));
+	tileGenData.m_humidity = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_humidityScale, 5, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 2));
 	tileGenData.m_humidity = MathUtils::SmoothStep3(tileGenData.m_humidity);
 	tileGenData.m_humidity *= -1.f; // Invert so higher moisture is lower value
 	tileGenData.m_humidity = MathUtils::RangeMapClamped(tileGenData.m_humidity, -1.f, 0.f, 0.f, 0.5f);
@@ -315,7 +318,7 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 
 	// Riverness
 	float rivernessScale = worldSettings.m_rivernessScale;
-	tileGenData.m_riverness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, rivernessScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4));
+	tileGenData.m_riverness = GetPerlinNoise2D(worldTileLocation.x, worldTileLocation.y, rivernessScale, 10, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 4));
 	tileGenData.m_riverness = MathUtils::AbsF(tileGenData.m_riverness);
 
 	// River runs through here
@@ -323,11 +326,11 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 	float riverThreshold = MathUtils::RangeMapClamped(tileGenData.m_humidity, 1.f, 0.f, worldSettings.m_riverThreshold, 0.f);
 
 	// Island
-	tileGenData.m_islandness = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_islandnessScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 5));
+	tileGenData.m_islandness = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_islandnessScale, 5, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 5));
 	tileGenData.m_islandness = MathUtils::SmoothStep3(tileGenData.m_islandness);
 
 	// Temperature
-	tileGenData.m_temperature = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_temperatureScale, 12, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 6));
+	tileGenData.m_temperature = GetPerlinNoise2D_01(worldTileLocation.x, worldTileLocation.y, worldSettings.m_temperatureScale, 5, 0.5f, 2.f, true, static_cast<unsigned int>(worldSettings.m_worldSeed + 6));
 	tileGenData.m_temperature = MathUtils::SmoothStep3(tileGenData.m_temperature);
 
 	// Forestness

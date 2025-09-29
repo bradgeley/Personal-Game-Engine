@@ -47,6 +47,9 @@ public:
     T& GetVert(size_t index);
 
     template<typename T>
+    T* GetData(size_t index);
+
+    template<typename T>
     T const& GetVert(size_t index) const;
 
     virtual void Resize(int numVerts);
@@ -117,6 +120,15 @@ template<typename T>
 T& VertexBuffer::GetVert(size_t index)
 {
     return *reinterpret_cast<T*>(GetVertInternal(sizeof(T), index));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename T>
+inline T* VertexBuffer::GetData(size_t index)
+{
+    return reinterpret_cast<T*>(GetVertInternal(sizeof(T), index));;
 }
 
 

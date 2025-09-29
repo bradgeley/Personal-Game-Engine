@@ -295,7 +295,6 @@
     <ClCompile Include="Framework\Windows\Main_Windows.cpp" />
     <ClCompile Include="Game\CAbility.cpp" />
     <ClCompile Include="Game\CAnimation.cpp" />
-    <ClCompile Include="Game\CCamera.cpp" />
     <ClCompile Include="Game\CCollision.cpp" />
     <ClCompile Include="Game\Chunk.cpp" />
     <ClCompile Include="Game\CMovement.cpp" />
@@ -353,7 +352,7 @@
     <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
-    <ClInclude Include="Game\CCamera.h" />
+    <ClInclude Include="Game\SCCamera.h" />
     <ClInclude Include="Game\CCollision.h" />
     <ClInclude Include="Game\Chunk.h" />
     <ClInclude Include="Game\CMovement.h" />
@@ -374,6 +373,7 @@
     <ClInclude Include="Game\SCamera.h" />
     <ClInclude Include="Game\SCAudio.h" />
     <ClInclude Include="Game\SCCollision.h" />
+    <ClInclude Include="Game\SCLighting.h" />
     <ClInclude Include="Game\SCTime.h" />
     <ClInclude Include="Game\SCDebug.h" />
     <ClInclude Include="Game\SCEntityFactory.h" />

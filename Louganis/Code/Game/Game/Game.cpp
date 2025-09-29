@@ -206,12 +206,12 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CAnimation>();
 
     // Map components
-    g_ecs->RegisterComponentMap<CCamera>();
     g_ecs->RegisterComponentMap<CPlayerController>();
     g_ecs->RegisterComponentMap<CTime>();
 
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCAudio>();
+    g_ecs->RegisterComponentSingleton<SCCamera>();
     g_ecs->RegisterComponentSingleton<SCCollision>();
     g_ecs->RegisterComponentSingleton<SCDebug>();
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();

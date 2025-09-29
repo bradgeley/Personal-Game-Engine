@@ -4,9 +4,6 @@
     <ClCompile Include="Game\Game.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\CCamera.cpp">
-      <Filter>ECS\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Game\CCollision.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
@@ -170,9 +167,6 @@
     </ClInclude>
     <ClInclude Include="Game\GameCommon.h">
       <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\CCamera.h">
-      <Filter>ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="Game\CCollision.h">
       <Filter>ECS\Components</Filter>
@@ -365,6 +359,12 @@
     </ClInclude>
     <ClInclude Include="Game\WorldShaderCPU.h">
       <Filter>Data\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCLighting.h">
+      <Filter>ECS\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCCamera.h">
+      <Filter>ECS\Singletons</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

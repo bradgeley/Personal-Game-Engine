@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SCollisionHash.h"
-#include "CCamera.h"
+#include "SCCamera.h"
 #include "CCollision.h"
 #include "CTransform.h"
 #include "SCWorld.h"
@@ -16,7 +16,7 @@
 void SCollisionHash::Startup()
 {
 	AddWriteDependencies<SCWorld, SCCollision>();
-    AddReadDependencies<CCollision, CTransform, CCamera>();
+    AddReadDependencies<CCollision, CTransform, SCCamera>();
 
     // Hashing entities can be split, since it is a read only operation until the combine phase
     int numThreads = std::thread::hardware_concurrency() - 1;
@@ -29,6 +29,7 @@ void SCollisionHash::Startup()
 void SCollisionHash::PreRun()
 {
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	SCCamera& camera = g_ecs->GetSingleton<SCCamera>();
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
     // clear out stale data and remove any chunk entries that are no longer loaded
@@ -63,19 +64,8 @@ void SCollisionHash::PreRun()
 
 	// Optimization: only update collision hashes for entities that are within the collision hash radius of the active camera
     scCollision.m_collisionUpdateBounds = AABB2::ZeroToOne;
-
-    SystemContext context;
-    for (auto it = g_ecs->Iterate<CTransform, CCamera>(context); it.IsValid(); ++it)
-    {
-        CCamera& camera = *g_ecs->GetComponent<CCamera>(it);
-        if (camera.m_isActive)
-        {
-            scCollision.m_collisionUpdateBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
-            scCollision.m_collisionUpdateBounds.SetDimsAboutCenter(Vec2(StaticWorldSettings::s_collisionHashRadius * 2.f, StaticWorldSettings::s_collisionHashRadius * 2.f));
-            break;
-        }
-    }
-
+    scCollision.m_collisionUpdateBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
+    scCollision.m_collisionUpdateBounds.SetDimsAboutCenter(Vec2(StaticWorldSettings::s_collisionHashRadius * 2.f, StaticWorldSettings::s_collisionHashRadius * 2.f));
 	scCollision.m_perThreadCollisionData.resize(m_systemSplittingNumJobs);
 }
 
@@ -111,10 +101,10 @@ void SCollisionHash::Run(SystemContext const& context)
             return true; // continue iterating
         });
 
-        world.ForEachWorldCoordsOverlappingCircle(pos, radius, [&](WorldCoords const& worldCoords)
+        world.ForEachWorldCoordsOverlappingCircle(pos, radius, [&](WorldCoords const& worldCoords, Chunk& chunk)
         {
             ChunkCollisionData& threadChunkCollisionData = thisThreadCollisionData[worldCoords.m_chunkCoords];
-            int tileIndex = world.GetActiveChunk(worldCoords.m_chunkCoords)->m_tiles.GetIndexForCoords(worldCoords.m_localTileCoords);
+            int tileIndex = chunk.m_tiles.GetIndexForCoords(worldCoords.m_localTileCoords);
             threadChunkCollisionData.m_tileBuckets[tileIndex].push_back(it.m_currentIndex);
             return true; // continue iterating
         });

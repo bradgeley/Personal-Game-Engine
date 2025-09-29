@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugRender.h"
-#include "CCamera.h"
+#include "SCCamera.h"
 #include "CCollision.h"
 #include "Chunk.h"
 #include "CPlayerController.h"
@@ -58,7 +58,7 @@ void SDebugRender::Run(SystemContext const& context)
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-    auto& cameraStorage = g_ecs->GetMapStorage<CCamera>();
+    auto& camera = g_ecs->GetSingleton<SCCamera>();
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     SCFlowField const& scFlowfield = g_ecs->GetSingleton<SCFlowField>();
@@ -67,29 +67,18 @@ void SDebugRender::Run(SystemContext const& context)
 
     VertexBuffer& frameVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameUntexVerts);
     VertexBuffer& frameTextVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
-    CCamera* playerCamera = nullptr;
-    AABB2 cameraBounds;
+    AABB2 cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
 
-    for (auto it = g_ecs->Iterate<CCamera>(context); it.IsValid(); ++it)
+    if (g_window->HasFocus())
     {
-        CCamera& camera = *cameraStorage.Get(it);
-        if (camera.m_isActive)
-        {
-            if (g_window->HasFocus())
-            {
-                Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
-                scDebug.m_debugMouseLocation = camera.m_camera.ScreenToWorldOrtho(relMousePos);
-            }
-			cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
-            playerCamera = &camera;
-            break;
-        }
+        Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
+        scDebug.m_debugMouseLocation = camera.m_camera.ScreenToWorldOrtho(relMousePos);
     }
 
     // Grid
     if (scDebug.m_debugRenderGrid)
     {
-        world.ForEachChunkOverlappingAABB(cameraBounds, [&](Chunk& chunk)
+        world.ForEachChunkOverlappingAABB(cameraBounds, [&](Chunk&)
         {
             g_renderer->BindTexture(nullptr);
             g_renderer->BindShader(nullptr);
@@ -106,13 +95,12 @@ void SDebugRender::Run(SystemContext const& context)
     // Mouse Raycast
     if (scDebug.m_debugRenderToMouseRaycast)
     {
-        for (auto it = g_ecs->Iterate<CTransform, CCamera>(context); it.IsValid(); ++it)
+        for (auto it = g_ecs->Iterate<CTransform, CPlayerController>(context); it.IsValid(); ++it)
         {
             CTransform* playerTransform = transStorage.Get(it);
-            CCamera* cameraComp = cameraStorage.Get(it);
             Vec2 playerLocation = playerTransform->m_pos;
             Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
-            Vec2 worldMousePos = cameraComp->m_camera.ScreenToWorldOrtho(relMousePos);
+            Vec2 worldMousePos = camera.m_camera.ScreenToWorldOrtho(relMousePos);
             Vec2 playerToMouse = worldMousePos - playerLocation;
             WorldRaycast raycast(playerLocation, playerToMouse.GetNormalized(), playerToMouse.GetLength());
             WorldRaycastResult result = Raycast(world, raycast);
@@ -155,7 +143,7 @@ void SDebugRender::Run(SystemContext const& context)
                 }
             }
 
-            world.ForEachWorldCoordsOverlappingCapsule(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, [&](WorldCoords const& coords)
+            world.ForEachWorldCoordsOverlappingCapsule(result.m_discCast.m_start, result.m_newDiscCenter, result.m_discCast.m_discRadius, [&](WorldCoords const& coords, Chunk&)
             {
                 VertexUtils::AddVertsForWireBox2D(frameVerts, world.GetTileBounds(coords), 0.1f, Rgba8::Magenta);
                 return true; 
@@ -239,9 +227,9 @@ void SDebugRender::Run(SystemContext const& context)
     }
 
     // Render Solid Tiles
-    if (scDebug.m_debugRenderSolidTiles && playerCamera)
+    if (scDebug.m_debugRenderSolidTiles)
     {
-        world.ForEachChunkOverlappingAABB(playerCamera->m_camera.GetTranslatedOrthoBounds2D(), [&world, &frameVerts](Chunk& chunk)
+        world.ForEachChunkOverlappingAABB(camera.m_camera.GetTranslatedOrthoBounds2D(), [&world, &frameVerts](Chunk& chunk)
         {
             for (int tileID = 0; tileID < StaticWorldSettings::s_numTilesInChunk; ++tileID)
             {
@@ -279,9 +267,9 @@ void SDebugRender::Run(SystemContext const& context)
             {
                 VertexUtils::AddVertsForWireDisc2D(frameVerts, collisionPos, collision.m_radius, 0.01f, 8, Rgba8::Magenta);
 			}
-            if (render && GeometryUtils::DoesDiscOverlapAABB(collisionPos, 0.5f * render->m_scale, cameraBounds))
+            if (render && GeometryUtils::DoesDiscOverlapAABB(render->GetRenderPosition(), 0.5f * render->m_scale, cameraBounds))
             {
-				VertexUtils::AddVertsForWireDisc2D(frameVerts, transform.m_pos, 0.5f * render->m_scale, 0.01f, 8, Rgba8::Cyan);
+				VertexUtils::AddVertsForWireDisc2D(frameVerts, render->GetRenderPosition(), 0.5f * render->m_scale, 0.01f, 8, Rgba8::Cyan);
 			}
         }
     }
@@ -289,38 +277,23 @@ void SDebugRender::Run(SystemContext const& context)
     // Lighting
     if (scDebug.m_debugRenderLighting)
     {
-        //world.ForEachWorldCoordsOverlappingAABB(cameraBounds, [&world, &frameVerts, &font, &frameTextVerts](WorldCoords const& coords)
-        //{
-        //    AABB2 tileBounds = world.GetTileBounds(coords);
-        //    Chunk* chunk = world.GetActiveChunk(coords);
-        //    if (chunk)
-        //    {
-        //        Tile const& tile = chunk->m_tiles.GetRef(coords.m_localTileCoords);
-        //        uint8_t outdoorLighting = tile.GetOutdoorLighting255();
-        //        uint8_t indoorLighting = tile.GetIndoorLighting255();
-        //        Rgba8 outdoorTint = Rgba8::Lerp(Rgba8::Black, Rgba8::White, (float) outdoorLighting / 15.f);
-        //        Rgba8 indoorTint = Rgba8::Lerp(Rgba8::Black, Rgba8::White, (float) indoorLighting / 15.f);
-        //        VertexUtils::AddVertsForAABB2(frameVerts, tileBounds, outdoorTint);
-        //        font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter() + Vec2(0.f, tileBounds.GetHeight() * 0.1f), Vec2(0.5f, 0.5f), tileBounds.GetHeight() * 0.2f, StringUtils::StringF("%u", outdoorLighting), Rgba8::Magenta);            
-        //    }
-        //    return true;
-		//});
-        world.ForEachChunkOverlappingAABB(cameraBounds, [&](Chunk& chunk)
+        world.ForEachWorldCoordsOverlappingAABB(cameraBounds, [&world, &frameVerts, &font, &frameTextVerts](WorldCoords const& coords, Chunk& chunk)
         {
-            Image lightmap;
-            chunk.GenerateLightmapImage(lightmap);
-            for (int i = 0; i < StaticWorldSettings::s_numTilesInChunk; ++i)
+            Tile const& tile = chunk.m_tiles.GetRef(coords.m_localTileCoords);
+            uint8_t outdoorLighting = tile.GetOutdoorLighting255();
+            uint8_t indoorLighting = tile.GetIndoorLighting255();
+			Rgba8 tint = Rgba8(outdoorLighting, indoorLighting, 0, 100);
+            if (tile.IsLightingDirty())
             {
-                IntVec2 localTileCoords = chunk.m_tiles.GetCoordsForIndex(i);
-                WorldCoords worldCoords;
-                worldCoords.m_chunkCoords = chunk.m_chunkCoords;
-                worldCoords.m_localTileCoords = localTileCoords;
-                AABB2 tileBounds = world.GetTileBounds(worldCoords);
-                Rgba8 pixel = lightmap.GetPixels().Get(localTileCoords);
-                font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter() + Vec2(0.f, tileBounds.GetHeight() * 0.1f), Vec2(0.5f, 0.5f), tileBounds.GetHeight() * 0.2f, StringUtils::StringF("(%u,%u)", pixel.r, pixel.g), Rgba8::Magenta);
-			}
+				tint = Rgba8::Red;
+                tint.a = 100;
+            }
+            AABB2 tileBounds = world.GetTileBounds(coords);
+            VertexUtils::AddVertsForAABB2(frameVerts, tileBounds, tint);
+            font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter() + Vec2(0.f, StaticWorldSettings::s_tileWidth * 0.25f), Vec2(0.f, 0.f), tileBounds.GetHeight() * 0.2f, StringUtils::StringF("%u", outdoorLighting), Rgba8::White);
+            font->AddVertsForAlignedText2D(frameTextVerts, tileBounds.GetCenter() - Vec2(0.f, StaticWorldSettings::s_tileWidth * 0.25f), Vec2(0.f, 0.f), tileBounds.GetHeight() * 0.2f, StringUtils::StringF("%u", indoorLighting), Rgba8::Orange);
             return true;
-        });
+		});
 
     }
     
@@ -440,7 +413,7 @@ bool SDebugRender::DebugRenderLighting(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugRender::DebugRenderGrid(NamedProperties& args)
+bool SDebugRender::DebugRenderGrid(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderGrid = !scDebug.m_debugRenderGrid;

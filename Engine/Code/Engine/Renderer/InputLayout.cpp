@@ -88,6 +88,8 @@ int InputLayout::GetNumBytesForFormat(InputLayoutAttributeFormat format)
 		case InputLayoutAttributeFormat::Uint3:	    return 12;
         case InputLayoutAttributeFormat::Uint4:     return 16;
 		case InputLayoutAttributeFormat::Rgba8:     return 4;
+		case InputLayoutAttributeFormat::R8_UNORM:  return 1;
+            default:
+			    ERROR_AND_DIE(StringUtils::StringF("InputLayout::GetNumBytesForFormat: byte amount not specified %s", s_inputLayoutAttributeFormatNames[(int) format].c_str()));
     }
-    return 0;
 }

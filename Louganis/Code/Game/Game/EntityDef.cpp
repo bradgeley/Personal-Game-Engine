@@ -110,13 +110,6 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_animation = CAnimation(elem);
     }
 
-    // CCamera
-    elem = xmlElement->FirstChildElement("Camera");
-    if (elem)
-    {
-        m_camera = CCamera(elem);
-    }
-
     // CCollision
     elem = xmlElement->FirstChildElement("Collision");
     if (elem)

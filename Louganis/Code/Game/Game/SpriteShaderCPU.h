@@ -21,12 +21,10 @@ struct alignas(16) SpriteInstance
 	Rgba8		m_rgba;				// TINT			(4 bytes)
 	float		m_scale;			// SCALE		(4 bytes)
 	uint32_t	m_spriteIndex;		// SPRITEINDEX	(4 bytes)
-	uint8_t		m_indoorLighting;	// INDOORLIGHT	(1 byte)
-	uint8_t		m_outdoorLighting;	// OUTDOORLIGHT	(1 byte)
-	uint8_t 	padding[2];			// PADDING		(2 bytes)
+	uint8_t		m_indoorLight;		// INDOORLIGHT	(1 byte)
+	uint8_t		m_outdoorLight;		// OUTDOORLIGHT	(1 byte)
+	uint8_t 	padding[2] = { 0 };	// PADDING		(2 bytes)
 	//------------------------------------------------------
-
-	static InputLayout* GetInputLayout();
 };
 
 

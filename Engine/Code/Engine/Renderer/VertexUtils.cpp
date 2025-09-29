@@ -96,13 +96,17 @@ void VertexUtils::AddVertsForRect2D(VertexBuffer& out_verts, Vec2 const& mins, V
     Vec2 topLeftUVs = Vec2(UVs.mins.x, UVs.maxs.y);
 
     // Push some verts
-    out_verts.AddVert(Vertex_PCU(bottomLeftPoint, tint, bottomLeftUVs));
-    out_verts.AddVert(Vertex_PCU(bottomRightPoint, tint, bottomRightUVs));
-    out_verts.AddVert(Vertex_PCU(topRightPoint, tint, topRightUVs));
+    Vertex_PCU verts[6] = 
+    {
+        Vertex_PCU(bottomLeftPoint, tint, bottomLeftUVs),
+        Vertex_PCU(bottomRightPoint, tint, bottomRightUVs),
+        Vertex_PCU(topRightPoint, tint, topRightUVs),
+        Vertex_PCU(topRightPoint, tint, topRightUVs),
+        Vertex_PCU(topLeftPoint, tint, topLeftUVs),
+        Vertex_PCU(bottomLeftPoint, tint, bottomLeftUVs)
+    };
 
-    out_verts.AddVert(Vertex_PCU(topRightPoint, tint, topRightUVs));
-    out_verts.AddVert(Vertex_PCU(topLeftPoint, tint, topLeftUVs));
-    out_verts.AddVert(Vertex_PCU(bottomLeftPoint, tint, bottomLeftUVs));
+    out_verts.AddVerts(verts, 6);
 }
 
 

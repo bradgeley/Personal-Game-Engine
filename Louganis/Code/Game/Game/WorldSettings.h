@@ -79,9 +79,9 @@ struct WorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Lighting Settings
 
-    Rgba8 m_timeOfDayTints[4]                   = { Rgba8(255, 153, 102), Rgba8::White, Rgba8(255, 102, 102), Rgba8(51, 102, 255) };    // Dawn, Day, Dusk, Night
-	double m_timeOfDayDurations[4]              = { 6.0, 12.0, 6.0, 12.0 }; // Dawn, Day, Dusk, Night
-    double m_timeOfDayTransitionDuration        = 10.f;
+    Rgba8 m_timeOfDayTints[4]                   = { Rgba8(255, 153, 102), Rgba8::White, Rgba8(200, 102, 102), Rgba8(51, 102, 200) };    // Dawn, Day, Dusk, Night
+	double m_timeOfDayDurations[4]              = { 1.0, 180.0, 1.0, 180.0 };                                                           // Dawn, Day, Dusk, Night
+    double m_timeOfDayTransitionDuration        = 20.f;
 
     //----------------------------------------------------------------------------------------------------------------------
     // Generation Settings

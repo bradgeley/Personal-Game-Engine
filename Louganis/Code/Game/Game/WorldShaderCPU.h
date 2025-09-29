@@ -22,10 +22,6 @@ public:
 	Rgba8   m_tint;
 	Vec2    m_uvs;
 	Vec2    m_lightmapUVs;
-
-public:
-
-	static InputLayout* GetInputLayout();
 };
 
 

@@ -7,12 +7,10 @@
 #include "EntityDef.h"
 #include "Chunk.h"
 #include "SEntityFactory.h"
+#include "SCEntityFactory.h"
 #include "TileDef.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Performance/ScopedTimer.h"
-
-// Experimental
-#include "SCEntityFactory.h"
 
 
 

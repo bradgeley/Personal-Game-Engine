@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SAnimation.h"
 #include "CAnimation.h"
-#include "CCamera.h"
+#include "SCCamera.h"
 #include "CMovement.h"
 #include "CRender.h"
 #include "CTransform.h"
@@ -21,7 +21,7 @@
 void SAnimation::Startup()
 {
 	AddWriteDependencies<CAnimation, Renderer, AssetManager>();
-	AddReadDependencies<CRender, CMovement, CTransform, CCamera>();
+	AddReadDependencies<CRender, CMovement, CTransform, SCCamera>();
 }
 
 
@@ -29,17 +29,8 @@ void SAnimation::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAnimation::Run(SystemContext const& context)
 {
-    AABB2 cameraBounds;
-
-    for (auto it = g_ecs->Iterate<CCamera>(context); it.IsValid(); ++it)
-    {
-		CCamera& camera = *g_ecs->GetComponent<CCamera>(it);
-        if (camera.m_isActive)
-        {
-            cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
-            break;
-        }
-    }
+	SCCamera& scCamera = g_ecs->GetSingleton<SCCamera>();
+	AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
 
 	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
@@ -50,7 +41,7 @@ void SAnimation::Run(SystemContext const& context)
     {
 		CTransform const& transform = transformStorage[it];
         CRender const& render = renderStorage[it];
-		if (!GeometryUtils::DoesDiscOverlapAABB(transform.m_pos, 0.5f * render.m_scale, cameraBounds))
+		if (!GeometryUtils::DoesDiscOverlapAABB(render.GetRenderPosition(), 0.5f * render.m_scale, cameraBounds))
         {
             continue;
         }

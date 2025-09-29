@@ -171,16 +171,16 @@ WorldCoords SCWorld::GetWorldCoordsAtGlobalTileCoords(IntVec2 const& globalTileC
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&)>& func) const
+void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(WorldCoords const&, Chunk&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
 
-	ForEachWorldCoordsOverlappingAABB(boundingBox, [&](WorldCoords const& worldCoords) 
+	ForEachWorldCoordsOverlappingAABB(boundingBox, [&](WorldCoords const& worldCoords, Chunk& chunk)
 	{ 
 		AABB2 tileBounds = GetTileBounds(worldCoords);
 		if (GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
 		{
-			if (!func(worldCoords))
+			if (!func(worldCoords, chunk))
 			{
 				return false;
 			}
@@ -192,16 +192,16 @@ void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(WorldCoords const&)>& func) const
+void SCWorld::ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(WorldCoords const&, Chunk&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetDiscBounds(pos, radius);
 
-	ForEachWorldCoordsOverlappingAABB(boundingBox, [&](WorldCoords const& worldCoords)
+	ForEachWorldCoordsOverlappingAABB(boundingBox, [&](WorldCoords const& worldCoords, Chunk& chunk)
 	{
 		AABB2 tileBounds = GetTileBounds(worldCoords);
 		if (GeometryUtils::DoesDiscOverlapAABB(pos, radius, tileBounds))
 		{
-			if (!func(worldCoords))
+			if (!func(worldCoords, chunk))
 			{
 				return false;
 			}
@@ -213,7 +213,7 @@ void SCWorld::ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius,
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(WorldCoords const&)>& func) const
+void SCWorld::ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(WorldCoords const&, Chunk&)>& func) const
 {
 	// Start in bot left, and iterate in a grid pattern
 	IntVec2 startGlobalTileCoords = GetGlobalTileCoordsAtLocation(aabb.mins);
@@ -232,7 +232,7 @@ void SCWorld::ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::fu
 			WorldCoords worldCoords = GetWorldCoordsAtGlobalTileCoords(IntVec2(x, y));
 			if (Chunk* chunk = GetActiveChunk(worldCoords))
 			{
-				if (!func(worldCoords))
+				if (!func(worldCoords, *chunk))
 				{
 					return;
 				}

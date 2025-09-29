@@ -18,7 +18,7 @@ public:
 	ShaderID m_worldShaderID = RendererUtils::InvalidID;	// Owned by SRenderWorld
 
 	ConstantBufferID m_spriteSheetConstantsBuffer	= RendererUtils::InvalidID; // Owned by SRenderEntities
-	ConstantBufferID m_lightingConstantsBuffer		= RendererUtils::InvalidID; // Owned by SRenderWorld
+	ConstantBufferID m_lightingConstantsBuffer		= RendererUtils::InvalidID; // Owned by SLighting
 	ConstantBufferID m_staticWorldConstantsBuffer	= RendererUtils::InvalidID; // Owned by SRenderWorld
 
 	std::unordered_map<AssetID, VertexBufferID> m_entityVBOsBySpriteSheet; // Owned by SRenderEntities

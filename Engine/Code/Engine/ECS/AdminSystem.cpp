@@ -347,6 +347,10 @@ bool AdminSystem::DoesEntityHaveComponents(EntityID entityID, BitMask componentB
 //----------------------------------------------------------------------------------------------------------------------
 bool AdminSystem::DoesEntityExist(EntityID entityID) const
 {
+	if (entityID >= MAX_ENTITIES)
+	{
+		return false;
+	}
 	return m_entities.Get((int) entityID);
 }
 

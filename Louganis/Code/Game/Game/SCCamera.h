@@ -1,19 +1,18 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/ECS/EntityID.h"
 #include "Engine/Renderer/Camera.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct CCamera
+struct SCCamera
 {
-    CCamera() = default;
-    CCamera(void const* xmlElement);
+	EntityID m_attachedEntity = ENTITY_ID_INVALID; // Entity that the camera should follow, if any
 
     // Transient Data
     Camera m_camera;
     float m_zoomAmount = 1.f;
-	bool m_isActive = false; // only 1 camera may be active at a time in the game world
 
     // Definition Data
     float m_minZoom = 0.1f;
