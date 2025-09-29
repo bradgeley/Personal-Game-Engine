@@ -41,14 +41,14 @@
   <EntityDef name = "DeadTree1">
     <Transform></Transform>
     <Collision radius="0.25" immovable="true"></Collision>
-    <Render scale="2.5"></Render>
+    <Render scale="2.5" offset="0,0.8"></Render>
     <Animation spriteSheet="Data/SpriteSheets/DeadTree1.xml"></Animation>
   </EntityDef>
 
   <EntityDef name = "Cactus1">
     <Transform></Transform>
     <Collision radius="0.25" immovable="true"></Collision>
-    <Render scale="2.5"></Render>
+    <Render scale="2.5" offset="0.1,0.8"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Cactus1.xml"></Animation>
   </EntityDef>
 
