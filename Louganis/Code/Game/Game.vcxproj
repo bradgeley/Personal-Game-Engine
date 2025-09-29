@@ -328,7 +328,6 @@
     <ClCompile Include="Game\SMovement.cpp" />
     <ClCompile Include="Game\SCopyTransform.cpp" />
     <ClCompile Include="Game\SPhysics.cpp" />
-    <ClCompile Include="Game\SpriteShaderCPU.cpp" />
     <ClCompile Include="Game\SUnloadChunks.cpp" />
     <ClCompile Include="Game\SRenderEntities.cpp" />
     <ClCompile Include="Game\SRenderWorld.cpp" />

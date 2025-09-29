@@ -67,9 +67,6 @@
     <ClCompile Include="Game\SCCollision.cpp">
       <Filter>ECS\Singletons</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SpriteShaderCPU.cpp">
-      <Filter>Data\Shaders</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SRenderEntities.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>

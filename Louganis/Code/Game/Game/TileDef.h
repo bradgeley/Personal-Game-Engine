@@ -37,7 +37,8 @@ public:
 
 	Name		m_name			= "Unnamed TileDef";
 	uint8_t		m_spriteIndex	= 0;
-	TileTags	m_tags			= (TileTags) TileTag::Lighting_Dirty;	// Start tiles off as dirty
+	TileTags	m_tags			= 0;
 	Rgba8		m_tint			= Rgba8::White;
 	uint8_t		m_cost			= 1;
+	uint8_t 	m_indoorLight	= 0; // Innate indoor light source strength
 };

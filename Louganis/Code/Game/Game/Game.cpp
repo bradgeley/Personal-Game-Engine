@@ -216,6 +216,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCDebug>();
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
     g_ecs->RegisterComponentSingleton<SCFlowField>();
+    g_ecs->RegisterComponentSingleton<SCLighting>();
     g_ecs->RegisterComponentSingleton<SCLoadChunks>();
     g_ecs->RegisterComponentSingleton<SCRender>();
     g_ecs->RegisterComponentSingleton<SCTime>();

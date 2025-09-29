@@ -31,8 +31,8 @@ namespace StaticWorldSettings
     constexpr float s_flowFieldGenerationRadiusSquared      = s_flowFieldGenerationRadius * s_flowFieldGenerationRadius;
     constexpr float s_collisionHashRadiusSquared            = s_collisionHashRadius * s_collisionHashRadius;
 
-	constexpr int s_maxOutdoorLighting                      = 15;       // 4 bits (0-15)
-	constexpr int s_maxIndoorLighting                       = 15;       // 4 bits (0-15)
+	constexpr uint8_t s_maxOutdoorLighting                  = 15;       // 4 bits (0-15)
+	constexpr uint8_t s_maxIndoorLighting                   = 15;       // 4 bits (0-15)
 
     //----------------------------------------------------------------------------------------------------------------------
     // Derived Constants

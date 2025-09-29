@@ -24,6 +24,7 @@ TileDef::TileDef(XmlElement const* tileDefXmlElement)
 	m_tint = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "tint", m_tint);
 	m_cost = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "cost", m_cost);
 	m_spriteIndex = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "spriteIndex", m_spriteIndex);
+	m_indoorLight = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "indoorLight", m_indoorLight);
 }
 
 
@@ -110,11 +111,11 @@ Tile TileDef::GetDefaultTile(Name name)
 	TileID defID = GetTileDefID(name);
 	if (defID != -1)
 	{
+		TileDef const* def = GetTileDef(defID);
 		result.m_id = defID;
-		result.m_tags = GetTileDef((uint8_t) defID)->m_tags;
-		if (!result.IsOpaque())
+		result.m_tags = def->m_tags;
+		if (!result.IsOpaque() || def->m_indoorLight > 0)
 		{
-			result.SetOutdoorLighting(StaticWorldSettings::s_maxOutdoorLighting);
 			result.SetLightingDirty(true);
 		}
 	}

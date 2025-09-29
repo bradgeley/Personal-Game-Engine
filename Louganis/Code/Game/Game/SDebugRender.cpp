@@ -14,6 +14,7 @@
 #include "SCDebug.h"
 #include "WorldRaycast.h"
 #include "Engine/Assets/Image.h"
+#include "Engine/Core/EngineCommon.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Input/InputSystem.h"
@@ -78,13 +79,14 @@ void SDebugRender::Run(SystemContext const& context)
     // Grid
     if (scDebug.m_debugRenderGrid)
     {
-        world.ForEachChunkOverlappingAABB(cameraBounds, [&](Chunk&)
+        world.ForEachChunkOverlappingAABB(cameraBounds, [&](Chunk& chunk)
         {
             g_renderer->BindTexture(nullptr);
             g_renderer->BindShader(nullptr);
 			#if defined(_DEBUG)
 			    g_renderer->DrawVertexBuffer(chunk.m_debugVBO);
             #else 
+                UNUSED(chunk);
 			    DevConsoleUtils::LogError("Debug render grid is _DEBUG only");
 			#endif // _DEBUG
             return true;
@@ -280,8 +282,8 @@ void SDebugRender::Run(SystemContext const& context)
         world.ForEachWorldCoordsOverlappingAABB(cameraBounds, [&world, &frameVerts, &font, &frameTextVerts](WorldCoords const& coords, Chunk& chunk)
         {
             Tile const& tile = chunk.m_tiles.GetRef(coords.m_localTileCoords);
-            uint8_t outdoorLighting = tile.GetOutdoorLighting255();
-            uint8_t indoorLighting = tile.GetIndoorLighting255();
+            uint8_t outdoorLighting = tile.GetOutdoorLighting();
+            uint8_t indoorLighting = tile.GetIndoorLighting();
 			Rgba8 tint = Rgba8(outdoorLighting, indoorLighting, 0, 100);
             if (tile.IsLightingDirty())
             {

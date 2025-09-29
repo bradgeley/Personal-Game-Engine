@@ -31,8 +31,6 @@ void DrawChunk(Chunk* chunk)
         return;
     }
 
-	chunk->GenerateLightmap(); // maybe move to SLighting?
-
 	g_renderer->BindTexture(chunk->m_lightmap, 1);
     g_renderer->DrawVertexBuffer(chunk->m_vbo);
 }

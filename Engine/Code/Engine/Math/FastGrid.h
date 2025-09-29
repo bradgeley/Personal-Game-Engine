@@ -428,7 +428,7 @@ template <typename T, uint8_t Pow2>
 IntVec2 FastGrid<T, Pow2>::GetCoordsForIndex(int index) const
 {
     constexpr uint32_t numBitsInInt = sizeof(int) * 8;
-    static uint32_t xBitMask = 0xFFFF'FFFF >> (numBitsInInt - Pow2);
+    constexpr uint32_t xBitMask = 0xFFFF'FFFF >> (numBitsInInt - Pow2);
     int x = index & xBitMask;
     int y = index >> Pow2;
     return IntVec2(x, y);

@@ -127,6 +127,13 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			Tile& tile = m_tiles.GetRef(index);
 			tile.m_staticLighting = static_cast<uint8_t>(tileGenData.m_staticLighting01 * 255.f);
 
+			// Set all edge tiles as dirty
+			if (x == 0 || y == 0 || x == StaticWorldSettings::s_numTilesInRow - 1 || y == StaticWorldSettings::s_numTilesInRow - 1)
+			{
+				tile.SetLightingDirty(true);
+				m_isLightingDirty = true;
+			}
+
 			// Spawn Entities
 			if (tileGenData.m_treeDef != nullptr)
 			{
@@ -230,11 +237,6 @@ void Chunk::GenerateVBO()
 //----------------------------------------------------------------------------------------------------------------------
 void Chunk::GenerateLightmap()
 {
-	if (!m_isLightingDirty)
-	{
-		return;
-	}
-
 	Vec2 chunkOrigin = Vec2(m_chunkCoords.x, m_chunkCoords.y) * StaticWorldSettings::s_chunkWidth;
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 
@@ -260,7 +262,6 @@ void Chunk::GenerateLightmap()
 
 	Texture* lightmapTex = g_renderer->GetTexture(m_lightmap);
 	lightmapTex->CreateFromImage(image, false, false);
-	m_isLightingDirty = false;
 }
 
 
