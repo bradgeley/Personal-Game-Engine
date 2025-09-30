@@ -77,13 +77,15 @@ cbuffer StaticWorldConstants : register(b6)
 cbuffer LightingConstants : register(b7)
 {
 	//------------------------------------------------------
-    float4 outdoorLightTint;                    // 16 bytes
+    float4 outdoorLightTint;
 	//------------------------------------------------------
-    float4 indoorLightTint;                     // 16 bytes
+    float4 indoorLightTint;
 	//------------------------------------------------------
-    float4 ambientLightTint;                    // 16 bytes
+    float4 ambientLightTint;
 	//------------------------------------------------------
-    float ambientLightIntensity;                // 4 bytes
+    float ambientLightIntensity;
+	//------------------------------------------------------
+    bool isLightingEnabled;
 	//------------------------------------------------------
 };
 
@@ -115,21 +117,27 @@ float4 PixelMain(VSOutput input) : SV_Target0
 	float4 surfaceColor = SurfaceColorTexture.Sample(SurfaceSampler, texCoord);
     float4 lightmapValue = ChunkLightmapTexture.Sample(SurfaceSampler, input.lightmapUVs);
 	
-    //float indoorLightingBrightness = lightmapValue.x;
-    //float3 indoorLightContribution = indoorLightTint.rgb * indoorLightingBrightness;
-    //float3 ambientLightContribution = ambientLightTint.rgb * ambientLightIntensity;
-	
-    float outdoorLightingBrightness = lightmapValue.g;
-    float3 outdoorLightContribution = outdoorLightTint.rgb * outdoorLightingBrightness;
-	
-	float3 totalLightContribution = outdoorLightContribution;
-	totalLightContribution = saturate(totalLightContribution); // clamp to 0-1
-	
 	float4 tint = input.tint;
-    float4 finalColor = (tint * surfaceColor * float4(totalLightContribution, 1.f));
+    float4 finalColor = (tint * surfaceColor);
+	
+    if (isLightingEnabled)
+    {
+        float indoorLightingBrightness = lightmapValue.x;
+        float3 indoorLightContribution = indoorLightTint.rgb * indoorLightingBrightness;
+        //float3 ambientLightContribution = ambientLightTint.rgb * ambientLightIntensity;
+	
+        float outdoorLightingBrightness = lightmapValue.g;
+        float3 outdoorLightContribution = outdoorLightTint.rgb * outdoorLightingBrightness;
+	
+        float3 totalLightContribution = outdoorLightContribution + indoorLightContribution;
+        totalLightContribution = saturate(totalLightContribution);
+        finalColor *= float4(totalLightContribution, 1.f);
+    }
     
     if (finalColor.a <= 0.001f)
+    {
         discard;
+    }
     
-	return finalColor;
+    return finalColor;
 }

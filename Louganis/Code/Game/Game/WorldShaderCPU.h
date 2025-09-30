@@ -47,13 +47,16 @@ struct alignas(16) LightingConstants // : register(b7)
 	static int GetSlot() { return 7; }
 
 	//------------------------------------------------------
-	float m_outdoorLightTint[4];                  // 16 bytes
+	float m_outdoorLightTint[4];                // 16 bytes
 	//------------------------------------------------------
 	float m_indoorLightTint[4];					// 16 bytes
 	//------------------------------------------------------
-	float m_ambientLightTint[4];                  // 16 bytes
+	float m_ambientLightTint[4];                // 16 bytes
 	//------------------------------------------------------
-	float m_ambientLightIntensity;                // 4 bytes
-	float padding[3];                           // 12 bytes
+	float m_ambientLightIntensity;              // 4 bytes
+	uint32_t m_isLightingEnabled;				// 4 bytes
+	float padding[2];							// 8 bytes
 	//------------------------------------------------------
 };
+
+constexpr int boolsize = sizeof(bool);

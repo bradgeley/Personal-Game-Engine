@@ -313,6 +313,7 @@
     <ClCompile Include="Game\SCCollision.cpp" />
     <ClCompile Include="Game\SCollision.cpp" />
     <ClCompile Include="Game\SCollisionHash.cpp" />
+    <ClCompile Include="Game\SCTime.cpp" />
     <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\SDebugCommands.cpp" />
     <ClCompile Include="Game\SDebugInput.cpp" />

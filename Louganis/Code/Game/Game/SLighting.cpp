@@ -8,6 +8,7 @@
 #include "SCLighting.h"
 #include "TileDef.h"
 #include "WorldShaderCPU.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/ConstantBuffer.h"
@@ -22,6 +23,8 @@ void SLighting::Startup()
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
     scRender.m_lightingConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(LightingConstants));
+
+	DevConsoleUtils::AddDevConsoleCommand("ToggleLighting", &SLighting::ToggleLighting);
 }
 
 
@@ -47,6 +50,7 @@ void SLighting::Run(SystemContext const&)
 	outdoorLightTint.GetAsFloats(lightingConstants.m_outdoorLightTint);
 	Rgba8::LightOrange.GetAsFloats(lightingConstants.m_indoorLightTint);
     lightingConstants.m_ambientLightIntensity = 0.01f; // 0 = pitch black, 1 = full brightness
+	lightingConstants.m_isLightingEnabled = scLighting.m_isLightingEnabled ? 1 : 0;
 
     ConstantBuffer* lightingCbo = g_renderer->GetConstantBuffer(scRender.m_lightingConstantsBuffer);
     lightingCbo->Update(lightingConstants);
@@ -129,7 +133,6 @@ void SLighting::Run(SystemContext const&)
 
         if (lightingChanged)
         {
-			chunk->m_isLightingDirty = true;
 			scLighting.m_dirtyChunks.insert(chunk);
 
             for (auto& neighborOffset : neighborOffsets)
@@ -142,15 +145,16 @@ void SLighting::Run(SystemContext const&)
                 }
                 Tile& neighborTile = neighborChunk->m_tiles.GetRef(neighborCoords.m_localTileCoords);
                 neighborTile.SetLightingDirty(true);
+                neighborChunk->m_isLightingDirty = true;
 				scLighting.m_dirtyLightingTiles.insert(neighborCoords);
             }
         }
+        it = scLighting.m_dirtyLightingTiles.begin();
     }
 
     for (Chunk* dirtyChunk : scLighting.m_dirtyChunks)
     {
         dirtyChunk->GenerateLightmap();
-        dirtyChunk->m_isLightingDirty = false;
 	}
     scLighting.m_dirtyChunks.clear();
 }
@@ -162,4 +166,16 @@ void SLighting::Shutdown()
 {
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
     g_renderer->ReleaseConstantBuffer(scRender.m_lightingConstantsBuffer);
+
+	DevConsoleUtils::RemoveDevConsoleCommand("ToggleLighting", &SLighting::ToggleLighting);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SLighting::ToggleLighting(NamedProperties& args)
+{
+	SCLighting& scLighting = g_ecs->GetSingleton<SCLighting>();
+	scLighting.m_isLightingEnabled = !scLighting.m_isLightingEnabled;
+    return false;
 }

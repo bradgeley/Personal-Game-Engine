@@ -67,6 +67,15 @@ int VertexBuffer::GetNumVerts() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void VertexBuffer::SetDirty()
+{
+    ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");
+    m_gpuBuffer->SetDirty();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool VertexBuffer::IsDirty() const
 {
     ASSERT_OR_DIE(m_gpuBuffer != nullptr && m_vertSize > 0, "VertexBuffer - Vertex buffer not properly initialized.");

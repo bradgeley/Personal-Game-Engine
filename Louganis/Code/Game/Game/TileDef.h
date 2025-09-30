@@ -22,6 +22,7 @@ public:
 	static TileDef const* GetTileDef(Name name);
 	static TileID GetTileDefID(Name name);
 	static Tile GetDefaultTile(Name name);
+	static Tile GetDefaultTile(TileID id);
 
 	inline bool IsVisible() const { return m_tags & static_cast<uint8_t>(TileTag::Visible); }
 	inline bool IsSolid()   const { return m_tags & static_cast<uint8_t>(TileTag::Solid); }

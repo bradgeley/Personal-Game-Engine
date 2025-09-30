@@ -58,6 +58,7 @@ public:
     virtual void ReleaseResources() = 0;
     virtual void UpdateGPUBuffer() = 0;
 
+    void SetDirty();
     bool IsDirty() const;
 	void Reserve(size_t byteWidth);
 	void Resize(size_t byteWidth);

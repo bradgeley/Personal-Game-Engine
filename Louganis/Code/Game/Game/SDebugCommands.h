@@ -23,4 +23,6 @@ protected:
     static bool Goto(NamedProperties& args);
     static bool SetSeed(NamedProperties& args);
     static bool SlowPlayer(NamedProperties& args);
+    static bool SetDebugTileDef(NamedProperties& args);
+    static bool SetTimeOfDay(NamedProperties& args);
 };

@@ -12,6 +12,7 @@
   <TileDef name="ice"               visible="true" solid="false" opaque="false"  cost="1"    spriteIndex="9"/>
   <TileDef name="clay"              visible="true" solid="true"  opaque="true"   cost="255"  spriteIndex="10"/>
   <TileDef name="obsidian"          visible="true" solid="true"  opaque="true"   cost="255"  spriteIndex="11"/>
+  <TileDef name="glowstone"         visible="true" solid="true"  opaque="true"   cost="255"  spriteIndex="12" indoorLight="15"/>
 
   <TileDef name="error"         visible="true" solid="true"   tint="255,0,255"    cost="255"  spriteIndex="255"/>
   

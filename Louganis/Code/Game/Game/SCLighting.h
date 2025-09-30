@@ -14,6 +14,7 @@ class SCLighting
 {
 public:	
 
+	bool m_isLightingEnabled = true;
 	std::unordered_set<WorldCoords> m_dirtyLightingTiles;
 	std::unordered_set<Chunk*> m_dirtyChunks; // Lightmaps need to be rebuild
 };

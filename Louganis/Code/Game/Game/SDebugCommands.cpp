@@ -6,7 +6,10 @@
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "SCWorld.h"
+#include "SCDebug.h"
 #include "SCLoadChunks.h"
+#include "SCTime.h"
+#include "TileDef.h"
 
 
 
@@ -18,6 +21,8 @@ void SDebugCommands::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("SlowPlayer", &SDebugCommands::SlowPlayer, "slow", DevConsoleArgType::Bool);
 	DevConsoleUtils::AddDevConsoleCommand("SetSeed", &SDebugCommands::SetSeed, "seed", DevConsoleArgType::Int);	
 	DevConsoleUtils::AddDevConsoleCommand("Goto", &SDebugCommands::Goto, "location", DevConsoleArgType::Vec2);
+	DevConsoleUtils::AddDevConsoleCommand("SetDebugTileDef", &SDebugCommands::SetDebugTileDef, "tileDefName", DevConsoleArgType::String);
+	DevConsoleUtils::AddDevConsoleCommand("SetTimeOfDay", &SDebugCommands::SetTimeOfDay, "timeOfDay", DevConsoleArgType::Int);
 }
 
 
@@ -36,6 +41,8 @@ void SDebugCommands::Shutdown()
 	DevConsoleUtils::RemoveDevConsoleCommand("SlowPlayer", &SDebugCommands::SlowPlayer);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetSeed", &SDebugCommands::SetSeed);
 	DevConsoleUtils::RemoveDevConsoleCommand("Goto", &SDebugCommands::Goto);
+	DevConsoleUtils::RemoveDevConsoleCommand("SetDebugTileDef", &SDebugCommands::SetDebugTileDef);
+	DevConsoleUtils::RemoveDevConsoleCommand("SetTimeOfDay", &SDebugCommands::SetTimeOfDay);
 }
 
 
@@ -79,4 +86,38 @@ bool SDebugCommands::SlowPlayer(NamedProperties& args)
 		cTime->m_clock.SetLocalTimeDilation(slow ? 0.1 : 1.0);
 	}
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::SetDebugTileDef(NamedProperties& args)
+{
+	std::string tileDefString = args.Get("tileDefName", std::string(""));
+	Name tileDefName = Name(tileDefString);
+	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+	scDebug.m_debugPlacementTileID = tileDefName.IsValid() ? TileDef::GetTileDefID(tileDefName) : 0;
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::SetTimeOfDay(NamedProperties& args)
+{
+	int timeOfDay = args.Get("timeOfDay", -1);
+	if (timeOfDay >= 0 && timeOfDay < (int) TimeOfDay::Count)
+	{
+		SCTime& scTime = g_ecs->GetSingleton<SCTime>();
+		SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+		if ((int) scTime.m_timeOfDay <= timeOfDay)
+		{
+			// Advance 1 day
+			scTime.m_dayCount++;
+		}
+		scTime.m_isTransitioning = false;
+		scTime.m_timeOfDay = (TimeOfDay) timeOfDay;
+		scTime.m_dayTimer.Set(nullptr, scWorld.m_worldSettings.m_timeOfDayDurations[(int) scTime.m_timeOfDay]);
+	}
+	return false;
 }

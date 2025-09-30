@@ -79,7 +79,7 @@ struct WorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Lighting Settings
 
-    Rgba8 m_timeOfDayTints[4]                   = { Rgba8(255, 153, 102), Rgba8::White, Rgba8(200, 102, 102), Rgba8(51, 102, 200) };    // Dawn, Day, Dusk, Night
+    Rgba8 m_timeOfDayTints[4]                   = { Rgba8(255, 153, 102), Rgba8::White, Rgba8(200, 102, 102), Rgba8(26, 51, 100) };    // Dawn, Day, Dusk, Night
 	double m_timeOfDayDurations[4]              = { 1.0, 180.0, 1.0, 180.0 };                                                           // Dawn, Day, Dusk, Night
     double m_timeOfDayTransitionDuration        = 20.f;
 
@@ -89,14 +89,24 @@ struct WorldSettings
     float m_terrainHeightOffsetScale            = 100.f;
 
     // Biomes
-	float m_humidityScale                       = 10000.f;
+	float m_humidityScale                       = 2500.f;
 	float m_mountainnessScale                   = 500.f;
 	float m_oceannessScale                      = 1000.f;
-    float m_rivernessScale                      = 4000.f;
-    float m_forestnessScale                     = 5000.f;
+    float m_rivernessScale                      = 5000.f;
+    float m_forestnessScale                     = 2500.f;
     float m_treeBaseScale                       = 10.f;
-	float m_islandnessScale                     = 10000.f;
-	float m_temperatureScale                    = 10000.f;
+	float m_islandnessScale                     = 5000.f;
+	float m_temperatureScale                    = 2500.f;
+
+    // Biome Detail
+	int m_forestnessDetailLevel                 = 5;
+	int m_temperatureDetailLevel                = 5;
+	int m_rivernessDetailLevel                  = 10;
+	int m_islandnessDetailLevel                 = 5;
+	int m_terrainHeightDetailLevel              = 8;
+	int m_humidityDetailLevel                   = 5;
+	int m_mountainnessDetailLevel               = 8;
+	int m_oceannessDetailLevel                  = 8;
 
     float m_coldThreshold                       = 0.2f;
     float m_forestThreshold                     = 0.5f;

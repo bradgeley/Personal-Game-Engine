@@ -2,6 +2,7 @@
 #include "TileDef.h"
 #include "WorldSettings.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Core/ErrorUtils.h"
 
 
 
@@ -112,6 +113,7 @@ Tile TileDef::GetDefaultTile(Name name)
 	if (defID != -1)
 	{
 		TileDef const* def = GetTileDef(defID);
+		ASSERT_OR_DIE(def != nullptr, "TileDef::GetDefaultTile - failed to get tile def.");
 		result.m_id = defID;
 		result.m_tags = def->m_tags;
 		if (!result.IsOpaque() || def->m_indoorLight > 0)
@@ -120,4 +122,14 @@ Tile TileDef::GetDefaultTile(Name name)
 		}
 	}
 	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Tile TileDef::GetDefaultTile(TileID id)
+{
+	TileDef const* def = GetTileDef(id);
+	ASSERT_OR_DIE(def != nullptr, "TileDef::GetDefaultTile - failed to get tile def.");
+	return GetDefaultTile(def->m_name);
 }

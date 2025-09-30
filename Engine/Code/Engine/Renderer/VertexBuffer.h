@@ -59,6 +59,7 @@ public:
     virtual int GetStride() const;
 	virtual int GetNumVerts() const;
 
+    virtual void SetDirty();
 	virtual bool IsDirty() const;
     virtual bool IsEmpty() const;
 	virtual void UpdateGPUBuffer();

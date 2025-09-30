@@ -31,6 +31,8 @@ void DrawChunk(Chunk* chunk)
         return;
     }
 
+    chunk->GenerateVBO();
+
 	g_renderer->BindTexture(chunk->m_lightmap, 1);
     g_renderer->DrawVertexBuffer(chunk->m_vbo);
 }

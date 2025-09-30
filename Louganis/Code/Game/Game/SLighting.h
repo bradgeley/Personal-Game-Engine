@@ -4,6 +4,7 @@
 
 
 
+struct NamedProperties;
 enum class TimeOfDay;
 
 
@@ -17,4 +18,8 @@ public:
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;
+
+public:
+
+	static bool ToggleLighting(NamedProperties& args);
 };

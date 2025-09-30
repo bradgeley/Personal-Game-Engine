@@ -13,6 +13,14 @@ GPUBuffer::GPUBuffer(GpuBufferConfig const& config) : m_config(config)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void GPUBuffer::SetDirty()
+{
+	m_isDirty = true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool GPUBuffer::IsDirty() const
 {
 	return m_isDirty;
@@ -65,6 +73,7 @@ uint8_t const* GPUBuffer::GetCPUBufferData() const
 //----------------------------------------------------------------------------------------------------------------------
 uint8_t* GPUBuffer::GetCPUBufferData()
 {
+	m_isDirty = true;
 	return m_cpuBuffer.data();
 }
 

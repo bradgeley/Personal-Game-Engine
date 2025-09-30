@@ -35,7 +35,7 @@ void SCollisionHash::PreRun()
     // clear out stale data and remove any chunk entries that are no longer loaded
     for (auto it = scCollision.m_chunkCollisionData.begin(); it != scCollision.m_chunkCollisionData.end();)
     {
-		IntVec2 const& chunkCoords = it->first;
+		IntVec2 chunkCoords = it->first;
 		ChunkCollisionData& chunkCollisionData = it->second;
 
         // Clear out stale data
