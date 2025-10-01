@@ -37,7 +37,7 @@ void SDebugInput::Run(SystemContext const&)
 		}
 	}
 
-	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('B'))
+	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->IsKeyDown('B'))
 	{
 		Chunk* chunk = world.GetActiveChunk(debug.m_debugMouseWorldCoords);
 		TileDef const* tileDef = TileDef::GetTileDef(debug.m_debugPlacementTileID);

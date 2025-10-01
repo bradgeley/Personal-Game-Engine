@@ -43,6 +43,7 @@ public:
 	AABB2 m_chunkBounds;
 	bool m_isLightingDirty = true;
 	bool m_isVBODirty = true;
+	bool m_solidnessChanged = false;
 	FastGrid<Tile, StaticWorldSettings::s_worldChunkSizePowerOfTwo> m_tiles;
 	VertexBufferID m_vbo = RendererUtils::InvalidID;
 	TextureID m_lightmap = RendererUtils::InvalidID; // R8G8

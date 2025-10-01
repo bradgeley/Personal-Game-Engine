@@ -19,6 +19,7 @@ public:
     SWorld(Name name = "World", Rgba8 const& debugTint = Rgba8::ForestGreen) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
+	void EndFrame() override;
     void Shutdown() override;
 
 protected:

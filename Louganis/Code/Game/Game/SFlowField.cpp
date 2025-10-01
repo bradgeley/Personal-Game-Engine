@@ -57,7 +57,20 @@ void SFlowField::Run(SystemContext const& context)
         chunksCreated = CreateMissingFlowFieldChunks(firstPlayerLocation);
     }
 
-    if (world.m_isWorldSeedDirty || playerChangedCoords || chunksCreated > 0)
+    bool needsGenerate = world.m_isWorldSeedDirty || playerChangedCoords || chunksCreated > 0;
+
+    for (auto& it : flowField.m_activeFlowFieldChunks)
+    {
+        FlowFieldChunk* flowFieldChunk = it.second;
+		Chunk* chunk = flowFieldChunk->GetChunk();
+        if (chunk->m_solidnessChanged)
+        {
+            needsGenerate = true;
+            break;
+        }
+	}
+
+    if (needsGenerate)
     {
         flowField.SoftReset();
         GenerateFlow(flowField, world.m_lastKnownPlayerWorldCoords);

@@ -37,9 +37,11 @@ public:
 	virtual ~System() = default;
 
 	virtual void Startup()											{}  // Main thread, once per system
+	virtual void BeginFrame()										{}  // Main thread, once per system, before any systems run
 	virtual void PreRun()											{}	// Main thread, once per system
 	virtual void Run(SystemContext const&)							{}  // Worker threads, depending on system splitting settings
 	virtual void PostRun()											{}  // Main thread, once per system
+	virtual void EndFrame()											{}  // Main thread, once per system, after all systems run
 	virtual void Shutdown()											{}  // Main thread, once per system
 
 	bool IsActive() const											{ return m_isActive; }

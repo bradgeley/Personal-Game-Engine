@@ -518,6 +518,12 @@ uint8_t Chunk::GetCost(int localTileIndex) const
 void Chunk::SetTile(IntVec2 const& localTileCoords, Tile tile)
 {
 	Tile prevTile = m_tiles.Get(localTileCoords);
+	if (prevTile.m_id == tile.m_id && prevTile.m_staticLighting == tile.m_staticLighting)
+	{
+		return; // No change
+	}
+
+	m_solidnessChanged = prevTile.IsSolid() != tile.IsSolid();
 
 	tile.SetLightingDirty(true);
 	m_tiles.Set(localTileCoords, tile);

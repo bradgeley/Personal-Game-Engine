@@ -113,6 +113,15 @@ void SystemScheduler::ScheduleFrame(std::vector<SystemSubgraph>& systems)
 //----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::RunFrame(float deltaSeconds)
 {
+	// Begin Frame
+	for (auto& systemSubgraph : m_systemSubgraphs)
+	{
+		for (auto& system : systemSubgraph->m_systems)
+		{
+			system->BeginFrame();
+		}
+	}
+
 	if (g_jobSystem && g_ecs->IsAutoMultithreadingActive())
 	{
 		RunFrame_AutoMultithreaded(deltaSeconds);
@@ -120,6 +129,15 @@ void SystemScheduler::RunFrame(float deltaSeconds)
 	else
 	{
 		RunFrame_Singlethreaded(deltaSeconds);
+	}
+
+	// End Frame
+	for (auto& systemSubgraph : m_systemSubgraphs)
+	{
+		for (auto& system : systemSubgraph->m_systems)
+		{
+			system->EndFrame();
+		}
 	}
 }
 

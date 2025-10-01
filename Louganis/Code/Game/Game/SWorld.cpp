@@ -54,6 +54,19 @@ void SWorld::Run(SystemContext const& context)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SWorld::EndFrame()
+{
+	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	for (auto& it : world.m_activeChunks)
+	{
+		Chunk* chunk = it.second;
+		chunk->m_solidnessChanged = false;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SWorld::Shutdown()
 {
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
