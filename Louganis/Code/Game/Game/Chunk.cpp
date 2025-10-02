@@ -373,7 +373,7 @@ TileGeneratedData Chunk::GenerateTileData(IntVec2 const& globalTileCoords, World
 		float oceanHeight = tileGenData.m_terrainHeight;
 		if (oceanHeight < SEA_LEVEL && oceanHeight >= SAND_TERRAIN_HEIGHT)
 		{
-			tileGenData.m_terrainHeight = riverHeight; //  MathUtils::InterpolateClamped(riverHeight, oceanHeight, MathUtils::RangeMapClamped(tileGenData.m_oceanness, worldSettings.m_oceanShallowWaterThreshold, 1.f, 0.f, worldSettings.m_riverToOceanTransitionSpeed));
+			tileGenData.m_terrainHeight = riverHeight;
 		}
 		else
 		{
@@ -529,9 +529,5 @@ void Chunk::SetTile(IntVec2 const& localTileCoords, Tile tile)
 	m_tiles.Set(localTileCoords, tile);
 
 	m_isLightingDirty = true;
-
-	if (prevTile.m_id != tile.m_id)
-	{
-		m_isVBODirty = true;
-	}
+	m_isVBODirty = true;
 }

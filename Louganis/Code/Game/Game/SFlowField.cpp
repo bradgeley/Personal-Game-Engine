@@ -40,10 +40,10 @@ void SFlowField::Run(SystemContext const& context)
     SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
     FlowField& flowField = scFlowField.m_toPlayerFlowField;
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-    auto it = g_ecs->Iterate<CTransform, CPlayerController>(context);
-    if (it.IsValid())
+    auto playerTransformIt = g_ecs->Iterate<CTransform, CPlayerController>(context);
+    if (playerTransformIt.IsValid())
     {
-        firstPlayerLocation = transStorage.Get(it)->m_pos;
+        firstPlayerLocation = transStorage.Get(playerTransformIt)->m_pos;
     }
 
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();

@@ -173,7 +173,7 @@ void SLighting::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SLighting::ToggleLighting(NamedProperties& args)
+bool SLighting::ToggleLighting(NamedProperties&)
 {
 	SCLighting& scLighting = g_ecs->GetSingleton<SCLighting>();
 	scLighting.m_isLightingEnabled = !scLighting.m_isLightingEnabled;
