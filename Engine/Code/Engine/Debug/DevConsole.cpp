@@ -402,6 +402,76 @@ std::string DevConsole::GuessCommandInput(std::string const& input) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+std::vector<std::string> DevConsole::GetTopInputGuesses(std::string const& input, int maxGuesses /*= 10*/) const
+{
+    struct Guess
+    {
+		Guess() = default;
+        Guess(std::string const& eventName, int numMatchingChars) : m_eventName(eventName), m_numMatchingChars(numMatchingChars) {}
+        std::string m_eventName;
+        int m_numMatchingChars = 0;
+	};
+
+    if (input.empty())
+    {
+        return {};
+	}
+
+	std::vector<Guess> guesses;
+    guesses.reserve(maxGuesses);
+
+    int numInputChars = (int) input.size();
+
+    Strings allEvents = g_eventSystem->GetAllEventNames();
+    for (std::string const& eventName : allEvents)
+    {
+        if (eventName.size() < numInputChars)
+        {
+            continue;
+        }
+
+        int numMatchingChars = 0;
+        for (int i = 0; i < numInputChars; ++i)
+        {
+            char inputChar = StringUtils::ToLowerChar(input[i]);
+            char eventChar = StringUtils::ToLowerChar(eventName[i]);
+
+            if (inputChar == eventChar)
+            {
+                ++numMatchingChars;
+            }
+        }
+         
+        if (numMatchingChars == numInputChars)
+        {
+            guesses.insert(guesses.begin(), Guess(eventName, numMatchingChars));
+        }
+    }
+
+    std::sort(guesses.begin(), guesses.end(), [](Guess const& a, Guess const& b)
+    {
+        return a.m_numMatchingChars > b.m_numMatchingChars;
+	});
+
+    if (guesses.size() > (size_t) maxGuesses)
+    {
+        guesses.resize(maxGuesses);
+	}
+
+    std::vector<std::string> result; // Best result will be first
+    result.reserve(maxGuesses);
+
+    for (Guess const& guess : guesses)
+    {
+        result.emplace_back(guess.m_eventName);
+    }
+
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsole::LogSuccess(std::string const& line)
 {
     AddLine(line, m_config.m_successTint);
@@ -493,11 +563,25 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
     }
     else if (key == (uint8_t) KeyCode::Delete)
     {
-        m_inputLine.Delete();
+        if (m_ctrlState.IsPressed())
+        {
+            m_inputLine.DeleteAll();
+        }
+        else
+        {
+			m_inputLine.Delete();
+        }
     }
     else if (key == (uint8_t) KeyCode::Backspace)
     {
-        m_inputLine.Backspace();
+        if (m_ctrlState.IsPressed())
+        {
+            m_inputLine.DeleteAll();
+        }
+        else
+        {
+            m_inputLine.Backspace();
+        }
     }
     else if (key == (uint8_t) KeyCode::Left)
     {
@@ -859,6 +943,9 @@ void DevConsole::DrawText() const
     Vec2 logMaxs = m_camera->GetOrthoBounds2D().maxs;
     AABB2 logBox(logMins, logMaxs);
     m_log.RenderToBox(logBox);
+
+    AABB2 guessesBox = AABB2(inputLineBox.GetTopLeft(), inputLineBox.maxs + Vec2(0.f, 0.9f));
+    m_inputLine.RenderInputGuessesToBox(guessesBox, 50);
 }
 
 

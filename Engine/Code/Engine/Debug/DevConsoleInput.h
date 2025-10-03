@@ -28,6 +28,7 @@ public:
     void SetLine(std::string const& line);
 
     void Delete();
+    void DeleteAll();
     void Backspace();
     void Enter();
     void MoveCaret(int offset, bool wantsToSelect = false);
@@ -39,6 +40,8 @@ public:
     void RenderText(AABB2 const& box) const;
     void RenderSelection(AABB2 const& box) const;
     void RenderCaret(AABB2 const& box) const;
+
+	void RenderInputGuessesToBox(AABB2 const& box, int maxLines = 10) const;
 
 	void CopyToClipboard() const;
 	void PasteFromClipboard();

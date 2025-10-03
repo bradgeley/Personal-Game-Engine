@@ -9,6 +9,7 @@
 #include "DevConsoleCommandInfo.h"
 #include "DevConsoleInput.h"
 #include "DevConsoleLog.h"
+#include <vector>
 #include <string>
 #include <mutex>
 
@@ -88,6 +89,7 @@ public:
 	void RemoveDevConsoleCommandInfo(Name commandName);
 	DevConsoleCommandInfo const* GetDevConsoleCommandInfo(Name commandName) const;
 	std::string GuessCommandInput(std::string const& input) const;
+	std::vector<std::string> GetTopInputGuesses(std::string const& input, int maxGuesses = 10) const;
 	
 	void LogSuccess(std::string const& line);
 	void LogWarning(std::string const& line);

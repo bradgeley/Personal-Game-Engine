@@ -105,6 +105,16 @@ void DevConsoleInput::Delete()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void DevConsoleInput::DeleteAll()
+{
+    m_input.m_line.clear();
+    m_caretIndex = 0;
+	m_selectionStartIndex = -1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::Backspace()
 {
     if (IsSelecting())
@@ -309,6 +319,42 @@ void DevConsoleInput::RenderCaret(AABB2 const& box) const
     VertexUtils::AddVertsForAABB2(vbo, caretBox, caretTint);
     g_renderer->BindShader(nullptr);
     g_renderer->BindTexture(nullptr);
+    g_renderer->DrawVertexBuffer(vbo);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DevConsoleInput::RenderInputGuessesToBox(AABB2 const& box, int maxLines /*= 10*/) const
+{
+    std::vector<std::string> guesses = g_devConsole->GetTopInputGuesses(m_input.m_line, 10);
+
+    int numLines = MathUtils::Min((int) guesses.size(), maxLines);
+
+    if (guesses.empty())
+    {
+        return;
+    }
+
+	AABB2 truncatedBox = box;
+    float lineHeight = box.GetHeight() / (float) maxLines;
+    truncatedBox.maxs.y = truncatedBox.mins.y + lineHeight * (float) numLines;
+	RenderBackground(truncatedBox);
+
+    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+    vbo.ClearVerts();
+
+    for (int i = 0; i < (int) guesses.size() && i < numLines; ++i)
+    {
+        std::string guess = guesses[i];
+        AABB2 lineBox = box;
+        lineBox.mins.y += i * lineHeight;
+        lineBox.maxs.y = lineBox.mins.y + lineHeight;
+        font->AddVertsForText2D(vbo, lineBox.mins, lineBox.GetHeight(), guess, Rgba8::White);
+	}
+
+    font->SetRendererState();
     g_renderer->DrawVertexBuffer(vbo);
 }
 
