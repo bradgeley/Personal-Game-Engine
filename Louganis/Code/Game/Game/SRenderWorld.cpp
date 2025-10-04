@@ -100,26 +100,11 @@ void SRenderWorld::Run(SystemContext const&)
 
     AABB2 cameraOrthoBounds2D = scCamera.m_camera.GetTranslatedOrthoBounds2D();
 
-    if (cameraOrthoBounds2D.GetHeight() > world.m_worldSettings.m_chunkLoadRadius)
+    world.ForEachChunkOverlappingAABB(cameraOrthoBounds2D, [worldSpriteSheet](Chunk& chunk)
     {
-        for (auto& it : world.m_activeChunks)
-        {
-            if (it.second->m_chunkBounds.IsOverlapping(cameraOrthoBounds2D))
-            {
-				Chunk* chunk = it.second;
-                DrawChunk(chunk);
-            }
-        }
-    }
-    else
-    {
-        // This is faster if the camera bounds are small, slower (uncapped) if bounds are much bigger than the visible world.
-        world.ForEachChunkOverlappingAABB(cameraOrthoBounds2D, [worldSpriteSheet](Chunk& chunk)
-        {
-            DrawChunk(&chunk);
-            return true;
-        });
-    }
+        DrawChunk(&chunk);
+        return true;
+    });
 }
 
 

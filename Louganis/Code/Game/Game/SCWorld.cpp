@@ -306,6 +306,19 @@ void SCWorld::ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 
 //----------------------------------------------------------------------------------------------------------------------
 void SCWorld::ForEachChunkOverlappingAABB(AABB2 const& aabb, const std::function<bool(Chunk&)>& func) const
 {
+	if (aabb.GetHalfHeight() > m_worldSettings.m_chunkUnloadRadius)
+	{
+		// Faster to iterate through all chunks
+		for (auto& chunk : m_activeChunks)
+		{
+			if (!func(*chunk.second))
+			{
+				return;
+			}
+		}
+		return;
+	}
+
 	// Start in bot left, and iterate in a grid pattern
 	IntVec2 initialChunkCoords = GetChunkCoordsAtLocation(aabb.mins);
 	IntVec2 endChunkCoords = GetChunkCoordsAtLocation(aabb.maxs);

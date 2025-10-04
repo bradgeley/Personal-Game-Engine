@@ -37,7 +37,7 @@ static std::string s_inputLayoutAttributeFormatNames[] =
     "Uint2",
     "Uint3",
     "Uint4",
-    "Rgba8",
+	"Rgba8", // R8G8B8A8_UNORM
 	"R8_UNORM",
 
     "COUNT",
