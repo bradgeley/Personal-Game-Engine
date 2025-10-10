@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Renderer/RendererUtils.h"
+#include "Engine/Math/Vec2.h"
 #include "WorldCoords.h"
 
 
@@ -27,6 +28,7 @@ public:
 	bool m_debugRenderLighting				= false;
 	bool m_debugRenderGrid					= false;
 	bool m_debugRenderTileIDs				= false;
+	bool m_debugOverlayEnabled				= false;
 	Vec2 m_debugMouseLocation;
 	WorldCoords m_debugMouseWorldCoords;
 	TileID m_debugPlacementTileID			= 0;

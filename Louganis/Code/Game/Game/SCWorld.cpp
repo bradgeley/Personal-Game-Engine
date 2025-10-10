@@ -165,6 +165,9 @@ WorldCoords SCWorld::GetWorldCoordsAtGlobalTileCoords(IntVec2 const& globalTileC
 
 	IntVec2 chunkOriginGlobalTileCoords = result.m_chunkCoords * StaticWorldSettings::s_numTilesInRow;
 	result.m_localTileCoords = globalTileCoords - chunkOriginGlobalTileCoords;
+	result.m_localTileCoords.x = MathUtils::Clamp(result.m_localTileCoords.x, 0, StaticWorldSettings::s_numTilesInRowMinusOne);
+	result.m_localTileCoords.y = MathUtils::Clamp(result.m_localTileCoords.y, 0, StaticWorldSettings::s_numTilesInRowMinusOne);
+
 	return result;
 }
 

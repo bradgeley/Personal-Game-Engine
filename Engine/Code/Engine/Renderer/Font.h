@@ -70,7 +70,9 @@ public:
     
     // Vert Helpers
     void AddVertsForText2D(VertexBuffer& out_verts, Vec2 const& textMins, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
-    void AddVertsForAlignedText2D(VertexBuffer& out_verts, Vec2 const& pivot, Vec2 const& alignment, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black);
+
+	// Line Spacing = percentage of cell height between lines
+    void AddVertsForAlignedText2D(VertexBuffer& out_verts, Vec2 const& pivot, Vec2 const& alignment, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, float lineSpacing = 0.5f);
     //void AddVertsForTextInBox2D(VertexBuffer& out_verts, Vec2 const& textMins, Vec2 const& textMaxs, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, Vec2 const& alignment = AlignCentered);
 
     float GetTextWidth(float cellHeight, std::string const& text);

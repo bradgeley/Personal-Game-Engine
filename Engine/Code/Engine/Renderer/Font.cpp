@@ -3,27 +3,28 @@
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/TextureAsset.h"
 #include "Engine/Core/EngineCommon.h"
+#include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
+#include "Engine/Core/XmlUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Shader.h"
-#include "Engine/Core/ErrorUtils.h"
-#include "Engine/Core/StringUtils.h"
-#include "Engine/Core/XmlUtils.h"
 #include "Engine/Math/AABB2.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 Font::AlignCentered	= Vec2(0.5f, 0.5f);
-Vec2 Font::AlignTop			= Vec2(0.5f, 1.f);
-Vec2 Font::AlignBottom		= Vec2(0.5f, 0.f);
-Vec2 Font::AlignRight		= Vec2(1.0f, 0.5f);
-Vec2 Font::AlignLeft		= Vec2(0.f, 0.5f);
-Vec2 Font::AlignTopRight	= Vec2(1.0f, 1.f);
-Vec2 Font::AlignTopLeft		= Vec2(0.f, 1.f);
-Vec2 Font::AlignBottomRight = Vec2(1.0f, 0.f);
-Vec2 Font::AlignBottomLeft	= Vec2(0.f, 0.f);
+Vec2 Font::AlignCentered	= Vec2(0.f, 0.f);
+Vec2 Font::AlignTop			= Vec2(0.f, 1.f);
+Vec2 Font::AlignBottom		= Vec2(0.f, -1.f);
+Vec2 Font::AlignRight		= Vec2(1.0f, 0.f);
+Vec2 Font::AlignLeft		= Vec2(-1.f, 0.5f);
+Vec2 Font::AlignTopRight	= Vec2(1.f, 1.f);
+Vec2 Font::AlignTopLeft		= Vec2(-1.f, 1.f);
+Vec2 Font::AlignBottomRight = Vec2(1.0f, -1.f);
+Vec2 Font::AlignBottomLeft	= Vec2(-1.f, -1.f);
 
 
 
@@ -105,19 +106,45 @@ void Font::AddVertsForText2D(VertexBuffer& out_verts, Vec2 const& textMins, floa
 
 //----------------------------------------------------------------------------------------------------------------------
 void Font::AddVertsForAlignedText2D(VertexBuffer& out_verts, Vec2 const& pivot, Vec2 const& alignment,
-	float cellHeight, std::string const& text, Rgba8 const& tint)
+	float cellHeight, std::string const& text, Rgba8 const& tint, float lineSpacing /*= 0.5f*/)
 {
-	float width = GetTextWidth(cellHeight, text);
-	float left = pivot.x - (width * 0.5f);
-	float halfWidth = width * 0.5f;
-	float alignmentOffsetX = alignment.x * halfWidth;
+	Strings lines = StringUtils::SplitStringOnDelimiter(text, '\n');
+	if (lines.empty())
+	{
+		return;
+	}
 
-	float bottom = pivot.y - (cellHeight * 0.5f);
-	float halfHeight = cellHeight * 0.5f;
-	float alignmentOffsetY = alignment.y * halfHeight;
+	if (lines.back().empty())
+	{
+		// Trims the last trailing new line
+		lines.pop_back();
+	}
 
-	Vec2 textMins = Vec2(left + alignmentOffsetX, bottom + alignmentOffsetY);
-	AddVertsForText2D(out_verts, textMins, cellHeight, text, tint);
+	float paragraphHeight = cellHeight * (float) lines.size() + (lineSpacing * cellHeight) * ((float) lines.size() - 1);
+	float paragraphWidth = 0.f;
+
+	for (int i = 0; i < (int) lines.size(); ++i)
+	{
+		std::string const& line = lines[i];
+		float lineWidth = GetTextWidth(cellHeight, line);
+		paragraphWidth = MathUtils::Max(paragraphWidth, lineWidth);
+	}
+
+	Vec2 topLeft;
+	topLeft.x = pivot.x - (paragraphWidth * 0.5f);
+	topLeft.x += alignment.x * paragraphWidth * 0.5f;
+	topLeft.y = pivot.y + (paragraphHeight * 0.5f);
+	topLeft.y += alignment.y * paragraphHeight * 0.5f;
+
+	float lineSpacingHeight = lineSpacing * cellHeight;
+
+	for (int i = 0; i < (int) lines.size(); ++i)
+	{
+		std::string const& line = lines[i];
+		float yOffset = -1.f * ((float)(i + 1) * cellHeight + ((float)(i * lineSpacingHeight)));
+		Vec2 textMins = topLeft + Vec2(0.f, yOffset);
+		AddVertsForText2D(out_verts, textMins, cellHeight, line, tint);
+	}
 }
 
 

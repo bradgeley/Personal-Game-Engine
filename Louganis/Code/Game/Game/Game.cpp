@@ -266,6 +266,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
+	g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);
 
     // debug
     g_ecs->RegisterSystem<SDebugCommands>((int) FramePhase::PostRender);

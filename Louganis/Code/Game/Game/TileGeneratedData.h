@@ -14,6 +14,7 @@ struct EntityDef;
 struct TileGeneratedData
 {
 	std::string ToString() const;
+	std::string ToStringVerbose() const;
 
 	float				m_terrainHeight				= 0.f; // 0 to 1
 	float				m_terrainHeightOffset		= 0.f; // -0.5 to +0.5

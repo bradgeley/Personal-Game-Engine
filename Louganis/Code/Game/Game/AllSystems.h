@@ -24,6 +24,7 @@
 #include "SDebugCommands.h"
 #include "SDebugInput.h"
 #include "SDebugRender.h"
+#include "SDebugOverlay.h"
 #include "SEntityFactory.h"
 #include "SFlowField.h"
 #include "SInitView.h"

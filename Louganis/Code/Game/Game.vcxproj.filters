@@ -155,6 +155,9 @@
       <Filter>Data\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="Game\SCTime.cpp" />
+    <ClCompile Include="Game\SDebugOverlay.cpp">
+      <Filter>ECS\Systems\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -363,6 +366,9 @@
     </ClInclude>
     <ClInclude Include="Game\SCCamera.h">
       <Filter>ECS\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SDebugOverlay.h">
+      <Filter>ECS\Systems\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
