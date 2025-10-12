@@ -24,3 +24,41 @@ bool CCollision::IsImmovable() const
 {
     return (m_collisionFlags & (uint8_t) CollisionFlags::Immovable) != 0;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CCollision::IsCollisionEnabled() const
+{
+	return (m_collisionFlags & (uint8_t) CollisionFlags::Enabled) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CCollision::SetCollisionEnabled(bool enabled)
+{
+    if (enabled)
+    {
+        m_collisionFlags |= (uint8_t) CollisionFlags::Enabled;
+    }
+    else
+    {
+        m_collisionFlags &= ~((uint8_t) CollisionFlags::Enabled);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CCollision::SetImmovable(bool immovable)
+{
+    if (immovable)
+    {
+        m_collisionFlags |= (uint8_t) CollisionFlags::Immovable;
+    }
+    else
+    {
+        m_collisionFlags &= ~((uint8_t) CollisionFlags::Immovable);
+	}
+}

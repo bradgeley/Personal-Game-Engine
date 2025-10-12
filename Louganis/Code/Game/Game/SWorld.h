@@ -25,8 +25,4 @@ public:
 protected:
 
     void UpdateLastKnownPlayerLocation(SCWorld& world, Vec2 const& playerLocation) const;
-
-protected:
-
-    static bool DumpTileGenData(NamedProperties& args);
 };

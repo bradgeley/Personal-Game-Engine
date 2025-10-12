@@ -42,11 +42,18 @@ void SPhysics::Run(SystemContext const& context)
     auto& scWorld = g_ecs->GetSingleton<SCWorld>();
     auto& scDebug = g_ecs->GetSingleton<SCDebug>();
 
-    for (auto it = g_ecs->Iterate<CMovement, CTransform>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CMovement, CTransform, CCollision>(context); it.IsValid(); ++it)
     {
+        CCollision const& collision = collisionStorage[it];
         CMovement& move = moveStorage[it];
         CTransform& transform = transStorage[it];
-        const CCollision& collision = collisionStorage[it];
+        if (collision.IsCollisionEnabled() == false)
+        {
+			transform.m_pos += move.m_frameMovement;
+			move.m_frameMovement = Vec2::ZeroVector;
+            continue;
+		}
+
         const float& radius = collision.m_radius;
 
 		Vec2 collisionPos = transform.m_pos + collision.m_offset;

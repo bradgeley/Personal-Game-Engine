@@ -83,10 +83,10 @@ public:
 public:
 
     static Vec2 AlignCentered;
-    static Vec2 AlignTop;
-    static Vec2 AlignBottom;
-    static Vec2 AlignRight;
-    static Vec2 AlignLeft;
+    static Vec2 AlignTopCenter;
+    static Vec2 AlignBottomCenter;
+    static Vec2 AlignRightCenter;
+    static Vec2 AlignLeftCenter;
     static Vec2 AlignTopRight;
     static Vec2 AlignTopLeft;
     static Vec2 AlignBottomRight;

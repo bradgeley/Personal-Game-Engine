@@ -44,11 +44,11 @@ void SWorldCollision::Run(SystemContext const&)
         
         for (EntityID entity : tileBucket)
         {
-			CTransform& transform = transStorage[entity];
 			CCollision& collision = collStorage[entity];
+            CTransform& transform = transStorage[entity];
 
 			Vec2 newPos = transform.m_pos + collision.m_offset;
-			bool collisionResolved = GeometryUtils::PushDiscOutOfAABB2D(newPos, collision.m_radius, tileBounds);
+			bool collisionResolved = GeometryUtils::PushDiscOutOfAABB2D(newPos, collision.m_radius + 0.0001f, tileBounds);
             if (collisionResolved)
             {
                 transform.m_pos = newPos - collision.m_offset;

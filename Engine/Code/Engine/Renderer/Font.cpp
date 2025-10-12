@@ -16,15 +16,15 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 Font::AlignCentered	= Vec2(0.f, 0.f);
-Vec2 Font::AlignTop			= Vec2(0.f, 1.f);
-Vec2 Font::AlignBottom		= Vec2(0.f, -1.f);
-Vec2 Font::AlignRight		= Vec2(1.0f, 0.f);
-Vec2 Font::AlignLeft		= Vec2(-1.f, 0.5f);
-Vec2 Font::AlignTopRight	= Vec2(1.f, 1.f);
-Vec2 Font::AlignTopLeft		= Vec2(-1.f, 1.f);
-Vec2 Font::AlignBottomRight = Vec2(1.0f, -1.f);
-Vec2 Font::AlignBottomLeft	= Vec2(-1.f, -1.f);
+Vec2 Font::AlignCentered		= Vec2(0.f, 0.f);
+Vec2 Font::AlignTopCenter		= Vec2(0.f, 1.f);
+Vec2 Font::AlignBottomCenter	= Vec2(0.f, -1.f);
+Vec2 Font::AlignRightCenter		= Vec2(1.0f, 0.f);
+Vec2 Font::AlignLeftCenter		= Vec2(-1.f, 0.f);
+Vec2 Font::AlignTopRight		= Vec2(1.f, 1.f);
+Vec2 Font::AlignTopLeft			= Vec2(-1.f, 1.f);
+Vec2 Font::AlignBottomRight		= Vec2(1.f, -1.f);
+Vec2 Font::AlignBottomLeft		= Vec2(-1.f, -1.f);
 
 
 

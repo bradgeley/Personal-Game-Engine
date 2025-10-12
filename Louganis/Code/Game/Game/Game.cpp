@@ -166,6 +166,7 @@ void Game::ConfigureEngine(Engine* engine)
     DevConsoleConfig dcConfig;
     dcConfig.m_backgroundImageSustainSeconds = 30.f;
     dcConfig.m_backgroundImageFadeSeconds = 1.f;
+    dcConfig.m_openCloseAnimationSpeed = 10.f;
     dcConfig.m_backgroundImages = { "DrStrange.jpg" , "Hawkeye.jpg", "Thanos.jpg", "Avengers.png", "IronMan.jpg", "Jack1.jpg", "Jack2.jpg", "Thor.jpg" };
     dcConfig.m_openSoundFilePath = "Data/Sounds/SFX/WaterDroplet1.wav";
     g_devConsole = new DevConsole(dcConfig);

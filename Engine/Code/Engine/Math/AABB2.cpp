@@ -124,6 +124,22 @@ Vec2 AABB2::GetCenterRight() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Vec2 AABB2::GetTopCenter() const
+{
+	return Vec2((maxs.x + mins.x * 0.5f), maxs.y);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 AABB2::GetBottomCenter() const
+{
+    return Vec2((maxs.x + mins.x) * 0.5f, mins.y);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AABB2 AABB2::GetExpandedBy(float flatExpansionAmount) const
 {
     return AABB2(mins - Vec2(flatExpansionAmount, flatExpansionAmount), maxs + Vec2(flatExpansionAmount, flatExpansionAmount));

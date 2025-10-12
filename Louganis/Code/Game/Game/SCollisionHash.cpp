@@ -82,8 +82,13 @@ void SCollisionHash::Run(SystemContext const& context)
     // Hash entities for this split system
     for (GroupIter it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
     {
-        CTransform& trans = transStorage[it];
         CCollision& coll = *collStorage.Get(it);
+        if (!coll.IsCollisionEnabled())
+        {
+            continue;
+        }
+
+        CTransform& trans = transStorage[it];
 
         Vec2 pos = trans.m_pos + coll.m_offset;
         float radius = coll.m_radius + world.m_worldSettings.m_collisionHashWiggleRoom;

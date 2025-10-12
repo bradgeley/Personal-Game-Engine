@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugCommands.h"
+#include "CCollision.h"
 #include "CPlayerController.h"
 #include "CTime.h"
 #include "CTransform.h"
@@ -18,9 +19,10 @@ void SDebugCommands::Startup()
 {
     AddWriteAllDependencies();
 
+	DevConsoleUtils::AddDevConsoleCommand("Goto", &SDebugCommands::Goto, "location", DevConsoleArgType::Vec2);
+	DevConsoleUtils::AddDevConsoleCommand("Ghost", &SDebugCommands::Ghost);
 	DevConsoleUtils::AddDevConsoleCommand("SlowPlayer", &SDebugCommands::SlowPlayer, "slow", DevConsoleArgType::Bool);
 	DevConsoleUtils::AddDevConsoleCommand("SetSeed", &SDebugCommands::SetSeed, "seed", DevConsoleArgType::Int);	
-	DevConsoleUtils::AddDevConsoleCommand("Goto", &SDebugCommands::Goto, "location", DevConsoleArgType::Vec2);
 	DevConsoleUtils::AddDevConsoleCommand("SetDebugTileDef", &SDebugCommands::SetDebugTileDef, "tileDefName", DevConsoleArgType::String);
 	DevConsoleUtils::AddDevConsoleCommand("SetTimeOfDay", &SDebugCommands::SetTimeOfDay, "timeOfDay", DevConsoleArgType::Int);
 }
@@ -38,9 +40,10 @@ void SDebugCommands::Run(SystemContext const&)
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugCommands::Shutdown()
 {
+	DevConsoleUtils::RemoveDevConsoleCommand("Goto", &SDebugCommands::Goto);
+	DevConsoleUtils::RemoveDevConsoleCommand("Goto", &SDebugCommands::Ghost);
 	DevConsoleUtils::RemoveDevConsoleCommand("SlowPlayer", &SDebugCommands::SlowPlayer);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetSeed", &SDebugCommands::SetSeed);
-	DevConsoleUtils::RemoveDevConsoleCommand("Goto", &SDebugCommands::Goto);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetDebugTileDef", &SDebugCommands::SetDebugTileDef);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetTimeOfDay", &SDebugCommands::SetTimeOfDay);
 }
@@ -56,6 +59,20 @@ bool SDebugCommands::Goto(NamedProperties& args)
 	{
 		CTransform* transform = g_ecs->GetComponent<CTransform>(it);
 		transform->m_pos = location;
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::Ghost(NamedProperties& args)
+{
+	SystemContext context;
+	for (auto it = g_ecs->Iterate<CPlayerController, CCollision>(context); it.IsValid(); ++it)
+	{
+		CCollision* cCollision = g_ecs->GetComponent<CCollision>(it);
+		cCollision->SetCollisionEnabled(!cCollision->IsCollisionEnabled());
 	}
 	return false;
 }

@@ -20,8 +20,6 @@ void SWorld::Startup()
 	AddWriteDependencies<SCWorld>();
 	AddReadDependencies<CTransform, CPlayerController>();
 
-	DevConsoleUtils::AddDevConsoleCommand("DumpTileGenData", &SWorld::DumpTileGenData);
-
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	if (world.m_worldSettings.m_randomWorldSeed)
 	{
@@ -71,8 +69,6 @@ void SWorld::Shutdown()
 {
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	world.ClearActiveChunks();
-
-	DevConsoleUtils::RemoveDevConsoleCommand("DumpTileGenData", &SWorld::DumpTileGenData);
 }
 
 
@@ -88,24 +84,4 @@ void SWorld::UpdateLastKnownPlayerLocation(SCWorld& world, Vec2 const& playerLoc
 		world.m_lastKnownPlayerWorldCoords = playerWorldCoords;
 		world.m_playerChangedWorldCoordsThisFrame = true;
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool SWorld::DumpTileGenData(NamedProperties&)
-{
-	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-	SystemContext context;
-	auto it = g_ecs->Iterate<CTransform, CPlayerController>(context);
-	if (it.IsValid())
-	{
-		Vec2 playerLocation = g_ecs->GetComponent<CTransform>(it)->m_pos;
-		IntVec2 globalTileCoords = world.GetGlobalTileCoordsAtLocation(playerLocation);
-		TileGeneratedData tileGenData = Chunk::GenerateTileData(globalTileCoords, world.m_worldSettings);
-		DevConsoleUtils::Log(Rgba8::White, StringUtils::StringF("Player Location: (%.02f, %.02f)", playerLocation.x, playerLocation.y).c_str());
-		DevConsoleUtils::Log(Rgba8::White, StringUtils::StringF("Seed: %i", world.m_worldSettings.m_worldSeed).c_str());
-		DevConsoleUtils::Log(Rgba8::White, tileGenData.ToString().c_str());
-	}
-	return false;
 }

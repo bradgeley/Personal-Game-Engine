@@ -35,6 +35,8 @@ public:
     Vec2 GetBottomRight() const;
     Vec2 GetCenterLeft() const;
     Vec2 GetCenterRight() const;
+    Vec2 GetTopCenter() const;
+    Vec2 GetBottomCenter() const;
     AABB2 GetExpandedBy(float flatExpansionAmount) const;
 
     // Geometric Queries
