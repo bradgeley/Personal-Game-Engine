@@ -297,6 +297,7 @@
     <ClCompile Include="Game\CAnimation.cpp" />
     <ClCompile Include="Game\CCollision.cpp" />
     <ClCompile Include="Game\Chunk.cpp" />
+    <ClCompile Include="Game\CLifetime.cpp" />
     <ClCompile Include="Game\CMovement.cpp" />
     <ClCompile Include="Game\CPlayerController.cpp" />
     <ClCompile Include="Game\CRender.cpp" />
@@ -318,6 +319,7 @@
     <ClCompile Include="Game\SDebugCommands.cpp" />
     <ClCompile Include="Game\SDebugInput.cpp" />
     <ClCompile Include="Game\SDebugOverlay.cpp" />
+    <ClCompile Include="Game\SLifetime.cpp" />
     <ClCompile Include="Game\SLighting.cpp" />
     <ClCompile Include="Game\STime.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
@@ -353,6 +355,7 @@
     <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
+    <ClInclude Include="Game\CLifetime.h" />
     <ClInclude Include="Game\SCCamera.h" />
     <ClInclude Include="Game\CCollision.h" />
     <ClInclude Include="Game\Chunk.h" />
@@ -386,6 +389,7 @@
     <ClInclude Include="Game\SDebugCommands.h" />
     <ClInclude Include="Game\SDebugInput.h" />
     <ClInclude Include="Game\SDebugOverlay.h" />
+    <ClInclude Include="Game\SLifetime.h" />
     <ClInclude Include="Game\SLighting.h" />
     <ClInclude Include="Game\STime.h" />
     <ClInclude Include="Game\SDebugRender.h" />

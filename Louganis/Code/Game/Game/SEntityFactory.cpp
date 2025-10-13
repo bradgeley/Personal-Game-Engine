@@ -22,17 +22,17 @@ void SEntityFactory::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SEntityFactory::Run(SystemContext const&)
 {
-    auto factory = g_ecs->GetComponent<SCEntityFactory>();
+    SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
     // Destroy first
-    for (auto& entToDestroy : factory->m_entitiesToDestroy)
+    for (auto& entToDestroy : factory.m_entitiesToDestroy)
     {
         g_ecs->DestroyEntity(entToDestroy);
     }
-    factory->m_entitiesToDestroy.clear();
+    factory.m_entitiesToDestroy.clear();
 
     // Spawn second
-    for (SpawnInfo& spawnInfo : factory->m_entitiesToSpawn)
+    for (SpawnInfo& spawnInfo : factory.m_entitiesToSpawn)
     {
         EntityID id = CreateEntityFromDef(spawnInfo.m_def);
         if (id == ENTITY_ID_INVALID)
@@ -47,7 +47,7 @@ void SEntityFactory::Run(SystemContext const&)
             transform->m_orientation = spawnInfo.m_spawnOrientation;
         }
     }
-    factory->m_entitiesToSpawn.clear();
+    factory.m_entitiesToSpawn.clear();
 }
 
 
@@ -82,6 +82,7 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
 	if (def->m_playerController.has_value())    g_ecs->AddComponent<CPlayerController>(id, *def->m_playerController);
     if (def->m_movement.has_value())            g_ecs->AddComponent<CMovement>(id, *def->m_movement);
     if (def->m_render.has_value())              g_ecs->AddComponent<CRender>(id, *def->m_render);
+	if (def->m_lifetime.has_value())            g_ecs->AddComponent<CLifetime>(id, *def->m_lifetime);
 
     return id;
 }
@@ -114,5 +115,18 @@ EntityID SEntityFactory::SpawnEntity(SpawnInfo const& spawnInfo)
         render->m_scale *= spawnInfo.m_spawnScale;
 		render->m_tint = spawnInfo.m_spawnTint;
     }
+
+    CLifetime* lifetime = g_ecs->GetComponent<CLifetime>(id);
+    if (!lifetime && spawnInfo.m_spawnLifetime >= 0.f)
+    {
+        lifetime = g_ecs->AddComponent<CLifetime>(id);
+    }
+
+    if (lifetime)
+    {
+		lifetime->m_lifetime = spawnInfo.m_spawnLifetime;
+        lifetime->m_lifetimeRemaining = spawnInfo.m_spawnLifetime;
+	}
+
     return id;
 }

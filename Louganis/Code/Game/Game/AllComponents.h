@@ -21,6 +21,7 @@
 #include "CAIController.h"
 #include "CAnimation.h"
 #include "CCollision.h"
+#include "CLifetime.h"
 #include "CMovement.h"
 #include "CPlayerController.h"
 #include "CRender.h"

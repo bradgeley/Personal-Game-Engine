@@ -89,14 +89,14 @@ struct WorldSettings
     float m_terrainHeightOffsetScale            = 100.f;
 
     // Biomes
-	float m_humidityScale                       = 2500.f;
+	float m_humidityScale                       = 500.f;
 	float m_mountainnessScale                   = 500.f;
-	float m_oceannessScale                      = 1000.f;
-    float m_rivernessScale                      = 5000.f;
-    float m_forestnessScale                     = 2500.f;
+	float m_oceannessScale                      = 200.f;
+    float m_rivernessScale                      = 1000.f;
+    float m_forestnessScale                     = 500.f;
     float m_treeBaseScale                       = 10.f;
-	float m_islandnessScale                     = 5000.f;
-	float m_temperatureScale                    = 2500.f;
+	float m_islandnessScale                     = 1000.f;
+	float m_temperatureScale                    = 500.f;
 
     // Biome Detail
 	int m_forestnessDetailLevel                 = 5;

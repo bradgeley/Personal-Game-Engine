@@ -34,8 +34,10 @@ public:
 	std::optional<CAnimation>           m_animation;
 	std::optional<CCollision>           m_collision;
     std::optional<CPlayerController>    m_playerController;
+	std::optional<CLifetime>			m_lifetime;
     std::optional<CMovement>            m_movement;
 	std::optional<CRender>              m_render;
     std::optional<CTime>                m_time;
     std::optional<CTransform>           m_transform;
 };
+    

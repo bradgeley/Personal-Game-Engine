@@ -442,6 +442,18 @@ ID3D11DeviceContext* D3D11Renderer::GetDeviceContext() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void D3D11Renderer::MSAAChanged()
+{
+	// Recreate the depth buffer and backbuffer textures
+	for (auto& rt : m_renderTargets)
+	{
+		ResizeSwapChainRenderTarget(rt.first, rt.second->m_renderDimensions);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void D3D11Renderer::BindRenderTarget(RenderTargetID renderTargetID)
 {
 	m_currentRenderTarget = renderTargetID;
@@ -966,22 +978,6 @@ void D3D11Renderer::ReportLiveObjects()
 			m_debug->ReportLiveObjects(DXGI_DEBUG_ALL, flags);
 		}
 	#endif
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool D3D11Renderer::ToggleMSAA(NamedProperties&)
-{
-	m_userSettings.m_msaaEnabled = !m_userSettings.m_msaaEnabled;
-
-	// Recreate the depth buffer and backbuffer textures
-	for (auto& rt : m_renderTargets)
-	{
-		ResizeSwapChainRenderTarget(rt.first, rt.second->m_renderDimensions);
-	}
-
-	return false;
 }
 
 #endif // RENDERER_D3D11

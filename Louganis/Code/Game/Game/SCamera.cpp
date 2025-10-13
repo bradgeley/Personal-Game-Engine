@@ -29,7 +29,7 @@ void SCamera::Run(SystemContext const& context)
     AABB2 cameraBounds = AABB2(cameraMins, cameraMaxs);
     camera.m_camera.SetOrthoBounds2D(cameraBounds);
 
-    for (auto it = g_ecs->Iterate<CRender, CPlayerController>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CRender, CPlayerController>(context); it.IsValid();)
     {
 		camera.m_attachedEntity = it.m_currentIndex;
         break;

@@ -119,6 +119,8 @@ public:
 //
 public:
 
+	template<typename CType>
+	bool HasComponent(EntityID entityID) const;
 	bool DoesEntityHaveComponents(EntityID entityID, BitMask componentBitMask) const;
 	bool DoesEntityExist(EntityID entityID) const;
 
@@ -345,10 +347,14 @@ CType* AdminSystem::AddComponent(EntityID entityID, Args const& ...args)
 {    
 	std::type_index typeIndex(typeid(CType));
 	BitMask& componentBitMask = m_componentBitMasks.at(typeIndex);
-	
-	m_entityComposition[entityID] |= (componentBitMask);
 
 	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
+	if (HasComponent<CType>(entityID))
+	{
+		return typedStorage->Get(entityID);
+	}
+
+	m_entityComposition[entityID] |= (componentBitMask);
 	return typedStorage->Add(entityID, CType(args...));
 }
 
@@ -356,12 +362,16 @@ CType* AdminSystem::AddComponent(EntityID entityID, Args const& ...args)
 
 //----------------------------------------------------------------------------------------------------------------------
 // Slow (RTTI + work that can be pulled out of iterator loops).
-// Use GetXXXStorage + the result's operator[] for maximum performance
+// Use GetXXXStorage + operator[GroupIter] for maximum performance
 //
 template <typename CType>
 CType* AdminSystem::GetComponent(EntityID entityID /*= ENTITY_ID_SINGLETON*/) const
 {
 	std::type_index typeIndex(typeid(CType));
+	if (!HasComponent<CType>(entityID))
+	{
+		return nullptr;
+	}
 	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
 	return typedStorage->Get(entityID);
 }
@@ -472,6 +482,16 @@ BitMask AdminSystem::GetComponentBitMask() const
 
 	(result |= ... |= m_componentBitMasks.at(std::type_index(typeid(CTypes))));
 	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename CType>
+inline bool AdminSystem::HasComponent(EntityID entityID) const
+{
+	BitMask bitMask = GetComponentBit(std::type_index(typeid(CType)));
+	return DoesEntityHaveComponents(entityID, bitMask);
 }
 
 

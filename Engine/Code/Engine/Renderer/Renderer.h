@@ -80,6 +80,10 @@ public:
     void DrawVertexBuffer(VertexBuffer& vbo);
     void DrawInstanced(VertexBuffer& vbo, InstanceBuffer& ibo);
 
+    void SetMSAA(bool msaaEnabled);
+    virtual void MSAAChanged() = 0;
+    void SetVSync(bool vsyncEnabled);
+
     virtual void ClearDepth(float depth) = 0;
 
     // Factory Make Functions
@@ -233,7 +237,7 @@ protected:
     void RemoveDevConsoleCommands();
     bool DebugDrawVertexBuffers(NamedProperties& args);
     bool ToggleVSync(NamedProperties& args);
-    virtual bool ToggleMSAA(NamedProperties& args) = 0;
+    virtual bool ToggleMSAA(NamedProperties& args);
 
 protected:
 

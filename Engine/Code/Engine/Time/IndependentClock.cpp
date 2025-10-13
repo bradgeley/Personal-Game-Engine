@@ -73,7 +73,7 @@ float IndependentClock::GetDeltaSecondsF() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void IndependentClock::SetLocalTimeDilation(double timeDilation)
+void IndependentClock::SetTimeDilation(double timeDilation)
 {
 	m_timeDilation = timeDilation;
 }
@@ -81,7 +81,7 @@ void IndependentClock::SetLocalTimeDilation(double timeDilation)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-double IndependentClock::GetLocalTimeDilation() const
+double IndependentClock::GetTimeDilation() const
 {
 	return m_timeDilation;
 }
@@ -89,7 +89,7 @@ double IndependentClock::GetLocalTimeDilation() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float IndependentClock::GetLocalTimeDilationF() const
+float IndependentClock::GetTimeDilationF() const
 {
 	return static_cast<float>(m_timeDilation);
 }

@@ -151,7 +151,7 @@ void Game::ConfigureEngine(Engine* engine)
 
     RendererConfig rendererConfig;
 	rendererConfig.m_startupUserSettings.m_vsyncEnabled = false;
-	rendererConfig.m_startupUserSettings.m_msaaEnabled = true;
+	rendererConfig.m_startupUserSettings.m_msaaEnabled = false;
     g_renderer = RendererUtils::MakeRenderer(rendererConfig);
     engine->RegisterSubsystem(g_renderer);
 
@@ -205,6 +205,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CRender>();
     g_ecs->RegisterComponentArray<CTransform>();
     g_ecs->RegisterComponentArray<CAnimation>();
+    g_ecs->RegisterComponentArray<CLifetime>();
 
     // Map components
     g_ecs->RegisterComponentMap<CPlayerController>();
@@ -236,6 +237,7 @@ void Game::ConfigureECS()
 
     // Pre Physics
     g_ecs->RegisterSystem<STime>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SLifetime>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SDebugInput>((int) FramePhase::PrePhysics);

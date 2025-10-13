@@ -48,6 +48,8 @@ public:
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
 
+    virtual void MSAAChanged() override;
+
     virtual void BindRenderTarget(RenderTargetID renderTargetID) override;
     virtual void ResizeSwapChainRenderTarget(RenderTargetID renderTargetID, IntVec2 const& newSize) override;
     virtual bool SetFullscreenState(RenderTargetID renderTargetID, bool fullscreen) override;
@@ -89,11 +91,6 @@ private:
 
     // Debug
     void ReportLiveObjects();
-
-private:
-
-    // Dev Console Commands
-    virtual bool ToggleMSAA(NamedProperties& args);
 
 protected:
 

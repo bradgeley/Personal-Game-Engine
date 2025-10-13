@@ -102,7 +102,7 @@ void SDebugOverlay::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugOverlay::ToggleDebugOverlay(NamedProperties& args)
+bool SDebugOverlay::ToggleDebugOverlay(NamedProperties&)
 {
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 	scDebug.m_debugOverlayEnabled = !scDebug.m_debugOverlayEnabled;

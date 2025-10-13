@@ -29,6 +29,7 @@
 #include "SFlowField.h"
 #include "SInitView.h"
 #include "SInput.h"
+#include "SLifetime.h"
 #include "SLighting.h"
 #include "SLoadChunks.h"
 #include "SMovement.h"

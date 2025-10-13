@@ -25,10 +25,10 @@ public:
 	double GetCurrentTimeSeconds() const;
 	float GetCurrentTimeSecondsF() const;
 
-	double GetLocalTimeDilation() const;
-	float GetLocalTimeDilationF() const;
+	double GetTimeDilation() const;
+	float GetTimeDilationF() const;
 
-	void SetLocalTimeDilation(double timeDilation);
+	void SetTimeDilation(double timeDilation);
 
 protected:
 

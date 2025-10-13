@@ -66,7 +66,7 @@ bool SDebugCommands::Goto(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugCommands::Ghost(NamedProperties& args)
+bool SDebugCommands::Ghost(NamedProperties&)
 {
 	SystemContext context;
 	for (auto it = g_ecs->Iterate<CPlayerController, CCollision>(context); it.IsValid(); ++it)
@@ -100,7 +100,7 @@ bool SDebugCommands::SlowPlayer(NamedProperties& args)
 	for (auto it = g_ecs->Iterate<CPlayerController, CTime>(context); it.IsValid(); ++it)
 	{
 		CTime* cTime = g_ecs->GetComponent<CTime>(it);
-		cTime->m_clock.SetLocalTimeDilation(slow ? 0.1 : 1.0);
+		cTime->m_clock.SetTimeDilation(slow ? 0.1 : 1.0);
 	}
     return false;
 }

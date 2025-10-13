@@ -264,6 +264,24 @@ void Renderer::DrawInstanced(VertexBuffer& vbo, InstanceBuffer& ibo)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Renderer::SetMSAA(bool msaaEnabled)
+{
+	m_userSettings.m_msaaEnabled = !m_userSettings.m_msaaEnabled;
+
+	MSAAChanged();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::SetVSync(bool vsyncEnabled)
+{
+	m_userSettings.m_vsyncEnabled = vsyncEnabled;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Texture* Renderer::GetTexture(TextureID id) const
 {
 	std::unique_lock lock(m_texturesMutex);
@@ -1198,6 +1216,16 @@ bool Renderer::DebugDrawVertexBuffers(NamedProperties&)
 bool Renderer::ToggleVSync(NamedProperties&)
 {
 	m_userSettings.m_vsyncEnabled = !m_userSettings.m_vsyncEnabled;
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Renderer::ToggleMSAA(NamedProperties&)
+{
+	SetMSAA(!m_userSettings.m_msaaEnabled);
+
 	return false;
 }
 

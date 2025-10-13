@@ -151,4 +151,11 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     {
         m_transform.emplace(CTransform());
     }
+
+    // CLifetime
+    elem = xmlElement->FirstChildElement("Lifetime");
+    if (elem)
+    {
+        m_lifetime.emplace(CLifetime());
+    }
 }
