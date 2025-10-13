@@ -158,11 +158,11 @@
     <ClCompile Include="Game\SDebugOverlay.cpp">
       <Filter>ECS\Systems\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SLifetime.cpp">
-      <Filter>ECS\Systems\Gameplay</Filter>
-    </ClCompile>
     <ClCompile Include="Game\CLifetime.cpp">
       <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SLifetime.cpp">
+      <Filter>ECS\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -380,7 +380,7 @@
       <Filter>ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="Game\SLifetime.h">
-      <Filter>ECS\Systems\Gameplay</Filter>
+      <Filter>ECS\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

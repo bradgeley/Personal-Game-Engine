@@ -91,7 +91,7 @@ struct WorldSettings
     // Biomes
 	float m_humidityScale                       = 500.f;
 	float m_mountainnessScale                   = 500.f;
-	float m_oceannessScale                      = 200.f;
+	float m_oceannessScale                      = 500.f;
     float m_rivernessScale                      = 1000.f;
     float m_forestnessScale                     = 500.f;
     float m_treeBaseScale                       = 10.f;
@@ -120,7 +120,7 @@ struct WorldSettings
 	float m_oceanDeepWaterThreshold             = 0.77f;
 
     // River settings
-    float m_riverThreshold                      = 0.01f;
+    float m_riverThreshold                      = 0.02f;
     float m_riverMaxDepth                       = 0.25f;
     float m_desertRiverMaxDepth                 = 0.35f;
     float m_riverToOceanTransitionSpeed         = 10.f;

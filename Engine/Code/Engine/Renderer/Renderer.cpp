@@ -266,9 +266,12 @@ void Renderer::DrawInstanced(VertexBuffer& vbo, InstanceBuffer& ibo)
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::SetMSAA(bool msaaEnabled)
 {
-	m_userSettings.m_msaaEnabled = !m_userSettings.m_msaaEnabled;
+	if (m_userSettings.m_msaaEnabled != msaaEnabled)
+	{
+		m_userSettings.m_msaaEnabled = msaaEnabled;
 
-	MSAAChanged();
+		MSAAChanged();
+	}
 }
 
 

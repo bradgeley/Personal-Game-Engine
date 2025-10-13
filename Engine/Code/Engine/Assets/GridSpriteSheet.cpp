@@ -320,8 +320,8 @@ void GridSpriteSheet::ComputeSpriteUVs()
 			AABB2 uvs; 
 
 			// Compute location/dims in pixels
-			uvs.mins.x = static_cast<float>(m_edgePadding.x + (spriteX - 1) * m_innerPadding.x + spriteX * m_spriteDims.x);
-			uvs.mins.y = static_cast<float>(m_edgePadding.y + (spriteY - 1) * m_innerPadding.y + spriteY * m_spriteDims.y);
+			uvs.mins.x = static_cast<float>(m_edgePadding.x + (spriteX * m_innerPadding.x) + (spriteX * m_spriteDims.x));
+			uvs.mins.y = static_cast<float>(m_edgePadding.y + (spriteY * m_innerPadding.y) + (spriteY * m_spriteDims.y));
 			uvs.maxs = uvs.mins + Vec2(m_spriteDims);
 
 			// Convert to UVs

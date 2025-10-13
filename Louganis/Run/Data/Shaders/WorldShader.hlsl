@@ -29,6 +29,17 @@ struct VSOutput
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct PSInput
+{
+    float4 position         : SV_Position;
+    float4 tint             : TINT;
+    float2 uvs              : UVS;
+    float2 lightmapUVs      : LIGHTMAPUVS;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Texture2D<float4> SurfaceColorTexture : register(t0);
 Texture2D<float4> ChunkLightmapTexture : register(t1);
 
@@ -111,7 +122,7 @@ VSOutput VertexMain(VSInput vin)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float4 PixelMain(VSOutput input) : SV_Target0
+float4 PixelMain(PSInput input) : SV_Target0
 {
 	float2 texCoord = input.uvs;
 	float4 surfaceColor = SurfaceColorTexture.Sample(SurfaceSampler, texCoord);

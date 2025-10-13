@@ -203,16 +203,16 @@ void Chunk::GenerateVBO()
 			Rgba8 tint = tileDef->m_tint * staticLighting01;
 
 			float z = 1.f;
-			Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, z);
-			Vec3 topRightPoint = Vec3(maxs.x, maxs.y, z);
-			Vec3 bottomLeftPoint = Vec3(mins.x, mins.y, z);
-			Vec3 topLeftPoint = Vec3(mins.x, maxs.y, z);
+			Vec3 bottomRightPoint	= Vec3(maxs.x, mins.y, z);
+			Vec3 topRightPoint		= Vec3(maxs.x, maxs.y, z);
+			Vec3 bottomLeftPoint	= Vec3(mins.x, mins.y, z);
+			Vec3 topLeftPoint		= Vec3(mins.x, maxs.y, z);
 
 			// UVs
-			Vec2 const& topRightUVs = uvs.maxs;
-			Vec2 const& bottomLeftUVs = uvs.mins;
-			Vec2 bottomRightUVs = Vec2(uvs.maxs.x, uvs.mins.y);
-			Vec2 topLeftUVs = Vec2(uvs.mins.x, uvs.maxs.y);
+			Vec2 const& topRightUVs		= uvs.maxs;
+			Vec2 const& bottomLeftUVs	= uvs.mins;
+			Vec2 bottomRightUVs			= Vec2(uvs.maxs.x, uvs.mins.y);
+			Vec2 topLeftUVs				= Vec2(uvs.mins.x, uvs.maxs.y);
 
 			// Lightmap UVs
 			Vec2 lightmapUVs = lightmapUVsHalfStepSize + Vec2(x, y) * lightmapUVsStepSize;
@@ -220,12 +220,12 @@ void Chunk::GenerateVBO()
 			// Write verts
 			int firstVertIndex = index * 6;
 			TerrainVertex* firstVert = vbo.GetData<TerrainVertex>(firstVertIndex);
-			*firstVert = TerrainVertex(Vec3(bottomLeftPoint), tint, bottomLeftUVs, lightmapUVs);
-			*(firstVert + 1) = TerrainVertex(Vec3(bottomRightPoint), tint, bottomRightUVs, lightmapUVs);
-			*(firstVert + 2) = TerrainVertex(Vec3(topRightPoint), tint, topRightUVs, lightmapUVs);
-			*(firstVert + 3) = TerrainVertex(Vec3(bottomLeftPoint), tint, bottomLeftUVs, lightmapUVs);
-			*(firstVert + 4) = TerrainVertex(Vec3(topRightPoint), tint, topRightUVs, lightmapUVs);
-			*(firstVert + 5) = TerrainVertex(Vec3(topLeftPoint), tint, topLeftUVs, lightmapUVs);
+			*firstVert			= TerrainVertex(bottomLeftPoint,	tint, bottomLeftUVs,	lightmapUVs);
+			*(firstVert + 1)	= TerrainVertex(bottomRightPoint,	tint, bottomRightUVs,	lightmapUVs);
+			*(firstVert + 2)	= TerrainVertex(topRightPoint,		tint, topRightUVs,		lightmapUVs);
+			*(firstVert + 3)	= TerrainVertex(bottomLeftPoint,	tint, bottomLeftUVs,	lightmapUVs);
+			*(firstVert + 4)	= TerrainVertex(topRightPoint,		tint, topRightUVs,		lightmapUVs);
+			*(firstVert + 5)	= TerrainVertex(topLeftPoint,		tint, topLeftUVs,		lightmapUVs);
 		}
 	}
 
