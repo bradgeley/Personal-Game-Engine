@@ -158,4 +158,11 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     {
         m_lifetime.emplace(CLifetime());
     }
+
+    // CHealth
+    elem = xmlElement->FirstChildElement("Health");
+    if (elem)
+    {
+        m_health.emplace(CHealth());
+    }
 }

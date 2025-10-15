@@ -201,6 +201,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CAbility>();
     g_ecs->RegisterComponentArray<CAIController>();
     g_ecs->RegisterComponentArray<CCollision>();
+    g_ecs->RegisterComponentArray<CHealth>();
     g_ecs->RegisterComponentArray<CMovement>();
     g_ecs->RegisterComponentArray<CRender>();
     g_ecs->RegisterComponentArray<CTransform>();
@@ -260,6 +261,7 @@ void Game::ConfigureECS()
 
     // Post-Physics
     g_ecs->RegisterSystem<SAnimation>((int)FramePhase::PostPhysics);
+    g_ecs->RegisterSystem<SHealth>((int)FramePhase::PostPhysics);
 
     // Render
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
@@ -268,6 +270,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SLighting>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 	g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);
 

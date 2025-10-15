@@ -4,6 +4,7 @@
   <!-- Players -->
   
   <EntityDef name = "Player">
+    <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="5" sprintMoveSpeedMultiplier="2"></Movement>
     <PlayerController></PlayerController>
@@ -18,6 +19,7 @@
   <!-- Enemies -->
   
   <EntityDef name = "BabyZombie">
+    <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="0.25"></Movement>
     <Collision radius="0.25"></Collision>
@@ -32,6 +34,7 @@
   <!-- Trees -->
   
   <EntityDef name = "Tree1">
+    <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Collision radius="0.25" immovable="true"></Collision>
     <Render scale="2.5" offset="0,0.8"></Render>
@@ -39,6 +42,7 @@
   </EntityDef>
 
   <EntityDef name = "DeadTree1">
+    <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Collision radius="0.25" immovable="true"></Collision>
     <Render scale="2.5" offset="0,0.8"></Render>
@@ -46,6 +50,7 @@
   </EntityDef>
 
   <EntityDef name = "Cactus1">
+    <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Collision radius="0.25" immovable="true"></Collision>
     <Render scale="2.5" offset="0.1,0.8"></Render>

@@ -164,6 +164,12 @@
     <ClCompile Include="Game\SLifetime.cpp">
       <Filter>ECS\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Game\CHealth.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRenderUI.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -381,6 +387,12 @@
     </ClInclude>
     <ClInclude Include="Game\SLifetime.h">
       <Filter>ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CHealth.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderUI.h">
+      <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -15,7 +15,7 @@ class VertexBuffer;
 //----------------------------------------------------------------------------------------------------------------------
 // Vertex Utils
 //
-// Utility functions for pushing back verts to a list for rendering
+// Utility functions for pushing back Vertex_PCU's to a list for rendering. Todo: make work for other vert types, if possible?
 //
 namespace VertexUtils
 {

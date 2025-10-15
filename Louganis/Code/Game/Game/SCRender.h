@@ -23,5 +23,7 @@ public:
 
 	std::unordered_map<AssetID, VertexBufferID> m_entityVBOsBySpriteSheet; // Owned by SRenderEntities
 	std::unordered_map<AssetID, InstanceBufferID> instancesPerSpriteSheet; // Owned by SRenderEntities
+
+	VertexBufferID m_uiVBO = RendererUtils::InvalidID;		// Owned by SRenderUI
 };
 
