@@ -89,8 +89,22 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
     g_devConsole->AddLine(StringUtils::StringF("Entity def loading: %s", m_name.ToCStr()));
 
+    // CTime
+    auto elem = xmlElement->FirstChildElement("Time");
+    if (elem)
+    {
+        m_time.emplace(CTime()); // no elem
+    }
+
+    // CTransform
+    elem = xmlElement->FirstChildElement("Transform");
+    if (elem)
+    {
+        m_transform.emplace(CTransform()); // no elem
+    }
+
     // CAbility
-    auto elem = xmlElement->FirstChildElement("Ability");
+    elem = xmlElement->FirstChildElement("Ability");
     if (elem)
     {
 		m_ability = CAbility(elem);
@@ -138,31 +152,17 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_render = CRender(elem);
     }
 
-    // CTime
-    elem = xmlElement->FirstChildElement("Time");
-    if (elem)
-    {
-        m_time.emplace(CTime());
-    }
-
-    // CTransform
-    elem = xmlElement->FirstChildElement("Transform");
-    if (elem)
-    {
-        m_transform.emplace(CTransform());
-    }
-
     // CLifetime
     elem = xmlElement->FirstChildElement("Lifetime");
     if (elem)
     {
-        m_lifetime.emplace(CLifetime());
+        m_lifetime.emplace(CLifetime(elem));
     }
 
     // CHealth
     elem = xmlElement->FirstChildElement("Health");
     if (elem)
     {
-        m_health.emplace(CHealth());
+        m_health.emplace(CHealth(elem));
     }
 }

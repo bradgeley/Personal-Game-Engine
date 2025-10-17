@@ -37,9 +37,14 @@ void SRenderUI::Run(SystemContext const& context)
 	{
 		CHealth const& health = healthStorage[it];
 
+		if (health.GetNeverShowHealthBar())
+		{
+			continue;
+		}
+
 		if (health.m_currentHealth == health.m_maxHealth || health.m_maxHealth <= 0.f)
 		{
-			//continue;
+			continue;
 		}
 
 		CRender const& render = renderStorage[it];
@@ -50,7 +55,7 @@ void SRenderUI::Run(SystemContext const& context)
 		float healthBarWidth = render.m_scale * 0.75f;
 		AABB2 backgroundVerts;
 		backgroundVerts.SetCenter(headLocation);
-		backgroundVerts.SetDimsAboutCenter(Vec2(healthBarWidth, 0.057f * healthBarWidth));
+		backgroundVerts.SetDimsAboutCenter(Vec2(healthBarWidth, 0.0833f));
 		AABB2 healthVerts = backgroundVerts;
 		healthVerts.maxs.x = healthVerts.mins.x + healthBarWidth * healthPercentage;
 		VertexUtils::AddVertsForAABB2(vbo, backgroundVerts, Rgba8::DarkGray);

@@ -34,7 +34,7 @@
   <!-- Trees -->
   
   <EntityDef name = "Tree1">
-    <Health maxHealth="100" healthRegen="1"></Health>
+    <Health maxHealth="100" healthRegen="1" neverShowHealthBar="true"></Health>
     <Transform></Transform>
     <Collision radius="0.25" immovable="true"></Collision>
     <Render scale="2.5" offset="0,0.8"></Render>
@@ -42,7 +42,7 @@
   </EntityDef>
 
   <EntityDef name = "DeadTree1">
-    <Health maxHealth="100" healthRegen="1"></Health>
+    <Health maxHealth="100" healthRegen="1" neverShowHealthBar="true"></Health>
     <Transform></Transform>
     <Collision radius="0.25" immovable="true"></Collision>
     <Render scale="2.5" offset="0,0.8"></Render>
@@ -50,7 +50,7 @@
   </EntityDef>
 
   <EntityDef name = "Cactus1">
-    <Health maxHealth="100" healthRegen="1"></Health>
+    <Health maxHealth="100" healthRegen="1" neverShowHealthBar="true"></Health>
     <Transform></Transform>
     <Collision radius="0.25" immovable="true"></Collision>
     <Render scale="2.5" offset="0.1,0.8"></Render>

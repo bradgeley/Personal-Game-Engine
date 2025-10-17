@@ -22,6 +22,7 @@ protected:
 
     static bool Goto(NamedProperties& args);
 	static bool Ghost(NamedProperties& args);
+	static bool GodMode(NamedProperties& args);
     static bool SetSeed(NamedProperties& args);
     static bool SlowPlayer(NamedProperties& args);
     static bool SetDebugTileDef(NamedProperties& args);

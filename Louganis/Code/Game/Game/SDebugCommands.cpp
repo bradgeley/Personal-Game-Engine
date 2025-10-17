@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugCommands.h"
 #include "CCollision.h"
+#include "CHealth.h"
 #include "CPlayerController.h"
 #include "CTime.h"
 #include "CTransform.h"
@@ -19,6 +20,7 @@ void SDebugCommands::Startup()
 {
     AddWriteAllDependencies();
 
+	DevConsoleUtils::AddDevConsoleCommand("GodMode", &SDebugCommands::GodMode);
 	DevConsoleUtils::AddDevConsoleCommand("Goto", &SDebugCommands::Goto, "location", DevConsoleArgType::Vec2);
 	DevConsoleUtils::AddDevConsoleCommand("Ghost", &SDebugCommands::Ghost);
 	DevConsoleUtils::AddDevConsoleCommand("SlowPlayer", &SDebugCommands::SlowPlayer, "slow", DevConsoleArgType::Bool);
@@ -40,6 +42,7 @@ void SDebugCommands::Run(SystemContext const&)
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugCommands::Shutdown()
 {
+	DevConsoleUtils::RemoveDevConsoleCommand("GodMode", &SDebugCommands::GodMode);
 	DevConsoleUtils::RemoveDevConsoleCommand("Goto", &SDebugCommands::Goto);
 	DevConsoleUtils::RemoveDevConsoleCommand("Goto", &SDebugCommands::Ghost);
 	DevConsoleUtils::RemoveDevConsoleCommand("SlowPlayer", &SDebugCommands::SlowPlayer);
@@ -73,6 +76,20 @@ bool SDebugCommands::Ghost(NamedProperties&)
 	{
 		CCollision* cCollision = g_ecs->GetComponent<CCollision>(it);
 		cCollision->SetCollisionEnabled(!cCollision->IsCollisionEnabled());
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::GodMode(NamedProperties& args)
+{
+	SystemContext context;
+	for (auto it = g_ecs->Iterate<CPlayerController, CHealth>(context); it.IsValid(); ++it)
+	{
+		CHealth* health = g_ecs->GetComponent<CHealth>(it);
+		health->SetInvincible(!health->GetIsInvincible());
 	}
 	return false;
 }
