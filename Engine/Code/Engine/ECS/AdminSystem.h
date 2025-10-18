@@ -224,6 +224,7 @@ protected:
 
 	BitArray<MAX_ENTITIES>			m_entities;
 	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 }; // Todo: if user needs more than 32 or 64 components, allow them to use a fixed size BitArray for entity composition, so the max component count would be uncapped
+	int								m_highWatermarkEntityID = 0; // highest entity ID ever allocated, speeds up system iteration by only searching up to this ID
 
 	std::unordered_map<std::type_index, BaseStorage*>	m_componentStorage;
 	std::unordered_map<std::type_index, BitMask>		m_componentBitMasks;

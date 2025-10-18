@@ -2,6 +2,7 @@
 #include "SMovement.h"
 #include "CMovement.h"
 #include "CTransform.h"
+#include "CHealth.h"
 #include "CTime.h"
 
 
@@ -10,7 +11,7 @@
 void SMovement::Startup()
 {
     AddWriteDependencies<CMovement, CTransform>();
-    AddReadDependencies<CTime>();
+    AddReadDependencies<CTime, CHealth>();
 }
 
 
@@ -31,6 +32,12 @@ void SMovement::Run(SystemContext const& context)
         {
             transform.m_pos += move.m_frameMovement;
             move.m_frameMovement = Vec2::ZeroVector;
+            continue;
+        }
+
+        CHealth* health = g_ecs->GetComponent<CHealth>(it.m_currentIndex);
+        if (health && health->GetIsDead())
+        {
             continue;
         }
 

@@ -359,7 +359,9 @@ bool AdminSystem::DoesEntityExist(EntityID entityID) const
 //----------------------------------------------------------------------------------------------------------------------
 EntityID AdminSystem::GetNextEntityWithGroup(BitMask groupMask, EntityID startIndex, EntityID endIndex) const
 {
-	for (EntityID entity = startIndex; entity <= endIndex; ++entity)
+	int lastIndex = m_highWatermarkEntityID < endIndex ? m_highWatermarkEntityID : endIndex;
+
+	for (EntityID entity = startIndex; entity <= lastIndex; ++entity)
 	{
 		if ((m_entityComposition[entity] & groupMask) == groupMask)
 		{
@@ -383,6 +385,11 @@ EntityID AdminSystem::CreateEntity(int searchBeginEntityID)
 		return ENTITY_ID_INVALID;
 	}
 
+	if (index > m_highWatermarkEntityID)
+	{
+		m_highWatermarkEntityID = index;
+	}
+
 	return (EntityID) index;
 }
 
@@ -392,6 +399,11 @@ EntityID AdminSystem::CreateEntity(int searchBeginEntityID)
 EntityID AdminSystem::CreateEntityInPlace(int entityID)
 {
 	m_entities.Set(entityID);
+
+	if (entityID > m_highWatermarkEntityID)
+	{
+		m_highWatermarkEntityID = entityID;
+	}
 
 	return (EntityID) entityID;
 }
@@ -411,4 +423,5 @@ void AdminSystem::DestroyAllEntities()
 		auto& baseStorage = storage.second;
 		baseStorage->Clear();
 	}
+	m_highWatermarkEntityID = 0;
 }
