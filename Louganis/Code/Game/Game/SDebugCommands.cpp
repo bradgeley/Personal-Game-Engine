@@ -3,6 +3,7 @@
 #include "CCollision.h"
 #include "CHealth.h"
 #include "CPlayerController.h"
+#include "CLifetime.h"
 #include "CTime.h"
 #include "CTransform.h"
 #include "Engine/DataStructures/NamedProperties.h"
@@ -11,6 +12,7 @@
 #include "SCDebug.h"
 #include "SCLoadChunks.h"
 #include "SCTime.h"
+#include "SCEntityFactory.h"
 #include "TileDef.h"
 
 
@@ -20,6 +22,7 @@ void SDebugCommands::Startup()
 {
     AddWriteAllDependencies();
 
+	DevConsoleUtils::AddDevConsoleCommand("DamagePlayer", &SDebugCommands::DamagePlayer, "amount", DevConsoleArgType::Float);
 	DevConsoleUtils::AddDevConsoleCommand("GodMode", &SDebugCommands::GodMode);
 	DevConsoleUtils::AddDevConsoleCommand("Goto", &SDebugCommands::Goto, "location", DevConsoleArgType::Vec2);
 	DevConsoleUtils::AddDevConsoleCommand("Ghost", &SDebugCommands::Ghost);
@@ -34,7 +37,7 @@ void SDebugCommands::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugCommands::Run(SystemContext const&)
 {
-    
+    // Empty
 }
 
 
@@ -42,6 +45,7 @@ void SDebugCommands::Run(SystemContext const&)
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugCommands::Shutdown()
 {
+	DevConsoleUtils::RemoveDevConsoleCommand("DamagePlayer", &SDebugCommands::DamagePlayer);
 	DevConsoleUtils::RemoveDevConsoleCommand("GodMode", &SDebugCommands::GodMode);
 	DevConsoleUtils::RemoveDevConsoleCommand("Goto", &SDebugCommands::Goto);
 	DevConsoleUtils::RemoveDevConsoleCommand("Goto", &SDebugCommands::Ghost);
@@ -152,6 +156,36 @@ bool SDebugCommands::SetTimeOfDay(NamedProperties& args)
 		scTime.m_isTransitioning = false;
 		scTime.m_timeOfDay = (TimeOfDay) timeOfDay;
 		scTime.m_dayTimer.Set(nullptr, scWorld.m_worldSettings.m_timeOfDayDurations[(int) scTime.m_timeOfDay]);
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::DamagePlayer(NamedProperties& args)
+{
+	float damageAmount = args.Get("amount", 10.f);
+	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
+	SystemContext context;
+	for (auto it = g_ecs->Iterate<CPlayerController, CHealth>(context); it.IsValid(); ++it)
+	{
+		CHealth* health = g_ecs->GetComponent<CHealth>(it);
+		if (!health->GetIsInvincible())
+		{
+			health->m_currentHealth -= damageAmount;
+			if (health->m_currentHealth < 0.f)
+			{
+				if (CLifetime* lifetime = g_ecs->GetComponent<CLifetime>(it))
+				{
+					lifetime->SetLifetime(2.f);
+				}
+				else
+				{
+					factory.m_entitiesToDestroy.push_back(it.m_currentIndex); // todo: handle death anim before destroying
+				}
+			}
+		}
 	}
 	return false;
 }

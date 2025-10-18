@@ -4,6 +4,7 @@
   <!-- Players -->
   
   <EntityDef name = "Player">
+    <Lifetime></Lifetime>
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="5" sprintMoveSpeedMultiplier="2"></Movement>
@@ -19,6 +20,7 @@
   <!-- Enemies -->
   
   <EntityDef name = "BabyZombie">
+    <Lifetime></Lifetime>
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="0.25"></Movement>

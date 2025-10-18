@@ -12,3 +12,12 @@ CLifetime::CLifetime(void const* xmlElement)
 	m_lifetime = XmlUtils::ParseXmlAttribute(elem, "lifetime", m_lifetime);
 	m_lifetimeRemaining = m_lifetime;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CLifetime::SetLifetime(float lifetime)
+{
+	m_lifetime = lifetime;
+	m_lifetimeRemaining = lifetime;
+}

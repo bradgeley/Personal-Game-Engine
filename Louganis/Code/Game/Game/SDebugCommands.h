@@ -27,4 +27,5 @@ protected:
     static bool SlowPlayer(NamedProperties& args);
     static bool SetDebugTileDef(NamedProperties& args);
     static bool SetTimeOfDay(NamedProperties& args);
+	static bool DamagePlayer(NamedProperties& args);
 };
