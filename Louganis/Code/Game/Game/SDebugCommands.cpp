@@ -174,17 +174,6 @@ bool SDebugCommands::DamagePlayer(NamedProperties& args)
 		if (!health->GetIsInvincible())
 		{
 			health->m_currentHealth -= damageAmount;
-			if (health->m_currentHealth < 0.f)
-			{
-				if (CLifetime* lifetime = g_ecs->GetComponent<CLifetime>(it))
-				{
-					lifetime->SetLifetime(2.f);
-				}
-				else
-				{
-					factory.m_entitiesToDestroy.push_back(it.m_currentIndex); // todo: handle death anim before destroying
-				}
-			}
 		}
 	}
 	return false;

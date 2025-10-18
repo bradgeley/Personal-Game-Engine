@@ -277,6 +277,7 @@ void Game::ConfigureECS()
     // debug
     g_ecs->RegisterSystem<SDebugCommands>((int) FramePhase::PostRender);
     g_ecs->RegisterSystem<SSystemDebug>((int) FramePhase::PostRender);
+    g_ecs->RegisterSystem<SDeath>((int) FramePhase::PostRender);
 }
 
 

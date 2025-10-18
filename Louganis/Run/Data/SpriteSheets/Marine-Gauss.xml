@@ -1,7 +1,7 @@
 
 
 
-<GridSpriteSheet name="Marine-Gauss" texture="Data/SpriteSheets/marine-gauss.png" layout="6,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Marine-Gauss" texture="Data/SpriteSheets/marine-gauss.png" layout="8,1" edgePadding="0,0" innerPadding="0,0">
   
   <!-- Walk Anims -->
   <SpriteAnimationGroup name="walk">
@@ -14,5 +14,8 @@
     <SpriteAnimation name="eastIdle" dir="1,0" frames="0" type="singleframe" secondsPerFrame="0.5"></SpriteAnimation>
     <SpriteAnimation name="westIdle" dir="-1,0" frames="3" type="singleframe" secondsPerFrame="0.5"></SpriteAnimation>
   </SpriteAnimationGroup>
+
+  <!-- Death Anim -->
+  <SpriteAnimation name="death" dir="1,0" frames="5-7" type="once" secondsPerFrame="0.33"></SpriteAnimation>
   
 </GridSpriteSheet>

@@ -22,6 +22,7 @@ public:
     CHealth() = default;
     CHealth(void const* xmlElement);
 
+    bool GetIsDead() const;
     bool GetIsInvincible() const;
     bool GetNeverShowHealthBar() const;
 

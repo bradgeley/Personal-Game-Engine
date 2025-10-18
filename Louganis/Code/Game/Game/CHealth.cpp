@@ -19,6 +19,14 @@ CHealth::CHealth(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool CHealth::GetIsDead() const
+{
+	return m_currentHealth <= 0.f;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool CHealth::GetIsInvincible() const
 {
 	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::Invincible)) != 0;
