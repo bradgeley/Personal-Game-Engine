@@ -16,6 +16,6 @@
   </SpriteAnimationGroup>
 
   <!-- Death Anim -->
-  <SpriteAnimation name="death" dir="1,0" frames="5-7" type="once" secondsPerFrame="0.33"></SpriteAnimation>
+  <SpriteAnimation name="death" frames="5-7" type="once" secondsPerFrame="0.33"></SpriteAnimation>
   
 </GridSpriteSheet>

@@ -8,14 +8,28 @@
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="5" sprintMoveSpeedMultiplier="2"></Movement>
-    <PlayerController></PlayerController>
     <Collision radius="0.5"></Collision>
     <Render scale="1"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Marine-Gauss.xml"></Animation>
-    <Ability></Ability>
     <Time></Time>
+    <PlayerController></PlayerController>
   </EntityDef>
 
+  <!-- ==================================================================================================================== -->
+  <!-- Wildlife -->
+
+  <EntityDef name = "pig">
+    <Lifetime></Lifetime>
+    <Health maxHealth="100" healthRegen="1"></Health>
+    <Transform></Transform>
+    <Movement moveSpeed="1"></Movement>
+    <Collision radius="0.25"></Collision>
+    <Render scale="0.5"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/pig.xml"></Animation>
+    <Time></Time>
+    <AIController></AIController>
+  </EntityDef>
+  
   <!-- ==================================================================================================================== -->
   <!-- Enemies -->
   
@@ -26,10 +40,9 @@
     <Movement moveSpeed="0.25"></Movement>
     <Collision radius="0.25"></Collision>
     <Render scale="0.5"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/Zombie2.xml"></Animation>
-    <AIController></AIController>
-    <Ability></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/Zombie.xml"></Animation>
     <Time></Time>
+    <AIController></AIController>
   </EntityDef>
 
   <!-- ==================================================================================================================== -->

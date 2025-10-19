@@ -436,10 +436,10 @@
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Marine-Gauss.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\pig.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Tree1.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />
-    <Xml Include="..\..\Run\Data\SpriteSheets\Zombie2.xml" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">
