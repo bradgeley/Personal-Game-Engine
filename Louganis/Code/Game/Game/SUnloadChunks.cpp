@@ -6,8 +6,6 @@
 #include "EntityDef.h"
 #include "SCEntityFactory.h"
 #include "SCWorld.h"
-#include "TileDef.h"
-#include "Engine/Debug/DevConsole.h"
 
 
 
@@ -15,7 +13,7 @@
 void SUnloadChunks::Startup()
 {
 	AddWriteDependencies<SCWorld, SCLoadChunks, SCEntityFactory>();
-	AddReadDependencies<CTransform, CPlayerController>();
+	AddReadDependencies<CTransform>();
 }
 
 
@@ -40,7 +38,7 @@ void SUnloadChunks::Run(SystemContext const& context)
 	}
 
 	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
-	CTransform& playerTransform = *transformStorage.Get(playerIt);
+	CTransform const& playerTransform = *transformStorage.Get(playerIt);
 
 	float unloadRadius = world.GetChunkUnloadRadius();
 	float unloadRadiusSquared = unloadRadius * unloadRadius;

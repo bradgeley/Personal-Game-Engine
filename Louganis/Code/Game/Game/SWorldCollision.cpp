@@ -4,11 +4,8 @@
 #include "CTransform.h"
 #include "Chunk.h"
 #include "SCCollision.h"
-#include "SCDebug.h"
 #include "SCWorld.h"
-#include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Math/GeometryUtils.h"
-#include "WorldRaycast.h"
 
 
 
@@ -17,7 +14,6 @@ void SWorldCollision::Startup()
 {
     AddWriteDependencies<CTransform>();
     AddReadDependencies<CCollision, SCWorld, SCCollision>();
-    AddWriteDependencies<SCDebug>();
 }
 
 
@@ -27,8 +23,8 @@ void SWorldCollision::Run(SystemContext const&)
 {
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
-    auto& scWorld = g_ecs->GetSingleton<SCWorld>();
-	auto& scCollision = g_ecs->GetSingleton<SCCollision>();
+    SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>();
+    SCCollision const& scCollision = g_ecs->GetSingleton<SCCollision>();
 
     scWorld.ForEachSolidWorldCoordsOverlappingAABB(scCollision.m_collisionUpdateBounds, [&](WorldCoords const& worldCoords, Chunk& chunk)
     {
@@ -37,14 +33,29 @@ void SWorldCollision::Run(SystemContext const&)
             return true; // keep iterating
         }
 
-        ChunkCollisionData& chunkCollisionData = scCollision.m_chunkCollisionData[worldCoords.m_chunkCoords];
-        auto& tileBuckets = chunkCollisionData.m_tileBuckets;
-		auto& tileBucket = tileBuckets[chunk.m_tiles.GetIndexForCoords(worldCoords.m_localTileCoords)];
+		auto chunkCollisionDataIt = scCollision.m_chunkCollisionData.find(worldCoords.m_chunkCoords);
+        if (chunkCollisionDataIt == scCollision.m_chunkCollisionData.end())
+        {
+			return true; // keep iterating
+        }
+
+        ChunkCollisionData const& chunkCollisionData = chunkCollisionDataIt->second;
+        auto const& tileBuckets = chunkCollisionData.m_tileBuckets;
+
+		int tileIndex = chunk.m_tiles.GetIndexForCoords(worldCoords.m_localTileCoords);
+
+		auto tileBucketIt = tileBuckets.find(tileIndex);
+        if (tileBucketIt == tileBuckets.end())
+        {
+			return true; // keep iterating
+        }
+
+		EntityBucket const& tileBucket = tileBucketIt->second;
 		AABB2 tileBounds = scWorld.GetTileBounds(worldCoords);
         
-        for (EntityID entity : tileBucket)
+        for (EntityID const& entity : tileBucket)
         {
-			CCollision& collision = collStorage[entity];
+			CCollision const& collision = collStorage[entity];
             CTransform& transform = transStorage[entity];
 
 			Vec2 newPos = transform.m_pos + collision.m_offset;

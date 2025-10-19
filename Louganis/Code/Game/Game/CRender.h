@@ -10,7 +10,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 enum class RenderFlags : uint8_t
 {
-	RotateSprite = 1 << 0, // if true, render the sprite rotated to orientation, if false, do not rotate
+	RotateSprite    = 1 << 0, // if true, render the sprite rotated to orientation, if false, do not rotate
+	IsInCameraView  = 1 << 1,
 };
 
 
@@ -27,8 +28,10 @@ public:
     float GetRenderOrientation() const;
 
     bool GetRotateSprite() const;
+	bool GetIsInCameraView() const;
 
     void SetRotateSprite(bool rotate);
+	void SetIsInCameraView(bool isInView);
 
 public:
     

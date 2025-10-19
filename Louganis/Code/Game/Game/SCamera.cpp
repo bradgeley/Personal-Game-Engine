@@ -11,8 +11,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SCamera::Startup()
 {
-    AddWriteDependencies<SCCamera>();
-    AddReadDependencies<CRender, CPlayerController>();
+    AddWriteDependencies<SCCamera, Renderer>();
+    AddReadDependencies<CRender>();
 }
 
 
@@ -38,7 +38,7 @@ void SCamera::Run(SystemContext const& context)
 	bool attachedEntityExists = g_ecs->DoesEntityExist(camera.m_attachedEntity);
     if (attachedEntityExists)
     {
-        CRender& render = *renderStorage.Get(camera.m_attachedEntity);
+        CRender const& render = *renderStorage.Get(camera.m_attachedEntity);
         camera.m_camera.SetPosition2D(render.GetRenderPosition());
 	}
     else

@@ -25,30 +25,30 @@ void SCollision::Run(SystemContext const&)
 	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
 
-	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+	SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>();
     scWorld.ForEachChunkCoordsOverlappingAABB(scCollision.m_collisionUpdateBounds, [&](IntVec2 const& chunkCoords)
     {
-        ChunkCollisionData& chunkCollisionData = scCollision.m_chunkCollisionData[chunkCoords];
+        ChunkCollisionData const& chunkCollisionData = scCollision.m_chunkCollisionData[chunkCoords];
         auto& tileBuckets = chunkCollisionData.m_tileBuckets;
 
         for (auto tileIt = tileBuckets.begin(); tileIt != tileBuckets.end(); ++tileIt)
         {
-            EntityBucket& tileBucket = tileIt->second;
+            EntityBucket const& tileBucket = tileIt->second;
 
             // Handle collision inside tile
             for (size_t a = 0; a < tileBucket.size(); ++a)
             {
-                EntityID& entityA = tileBucket[a];
+                EntityID const& entityA = tileBucket[a];
                 CTransform& transformA = transformStorage[entityA];
-                CCollision& collisionA = collisionStorage[entityA];
+                CCollision const& collisionA = collisionStorage[entityA];
 
                 bool canBpushA = !collisionA.IsImmovable();
 
                 for (size_t b = a + 1; b < tileBucket.size(); ++b)
                 {
-                    EntityID& entityB = tileBucket[b];
+                    EntityID const& entityB = tileBucket[b];
                     CTransform& transformB = transformStorage[entityB];
-                    CCollision& collisionB = collisionStorage[entityB];
+                    CCollision const& collisionB = collisionStorage[entityB];
 
 					Vec2 newPosA = transformA.m_pos + collisionA.m_offset;
 					Vec2 newPosB = transformB.m_pos + collisionB.m_offset;

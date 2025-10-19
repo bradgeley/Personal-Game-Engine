@@ -3,16 +3,12 @@
 #include "CCollision.h"
 #include "CMovement.h"
 #include "CTransform.h"
-#include "Engine/Math/MathUtils.h"
-#include "SMovement.h"
 #include "WorldRaycast.h"
 #include "SCWorld.h"
 #include "SCDebug.h"
-#include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Events/EventSystem.h"
 #include "Engine/Math/GeometryUtils.h"
-#include "Engine/Performance/ScopedTimer.h"
+#include "Engine/Math/MathUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include <thread>
 
@@ -22,10 +18,10 @@
 void SPhysics::Startup()
 {
     AddWriteDependencies<CMovement, CTransform>();
-    AddWriteDependencies<SCDebug, Renderer>();
-    AddReadDependencies<CCollision, SCWorld>();
+    AddWriteDependencies<Renderer>();
+    AddReadDependencies<CCollision, SCDebug, SCWorld>();
 
-    g_eventSystem->SubscribeMethod("DebugRenderPreventativePhysics", this, &SPhysics::DebugRenderPreventativePhysics);
+	DevConsoleUtils::AddDevConsoleCommand("DebugRenderPreventativePhysics", &SPhysics::DebugRenderPreventativePhysics);
 
     int numThreads = std::thread::hardware_concurrency() - 1;
     m_systemSplittingNumJobs = numThreads - 1;
@@ -39,8 +35,8 @@ void SPhysics::Run(SystemContext const& context)
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
-    auto& scWorld = g_ecs->GetSingleton<SCWorld>();
-    auto& scDebug = g_ecs->GetSingleton<SCDebug>();
+    SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>();
+    SCDebug const& scDebug = g_ecs->GetSingleton<SCDebug>();
 
     for (auto it = g_ecs->Iterate<CMovement, CTransform, CCollision>(context); it.IsValid(); ++it)
     {
@@ -114,7 +110,7 @@ void SPhysics::Run(SystemContext const& context)
 //----------------------------------------------------------------------------------------------------------------------
 void SPhysics::Shutdown()
 {
-    g_eventSystem->UnsubscribeMethod("DebugRenderPreventativePhysics", this, &SPhysics::DebugRenderPreventativePhysics);
+	DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderPreventativePhysics", &SPhysics::DebugRenderPreventativePhysics);
 }
 
 
@@ -122,7 +118,7 @@ void SPhysics::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 bool SPhysics::DebugRenderPreventativePhysics(NamedProperties&)
 {
-    auto& scDebug = g_ecs->GetSingleton<SCDebug>();
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderPreventativePhysics = !scDebug.m_debugRenderPreventativePhysics;
     return false;
 }

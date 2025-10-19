@@ -324,6 +324,7 @@
     <ClCompile Include="Game\SDebugOverlay.cpp" />
     <ClCompile Include="Game\SLifetime.cpp" />
     <ClCompile Include="Game\SLighting.cpp" />
+    <ClCompile Include="Game\SMovementAnimation.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
     <ClCompile Include="Game\STime.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
@@ -398,6 +399,7 @@
     <ClInclude Include="Game\SDebugOverlay.h" />
     <ClInclude Include="Game\SLifetime.h" />
     <ClInclude Include="Game\SLighting.h" />
+    <ClInclude Include="Game\SMovementAnimation.h" />
     <ClInclude Include="Game\SRenderUI.h" />
     <ClInclude Include="Game\STime.h" />
     <ClInclude Include="Game\SDebugRender.h" />

@@ -12,8 +12,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugInput::Startup()
 {
-    AddWriteDependencies<InputSystem, SCCamera, SCDebug>();
-	AddReadDependencies<SCWorld>();
+    AddWriteDependencies<InputSystem, SCCamera>();
+	AddReadDependencies<SCWorld, SCDebug>();
 }
 
 
@@ -22,8 +22,8 @@ void SDebugInput::Startup()
 void SDebugInput::Run(SystemContext const&)
 {
 	SCCamera& camera = g_ecs->GetSingleton<SCCamera>();
-	SCDebug& debug = g_ecs->GetSingleton<SCDebug>();
-	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	SCDebug const& debug = g_ecs->GetSingleton<SCDebug>();
+	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
 
 	if (g_input->WasKeyJustPressed('Z'))
 	{

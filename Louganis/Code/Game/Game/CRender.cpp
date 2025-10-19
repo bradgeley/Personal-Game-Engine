@@ -50,6 +50,14 @@ bool CRender::GetRotateSprite() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool CRender::GetIsInCameraView() const
+{
+	return (m_renderFlags & static_cast<uint8_t>(RenderFlags::IsInCameraView)) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void CRender::SetRotateSprite(bool rotate)
 {
 	if (rotate)
@@ -59,5 +67,20 @@ void CRender::SetRotateSprite(bool rotate)
 	else
 	{
 		m_renderFlags &= ~static_cast<uint8_t>(RenderFlags::RotateSprite);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CRender::SetIsInCameraView(bool isInView)
+{
+	if (isInView)
+	{
+		m_renderFlags |= static_cast<uint8_t>(RenderFlags::IsInCameraView);
+	}
+	else
+	{
+		m_renderFlags &= ~static_cast<uint8_t>(RenderFlags::IsInCameraView);
 	}
 }

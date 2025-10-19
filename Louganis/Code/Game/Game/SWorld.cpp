@@ -6,11 +6,7 @@
 #include "EntityDef.h"
 #include "SCEntityFactory.h"
 #include "SCWorld.h"
-#include "Engine/Core/StringUtils.h"
-#include "Engine/Debug/DevConsoleUtils.h"
-#include "Engine/Math/Noise.h"
 #include "Engine/Math/RandomNumberGenerator.h"
-#include "TileGeneratedData.h"
 
 
 
@@ -18,7 +14,7 @@
 void SWorld::Startup()
 {
 	AddWriteDependencies<SCWorld>();
-	AddReadDependencies<CTransform, CPlayerController>();
+	AddReadDependencies<CTransform>();
 
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	if (world.m_worldSettings.m_randomWorldSeed)

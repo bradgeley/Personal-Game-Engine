@@ -13,8 +13,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderUI::Startup()
 {
-	AddReadDependencies<CHealth, CRender>();
-	AddWriteDependencies<SCRender, Renderer>();
+	AddReadDependencies<CHealth, CRender, SCRender>();
+	AddWriteDependencies<Renderer>();
 
 	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 	scRender.m_uiVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -25,16 +25,22 @@ void SRenderUI::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderUI::Run(SystemContext const& context)
 {
-	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+	SCRender const& scRender = g_ecs->GetSingleton<SCRender>();
 
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(scRender.m_uiVBO);
 	vbo.ClearVerts();
 
 	// Render Health bars
-	for (auto it = g_ecs->Iterate<CHealth>(context); it.IsValid(); ++it)
+	for (auto it = g_ecs->Iterate<CRender, CHealth>(context); it.IsValid(); ++it)
 	{
+		CRender const& render = renderStorage[it];
+		if (!render.GetIsInCameraView())
+		{
+			continue;
+		}
+
 		CHealth const& health = healthStorage[it];
 
 		if (health.GetNeverShowHealthBar())
@@ -46,8 +52,6 @@ void SRenderUI::Run(SystemContext const& context)
 		{
 			continue;
 		}
-
-		CRender const& render = renderStorage[it];
 
 		float healthPercentage = health.m_currentHealth / health.m_maxHealth;
 

@@ -35,6 +35,7 @@
 #include "SLighting.h"
 #include "SLoadChunks.h"
 #include "SMovement.h"
+#include "SMovementAnimation.h"
 #include "SPhysics.h"
 #include "SRenderEntities.h"
 #include "SRenderUI.h"

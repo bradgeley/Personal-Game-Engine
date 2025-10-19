@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SRenderWorld.h"
-#include "SCCamera.h"
 #include "Chunk.h"
+#include "SCCamera.h"
 #include "SCRender.h"
 #include "SCWorld.h"
 #include "WorldShaderCPU.h"
@@ -12,9 +12,6 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Renderer/ConstantBuffer.h"
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/VertexBuffer.h"
-#include "Engine/Renderer/VertexUtils.h"
-#include "Engine/Window/Window.h"
 
 
 
@@ -42,8 +39,8 @@ void DrawChunk(Chunk* chunk)
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderWorld::Startup()
 {
-    AddWriteDependencies<SCRender, SCWorld, Renderer>();
-    AddReadDependencies<SCCamera, AssetManager>();
+    AddWriteDependencies<SCRender, Renderer, AssetManager>();
+    AddReadDependencies<SCCamera, SCWorld>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 	scRender.m_staticWorldConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(StaticWorldConstants));
@@ -69,9 +66,9 @@ void SRenderWorld::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderWorld::Run(SystemContext const&)
 {
-    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-	SCCamera& scCamera = g_ecs->GetSingleton<SCCamera>();
+    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
 
 	GridSpriteSheet* worldSpriteSheet = g_assetManager->Get<GridSpriteSheet>(world.m_worldSpriteSheet);
     if (worldSpriteSheet)

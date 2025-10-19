@@ -20,5 +20,5 @@ public:
 
 protected:
 
-    bool DebugRenderPreventativePhysics(NamedProperties& args);
+    static bool DebugRenderPreventativePhysics(NamedProperties& args);
 };

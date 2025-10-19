@@ -1,5 +1,10 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugOverlay.h"
+#include "Chunk.h"
+#include "CPlayerController.h"
+#include "CTransform.h"
+#include "SCDebug.h"
+#include "SCWorld.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Input/InputSystem.h"
@@ -9,11 +14,6 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Window/Window.h"
-#include "Chunk.h"
-#include "CPlayerController.h"
-#include "CTransform.h"
-#include "SCDebug.h"
-#include "SCWorld.h"
 
 
 

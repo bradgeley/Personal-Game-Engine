@@ -6,11 +6,6 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-constexpr int MAX_Z_LAYERS = 2;
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void SCopyTransform::Startup()
 {
     AddWriteDependencies<CRender>();
@@ -28,7 +23,7 @@ void SCopyTransform::Run(SystemContext const& context)
     for (auto renderIt = g_ecs->Iterate<CRender, CTransform>(context); renderIt.IsValid(); ++renderIt)
     {
         CRender& render = *renderStorage.Get(renderIt);
-        CTransform& transform = *transStorage.Get(renderIt);
+        CTransform const& transform = *transStorage.Get(renderIt);
 
         render.m_pos = transform.m_pos;
         render.m_orientation = transform.m_orientation;

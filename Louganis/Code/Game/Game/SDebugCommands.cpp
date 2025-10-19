@@ -3,25 +3,21 @@
 #include "CCollision.h"
 #include "CHealth.h"
 #include "CPlayerController.h"
-#include "CLifetime.h"
 #include "CTime.h"
 #include "CTransform.h"
-#include "Engine/DataStructures/NamedProperties.h"
-#include "Engine/Debug/DevConsoleUtils.h"
 #include "SCWorld.h"
 #include "SCDebug.h"
 #include "SCLoadChunks.h"
 #include "SCTime.h"
-#include "SCEntityFactory.h"
 #include "TileDef.h"
+#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugCommands::Startup()
 {
-    AddWriteAllDependencies();
-
 	DevConsoleUtils::AddDevConsoleCommand("DamagePlayer", &SDebugCommands::DamagePlayer, "amount", DevConsoleArgType::Float);
 	DevConsoleUtils::AddDevConsoleCommand("GodMode", &SDebugCommands::GodMode);
 	DevConsoleUtils::AddDevConsoleCommand("Goto", &SDebugCommands::Goto, "location", DevConsoleArgType::Vec2);
@@ -87,7 +83,7 @@ bool SDebugCommands::Ghost(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugCommands::GodMode(NamedProperties& args)
+bool SDebugCommands::GodMode(NamedProperties&)
 {
 	SystemContext context;
 	for (auto it = g_ecs->Iterate<CPlayerController, CHealth>(context); it.IsValid(); ++it)
@@ -166,7 +162,6 @@ bool SDebugCommands::SetTimeOfDay(NamedProperties& args)
 bool SDebugCommands::DamagePlayer(NamedProperties& args)
 {
 	float damageAmount = args.Get("amount", 10.f);
-	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 	SystemContext context;
 	for (auto it = g_ecs->Iterate<CPlayerController, CHealth>(context); it.IsValid(); ++it)
 	{

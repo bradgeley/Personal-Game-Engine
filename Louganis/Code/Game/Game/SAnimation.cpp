@@ -5,21 +5,14 @@
 #include "CRender.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
-#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
-#include "Engine/Renderer/Texture.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Math/GeometryUtils.h"
-#include "Engine/Math/MathUtils.h"
-#include "Engine/Math/Constants.h"
-#include "Engine/Input/InputSystem.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SAnimation::Startup()
 {
-	AddWriteDependencies<CAnimation, Renderer, AssetManager>();
+	AddWriteDependencies<CAnimation, AssetManager>();
 	AddReadDependencies<CRender, SCCamera>();
 }
 
@@ -28,7 +21,7 @@ void SAnimation::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAnimation::Run(SystemContext const& context)
 {
-	SCCamera& scCamera = g_ecs->GetSingleton<SCCamera>();
+	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
 	AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
 
 	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
@@ -37,7 +30,7 @@ void SAnimation::Run(SystemContext const& context)
     for (auto it = g_ecs->Iterate<CRender, CAnimation>(context); it.IsValid(); ++it)
     {
         CRender const& render = renderStorage[it];
-		if (!GeometryUtils::DoesDiscOverlapAABB(render.GetRenderPosition(), 0.5f * render.m_scale, cameraBounds))
+        if (!render.GetIsInCameraView())
         {
             continue;
         }

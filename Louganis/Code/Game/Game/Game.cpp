@@ -208,10 +208,10 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CAnimation>();
     g_ecs->RegisterComponentArray<CLifetime>();
     g_ecs->RegisterComponentArray<CDeath>();
+    g_ecs->RegisterComponentArray<CTime>();
 
     // Map components
     g_ecs->RegisterComponentMap<CPlayerController>();
-    g_ecs->RegisterComponentMap<CTime>();
 
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCAudio>();
@@ -265,9 +265,10 @@ void Game::ConfigureECS()
 
     // Render
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SAnimation>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SCamera>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SInitView>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SMovementAnimation>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SAnimation>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SLighting>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);

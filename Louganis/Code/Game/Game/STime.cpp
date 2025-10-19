@@ -26,9 +26,9 @@ void STime::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void STime::Run(SystemContext const& context)
 {
-	auto& timeStorage = g_ecs->GetMapStorage<CTime>();
+	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
 	SCTime& scTime = g_ecs->GetSingleton<SCTime>();
-	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+	SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>();
 
 	// Time of day
 	bool completedState = scTime.m_dayTimer.Update(context.m_deltaSeconds);

@@ -18,8 +18,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SLighting::Startup()
 {
-    AddReadDependencies<SCTime, SCWorld, SCCamera>();
-	AddWriteDependencies<SCLighting, SCRender, Renderer>();
+    AddReadDependencies<SCTime, SCWorld, SCCamera, SCRender>();
+	AddWriteDependencies<SCLighting, Renderer>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
     scRender.m_lightingConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(LightingConstants));
@@ -32,10 +32,10 @@ void SLighting::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SLighting::Run(SystemContext const&)
 {
-    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-    SCTime& scTime = g_ecs->GetSingleton<SCTime>();
-	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
-	SCCamera& scCamera = g_ecs->GetSingleton<SCCamera>();
+    SCRender const& scRender = g_ecs->GetSingleton<SCRender>();
+    SCTime const& scTime = g_ecs->GetSingleton<SCTime>();
+	SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>();
+	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
 	SCLighting& scLighting = g_ecs->GetSingleton<SCLighting>();
 
     static IntVec2 neighborOffsets[4] = { IntVec2(1, 0), IntVec2(-1, 0), IntVec2(0, 1), IntVec2(0, -1) };

@@ -1,11 +1,11 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SInput.h"
-#include "Engine/Input/InputSystem.h"
-#include "Engine/Math/MathUtils.h"
 #include "SCCamera.h"
 #include "CPlayerController.h"
 #include "CMovement.h"
 #include "CTransform.h"
+#include "Engine/Input/InputSystem.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -13,7 +13,7 @@
 void SInput::Startup()
 {
     AddWriteDependencies<SCCamera, CMovement>();
-    AddReadDependencies<InputSystem, CPlayerController, CTransform>();
+    AddReadDependencies<InputSystem, CTransform>();
 }
 
 

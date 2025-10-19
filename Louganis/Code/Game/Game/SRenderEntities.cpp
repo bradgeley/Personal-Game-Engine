@@ -1,10 +1,16 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SRenderEntities.h"
+#include "CAnimation.h"
+#include "Chunk.h"
+#include "CRender.h"
+#include "SCCamera.h"
+#include "SCRender.h"
+#include "SCWorld.h"
+#include "SpriteShaderCPU.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/ShaderAsset.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Math/GeometryUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/InstanceBuffer.h"
 #include "Engine/Renderer/Shader.h"
@@ -12,21 +18,14 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/ConstantBuffer.h"
-#include "CAnimation.h"
-#include "SCCamera.h"
-#include "Chunk.h"
-#include "CRender.h"
-#include "SCRender.h"
-#include "SCWorld.h"
-#include "SpriteShaderCPU.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderEntities::Startup()
 {
-    AddWriteDependencies<CRender, Renderer, SCRender>();
-    AddReadDependencies<SCWorld, SCCamera, CAnimation>();
+    AddWriteDependencies<Renderer, SCRender>();
+    AddReadDependencies<CRender, SCWorld, SCCamera, CAnimation>();
 
 	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
     scRender.m_spriteSheetConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(SpriteSheetConstants));
@@ -41,10 +40,10 @@ void SRenderEntities::Startup()
 void SRenderEntities::Run(SystemContext const& context)
 {
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-    auto& scRender = g_ecs->GetSingleton<SCRender>();
     auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
-	SCCamera& scCamera = g_ecs->GetSingleton<SCCamera>();
-	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
+	SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>();
+    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 
     ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
     if (spriteShaderAsset)
@@ -73,8 +72,8 @@ void SRenderEntities::Run(SystemContext const& context)
     // Push back an instance for every entity in camera view this frame
     for (auto renderIt = g_ecs->Iterate<CRender, CAnimation>(context); renderIt.IsValid(); ++renderIt)
     {
-        CRender& render = *renderStorage.Get(renderIt);
-        if (!GeometryUtils::DoesDiscOverlapAABB(render.GetRenderPosition(), render.m_scale, cameraBounds))
+        CRender const& render = *renderStorage.Get(renderIt);
+        if (!render.GetIsInCameraView())
         {
             continue;
 		}

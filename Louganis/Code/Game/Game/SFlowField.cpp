@@ -8,7 +8,7 @@
 #include "FlowFieldChunk.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
-#include "Engine/Debug/DevConsole.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Chunk.h"
 #include <cfloat>
 #include <queue>
@@ -172,7 +172,7 @@ void SFlowField::GenerateFlow(FlowField& flowField, WorldCoords const& destinati
     bool succeeded = flowField.Seed(destination);
     if (!succeeded)
     {
-        g_devConsole->LogError("Failed to seed flow field");
+        DevConsoleUtils::LogError("Failed to seed flow field");
     }
 
     flowField.m_openList.emplace(destination, 0.f);

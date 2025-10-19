@@ -106,9 +106,6 @@
     <ClCompile Include="Game\SHealth.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SAnimation.cpp">
-      <Filter>ECS\Systems\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SCamera.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
@@ -175,6 +172,12 @@
     </ClCompile>
     <ClCompile Include="Game\CDeath.cpp">
       <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SAnimation.cpp">
+      <Filter>ECS\Systems\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SMovementAnimation.cpp">
+      <Filter>ECS\Systems\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -322,9 +325,6 @@
     <ClInclude Include="Game\SHealth.h">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SAnimation.h">
-      <Filter>ECS\Systems\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SCamera.h">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
@@ -406,6 +406,12 @@
     <ClInclude Include="Game\CDeath.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Game\SAnimation.h">
+      <Filter>ECS\Systems\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SMovementAnimation.h">
+      <Filter>ECS\Systems\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -473,6 +479,9 @@
     </Filter>
     <Filter Include="ECS\Systems\Debug">
       <UniqueIdentifier>{085367d3-f4e8-4e18-811c-71e0eebfc4d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ECS\Systems\Animation">
+      <UniqueIdentifier>{b7ff92ff-f393-4ac6-821f-5a58489d1615}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

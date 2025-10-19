@@ -7,7 +7,6 @@
 #include "SCCollision.h"
 #include "Chunk.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Performance/ScopedTimer.h"
 #include <thread>
 
 

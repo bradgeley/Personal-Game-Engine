@@ -5,9 +5,7 @@
 #include "CHealth.h"
 #include "CLifetime.h"
 #include "SCEntityFactory.h"
-#include "Engine/Assets/AssetManager.h"
-#include "Engine/Assets/GridSpriteSheet.h"
-#include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/Core/ErrorUtils.h"
 
 
 
@@ -15,7 +13,7 @@
 void SDeath::Startup()
 {
     AddReadDependencies<CHealth>();
-	AddWriteDependencies<CAnimation, CDeath, CLifetime, SCEntityFactory>();
+	AddWriteDependencies<CAnimation, CDeath, CLifetime>();
 }
 
 
@@ -27,7 +25,6 @@ void SDeath::Run(SystemContext const& context)
 	auto& deathStorage = g_ecs->GetArrayStorage<CDeath>();
 	auto& lifetimeStorage = g_ecs->GetArrayStorage<CLifetime>();
 	auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
-	auto& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	for (auto it = g_ecs->Iterate<CHealth, CDeath, CLifetime>(context); it.IsValid(); ++it)
 	{

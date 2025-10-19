@@ -359,9 +359,9 @@ bool AdminSystem::DoesEntityExist(EntityID entityID) const
 //----------------------------------------------------------------------------------------------------------------------
 EntityID AdminSystem::GetNextEntityWithGroup(BitMask groupMask, EntityID startIndex, EntityID endIndex) const
 {
-	int lastIndex = m_highWatermarkEntityID < endIndex ? m_highWatermarkEntityID : endIndex;
+	int lastIndex = m_highWatermarkEntityID < static_cast<int>(endIndex) ? m_highWatermarkEntityID : static_cast<int>(endIndex);
 
-	for (EntityID entity = startIndex; entity <= lastIndex; ++entity)
+	for (EntityID entity = startIndex; entity <= static_cast<EntityID>(lastIndex); ++entity)
 	{
 		if ((m_entityComposition[entity] & groupMask) == groupMask)
 		{

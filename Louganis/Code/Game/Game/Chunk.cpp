@@ -144,6 +144,13 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 				spawnInfo.m_spawnTint = tileGenData.m_treeTint;
 				out_spawnInfos.push_back(spawnInfo);
 			}
+			else if (!tile.IsSolid())
+			{
+				SpawnInfo spawnInfo;
+				spawnInfo.m_def = EntityDef::GetEntityDef("BabyZombie");
+				spawnInfo.m_spawnPos = tileOrigin + (tileDims * 0.5f);
+				out_spawnInfos.push_back(spawnInfo);
+			}
 		}
 	}
 

@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SMovement.h"
-#include "CAnimation.h"
 #include "CMovement.h"
 #include "CTransform.h"
 #include "CDeath.h"
@@ -21,12 +20,27 @@ void SMovement::Startup()
 void SMovement::Run(SystemContext const& context)
 {
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
+    auto& deathStorage = g_ecs->GetArrayStorage<CDeath>();
     auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
-    auto& timeStorage = g_ecs->GetMapStorage<CTime>();
+    auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
+
+	BitMask deathBitMask = g_ecs->GetComponentBitMask<CDeath>();
 
     for (auto it = g_ecs->Iterate<CMovement, CTransform, CTime>(context); it.IsValid(); ++it)
     {
         CMovement& move = moveStorage[it];
+        if (g_ecs->DoesEntityHaveComponents(it.m_currentIndex, deathBitMask))
+        {
+            CDeath const& death = deathStorage[it];
+            if (death.GetIsDead())
+            {
+                move.m_frameMoveDir = Vec2::ZeroVector;
+                move.m_frameMovement = Vec2::ZeroVector;
+                move.m_isTeleporting = false;
+                continue;
+            }
+        }
+
 		CTransform& transform = transformStorage[it];
 
         if (move.m_isTeleporting)
@@ -36,13 +50,7 @@ void SMovement::Run(SystemContext const& context)
             continue;
         }
 
-        CDeath* death = g_ecs->GetComponent<CDeath>(it.m_currentIndex);
-        if (death && death->GetIsDead())
-        {
-            continue;
-        }
-
-        CTime& time = timeStorage[it];
+        CTime const& time = timeStorage[it];
         move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * move.m_movementSpeedMultiplier * time.m_clock.GetDeltaSecondsF();
         if (move.m_isSprinting)
         {
@@ -52,17 +60,6 @@ void SMovement::Run(SystemContext const& context)
         if (!move.m_frameMoveDir.IsZero())
         {
             transform.m_orientation = move.m_frameMoveDir.GetAngleDegrees();
-        }
-
-		CAnimation* anim = g_ecs->GetComponent<CAnimation>(it.m_currentIndex);
-        if (anim)
-        {
-            PlayAnimationRequest request;
-            request.m_animGroupName = move.m_frameMovement.IsNearlyZero(0.01f) ? "Idle" : "Walk";
-			request.m_animSpeedMultiplier = move.m_isSprinting ? move.m_sprintMoveSpeedMultiplier : 1.f;
-            request.m_priority = 1;
-			request.m_direction = move.m_frameMoveDir;
-            anim->PlayAnimation(request);
         }
     }
 }

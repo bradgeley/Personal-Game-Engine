@@ -1,10 +1,10 @@
 // Bradley Christensen - 2022-2025
 #include "SBackgroundMusic.h"
+#include "SCAudio.h"
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/DataStructures/NamedProperties.h"
-#include "SCAudio.h"
 
 
 
@@ -16,7 +16,7 @@ const char* BGM_FILEPATH = "Data/Sounds/Music/alex-productions-racing-sport-gami
 //----------------------------------------------------------------------------------------------------------------------
 void SBackgroundMusic::Startup()
 {
-	AddWriteDependencies<AudioSystem, SCAudio>();
+	// AddWriteDependencies<AudioSystem, SCAudio>(); todo: reenable if/when Run does more stuff
 
 	PlayBGM();
 

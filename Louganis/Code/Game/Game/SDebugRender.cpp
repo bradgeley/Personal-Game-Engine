@@ -13,7 +13,6 @@
 #include "SCCollision.h"
 #include "SCDebug.h"
 #include "WorldRaycast.h"
-#include "Engine/Assets/Image.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/GeometryUtils.h"
@@ -25,7 +24,6 @@
 #include "Engine/Renderer/Font.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
-#include "Engine/Events/EventSystem.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Window/Window.h"
 
@@ -36,16 +34,16 @@ void SDebugRender::Startup()
 {
     AddWriteAllDependencies();
 
-    g_eventSystem->SubscribeMethod("DebugRenderMouseRaycast", this, &SDebugRender::DebugRenderMouseRaycast);
-    g_eventSystem->SubscribeMethod("DebugRenderMouseDiscCast", this, &SDebugRender::DebugRenderMouseDiscCast);
-    g_eventSystem->SubscribeMethod("DebugRenderCostField", this, &SDebugRender::DebugRenderCostField);
-    g_eventSystem->SubscribeMethod("DebugRenderDistanceField", this, &SDebugRender::DebugRenderDistanceField);
-    g_eventSystem->SubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
-    g_eventSystem->SubscribeMethod("DebugRenderSolidTiles", this, &SDebugRender::DebugRenderSolidTiles);
-    g_eventSystem->SubscribeMethod("DebugRenderCollision", this, &SDebugRender::DebugRenderCollision);
-    g_eventSystem->SubscribeMethod("DebugRenderLighting", this, &SDebugRender::DebugRenderLighting);
-    g_eventSystem->SubscribeMethod("DebugRenderGrid", this, &SDebugRender::DebugRenderGrid);
-	g_eventSystem->SubscribeMethod("DebugRenderTileIDs", this, &SDebugRender::DebugRenderTileIDs);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderMouseRaycast", &SDebugRender::DebugRenderMouseRaycast);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderMouseDiscCast", &SDebugRender::DebugRenderMouseDiscCast);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderCostField", &SDebugRender::DebugRenderCostField);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderSolidTiles", &SDebugRender::DebugRenderSolidTiles);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderLighting", &SDebugRender::DebugRenderLighting);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderGrid", &SDebugRender::DebugRenderGrid);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderTileIDs", &SDebugRender::DebugRenderTileIDs);
 
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_frameUntexVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -333,16 +331,16 @@ void SDebugRender::Shutdown()
     g_renderer->ReleaseVertexBuffer(scDebug.m_frameDefaultFontVerts);
     g_renderer->ReleaseVertexBuffer(scDebug.m_frameUntexVerts);
 
-    g_eventSystem->UnsubscribeMethod("DebugRenderMouseRaycast", this, &SDebugRender::DebugRenderMouseRaycast);
-    g_eventSystem->UnsubscribeMethod("DebugRenderMouseDiscCast", this, &SDebugRender::DebugRenderMouseDiscCast);
-    g_eventSystem->UnsubscribeMethod("DebugRenderCostField", this, &SDebugRender::DebugRenderCostField);
-    g_eventSystem->UnsubscribeMethod("DebugRenderDistanceField", this, &SDebugRender::DebugRenderDistanceField);
-    g_eventSystem->UnsubscribeMethod("DebugRenderFlowField", this, &SDebugRender::DebugRenderFlowField);
-    g_eventSystem->UnsubscribeMethod("DebugRenderSolidTiles", this, &SDebugRender::DebugRenderSolidTiles);
-    g_eventSystem->UnsubscribeMethod("DebugRenderCollision", this, &SDebugRender::DebugRenderCollision);
-    g_eventSystem->UnsubscribeMethod("DebugRenderLighting", this, &SDebugRender::DebugRenderLighting);
-    g_eventSystem->UnsubscribeMethod("DebugRenderGrid", this, &SDebugRender::DebugRenderGrid);
-	g_eventSystem->UnsubscribeMethod("DebugRenderTileIDs", this, &SDebugRender::DebugRenderTileIDs);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderMouseRaycast", &SDebugRender::DebugRenderMouseRaycast);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderMouseDiscCast", &SDebugRender::DebugRenderMouseDiscCast);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCostField", &SDebugRender::DebugRenderCostField);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderSolidTiles", &SDebugRender::DebugRenderSolidTiles);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderLighting", &SDebugRender::DebugRenderLighting);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderGrid", &SDebugRender::DebugRenderGrid);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderTileIDs", &SDebugRender::DebugRenderTileIDs);
 }
 
 

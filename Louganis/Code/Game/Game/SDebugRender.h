@@ -20,14 +20,14 @@ public:
 
 protected:
 
-    bool DebugRenderMouseRaycast(NamedProperties& args);
-    bool DebugRenderMouseDiscCast(NamedProperties& args);
-    bool DebugRenderCostField(NamedProperties& args);
-    bool DebugRenderDistanceField(NamedProperties& args);
-    bool DebugRenderFlowField(NamedProperties& args);
-    bool DebugRenderSolidTiles(NamedProperties& args);
-    bool DebugRenderCollision(NamedProperties& args);
-    bool DebugRenderLighting(NamedProperties& args);
-    bool DebugRenderGrid(NamedProperties& args);
-    bool DebugRenderTileIDs(NamedProperties& args);
+    static bool DebugRenderMouseRaycast(NamedProperties& args);
+    static bool DebugRenderMouseDiscCast(NamedProperties& args);
+    static bool DebugRenderCostField(NamedProperties& args);
+    static bool DebugRenderDistanceField(NamedProperties& args);
+    static bool DebugRenderFlowField(NamedProperties& args);
+    static bool DebugRenderSolidTiles(NamedProperties& args);
+    static bool DebugRenderCollision(NamedProperties& args);
+    static bool DebugRenderLighting(NamedProperties& args);
+    static bool DebugRenderGrid(NamedProperties& args);
+    static bool DebugRenderTileIDs(NamedProperties& args);
 };
