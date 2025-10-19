@@ -99,6 +99,14 @@ Name SpriteAnimationDef::GetName() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+SpriteAnimationType SpriteAnimationDef::GetType() const
+{
+    return m_type;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Name SpriteAnimationDef::GetAnimGroupName() const
 {
     return m_groupName;

@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDeath.h"
 #include "CAnimation.h"
+#include "CDeath.h"
 #include "CHealth.h"
 #include "CLifetime.h"
 #include "SCEntityFactory.h"
@@ -14,7 +15,7 @@
 void SDeath::Startup()
 {
     AddReadDependencies<CHealth>();
-	AddWriteDependencies<CAnimation, CLifetime, SCEntityFactory>();
+	AddWriteDependencies<CAnimation, CDeath, CLifetime, SCEntityFactory>();
 }
 
 
@@ -23,47 +24,76 @@ void SDeath::Startup()
 void SDeath::Run(SystemContext const& context)
 {
 	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+	auto& deathStorage = g_ecs->GetArrayStorage<CDeath>();
 	auto& lifetimeStorage = g_ecs->GetArrayStorage<CLifetime>();
 	auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
 	auto& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
 
-	for (auto it = g_ecs->Iterate<CHealth, CLifetime>(context); it.IsValid(); ++it)
+	for (auto it = g_ecs->Iterate<CHealth, CDeath, CLifetime>(context); it.IsValid(); ++it)
 	{
 		CHealth const& health = healthStorage[it];
-		if (!health.GetIsDead())
+		if (!health.ShouldDie())
 		{
 			continue;
 		}
 
-
+		// If health is 0 and GetIsDead is false, mark 'died this frame' - then next frame transition 'died this frame' to 'is dead'
+		// This is so things can do logic on the frame the entity dies
+		CDeath& death = deathStorage[it];
 		CAnimation& animation = animStorage[it];
-		GridSpriteSheet* gridSpriteSheet = g_assetManager->Get<GridSpriteSheet>(animation.m_gridSpriteSheet);
-		if (!gridSpriteSheet)
+		if (death.GetDiedThisFrame())
 		{
-			DevConsoleUtils::LogWarning("SDeath::Run - Entity has no valid GridSpriteSheet for death animation, destroying entity immediately.");
-			entityFactory.m_entitiesToDestroy.push_back(it.m_currentIndex);
-			continue;
+			death.SetDiedThisFrame(false);
+			death.SetIsDead(true);
+		}
+		else if (!death.GetIsDead())
+		{
+			death.SetDiedThisFrame(true);
 		}
 
-		SpriteAnimationDef const* deathAnim = gridSpriteSheet->GetAnimationDef("Death");
-		if (!deathAnim)
+		if (death.GetDeathAnimFinishedThisFrame())
 		{
-			DevConsoleUtils::LogWarning("SDeath::Run - Entity has no valid death animation, destroying entity immediately.");
-			entityFactory.m_entitiesToDestroy.push_back(it.m_currentIndex);
-			continue;
+			death.SetDeathAnimFinishedThisFrame(false);
+			death.SetDeathAnimFinished(true);
 		}
 
-		SpriteAnimationDef const& currentAnim = animation.m_animInstance.GetDef();
-		if (currentAnim.GetName() != deathAnim->GetName())
+		bool diedThisFrame = death.GetDiedThisFrame();
+		bool deathAnimFinished = death.GetDeathAnimFinished();
+
+		if (diedThisFrame && !deathAnimFinished)
 		{
-			animation.m_animInstance = deathAnim->MakeAnimInstance(0, 1);
+			if (!death.m_deathAnimationName.IsValid())
+			{
+				// No death animation, pretend it is finished
+				death.SetDeathAnimFinishedThisFrame(true);
+			}
+			else
+			{
+				// Start death animation
+				PlayAnimationRequest request;
+				request.m_animGroupName = death.m_deathAnimationName;
+				request.m_priority = 100; // High priority so it overrides other animations
+				request.m_animSpeedMultiplier = 1.f;
+				animation.PlayAnimation(request);
+			}
 		}
-		else if(animation.m_animInstance.IsFinished())
+
+		if (death.m_deathAnimationName.IsValid())
+		{
+			ASSERT_OR_DIE(animation.m_pendingAnimRequest.m_animGroupName == death.m_deathAnimationName, "SDeath::Run - Current animation is not death animation. Was it overridden by something?");
+
+			if (animation.m_animInstance.IsFinished() && !deathAnimFinished)
+			{
+				death.SetDeathAnimFinishedThisFrame(true);
+			}
+		}
+		
+		if (death.GetDeathAnimFinishedThisFrame())
 		{
 			CLifetime& lifetime = lifetimeStorage[it];
 			if (lifetime.m_lifetime < 0.f)
 			{
-				lifetime.SetLifetime(5.f);
+				lifetime.SetLifetime(death.m_corpseDurationSeconds);
 			}
 		}
 	}

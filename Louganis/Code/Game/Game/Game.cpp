@@ -207,6 +207,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CTransform>();
     g_ecs->RegisterComponentArray<CAnimation>();
     g_ecs->RegisterComponentArray<CLifetime>();
+    g_ecs->RegisterComponentArray<CDeath>();
 
     // Map components
     g_ecs->RegisterComponentMap<CPlayerController>();
@@ -260,11 +261,11 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
 
     // Post-Physics
-    g_ecs->RegisterSystem<SAnimation>((int)FramePhase::PostPhysics);
     g_ecs->RegisterSystem<SHealth>((int)FramePhase::PostPhysics);
 
     // Render
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SAnimation>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SCamera>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SInitView>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SLighting>((int) FramePhase::Render);

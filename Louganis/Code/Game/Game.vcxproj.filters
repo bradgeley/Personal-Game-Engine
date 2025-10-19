@@ -173,6 +173,9 @@
     <ClCompile Include="Game\SLifetime.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="Game\CDeath.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -399,6 +402,9 @@
     </ClInclude>
     <ClInclude Include="Game\SLifetime.h">
       <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CDeath.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -31,7 +31,7 @@ void SCopyTransform::Run(SystemContext const& context)
         CTransform& transform = *transStorage.Get(renderIt);
 
         render.m_pos = transform.m_pos;
-        //render.m_orientation = transform.m_orientation; Only change if render orientation should actually match the transform
+        render.m_orientation = transform.m_orientation;
     }
 }
 

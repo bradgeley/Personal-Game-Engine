@@ -165,4 +165,11 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     {
         m_health.emplace(CHealth(elem));
     }
+
+    // CDeath
+    elem = xmlElement->FirstChildElement("Death");
+    if (elem)
+    {
+        m_death.emplace(CDeath(elem));
+    }
 }

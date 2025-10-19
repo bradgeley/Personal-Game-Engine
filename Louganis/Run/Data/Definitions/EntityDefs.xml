@@ -5,6 +5,7 @@
   
   <EntityDef name = "Player">
     <Lifetime></Lifetime>
+    <Death></Death>
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="5" sprintMoveSpeedMultiplier="2"></Movement>

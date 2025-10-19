@@ -99,6 +99,8 @@ Asset* GridSpriteSheet::Load(Name assetName)
 		animationElem = animationElem->NextSiblingElement("SpriteAnimation");
 	}
 
+	spriteSheet->m_numAnimations = spriteSheet->CountNumAnimations();
+
 	return spriteSheet;
 }
 
@@ -274,6 +276,27 @@ AABB2 GridSpriteSheet::GetGenericSpriteQuad(float size /*= 1.f*/) const
 		spriteAABB.maxs = spriteAABB.mins + Vec2(2.f * halfSize * spriteAspect, 2.f * halfSize);
 	}
 	return spriteAABB;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int GridSpriteSheet::CountNumAnimations() const
+{
+	int count = 0;
+	for (auto& grp : m_animationGroups)
+	{
+		count += static_cast<int>(grp.m_animationDefs.size());
+	}
+	return count;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int GridSpriteSheet::GetNumAnimations() const
+{
+	return m_numAnimations;
 }
 
 

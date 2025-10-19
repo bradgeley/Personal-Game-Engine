@@ -98,8 +98,8 @@ void SRenderEntities::Run(SystemContext const& context)
 			scRender.m_entityVBOsBySpriteSheet[anim.m_gridSpriteSheet] = g_renderer->MakeVertexBuffer<Vertex_PCU>();
             VertexBufferID vboID = scRender.m_entityVBOsBySpriteSheet[anim.m_gridSpriteSheet];
 
-            VertexBuffer* vbo = g_renderer->GetVertexBuffer(vboID);
-            VertexUtils::AddVertsForAABB2(*vbo, spriteSheet->GetGenericSpriteQuad(1.f), render.m_tint); // UVs will be passed deduced via information in the sprite instance data in the shader
+            VertexBuffer& vbo = *g_renderer->GetVertexBuffer(vboID);
+            VertexUtils::AddVertsForAABB2(vbo, spriteSheet->GetGenericSpriteQuad(1.f), render.m_tint); // UVs will be passed deduced via information in the sprite instance data in the shader
         }
 
         // Get or create instance buffer for this sprite sheet
@@ -108,12 +108,12 @@ void SRenderEntities::Run(SystemContext const& context)
 			scRender.instancesPerSpriteSheet[anim.m_gridSpriteSheet] = g_renderer->MakeInstanceBuffer<SpriteInstance>();
         }
         InstanceBufferID iboID = scRender.instancesPerSpriteSheet[anim.m_gridSpriteSheet];
-		InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
+		InstanceBuffer& ibo = *g_renderer->GetInstanceBuffer(iboID);
 
         SpriteInstance instance;
 		float instanceDepth = MathUtils::RangeMap(render.GetRenderPosition().y - (render.m_scale * 0.5f), cameraBounds.mins.y - 100.f, cameraBounds.maxs.y + 100.f, 0.05f, 0.95f);
 		instance.m_position = Vec3(render.GetRenderPosition(), instanceDepth); // todo: z-order
-		instance.m_orientation = render.m_orientation;
+        instance.m_orientation = render.GetRenderOrientation();
 		instance.m_scale = render.m_scale;
         instance.m_rgba = render.m_tint;
         instance.m_rgba = render.m_tint;
@@ -128,7 +128,7 @@ void SRenderEntities::Run(SystemContext const& context)
 			instance.m_outdoorLight = tile.GetOutdoorLighting255();
         }
 
-		ibo->AddInstance(instance);
+		ibo.AddInstance(instance);
     }
 
 	// 1 Draw call per sprite sheet

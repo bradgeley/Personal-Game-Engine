@@ -35,6 +35,7 @@ public:
 	void Init(SpriteAnimationType type, std::vector<int> const& frames, float secondsPerFrame);
 
 	Name GetName() const;
+	SpriteAnimationType GetType() const;
 	Name GetAnimGroupName() const;
 	Vec2 const& GetDirection() const;
 	SpriteAnimation MakeAnimInstance(int startingFrameIndex = 0, int startingDirection = 1) const;

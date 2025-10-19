@@ -37,6 +37,8 @@ public:
 	IntVec2 GetEdgePadding() const;
 	IntVec2 GetInnerPadding() const;
 	AABB2 GetGenericSpriteQuad(float size = 1.f) const;		// In NDC space, centered on origin, with correct aspect ratio
+	int CountNumAnimations() const;
+	int GetNumAnimations() const;
 
 	// Setters
 	void SetRendererState() const;
@@ -53,6 +55,7 @@ protected:
 	Grid<AABB2> m_spriteUVs;									// Precomputed UVs for each sprite
 	IntVec2		m_edgePadding	= IntVec2::ZeroVector;			// Around the whole sheet
 	IntVec2		m_innerPadding	= IntVec2::ZeroVector;			// Between sprites
+	int			m_numAnimations = 0;
 	std::vector<SpriteAnimationGroup> m_animationGroups;		// Animations that use this sprite sheet, loaded from the xml
 
 	// Used during the load process

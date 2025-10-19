@@ -84,6 +84,7 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
     if (def->m_render.has_value())              g_ecs->AddComponent<CRender>(id, *def->m_render);
 	if (def->m_lifetime.has_value())            g_ecs->AddComponent<CLifetime>(id, *def->m_lifetime);
 	if (def->m_health.has_value())              g_ecs->AddComponent<CHealth>(id, *def->m_health);
+	if (def->m_death.has_value())               g_ecs->AddComponent<CDeath>(id, *def->m_death);
 
     return id;
 }

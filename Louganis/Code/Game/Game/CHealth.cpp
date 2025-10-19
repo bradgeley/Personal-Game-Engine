@@ -19,7 +19,7 @@ CHealth::CHealth(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CHealth::GetIsDead() const
+bool CHealth::ShouldDie() const
 {
 	return m_currentHealth <= 0.f;
 }

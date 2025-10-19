@@ -8,13 +8,31 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class RenderFlags : uint8_t
+{
+	RotateSprite = 1 << 0, // if true, render the sprite rotated to orientation, if false, do not rotate
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct CRender
 {
+public:
+
     CRender() = default;
     CRender(void const* xmlElement);
 
-	Vec2 GetRenderPosition() const { return m_pos + (m_renderOffset * m_scale * 0.5f); }
+    Vec2 GetRenderPosition() const;
+    float GetRenderOrientation() const;
+
+    bool GetRotateSprite() const;
+
+    void SetRotateSprite(bool rotate);
+
+public:
     
+	uint8_t m_renderFlags           = 0;
     Vec2 m_pos                      = Vec2::ZeroVector;
     Vec2 m_renderOffset			    = Vec2::ZeroVector;
     float m_orientation             = 0.f;

@@ -33,6 +33,7 @@ public:
     std::optional<CAIController>        m_ai;
 	std::optional<CAnimation>           m_animation;
 	std::optional<CCollision>           m_collision;
+	std::optional<CDeath>               m_death;
     std::optional<CHealth>              m_health;
     std::optional<CPlayerController>    m_playerController;
 	std::optional<CLifetime>			m_lifetime;
