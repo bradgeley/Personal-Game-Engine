@@ -21,6 +21,7 @@
 
   <EntityDef name = "pig">
     <Lifetime></Lifetime>
+    <Death></Death>
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="1"></Movement>
@@ -36,7 +37,8 @@
   
   <EntityDef name = "BabyZombie">
     <Lifetime></Lifetime>
-    <Health maxHealth="100" healthRegen="1"></Health>
+    <Death></Death>
+    <Health maxHealth="100" healthRegen="0"></Health>
     <Transform></Transform>
     <Movement moveSpeed="0.25"></Movement>
     <Collision radius="0.25"></Collision>

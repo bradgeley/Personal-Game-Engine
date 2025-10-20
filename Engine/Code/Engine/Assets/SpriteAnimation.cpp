@@ -179,6 +179,8 @@ void SpriteAnimation::Update(float deltaSeconds)
     if (m_def->m_type == SpriteAnimationType::SingleFrame || m_def->m_frames.size() <= 1)
     {
         // Single frame animations do not update
+        m_t += deltaSeconds / GetSecondsPerFrame();
+        m_t = MathUtils::Clamp01(m_t);
         return;
 	}
 
@@ -302,7 +304,7 @@ bool SpriteAnimation::IsFinished() const
     }
     else
     {
-        return (m_currentFrame == 0) && MathUtils::IsNearlyEqual(m_t, 0.f);
+        return (m_currentFrame == 0) && MathUtils::IsNearlyEqual(m_t, 1.f);
 	}
 }
 

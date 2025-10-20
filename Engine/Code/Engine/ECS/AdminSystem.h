@@ -178,6 +178,9 @@ public:
 public:
 
 	template <typename...CTypes>
+	GroupIter IterateAll() const;
+
+	template <typename...CTypes>
 	GroupIter Iterate(SystemContext const& context) const;
 
 	template <typename...CTypes>
@@ -451,6 +454,20 @@ void AdminSystem::RemoveComponent(EntityID entityID)
 	BitMask& entityComp = m_entityComposition[entityID];
 	BitMask& componentBitMask = m_componentBitMasks[typeIndex];
 	entityComp &= (~componentBitMask);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename...CTypes>
+GroupIter AdminSystem::IterateAll() const
+{
+	GroupIter result;
+
+	result.m_groupMask = GetComponentBitMask<CTypes...>();
+
+	result.m_currentIndex = GetNextEntityWithGroup(result.m_groupMask, 0, MAX_ENTITIES - 1);
+	return result;
 }
 
 

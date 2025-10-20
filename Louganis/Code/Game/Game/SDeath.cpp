@@ -12,8 +12,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SDeath::Startup()
 {
-    AddReadDependencies<CHealth>();
-	AddWriteDependencies<CAnimation, CDeath, CLifetime>();
+	AddWriteDependencies<CHealth, CAnimation, CDeath, CLifetime>();
 }
 
 
@@ -28,8 +27,8 @@ void SDeath::Run(SystemContext const& context)
 
 	for (auto it = g_ecs->Iterate<CHealth, CDeath, CLifetime>(context); it.IsValid(); ++it)
 	{
-		CHealth const& health = healthStorage[it];
-		if (!health.ShouldDie())
+		CHealth& health = healthStorage[it];
+		if (!health.GetHealthReachedZero())
 		{
 			continue;
 		}
@@ -42,10 +41,17 @@ void SDeath::Run(SystemContext const& context)
 		{
 			death.SetDiedThisFrame(false);
 			death.SetIsDead(true);
+
+			CLifetime& lifetime = lifetimeStorage[it];
+			if (lifetime.m_lifetime < 0.f)
+			{
+				lifetime.SetLifetime(death.m_corpseDurationSeconds);
+			}
 		}
 		else if (!death.GetIsDead())
 		{
 			death.SetDiedThisFrame(true);
+			health.SetRegenSuppressed(true);
 		}
 
 		if (death.GetDeathAnimFinishedThisFrame())
@@ -75,22 +81,13 @@ void SDeath::Run(SystemContext const& context)
 			}
 		}
 
-		if (death.m_deathAnimationName.IsValid())
+		if (death.m_deathAnimationName.IsValid() && animation.m_animInstance.IsValid())
 		{
 			ASSERT_OR_DIE(animation.m_pendingAnimRequest.m_animGroupName == death.m_deathAnimationName, "SDeath::Run - Current animation is not death animation. Was it overridden by something?");
 
 			if (animation.m_animInstance.IsFinished() && !deathAnimFinished)
 			{
 				death.SetDeathAnimFinishedThisFrame(true);
-			}
-		}
-		
-		if (death.GetDeathAnimFinishedThisFrame())
-		{
-			CLifetime& lifetime = lifetimeStorage[it];
-			if (lifetime.m_lifetime < 0.f)
-			{
-				lifetime.SetLifetime(death.m_corpseDurationSeconds);
 			}
 		}
 	}

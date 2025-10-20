@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SHealth.h"
 #include "CHealth.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -21,12 +22,18 @@ void SHealth::Run(SystemContext const& context)
 	{
 		CHealth& health = healthStorage[it];
 
-		health.m_currentHealth += health.m_healthRegen * context.m_deltaSeconds;
-
-		if (health.m_currentHealth > health.m_maxHealth)
+		if (health.m_currentHealth <= 0.f)
 		{
-			health.m_currentHealth = health.m_maxHealth;
+			// Pre-regen death check, read by Death system
+			health.SetHealthReachedZero(true);
 		}
+
+		if (!health.GetRegenSuppressed())
+		{
+			health.m_currentHealth += health.m_healthRegen * context.m_deltaSeconds;
+		}
+
+		health.m_currentHealth = MathUtils::Clamp(health.m_currentHealth, 0.f, health.m_maxHealth);
 	}
 }
 

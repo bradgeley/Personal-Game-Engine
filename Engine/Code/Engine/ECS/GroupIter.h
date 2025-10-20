@@ -4,7 +4,6 @@
 
 
 
-class AdminSystem;
 struct SystemContext;
 
 
@@ -16,9 +15,14 @@ struct SystemContext;
 //
 struct GroupIter
 {
-public:
+protected:
 
+	friend class AdminSystem;
+
+	GroupIter() = default;
 	explicit GroupIter(SystemContext const& context);
+
+public:
 
 	bool IsValid() const;
 	void Next();
@@ -27,7 +31,7 @@ public:
 	
 public:
 
-	SystemContext const*	m_context			= nullptr;
-	EntityID				m_currentIndex		= ENTITY_ID_INVALID;
+	EntityID				m_currentIndex		= 0;
+	EntityID				m_endIndex			= MAX_ENTITIES - 1;
 	BitMask					m_groupMask			= 0;
 };

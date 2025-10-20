@@ -33,8 +33,13 @@ void SMovementAnimation::Run(SystemContext const& context)
             continue;
         }
 
-		CMovement const& move = moveStorage[it];
         CAnimation& anim = animationStorage[it];
+        if (anim.m_pendingAnimRequest.m_priority > 1)
+        {
+			continue; // Higher priority animation is playing
+        }
+
+		CMovement const& move = moveStorage[it];
         PlayAnimationRequest request;
         request.m_animGroupName = move.m_frameMoveDir.IsNearlyZero(0.01f) ? idleAnimName : walkAnimName;
         request.m_animSpeedMultiplier = move.m_isSprinting ? move.m_sprintMoveSpeedMultiplier : 1.f;

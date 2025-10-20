@@ -19,9 +19,23 @@ CHealth::CHealth(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CHealth::ShouldDie() const
+void CHealth::TakeDamage(float damage)
 {
-	return m_currentHealth <= 0.f;
+	m_currentHealth -= damage;
+
+	if (m_currentHealth <= 0.f)
+	{
+		m_currentHealth = 0.f;
+		SetHealthReachedZero(true);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CHealth::GetHealthReachedZero() const
+{
+	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::HealthReachedZero)) != 0;
 }
 
 
@@ -38,6 +52,29 @@ bool CHealth::GetIsInvincible() const
 bool CHealth::GetNeverShowHealthBar() const
 {
 	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::NeverShowHealthBar)) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CHealth::GetRegenSuppressed() const
+{
+	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::RegenSuppressed)) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::SetHealthReachedZero(bool reachedZero)
+{
+	if (reachedZero)
+	{
+		m_healthFlags |= static_cast<uint8_t>(HealthFlags::HealthReachedZero);
+	}
+	else
+	{
+		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::HealthReachedZero);
+	}
 }
 
 
@@ -67,5 +104,20 @@ void CHealth::SetNeverShowHealthBar(bool neverShowHealthBar)
 	else
 	{
 		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::NeverShowHealthBar);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::SetRegenSuppressed(bool regenSuppressed)
+{
+	if (regenSuppressed)
+	{
+		m_healthFlags |= static_cast<uint8_t>(HealthFlags::RegenSuppressed);
+	}
+	else
+	{
+		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::RegenSuppressed);
 	}
 }

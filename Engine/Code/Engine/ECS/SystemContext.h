@@ -13,7 +13,7 @@ class AdminSystem;
 struct SystemContext
 {
     SystemContext() = default;
-    explicit SystemContext(System* system, float deltaSeconds);
+    explicit SystemContext(System* system, float deltaSeconds = 0.f);
 
     // Sets start and end entity based on which job this system context is out of the total jobs
     void SplitEntities(int systemSplittingJobID, int systemSplittingNumJobs);

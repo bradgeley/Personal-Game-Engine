@@ -28,4 +28,5 @@ protected:
     static bool SetDebugTileDef(NamedProperties& args);
     static bool SetTimeOfDay(NamedProperties& args);
 	static bool DamagePlayer(NamedProperties& args);
+	static bool KillAllEnemies(NamedProperties& args);
 };

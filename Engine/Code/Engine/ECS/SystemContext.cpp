@@ -4,7 +4,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-SystemContext::SystemContext(System* system, float deltaSeconds) : m_system(system), m_deltaSeconds(deltaSeconds)
+SystemContext::SystemContext(System* system, float deltaSeconds /*= 0.f*/) : m_system(system), m_deltaSeconds(deltaSeconds)
 {
 
 }

@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugCommands.h"
+#include "CAIController.h"
 #include "CCollision.h"
 #include "CHealth.h"
 #include "CPlayerController.h"
@@ -26,6 +27,7 @@ void SDebugCommands::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("SetSeed", &SDebugCommands::SetSeed, "seed", DevConsoleArgType::Int);	
 	DevConsoleUtils::AddDevConsoleCommand("SetDebugTileDef", &SDebugCommands::SetDebugTileDef, "tileDefName", DevConsoleArgType::String);
 	DevConsoleUtils::AddDevConsoleCommand("SetTimeOfDay", &SDebugCommands::SetTimeOfDay, "timeOfDay", DevConsoleArgType::Int);
+	DevConsoleUtils::AddDevConsoleCommand("KillAllEnemies", &SDebugCommands::KillAllEnemies);
 }
 
 
@@ -49,6 +51,7 @@ void SDebugCommands::Shutdown()
 	DevConsoleUtils::RemoveDevConsoleCommand("SetSeed", &SDebugCommands::SetSeed);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetDebugTileDef", &SDebugCommands::SetDebugTileDef);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetTimeOfDay", &SDebugCommands::SetTimeOfDay);
+	DevConsoleUtils::RemoveDevConsoleCommand("KillAllEnemies", &SDebugCommands::KillAllEnemies);
 }
 
 
@@ -57,8 +60,7 @@ void SDebugCommands::Shutdown()
 bool SDebugCommands::Goto(NamedProperties& args)
 {
 	Vec2 location = args.Get("location", Vec2::ZeroVector);
-	SystemContext context;
-	for (auto it = g_ecs->Iterate<CPlayerController, CTransform>(context); it.IsValid(); ++it)
+	for (auto it = g_ecs->IterateAll<CPlayerController, CTransform>(); it.IsValid(); ++it)
 	{
 		CTransform* transform = g_ecs->GetComponent<CTransform>(it);
 		transform->m_pos = location;
@@ -71,8 +73,7 @@ bool SDebugCommands::Goto(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool SDebugCommands::Ghost(NamedProperties&)
 {
-	SystemContext context;
-	for (auto it = g_ecs->Iterate<CPlayerController, CCollision>(context); it.IsValid(); ++it)
+	for (auto it = g_ecs->IterateAll<CPlayerController, CCollision>(); it.IsValid(); ++it)
 	{
 		CCollision* cCollision = g_ecs->GetComponent<CCollision>(it);
 		cCollision->SetCollisionEnabled(!cCollision->IsCollisionEnabled());
@@ -85,8 +86,7 @@ bool SDebugCommands::Ghost(NamedProperties&)
 //----------------------------------------------------------------------------------------------------------------------
 bool SDebugCommands::GodMode(NamedProperties&)
 {
-	SystemContext context;
-	for (auto it = g_ecs->Iterate<CPlayerController, CHealth>(context); it.IsValid(); ++it)
+	for (auto it = g_ecs->IterateAll<CPlayerController, CHealth>(); it.IsValid(); ++it)
 	{
 		CHealth* health = g_ecs->GetComponent<CHealth>(it);
 		health->SetInvincible(!health->GetIsInvincible());
@@ -113,8 +113,7 @@ bool SDebugCommands::SetSeed(NamedProperties& args)
 bool SDebugCommands::SlowPlayer(NamedProperties& args)
 {
 	bool slow = args.Get("slow", true);
-	SystemContext context;
-	for (auto it = g_ecs->Iterate<CPlayerController, CTime>(context); it.IsValid(); ++it)
+	for (auto it = g_ecs->IterateAll<CPlayerController, CTime>(); it.IsValid(); ++it)
 	{
 		CTime* cTime = g_ecs->GetComponent<CTime>(it);
 		cTime->m_clock.SetTimeDilation(slow ? 0.1 : 1.0);
@@ -162,13 +161,28 @@ bool SDebugCommands::SetTimeOfDay(NamedProperties& args)
 bool SDebugCommands::DamagePlayer(NamedProperties& args)
 {
 	float damageAmount = args.Get("amount", 10.f);
-	SystemContext context;
-	for (auto it = g_ecs->Iterate<CPlayerController, CHealth>(context); it.IsValid(); ++it)
+	for (auto it = g_ecs->IterateAll<CPlayerController, CHealth>(); it.IsValid(); ++it)
 	{
 		CHealth* health = g_ecs->GetComponent<CHealth>(it);
 		if (!health->GetIsInvincible())
 		{
 			health->m_currentHealth -= damageAmount;
+		}
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::KillAllEnemies(NamedProperties&)
+{
+	for (auto it = g_ecs->IterateAll<CAIController, CHealth>(); it.IsValid(); ++it)
+	{
+		CHealth* health = g_ecs->GetComponent<CHealth>(it);
+		if (!health->GetIsInvincible())
+		{
+			health->TakeDamage(health->m_currentHealth);
 		}
 	}
 	return false;

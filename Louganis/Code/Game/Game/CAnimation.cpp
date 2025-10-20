@@ -14,9 +14,9 @@ CAnimation::CAnimation(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CAnimation::PlayAnimation(PlayAnimationRequest const& request)
+bool CAnimation::PlayAnimation(PlayAnimationRequest const& request, bool force /*= false*/)
 {
-    if (m_pendingAnimRequest.m_priority > request.m_priority)
+    if (!force && m_pendingAnimRequest.m_priority > request.m_priority)
     {
         return false;
     }

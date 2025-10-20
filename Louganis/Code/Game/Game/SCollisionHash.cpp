@@ -73,8 +73,8 @@ void SCollisionHash::PreRun()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::Run(SystemContext const& context)
 {
-    auto& world = g_ecs->GetSingleton<SCWorld>();
-    auto& scCollision = g_ecs->GetSingleton<SCCollision>();
+    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
 
