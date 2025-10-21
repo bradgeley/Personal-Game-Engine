@@ -164,6 +164,7 @@ void SpriteAnimation::ChangeDef(SpriteAnimationDef const& newDef, bool restart /
     {
 		m_currentFrame = 0;
 		m_t = 0.f;
+        m_currentDirection = 1.f;
     }
     else
     {

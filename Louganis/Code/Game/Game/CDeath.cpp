@@ -32,22 +32,6 @@ bool CDeath::GetDiedThisFrame() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CDeath::GetDeathAnimFinished() const
-{
-	return (m_deathTags & static_cast<uint8_t>(DeathTags::DeathAnimFinished)) != 0;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool CDeath::GetDeathAnimFinishedThisFrame() const
-{
-	return GetDeathAnimFinished() || (m_deathTags & static_cast<uint8_t>(DeathTags::DeathAnimFinishedThisFrame)) != 0;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void CDeath::SetIsDead(bool isDead)
 {
 	if (isDead)
@@ -72,35 +56,5 @@ void CDeath::SetDiedThisFrame(bool diedThisFrame)
 	else
 	{
 		m_deathTags &= ~static_cast<uint8_t>(DeathTags::DiedThisFrame);
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void CDeath::SetDeathAnimFinished(bool isFinished)
-{
-	if (isFinished)
-	{
-		m_deathTags |= static_cast<uint8_t>(DeathTags::DeathAnimFinished);
-	}
-	else
-	{
-		m_deathTags &= ~static_cast<uint8_t>(DeathTags::DeathAnimFinished);
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void CDeath::SetDeathAnimFinishedThisFrame(bool isFinished)
-{
-	if (isFinished)
-	{
-		m_deathTags |= static_cast<uint8_t>(DeathTags::DeathAnimFinishedThisFrame);
-	}
-	else
-	{
-		m_deathTags &= ~static_cast<uint8_t>(DeathTags::DeathAnimFinishedThisFrame);
 	}
 }

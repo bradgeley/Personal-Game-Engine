@@ -10,8 +10,6 @@ enum class DeathTags : uint8_t
 {
 	IsDead						= 1 << 0,
 	DiedThisFrame				= 1 << 1,
-	DeathAnimFinished			= 1 << 2,
-	DeathAnimFinishedThisFrame	= 1 << 3,
 };
 
 
@@ -26,13 +24,9 @@ public:
 
 	bool GetIsDead() const;
 	bool GetDiedThisFrame() const;
-	bool GetDeathAnimFinished() const;
-	bool GetDeathAnimFinishedThisFrame() const;
 
 	void SetIsDead(bool isDead);
 	void SetDiedThisFrame(bool diedThisFrame);
-	void SetDeathAnimFinished(bool isFinished);
-	void SetDeathAnimFinishedThisFrame(bool isFinished);
 
 public:
 

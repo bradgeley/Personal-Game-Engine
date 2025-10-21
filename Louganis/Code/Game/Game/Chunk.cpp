@@ -147,7 +147,7 @@ void Chunk::Generate(IntVec2 const& chunkCoords, WorldSettings const& worldSetti
 			else if (!tile.IsSolid())
 			{
 				SpawnInfo spawnInfo;
-				spawnInfo.m_def = EntityDef::GetEntityDef("BabyZombie");
+				spawnInfo.m_def = EntityDef::GetEntityDef("pig");
 				spawnInfo.m_spawnPos = tileOrigin + (tileDims * 0.5f);
 				out_spawnInfos.push_back(spawnInfo);
 			}
@@ -227,7 +227,7 @@ void Chunk::GenerateVBO()
 			// Write verts
 			int firstVertIndex = index * 6;
 			TerrainVertex* firstVert = vbo.GetData<TerrainVertex>(firstVertIndex);
-			*firstVert			= TerrainVertex(bottomLeftPoint,	tint, bottomLeftUVs,	lightmapUVs);
+			*(firstVert	   )	= TerrainVertex(bottomLeftPoint,	tint, bottomLeftUVs,	lightmapUVs);
 			*(firstVert + 1)	= TerrainVertex(bottomRightPoint,	tint, bottomRightUVs,	lightmapUVs);
 			*(firstVert + 2)	= TerrainVertex(topRightPoint,		tint, topRightUVs,		lightmapUVs);
 			*(firstVert + 3)	= TerrainVertex(bottomLeftPoint,	tint, bottomLeftUVs,	lightmapUVs);

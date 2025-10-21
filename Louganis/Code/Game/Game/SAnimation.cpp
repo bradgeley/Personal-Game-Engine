@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SAnimation.h"
 #include "CAnimation.h"
-#include "SCCamera.h"
 #include "CRender.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
@@ -13,7 +12,7 @@
 void SAnimation::Startup()
 {
 	AddWriteDependencies<CAnimation, AssetManager>();
-	AddReadDependencies<CRender, SCCamera>();
+	AddReadDependencies<CRender>();
 }
 
 
@@ -21,9 +20,6 @@ void SAnimation::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAnimation::Run(SystemContext const& context)
 {
-	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
-	AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
-
 	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 	auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
 
