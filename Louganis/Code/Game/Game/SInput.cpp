@@ -3,7 +3,6 @@
 #include "SCCamera.h"
 #include "CPlayerController.h"
 #include "CMovement.h"
-#include "CTransform.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Math/MathUtils.h"
 
@@ -13,7 +12,7 @@
 void SInput::Startup()
 {
     AddWriteDependencies<SCCamera, CMovement>();
-    AddReadDependencies<InputSystem, CTransform>();
+    AddReadDependencies<InputSystem>();
 }
 
 
@@ -22,7 +21,6 @@ void SInput::Startup()
 void SInput::Run(SystemContext const& context)
 {
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
-    auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	SCCamera& camera = g_ecs->GetSingleton<SCCamera>();
 
     // Camera input
@@ -38,7 +36,6 @@ void SInput::Run(SystemContext const& context)
     for (auto it = g_ecs->Iterate<CMovement, CPlayerController>(context); it.IsValid(); ++it)
     {
         CMovement& move = moveStorage[it];
-        CTransform const& transform = transformStorage[it];
 
         move.m_frameMoveDir = Vec2::ZeroVector;
         if (g_input->IsKeyDown('W'))
@@ -66,18 +63,6 @@ void SInput::Run(SystemContext const& context)
         else
         {
             move.SetIsSprinting(false);
-        }
-
-        if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('T'))
-        {
-            Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
-            Vec2 worldMousePos = camera.m_camera.ScreenToWorldOrtho(relMousePos);
-            move.m_frameMovement = worldMousePos - transform.m_pos;
-            move.SetIsTeleporting(true);
-		}
-        else
-        {
-            move.SetIsTeleporting(false);
         }
     }
 }
