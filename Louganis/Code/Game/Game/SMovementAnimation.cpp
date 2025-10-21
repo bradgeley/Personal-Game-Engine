@@ -42,7 +42,7 @@ void SMovementAnimation::Run(SystemContext const& context)
 		CMovement const& move = moveStorage[it];
         PlayAnimationRequest request;
         request.m_animGroupName = move.m_frameMoveDir.IsNearlyZero(0.01f) ? idleAnimName : walkAnimName;
-        request.m_animSpeedMultiplier = move.m_isSprinting ? move.m_sprintMoveSpeedMultiplier : 1.f;
+        request.m_animSpeedMultiplier = move.GetIsSprinting() ? move.m_sprintMoveSpeedMultiplier : 1.f;
         request.m_priority = 1;
         request.m_direction = move.m_frameMoveDir;
         anim.PlayAnimation(request);

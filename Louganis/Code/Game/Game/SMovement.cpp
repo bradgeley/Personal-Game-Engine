@@ -36,14 +36,14 @@ void SMovement::Run(SystemContext const& context)
             {
                 move.m_frameMoveDir = Vec2::ZeroVector;
                 move.m_frameMovement = Vec2::ZeroVector;
-                move.m_isTeleporting = false;
+                move.SetIsTeleporting(false);
                 continue;
             }
         }
 
 		CTransform& transform = transformStorage[it];
 
-        if (move.m_isTeleporting)
+        if (move.GetIsTeleporting())
         {
             transform.m_pos += move.m_frameMovement;
             move.m_frameMovement = Vec2::ZeroVector;
@@ -52,7 +52,7 @@ void SMovement::Run(SystemContext const& context)
 
         CTime const& time = timeStorage[it];
         move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * move.m_movementSpeedMultiplier * time.m_clock.GetDeltaSecondsF();
-        if (move.m_isSprinting)
+        if (move.GetIsSprinting())
         {
             move.m_frameMovement *= move.m_sprintMoveSpeedMultiplier;
         }

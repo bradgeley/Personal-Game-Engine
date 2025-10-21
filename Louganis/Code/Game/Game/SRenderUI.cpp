@@ -55,8 +55,8 @@ void SRenderUI::Run(SystemContext const& context)
 
 		float healthPercentage = health.m_currentHealth / health.m_maxHealth;
 
-		Vec2 headLocation = render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_scale);
-		float healthBarWidth = render.m_scale * 0.75f;
+		Vec2 headLocation = render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius);
+		float healthBarWidth = render.m_renderRadius * 0.75f;
 		AABB2 backgroundVerts;
 		backgroundVerts.SetCenter(headLocation);
 		backgroundVerts.SetDimsAboutCenter(Vec2(healthBarWidth, 0.0833f));

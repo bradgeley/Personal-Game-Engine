@@ -8,7 +8,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct PlayAnimationRequest
 {
-	Name	m_animGroupName				= Name::Invalid;
+	Name	m_animGroupName			= Name::Invalid;
 	int		m_priority				= 0;
 	float	m_animSpeedMultiplier	= 1.f;
 	Vec2	m_direction				= Vec2::ZeroVector;

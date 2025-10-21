@@ -32,7 +32,7 @@ void SInitView::Run(SystemContext const& context)
     {
         CRender& render = renderStorage[it];
 
-        bool isInView = GeometryUtils::DoesDiscOverlapAABB(render.GetRenderPosition(), render.m_scale, cameraBounds);
+        bool isInView = GeometryUtils::DoesDiscOverlapAABB(render.GetRenderPosition(), render.m_renderRadius, cameraBounds);
         render.SetIsInCameraView(isInView);
     }
 }

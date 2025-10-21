@@ -269,9 +269,9 @@ void SDebugRender::Run(SystemContext const& context)
             {
                 VertexUtils::AddVertsForWireDisc2D(frameVerts, collisionPos, collision.m_radius, 0.01f, 8, Rgba8::Magenta);
 			}
-            if (render && GeometryUtils::DoesDiscOverlapAABB(render->GetRenderPosition(), 0.5f * render->m_scale, cameraBounds))
+            if (render && GeometryUtils::DoesDiscOverlapAABB(render->GetRenderPosition(), 0.5f * render->m_renderRadius, cameraBounds))
             {
-				VertexUtils::AddVertsForWireDisc2D(frameVerts, render->GetRenderPosition(), 0.5f * render->m_scale, 0.01f, 8, Rgba8::Cyan);
+				VertexUtils::AddVertsForWireDisc2D(frameVerts, render->GetRenderPosition(), 0.5f * render->m_renderRadius, 0.01f, 8, Rgba8::Cyan);
 			}
         }
     }

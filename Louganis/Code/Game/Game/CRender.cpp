@@ -9,7 +9,7 @@
 CRender::CRender(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-    m_scale = XmlUtils::ParseXmlAttribute(elem, "scale", m_scale);
+    m_renderRadius = XmlUtils::ParseXmlAttribute(elem, "scale", m_renderRadius);
     m_renderOffset = XmlUtils::ParseXmlAttribute(elem, "offset", m_renderOffset);
 
 	bool rotateSprite = XmlUtils::ParseXmlAttribute(elem, "rotateSprite", false);
@@ -21,7 +21,7 @@ CRender::CRender(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 Vec2 CRender::GetRenderPosition() const
 {
-	return m_pos + (m_renderOffset * m_scale * 0.5f);
+	return m_pos + (m_renderOffset * m_renderRadius * 0.5f);
 }
 
 

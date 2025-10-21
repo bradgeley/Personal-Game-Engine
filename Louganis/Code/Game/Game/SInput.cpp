@@ -61,11 +61,11 @@ void SInput::Run(SystemContext const& context)
 
         if (g_input->IsKeyDown(KeyCode::Shift))
         {
-            move.m_isSprinting = true;
+            move.SetIsSprinting(true);
         }
         else
         {
-            move.m_isSprinting = false;
+            move.SetIsSprinting(false);
         }
 
         if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('T'))
@@ -73,11 +73,11 @@ void SInput::Run(SystemContext const& context)
             Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
             Vec2 worldMousePos = camera.m_camera.ScreenToWorldOrtho(relMousePos);
             move.m_frameMovement = worldMousePos - transform.m_pos;
-            move.m_isTeleporting = true;
+            move.SetIsTeleporting(true);
 		}
         else
         {
-            move.m_isTeleporting = false;
+            move.SetIsTeleporting(false);
         }
     }
 }

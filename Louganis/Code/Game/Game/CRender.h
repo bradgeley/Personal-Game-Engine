@@ -11,7 +11,7 @@
 enum class RenderFlags : uint8_t
 {
 	RotateSprite    = 1 << 0, // if true, render the sprite rotated to orientation, if false, do not rotate
-	IsInCameraView  = 1 << 1,
+	IsInCameraView  = 1 << 1, // True if the entity is in camera view this frame, according to size and location.
 };
 
 
@@ -39,6 +39,6 @@ public:
     Vec2 m_pos                      = Vec2::ZeroVector;
     Vec2 m_renderOffset			    = Vec2::ZeroVector;
     float m_orientation             = 0.f;
-    float m_scale                   = 1.f;
+    float m_renderRadius            = 1.f;
     Rgba8 m_tint                    = Rgba8::White;
 };
