@@ -15,8 +15,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugInput::Startup()
 {
-    AddWriteDependencies<InputSystem, SCCamera, CMovement>();
-	AddReadDependencies<SCWorld, SCDebug, CTransform>();
+    AddWriteDependencies<SCCamera, CMovement>();
+	AddReadDependencies<InputSystem, SCWorld, SCDebug, CTransform>();
 }
 
 

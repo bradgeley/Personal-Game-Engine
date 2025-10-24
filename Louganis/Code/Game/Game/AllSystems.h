@@ -40,6 +40,7 @@
 #include "SRenderEntities.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"
+#include "SStorm.h"
 #include "STime.h"
 #include "SUnloadChunks.h"
 #include "SWorld.h"

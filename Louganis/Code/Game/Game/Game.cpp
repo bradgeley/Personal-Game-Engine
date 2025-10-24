@@ -244,6 +244,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SDebugInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SAbility>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SStorm>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLoadChunks>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SUnloadChunks>((int) FramePhase::PrePhysics);
