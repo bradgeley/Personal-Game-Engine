@@ -38,6 +38,7 @@
 #include "SMovementAnimation.h"
 #include "SPhysics.h"
 #include "SRenderEntities.h"
+#include "SRenderStorm.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"
 #include "SStorm.h"

@@ -223,6 +223,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCLighting>();
     g_ecs->RegisterComponentSingleton<SCLoadChunks>();
     g_ecs->RegisterComponentSingleton<SCRender>();
+    g_ecs->RegisterComponentSingleton<SCStorm>();
     g_ecs->RegisterComponentSingleton<SCTime>();
     g_ecs->RegisterComponentSingleton<SCWorld>();
 
@@ -273,6 +274,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SLighting>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderStorm>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 	g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);

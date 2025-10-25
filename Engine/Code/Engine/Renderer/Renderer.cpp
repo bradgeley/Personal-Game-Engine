@@ -538,6 +538,30 @@ void Renderer::ResetRenderingPipelineState()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Renderer::ResetCameraConstants()
+{
+	m_dirtySettings.m_cameraConstants = CameraConstants();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::ResetModelConstants()
+{
+	m_dirtySettings.m_modelConstants = ModelConstants();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::ResetFontConstants()
+{
+	m_dirtySettings.m_fontConstants = FontConstants();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::SetCameraConstants(CameraConstants const& cameraConstants)
 {
 	m_dirtySettings.m_cameraConstants = cameraConstants;

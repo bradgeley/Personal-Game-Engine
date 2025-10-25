@@ -125,6 +125,10 @@ public:
 
     // Rendering Pipeline State
     void ResetRenderingPipelineState();
+	void ResetCameraConstants();
+	void ResetModelConstants();
+	void ResetFontConstants();
+
     void SetCameraConstants(CameraConstants const& cameraConstants);
     void SetModelConstants(ModelConstants const& modelConstants);
     void SetFontConstants(FontConstants const& fontConstants);

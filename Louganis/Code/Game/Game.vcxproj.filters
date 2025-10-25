@@ -179,6 +179,12 @@
     <ClCompile Include="Game\SMovementAnimation.cpp">
       <Filter>ECS\Systems\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SStorm.cpp">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRenderStorm.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -411,6 +417,15 @@
     </ClInclude>
     <ClInclude Include="Game\SMovementAnimation.h">
       <Filter>ECS\Systems\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SStorm.h">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCStorm.h">
+      <Filter>ECS\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderStorm.h">
+      <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

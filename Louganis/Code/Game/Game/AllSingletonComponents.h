@@ -14,5 +14,6 @@
 #include "SCLighting.h"
 #include "SCLoadChunks.h"
 #include "SCRender.h"
+#include "SCStorm.h"
 #include "SCTime.h"
 #include "SCWorld.h"

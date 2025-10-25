@@ -5,11 +5,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class STime : public System
+class SStorm : public System
 {
 public:
 
-    STime(Name name = "Time", Rgba8 const& debugTint = Rgba8::SkyBlue) : System(name, debugTint) {};
+    SStorm(Name name = "Storm", Rgba8 const& debugTint = Rgba8::DarkViolet) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
 };

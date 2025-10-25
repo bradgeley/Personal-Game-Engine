@@ -62,6 +62,9 @@ void SLighting::Run(SystemContext const&)
         {
             return true;
         }
+
+        scLighting.m_dirtyChunks.insert(&chunk);
+
         for (int tileIndex = 0; tileIndex < chunk.m_tiles.Size(); ++tileIndex)
         {
             Tile& tile = chunk.m_tiles.GetRef(tileIndex);
@@ -98,7 +101,7 @@ void SLighting::Run(SystemContext const&)
         uint8_t correctIndoorLighting = innateIndoorLight;
 
         bool lightingChanged = false;
-        for (auto& neighborOffset : neighborOffsets)
+        for (IntVec2 const& neighborOffset : neighborOffsets)
         {
 			WorldCoords neighborCoords = scWorld.GetWorldCoordsAtOffset(worldCoords, neighborOffset);
             Chunk* neighborChunk = scWorld.GetActiveChunk(neighborCoords);
