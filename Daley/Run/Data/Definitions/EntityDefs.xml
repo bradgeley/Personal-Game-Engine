@@ -1,0 +1,19 @@
+<EntityDefs>
+
+  <!-- ==================================================================================================================== -->
+  <!-- Enemies -->
+
+  <EntityDef name = "SmallEnemy">
+    <Lifetime></Lifetime>
+    <Death></Death>
+    <Health maxHealth="100" healthRegen="1"></Health>
+    <Transform></Transform>
+    <Movement moveSpeed="1"></Movement>
+    <Collision radius="0.25"></Collision>
+    <Render scale="0.5"></Render>
+    <!-- <Animation spriteSheet="Data/SpriteSheets/pig.xml"></Animation> -->
+    <Time></Time>
+    <AIController></AIController>
+  </EntityDef>
+  
+</EntityDefs>
