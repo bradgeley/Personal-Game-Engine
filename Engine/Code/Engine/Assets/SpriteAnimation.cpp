@@ -164,7 +164,7 @@ void SpriteAnimation::ChangeDef(SpriteAnimationDef const& newDef, bool restart /
     {
 		m_currentFrame = 0;
 		m_t = 0.f;
-        m_currentDirection = 1.f;
+        m_currentDirection = 1;
     }
     else
     {
@@ -181,7 +181,7 @@ void SpriteAnimation::Update(float deltaSeconds)
     {
         // Single frame animations do not update
         m_t += deltaSeconds / GetSecondsPerFrame();
-        m_t = MathUtils::Clamp01(m_t);
+        m_t = MathUtils::Clamp01F(m_t);
         return;
 	}
 
