@@ -70,9 +70,6 @@
     <ClCompile Include="Game\SCollisionHash.cpp">
       <Filter>ECS\Systems\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SWorldCollision.cpp">
-      <Filter>ECS\Systems\Collision</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SWorld.cpp">
       <Filter>ECS\Systems\World</Filter>
     </ClCompile>
@@ -253,9 +250,6 @@
       <Filter>ECS\Systems\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Game\SCollisionHash.h">
-      <Filter>ECS\Systems\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SWorldCollision.h">
       <Filter>ECS\Systems\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Game\SWorld.h">

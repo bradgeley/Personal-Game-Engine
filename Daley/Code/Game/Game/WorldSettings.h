@@ -42,13 +42,21 @@ namespace StaticWorldSettings
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct WorldSettings
+struct CustomWorldSettings
 {
     //----------------------------------------------------------------------------------------------------------------------
     // Collision Settings
 
     float   m_entityWallBuffer              = 0.01f;
-    float   m_collisionHashWiggleRoom       = 0.25f;      // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
+    float   m_collisionHashWiggleRoom       = 0.25f;            // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Generation Settings
+
+    float   m_goalDistance                  = 20.f;             // How far away is the goal from the right side of the screen, in world units
+	int     m_goalWidth                     = 4;                // How large is the goal? In world units
+	Name    m_groundTileName                = "Grass";          // The name of the tile that is the ground, as defined in TileDefs.xml
+	Name    m_goalTileName                  = "IslandWater";    // The name of the tile that is the goal, as defined in TileDefs.xml
 };
 
 

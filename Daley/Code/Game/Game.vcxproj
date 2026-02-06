@@ -333,7 +333,6 @@
     <ClCompile Include="Game\SRenderEntities.cpp" />
     <ClCompile Include="Game\SRenderWorld.cpp" />
     <ClCompile Include="Game\SWorld.cpp" />
-    <ClCompile Include="Game\SWorldCollision.cpp" />
     <ClCompile Include="Game\Tile.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
     <ClCompile Include="Game\WorldRaycast.cpp" />
@@ -399,7 +398,6 @@
     <ClInclude Include="Game\SRenderEntities.h" />
     <ClInclude Include="Game\SRenderWorld.h" />
     <ClInclude Include="Game\SWorld.h" />
-    <ClInclude Include="Game\SWorldCollision.h" />
     <ClInclude Include="Game\Tile.h" />
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />

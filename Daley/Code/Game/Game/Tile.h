@@ -17,6 +17,7 @@ enum class TileTag : uint8_t
 	Visible = 1 << 1,
 	Solid = 1 << 2,
 	Opaque = 1 << 3,
+	IsGoal = 1 << 4,
 };
 
 
@@ -33,6 +34,7 @@ public:
 	inline bool IsSolid()			const { return m_tags & static_cast<uint8_t>(TileTag::Solid); }
 	inline bool IsOpaque()			const { return m_tags & static_cast<uint8_t>(TileTag::Opaque); }
 	inline bool IsLightingDirty()   const { return m_tags & static_cast<uint8_t>(TileTag::Lighting_Dirty); }
+	inline bool IsGoal()			const { return m_tags & static_cast<uint8_t>(TileTag::IsGoal); }
 
 	inline uint8_t GetOutdoorLighting() 	const { return m_lightingValues & 0x0F; }
 	inline float   GetOutdoorLighting01() const { return static_cast<float>(GetOutdoorLighting()) / 15.f; }
@@ -45,6 +47,7 @@ public:
 	inline void SetOutdoorLighting(uint8_t outdoorLighting) { m_lightingValues = (m_lightingValues & 0xF0) | (outdoorLighting & 0x0F); }     // Set the bottom 4 bits
 
 	void SetLightingDirty(bool dirty);
+	void SetIsGoal(bool isGoal);
 
 public:
 

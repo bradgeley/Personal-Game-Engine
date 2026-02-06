@@ -26,3 +26,18 @@ void Tile::SetLightingDirty(bool dirty)
         m_tags &= ~static_cast<uint8_t>(TileTag::Lighting_Dirty);
     }
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Tile::SetIsGoal(bool isGoal)
+{
+    if (isGoal)
+    {
+        m_tags |= static_cast<uint8_t>(TileTag::IsGoal);
+    }
+    else
+    {
+        m_tags &= ~static_cast<uint8_t>(TileTag::IsGoal);
+	}
+}

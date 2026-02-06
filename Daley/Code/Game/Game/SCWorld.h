@@ -52,6 +52,8 @@ public:
     WorldSettings m_worldSettings;
 
     FastGrid<Tile, StaticWorldSettings::s_worldSizePowerOfTwo> m_tiles;
+    int m_firstVisibleTileIndex                 = 0;
+    int m_lastVisibleTileIndex                  = 0;
 
     bool m_isLightingDirty                      = true;
     bool m_isVBODirty                           = true;
