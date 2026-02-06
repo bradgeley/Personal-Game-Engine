@@ -70,8 +70,7 @@ void SRenderWorld::Run(SystemContext const&)
     g_renderer->BindShader(scRender.m_worldShaderID);
 	g_renderer->BindConstantBuffer(scRender.m_staticWorldConstantsBuffer, StaticWorldConstants::GetSlot());
 
-    // Todo: Generate world vbo
-	//g_renderer->DrawVertexBuffer(world.m_vbo);
+	g_renderer->DrawVertexBuffer(world.m_vbo);
 }
 
 

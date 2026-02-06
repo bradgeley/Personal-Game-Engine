@@ -1,12 +1,17 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SWorld.h"
+#include "SCWorld.h"
+#include "TileDef.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SWorld::Startup()
 {
+	TileDef::LoadFromXML();
 
+	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+	scWorld.InitializeMap();
 }
 
 

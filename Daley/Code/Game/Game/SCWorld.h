@@ -23,6 +23,12 @@ class SCWorld
 {
 public:
 
+    void InitializeMap();
+    void GenerateMapVBO();
+    void GenerateLightmap();
+
+    void Shutdown();
+
     IntVec2 GetTileCoordsAtLocation(Vec2 const& worldLocation) const;
 
     bool IsTileSolid(int tileIndex) const;

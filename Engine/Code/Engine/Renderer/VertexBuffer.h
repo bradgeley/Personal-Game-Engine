@@ -33,6 +33,9 @@ public:
 
     template<typename T>
     void Initialize(size_t initialVertCount = 0);
+
+    template<typename T>
+    bool MatchesVertType() const;
     
     template<typename T>
     void AddVert(T const& vert);
@@ -71,6 +74,7 @@ protected:
     virtual void AddVertsInternal(void const* vert, size_t vertSize, size_t numVerts);
 	virtual void* GetVertInternal(size_t vertSize, size_t index);
 	virtual void const* GetVertInternal(size_t vertSize, size_t index) const;
+	virtual bool MatchesVertTypeInternal(size_t vertSize) const;
 
 protected:
 
@@ -85,6 +89,15 @@ template<typename T>
 void VertexBuffer::Initialize(size_t initialVertCount /*= 0*/)
 {
     InitializeInternal(sizeof(T), initialVertCount);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename T>
+inline bool VertexBuffer::MatchesVertType() const
+{
+    return MatchesVertTypeInternal(sizeof(T));
 }
 
 

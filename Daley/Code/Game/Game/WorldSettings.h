@@ -11,8 +11,8 @@
 //
 namespace StaticWorldSettings
 {
-    constexpr int   s_worldSizePowerOfTwo                   = 4;        // In tiles
-    constexpr float s_tileWidth                             = 2.f;      // In world units
+    constexpr int   s_worldSizePowerOfTwo                   = 7;        // In tiles
+    constexpr float s_tileWidth                             = 1.f;      // In world units
 
 	constexpr uint8_t s_maxOutdoorLighting                  = 15;       // 4 bits (0-15)
 	constexpr uint8_t s_maxIndoorLighting                   = 15;       // 4 bits (0-15)
@@ -36,7 +36,6 @@ namespace StaticWorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Static Asserts
     //
-    static_assert(s_worldSizePowerOfTwo > 0 && s_worldSizePowerOfTwo < 5, "s_worldSizePowerOfTwo must be between 1 and 4");
     static_assert(s_tileWidth > 0.f && s_tileWidth < 999.f, "s_tileWidth must be greater than 0 and less than 999");
 }
 

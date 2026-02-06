@@ -352,6 +352,11 @@ void VertexUtils::AddVertsForCapsule2D(VertexBuffer& out_verts, Vec2 const& star
 //----------------------------------------------------------------------------------------------------------------------
 void VertexUtils::AddVertsForWireMesh2D(VertexBuffer& out_verts, VertexBuffer const& triangles, float thickness, Rgba8 const& tint)
 {
+    if (!triangles.MatchesVertType<Vertex_PCU>())
+    {
+        return;
+    }
+
     for (size_t i = 0; i < triangles.GetNumVerts(); i += 3)
     {
         Vertex_PCU const& v1 = triangles.GetVert<Vertex_PCU>(i);

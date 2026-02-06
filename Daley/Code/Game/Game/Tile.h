@@ -51,5 +51,5 @@ public:
 	TileID		m_id = 0;
 	TileTags	m_tags = 0;
 	uint8_t		m_lightingValues = 0;									// 4 bits indoor lighting (XXXX0000), 4 bits outdoor lighting (0000XXXX)
-	uint8_t		m_staticLighting = 0;									// Brightness of this tile as determined by world generation (0-255)
+	uint8_t		m_staticLighting = 255;									// Brightness of this tile as determined by world generation (0-255)
 };

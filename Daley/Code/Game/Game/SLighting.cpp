@@ -121,8 +121,6 @@ void SLighting::Run(SystemContext const&)
         }
         it = scLighting.m_dirtyLightingTiles.begin();
     }
-
-    // Todo: Generate Lightmap
 }
 
 

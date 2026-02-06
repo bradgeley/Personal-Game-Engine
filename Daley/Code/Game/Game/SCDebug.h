@@ -17,6 +17,10 @@ public:
 	VertexBufferID m_frameUntexVerts		= RendererUtils::InvalidID;
 	VertexBufferID m_frameDefaultFontVerts	= RendererUtils::InvalidID;
 
+	// Overlay
 	bool m_debugOverlayEnabled				= false;
+
+	// Debug draw toggles
+	bool m_debugRenderGrid					= false;
 };
 

@@ -145,3 +145,11 @@ void const* VertexBuffer::GetVertInternal(size_t vertSize, size_t index) const
     ASSERT_OR_DIE(data != nullptr && byteIndex < m_gpuBuffer->GetCPUBufferSize(), "VertexBuffer - Index out of bounds.");
     return (void*) (data + byteIndex);
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool VertexBuffer::MatchesVertTypeInternal(size_t vertSize) const
+{
+    return vertSize == m_vertSize;
+}
