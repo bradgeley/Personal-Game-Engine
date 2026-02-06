@@ -49,7 +49,7 @@ public:
 public:
 
     bool m_isWorldSeedDirty                     = true; // flag that is set when the world seed changes, so we can regenerate the world
-    WorldSettings m_worldSettings;
+    CustomWorldSettings m_worldSettings;
 
     FastGrid<Tile, StaticWorldSettings::s_worldSizePowerOfTwo> m_tiles;
     int m_firstVisibleTileIndex                 = 0;

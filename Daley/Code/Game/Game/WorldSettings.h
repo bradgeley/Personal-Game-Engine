@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Core/Name.h"
 #include "Engine/Renderer/Rgba8.h"
 #include <cstddef>
 #include <cstdint>
@@ -52,11 +53,15 @@ struct CustomWorldSettings
 
     //----------------------------------------------------------------------------------------------------------------------
     // Generation Settings
+    int     m_seed                          = 0;
 
-    float   m_goalDistance                  = 20.f;             // How far away is the goal from the right side of the screen, in world units
+    float   m_minGoalDistance               = 15.f;             // How far away is the goal from the right side of the screen, in world units
+    float   m_maxGoalDistance               = 20.f;             // How far away is the goal from the right side of the screen, in world units
 	int     m_goalWidth                     = 4;                // How large is the goal? In world units
+
 	Name    m_groundTileName                = "Grass";          // The name of the tile that is the ground, as defined in TileDefs.xml
 	Name    m_goalTileName                  = "IslandWater";    // The name of the tile that is the goal, as defined in TileDefs.xml
+	Name    m_pathTileName                  = "ForestGrass";    // The name of the tile that is the path, as defined in TileDefs.xml
 };
 
 
