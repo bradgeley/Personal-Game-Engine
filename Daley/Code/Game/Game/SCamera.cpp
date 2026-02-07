@@ -23,8 +23,8 @@ void SCamera::Run(SystemContext const& context)
 	SCCamera& camera = g_ecs->GetSingleton<SCCamera>();
 
     Vec2 cameraDims = Vec2(StaticWorldSettings::s_visibleWorldWidth, StaticWorldSettings::s_visibleWorldHeight);
-    Vec2 cameraMins = Vec2(0.f, 0.f);
-    Vec2 cameraMaxs = cameraMins + cameraDims;
+    Vec2 cameraMins = Vec2(StaticWorldSettings::s_cameraMinX, StaticWorldSettings::s_cameraMinY);
+    Vec2 cameraMaxs = Vec2(StaticWorldSettings::s_cameraMaxX, StaticWorldSettings::s_cameraMaxY);
     AABB2 cameraBounds = AABB2(cameraMins, cameraMaxs);
     camera.m_camera.SetOrthoBounds2D(cameraBounds);
     camera.m_camera.SetPosition2D(Vec2(0.f, 0.f));

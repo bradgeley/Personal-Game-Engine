@@ -30,7 +30,7 @@ void SDebugRender::Run(SystemContext const& context)
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 
     #if defined(_DEBUG)
-        if (scDebug.m_debugRenderGrid)
+        //if (scDebug.m_debugRenderGrid)
         {
             g_renderer->BindTexture(nullptr);
             g_renderer->BindShader(nullptr);

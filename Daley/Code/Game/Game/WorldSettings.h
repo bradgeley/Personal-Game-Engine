@@ -12,14 +12,14 @@
 //
 namespace StaticWorldSettings
 {
-    constexpr int   s_worldSizePowerOfTwo                   = 7;        // In tiles
-    constexpr float s_tileWidth                             = 1.f;      // In world units
+    constexpr int   s_worldSizePowerOfTwo   = 7;        // In tiles
+    constexpr float s_tileWidth             = 1.f;      // In world units
 
-    constexpr int   s_numWorldBoundsTiles                   = 2;        // Invisible tiles off the edge of world so entities may spawn in on the edges and walk into view
-    constexpr float s_visibleWorldAspect                    = 2.f;      // Visible X tiles divided by visible Y tiles
+    constexpr int   s_numWorldBoundsTiles   = 4;        // Invisible tiles off the edge of world so entities may spawn in on the edges and walk into view
+    constexpr float s_visibleWorldAspect    = 2.f;      // Visible X tiles divided by visible Y tiles
 
-	constexpr uint8_t s_maxOutdoorLighting                  = 15;       // 4 bits (0-15)
-	constexpr uint8_t s_maxIndoorLighting                   = 15;       // 4 bits (0-15)
+	constexpr uint8_t s_maxOutdoorLighting  = 15;       // 4 bits (0-15)
+	constexpr uint8_t s_maxIndoorLighting   = 15;       // 4 bits (0-15)
 
     //----------------------------------------------------------------------------------------------------------------------
     // Derived Constants
@@ -37,15 +37,25 @@ namespace StaticWorldSettings
     constexpr float s_oneOverWorldWidth     = 1.f / s_worldWidth;
     constexpr float s_worldHalfWidth        = s_worldWidth * 0.5f;
 
-    // Camera bounds
+    // Visible World
     constexpr float s_numVisibleWorldTilesX = s_numTilesInRow - s_numWorldBoundsTiles;
     constexpr float s_numVisibleWorldTilesY = s_numVisibleWorldTilesX / s_visibleWorldAspect;
     constexpr float s_visibleWorldWidth     = s_numVisibleWorldTilesX * s_tileWidth;
     constexpr float s_visibleWorldHeight    = s_numVisibleWorldTilesY * s_tileWidth;
-    constexpr float s_cameraMinX            = 0.f + s_worldBoundsTileWidth;
-    constexpr float s_cameraMaxX            = s_worldWidth - s_numWorldBoundsTiles;
-    constexpr float s_cameraMinY            = 0.f + static_cast<float>(s_numWorldBoundsTiles);
-    constexpr float s_cameraMaxY            = s_cameraMinY + static_cast<float>(s_numVisibleWorldTilesY) * s_tileWidth;
+
+    // World Offset (puts 0,0 in the center of the camera)
+	constexpr float s_worldOffsetX          = -1.f * s_worldWidth * 0.5f;
+    constexpr float s_worldOffsetY          = -1.f * (s_visibleWorldHeight) * 0.5f - s_worldBoundsTileWidth;
+    
+    // Camera bounds
+    constexpr float s_cameraMinX            = 0.f + s_worldBoundsTileWidth + s_worldOffsetX;
+    constexpr float s_cameraMaxX            = s_worldWidth - s_numWorldBoundsTiles + s_worldOffsetX;
+    constexpr float s_cameraMinY            = 0.f + s_worldBoundsTileWidth + s_worldOffsetY;
+    constexpr float s_cameraMaxY            = s_cameraMinY + s_visibleWorldHeight * s_tileWidth;
+
+    // Debug
+	constexpr float s_tileGridDebugDrawThickness        = 0.02f;
+	constexpr float s_worldOriginDebugDrawThickness     = 0.1f;
 
     //----------------------------------------------------------------------------------------------------------------------
     // Collision Constants

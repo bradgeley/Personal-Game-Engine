@@ -78,7 +78,7 @@ void SCWorld::GenerateMapVBO()
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
 	vbo.Resize(StaticWorldSettings::s_numVertsInWorld);
 
-	Vec2 worldMins = Vec2(0.f, 0.f);
+	Vec2 worldMins = Vec2(0.f, 0.f) + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
 	Vec2 worldDims = Vec2(StaticWorldSettings::s_worldWidth, StaticWorldSettings::s_worldWidth);
 	Vec2 worldMaxs = worldMins + worldDims;
 	AABB2 worldBounds = AABB2(worldMins, worldMaxs);
@@ -129,8 +129,10 @@ void SCWorld::GenerateMapVBO()
 	#if defined(_DEBUG)
 	m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 	VertexBuffer& debugVBO = *g_renderer->GetVertexBuffer(m_debugVBO);
-	VertexUtils::AddVertsForWireGrid(debugVBO, worldBounds, IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), 0.01f, Rgba8::Black);
+	VertexUtils::AddVertsForWireGrid(debugVBO, worldBounds, IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), StaticWorldSettings::s_tileGridDebugDrawThickness, Rgba8::Black);
 	VertexUtils::AddVertsForWireBox2D(debugVBO, worldBounds, 0.03f, Rgba8::Red);
+	VertexUtils::AddVertsForArrow2D(debugVBO, Vec2(0.f, 0.f), Vec2(1.f, 0.f), StaticWorldSettings::s_worldOriginDebugDrawThickness, Rgba8::Red);
+	VertexUtils::AddVertsForArrow2D(debugVBO, Vec2(0.f, 0.f), Vec2(0.f, 1.f), StaticWorldSettings::s_worldOriginDebugDrawThickness, Rgba8::Blue);
 	#endif
 
 	m_isVBODirty = false;
