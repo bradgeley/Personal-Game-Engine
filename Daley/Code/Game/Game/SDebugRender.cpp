@@ -2,7 +2,9 @@
 #include "SDebugRender.h"
 #include "SCDebug.h"
 #include "SCWorld.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -28,6 +30,10 @@ void SDebugRender::Run(SystemContext const& context)
 {
 	SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>();
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    Font* defaultFont = g_renderer->GetDefaultFont();
+
+    VertexBuffer& untexturedVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameUntexVerts);
+    VertexBuffer& defaultFontVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
 
     #if defined(_DEBUG)
         //if (scDebug.m_debugRenderGrid)
@@ -37,6 +43,16 @@ void SDebugRender::Run(SystemContext const& context)
             g_renderer->DrawVertexBuffer(scWorld.m_debugVBO);
         }
     #endif 
+
+    g_renderer->BindTexture(nullptr);
+    g_renderer->BindShader(nullptr);
+    g_renderer->DrawVertexBuffer(scDebug.m_frameUntexVerts);
+
+	defaultFont->SetRendererState();
+    g_renderer->DrawVertexBuffer(scDebug.m_frameDefaultFontVerts);
+
+	untexturedVerts.ClearVerts();
+	defaultFontVerts.ClearVerts();
 }
 
 

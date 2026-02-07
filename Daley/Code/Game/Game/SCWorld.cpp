@@ -187,7 +187,8 @@ void SCWorld::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 SCWorld::GetTileCoordsAtLocation(Vec2 const& worldLocation) const
 {
-	Vec2 globalTileCoords = worldLocation * StaticWorldSettings::s_oneOverTileWidth;
+	Vec2 relativeLocation = worldLocation - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
+	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
 	return IntVec2(globalTileCoords.GetFloor());
 }
 
@@ -353,7 +354,7 @@ AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos) const
 	IntVec2 tileCoords = GetTileCoordsAtLocation(worldPos);
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 	AABB2 tileBounds;
-	tileBounds.mins = Vec2(tileCoords) * StaticWorldSettings::s_tileWidth;
+	tileBounds.mins = Vec2(tileCoords) * StaticWorldSettings::s_tileWidth + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
 	tileBounds.maxs = tileBounds.mins + tileDims;
 	return tileBounds;
 }
@@ -365,7 +366,7 @@ AABB2 SCWorld::GetTileBounds(IntVec2 const& tileCoords) const
 {
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 	AABB2 tileBounds;
-	tileBounds.mins = Vec2(tileCoords) * StaticWorldSettings::s_tileWidth;
+	tileBounds.mins = Vec2(tileCoords) * StaticWorldSettings::s_tileWidth + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
 	tileBounds.maxs = tileBounds.mins + tileDims;
 	return tileBounds;
 }

@@ -54,8 +54,8 @@ namespace StaticWorldSettings
     constexpr float s_cameraMaxY            = s_cameraMinY + s_visibleWorldHeight * s_tileWidth;
 
     // Debug
-	constexpr float s_tileGridDebugDrawThickness        = 0.02f;
-	constexpr float s_worldOriginDebugDrawThickness     = 0.1f;
+	constexpr float s_tileGridDebugDrawThickness    = 0.02f;
+	constexpr float s_worldOriginDebugDrawThickness = 0.1f;
 
     //----------------------------------------------------------------------------------------------------------------------
     // Collision Constants
