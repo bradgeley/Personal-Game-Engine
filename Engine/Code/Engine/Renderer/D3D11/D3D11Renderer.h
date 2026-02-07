@@ -50,7 +50,7 @@ public:
 
     virtual void MSAAChanged() override;
 
-    virtual void BindRenderTarget(RenderTargetID renderTargetID) override;
+    virtual void BindRenderTarget(RenderTargetID renderTargetID, float letterboxedAspect = -1.f) override;
     virtual void ResizeSwapChainRenderTarget(RenderTargetID renderTargetID, IntVec2 const& newSize) override;
     virtual bool SetFullscreenState(RenderTargetID renderTargetID, bool fullscreen) override;
 

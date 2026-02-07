@@ -14,7 +14,7 @@ struct RenderTarget
 
     virtual void Present();
 
-    IntVec2 m_renderDimensions;
+    IntVec2 m_renderDimensions;   // Full render target dims
     TextureID m_backbufferTexture    = RendererUtils::InvalidID;
     TextureID m_depthBuffer          = RendererUtils::InvalidID;
     SwapchainID m_swapchain          = RendererUtils::InvalidID;

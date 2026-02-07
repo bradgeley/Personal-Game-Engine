@@ -39,8 +39,20 @@ void SCWorld::InitializeMap()
 	Tile const& defaultTile = TileDef::GetDefaultTile("Grass");
 	m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), defaultTile);
 
+	CustomWorldSettings worldSettings;
+
+
+	GenerateTiles(worldSettings);
 	GenerateLightmap();
 	GenerateMapVBO();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::GenerateTiles(CustomWorldSettings const& settings)
+{
+
 }
 
 
@@ -66,7 +78,7 @@ void SCWorld::GenerateMapVBO()
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
 	vbo.Resize(StaticWorldSettings::s_numVertsInWorld);
 
-	Vec2 worldMins = Vec2(-StaticWorldSettings::s_worldHalfWidth, -StaticWorldSettings::s_worldHalfWidth);
+	Vec2 worldMins = Vec2(0.f, 0.f);
 	Vec2 worldDims = Vec2(StaticWorldSettings::s_worldWidth, StaticWorldSettings::s_worldWidth);
 	Vec2 worldMaxs = worldMins + worldDims;
 	AABB2 worldBounds = AABB2(worldMins, worldMaxs);

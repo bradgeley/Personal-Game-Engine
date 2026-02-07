@@ -454,7 +454,7 @@ void D3D11Renderer::MSAAChanged()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::BindRenderTarget(RenderTargetID renderTargetID)
+void D3D11Renderer::BindRenderTarget(RenderTargetID renderTargetID, float letterboxedAspect /*= -1.f*/)
 {
 	m_currentRenderTarget = renderTargetID;
 	RenderTarget* renderTarget = GetRenderTarget(renderTargetID);
@@ -474,11 +474,30 @@ void D3D11Renderer::BindRenderTarget(RenderTargetID renderTargetID)
 	// Set viewport
 	IntVec2 renderResolution = renderTarget->m_renderDimensions;
 
+	IntVec2 viewportDimensions = renderResolution;
+
+	float renderTargetAspect = renderResolution.GetAspect();
+
+	if (letterboxedAspect > 0.f)
+	{
+		if (renderTargetAspect > letterboxedAspect)
+		{
+			viewportDimensions.x = static_cast<int>(renderResolution.y * letterboxedAspect);
+		}
+		else
+		{
+			viewportDimensions.y = static_cast<int>(renderResolution.x / letterboxedAspect);
+		}
+	}
+
+	float viewportLeft = (renderResolution.x - viewportDimensions.x) * 0.5f;
+	float viewportTop = (renderResolution.y - viewportDimensions.y) * 0.5f;
+
 	D3D11_VIEWPORT viewport;
-	viewport.TopLeftX = 0.f;
-	viewport.TopLeftY = 0.f;
-	viewport.Width = static_cast<float>(renderResolution.x);
-	viewport.Height = static_cast<float>(renderResolution.y);
+	viewport.TopLeftX = viewportLeft;
+	viewport.TopLeftY = viewportTop;
+	viewport.Width = static_cast<float>(viewportDimensions.x);
+	viewport.Height = static_cast<float>(viewportDimensions.y);
 	viewport.MinDepth = 0;
 	viewport.MaxDepth = 1;
 	m_deviceContext->RSSetViewports(1, &viewport);

@@ -15,6 +15,9 @@ namespace StaticWorldSettings
     constexpr int   s_worldSizePowerOfTwo                   = 7;        // In tiles
     constexpr float s_tileWidth                             = 1.f;      // In world units
 
+    constexpr int   s_numWorldBoundsTiles                   = 2;        // Invisible tiles off the edge of world so entities may spawn in on the edges and walk into view
+    constexpr float s_visibleWorldAspect                    = 2.f;      // Visible X tiles divided by visible Y tiles
+
 	constexpr uint8_t s_maxOutdoorLighting                  = 15;       // 4 bits (0-15)
 	constexpr uint8_t s_maxIndoorLighting                   = 15;       // 4 bits (0-15)
 
@@ -22,7 +25,7 @@ namespace StaticWorldSettings
     // Derived Constants
     //
     constexpr int   s_numTilesInRow         = (1 << s_worldSizePowerOfTwo);
-    constexpr int   s_numTiles              = s_numTilesInRow * s_numTilesInRow;
+    constexpr float s_worldBoundsTileWidth  = s_numWorldBoundsTiles * s_tileWidth; // e
     constexpr int   s_numTilesInRowMinusOne = s_numTilesInRow - 1;
     constexpr float s_numTilesInRowF        = static_cast<float>(s_numTilesInRow);
     constexpr int   s_numTilesInWorld       = (s_numTilesInRow * s_numTilesInRow);
@@ -33,6 +36,22 @@ namespace StaticWorldSettings
     constexpr float s_worldWidth            = s_tileWidth * s_numTilesInRowF;
     constexpr float s_oneOverWorldWidth     = 1.f / s_worldWidth;
     constexpr float s_worldHalfWidth        = s_worldWidth * 0.5f;
+
+    // Camera bounds
+    constexpr float s_numVisibleWorldTilesX = s_numTilesInRow - s_numWorldBoundsTiles;
+    constexpr float s_numVisibleWorldTilesY = s_numVisibleWorldTilesX / s_visibleWorldAspect;
+    constexpr float s_visibleWorldWidth     = s_numVisibleWorldTilesX * s_tileWidth;
+    constexpr float s_visibleWorldHeight    = s_numVisibleWorldTilesY * s_tileWidth;
+    constexpr float s_cameraMinX            = 0.f + s_worldBoundsTileWidth;
+    constexpr float s_cameraMaxX            = s_worldWidth - s_numWorldBoundsTiles;
+    constexpr float s_cameraMinY            = 0.f + static_cast<float>(s_numWorldBoundsTiles);
+    constexpr float s_cameraMaxY            = s_cameraMinY + static_cast<float>(s_numVisibleWorldTilesY) * s_tileWidth;
+
+    //----------------------------------------------------------------------------------------------------------------------
+    // Collision Constants
+    //
+    constexpr float   s_collisionEntityWallBuffer           = 0.01f;        // Minimum space between a wall and an entity after collision is resolved, in world units.
+    constexpr float   s_collisionHashWiggleRoom             = 0.25f;        // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
 
     //----------------------------------------------------------------------------------------------------------------------
     // Static Asserts
@@ -48,8 +67,6 @@ struct CustomWorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Collision Settings
 
-    float   m_entityWallBuffer              = 0.01f;
-    float   m_collisionHashWiggleRoom       = 0.25f;            // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
 
     //----------------------------------------------------------------------------------------------------------------------
     // Generation Settings

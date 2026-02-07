@@ -31,7 +31,7 @@ public:
 	FastGrid<uint8_t, StaticWorldSettings::s_worldSizePowerOfTwo> m_costField;
 	FastGrid<float, StaticWorldSettings::s_worldSizePowerOfTwo> m_distanceField;
 	FastGrid<Vec2, StaticWorldSettings::s_worldSizePowerOfTwo> m_gradient;
-	BitArray<StaticWorldSettings::s_numTiles> m_consideredCells;
+	BitArray<StaticWorldSettings::s_numTilesInWorld> m_consideredCells;
 	VertexBufferID m_debugVBO = RendererUtils::InvalidID;
 };
 

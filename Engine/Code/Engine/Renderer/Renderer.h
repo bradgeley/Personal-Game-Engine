@@ -62,6 +62,7 @@ public:
     virtual void EndFrame() override;
 
     void BeginWindow(Window const* window);
+    void BeginWindowLetterboxed(Window const* window, float letterboxedAspect);
     void EndWindow(Window const* window);
 
     void BeginCamera(Camera const* camera);
@@ -145,7 +146,7 @@ public:
     void BindShader(ShaderID shader);
     void BindTexture(Texture* texture, int slot = 0);
     void BindTexture(TextureID texture, int slot = 0);
-    virtual void BindRenderTarget(RenderTargetID renderTarget) = 0;
+    virtual void BindRenderTarget(RenderTargetID renderTarget, float letterboxedAspect = -1.f) = 0;
     virtual void BindVertexBuffer(VertexBufferID vbo) const = 0;
     virtual void BindVertexBuffer(VertexBuffer& vbo) const = 0;
 	virtual void BindInstanceBuffer(InstanceBufferID ibo) const = 0;

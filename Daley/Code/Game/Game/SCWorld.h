@@ -24,6 +24,7 @@ class SCWorld
 public:
 
     void InitializeMap();
+    void GenerateTiles(CustomWorldSettings const& settings);
     void GenerateMapVBO();
     void GenerateLightmap();
 

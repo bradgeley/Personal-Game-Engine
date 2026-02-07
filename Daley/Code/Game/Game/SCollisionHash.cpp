@@ -51,7 +51,7 @@ void SCollisionHash::Run(SystemContext const& context)
         CTransform& trans = transStorage[it];
 
         Vec2 pos = trans.m_pos + coll.m_offset;
-        float radius = coll.m_radius + world.m_worldSettings.m_collisionHashWiggleRoom;
+        float radius = coll.m_radius + StaticWorldSettings::s_collisionHashWiggleRoom;
 
         world.ForEachWorldCoordsOverlappingCircle(pos, radius, [&](IntVec2 const& worldCoords)
         {								  

@@ -136,6 +136,16 @@ void Renderer::BeginWindow(Window const* window)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Renderer::BeginWindowLetterboxed(Window const* window, float letterboxedAspect)
+{
+	ASSERT_OR_DIE(window, "Renderer::BeginWindowLetterboxed - trying to begin a null window.");
+
+	BindRenderTarget(window->GetRenderTarget(), letterboxedAspect);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::EndWindow(Window const* window)
 {
 	ASSERT_OR_DIE(window, "Renderer::EndWindow - trying to end a null window.");

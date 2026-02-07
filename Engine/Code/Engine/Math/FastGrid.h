@@ -16,6 +16,8 @@ class FastGrid
 {
 public:
 
+	static_assert(Pow2 > 0 && Pow2 <= 8, "Pow2 must be between 1 and 8 inclusive");
+
     FastGrid() = default;
     explicit FastGrid(FastGrid<T, Pow2> const& copy);
     explicit FastGrid(T const& initialValue);

@@ -43,9 +43,9 @@ struct WindowUserSettings
 //----------------------------------------------------------------------------------------------------------------------
 struct WindowConfig
 {
-    std::string		m_windowTitle = "Untitled Window";
-    bool            m_automaticallyPresent = true;
-    bool            m_takeFocusWhenCreated = true;
+    std::string		m_windowTitle           = "Untitled Window";
+    bool            m_automaticallyPresent  = true;
+    bool            m_takeFocusWhenCreated  = true;
 
     WindowUserSettings m_startupUserSettings;
 };
