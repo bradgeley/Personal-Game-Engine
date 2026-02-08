@@ -33,8 +33,8 @@ public:
     bool IsTileSolid(int tileIndex) const;
     bool IsTileSolid(IntVec2 const& worldCoords) const;
 
-	bool IsTileInView(int tileIndex) const;
-	bool IsTileInView(IntVec2 const& worldCoords) const;
+	bool IsTileVisible(int tileIndex) const;
+	bool IsTileVisible(IntVec2 const& worldCoords) const;
 
 	bool SetTile(IntVec2 const& tileCoords, Tile const& tile);
 	bool SetTile(int tileIndex, Tile const& tile);
@@ -49,6 +49,7 @@ public:
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
 
+	IntVec2 GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const;
     IntVec2 GetTileCoordsAtWorldPos(Vec2 const& worldPos) const;
     int GetTileIndexAtWorldPos(Vec2 const& worldPos) const;
     Tile const* GetTileAtWorldPos(Vec2 const& worldPos) const;

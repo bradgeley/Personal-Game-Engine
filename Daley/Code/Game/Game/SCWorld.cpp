@@ -64,7 +64,7 @@ void SCWorld::GenerateVBO()
 	}
 
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
-	Vec2 lightmapUVsStepSize = Vec2(StaticWorldSettings::s_oneOverNumTilesInRow, StaticWorldSettings::s_oneOverNumTilesInRow);
+	Vec2 lightmapUVsStepSize = Vec2(1.f / StaticWorldSettings::s_visibleWorldWidth, 1.f / StaticWorldSettings::s_visibleWorldHeight);
 	Vec2 lightmapUVsHalfStepSize = lightmapUVsStepSize * 0.5f;
 
 	// Get sprite sheet ready
@@ -112,8 +112,9 @@ void SCWorld::GenerateVBO()
 		Vec2 bottomRightUVs = Vec2(uvs.maxs.x, uvs.mins.y);
 		Vec2 topLeftUVs = Vec2(uvs.mins.x, uvs.maxs.y);
 
-		// Lightmap UVs
-		Vec2 lightmapUVs = lightmapUVsHalfStepSize + Vec2(worldCoords.x, worldCoords.y) * lightmapUVsStepSize;
+		// Lightmap UVs (Lightmap is only large enough to cover the visible world, so we need to use visible world relative coords)
+		IntVec2 visibleWorldRelativeCoords = GetVisibleWorldRelativeCoords(worldCoords);
+		Vec2 lightmapUVs = lightmapUVsHalfStepSize + Vec2(visibleWorldRelativeCoords.x, visibleWorldRelativeCoords.y) * lightmapUVsStepSize;
 
 		// Write verts
 		int firstVertIndex = visibleWorldRelativeTileIndex * 6;
@@ -152,20 +153,19 @@ void SCWorld::GenerateLightmap()
 
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 
-	Image image = Image(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), Rgba8::TransparentBlack);
+	Image image = Image(IntVec2(StaticWorldSettings::s_visibleWorldWidth, StaticWorldSettings::s_visibleWorldHeight), Rgba8::TransparentBlack);
 	image.SetName("WorldLightmap");
 	Grid<Rgba8>& pixelGrid = image.GetPixelsRef();
 
-	int index = 0;
-	for (int y = 0; y < StaticWorldSettings::s_numTilesInRow; ++y)
+	ForEachVisibleWorldCoords([&](IntVec2 const& worldCoords, int visibleWorldRelativeTileIndex)
 	{
-		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x, ++index)
-		{
-			Tile& tile = m_tiles.GetRef(index);
-
-			pixelGrid.Set(x, y, Rgba8(tile.GetIndoorLighting255(), tile.GetOutdoorLighting255(), 0, 0));
-		}
-	}
+		// Lightmap is only large enough to cover the visible world, so we need to use visible world relative coords
+		IntVec2 visibleWorldRelativeCoords = GetVisibleWorldRelativeCoords(worldCoords);
+		int tileIndex = m_tiles.GetIndexForCoords(worldCoords);
+		Tile& tile = m_tiles.GetRef(tileIndex);
+		pixelGrid.Set(visibleWorldRelativeCoords, Rgba8(tile.GetIndoorLighting255(), tile.GetOutdoorLighting255(), 0, 0));
+		return true; // keep iterating
+	});
 
 	Texture* lightmapTex = g_renderer->GetTexture(m_lightmap);
 	lightmapTex->CreateFromImage(image, false, false);
@@ -205,16 +205,16 @@ bool SCWorld::IsTileSolid(IntVec2 const& worldCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SCWorld::IsTileInView(int tileIndex) const
+bool SCWorld::IsTileVisible(int tileIndex) const
 {
 	IntVec2 tileCoords = m_tiles.GetCoordsForIndex(tileIndex);
-	return IsTileInView(tileCoords);
+	return IsTileVisible(tileCoords);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SCWorld::IsTileInView(IntVec2 const& worldCoords) const
+bool SCWorld::IsTileVisible(IntVec2 const& worldCoords) const
 {
 	return worldCoords.x >= StaticWorldSettings::s_visibleWorldBeginX && worldCoords.x <= StaticWorldSettings::s_visibleWorldEndX
 		&& worldCoords.y >= StaticWorldSettings::s_visibleWorldBeginY && worldCoords.y <= StaticWorldSettings::s_visibleWorldEndY;
@@ -408,6 +408,14 @@ bool SCWorld::IsPointInsideSolidTile(Vec2 const& worldPos) const
 {
 	IntVec2 tileCoords = GetTileCoordsAtWorldPos(worldPos);
 	return IsTileSolid(tileCoords);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 SCWorld::GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const
+{
+	return worldCoords - IntVec2(StaticWorldSettings::s_visibleWorldBeginX, StaticWorldSettings::s_visibleWorldBeginY);
 }
 
 

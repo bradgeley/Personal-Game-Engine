@@ -101,7 +101,7 @@ void SLighting::Run(SystemContext const&)
         for (IntVec2 const& neighborOffset : neighborOffsets)
         {
             IntVec2 neighborCoords = tileCoords + neighborOffset;
-            if (!scWorld.m_tiles.IsValidCoords(neighborCoords))
+            if (!scWorld.IsTileVisible(neighborCoords))
             {
                 continue;
             }
@@ -135,7 +135,7 @@ void SLighting::Run(SystemContext const&)
             for (auto& neighborOffset : neighborOffsets)
             {
                 IntVec2 neighborCoords = tileCoords + neighborOffset;
-                if (!scWorld.m_tiles.IsValidCoords(neighborCoords))
+                if (!scWorld.IsTileVisible(neighborCoords))
                 {
                     continue;
                 }
