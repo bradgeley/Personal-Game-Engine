@@ -49,7 +49,7 @@ public:
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
 
-	IntVec2 GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const;
+	IntVec2 GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const; // Returns relative coords where 0,0 is bottom left of visible world
     IntVec2 GetTileCoordsAtWorldPos(Vec2 const& worldPos) const;
     int GetTileIndexAtWorldPos(Vec2 const& worldPos) const;
     Tile const* GetTileAtWorldPos(Vec2 const& worldPos) const;

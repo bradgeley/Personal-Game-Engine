@@ -15,6 +15,21 @@ Tile::Tile(uint8_t tileID, uint8_t lighting, uint8_t flags) :
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Tile::SetIsGoal(bool isGoal)
+{
+    if (isGoal)
+    {
+        m_tags |= static_cast<uint8_t>(TileTag::IsGoal);
+    }
+    else
+    {
+        m_tags &= ~static_cast<uint8_t>(TileTag::IsGoal);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Tile::SetLightingDirty(bool dirty)
 {
     if (dirty)
@@ -30,15 +45,15 @@ void Tile::SetLightingDirty(bool dirty)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Tile::SetIsGoal(bool isGoal)
+void Tile::SetVertsDirty(bool dirty)
 {
-    if (isGoal)
+    if (dirty)
     {
-        m_tags |= static_cast<uint8_t>(TileTag::IsGoal);
+        m_tags |= static_cast<uint8_t>(TileTag::Verts_Dirty);
     }
     else
     {
-        m_tags &= ~static_cast<uint8_t>(TileTag::IsGoal);
+        m_tags &= ~static_cast<uint8_t>(TileTag::Verts_Dirty);
 	}
 }
 

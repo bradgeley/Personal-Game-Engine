@@ -12,12 +12,13 @@ typedef uint8_t TileID;
 //----------------------------------------------------------------------------------------------------------------------
 enum class TileTag : uint8_t
 {
-	None = 0,
-	Lighting_Dirty = 1 << 0, // Means the lighting for this tile changed and its verts need to be recalculated
-	Visible = 1 << 1,
-	Solid = 1 << 2,
-	Opaque = 1 << 3,
-	IsGoal = 1 << 4,
+	None			= 0,
+	Visible			= 1 << 0,
+	Solid			= 1 << 1,
+	Opaque			= 1 << 2,
+	IsGoal			= 1 << 3,
+	Lighting_Dirty	= 1 << 4, // Means the lighting for this tile changed and its verts need to be recalculated
+	Verts_Dirty		= 1 << 5, // Means the verts are dirty and need to be recalculated (e.g., because the tile ID changed, or lighting changed)
 };
 
 
@@ -33,8 +34,9 @@ public:
 	inline bool IsVisible()			const { return m_tags & static_cast<uint8_t>(TileTag::Visible); }
 	inline bool IsSolid()			const { return m_tags & static_cast<uint8_t>(TileTag::Solid); }
 	inline bool IsOpaque()			const { return m_tags & static_cast<uint8_t>(TileTag::Opaque); }
-	inline bool IsLightingDirty()   const { return m_tags & static_cast<uint8_t>(TileTag::Lighting_Dirty); }
 	inline bool IsGoal()			const { return m_tags & static_cast<uint8_t>(TileTag::IsGoal); }
+	inline bool IsLightingDirty()   const { return m_tags & static_cast<uint8_t>(TileTag::Lighting_Dirty); }
+	inline bool IsVertsDirty()		const { return m_tags & static_cast<uint8_t>(TileTag::Verts_Dirty); }
 
 	inline uint8_t GetOutdoorLighting() 	const { return m_lightingValues & 0x0F; }
 	inline float   GetOutdoorLighting01()	const { return static_cast<float>(GetOutdoorLighting()) / 15.f; }
@@ -46,8 +48,9 @@ public:
 	inline void SetIndoorLighting(uint8_t indoorLighting) { m_lightingValues = (m_lightingValues & 0x0F) | ((indoorLighting & 0x0F) << 4); } // Set the top 4 bits
 	inline void SetOutdoorLighting(uint8_t outdoorLighting) { m_lightingValues = (m_lightingValues & 0xF0) | (outdoorLighting & 0x0F); }     // Set the bottom 4 bits
 
-	void SetLightingDirty(bool dirty);
 	void SetIsGoal(bool isGoal);
+	void SetLightingDirty(bool dirty);
+	void SetVertsDirty(bool dirty);
 
 	bool operator==(Tile const& other) const;
 

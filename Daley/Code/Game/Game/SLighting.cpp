@@ -132,6 +132,9 @@ void SLighting::Run(SystemContext const&)
 
         if (lightingChanged)
         {
+            tile.SetVertsDirty(true);
+            scWorld.m_isVBODirty = true;
+
             for (auto& neighborOffset : neighborOffsets)
             {
                 IntVec2 neighborCoords = tileCoords + neighborOffset;
@@ -148,7 +151,6 @@ void SLighting::Run(SystemContext const&)
     }
 
     scWorld.GenerateLightmap();
-    scWorld.m_isVBODirty = true;
 }
 
 

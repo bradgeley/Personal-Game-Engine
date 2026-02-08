@@ -90,6 +90,12 @@ void SCWorld::GenerateVBO()
 	{
 		int tileIndex = m_tiles.GetIndexForCoords(worldCoords);
 		Tile& tile = m_tiles.GetRef(tileIndex);
+		if (!tile.IsVertsDirty())
+		{
+			return true; // keep iterating
+		}
+		tile.SetVertsDirty(false);
+
 		TileDef const* tileDef = TileDef::GetTileDef((uint8_t) tile.m_id);
 		ASSERT_OR_DIE(tileDef != nullptr, "Chunk::Generate - Failed to find TileDef for tile id.");
 
@@ -251,6 +257,7 @@ bool SCWorld::SetTile(int tileIndex, Tile const& tile)
 
 	existingTile = tile;
 	existingTile.SetLightingDirty(true);
+	existingTile.SetVertsDirty(true);
 
 	return true;
 }
