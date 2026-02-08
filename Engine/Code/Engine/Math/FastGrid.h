@@ -39,6 +39,10 @@ public:
     T& GetRef(int x, int y);
     T& GetRef(IntVec2 const& coords);
 
+    T const& GetRef(int index) const;
+    T const& GetRef(int x, int y) const;
+    T const& GetRef(IntVec2 const& coords) const;
+
     int GetIndexEastOf(int index, bool wrap = false) const; // +x
     int GetIndexWestOf(int index, bool wrap = false) const; // -x
     int GetIndexNorthOf(int index, bool wrap = false) const; // +y
@@ -253,6 +257,35 @@ T& FastGrid<T, Pow2>::GetRef(int x, int y)
 //----------------------------------------------------------------------------------------------------------------------
 template <typename T, uint8_t Pow2>
 T& FastGrid<T, Pow2>::GetRef(IntVec2 const& coords)
+{
+    int index = GetIndexForCoords(coords);
+    return m_data[index];
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T, uint8_t Pow2>
+T const& FastGrid<T, Pow2>::GetRef(int index) const
+{
+    return m_data[index];
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T, uint8_t Pow2>
+T const& FastGrid<T, Pow2>::GetRef(int x, int y) const
+{
+    int index = GetIndexForCoords(x, y);
+    return m_data[index];
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T, uint8_t Pow2>
+T const& FastGrid<T, Pow2>::GetRef(IntVec2 const& coords) const
 {
     int index = GetIndexForCoords(coords);
     return m_data[index];

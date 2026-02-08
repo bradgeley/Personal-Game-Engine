@@ -25,15 +25,16 @@ public:
 
     void InitializeMap();
     void GenerateTiles(CustomWorldSettings const& settings);
-    void GenerateMapVBO();
+    void GenerateVBO();
     void GenerateLightmap();
 
     void Shutdown();
 
-    IntVec2 GetTileCoordsAtLocation(Vec2 const& worldLocation) const;
-
     bool IsTileSolid(int tileIndex) const;
     bool IsTileSolid(IntVec2 const& worldCoords) const;
+
+	bool SetTile(IntVec2 const& tileCoords, Tile const& tile);
+	bool SetTile(int tileIndex, Tile const& tile);
 
     // For each func - return false means stop iterating, true means keep iterating.
     void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
@@ -44,6 +45,10 @@ public:
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
 
+    IntVec2 GetTileCoordsAtWorldPos(Vec2 const& worldPos) const;
+    int GetTileIndexAtWorldPos(Vec2 const& worldPos) const;
+    Tile const* GetTileAtWorldPos(Vec2 const& worldPos) const;
+    Tile* GetTileAtWorldPos(Vec2 const& worldPos);
     AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos) const;
     AABB2 GetTileBounds(IntVec2 const& tileCoords) const;
 
@@ -58,7 +63,7 @@ public:
 
     bool m_isLightingDirty                      = true;
     bool m_isVBODirty                           = true;
-    bool m_solidnessChanged                     = false;
+    bool m_solidnessChanged                     = true;
     VertexBufferID m_vbo                        = RendererUtils::InvalidID;
     TextureID m_lightmap                        = RendererUtils::InvalidID; // R8G8
     #if defined(_DEBUG)

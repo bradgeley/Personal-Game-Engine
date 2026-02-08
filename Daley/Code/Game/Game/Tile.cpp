@@ -41,3 +41,14 @@ void Tile::SetIsGoal(bool isGoal)
         m_tags &= ~static_cast<uint8_t>(TileTag::IsGoal);
 	}
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Tile::operator==(Tile const& other) const
+{
+    return m_id == other.m_id
+        && m_tags == other.m_tags
+        && m_lightingValues == other.m_lightingValues
+		&& m_staticLighting == other.m_staticLighting;
+}

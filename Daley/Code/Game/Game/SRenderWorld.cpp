@@ -44,7 +44,9 @@ void SRenderWorld::Startup()
 void SRenderWorld::Run(SystemContext const&)
 {
 	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+
+    world.GenerateVBO();
 
 	GridSpriteSheet* worldSpriteSheet = g_assetManager->Get<GridSpriteSheet>(world.m_worldSpriteSheet);
     if (worldSpriteSheet)

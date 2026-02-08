@@ -25,7 +25,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 
     result.m_hitLocation = raycast.m_start + raycast.m_direction * raycast.m_maxDistance;
     
-    IntVec2 currentWorldCoords = world.GetTileCoordsAtLocation(raycast.m_start);
+    IntVec2 currentWorldCoords = world.GetTileCoordsAtWorldPos(raycast.m_start);
     if (world.IsTileSolid(currentWorldCoords))
     {
         // Somehow we got inside a block
