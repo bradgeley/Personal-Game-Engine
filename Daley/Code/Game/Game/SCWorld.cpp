@@ -37,7 +37,6 @@ void SCWorld::InitializeMap()
 {
 	// Generate map tiles - for now just fill with grass, later will want to generate a more interesting map
 	Tile backgroundTile = TileDef::GetDefaultTile("Grass");
-	backgroundTile.SetLightingDirty(true);
 	m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), backgroundTile);
 
 	CustomWorldSettings worldSettings;
@@ -80,7 +79,7 @@ void SCWorld::GenerateVBO()
 	}	
 	
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
-	vbo.Resize(StaticWorldSettings::s_numVertsInWorld);
+	vbo.Resize(StaticWorldSettings::s_numVertsInVisibleWorld);
 
 	Vec2 worldMins = Vec2(0.f, 0.f) + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
 	Vec2 worldDims = Vec2(StaticWorldSettings::s_worldWidth, StaticWorldSettings::s_worldWidth);

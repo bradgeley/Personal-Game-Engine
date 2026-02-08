@@ -25,6 +25,14 @@ void SLighting::Startup()
     scRender.m_lightingConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(LightingConstants));
 
 	DevConsoleUtils::AddDevConsoleCommand("ToggleLighting", &SLighting::ToggleLighting);
+
+	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+    scWorld.ForEachVisibleWorldCoords([&scWorld](IntVec2 const& tileCoords, int)
+    {
+        Tile& tile = scWorld.m_tiles.GetRef(tileCoords);
+        tile.SetLightingDirty(true);
+        return true;
+	});
 }
 
 
