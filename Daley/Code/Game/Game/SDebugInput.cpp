@@ -27,7 +27,7 @@ void SDebugInput::Run(SystemContext const& context)
 	// Debug mouse position
 	if (g_window->HasFocus())
 	{
-		Vec2 relMousePos = g_input->GetMouseClientRelativePosition();
+		Vec2 relMousePos = g_input->GetMouseViewportRelativePosition(StaticWorldSettings::s_visibleWorldAspect);
 		scDebug.m_debugMouseWorldLocation = camera.m_camera.ScreenToWorldOrtho(relMousePos);
 		scDebug.m_debugMouseTileCoords = world.GetTileCoordsAtWorldPos(scDebug.m_debugMouseWorldLocation);
 	}
