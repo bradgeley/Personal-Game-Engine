@@ -20,7 +20,7 @@ public:
 	IntVec2 m_debugMouseTileCoords			= IntVec2::ZeroVector;			// Updated by SDebugInput
 	VertexBufferID m_frameUntexVerts		= RendererUtils::InvalidID;		// Rendered then cleared each frame by SDebugRender
 	VertexBufferID m_frameDefaultFontVerts	= RendererUtils::InvalidID;		// Rendered then cleared each frame by SDebugRender
-	TileID m_debugPlacementTileID			= 1;							// Tile to place when using ctrl+B, used by SDebugInput
+	TileID m_debugPlacementTileID			= 12;							// Tile to place when using ctrl+B, used by SDebugInput
 
 	// Overlay
 	bool m_debugOverlayEnabled				= false;						// Toggle used by SDebugOverlay

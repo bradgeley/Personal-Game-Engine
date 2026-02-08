@@ -47,11 +47,9 @@ void SLighting::Run(SystemContext const&)
 
     static IntVec2 neighborOffsets[4] = { IntVec2(1, 0), IntVec2(-1, 0), IntVec2(0, 1), IntVec2(0, -1) };
 
-    Rgba8 outdoorLightTint = Rgba8::White;
-
 	LightingConstants lightingConstants;
     Rgba8::White.GetAsFloats(lightingConstants.m_ambientLightTint);
-	outdoorLightTint.GetAsFloats(lightingConstants.m_outdoorLightTint);
+    Rgba8::LightGray.GetAsFloats(lightingConstants.m_outdoorLightTint);
 	Rgba8::LightOrange.GetAsFloats(lightingConstants.m_indoorLightTint);
     lightingConstants.m_ambientLightIntensity = 0.01f; // 0 = pitch black, 1 = full brightness
 	lightingConstants.m_isLightingEnabled = scLighting.m_isLightingEnabled ? 1 : 0;
@@ -126,8 +124,6 @@ void SLighting::Run(SystemContext const&)
 
         if (lightingChanged)
         {
-            scLighting.m_isLightingDirty = true;
-
             for (auto& neighborOffset : neighborOffsets)
             {
                 IntVec2 neighborCoords = tileCoords + neighborOffset;
@@ -137,10 +133,14 @@ void SLighting::Run(SystemContext const&)
                 }
                 Tile& neighborTile = scWorld.m_tiles.GetRef(neighborCoords);
                 neighborTile.SetLightingDirty(true);
+                scLighting.m_dirtyLightingTiles.insert(neighborCoords);
             }
         }
         it = scLighting.m_dirtyLightingTiles.begin();
     }
+
+    scWorld.GenerateLightmap();
+    scWorld.m_isVBODirty = true;
 }
 
 

@@ -14,6 +14,7 @@ class Asset
 public:
 
 	Name GetName() const;
+	void SetName(Name const& name);
 
 protected:
 

@@ -46,6 +46,8 @@ namespace StaticWorldSettings
     constexpr int   s_visibleWorldEndX      = s_numTilesInRow - s_numWorldBoundsTiles - 1;
     constexpr int   s_visibleWorldBeginY    = s_numWorldBoundsTiles;
     constexpr int   s_visibleWorldEndY      = s_visibleWorldBeginY + static_cast<int>(s_numVisibleWorldTilesY) - 1;
+	constexpr int   s_numTilesInVisibleWorld = static_cast<int>(s_numVisibleWorldTilesX * s_numVisibleWorldTilesY);
+    constexpr int   s_numVertsInVisibleWorld = (6 * s_numTilesInVisibleWorld);
 
     // World Offset (puts 0,0 in the center of the camera)
 	constexpr float s_worldOffsetX          = -1.f * s_worldWidth * 0.5f;

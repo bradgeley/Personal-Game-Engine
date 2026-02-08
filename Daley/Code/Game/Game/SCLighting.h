@@ -15,7 +15,6 @@ class SCLighting
 public:	
 
 	bool m_isLightingEnabled = true;
-	bool m_isLightingDirty	 = true;
 	std::unordered_set<IntVec2> m_dirtyLightingTiles;
 };
 

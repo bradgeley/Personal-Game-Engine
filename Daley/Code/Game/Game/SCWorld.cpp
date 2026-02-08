@@ -36,15 +36,14 @@ IntVec2 s_neighborOffsets[8] =
 void SCWorld::InitializeMap()
 {
 	// Generate map tiles - for now just fill with grass, later will want to generate a more interesting map
-	Tile const& defaultTile = TileDef::GetDefaultTile("Grass");
-	m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), defaultTile);
+	Tile backgroundTile = TileDef::GetDefaultTile("Grass");
+	backgroundTile.SetLightingDirty(true);
+	m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), backgroundTile);
 
 	CustomWorldSettings worldSettings;
-
+	// default for now
 
 	GenerateTiles(worldSettings);
-	GenerateLightmap();
-	GenerateVBO();
 }
 
 
@@ -77,7 +76,7 @@ void SCWorld::GenerateVBO()
 	// Get VBO ready
 	if (m_vbo == RendererUtils::InvalidID)
 	{
-		m_vbo = g_renderer->MakeVertexBuffer<TerrainVertex>(StaticWorldSettings::s_numVertsInWorld);
+		m_vbo = g_renderer->MakeVertexBuffer<TerrainVertex>(StaticWorldSettings::s_numVertsInVisibleWorld);
 	}	
 	
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
@@ -88,48 +87,46 @@ void SCWorld::GenerateVBO()
 	Vec2 worldMaxs = worldMins + worldDims;
 	AABB2 worldBounds = AABB2(worldMins, worldMaxs);
 
-	int index = 0;
-	for (int y = 0; y < StaticWorldSettings::s_numTilesInRow; ++y)
+	ForEachVisibleWorldCoords([&](IntVec2 const& worldCoords, int visibleWorldRelativeTileIndex)
 	{
-		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x, ++index)
-		{
-			Tile& tile = m_tiles.GetRef(index);
-			TileDef const* tileDef = TileDef::GetTileDef((uint8_t) tile.m_id);
-			ASSERT_OR_DIE(tileDef != nullptr, "Chunk::Generate - Failed to find TileDef for tile id.");
+		int tileIndex = m_tiles.GetIndexForCoords(worldCoords);
+		Tile& tile = m_tiles.GetRef(tileIndex);
+		TileDef const* tileDef = TileDef::GetTileDef((uint8_t) tile.m_id);
+		ASSERT_OR_DIE(tileDef != nullptr, "Chunk::Generate - Failed to find TileDef for tile id.");
 
-			Vec2 mins = worldMins + Vec2(x, y) * StaticWorldSettings::s_tileWidth;
-			Vec2 maxs = mins + tileDims;
-			AABB2 uvs = terrainSpriteSheet->GetSpriteUVs(tileDef->m_spriteIndex);
+		Vec2 mins = worldMins + Vec2(worldCoords.x, worldCoords.y) * StaticWorldSettings::s_tileWidth;
+		Vec2 maxs = mins + tileDims;
+		AABB2 uvs = terrainSpriteSheet->GetSpriteUVs(tileDef->m_spriteIndex);
 
-			float staticLighting01 = static_cast<float>(tile.m_staticLighting) / 255.f;
-			Rgba8 tint = tileDef->m_tint * staticLighting01;
+		float staticLighting01 = static_cast<float>(tile.m_staticLighting) / 255.f;
+		Rgba8 tint = tileDef->m_tint * staticLighting01;
 
-			float z = 1.f;
-			Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, z);
-			Vec3 topRightPoint = Vec3(maxs.x, maxs.y, z);
-			Vec3 bottomLeftPoint = Vec3(mins.x, mins.y, z);
-			Vec3 topLeftPoint = Vec3(mins.x, maxs.y, z);
+		float z = 1.f;
+		Vec3 bottomRightPoint = Vec3(maxs.x, mins.y, z);
+		Vec3 topRightPoint = Vec3(maxs.x, maxs.y, z);
+		Vec3 bottomLeftPoint = Vec3(mins.x, mins.y, z);
+		Vec3 topLeftPoint = Vec3(mins.x, maxs.y, z);
 
-			// UVs
-			Vec2 const& topRightUVs = uvs.maxs;
-			Vec2 const& bottomLeftUVs = uvs.mins;
-			Vec2 bottomRightUVs = Vec2(uvs.maxs.x, uvs.mins.y);
-			Vec2 topLeftUVs = Vec2(uvs.mins.x, uvs.maxs.y);
+		// UVs
+		Vec2 const& topRightUVs = uvs.maxs;
+		Vec2 const& bottomLeftUVs = uvs.mins;
+		Vec2 bottomRightUVs = Vec2(uvs.maxs.x, uvs.mins.y);
+		Vec2 topLeftUVs = Vec2(uvs.mins.x, uvs.maxs.y);
 
-			// Lightmap UVs
-			Vec2 lightmapUVs = lightmapUVsHalfStepSize + Vec2(x, y) * lightmapUVsStepSize;
+		// Lightmap UVs
+		Vec2 lightmapUVs = lightmapUVsHalfStepSize + Vec2(worldCoords.x, worldCoords.y) * lightmapUVsStepSize;
 
-			// Write verts
-			int firstVertIndex = index * 6;
-			TerrainVertex* firstVert = vbo.GetData<TerrainVertex>(firstVertIndex);
-			*(firstVert) = TerrainVertex(bottomLeftPoint, tint, bottomLeftUVs, lightmapUVs);
-			*(firstVert + 1) = TerrainVertex(bottomRightPoint, tint, bottomRightUVs, lightmapUVs);
-			*(firstVert + 2) = TerrainVertex(topRightPoint, tint, topRightUVs, lightmapUVs);
-			*(firstVert + 3) = TerrainVertex(bottomLeftPoint, tint, bottomLeftUVs, lightmapUVs);
-			*(firstVert + 4) = TerrainVertex(topRightPoint, tint, topRightUVs, lightmapUVs);
-			*(firstVert + 5) = TerrainVertex(topLeftPoint, tint, topLeftUVs, lightmapUVs);
-		}
-	}
+		// Write verts
+		int firstVertIndex = visibleWorldRelativeTileIndex * 6;
+		TerrainVertex* firstVert = vbo.GetData<TerrainVertex>(firstVertIndex);
+		*(firstVert) = TerrainVertex(bottomLeftPoint, tint, bottomLeftUVs, lightmapUVs);
+		*(firstVert + 1) = TerrainVertex(bottomRightPoint, tint, bottomRightUVs, lightmapUVs);
+		*(firstVert + 2) = TerrainVertex(topRightPoint, tint, topRightUVs, lightmapUVs);
+		*(firstVert + 3) = TerrainVertex(bottomLeftPoint, tint, bottomLeftUVs, lightmapUVs);
+		*(firstVert + 4) = TerrainVertex(topRightPoint, tint, topRightUVs, lightmapUVs);
+		*(firstVert + 5) = TerrainVertex(topLeftPoint, tint, topLeftUVs, lightmapUVs);
+		return true; // keep iterating
+	});
 
 	#if defined(_DEBUG)
 	m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -157,6 +154,7 @@ void SCWorld::GenerateLightmap()
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 
 	Image image = Image(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), Rgba8::TransparentBlack);
+	image.SetName("WorldLightmap");
 	Grid<Rgba8>& pixelGrid = image.GetPixelsRef();
 
 	int index = 0;
@@ -208,6 +206,24 @@ bool SCWorld::IsTileSolid(IntVec2 const& worldCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::IsTileInView(int tileIndex) const
+{
+	IntVec2 tileCoords = m_tiles.GetCoordsForIndex(tileIndex);
+	return IsTileInView(tileCoords);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::IsTileInView(IntVec2 const& worldCoords) const
+{
+	return worldCoords.x >= StaticWorldSettings::s_visibleWorldBeginX && worldCoords.x <= StaticWorldSettings::s_visibleWorldEndX
+		&& worldCoords.y >= StaticWorldSettings::s_visibleWorldBeginY && worldCoords.y <= StaticWorldSettings::s_visibleWorldEndY;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::SetTile(IntVec2 const& tileCoords, Tile const& tile)
 {
 	int index = m_tiles.GetIndexForCoords(tileCoords);
@@ -238,6 +254,25 @@ bool SCWorld::SetTile(int tileIndex, Tile const& tile)
 	existingTile.SetLightingDirty(true);
 
 	return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachVisibleWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const
+{
+	int visibleWorldRelativeTileIndex = 0;
+	for (int y = StaticWorldSettings::s_visibleWorldBeginY; y <= StaticWorldSettings::s_visibleWorldEndY; ++y)
+	{
+		for (int x = StaticWorldSettings::s_visibleWorldBeginX; x <= StaticWorldSettings::s_visibleWorldEndX; ++x, ++visibleWorldRelativeTileIndex)
+		{
+			IntVec2 tileCoords = IntVec2(x, y);
+			if (!func(tileCoords, visibleWorldRelativeTileIndex))
+			{
+				return;
+			}
+		}
+	}
 }
 
 

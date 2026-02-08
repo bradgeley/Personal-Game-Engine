@@ -8,3 +8,11 @@ Name Asset::GetName() const
 {
 	return m_name;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Asset::SetName(Name const& name)
+{
+	m_name = name;
+}

@@ -41,7 +41,7 @@ struct PSInput
 
 //----------------------------------------------------------------------------------------------------------------------
 Texture2D<float4> SurfaceColorTexture : register(t0);
-Texture2D<float4> ChunkLightmapTexture : register(t1);
+Texture2D<float4> WorldLightmapTexture : register(t1);
 
 
 
@@ -126,7 +126,7 @@ float4 PixelMain(PSInput input) : SV_Target0
 {
 	float2 texCoord = input.uvs;
 	float4 surfaceColor = SurfaceColorTexture.Sample(SurfaceSampler, texCoord);
-    float4 lightmapValue = ChunkLightmapTexture.Sample(SurfaceSampler, input.lightmapUVs);
+    float4 lightmapValue = WorldLightmapTexture.Sample(SurfaceSampler, input.lightmapUVs);
 	
 	float4 tint = input.tint;
     float4 finalColor = (tint * surfaceColor);

@@ -69,8 +69,10 @@ void SRenderWorld::Run(SystemContext const&)
         return;
     }
 
+    g_renderer->BindTexture(world.m_lightmap, 1);
     g_renderer->BindShader(scRender.m_worldShaderID);
 	g_renderer->BindConstantBuffer(scRender.m_staticWorldConstantsBuffer, StaticWorldConstants::GetSlot());
+    g_renderer->BindConstantBuffer(scRender.m_lightingConstantsBuffer, LightingConstants::GetSlot());
 
 	g_renderer->DrawVertexBuffer(world.m_vbo);
 }

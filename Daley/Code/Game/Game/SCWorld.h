@@ -33,10 +33,14 @@ public:
     bool IsTileSolid(int tileIndex) const;
     bool IsTileSolid(IntVec2 const& worldCoords) const;
 
+	bool IsTileInView(int tileIndex) const;
+	bool IsTileInView(IntVec2 const& worldCoords) const;
+
 	bool SetTile(IntVec2 const& tileCoords, Tile const& tile);
 	bool SetTile(int tileIndex, Tile const& tile);
 
     // For each func - return false means stop iterating, true means keep iterating.
+    void ForEachVisibleWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const;
     void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
@@ -58,8 +62,6 @@ public:
     CustomWorldSettings m_worldSettings;
 
     FastGrid<Tile, StaticWorldSettings::s_worldSizePowerOfTwo> m_tiles;
-    int m_firstVisibleTileIndex                 = 0;
-    int m_lastVisibleTileIndex                  = 0;
 
     bool m_isLightingDirty                      = true;
     bool m_isVBODirty                           = true;
