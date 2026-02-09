@@ -21,4 +21,8 @@ public:
     void Run(SystemContext const& context) override;
 	void EndFrame() override;
     void Shutdown() override;
+
+protected:
+
+    void InitializeMap();
 };

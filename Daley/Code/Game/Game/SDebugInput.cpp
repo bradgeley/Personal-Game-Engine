@@ -35,8 +35,6 @@ void SDebugInput::Run(SystemContext const& context)
 	// Debug Tile Placement
 	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->IsKeyDown('B'))
 	{
-		Tile* tile = world.GetTileAtWorldPos(scDebug.m_debugMouseWorldLocation);
-		
 		Tile newTile = TileDef::GetDefaultTile(scDebug.m_debugPlacementTileID);
 		world.SetTile(scDebug.m_debugMouseTileCoords, newTile);
 	}

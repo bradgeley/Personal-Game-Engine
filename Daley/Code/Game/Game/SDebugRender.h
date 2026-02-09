@@ -21,4 +21,5 @@ public:
 protected:
 
     static bool DebugRenderGrid(NamedProperties& args);
+    static bool DebugTileTags(NamedProperties& args); // Used to visualize tile tags
 };

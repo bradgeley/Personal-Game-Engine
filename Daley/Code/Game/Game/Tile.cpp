@@ -15,6 +15,51 @@ Tile::Tile(uint8_t tileID, uint8_t lighting, uint8_t flags) :
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Tile::SetIsVisible(bool isVisible)
+{
+    if (isVisible)
+    {
+        m_tags |= static_cast<uint8_t>(TileTag::Visible);
+    }
+    else
+    {
+        m_tags &= ~static_cast<uint8_t>(TileTag::Visible);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Tile::SetIsSolid(bool isSolid)
+{
+    if (isSolid)
+    {
+        m_tags |= static_cast<uint8_t>(TileTag::Solid);
+    }
+    else
+    {
+        m_tags &= ~static_cast<uint8_t>(TileTag::Solid);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Tile::SetIsOpaque(bool isOpaque)
+{
+    if (isOpaque)
+    {
+        m_tags |= static_cast<uint8_t>(TileTag::Opaque);
+    }
+    else
+    {
+        m_tags &= ~static_cast<uint8_t>(TileTag::Opaque);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Tile::SetIsGoal(bool isGoal)
 {
     if (isGoal)

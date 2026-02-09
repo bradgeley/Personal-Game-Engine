@@ -136,6 +136,8 @@ struct NamedProperties
     template<typename T>
     T Get(Name name, T const& defaultValue) const;
 
+    std::string Get(Name key, const char* defaultValue) const;
+
     void Clear();
     int Size() const;
     bool Contains(Name name) const;
@@ -188,4 +190,3 @@ T NamedProperties::Get(Name name, T const& defaultValue) const
     }
     return defaultValue;
 }
-

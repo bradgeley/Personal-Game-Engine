@@ -23,8 +23,6 @@ class SCWorld
 {
 public:
 
-    void InitializeMap();
-    void GenerateTiles(CustomWorldSettings const& settings);
     void GenerateVBO();
     void GenerateLightmap();
 
@@ -69,9 +67,7 @@ public:
     bool m_solidnessChanged                     = true;
     VertexBufferID m_vbo                        = RendererUtils::InvalidID;
     TextureID m_lightmap                        = RendererUtils::InvalidID; // R8G8
-    #if defined(_DEBUG)
     VertexBufferID m_debugVBO                   = RendererUtils::InvalidID;
-    #endif
 
 	AssetID m_worldSpriteSheet                  = AssetID::Invalid; // cached in SRenderWorld startup
 

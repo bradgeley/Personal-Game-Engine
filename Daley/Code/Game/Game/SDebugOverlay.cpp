@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugOverlay.h"
 #include "SCDebug.h"
-#include "SCWorld.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Input/InputSystem.h"
@@ -28,7 +27,6 @@ void SDebugOverlay::Startup()
 void SDebugOverlay::Run(SystemContext const& context)
 {
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
-	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
 
 	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('D'))
 	{

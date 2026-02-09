@@ -38,20 +38,28 @@ namespace StaticWorldSettings
     constexpr float s_worldHalfWidth        = s_worldWidth * 0.5f;
 
     // Visible World
-    constexpr float s_numVisibleWorldTilesX = s_numTilesInRow - s_numWorldBoundsTiles;
-    constexpr float s_numVisibleWorldTilesY = s_numVisibleWorldTilesX / s_visibleWorldAspect;
-    constexpr float s_visibleWorldWidth     = s_numVisibleWorldTilesX * s_tileWidth;
-    constexpr float s_visibleWorldHeight    = s_numVisibleWorldTilesY * s_tileWidth;
-    constexpr int   s_visibleWorldBeginX    = s_numWorldBoundsTiles;
-    constexpr int   s_visibleWorldEndX      = s_numTilesInRow - s_numWorldBoundsTiles - 1;
-    constexpr int   s_visibleWorldBeginY    = s_numWorldBoundsTiles;
-    constexpr int   s_visibleWorldEndY      = s_visibleWorldBeginY + static_cast<int>(s_numVisibleWorldTilesY) - 1;
-	constexpr int   s_numTilesInVisibleWorld = static_cast<int>(s_numVisibleWorldTilesX * s_numVisibleWorldTilesY);
-    constexpr int   s_numVertsInVisibleWorld = (6 * s_numTilesInVisibleWorld);
+    constexpr float s_numVisibleWorldTilesX     = s_numTilesInRow - s_numWorldBoundsTiles;
+    constexpr float s_numVisibleWorldTilesY     = s_numVisibleWorldTilesX / s_visibleWorldAspect;
+    constexpr float s_visibleWorldWidth         = s_numVisibleWorldTilesX * s_tileWidth;
+    constexpr float s_visibleWorldHeight        = s_numVisibleWorldTilesY * s_tileWidth;
+    constexpr int   s_visibleWorldBeginIndexX   = s_numWorldBoundsTiles;
+    constexpr int   s_visibleWorldEndIndexX     = s_numTilesInRow - s_numWorldBoundsTiles - 1;
+    constexpr int   s_visibleWorldBeginIndexY   = s_numWorldBoundsTiles;
+    constexpr int   s_visibleWorldEndIndexY     = s_visibleWorldBeginIndexY + static_cast<int>(s_numVisibleWorldTilesY) - 1;
+	constexpr int   s_numTilesInVisibleWorld    = static_cast<int>(s_numVisibleWorldTilesX * s_numVisibleWorldTilesY);
+    constexpr int   s_numVertsInVisibleWorld    = (6 * s_numTilesInVisibleWorld);
 
     // World Offset (puts 0,0 in the center of the camera)
-	constexpr float s_worldOffsetX          = -1.f * s_worldWidth * 0.5f;
+    constexpr float s_worldOffsetX          = -1.f * s_worldWidth * 0.5f;
     constexpr float s_worldOffsetY          = -1.f * (s_visibleWorldHeight) * 0.5f - s_worldBoundsTileWidth;
+
+    // World Positions (Relative to 0,0 which is in the center of the camera)
+	constexpr float s_visibleWorldMinsX     = -s_visibleWorldWidth * 0.5f;
+    constexpr float s_visibleWorldMaxsX     = s_visibleWorldWidth * 0.5f;
+    constexpr float s_visibleWorldMinsY     = -s_visibleWorldHeight * 0.5f;
+    constexpr float s_visibleWorldMaxsY     = s_visibleWorldHeight * 0.5f;
+    constexpr float s_visibleWorldCenterX   = 0.f;
+    constexpr float s_visibleWorldCenterY   = 0.f;
     
     // Camera bounds
     constexpr float s_cameraMinX            = 0.f + s_worldBoundsTileWidth + s_worldOffsetX;
@@ -88,8 +96,7 @@ struct CustomWorldSettings
     // Generation Settings
     int     m_seed                          = 0;
 
-    float   m_minGoalDistance               = 15.f;             // How far away is the goal from the right side of the screen, in world units
-    float   m_maxGoalDistance               = 20.f;             // How far away is the goal from the right side of the screen, in world units
+    float   m_goalDistanceRatio             = 0.5f;             // How far away is the goal from the right side of the screen, as a ratio of map width.
 	int     m_goalWidth                     = 4;                // How large is the goal? In world units
 
 	Name    m_groundTileName                = "Grass";          // The name of the tile that is the ground, as defined in TileDefs.xml

@@ -18,7 +18,7 @@ void SCamera::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCamera::Run(SystemContext const& context)
+void SCamera::Run(SystemContext const&)
 {
 	SCCamera& camera = g_ecs->GetSingleton<SCCamera>();
 

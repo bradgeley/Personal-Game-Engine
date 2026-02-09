@@ -12,6 +12,14 @@ NamedProperties::~NamedProperties()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+std::string NamedProperties::Get(Name key, const char* defaultValue) const
+{
+    return Get<std::string>(key, std::string(defaultValue));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void NamedProperties::Clear()
 {
     for (auto& prop : m_properties)

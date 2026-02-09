@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SLighting.h"
 #include "SCRender.h"
-#include "SCTime.h"
 #include "SCWorld.h"
 #include "SCCamera.h"
 #include "SCLighting.h"
@@ -18,7 +17,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SLighting::Startup()
 {
-    AddReadDependencies<SCTime, SCWorld, SCCamera, SCRender>();
+    AddReadDependencies<SCWorld, SCCamera, SCRender>();
 	AddWriteDependencies<SCLighting, Renderer>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
@@ -49,7 +48,6 @@ void SLighting::Run(SystemContext const&)
 	scWorld.m_isLightingDirty = false;
 
     SCRender const& scRender = g_ecs->GetSingleton<SCRender>();
-    SCTime const& scTime = g_ecs->GetSingleton<SCTime>();
 	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
 	SCLighting& scLighting = g_ecs->GetSingleton<SCLighting>();
 
@@ -67,9 +65,9 @@ void SLighting::Run(SystemContext const&)
 
 	AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
 
-    for (int y = StaticWorldSettings::s_visibleWorldBeginY; y <= StaticWorldSettings::s_visibleWorldEndY; ++y)
+    for (int y = StaticWorldSettings::s_visibleWorldBeginIndexY; y <= StaticWorldSettings::s_visibleWorldEndIndexY; ++y)
     {
-        for (int x = StaticWorldSettings::s_visibleWorldBeginX; x <= StaticWorldSettings::s_visibleWorldEndX; ++x)
+        for (int x = StaticWorldSettings::s_visibleWorldBeginIndexX; x <= StaticWorldSettings::s_visibleWorldEndIndexX; ++x)
         {
 			Tile const& tile = scWorld.m_tiles.GetRef(IntVec2(x, y));
             if (tile.IsLightingDirty())

@@ -33,29 +33,6 @@ IntVec2 s_neighborOffsets[8] =
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::InitializeMap()
-{
-	// Generate map tiles - for now just fill with grass, later will want to generate a more interesting map
-	Tile backgroundTile = TileDef::GetDefaultTile("Grass");
-	m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), backgroundTile);
-
-	CustomWorldSettings worldSettings;
-	// default for now
-
-	GenerateTiles(worldSettings);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SCWorld::GenerateTiles(CustomWorldSettings const& settings)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::GenerateVBO()
 {
 	if (!m_isVBODirty)
@@ -159,11 +136,11 @@ void SCWorld::GenerateLightmap()
 
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 
-	Image image = Image(IntVec2(StaticWorldSettings::s_visibleWorldWidth, StaticWorldSettings::s_visibleWorldHeight), Rgba8::TransparentBlack);
+	Image image = Image(IntVec2(static_cast<int>(StaticWorldSettings::s_visibleWorldWidth), static_cast<int>(StaticWorldSettings::s_visibleWorldHeight)), Rgba8::TransparentBlack);
 	image.SetName("WorldLightmap");
 	Grid<Rgba8>& pixelGrid = image.GetPixelsRef();
 
-	ForEachVisibleWorldCoords([&](IntVec2 const& worldCoords, int visibleWorldRelativeTileIndex)
+	ForEachVisibleWorldCoords([&](IntVec2 const& worldCoords, int)
 	{
 		// Lightmap is only large enough to cover the visible world, so we need to use visible world relative coords
 		IntVec2 visibleWorldRelativeCoords = GetVisibleWorldRelativeCoords(worldCoords);
@@ -222,8 +199,8 @@ bool SCWorld::IsTileVisible(int tileIndex) const
 //----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsTileVisible(IntVec2 const& worldCoords) const
 {
-	return worldCoords.x >= StaticWorldSettings::s_visibleWorldBeginX && worldCoords.x <= StaticWorldSettings::s_visibleWorldEndX
-		&& worldCoords.y >= StaticWorldSettings::s_visibleWorldBeginY && worldCoords.y <= StaticWorldSettings::s_visibleWorldEndY;
+	return worldCoords.x >= StaticWorldSettings::s_visibleWorldBeginIndexX && worldCoords.x <= StaticWorldSettings::s_visibleWorldEndIndexX
+		&& worldCoords.y >= StaticWorldSettings::s_visibleWorldBeginIndexY && worldCoords.y <= StaticWorldSettings::s_visibleWorldEndIndexY;
 }
 
 
@@ -268,9 +245,9 @@ bool SCWorld::SetTile(int tileIndex, Tile const& tile)
 void SCWorld::ForEachVisibleWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const
 {
 	int visibleWorldRelativeTileIndex = 0;
-	for (int y = StaticWorldSettings::s_visibleWorldBeginY; y <= StaticWorldSettings::s_visibleWorldEndY; ++y)
+	for (int y = StaticWorldSettings::s_visibleWorldBeginIndexY; y <= StaticWorldSettings::s_visibleWorldEndIndexY; ++y)
 	{
-		for (int x = StaticWorldSettings::s_visibleWorldBeginX; x <= StaticWorldSettings::s_visibleWorldEndX; ++x, ++visibleWorldRelativeTileIndex)
+		for (int x = StaticWorldSettings::s_visibleWorldBeginIndexX; x <= StaticWorldSettings::s_visibleWorldEndIndexX; ++x, ++visibleWorldRelativeTileIndex)
 		{
 			IntVec2 tileCoords = IntVec2(x, y);
 			if (!func(tileCoords, visibleWorldRelativeTileIndex))
@@ -422,7 +399,7 @@ bool SCWorld::IsPointInsideSolidTile(Vec2 const& worldPos) const
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 SCWorld::GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const
 {
-	return worldCoords - IntVec2(StaticWorldSettings::s_visibleWorldBeginX, StaticWorldSettings::s_visibleWorldBeginY);
+	return worldCoords - IntVec2(StaticWorldSettings::s_visibleWorldBeginIndexX, StaticWorldSettings::s_visibleWorldBeginIndexY);
 }
 
 

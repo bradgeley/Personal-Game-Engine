@@ -48,6 +48,9 @@ public:
 	inline void SetIndoorLighting(uint8_t indoorLighting) { m_lightingValues = (m_lightingValues & 0x0F) | ((indoorLighting & 0x0F) << 4); } // Set the top 4 bits
 	inline void SetOutdoorLighting(uint8_t outdoorLighting) { m_lightingValues = (m_lightingValues & 0xF0) | (outdoorLighting & 0x0F); }     // Set the bottom 4 bits
 
+	void SetIsVisible(bool isVisible);
+	void SetIsSolid(bool isSolid);
+	void SetIsOpaque(bool isOpaque);
 	void SetIsGoal(bool isGoal);
 	void SetLightingDirty(bool dirty);
 	void SetVertsDirty(bool dirty);
