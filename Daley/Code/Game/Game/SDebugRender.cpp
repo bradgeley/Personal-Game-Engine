@@ -52,7 +52,8 @@ void SDebugRender::Run(SystemContext const& context)
             if ((tile.m_tags & scDebug.m_debugTileTags) != 0)
             {
                 AABB2 tileBounds = scWorld.GetTileBounds(tileCoords);
-                VertexUtils::AddVertsForAABB2(untexturedVerts, tileBounds, Rgba8::Yellow);
+                Rgba8 highlightTint = Rgba8(0, 255, 255, 127);
+                VertexUtils::AddVertsForAABB2(untexturedVerts, tileBounds, highlightTint);
             }
             return true; // keep iterating
 		});
