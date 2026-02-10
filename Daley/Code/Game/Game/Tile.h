@@ -17,8 +17,9 @@ enum class TileTag : uint8_t
 	Solid			= 1 << 1,
 	Opaque			= 1 << 2,
 	IsGoal			= 1 << 3,
-	Lighting_Dirty	= 1 << 4, // Means the lighting for this tile changed and its verts need to be recalculated
-	Verts_Dirty		= 1 << 5, // Means the verts are dirty and need to be recalculated (e.g., because the tile ID changed, or lighting changed)
+	IsPath			= 1 << 4,
+	Lighting_Dirty	= 1 << 5, // Means the lighting for this tile changed and its verts need to be recalculated
+	Verts_Dirty		= 1 << 6, // Means the verts are dirty and need to be recalculated (e.g., because the tile ID changed, or lighting changed)
 };
 
 
@@ -35,6 +36,7 @@ public:
 	inline bool IsSolid()			const { return m_tags & static_cast<uint8_t>(TileTag::Solid); }
 	inline bool IsOpaque()			const { return m_tags & static_cast<uint8_t>(TileTag::Opaque); }
 	inline bool IsGoal()			const { return m_tags & static_cast<uint8_t>(TileTag::IsGoal); }
+	inline bool IsPath()			const { return m_tags & static_cast<uint8_t>(TileTag::IsPath); }
 	inline bool IsLightingDirty()   const { return m_tags & static_cast<uint8_t>(TileTag::Lighting_Dirty); }
 	inline bool IsVertsDirty()		const { return m_tags & static_cast<uint8_t>(TileTag::Verts_Dirty); }
 
@@ -52,6 +54,7 @@ public:
 	void SetIsSolid(bool isSolid);
 	void SetIsOpaque(bool isOpaque);
 	void SetIsGoal(bool isGoal);
+	void SetIsPath(bool isPath);
 	void SetLightingDirty(bool dirty);
 	void SetVertsDirty(bool dirty);
 

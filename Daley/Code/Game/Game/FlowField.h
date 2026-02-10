@@ -17,10 +17,13 @@ class FlowField
 {
 public:
 
-	bool Seed(IntVec2 const& tileCoords);
+	FlowField();
 
-	void HardReset();
-	void SoftReset();
+	bool Seed(IntVec2 const& tileCoords);
+	bool SeedUnsafe(IntVec2 const& tileCoords); // Call if you've already validated the tile coords
+	void AddSeedsToOpenList();
+
+	void Reset();
 	void ResetConsideredCells();
 
 	Vec2 GetFlowAtTileCoords(IntVec2 const& tileCoords) const;
@@ -28,6 +31,9 @@ public:
 public:
 
 	std::priority_queue<FlowGenerationCoords> m_openList;
+
+	bool m_hasGeneratedFlow = false;
+	std::vector<IntVec2> m_seeds;
 	FastGrid<uint8_t, StaticWorldSettings::s_worldSizePowerOfTwo> m_costField;
 	FastGrid<float, StaticWorldSettings::s_worldSizePowerOfTwo> m_distanceField;
 	FastGrid<Vec2, StaticWorldSettings::s_worldSizePowerOfTwo> m_gradient;

@@ -22,4 +22,7 @@ protected:
 
     static bool DebugRenderGrid(NamedProperties& args);
     static bool DebugTileTags(NamedProperties& args); // Used to visualize tile tags
+    static bool DebugRenderCostField(NamedProperties& args);
+    static bool DebugRenderDistanceField(NamedProperties& args);
+    static bool DebugRenderFlowField(NamedProperties& args);
 };

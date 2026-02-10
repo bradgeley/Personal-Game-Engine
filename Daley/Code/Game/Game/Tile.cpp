@@ -75,6 +75,21 @@ void Tile::SetIsGoal(bool isGoal)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Tile::SetIsPath(bool isPath)
+{
+    if (isPath)
+    {
+        m_tags |= static_cast<uint8_t>(TileTag::IsPath);
+    }
+    else
+    {
+        m_tags &= ~static_cast<uint8_t>(TileTag::IsPath);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Tile::SetLightingDirty(bool dirty)
 {
     if (dirty)

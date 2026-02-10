@@ -3,6 +3,8 @@
 #include "CTransform.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
+#include "TileDef.h"
+#include "WorldSettings.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Debug/DevConsoleUtils.h"
@@ -24,6 +26,13 @@ void SFlowField::Startup()
 {
     AddReadDependencies<CTransform, SCWorld>();
     AddWriteDependencies<SCFlowField>();
+
+	SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
+	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+
+	SeedFlowField(scFlowField.m_toGoalFlowField, world);
+	SetCostField(scFlowField.m_toGoalFlowField, world);
+	GenerateFlow(scFlowField.m_toGoalFlowField);
 }
 
 
@@ -40,26 +49,51 @@ void SFlowField::Run(SystemContext const& context)
 void SFlowField::Shutdown()
 {
     SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
-    scFlowField.m_toGoalFlowField.HardReset();
+    scFlowField.m_toGoalFlowField.Reset();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::GenerateFlow(FlowField& flowField, IntVec2 const& destination)
+void SFlowField::SeedFlowField(FlowField& flowField, SCWorld const& world)
+{
+    for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+    {
+        for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+        {
+            IntVec2 currentCoords = IntVec2(x, y);
+            if (world.m_tiles.Get(currentCoords).IsGoal())
+            {
+                flowField.SeedUnsafe(currentCoords);
+            }
+        }
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SFlowField::SetCostField(FlowField& flowField, SCWorld const& world)
+{
+    int index = 0; // trick only works if iterating from 0,0
+    for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+    {
+        for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x, ++index)
+        {
+            uint8_t cost = world.GetTileCost(index);
+            flowField.m_costField.Set(index, cost);
+        }
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SFlowField::GenerateFlow(FlowField& flowField)
 {
     ScopedTimer timer("GenerateFlow");
 
-    bool succeeded = flowField.Seed(destination);
-    if (!succeeded)
-    {
-        DevConsoleUtils::LogError("Failed to seed flow field");
-    }
-
-    flowField.m_openList.emplace(destination, 0.f);
     GenerateDistanceField(flowField);
-
-    flowField.m_openList.emplace(destination, 0.f);
     GenerateGradient(flowField);
 }
 
@@ -68,8 +102,10 @@ void SFlowField::GenerateFlow(FlowField& flowField, IntVec2 const& destination)
 //----------------------------------------------------------------------------------------------------------------------
 void SFlowField::GenerateDistanceField(FlowField& flowField)
 {
-    //ScopedTimer timer("- Generate Distance Field");
-    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+    ScopedTimer timer("- Generate Distance Field");
+    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+
+    flowField.AddSeedsToOpenList();
 
     while (!flowField.m_openList.empty())
     {
@@ -84,7 +120,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
         {
             continue;
         }
-        if (world.IsTileSolid(flowGenCoords.m_tileCoords))
+        if (!world.IsTileOnPath(flowGenCoords.m_tileCoords))
         {
             continue;
         }
@@ -102,7 +138,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
             {
                 continue;
             }
-            if (world.IsTileSolid(neighborTileCoords))
+            if (!world.IsTileOnPath(neighborTileCoords))
             {
                 continue;
             }
@@ -120,7 +156,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
                 {
                     continue;
                 }
-                if (world.IsTileSolid(nofnTileCoords))
+                if (!world.IsTileOnPath(nofnTileCoords))
                 {
                     continue;
                 }
@@ -164,10 +200,12 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
 
 void SFlowField::GenerateGradient(FlowField& flowField)
 {
-    //ScopedTimer timer("- Generate Gradient");
-    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+    ScopedTimer timer("- Generate Gradient");
+    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
 
     flowField.ResetConsideredCells();
+
+    flowField.AddSeedsToOpenList();
 
     while (!flowField.m_openList.empty())
     {
@@ -181,7 +219,7 @@ void SFlowField::GenerateGradient(FlowField& flowField)
         {
             continue;
         }
-        if (world.IsTileSolid(flowGenCoords.m_tileCoords))
+        if (!world.IsTileOnPath(flowGenCoords.m_tileCoords))
         {
             continue;
         }
@@ -201,7 +239,7 @@ void SFlowField::GenerateGradient(FlowField& flowField)
             float currentNeighborDistance = (float) flowField.m_distanceField.Get(neighborTileCoords);
             float dDist = currentTileDistance - currentNeighborDistance;
 
-            if (world.IsTileSolid(neighborTileCoords))
+            if (!world.IsTileOnPath(neighborTileCoords))
             {
                 // Always treat solid walls as being 0.5 distance away in that direction, so that flow always generates away from walls without skewing too much
                 // If we leave this as the actual distance, which is very large (999), then gradient will point away from walls too strongly

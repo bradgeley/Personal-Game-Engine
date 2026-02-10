@@ -206,6 +206,38 @@ bool SCWorld::IsTileVisible(IntVec2 const& worldCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::IsTileOnPath(int tileIndex) const
+{
+	Tile const& tile = m_tiles.Get(tileIndex);
+	return tile.IsPath();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::IsTileOnPath(IntVec2 const& worldCoords) const
+{
+	Tile const& tile = m_tiles.Get(worldCoords);
+	return tile.IsPath();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+uint8_t SCWorld::GetTileCost(int tileIndex) const
+{
+	Tile tile = m_tiles.Get(tileIndex);
+	TileDef const* tileDef = TileDef::GetTileDef(tile.m_id);
+	if (tileDef)
+	{
+		return tileDef->m_cost;
+	}
+	return (uint8_t) 255;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::SetTile(IntVec2 const& tileCoords, Tile const& tile)
 {
 	int index = m_tiles.GetIndexForCoords(tileCoords);

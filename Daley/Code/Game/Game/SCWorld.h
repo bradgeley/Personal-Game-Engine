@@ -34,6 +34,11 @@ public:
 	bool IsTileVisible(int tileIndex) const;
 	bool IsTileVisible(IntVec2 const& worldCoords) const;
 
+    bool IsTileOnPath(int tileIndex) const;
+    bool IsTileOnPath(IntVec2 const& worldCoords) const;
+
+    uint8_t GetTileCost(int tileIndex) const;
+
 	bool SetTile(IntVec2 const& tileCoords, Tile const& tile);
 	bool SetTile(int tileIndex, Tile const& tile);
 

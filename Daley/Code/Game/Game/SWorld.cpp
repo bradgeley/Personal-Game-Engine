@@ -50,17 +50,29 @@ void SWorld::InitializeMap()
 	scWorld.m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), backgroundTile);
 
 	CustomWorldSettings worldSettings;
-	// default for now
+	worldSettings.m_goalTileDistance = 10;
 
-	// Set goal tiles
-	Vec2 goalCenter = Vec2((float) StaticWorldSettings::s_visibleWorldMinsX + StaticWorldSettings::s_visibleWorldWidth * worldSettings.m_goalDistanceRatio, (float) StaticWorldSettings::s_visibleWorldCenterY);
+	Vec2 goalCenter = Vec2((float) StaticWorldSettings::s_visibleWorldMinsX + (float) worldSettings.m_goalTileDistance, (float) StaticWorldSettings::s_visibleWorldCenterY);
 	AABB2 goalBounds = AABB2(goalCenter, (float) worldSettings.m_goalWidth * 0.5f, (float) worldSettings.m_goalWidth * 0.5f);
-	goalBounds.Squeeze(0.01f);
+	goalBounds.Squeeze(0.01f); // Make sure we don't count tiles past the end of the AABB if it lines up perfectly with tile edges
 
+	// Generate path tiles going out from the right side of the goal tiles
+	AABB2 pathBounds = goalBounds;
+	pathBounds.maxs.x = StaticWorldSettings::s_visibleWorldMaxsX;
+	scWorld.ForEachWorldCoordsOverlappingAABB(pathBounds, [&scWorld, &worldSettings](IntVec2 const& tileCoords)
+	{
+		Tile pathTile = TileDef::GetDefaultTile(worldSettings.m_pathTileName);
+		pathTile.SetIsPath(true);
+		scWorld.SetTile(tileCoords, pathTile);
+		return true;
+	});
+
+	// Set goal tiles after path tiles, so they take precedence if they overlap
 	scWorld.ForEachWorldCoordsOverlappingAABB(goalBounds, [&scWorld, &worldSettings](IntVec2 const& tileCoords)
 	{
 		Tile goalTile = TileDef::GetDefaultTile(worldSettings.m_goalTileName);
 		goalTile.SetIsGoal(true);
+		goalTile.SetIsPath(true);
 		scWorld.SetTile(tileCoords, goalTile);
 		return true;
 	});

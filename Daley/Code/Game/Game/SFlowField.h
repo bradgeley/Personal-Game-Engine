@@ -8,6 +8,7 @@ struct Vec2;
 struct IntVec2;
 class FlowFieldChunk;
 class FlowField;
+class SCWorld;
 class WorldCoords;
 
 
@@ -21,12 +22,12 @@ public:
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;
-    int CreateMissingFlowFieldChunks(Vec2 const& anchorLocation);
-    int DestroyStaleFlowFieldChunks(Vec2 const& anchorLocation);
 
 private:
-    
-    void GenerateFlow(FlowField& flowField, IntVec2 const& destination);
+
+    void SeedFlowField(FlowField& flowField, SCWorld const& world);
+    void SetCostField(FlowField& flowField, SCWorld const& world);
+    void GenerateFlow(FlowField& flowField);
     void GenerateDistanceField(FlowField& flowField);
     void GenerateGradient(FlowField& flowField);
 };

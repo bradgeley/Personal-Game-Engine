@@ -27,6 +27,9 @@ public:
 
 	// Debug draw toggles
 	bool m_debugRenderGrid					= false;						// Toggle used by SDebugRender
+	bool m_debugRenderCostField				= false;						// Toggle used by SDebugRender
+	bool m_debugRenderDistanceField			= false;						// Toggle used by SDebugRender
+	bool m_debugRenderFlowField				= false;						// Toggle used by SDebugRender
 	uint8_t m_debugTileTags					= 0;							// Used by SDebugRender to display tiles that match the debug tags requested
 };
 
