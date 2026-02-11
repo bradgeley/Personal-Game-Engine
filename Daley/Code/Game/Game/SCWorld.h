@@ -44,6 +44,7 @@ public:
 
     // For each func - return false means stop iterating, true means keep iterating.
     void ForEachVisibleWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const;
+    void ForEachPlayableWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const;
     void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
@@ -51,6 +52,9 @@ public:
     void ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
+
+	AABB2 GetVisibleWorldBounds() const;
+	AABB2 GetPlayableWorldBounds() const;
 
 	IntVec2 GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const; // Returns relative coords where 0,0 is bottom left of visible world
     IntVec2 GetTileCoordsAtWorldPos(Vec2 const& worldPos) const;

@@ -27,6 +27,7 @@ public:
 
 	// Debug draw toggles
 	bool m_debugRenderGrid					= false;						// Toggle used by SDebugRender
+	bool m_debugRenderEdges					= false;						// Toggle used by SDebugRender
 	bool m_debugRenderCostField				= false;						// Toggle used by SDebugRender
 	bool m_debugRenderDistanceField			= false;						// Toggle used by SDebugRender
 	bool m_debugRenderFlowField				= false;						// Toggle used by SDebugRender

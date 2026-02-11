@@ -111,14 +111,12 @@ void SCWorld::GenerateVBO()
 		return true; // keep iterating
 	});
 
-	#if defined(_DEBUG)
 	m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 	VertexBuffer& debugVBO = *g_renderer->GetVertexBuffer(m_debugVBO);
 	VertexUtils::AddVertsForWireGrid(debugVBO, worldBounds, IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), StaticWorldSettings::s_tileGridDebugDrawThickness, Rgba8::Black);
 	VertexUtils::AddVertsForWireBox2D(debugVBO, worldBounds, 0.03f, Rgba8::Red);
 	VertexUtils::AddVertsForArrow2D(debugVBO, Vec2(0.f, 0.f), Vec2(1.f, 0.f), StaticWorldSettings::s_worldOriginDebugDrawThickness, Rgba8::Red);
 	VertexUtils::AddVertsForArrow2D(debugVBO, Vec2(0.f, 0.f), Vec2(0.f, 1.f), StaticWorldSettings::s_worldOriginDebugDrawThickness, Rgba8::Blue);
-	#endif
 
 	m_isVBODirty = false;
 	g_assetManager->Release(terrainID);
@@ -293,6 +291,25 @@ void SCWorld::ForEachVisibleWorldCoords(const std::function<bool(IntVec2 const&,
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachPlayableWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const
+{
+	int playableWorldRelativeTileIndex = 0;
+	for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+	{
+		for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x, ++playableWorldRelativeTileIndex)
+		{
+			IntVec2 tileCoords = IntVec2(x, y);
+			if (!func(tileCoords, playableWorldRelativeTileIndex))
+			{
+				return;
+			}
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
@@ -429,6 +446,32 @@ bool SCWorld::IsPointInsideSolidTile(Vec2 const& worldPos) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AABB2 SCWorld::GetVisibleWorldBounds() const
+{
+	AABB2 result;
+	result.mins.x = StaticWorldSettings::s_visibleWorldMinsX;
+	result.mins.y = StaticWorldSettings::s_visibleWorldMinsY;
+	result.maxs.x = StaticWorldSettings::s_visibleWorldMaxsX;
+	result.maxs.y = StaticWorldSettings::s_visibleWorldMaxsY;
+	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 SCWorld::GetPlayableWorldBounds() const
+{
+	AABB2 result;
+	result.mins.x = StaticWorldSettings::s_playableWorldMinsX;
+	result.mins.y = StaticWorldSettings::s_playableWorldMinsY;
+	result.maxs.x = StaticWorldSettings::s_playableWorldMaxsX;
+	result.maxs.y = StaticWorldSettings::s_playableWorldMaxsY;
+	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 IntVec2 SCWorld::GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const
 {
 	return worldCoords - IntVec2(StaticWorldSettings::s_visibleWorldBeginIndexX, StaticWorldSettings::s_visibleWorldBeginIndexY);
@@ -441,6 +484,8 @@ IntVec2 SCWorld::GetTileCoordsAtWorldPos(Vec2 const& worldPos) const
 {
 	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
 	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
+	globalTileCoords.x = MathUtils::Clamp(globalTileCoords.x, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
+	globalTileCoords.y = MathUtils::Clamp(globalTileCoords.y, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
 	return IntVec2(globalTileCoords.GetFloor());
 }
 

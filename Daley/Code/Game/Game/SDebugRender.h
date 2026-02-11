@@ -21,6 +21,7 @@ public:
 protected:
 
     static bool DebugRenderGrid(NamedProperties& args);
+    static bool DebugRenderEdges(NamedProperties& args);
     static bool DebugTileTags(NamedProperties& args); // Used to visualize tile tags
     static bool DebugRenderCostField(NamedProperties& args);
     static bool DebugRenderDistanceField(NamedProperties& args);

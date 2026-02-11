@@ -58,7 +58,7 @@ void SWorld::InitializeMap()
 
 	// Generate path tiles going out from the right side of the goal tiles
 	AABB2 pathBounds = goalBounds;
-	pathBounds.maxs.x = StaticWorldSettings::s_visibleWorldMaxsX;
+	pathBounds.maxs.x = StaticWorldSettings::s_playableWorldMaxsX;
 	scWorld.ForEachWorldCoordsOverlappingAABB(pathBounds, [&scWorld, &worldSettings](IntVec2 const& tileCoords)
 	{
 		Tile pathTile = TileDef::GetDefaultTile(worldSettings.m_pathTileName);

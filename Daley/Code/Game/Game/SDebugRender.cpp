@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugRender.h"
+#include "SCCamera.h"
 #include "SCDebug.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
@@ -24,6 +25,7 @@ void SDebugRender::Startup()
     scDebug.m_frameDefaultFontVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderGrid", &SDebugRender::DebugRenderGrid);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderEdges", &SDebugRender::DebugRenderEdges);
     DevConsoleUtils::AddDevConsoleCommand("DebugTileTags", &SDebugRender::DebugTileTags, "Tag", DevConsoleArgType::String);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderCostField", &SDebugRender::DebugRenderCostField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
@@ -51,9 +53,19 @@ void SDebugRender::Run(SystemContext const& context)
         g_renderer->DrawVertexBuffer(world.m_debugVBO);
     }
 
+	SCCamera& scCamera = g_ecs->GetSingleton<SCCamera>();
+    if (scDebug.m_debugRenderEdges)
+    {
+        scCamera.m_camera.SetOrthoBounds2D(world.GetPlayableWorldBounds());
+    }
+    else
+    {
+        scCamera.m_camera.SetOrthoBounds2D(world.GetVisibleWorldBounds());
+    }
+
     if (scDebug.m_debugTileTags != 0)
     {
-        world.ForEachVisibleWorldCoords([&](IntVec2 const& tileCoords, int)
+        world.ForEachPlayableWorldCoords([&](IntVec2 const& tileCoords, int)
         {
             Tile const& tile = world.m_tiles.Get(tileCoords);
             if ((tile.m_tags & scDebug.m_debugTileTags) != 0)
@@ -128,7 +140,7 @@ void SDebugRender::Run(SystemContext const& context)
                 AABB2 tileBounds = world.GetTileBounds(tileCoords);
                 Vec2 gradient = toGoalFlowField.m_gradient.Get(x, y);
 
-                VertexUtils::AddVertsForArrow2D(untexturedVerts, tileBounds.GetCenter(), tileBounds.GetCenter() + gradient, 0.05f, Rgba8::Yellow);
+                VertexUtils::AddVertsForArrow2D(untexturedVerts, tileBounds.GetCenter() - gradient * 0.33f, tileBounds.GetCenter() + gradient * 0.33f, 0.075f, Rgba8::Yellow);
             }
         }
     }
@@ -166,6 +178,16 @@ bool SDebugRender::DebugRenderGrid(NamedProperties&)
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderGrid = !scDebug.m_debugRenderGrid;
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderEdges(NamedProperties& args)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderEdges = !scDebug.m_debugRenderEdges;
+	return false;
 }
 
 
