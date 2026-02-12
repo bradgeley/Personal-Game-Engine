@@ -63,7 +63,7 @@ void SCWorld::GenerateVBO()
 	Vec2 worldMaxs = worldMins + worldDims;
 	AABB2 worldBounds = AABB2(worldMins, worldMaxs);
 
-	ForEachVisibleWorldCoords([&](IntVec2 const& worldCoords, int visibleWorldRelativeTileIndex)
+	ForEachVisibleTile([&](IntVec2 const& worldCoords, int visibleTileIndex)
 	{
 		int tileIndex = m_tiles.GetIndexForCoords(worldCoords);
 		Tile& tile = m_tiles.GetRef(tileIndex);
@@ -100,7 +100,7 @@ void SCWorld::GenerateVBO()
 		Vec2 lightmapUVs = lightmapUVsHalfStepSize + Vec2(visibleWorldRelativeCoords.x, visibleWorldRelativeCoords.y) * lightmapUVsStepSize;
 
 		// Write verts
-		int firstVertIndex = visibleWorldRelativeTileIndex * 6;
+		int firstVertIndex = visibleTileIndex * 6;
 		TerrainVertex* firstVert = vbo.GetData<TerrainVertex>(firstVertIndex);
 		*(firstVert) = TerrainVertex(bottomLeftPoint, tint, bottomLeftUVs, lightmapUVs);
 		*(firstVert + 1) = TerrainVertex(bottomRightPoint, tint, bottomRightUVs, lightmapUVs);
@@ -138,7 +138,7 @@ void SCWorld::GenerateLightmap()
 	image.SetName("WorldLightmap");
 	Grid<Rgba8>& pixelGrid = image.GetPixelsRef();
 
-	ForEachVisibleWorldCoords([&](IntVec2 const& worldCoords, int)
+	ForEachVisibleTile([&](IntVec2 const& worldCoords, int)
 	{
 		// Lightmap is only large enough to cover the visible world, so we need to use visible world relative coords
 		IntVec2 visibleWorldRelativeCoords = GetVisibleWorldRelativeCoords(worldCoords);
@@ -272,7 +272,7 @@ bool SCWorld::SetTile(int tileIndex, Tile const& tile)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachVisibleWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const
+void SCWorld::ForEachVisibleTile(const std::function<bool(IntVec2 const&, int)>& func) const
 {
 	int visibleWorldRelativeTileIndex = 0;
 	for (int y = StaticWorldSettings::s_visibleWorldBeginIndexY; y <= StaticWorldSettings::s_visibleWorldEndIndexY; ++y)
@@ -291,15 +291,14 @@ void SCWorld::ForEachVisibleWorldCoords(const std::function<bool(IntVec2 const&,
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachPlayableWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const
+void SCWorld::ForEachPlayableTile(const std::function<bool(IntVec2 const&)>& func) const
 {
-	int playableWorldRelativeTileIndex = 0;
 	for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
 	{
-		for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x, ++playableWorldRelativeTileIndex)
+		for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
 		{
 			IntVec2 tileCoords = IntVec2(x, y);
-			if (!func(tileCoords, playableWorldRelativeTileIndex))
+			if (!func(tileCoords))
 			{
 				return;
 			}
@@ -310,11 +309,11 @@ void SCWorld::ForEachPlayableWorldCoords(const std::function<bool(IntVec2 const&
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const
+void SCWorld::ForEachPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
 
-	ForEachWorldCoordsOverlappingAABB(boundingBox, [&](IntVec2 const& worldCoords)
+	ForEachPlayableTileOverlappingAABB(boundingBox, [&](IntVec2 const& worldCoords)
 	{ 
 		AABB2 tileBounds = GetTileBounds(worldCoords);
 		if (GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
@@ -331,11 +330,11 @@ void SCWorld::ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const
+void SCWorld::ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetDiscBounds(pos, radius);
 
-	ForEachWorldCoordsOverlappingAABB(boundingBox, [&](IntVec2 const& worldCoords)
+	ForEachPlayableTileOverlappingAABB(boundingBox, [&](IntVec2 const& worldCoords)
 	{
 		AABB2 tileBounds = GetTileBounds(worldCoords);
 		if (GeometryUtils::DoesDiscOverlapAABB(pos, radius, tileBounds))
@@ -352,11 +351,11 @@ void SCWorld::ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius,
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const
+void SCWorld::ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const
 {
 	// Start in bot left, and iterate in a grid pattern
-	IntVec2 startGlobalTileCoords = GetTileCoordsAtWorldPos(aabb.mins);
-	IntVec2 endGlobalTileCoords = GetTileCoordsAtWorldPos(aabb.maxs);
+	IntVec2 startGlobalTileCoords = GetTileCoordsAtWorldPosClamped(aabb.mins);
+	IntVec2 endGlobalTileCoords = GetTileCoordsAtWorldPosClamped(aabb.maxs);
 
 	int startX = MathUtils::Min(startGlobalTileCoords.x, endGlobalTileCoords.x);
 	int endX = MathUtils::Max(startGlobalTileCoords.x, endGlobalTileCoords.x);
@@ -380,11 +379,11 @@ void SCWorld::ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::fu
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachSolidWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const
+void SCWorld::ForEachSolidPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const
 {
 	// Start in bot left, and iterate in a grid pattern
-	IntVec2 startTileCoords = GetTileCoordsAtWorldPos(aabb.mins);
-	IntVec2 endTileCoords = GetTileCoordsAtWorldPos(aabb.maxs);
+	IntVec2 startTileCoords = GetTileCoordsAtWorldPosClamped(aabb.mins);
+	IntVec2 endTileCoords = GetTileCoordsAtWorldPosClamped(aabb.maxs);
 
 	int startX = MathUtils::Min(startTileCoords.x, endTileCoords.x);
 	int endX = MathUtils::Max(startTileCoords.x, endTileCoords.x);
@@ -411,11 +410,11 @@ void SCWorld::ForEachSolidWorldCoordsOverlappingAABB(AABB2 const& aabb, const st
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const
+void SCWorld::ForEachSolidPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
 
-	ForEachSolidWorldCoordsOverlappingAABB(boundingBox, [&](IntVec2 const& coords)
+	ForEachSolidPlayableTileOverlappingAABB(boundingBox, [&](IntVec2 const& coords)
 	{
 		AABB2 tileBounds = GetTileBounds(coords);
 		if (!GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
@@ -439,8 +438,12 @@ void SCWorld::ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 
 //----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsPointInsideSolidTile(Vec2 const& worldPos) const
 {
-	IntVec2 tileCoords = GetTileCoordsAtWorldPos(worldPos);
-	return IsTileSolid(tileCoords);
+	int tileIndex = GetTileIndexAtWorldPos(worldPos);
+	if (!m_tiles.IsValidIndex(tileIndex))
+	{
+		return false;
+	}
+	return IsTileSolid(tileIndex);
 }
 
 
@@ -484,6 +487,16 @@ IntVec2 SCWorld::GetTileCoordsAtWorldPos(Vec2 const& worldPos) const
 {
 	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
 	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
+	return IntVec2(globalTileCoords.GetFloor());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 SCWorld::GetTileCoordsAtWorldPosClamped(Vec2 const& worldPos) const
+{
+	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
+	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
 	globalTileCoords.x = MathUtils::Clamp(globalTileCoords.x, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
 	globalTileCoords.y = MathUtils::Clamp(globalTileCoords.y, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
 	return IntVec2(globalTileCoords.GetFloor());
@@ -495,6 +508,10 @@ IntVec2 SCWorld::GetTileCoordsAtWorldPos(Vec2 const& worldPos) const
 int SCWorld::GetTileIndexAtWorldPos(Vec2 const& worldPos) const
 {
 	IntVec2 tileCoords = GetTileCoordsAtWorldPos(worldPos);
+	if (!m_tiles.IsValidCoords(tileCoords))
+	{
+		return -1;
+	}
 	int index = m_tiles.GetIndexForCoords(tileCoords);
 	return index;
 }

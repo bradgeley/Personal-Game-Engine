@@ -24,7 +24,7 @@ void SDebugOverlay::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDebugOverlay::Run(SystemContext const& context)
+void SDebugOverlay::Run(SystemContext const&)
 {
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 

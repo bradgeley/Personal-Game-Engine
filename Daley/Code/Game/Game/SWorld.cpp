@@ -16,7 +16,7 @@ void SWorld::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWorld::Run(SystemContext const& context)
+void SWorld::Run(SystemContext const&)
 {
 
 }
@@ -59,7 +59,7 @@ void SWorld::InitializeMap()
 	// Generate path tiles going out from the right side of the goal tiles
 	AABB2 pathBounds = goalBounds;
 	pathBounds.maxs.x = StaticWorldSettings::s_playableWorldMaxsX;
-	scWorld.ForEachWorldCoordsOverlappingAABB(pathBounds, [&scWorld, &worldSettings](IntVec2 const& tileCoords)
+	scWorld.ForEachPlayableTileOverlappingAABB(pathBounds, [&scWorld, &worldSettings](IntVec2 const& tileCoords)
 	{
 		Tile pathTile = TileDef::GetDefaultTile(worldSettings.m_pathTileName);
 		pathTile.SetIsPath(true);
@@ -68,7 +68,7 @@ void SWorld::InitializeMap()
 	});
 
 	// Set goal tiles after path tiles, so they take precedence if they overlap
-	scWorld.ForEachWorldCoordsOverlappingAABB(goalBounds, [&scWorld, &worldSettings](IntVec2 const& tileCoords)
+	scWorld.ForEachPlayableTileOverlappingAABB(goalBounds, [&scWorld, &worldSettings](IntVec2 const& tileCoords)
 	{
 		Tile goalTile = TileDef::GetDefaultTile(worldSettings.m_goalTileName);
 		goalTile.SetIsGoal(true);

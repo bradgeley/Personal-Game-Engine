@@ -46,10 +46,10 @@ namespace StaticWorldSettings
 
     // World Tiles
     constexpr int   s_numTilesInRow         = (1 << s_worldSizePowerOfTwo);
+	constexpr int   s_numTilesInWorld       = s_numTilesInRow * s_numTilesInRow;
     constexpr float s_worldEdgeTileWidth    = s_numWorldEdgeTiles * s_tileWidth;
     constexpr int   s_numTilesInRowMinusOne = s_numTilesInRow - 1;
     constexpr float s_numTilesInRowF        = static_cast<float>(s_numTilesInRow);
-    constexpr int   s_numTilesInWorld       = (s_numTilesInRow * s_numTilesInRow);
     constexpr int   s_numVertsInWorld       = (6 * s_numTilesInWorld);
     constexpr float s_oneOverNumTilesInRow  = 1.f / static_cast<float>(s_numTilesInRow);
     constexpr float s_tileHalfWidth         = s_tileWidth * 0.5f;
@@ -80,18 +80,23 @@ namespace StaticWorldSettings
 	constexpr float s_worldMaxsY                = s_worldMinsY + s_worldHeight;
 
     // Visible World Positions (Relative to 0,0 which is in the center of the camera)
-    constexpr float s_visibleWorldMinsX = -s_visibleWorldWidth * 0.5f;
-    constexpr float s_visibleWorldMaxsX = s_visibleWorldWidth * 0.5f;
-    constexpr float s_visibleWorldMinsY = -s_visibleWorldHeight * 0.5f;
-    constexpr float s_visibleWorldMaxsY = s_visibleWorldHeight * 0.5f;
-    constexpr float s_visibleWorldCenterX = 0.f;
-    constexpr float s_visibleWorldCenterY = 0.f;
+    constexpr float s_visibleWorldMinsX         = -s_visibleWorldWidth * 0.5f;
+    constexpr float s_visibleWorldMaxsX         = s_visibleWorldWidth * 0.5f;
+    constexpr float s_visibleWorldMinsY         = -s_visibleWorldHeight * 0.5f;
+    constexpr float s_visibleWorldMaxsY         = s_visibleWorldHeight * 0.5f;
+    constexpr float s_visibleWorldCenterX       = (s_visibleWorldMinsX + s_visibleWorldMaxsX) * 0.5f;
+    constexpr float s_visibleWorldCenterY       = (s_visibleWorldMinsY + s_visibleWorldMaxsY) * 0.5f;
 
     // Playable World Positions (Visible Plus Edge Tiles)
+    constexpr float s_numPlayableWorldTilesX    = s_numTilesInRow;
+	constexpr float s_numPlayableWorldTilesY    = s_numWorldEdgeTiles * 2 + static_cast<int>(s_numVisibleWorldTilesY);
+    constexpr int   s_numTilesInPlayableWorld   = static_cast<int>(s_numPlayableWorldTilesX * s_numPlayableWorldTilesY);
+    constexpr float s_playableWorldWidth        = s_numVisibleWorldTilesX * s_tileWidth;
+    constexpr float s_playableWorldHeight       = s_numVisibleWorldTilesY * s_tileWidth;
 	constexpr int   s_playableWorldBeginIndexX  = 0;
 	constexpr int   s_playableWorldBeginIndexY  = 0;
-	constexpr int   s_playableWorldEndIndexX    = s_numTilesInRow - 1;
-	constexpr int   s_playableWorldEndIndexY    = s_numWorldEdgeTiles * 2 + static_cast<int>(s_numVisibleWorldTilesY) - 1;
+	constexpr int   s_playableWorldEndIndexX    = static_cast<int>(s_numPlayableWorldTilesX) - 1;
+	constexpr int   s_playableWorldEndIndexY    = static_cast<int>(s_numPlayableWorldTilesY) - 1;
     constexpr float s_playableWorldMinsX        = s_worldOffsetX;
     constexpr float s_playableWorldMaxsX        = s_playableWorldMinsX + s_visibleWorldWidth + s_worldEdgeTileWidth * 2.f;
     constexpr float s_playableWorldMinsY        = s_worldOffsetY;

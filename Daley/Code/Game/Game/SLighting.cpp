@@ -26,7 +26,7 @@ void SLighting::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("ToggleLighting", &SLighting::ToggleLighting);
 
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
-    scWorld.ForEachVisibleWorldCoords([&scWorld](IntVec2 const& tileCoords, int)
+    scWorld.ForEachVisibleTile([&scWorld](IntVec2 const& tileCoords, int)
     {
         Tile& tile = scWorld.m_tiles.GetRef(tileCoords);
         tile.SetLightingDirty(true);

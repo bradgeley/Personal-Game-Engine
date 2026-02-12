@@ -10,9 +10,6 @@
 void SPhysics::Startup()
 {
     AddWriteDependencies<CMovement, CTransform>();
-
-    int numThreads = std::thread::hardware_concurrency() - 1;
-    m_systemSplittingNumJobs = numThreads - 1;
 }
 
 

@@ -35,7 +35,7 @@ void SDebugRender::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDebugRender::Run(SystemContext const& context)
+void SDebugRender::Run(SystemContext const&)
 {
 	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
@@ -65,7 +65,7 @@ void SDebugRender::Run(SystemContext const& context)
 
     if (scDebug.m_debugTileTags != 0)
     {
-        world.ForEachPlayableWorldCoords([&](IntVec2 const& tileCoords, int)
+        world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
         {
             Tile const& tile = world.m_tiles.Get(tileCoords);
             if ((tile.m_tags & scDebug.m_debugTileTags) != 0)
@@ -183,7 +183,7 @@ bool SDebugRender::DebugRenderGrid(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugRender::DebugRenderEdges(NamedProperties& args)
+bool SDebugRender::DebugRenderEdges(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderEdges = !scDebug.m_debugRenderEdges;
@@ -237,7 +237,7 @@ bool SDebugRender::DebugTileTags(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugRender::DebugRenderCostField(NamedProperties& args)
+bool SDebugRender::DebugRenderCostField(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderCostField = !scDebug.m_debugRenderCostField;

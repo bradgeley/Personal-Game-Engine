@@ -43,13 +43,14 @@ public:
 	bool SetTile(int tileIndex, Tile const& tile);
 
     // For each func - return false means stop iterating, true means keep iterating.
-    void ForEachVisibleWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const;
-    void ForEachPlayableWorldCoords(const std::function<bool(IntVec2 const&, int)>& func) const;
-    void ForEachWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachWorldCoordsOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachSolidWorldCoordsOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachSolidWorldCoordsOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachVisibleTile(const std::function<bool(IntVec2 const&, int)>& func) const;
+
+    void ForEachPlayableTile(const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachSolidPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachSolidPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
 
@@ -58,6 +59,7 @@ public:
 
 	IntVec2 GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const; // Returns relative coords where 0,0 is bottom left of visible world
     IntVec2 GetTileCoordsAtWorldPos(Vec2 const& worldPos) const;
+    IntVec2 GetTileCoordsAtWorldPosClamped(Vec2 const& worldPos) const;
     int GetTileIndexAtWorldPos(Vec2 const& worldPos) const;
     Tile const* GetTileAtWorldPos(Vec2 const& worldPos) const;
     Tile* GetTileAtWorldPos(Vec2 const& worldPos);

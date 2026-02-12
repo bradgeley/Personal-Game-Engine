@@ -37,7 +37,7 @@ void SRenderWorld::Startup()
 	scWorld.m_worldSpriteSheet = g_assetManager->AsyncLoad<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
 	ASSERT_OR_DIE(scWorld.m_worldSpriteSheet != AssetID::Invalid, "Failed to load world sprite sheet in SRenderWorld::Startup");
 
-    scWorld.ForEachVisibleWorldCoords([&scWorld](IntVec2 const& tileCoords, int)
+    scWorld.ForEachVisibleTile([&scWorld](IntVec2 const& tileCoords, int)
     {
         Tile& tile = scWorld.m_tiles.GetRef(tileCoords);
         tile.SetVertsDirty(true);

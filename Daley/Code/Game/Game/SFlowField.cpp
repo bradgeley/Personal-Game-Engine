@@ -38,7 +38,7 @@ void SFlowField::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::Run(SystemContext const& context)
+void SFlowField::Run(SystemContext const&)
 {
 
 }
@@ -95,6 +95,7 @@ void SFlowField::GenerateFlow(FlowField& flowField)
 
     GenerateDistanceField(flowField);
     GenerateGradient(flowField);
+	flowField.m_hasGeneratedFlow = true;
 }
 
 

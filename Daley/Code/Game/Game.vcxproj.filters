@@ -430,6 +430,12 @@
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml">
       <Filter>Data\Shaders</Filter>
     </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Pig.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">

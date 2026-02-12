@@ -13,7 +13,7 @@ void SInput::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SInput::Run(SystemContext const& context)
+void SInput::Run(SystemContext const&)
 {
 
 }

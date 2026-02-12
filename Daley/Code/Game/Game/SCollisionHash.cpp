@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SCollisionHash.h"
-#include "SCCamera.h"
 #include "CCollision.h"
 #include "CTransform.h"
 #include "SCWorld.h"
@@ -14,11 +13,10 @@
 void SCollisionHash::Startup()
 {
 	AddWriteDependencies<SCWorld, SCCollision>();
-    AddReadDependencies<CCollision, CTransform, SCCamera>();
+    AddReadDependencies<CCollision, CTransform>();
 
-    // Hashing entities can be split, since it is a read only operation until the combine phase
-    int numThreads = std::thread::hardware_concurrency() - 1;
-	m_systemSplittingNumJobs = numThreads - 1;
+    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
+    scCollision.m_tileBuckets.resize(StaticWorldSettings::s_numTilesInPlayableWorld);
 }
 
 
@@ -26,7 +24,12 @@ void SCollisionHash::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::PreRun()
 {
+    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
+    for (auto& bucket : scCollision.m_tileBuckets)
+    {
+        bucket.clear();
+	}
 }
 
 
@@ -53,12 +56,12 @@ void SCollisionHash::Run(SystemContext const& context)
         Vec2 pos = trans.m_pos + coll.m_offset;
         float radius = coll.m_radius + StaticWorldSettings::s_collisionHashWiggleRoom;
 
-        world.ForEachWorldCoordsOverlappingCircle(pos, radius, [&](IntVec2 const& worldCoords)
+        world.ForEachPlayableTileOverlappingCircle(pos, radius, [&](IntVec2 const& worldCoords)
         {								  
-            int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
-            if (world.m_tiles.IsValidIndex(tileIndex))
+			int index = world.m_tiles.GetIndexForCoords(worldCoords);
+            if (world.m_tiles.IsValidIndex(index))
             {
-                scCollision.m_tileBuckets[tileIndex].push_back(it.m_currentIndex);
+                scCollision.m_tileBuckets[index].push_back(it.m_currentIndex);
             }
             return true;
         });

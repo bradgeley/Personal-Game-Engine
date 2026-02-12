@@ -18,7 +18,7 @@ void SDebugInput::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDebugInput::Run(SystemContext const& context)
+void SDebugInput::Run(SystemContext const&)
 {
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
@@ -29,7 +29,7 @@ void SDebugInput::Run(SystemContext const& context)
 	{
 		Vec2 relMousePos = g_input->GetMouseViewportRelativePosition(StaticWorldSettings::s_visibleWorldAspect);
 		scDebug.m_debugMouseWorldLocation = camera.m_camera.ScreenToWorldOrtho(relMousePos);
-		scDebug.m_debugMouseTileCoords = world.GetTileCoordsAtWorldPos(scDebug.m_debugMouseWorldLocation);
+		scDebug.m_debugMouseTileCoords = world.GetTileCoordsAtWorldPosClamped(scDebug.m_debugMouseWorldLocation);
 	}
 
 	// Debug Tile Placement

@@ -26,6 +26,11 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
     result.m_hitLocation = raycast.m_start + raycast.m_direction * raycast.m_maxDistance;
     
     IntVec2 currentWorldCoords = world.GetTileCoordsAtWorldPos(raycast.m_start);
+    if (!world.m_tiles.IsValidCoords(currentWorldCoords))
+    {
+        return result;
+	}
+
     if (world.IsTileSolid(currentWorldCoords))
     {
         // Somehow we got inside a block
@@ -135,7 +140,7 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 
     // Check for initial hit
     float nearestDistSquared = FLT_MAX;
-    world.ForEachSolidWorldCoordsOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result, &nearestDistSquared](IntVec2 const& coords)
+    world.ForEachSolidPlayableTileOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result, &nearestDistSquared](IntVec2 const& coords)
     {
         AABB2 tileBounds = world.GetTileBounds(coords);
         Vec2 nearestPoint = tileBounds.GetNearestPoint(discCast.m_start);
@@ -157,7 +162,7 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
     });
 
     // Sweep against all the tiles in the path
-    world.ForEachSolidWorldCoordsOverlappingCapsule(discCast.m_start, discCastEndPoint, discCast.m_discRadius, [&world, &discCast, &result, &discCastEndPoint](IntVec2 const& coords)
+    world.ForEachSolidPlayableTileOverlappingCapsule(discCast.m_start, discCastEndPoint, discCast.m_discRadius, [&world, &discCast, &result, &discCastEndPoint](IntVec2 const& coords)
     {
         // Line vs. expanded tile bounds for sweep test
         AABB2 tileBounds = world.GetTileBounds(coords);
