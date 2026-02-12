@@ -81,9 +81,9 @@ void SDebugRender::Run(SystemContext const& context)
     // Render Cost Field
     if (scDebug.m_debugRenderCostField)
     {
-        for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y < StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+        for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
         {
-            for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x < StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+            for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
             {
 				IntVec2 tileCoords = IntVec2(x, y);
                 if (!world.IsTileOnPath(tileCoords))
@@ -103,9 +103,9 @@ void SDebugRender::Run(SystemContext const& context)
     // Render Distance Field
     if (scDebug.m_debugRenderDistanceField)
     {
-        for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y < StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+        for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
         {
-            for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x < StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+            for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
             {
                 IntVec2 tileCoords = IntVec2(x, y);
                 if (!world.IsTileOnPath(tileCoords))
@@ -127,9 +127,9 @@ void SDebugRender::Run(SystemContext const& context)
     // Render Flow Field
     if (scDebug.m_debugRenderFlowField)
     {
-        for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y < StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+        for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
         {
-            for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x < StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+            for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
             {
                 IntVec2 tileCoords = IntVec2(x, y);
                 if (!world.IsTileOnPath(tileCoords))
