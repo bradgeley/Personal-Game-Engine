@@ -1,5 +1,8 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugRender.h"
+#include "CCollision.h"
+#include "CRender.h"
+#include "CTransform.h"
 #include "SCCamera.h"
 #include "SCDebug.h"
 #include "SCWorld.h"
@@ -30,17 +33,23 @@ void SDebugRender::Startup()
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderCostField", &SDebugRender::DebugRenderCostField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDebugRender::Run(SystemContext const&)
+void SDebugRender::Run(SystemContext const& context)
 {
 	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     SCFlowField const& scFlowfield = g_ecs->GetSingleton<SCFlowField>();
     FlowField const& toGoalFlowField = scFlowfield.m_toGoalFlowField;
+
+    auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
+    auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
+    auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
+
     Font* defaultFont = g_renderer->GetDefaultFont();
 
     VertexBuffer& untexturedVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameUntexVerts);
@@ -81,9 +90,9 @@ void SDebugRender::Run(SystemContext const&)
     // Render Cost Field
     if (scDebug.m_debugRenderCostField)
     {
-        for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+        for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
         {
-            for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+            for (int x = 0; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
             {
 				IntVec2 tileCoords = IntVec2(x, y);
                 if (!world.IsTileOnPath(tileCoords))
@@ -103,9 +112,9 @@ void SDebugRender::Run(SystemContext const&)
     // Render Distance Field
     if (scDebug.m_debugRenderDistanceField)
     {
-        for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+        for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
         {
-            for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+            for (int x = 0; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
             {
                 IntVec2 tileCoords = IntVec2(x, y);
                 if (!world.IsTileOnPath(tileCoords))
@@ -127,9 +136,9 @@ void SDebugRender::Run(SystemContext const&)
     // Render Flow Field
     if (scDebug.m_debugRenderFlowField)
     {
-        for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+        for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
         {
-            for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+            for (int x = 0; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
             {
                 IntVec2 tileCoords = IntVec2(x, y);
                 if (!world.IsTileOnPath(tileCoords))
@@ -142,6 +151,22 @@ void SDebugRender::Run(SystemContext const&)
 
                 VertexUtils::AddVertsForArrow2D(untexturedVerts, tileBounds.GetCenter() - gradient * 0.33f, tileBounds.GetCenter() + gradient * 0.33f, 0.075f, Rgba8::Yellow);
             }
+        }
+    }
+
+    // Render Flow Field
+    if (scDebug.m_debugRenderCollision)
+    {
+        for (auto it = g_ecs->Iterate<CCollision, CTransform, CRender>(context); it.IsValid(); ++it)
+        {
+            CTransform const& transform = *transStorage.Get(it);
+            CCollision const& collision = *collStorage.Get(it);
+            CRender const& render       = *renderStorage.Get(it);
+
+            Vec2 collisionPos = transform.m_pos + collision.m_offset;
+
+            VertexUtils::AddVertsForWireDisc2D(untexturedVerts, collisionPos, collision.m_radius, 0.05f, 8, Rgba8::Magenta);
+            VertexUtils::AddVertsForWireDisc2D(untexturedVerts, render.GetRenderPosition(), 0.5f * render.m_renderRadius, 0.05f, 8, Rgba8::Cyan);
         }
     }
 
@@ -167,7 +192,12 @@ void SDebugRender::Shutdown()
     g_renderer->ReleaseVertexBuffer(scDebug.m_frameUntexVerts);
 
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderGrid", &SDebugRender::DebugRenderGrid);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderEdges", &SDebugRender::DebugRenderEdges);
     DevConsoleUtils::RemoveDevConsoleCommand("DebugTileTags", &SDebugRender::DebugTileTags);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCostField", &SDebugRender::DebugRenderCostField);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
 }
 
 
@@ -261,5 +291,15 @@ bool SDebugRender::DebugRenderFlowField(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderFlowField = !scDebug.m_debugRenderFlowField;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderCollision(NamedProperties&)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderCollision = !scDebug.m_debugRenderCollision;
     return false;
 }

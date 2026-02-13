@@ -57,9 +57,9 @@ void SFlowField::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 void SFlowField::SeedFlowField(FlowField& flowField, SCWorld const& world)
 {
-    for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+    for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
     {
-        for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+        for (int x = 0; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
         {
             IntVec2 currentCoords = IntVec2(x, y);
             if (world.m_tiles.Get(currentCoords).IsGoal())
@@ -76,9 +76,9 @@ void SFlowField::SeedFlowField(FlowField& flowField, SCWorld const& world)
 void SFlowField::SetCostField(FlowField& flowField, SCWorld const& world)
 {
     int index = 0; // trick only works if iterating from 0,0
-    for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+    for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
     {
-        for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x, ++index)
+        for (int x = 0; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x, ++index)
         {
             uint8_t cost = world.GetTileCost(index);
             flowField.m_costField.Set(index, cost);

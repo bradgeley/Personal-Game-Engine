@@ -93,8 +93,6 @@ namespace StaticWorldSettings
     constexpr int   s_numTilesInPlayableWorld   = static_cast<int>(s_numPlayableWorldTilesX * s_numPlayableWorldTilesY);
     constexpr float s_playableWorldWidth        = s_numVisibleWorldTilesX * s_tileWidth;
     constexpr float s_playableWorldHeight       = s_numVisibleWorldTilesY * s_tileWidth;
-	constexpr int   s_playableWorldBeginIndexX  = 0;
-	constexpr int   s_playableWorldBeginIndexY  = 0;
 	constexpr int   s_playableWorldEndIndexX    = static_cast<int>(s_numPlayableWorldTilesX) - 1;
 	constexpr int   s_playableWorldEndIndexY    = static_cast<int>(s_numPlayableWorldTilesY) - 1;
     constexpr float s_playableWorldMinsX        = s_worldOffsetX;

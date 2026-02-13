@@ -26,4 +26,5 @@ protected:
     static bool DebugRenderCostField(NamedProperties& args);
     static bool DebugRenderDistanceField(NamedProperties& args);
     static bool DebugRenderFlowField(NamedProperties& args);
+    static bool DebugRenderCollision(NamedProperties& args);
 };

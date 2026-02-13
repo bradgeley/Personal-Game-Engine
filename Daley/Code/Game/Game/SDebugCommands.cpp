@@ -41,9 +41,11 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 		DevConsoleUtils::LogError("No EntityDef found with name \"%s\"", name.c_str());
 		return true;
 	}
+	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+
 	SpawnInfo spawnInfo;
 	spawnInfo.m_def = def;
-	spawnInfo.m_spawnPos = Vec2::ZeroVector;
+	spawnInfo.m_spawnPos = world.GetRandomSpawnLocation();
 	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 	factory.m_entitiesToSpawn.push_back(spawnInfo);
 	return true;

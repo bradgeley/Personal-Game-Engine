@@ -37,6 +37,9 @@ public:
     bool IsTileOnPath(int tileIndex) const;
     bool IsTileOnPath(IntVec2 const& worldCoords) const;
 
+    void CacheValidSpawnLocations();
+    Vec2 GetRandomSpawnLocation() const;
+
     uint8_t GetTileCost(int tileIndex) const;
 
 	bool SetTile(IntVec2 const& tileCoords, Tile const& tile);
@@ -51,6 +54,8 @@ public:
     void ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachSolidPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachSolidPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
+
+    void ForEachEdgeTile(const std::function<bool(IntVec2 const&)>& func) const;
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
 
@@ -85,5 +90,7 @@ public:
     // Tracks if the player has moved. todo: move to maybe movement component?
     bool m_playerChangedWorldCoordsThisFrame    = true;
     IntVec2 m_lastKnownPlayerWorldCoords;
+
+	std::vector<IntVec2> m_spawnLocations;
 };
 

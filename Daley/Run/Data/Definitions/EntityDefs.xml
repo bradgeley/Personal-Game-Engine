@@ -9,11 +9,14 @@
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="1"></Movement>
-    <Collision radius="0.5"></Collision>
+    <Collision radius="0.5" immovable="true"></Collision>
     <Render scale="1"></Render>
     <Animation spriteSheet="Data/SpriteSheets/pig.xml"></Animation>
     <Time></Time>
     <AIController></AIController>
   </EntityDef>
+
+  <!-- ==================================================================================================================== -->
+  <!-- Tower -->
   
 </EntityDefs>

@@ -4,8 +4,9 @@
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/Image.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Math/MathUtils.h"
 #include "Engine/Math/GeometryUtils.h"
+#include "Engine/Math/MathUtils.h"
+#include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexBuffer.h"
@@ -222,6 +223,42 @@ bool SCWorld::IsTileOnPath(IntVec2 const& worldCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SCWorld::CacheValidSpawnLocations()
+{
+	m_spawnLocations.clear();
+	m_spawnLocations.reserve(16);
+
+	ForEachEdgeTile([&](IntVec2 const& tileCoords)
+	{
+		Tile const& tile = m_tiles.Get(tileCoords);
+		if (tile.IsPath())
+		{
+			m_spawnLocations.push_back(tileCoords);
+		}
+		return true;
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 SCWorld::GetRandomSpawnLocation() const
+{
+	if (m_spawnLocations.empty())
+	{
+		return Vec2();
+	}
+
+	int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(m_spawnLocations.size()) - 1);
+	IntVec2 tileCoords = m_spawnLocations[randomIndex];
+	AABB2 tileBounds = GetTileBounds(tileCoords);
+	Vec2 randomLocationInBounds = g_rng->GetRandomVecInRange2D(tileBounds.mins, tileBounds.maxs);
+	return randomLocationInBounds;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 uint8_t SCWorld::GetTileCost(int tileIndex) const
 {
 	Tile tile = m_tiles.Get(tileIndex);
@@ -293,9 +330,9 @@ void SCWorld::ForEachVisibleTile(const std::function<bool(IntVec2 const&, int)>&
 //----------------------------------------------------------------------------------------------------------------------
 void SCWorld::ForEachPlayableTile(const std::function<bool(IntVec2 const&)>& func) const
 {
-	for (int y = StaticWorldSettings::s_playableWorldBeginIndexY; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+	for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
 	{
-		for (int x = StaticWorldSettings::s_playableWorldBeginIndexX; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+		for (int x = 0; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
 		{
 			IntVec2 tileCoords = IntVec2(x, y);
 			if (!func(tileCoords))
@@ -431,6 +468,64 @@ void SCWorld::ForEachSolidPlayableTileOverlappingCapsule(Vec2 const& start, Vec2
 		}
 		return true;
 	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachEdgeTile(const std::function<bool(IntVec2 const&)>& func) const
+{
+	// Bottom row first, left to right
+	for (int y = 0; y < StaticWorldSettings::s_numWorldEdgeTiles; ++y)
+	{
+		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x)
+		{
+			IntVec2 tileCoords = IntVec2(x, y);
+			if (!func(tileCoords))
+			{
+				return;
+			}
+		}
+	}
+
+	// Top row next, left to right
+	for (int y = StaticWorldSettings::s_playableWorldEndIndexY - StaticWorldSettings::s_numWorldEdgeTiles + 1; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
+	{
+		for (int x = 0; x < StaticWorldSettings::s_numTilesInRow; ++x)
+		{
+			IntVec2 tileCoords = IntVec2(x, y);
+			if (!func(tileCoords))
+			{
+				return;
+			}
+		}
+	}
+
+	// Left column, bottom to top
+	for (int y = StaticWorldSettings::s_numWorldEdgeTiles; y <= StaticWorldSettings::s_playableWorldEndIndexY - StaticWorldSettings::s_numWorldEdgeTiles; ++y)
+	{
+		for (int x = 0; x < StaticWorldSettings::s_numWorldEdgeTiles; ++x)
+		{
+			IntVec2 tileCoords = IntVec2(x, y);
+			if (!func(tileCoords))
+			{
+				return;
+			}
+		}
+	}
+
+	// Right column, bottom to top
+	for (int y = StaticWorldSettings::s_numWorldEdgeTiles; y <= StaticWorldSettings::s_playableWorldEndIndexY - StaticWorldSettings::s_numWorldEdgeTiles; ++y)
+	{
+		for (int x = StaticWorldSettings::s_playableWorldEndIndexX - StaticWorldSettings::s_numWorldEdgeTiles + 1; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
+		{
+			IntVec2 tileCoords = IntVec2(x, y);
+			if (!func(tileCoords))
+			{
+				return;
+			}
+		}
+	}
 }
 
 

@@ -34,7 +34,8 @@ void SWorld::EndFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void SWorld::Shutdown()
 {
-
+	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+	scWorld.Shutdown();
 }
 
 
@@ -43,11 +44,11 @@ void SWorld::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 void SWorld::InitializeMap()
 {
-	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 
 	// Generate map tiles - for now just fill with grass, later will want to generate a more interesting map
 	Tile backgroundTile = TileDef::GetDefaultTile("Grass");
-	scWorld.m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), backgroundTile);
+	world.m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), backgroundTile);
 
 	CustomWorldSettings worldSettings;
 	worldSettings.m_goalTileDistance = 10;
@@ -59,21 +60,23 @@ void SWorld::InitializeMap()
 	// Generate path tiles going out from the right side of the goal tiles
 	AABB2 pathBounds = goalBounds;
 	pathBounds.maxs.x = StaticWorldSettings::s_playableWorldMaxsX;
-	scWorld.ForEachPlayableTileOverlappingAABB(pathBounds, [&scWorld, &worldSettings](IntVec2 const& tileCoords)
+	world.ForEachPlayableTileOverlappingAABB(pathBounds, [&world, &worldSettings](IntVec2 const& tileCoords)
 	{
 		Tile pathTile = TileDef::GetDefaultTile(worldSettings.m_pathTileName);
 		pathTile.SetIsPath(true);
-		scWorld.SetTile(tileCoords, pathTile);
+		world.SetTile(tileCoords, pathTile);
 		return true;
 	});
 
 	// Set goal tiles after path tiles, so they take precedence if they overlap
-	scWorld.ForEachPlayableTileOverlappingAABB(goalBounds, [&scWorld, &worldSettings](IntVec2 const& tileCoords)
+	world.ForEachPlayableTileOverlappingAABB(goalBounds, [&world, &worldSettings](IntVec2 const& tileCoords)
 	{
 		Tile goalTile = TileDef::GetDefaultTile(worldSettings.m_goalTileName);
 		goalTile.SetIsGoal(true);
 		goalTile.SetIsPath(true);
-		scWorld.SetTile(tileCoords, goalTile);
+		world.SetTile(tileCoords, goalTile);
 		return true;
 	});
+
+	world.CacheValidSpawnLocations();
 }
