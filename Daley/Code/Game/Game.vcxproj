@@ -415,6 +415,7 @@
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Pig.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />

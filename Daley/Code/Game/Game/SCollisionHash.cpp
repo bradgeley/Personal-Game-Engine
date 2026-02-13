@@ -35,37 +35,36 @@ void SCollisionHash::PreRun()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCollisionHash::Run(SystemContext const& context)
+void SCollisionHash::Run(SystemContext const&)
 {
-    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
-    auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-    auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
+    //SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+    //SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
+    //auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
+    //auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
 
-    // Hash entities for this split system
-    for (GroupIter it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
-    {
-        CCollision& coll = *collStorage.Get(it);
-        if (!coll.IsCollisionEnabled())
-        {
-            continue;
-        }
-
-        CTransform& trans = transStorage[it];
-
-        Vec2 pos = trans.m_pos + coll.m_offset;
-        float radius = coll.m_radius + StaticWorldSettings::s_collisionHashWiggleRoom;
-
-        world.ForEachPlayableTileOverlappingCircle(pos, radius, [&](IntVec2 const& worldCoords)
-        {								  
-			int index = world.m_tiles.GetIndexForCoords(worldCoords);
-            if (world.m_tiles.IsValidIndex(index))
-            {
-                scCollision.m_tileBuckets[index].push_back(it.m_currentIndex);
-            }
-            return true;
-        });
-    }
+    //for (GroupIter it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
+    //{
+    //    CCollision& coll = *collStorage.Get(it);
+    //    if (!coll.IsCollisionEnabled())
+    //    {
+    //        continue;
+    //    }
+    //
+    //    CTransform& trans = transStorage[it];
+    //
+    //    Vec2 pos = trans.m_pos + coll.m_offset;
+    //    float radius = coll.m_radius + StaticWorldSettings::s_collisionHashWiggleRoom;
+    //
+    //    world.ForEachPlayableTileOverlappingCircle(pos, radius, [&](IntVec2 const& worldCoords)
+    //    {								  
+	//		int index = world.m_tiles.GetIndexForCoords(worldCoords);
+    //        if (world.m_tiles.IsValidIndex(index))
+    //        {
+    //            scCollision.m_tileBuckets[index].push_back(it.m_currentIndex);
+    //        }
+    //        return true;
+    //    });
+    //}
 }
 
 

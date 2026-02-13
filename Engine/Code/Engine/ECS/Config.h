@@ -11,7 +11,7 @@
 #ifdef _DEBUG
 constexpr uint32_t MAX_ENTITIES = 10'000;
 #else
-constexpr uint32_t MAX_ENTITIES = 100'000;
+constexpr uint32_t MAX_ENTITIES = 200'000;
 #endif
 
 

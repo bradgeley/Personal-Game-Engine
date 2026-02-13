@@ -72,6 +72,7 @@ void SDebugRender::Run(SystemContext const& context)
         scCamera.m_camera.SetOrthoBounds2D(world.GetVisibleWorldBounds());
     }
 
+    // Tile tags
     if (scDebug.m_debugTileTags != 0)
     {
         world.ForEachPlayableTile([&](IntVec2 const& tileCoords)

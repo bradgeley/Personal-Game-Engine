@@ -3,15 +3,28 @@
   <!-- ==================================================================================================================== -->
   <!-- Enemies -->
 
+  <EntityDef name = "ant">
+    <Lifetime></Lifetime>
+    <Death></Death>
+    <Health maxHealth="100" healthRegen="1"></Health>
+    <Transform></Transform>
+    <Movement moveSpeed="5"></Movement>
+    <Collision radius="0.5" immovable="true"></Collision>
+    <Render scale="1.5" rotateSprite="true"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/Ant.xml"></Animation>
+    <Time></Time>
+    <AIController></AIController>
+  </EntityDef>
+
   <EntityDef name = "pig">
     <Lifetime></Lifetime>
     <Death></Death>
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="1"></Movement>
-    <Collision radius="0.5" immovable="true"></Collision>
-    <Render scale="1"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/pig.xml"></Animation>
+    <Collision radius="1" immovable="true"></Collision>
+    <Render scale="2"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
     <Time></Time>
     <AIController></AIController>
   </EntityDef>

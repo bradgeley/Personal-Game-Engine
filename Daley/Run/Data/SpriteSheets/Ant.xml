@@ -1,0 +1,13 @@
+
+
+
+<GridSpriteSheet name="Ant" texture="Data/SpriteSheets/PixelAnt.png" layout="4,1" edgePadding="0,0" innerPadding="0,0">
+  
+  <!-- Walk Anim -->
+  <SpriteAnimation name="walk" frames="0-3" type="loop" secondsPerFrame="0.05"></SpriteAnimation>
+  <SpriteAnimation name="idle" frames="0" type="singleFrame"></SpriteAnimation>
+
+  <!-- Death Anim -->
+  <SpriteAnimation name="death" frames="0" type="once" secondsPerFrame="0.33"></SpriteAnimation>
+  
+</GridSpriteSheet>
