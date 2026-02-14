@@ -145,6 +145,9 @@
     <ClCompile Include="Game\SLighting.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Game\CAIController.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -437,6 +440,9 @@
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\DarkAnt.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
   </ItemGroup>

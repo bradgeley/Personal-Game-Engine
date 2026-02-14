@@ -293,6 +293,7 @@
     <ClCompile Include="Framework\WASM\main.cpp" />
     <ClCompile Include="Framework\WASM\WebApplication.cpp" />
     <ClCompile Include="Framework\Windows\Main_Windows.cpp" />
+    <ClCompile Include="Game\CAIController.cpp" />
     <ClCompile Include="Game\CAnimation.cpp" />
     <ClCompile Include="Game\CCollision.cpp" />
     <ClCompile Include="Game\CDeath.cpp" />
@@ -416,6 +417,7 @@
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\DarkAnt.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Pig.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />

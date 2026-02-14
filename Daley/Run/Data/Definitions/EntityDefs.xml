@@ -11,9 +11,9 @@
     <Movement moveSpeed="5"></Movement>
     <Collision radius="0.5" immovable="true"></Collision>
     <Render scale="1.5" rotateSprite="true"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/Ant.xml"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Time></Time>
-    <AIController></AIController>
+    <AIController isWiggly="true"></AIController>
   </EntityDef>
 
   <EntityDef name = "pig">
