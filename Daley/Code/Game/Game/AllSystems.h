@@ -40,3 +40,4 @@
 #include "SRenderWorld.h"
 #include "STime.h"
 #include "SWorld.h"
+#include "SWorldCollision.h"

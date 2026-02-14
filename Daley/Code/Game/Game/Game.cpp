@@ -250,6 +250,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
 
     // Post-Physics
     g_ecs->RegisterSystem<SHealth>((int)FramePhase::PostPhysics);

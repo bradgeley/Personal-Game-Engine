@@ -9,7 +9,7 @@
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="5"></Movement>
-    <Collision radius="0.5" immovable="true"></Collision>
+    <Collision radius="0.5" mustStayOnPath="true"></Collision>
     <Render scale="1.5" rotateSprite="true"></Render>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Time></Time>
@@ -22,7 +22,7 @@
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
     <Movement moveSpeed="1"></Movement>
-    <Collision radius="1" immovable="true"></Collision>
+    <Collision radius="1" mustStayOnPath="true"></Collision>
     <Render scale="2"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
     <Time></Time>

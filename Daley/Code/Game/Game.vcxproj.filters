@@ -148,6 +148,9 @@
     <ClCompile Include="Game\CAIController.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SWorldCollision.cpp">
+      <Filter>ECS\Systems\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -344,6 +347,9 @@
     </ClInclude>
     <ClInclude Include="Game\SCLighting.h">
       <Filter>ECS\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SWorldCollision.h">
+      <Filter>ECS\Systems\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

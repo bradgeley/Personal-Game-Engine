@@ -15,6 +15,9 @@ CCollision::CCollision(void const* xmlElement)
 
     bool immovable = XmlUtils::ParseXmlAttribute(elem, "immovable", false);
     m_collisionFlags |= immovable ? (uint8_t) CollisionFlags::Immovable : 0;
+
+	bool mustStayOnPath = XmlUtils::ParseXmlAttribute(elem, "mustStayOnPath", false);
+	m_collisionFlags |= mustStayOnPath ? (uint8_t) CollisionFlags::MustStayOnPath : 0;
 }
 
 
@@ -23,6 +26,14 @@ CCollision::CCollision(void const* xmlElement)
 bool CCollision::IsImmovable() const
 {
     return (m_collisionFlags & (uint8_t) CollisionFlags::Immovable) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CCollision::GetMustStayOnPath() const
+{
+	return (m_collisionFlags & (uint8_t) CollisionFlags::MustStayOnPath) != 0;
 }
 
 
@@ -60,5 +71,20 @@ void CCollision::SetImmovable(bool immovable)
     else
     {
         m_collisionFlags &= ~((uint8_t) CollisionFlags::Immovable);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CCollision::SetMustStayOnPath(bool mustStayOnPath)
+{
+    if (mustStayOnPath)
+    {
+        m_collisionFlags |= (uint8_t) CollisionFlags::MustStayOnPath;
+    }
+    else
+    {
+        m_collisionFlags &= ~((uint8_t) CollisionFlags::MustStayOnPath);
 	}
 }
