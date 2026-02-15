@@ -223,6 +223,15 @@ bool SCWorld::IsTileOnPath(IntVec2 const& worldCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& tagQuery) const
+{
+	Tile const& tile = m_tiles.Get(worldCoords);
+	return tagQuery.Resolve(tile.m_tags);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::CacheValidSpawnLocations()
 {
 	m_spawnLocations.clear();
@@ -411,63 +420,6 @@ void SCWorld::ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::f
 			}
 		}
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachSolidPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const
-{
-	// Start in bot left, and iterate in a grid pattern
-	IntVec2 startTileCoords = GetTileCoordsAtWorldPosClamped(aabb.mins);
-	IntVec2 endTileCoords = GetTileCoordsAtWorldPosClamped(aabb.maxs);
-
-	int startX = MathUtils::Min(startTileCoords.x, endTileCoords.x);
-	int endX = MathUtils::Max(startTileCoords.x, endTileCoords.x);
-
-	int startY = MathUtils::Min(startTileCoords.y, endTileCoords.y);
-	int endY = MathUtils::Max(startTileCoords.y, endTileCoords.y);
-
-	for (int x = startX; x <= endX; ++x)
-	{
-		for (int y = startY; y <= endY; ++y)
-		{
-			IntVec2 tileCoords = IntVec2(x, y);
-			if (IsTileSolid(tileCoords))
-			{
-				if (!func(tileCoords))
-				{
-					return;
-				}
-			}
-		}
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachSolidPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const
-{
-	AABB2 boundingBox = GeometryUtils::GetCapsuleBounds(start, end, radius);
-
-	ForEachSolidPlayableTileOverlappingAABB(boundingBox, [&](IntVec2 const& coords)
-	{
-		AABB2 tileBounds = GetTileBounds(coords);
-		if (!GeometryUtils::DoesCapsuleOverlapAABB(start, end, radius, tileBounds))
-		{
-			return true;
-		}
-
-		if (IsTileSolid(coords))
-		{
-			if (!func(coords))
-			{
-				return false;
-			}
-		}
-		return true;
-	});
 }
 
 

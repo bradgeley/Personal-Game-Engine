@@ -310,6 +310,9 @@
     <ClCompile Include="Time\IndependentClock.cpp">
       <Filter>Time</Filter>
     </ClCompile>
+    <ClCompile Include="Core\TagQuery.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -668,6 +671,9 @@
     </ClInclude>
     <ClInclude Include="Time\IndependentClock.h">
       <Filter>Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\TagQuery.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

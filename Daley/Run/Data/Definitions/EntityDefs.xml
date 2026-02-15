@@ -8,7 +8,7 @@
     <Death></Death>
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
-    <Movement moveSpeed="5"></Movement>
+    <Movement moveSpeed="25"></Movement>
     <Collision radius="0.5" mustStayOnPath="true"></Collision>
     <Render scale="1.5" rotateSprite="true"></Render>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>

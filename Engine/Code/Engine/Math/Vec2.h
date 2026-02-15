@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include <ThirdParty/miniaudio/miniaudio.h>
 
 
 
@@ -34,8 +35,10 @@ public:
     float GetLengthSquared() const;
     float GetAngleDegrees() const;
     void Normalize();
+    float NormalizeAndReturnLength();
     bool IsNormalized() const;
     Vec2 GetNormalized() const;
+    Vec2 GetNormalizedAndReturnLength(float& out_length) const;
     Vec2 GetRotated90() const;
     Vec2 GetRotatedMinus90() const;
     Vec2 GetRotated(float degrees) const;

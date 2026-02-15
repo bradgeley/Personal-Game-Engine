@@ -57,6 +57,7 @@ namespace MathUtils
 	float GetLength2D(Vec2 const& vec);
 	float GetLengthSquared2D(Vec2 const& vec);
 	void  NormalizeVector2D(Vec2& vec);
+	float NormalizeVector2D_ReturnLength(Vec2& vec);
 	float DotProduct2D(Vec2 const& vecA, Vec2 const& vecB);
 	float CrossProduct2D(Vec2 const& vecA, Vec2 const& vecB);
 	float GetDistance2D(Vec2 const& vecA, Vec2 const& vecB);

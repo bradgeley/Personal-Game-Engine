@@ -267,6 +267,7 @@
     <ClCompile Include="Core\Name.cpp" />
     <ClCompile Include="Core\NameTable.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
+    <ClCompile Include="Core\TagQuery.cpp" />
     <ClCompile Include="Core\XmlUtils.cpp" />
     <ClCompile Include="DataStructures\NamedProperties.cpp" />
     <ClCompile Include="Debug\DebugDrawUtils.cpp" />
@@ -376,6 +377,7 @@
     <ClInclude Include="Core\Name.h" />
     <ClInclude Include="Core\NameTable.h" />
     <ClInclude Include="Core\StringUtils.h" />
+    <ClInclude Include="Core\TagQuery.h" />
     <ClInclude Include="Core\XmlUtils.h" />
     <ClInclude Include="DataStructures\BitArray.h" />
     <ClInclude Include="DataStructures\NamedProperties.h" />

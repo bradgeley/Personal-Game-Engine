@@ -74,6 +74,14 @@ void Vec2::Normalize()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float Vec2::NormalizeAndReturnLength()
+{
+	return MathUtils::NormalizeVector2D_ReturnLength(*this);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Vec2::IsNormalized() const
 {
 	return MathUtils::IsNearlyEqual(GetLengthSquared(), 1.f, 0.000001f);
@@ -86,6 +94,16 @@ Vec2 Vec2::GetNormalized() const
 {
     Vec2 copy = *this;
     MathUtils::NormalizeVector2D(copy);
+    return copy;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 Vec2::GetNormalizedAndReturnLength(float& out_length) const
+{
+    Vec2 copy = *this;
+    out_length = MathUtils::NormalizeVector2D_ReturnLength(copy);
     return copy;
 }
 

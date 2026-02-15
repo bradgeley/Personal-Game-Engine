@@ -26,13 +26,6 @@ void SFlowField::Startup()
 {
     AddReadDependencies<CTransform, SCWorld>();
     AddWriteDependencies<SCFlowField>();
-
-	SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
-	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
-
-	SeedFlowField(scFlowField.m_toGoalFlowField, world);
-	SetCostField(scFlowField.m_toGoalFlowField, world);
-	GenerateFlow(scFlowField.m_toGoalFlowField);
 }
 
 
@@ -40,7 +33,17 @@ void SFlowField::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SFlowField::Run(SystemContext const&)
 {
+    SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
+    if (scFlowField.m_toGoalFlowField.m_hasGeneratedFlow)
+    {
+        return;
+	}
 
+    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+
+    SeedFlowField(scFlowField.m_toGoalFlowField, world);
+    SetCostField(scFlowField.m_toGoalFlowField, world);
+    GenerateFlow(scFlowField.m_toGoalFlowField);
 }
 
 

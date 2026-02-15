@@ -24,5 +24,7 @@ public:
 
 protected:
 
-    void InitializeMap();
+	static bool GenerateMap(NamedProperties& params);
+
+    static void GenerateMap(SCWorld& world);
 };

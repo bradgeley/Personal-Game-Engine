@@ -31,7 +31,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
         return result;
 	}
 
-    if (world.IsTileSolid(currentWorldCoords))
+    if (world.DoesTileMatchTagQuery(currentWorldCoords, raycast.m_tileTagQuery))
     {
         // Somehow we got inside a block
         result.m_blockingHit = true;
@@ -76,7 +76,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 
             totalRayLength = totalRayLengthX;
 
-            if (world.IsTileSolid(currentWorldCoords))
+            if (world.DoesTileMatchTagQuery(currentWorldCoords, raycast.m_tileTagQuery))
             {
                 result.m_blockingHit = true;
                 result.m_hitNormal = Vec2(-stepX, 0.f);
@@ -103,7 +103,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 
             totalRayLength = totalRayLengthY;
 
-            if (world.IsTileSolid(currentWorldCoords))
+            if (world.DoesTileMatchTagQuery(currentWorldCoords, raycast.m_tileTagQuery))
             {
                 result.m_blockingHit = true;
                 result.m_hitNormal = Vec2(0.f, -stepY);
@@ -140,8 +140,12 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 
     // Check for initial hit
     float nearestDistSquared = FLT_MAX;
-    world.ForEachSolidPlayableTileOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result, &nearestDistSquared](IntVec2 const& coords)
+    world.ForEachPlayableTileOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result, &nearestDistSquared](IntVec2 const& coords)
     {
+        if (!world.DoesTileMatchTagQuery(coords, discCast.m_tileTagQuery))
+        {
+            return true;
+		}
         AABB2 tileBounds = world.GetTileBounds(coords);
         Vec2 nearestPoint = tileBounds.GetNearestPoint(discCast.m_start);
     
@@ -162,8 +166,12 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
     });
 
     // Sweep against all the tiles in the path
-    world.ForEachSolidPlayableTileOverlappingCapsule(discCast.m_start, discCastEndPoint, discCast.m_discRadius, [&world, &discCast, &result, &discCastEndPoint](IntVec2 const& coords)
+    world.ForEachPlayableTileOverlappingCapsule(discCast.m_start, discCastEndPoint, discCast.m_discRadius, [&world, &discCast, &result, &discCastEndPoint](IntVec2 const& coords)
     {
+        if (!world.DoesTileMatchTagQuery(coords, discCast.m_tileTagQuery))
+        {
+            return true;
+        }
         // Line vs. expanded tile bounds for sweep test
         AABB2 tileBounds = world.GetTileBounds(coords);
         AABB2 expandedTileBounds = tileBounds.GetExpandedBy(discCast.m_discRadius);

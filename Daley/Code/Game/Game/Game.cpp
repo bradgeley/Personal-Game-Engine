@@ -245,7 +245,7 @@ void Game::ConfigureECS()
 
     // Physics
     //SystemSubgraph& physics = g_ecs->CreateOrGetSystemSubgraph((int) FramePhase::Physics);
-    //physics.m_timeStep = 0.01f;
+    //physics.m_timeStep = 0.005f;
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);

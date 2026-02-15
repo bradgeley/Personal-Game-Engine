@@ -4,6 +4,7 @@
 #include "WorldSettings.h"
 #include "Tile.h"
 #include "Engine/Assets/AssetID.h"
+#include "Engine/Core/TagQuery.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/FastGrid.h"
@@ -37,6 +38,8 @@ public:
     bool IsTileOnPath(int tileIndex) const;
     bool IsTileOnPath(IntVec2 const& worldCoords) const;
 
+    bool DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& tagQuery) const;
+
     void CacheValidSpawnLocations();
     Vec2 GetRandomSpawnLocation() const;
 
@@ -52,8 +55,6 @@ public:
     void ForEachPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachSolidPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachSolidPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
 
     void ForEachEdgeTile(const std::function<bool(IntVec2 const&)>& func) const;
 

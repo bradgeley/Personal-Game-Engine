@@ -129,6 +129,19 @@ void MathUtils::NormalizeVector2D(Vec2& vec)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float MathUtils::NormalizeVector2D_ReturnLength(Vec2& vec)
+{
+    float length = GetLength2D(vec);
+    if (!IsNearlyZero(length))
+    {
+        vec /= length;
+    }
+    return length;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::DotProduct2D(const Vec2& vecA, const Vec2& vecB)
 {
     return vecA.x * vecB.x + vecA.y * vecB.y;

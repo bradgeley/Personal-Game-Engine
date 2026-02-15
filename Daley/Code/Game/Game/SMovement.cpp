@@ -51,7 +51,7 @@ void SMovement::Run(SystemContext const& context)
         }
 
         CTime const& time = timeStorage[it];
-        move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * move.m_movementSpeedMultiplier * time.m_clock.GetDeltaSecondsF();
+        move.m_frameMovement = move.m_frameMoveDir * move.m_movementSpeed * move.m_movementSpeedMultiplier * context.m_deltaSeconds * time.m_clock.GetTimeDilationF();
 
         if (!move.m_frameMoveDir.IsZero())
         {

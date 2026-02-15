@@ -1,9 +1,12 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SWorld.h"
 #include "SCWorld.h"
+#include "SCFlowField.h"
 #include "TileDef.h"
 #include "WorldRaycast.h"
+#include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Math/Noise.h"
 
 
@@ -13,7 +16,10 @@ void SWorld::Startup()
 {
 	TileDef::LoadFromXML();
 
-	InitializeMap();
+	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "seed", DevConsoleArgType::Int);
+
+	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+	GenerateMap(scWorld);
 }
 
 
@@ -39,15 +45,34 @@ void SWorld::Shutdown()
 {
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
 	scWorld.Shutdown();
+
+	DevConsoleUtils::RemoveDevConsoleCommand("GenerateMap", &SWorld::GenerateMap);
 }
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+bool SWorld::GenerateMap(NamedProperties& params)
+{
+	int seed = params.Get<int>("seed", 0);
+
+	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	world.m_worldSettings.m_seed = seed;
+
+	GenerateMap(world);
+
+	SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
+	scFlowField.m_toGoalFlowField.Reset();
+
+	return false;
+}
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWorld::InitializeMap()
+void SWorld::GenerateMap(SCWorld& world)
 {
-	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	ScopedTimer timer("Generate Map");
 
 	// Generate map tiles - for now just fill with grass, later will want to generate a more interesting map
 	Tile backgroundTile = TileDef::GetDefaultTile("Grass");
@@ -110,6 +135,7 @@ void SWorld::InitializeMap()
 		});
 
 		wormLocation = nextWormLocation;
+		wormTileCoords = world.GetTileCoordsAtWorldPos(wormLocation);
 	}
 
 	world.CacheValidSpawnLocations();

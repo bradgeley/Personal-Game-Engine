@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Core/TagQuery.h"
 #include "Engine/Math/Vec2.h"
 
 
@@ -17,6 +18,7 @@ struct WorldRaycast
 
     bool m_queryWorldTiles = true;
     //bool m_queryActors = false; TODO
+    TagQuery m_tileTagQuery;
     Vec2 m_start;
     Vec2 m_direction;
     float m_maxDistance = 0.f;
