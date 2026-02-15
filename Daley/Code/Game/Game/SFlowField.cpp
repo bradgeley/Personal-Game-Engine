@@ -247,7 +247,7 @@ void SFlowField::GenerateGradient(FlowField& flowField)
             {
                 // Always treat solid walls as being 0.5 distance away in that direction, so that flow always generates away from walls without skewing too much
                 // If we leave this as the actual distance, which is very large (999), then gradient will point away from walls too strongly
-                dDist = -0.5;
+                dDist = -0.33333333333333333333f;
             }
 
             if (neighborOffset.x != 0.f)
