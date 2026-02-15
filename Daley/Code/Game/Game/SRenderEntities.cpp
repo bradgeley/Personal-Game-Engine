@@ -66,7 +66,6 @@ void SRenderEntities::Run(SystemContext const& context)
             ibo->ClearInstances();
         }
     }
-    scRender.m_entityVBOsBySpriteSheet.clear();
 
     // Push back an instance for every entity in camera view this frame
     for (auto renderIt = g_ecs->Iterate<CRender, CAnimation>(context); renderIt.IsValid(); ++renderIt)
@@ -127,11 +126,15 @@ void SRenderEntities::Run(SystemContext const& context)
         InstanceBufferID iboID = scRender.instancesPerSpriteSheet[assetID];
 
         GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(assetID);
+        if (!spriteSheet)
+        {
+            // May be reloading right now
+            continue;
+        }
         VertexBuffer* vbo = g_renderer->GetVertexBuffer(vboID);
         InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
         ConstantBuffer* spriteCbo = g_renderer->GetConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
 
-        ASSERT_OR_DIE(spriteSheet != nullptr, "SRenderEntities::Run - Invalid sprite sheet asset.");
         ASSERT_OR_DIE(vbo != nullptr, "SRenderEntities::Run - Invalid vertex buffer.");
         ASSERT_OR_DIE(ibo != nullptr, "SRenderEntities::Run - Invalid instance buffer.");
         ASSERT_OR_DIE(spriteCbo != nullptr, "SRenderEntities::Run - Invalid constant buffer.");
