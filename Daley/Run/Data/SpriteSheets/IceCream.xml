@@ -1,0 +1,9 @@
+
+
+
+<GridSpriteSheet name="IceCream" texture="Data/SpriteSheets/IceCream.png" layout="1,1" edgePadding="0,0" innerPadding="0,0">
+
+    <!-- Tower Flavors -->
+    <SpriteAnimation name="vanilla" frames="0" type="singleframe"></SpriteAnimation>
+
+  </GridSpriteSheet>

@@ -334,7 +334,6 @@
     <ClCompile Include="Game\SRenderEntities.cpp" />
     <ClCompile Include="Game\SRenderWorld.cpp" />
     <ClCompile Include="Game\SWorld.cpp" />
-    <ClCompile Include="Game\SWorldCollision.cpp" />
     <ClCompile Include="Game\Tile.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
     <ClCompile Include="Game\WorldRaycast.cpp" />
@@ -400,7 +399,6 @@
     <ClInclude Include="Game\SRenderEntities.h" />
     <ClInclude Include="Game\SRenderWorld.h" />
     <ClInclude Include="Game\SWorld.h" />
-    <ClInclude Include="Game\SWorldCollision.h" />
     <ClInclude Include="Game\Tile.h" />
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
@@ -420,6 +418,7 @@
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\DarkAnt.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\IceCream.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Pig.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />

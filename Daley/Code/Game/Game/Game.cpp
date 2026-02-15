@@ -250,7 +250,6 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SWorldCollision>((int) FramePhase::Physics);
 
     // Post-Physics
     g_ecs->RegisterSystem<SHealth>((int)FramePhase::PostPhysics);
@@ -268,7 +267,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 	g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);
 
-    // debug
+    // Debug
     g_ecs->RegisterSystem<SDebugCommands>((int) FramePhase::PostRender);
     g_ecs->RegisterSystem<SSystemDebug>((int) FramePhase::PostRender);
     g_ecs->RegisterSystem<SDeath>((int) FramePhase::PostRender);

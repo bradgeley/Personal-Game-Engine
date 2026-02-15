@@ -598,7 +598,7 @@ bool AssetManager::StaticReload(NamedProperties& params)
     if (g_assetManager)
     {
         AssetKey assetKey;
-        if (g_assetManager->FindAssetKeyByTypeName(assetTypeName, assetTypeName, assetKey))
+        if (g_assetManager->FindAssetKeyByTypeName(assetName, assetTypeName, assetKey))
         {
             assetKey.m_name = assetName;
 			AssetID assetID = g_assetManager->GetAssetID(assetKey);

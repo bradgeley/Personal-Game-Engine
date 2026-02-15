@@ -24,13 +24,16 @@ void SHealth::Run(SystemContext const& context)
 
 		if (health.m_currentHealth <= 0.f)
 		{
-			// Pre-regen death check, read by Death system
+			// Dead
 			health.SetHealthReachedZero(true);
 		}
-
-		if (!health.GetRegenSuppressed())
+		else
 		{
-			health.m_currentHealth += health.m_healthRegen * context.m_deltaSeconds;
+			// Not Dead
+			if (!health.GetRegenSuppressed())
+			{
+				health.m_currentHealth += health.m_healthRegen * context.m_deltaSeconds;
+			}
 		}
 
 		health.m_currentHealth = MathUtils::Clamp(health.m_currentHealth, 0.f, health.m_maxHealth);

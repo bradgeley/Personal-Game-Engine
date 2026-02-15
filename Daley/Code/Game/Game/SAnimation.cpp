@@ -37,7 +37,7 @@ void SAnimation::Run(SystemContext const& context)
         if (anim.m_pendingAnimRequest.m_animGroupName == Name::Invalid)
         {
 			PlayAnimationRequest defaultRequest;
-			defaultRequest.m_animGroupName = "idle";
+			defaultRequest.m_animGroupName = anim.m_defaultAnimationName;
 			defaultRequest.m_priority = 0;
 			defaultRequest.m_animSpeedMultiplier = 1.f;
 			defaultRequest.m_direction = Vec2::MakeFromUnitCircleDegrees(render.m_orientation);

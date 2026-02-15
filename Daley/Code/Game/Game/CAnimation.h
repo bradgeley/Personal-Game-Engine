@@ -32,6 +32,7 @@ public:
 	PlayAnimationRequest m_pendingAnimRequest;			// Queued animation
 
 	Name m_spriteSheetName;								// Name of the sprite sheet used for this entity
+	Name m_defaultAnimationName;						// Name of the default animation to play. Defaults to s_defaultAnimName.
 	AssetID m_gridSpriteSheet = AssetID::Invalid;		// Asset ID of the grid sprite sheet used for this animation
 	SpriteAnimation m_animInstance;						// currently playing animation
 };

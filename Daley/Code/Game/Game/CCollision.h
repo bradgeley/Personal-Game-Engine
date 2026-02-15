@@ -10,7 +10,6 @@ enum class CollisionFlags : uint8_t
 {
 	Enabled         = 1 << 0,
     Immovable       = 1 << 1,
-	MustStayOnPath  = 1 << 2,
 };
 
 
@@ -25,11 +24,9 @@ public:
 
 	bool IsCollisionEnabled() const;
     bool IsImmovable() const;
-	bool GetMustStayOnPath() const;
 
 	void SetCollisionEnabled(bool enabled);
 	void SetImmovable(bool immovable);
-	void SetMustStayOnPath(bool mustStayOnPath);
     
 public:
 

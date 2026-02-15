@@ -66,6 +66,7 @@ void SRenderEntities::Run(SystemContext const& context)
             ibo->ClearInstances();
         }
     }
+    scRender.m_entityVBOsBySpriteSheet.clear();
 
     // Push back an instance for every entity in camera view this frame
     for (auto renderIt = g_ecs->Iterate<CRender, CAnimation>(context); renderIt.IsValid(); ++renderIt)

@@ -8,8 +8,8 @@
     <Death></Death>
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
-    <Movement moveSpeed="25"></Movement>
-    <Collision radius="0.5" mustStayOnPath="true"></Collision>
+    <Movement moveSpeed="25" pathOnly="true"></Movement>
+    <Collision radius="0.5"></Collision>
     <Render scale="1.5" rotateSprite="true"></Render>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Time></Time>
@@ -21,8 +21,8 @@
     <Death></Death>
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
-    <Movement moveSpeed="1"></Movement>
-    <Collision radius="1" mustStayOnPath="true"></Collision>
+    <Movement moveSpeed="1" pathOnly="true"></Movement>
+    <Collision radius="1"></Collision>
     <Render scale="2"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
     <Time></Time>
@@ -31,5 +31,13 @@
 
   <!-- ==================================================================================================================== -->
   <!-- Tower -->
+
+  <EntityDef name = "Vanilla">
+    <Transform></Transform>
+    <Collision radius="1"></Collision>
+    <Render scale="2"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanilla"></Animation>
+    <Time></Time>
+  </EntityDef>
   
 </EntityDefs>
