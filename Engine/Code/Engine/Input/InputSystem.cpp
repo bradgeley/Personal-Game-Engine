@@ -54,6 +54,9 @@ void InputSystem::BeginFrame()
 void InputSystem::Update(float deltaSeconds)
 {
     UNUSED(deltaSeconds)
+
+    CacheMouseClientPosition();
+    CacheMouseClientRelativePosition();
 }
 
 
@@ -208,38 +211,39 @@ int InputSystem::GetMouseWheelChange()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-IntVec2 InputSystem::GetMouseClientPosition(bool originBottomLeft /*= true*/) const
+IntVec2 InputSystem::GetMouseClientPosition() const
 {
-    return g_window->GetMouseClientPosition(originBottomLeft);
+    return m_cachedMouseClientPosition;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 InputSystem::GetMouseClientRelativePosition(bool originBottomLeft /*= true*/) const
+Vec2 InputSystem::GetMouseClientRelativePosition() const
 {
-    return g_window->GetMouseClientRelativePosition(originBottomLeft);
+    return m_cachedMouseClientRelativePosition;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 InputSystem::GetMouseClientCenterRelativePosition(bool originBottomLeft /*= true*/) const
+Vec2 InputSystem::GetMouseClientCenterRelativePosition() const
 {
-    Vec2 clientRelativePosition = GetMouseClientRelativePosition(originBottomLeft);
+    Vec2 clientRelativePosition = GetMouseClientRelativePosition();
     Vec2 clientCenterRelativePosition;
     clientCenterRelativePosition.x = MathUtils::RangeMap(clientRelativePosition.x, 0.f, 1.f, -1.f, 1.f);
     clientCenterRelativePosition.y = MathUtils::RangeMap(clientRelativePosition.y, 0.f, 1.f, -1.f, 1.f);
     return clientCenterRelativePosition;
+
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 InputSystem::GetMouseViewportRelativePosition(float letterboxedViewportAspect, bool originBottomLeft /*= true*/) const
+Vec2 InputSystem::GetMouseViewportRelativePosition(float letterboxedViewportAspect) const
 {
-	IntVec2 clientPos = GetMouseClientPosition(originBottomLeft);
-	IntVec2 windowSize = g_window->GetActualWindowResolution();
+    IntVec2 clientPos = GetMouseClientPosition();
+    IntVec2 windowSize = g_window->GetActualWindowResolution();
 
     float windowAspect = windowSize.GetAspect();
 
@@ -249,17 +253,17 @@ Vec2 InputSystem::GetMouseViewportRelativePosition(float letterboxedViewportAspe
     {
         viewportDims.x = static_cast<int>((float) windowSize.y * letterboxedViewportAspect);
         viewportDims.y = windowSize.y;
-		viewportOffset.x = (windowSize.x - viewportDims.x) / 2;
+        viewportOffset.x = (windowSize.x - viewportDims.x) / 2;
     }
     else
     {
         viewportDims.x = windowSize.x;
         viewportDims.y = static_cast<int>((float) windowSize.x / letterboxedViewportAspect);
-		viewportOffset.y = (windowSize.y - viewportDims.y) / 2;
-	}
+        viewportOffset.y = (windowSize.y - viewportDims.y) / 2;
+    }
 
-	IntVec2 viewportMousePos = clientPos - viewportOffset;
-	Vec2 viewportRelativeMousePos = Vec2((float) viewportMousePos.x / viewportDims.x, (float) viewportMousePos.y / viewportDims.y);
+    IntVec2 viewportMousePos = clientPos - viewportOffset;
+    Vec2 viewportRelativeMousePos = Vec2((float) viewportMousePos.x / viewportDims.x, (float) viewportMousePos.y / viewportDims.y);
 
     return viewportRelativeMousePos;
 }
@@ -385,4 +389,20 @@ bool InputSystem::HandleMouseWheel(NamedProperties& args)
     }
     
     return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void InputSystem::CacheMouseClientPosition()
+{
+    m_cachedMouseClientPosition = g_window->GetMouseClientPosition();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void InputSystem::CacheMouseClientRelativePosition()
+{
+    m_cachedMouseClientRelativePosition = g_window->GetMouseClientRelativePosition();
 }

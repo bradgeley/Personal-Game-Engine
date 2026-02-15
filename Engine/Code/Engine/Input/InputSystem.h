@@ -58,10 +58,10 @@ public:
     bool WasMouseButtonJustReleased(int mouseButton);
     int GetMouseWheelChange();
     
-    IntVec2	GetMouseClientPosition(bool originBottomLeft = true) const;
-    Vec2 GetMouseClientRelativePosition(bool originBottomLeft = true) const;
-    Vec2 GetMouseClientCenterRelativePosition(bool originBottomLeft = true) const;
-	Vec2 GetMouseViewportRelativePosition(float letterboxedViewportAspect, bool originBottomLeft = true) const;
+    IntVec2	GetMouseClientPosition() const;
+    Vec2 GetMouseClientRelativePosition() const;
+    Vec2 GetMouseClientCenterRelativePosition() const;
+	Vec2 GetMouseViewportRelativePosition(float letterboxedViewportAspect) const;
 
 private:
 
@@ -72,6 +72,9 @@ private:
     bool HandleMouseButtonDown(NamedProperties& args);
     bool HandleMouseButtonUp(NamedProperties& args);
     bool HandleMouseWheel(NamedProperties& args);
+
+    void CacheMouseClientPosition();
+    void CacheMouseClientRelativePosition();
 
 public:
 
@@ -87,14 +90,20 @@ public:
 
 private:
 
-    static constexpr int MAX_KEYS = 256;
-    static constexpr int MAX_MOUSE_BUTTONS = 3;
+    static constexpr int MAX_KEYS                   = 256;
+    static constexpr int MAX_MOUSE_BUTTONS          = 3;
     
     InputSystemConfig const m_config;
+
+    // Keys
     KeyButtonState m_keyStates[MAX_KEYS];
+
+    // Mouse
     KeyButtonState m_mouseButtonStates[MAX_MOUSE_BUTTONS];
-    int m_frameMouseWheelChange = 0;
-	float m_timeOfLastMouseClick = -1.f;
+    int m_frameMouseWheelChange                     = 0;
+	float m_timeOfLastMouseClick                    = -1.f;
+	IntVec2 m_cachedMouseClientPosition             = IntVec2::ZeroVector;
+	Vec2 m_cachedMouseClientRelativePosition        = Vec2::ZeroVector;
 };
 
 
