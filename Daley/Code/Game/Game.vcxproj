@@ -301,6 +301,7 @@
     <ClCompile Include="Game\CLifetime.cpp" />
     <ClCompile Include="Game\CMovement.cpp" />
     <ClCompile Include="Game\CRender.cpp" />
+    <ClCompile Include="Game\CWeapon.cpp" />
     <ClCompile Include="Game\EntityDef.cpp" />
     <ClCompile Include="Game\FlowGenerationCoords.cpp" />
     <ClCompile Include="Game\FlowField.cpp" />
@@ -333,9 +334,12 @@
     <ClCompile Include="Game\SPhysics.cpp" />
     <ClCompile Include="Game\SRenderEntities.cpp" />
     <ClCompile Include="Game\SRenderWorld.cpp" />
+    <ClCompile Include="Game\SWeapon.cpp" />
     <ClCompile Include="Game\SWorld.cpp" />
     <ClCompile Include="Game\Tile.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
+    <ClCompile Include="Game\Weapon.cpp" />
+    <ClCompile Include="Game\WeaponDef.cpp" />
     <ClCompile Include="Game\WorldRaycast.cpp" />
     <ClCompile Include="Game\WorldShaderCPU.cpp" />
   </ItemGroup>
@@ -351,6 +355,7 @@
     <ClInclude Include="Game\CDeath.h" />
     <ClInclude Include="Game\CHealth.h" />
     <ClInclude Include="Game\CLifetime.h" />
+    <ClInclude Include="Game\CWeapon.h" />
     <ClInclude Include="Game\SCCamera.h" />
     <ClInclude Include="Game\CCollision.h" />
     <ClInclude Include="Game\CMovement.h" />
@@ -398,10 +403,13 @@
     <ClInclude Include="Game\SpriteShaderCPU.h" />
     <ClInclude Include="Game\SRenderEntities.h" />
     <ClInclude Include="Game\SRenderWorld.h" />
+    <ClInclude Include="Game\SWeapon.h" />
     <ClInclude Include="Game\SWorld.h" />
     <ClInclude Include="Game\Tile.h" />
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
+    <ClInclude Include="Game\Weapon.h" />
+    <ClInclude Include="Game\WeaponDef.h" />
     <ClInclude Include="Game\WorldRaycast.h" />
     <ClInclude Include="Game\WorldSettings.h" />
     <ClInclude Include="Game\WorldShaderCPU.h" />
@@ -414,6 +422,7 @@
   <ItemGroup>
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\WeaponDefs.xml" />
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />

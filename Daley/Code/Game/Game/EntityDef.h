@@ -16,6 +16,7 @@ public:
     explicit EntityDef(XmlElement const* xmlElement);
 
     static void LoadFromXML();
+    static void Shutdown();
     static EntityDef const* GetEntityDef(uint8_t id);
     static EntityDef const* GetEntityDef(Name name);
     static int GetEntityDefID(Name name);
@@ -39,5 +40,6 @@ public:
 	std::optional<CRender>              m_render;
     std::optional<CTime>                m_time;
     std::optional<CTransform>           m_transform;
+    std::optional<CWeapon>              m_weapon;
 };
     

@@ -148,6 +148,18 @@
     <ClCompile Include="Game\CAIController.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Game\CWeapon.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SWeapon.cpp">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Weapon.cpp">
+      <Filter>Game\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\WeaponDef.cpp">
+      <Filter>Definitions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -345,6 +357,18 @@
     <ClInclude Include="Game\SCLighting.h">
       <Filter>ECS\Singletons</Filter>
     </ClInclude>
+    <ClInclude Include="Game\CWeapon.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SWeapon.h">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Weapon.h">
+      <Filter>Game\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\WeaponDef.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -416,14 +440,14 @@
     <Filter Include="ECS\Systems\Animation">
       <UniqueIdentifier>{b7ff92ff-f393-4ac6-821f-5a58489d1615}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Gameplay">
+      <UniqueIdentifier>{510b4061-6af4-4d60-a51c-df5d2c335813}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Definitions">
+      <UniqueIdentifier>{7d34259a-1fd8-4e85-bc21-b40ec89813e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml">
-      <Filter>Data</Filter>
-    </Xml>
-    <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml">
-      <Filter>Data</Filter>
-    </Xml>
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
@@ -447,6 +471,15 @@
     </Xml>
     <Xml Include="..\..\Run\Data\SpriteSheets\IceCream.xml">
       <Filter>Data\SpriteSheets</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml">
+      <Filter>Data\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml">
+      <Filter>Data\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\WeaponDefs.xml">
+      <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

@@ -54,7 +54,7 @@ void SEntityFactory::Run(SystemContext const&)
 //----------------------------------------------------------------------------------------------------------------------
 void SEntityFactory::Shutdown()
 {
-
+    EntityDef::Shutdown();
 }
 
 

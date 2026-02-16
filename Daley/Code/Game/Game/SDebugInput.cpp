@@ -2,8 +2,13 @@
 #include "SDebugInput.h"
 #include "SCCamera.h"
 #include "SCDebug.h"
+#include "SCEntityFactory.h"
 #include "SCWorld.h"
 #include "TileDef.h"
+#include "EntityDef.h"
+#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/Events/EventSystem.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Window/Window.h"
 
@@ -23,6 +28,7 @@ void SDebugInput::Run(SystemContext const&)
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 	SCCamera& camera = g_ecs->GetSingleton<SCCamera>();
+	SCEntityFactory& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	// Debug mouse position
 	if (g_window->HasFocus())
@@ -37,6 +43,32 @@ void SDebugInput::Run(SystemContext const&)
 	{
 		Tile newTile = TileDef::GetDefaultTile(scDebug.m_debugPlacementTileID);
 		world.SetTile(scDebug.m_debugMouseTileCoords, newTile);
+	}
+
+	// Debug Tower Placement
+	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('T'))
+	{
+		EntityDef const* towerDef = EntityDef::GetEntityDef(scDebug.m_debugPlacementTowerName);
+		if (!towerDef)
+		{
+			DevConsoleUtils::LogError("Invalid EntityDef name for debug tower placement: %s", scDebug.m_debugPlacementTowerName.ToCStr());
+		}
+		else
+		{
+			SpawnInfo info;
+			info.m_def = EntityDef::GetEntityDef(scDebug.m_debugPlacementTowerName);
+			info.m_spawnPos = scDebug.m_debugMouseWorldLocation;
+			entityFactory.m_entitiesToSpawn.push_back(info);
+		}
+	}
+
+	// Debug Enemy Spawning
+	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->IsKeyDown('W'))
+	{
+		NamedProperties args;
+		args.Set<std::string>("name", "Ant");
+		args.Set("count", 20);
+		g_eventSystem->FireEvent("Spawn", args);
 	}
 }
 

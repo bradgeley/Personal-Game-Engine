@@ -56,6 +56,8 @@ void AdminSystem::Shutdown()
 
 	m_systemSubgraphs.clear();
 
+	DestroyAllEntities();
+
 	for (auto it = m_componentStorage.begin(); it != m_componentStorage.end(); ++it)
 	{
 		delete it->second;

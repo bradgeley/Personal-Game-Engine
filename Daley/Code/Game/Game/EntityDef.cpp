@@ -43,6 +43,14 @@ void EntityDef::LoadFromXML()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void EntityDef::Shutdown()
+{
+    s_entityDefs.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 EntityDef const* EntityDef::GetEntityDef(uint8_t id)
 {
     size_t index = static_cast<size_t>(id);
@@ -93,69 +101,76 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     auto elem = xmlElement->FirstChildElement("Time");
     if (elem)
     {
-        m_time.emplace(CTime()); // no elem
+        m_time.emplace();
     }
 
     // CTransform
     elem = xmlElement->FirstChildElement("Transform");
     if (elem)
     {
-        m_transform.emplace(CTransform()); // no elem
+        m_transform.emplace();
     }
 
     // CAIController
     elem = xmlElement->FirstChildElement("AIController");
     if (elem)
     {
-        m_ai = CAIController(elem);
+        m_ai.emplace(elem);
     }
 
     // CAnimation
     elem = xmlElement->FirstChildElement("Animation");
     if (elem)
     {
-        m_animation = CAnimation(elem);
+        m_animation.emplace(elem);
     }
 
     // CCollision
     elem = xmlElement->FirstChildElement("Collision");
     if (elem)
     {
-        m_collision = CCollision(elem);
+        m_collision.emplace(elem);
     }
 
     // CMovement
     elem = xmlElement->FirstChildElement("Movement");
     if (elem)
     {
-        m_movement = CMovement(elem);
+        m_movement.emplace(elem);
     }
 
     // CRender
     elem = xmlElement->FirstChildElement("Render");
     if (elem)
     {
-        m_render = CRender(elem);
+        m_render.emplace(elem);
     }
 
     // CLifetime
     elem = xmlElement->FirstChildElement("Lifetime");
     if (elem)
     {
-        m_lifetime.emplace(CLifetime(elem));
+        m_lifetime.emplace(elem);
     }
 
     // CHealth
     elem = xmlElement->FirstChildElement("Health");
     if (elem)
     {
-        m_health.emplace(CHealth(elem));
+        m_health.emplace(elem);
     }
 
     // CDeath
     elem = xmlElement->FirstChildElement("Death");
     if (elem)
     {
-        m_death.emplace(CDeath(elem));
+        m_death.emplace(elem);
+    }
+
+    // CWeapon
+    elem = xmlElement->FirstChildElement("Weapon");
+    if (elem)
+    {
+        m_weapon.emplace(elem);
     }
 }

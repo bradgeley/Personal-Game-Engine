@@ -39,4 +39,5 @@
 #include "SRenderUI.h"
 #include "SRenderWorld.h"
 #include "STime.h"
+#include "SWeapon.h"
 #include "SWorld.h"

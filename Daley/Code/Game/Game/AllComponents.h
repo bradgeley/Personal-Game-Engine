@@ -27,6 +27,7 @@
 #include "CRender.h"
 #include "CTime.h"
 #include "CTransform.h"
+#include "CWeapon.h"
 
 
 

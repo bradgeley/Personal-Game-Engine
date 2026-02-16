@@ -30,7 +30,15 @@
   </EntityDef>
 
   <!-- ==================================================================================================================== -->
-  <!-- Tower -->
+  <!-- Towers -->
+
+  <EntityDef name = "VanillaProj">
+    <Transform></Transform>
+    <Collision radius="0.33"></Collision>
+    <Render scale="0.66"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanillaProj"></Animation>
+    <Time></Time>
+  </EntityDef>
 
   <EntityDef name = "Vanilla">
     <Transform></Transform>
@@ -38,6 +46,7 @@
     <Render scale="2"></Render>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanilla"></Animation>
     <Time></Time>
+    <Weapon name="VanillaWeapon"></Weapon>
   </EntityDef>
   
 </EntityDefs>

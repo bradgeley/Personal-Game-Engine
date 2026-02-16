@@ -24,7 +24,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
 	#if defined(DEBUG_MEMORY_LEAKS)
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-		//_CrtSetBreakAlloc(13482); // Specific memory leak
+		//_CrtSetBreakAlloc(52569); // Specific memory leak
 	#endif 
 
 	g_app = new Application();

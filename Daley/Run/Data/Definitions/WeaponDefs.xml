@@ -1,0 +1,5 @@
+<WeaponDefs>
+
+  <ProjectileHitWeaponDef name="VanillaWeapon" projectileDef="VanillaProj" baseAttacksPerSecond="1" baseDamage="10" baseRange="10" baseProjSpeed="5"></ProjectileHitWeaponDef>
+  
+</WeaponDefs>

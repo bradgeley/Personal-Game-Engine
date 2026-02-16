@@ -209,6 +209,9 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CTime>();
     g_ecs->RegisterComponentArray<CTransform>();
 
+    // Map Components
+    g_ecs->RegisterComponentMap<CWeapon>();
+
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCAudio>();
     g_ecs->RegisterComponentSingleton<SCCamera>();
@@ -235,6 +238,7 @@ void Game::ConfigureECS()
     // Pre Physics
     g_ecs->RegisterSystem<STime>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLifetime>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SWeapon>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SDebugInput>((int) FramePhase::PrePhysics);
