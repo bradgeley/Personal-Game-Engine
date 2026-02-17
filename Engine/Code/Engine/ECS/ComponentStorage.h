@@ -91,14 +91,16 @@ public:
 
 	virtual CType*			Add(EntityID eid)						override
 	{
-		m_data[eid] = CType();
-		return &m_data[eid];
+		CType& slot = m_data[eid];
+		slot = CType();
+		return &slot;
 	}
 
 	virtual CType*			Add(EntityID eid, CType const& copy)	override
 	{
-		m_data[eid] = copy;
-		return &m_data[eid];
+		CType& slot = m_data[eid];
+		slot = copy;
+		return &slot;
 	}
 
 	virtual void			Destroy(EntityID eid)						override
@@ -176,13 +178,13 @@ public:
 	
 	virtual CType*			Add(EntityID eid)						override
 	{
-		m_data[eid] = CType();
+		m_data.emplace(eid, CType());
 		return &m_data[eid];
 	}
 	
 	virtual CType*			Add(EntityID eid, CType const& copy)	override
 	{
-		m_data[eid] = copy;
+		m_data.emplace(eid, copy);
 		return &m_data[eid];
 	}
 	

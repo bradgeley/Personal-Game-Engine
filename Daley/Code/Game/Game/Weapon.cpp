@@ -27,3 +27,13 @@ void ProjectileHitWeapon::Update(float deltaSeconds)
 {
 
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Weapon* ProjectileHitWeapon::DeepCopy() const
+{
+    ProjectileHitWeapon* copy = new ProjectileHitWeapon(*reinterpret_cast<ProjectileHitWeaponDef const*>(m_weaponDef));
+    *copy = *this;
+    return copy;
+}

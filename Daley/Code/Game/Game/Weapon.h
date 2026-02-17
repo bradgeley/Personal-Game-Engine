@@ -17,6 +17,7 @@ public:
 
 	virtual ~Weapon() = default;
 	virtual void Update(float deltaSeconds) = 0;
+	virtual Weapon* DeepCopy() const = 0;
 
 public:
 
@@ -33,6 +34,7 @@ public:
 	explicit ProjectileHitWeapon(ProjectileHitWeaponDef const& def);
 
 	virtual void Update(float deltaSeconds) override;
+	virtual Weapon* DeepCopy() const override;
 
 public:
 

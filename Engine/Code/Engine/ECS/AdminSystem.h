@@ -112,6 +112,9 @@ public:
 	template <typename CType, typename...Args>
 	CType* AddComponent(EntityID entityID, Args const& ...args);
 
+	template <typename CType>
+	CType* AddComponent(EntityID entityID, CType const& copy);
+
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -360,6 +363,25 @@ CType* AdminSystem::AddComponent(EntityID entityID, Args const& ...args)
 
 	m_entityComposition[entityID] |= (componentBitMask);
 	return typedStorage->Add(entityID, CType(args...));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename CType>
+CType* AdminSystem::AddComponent(EntityID entityID, CType const& copy)
+{
+	std::type_index typeIndex(typeid(CType));
+	BitMask& componentBitMask = m_componentBitMasks.at(typeIndex);
+
+	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
+	if (HasComponent<CType>(entityID))
+	{
+		return typedStorage->Get(entityID);
+	}
+
+	m_entityComposition[entityID] |= (componentBitMask);
+	return typedStorage->Add(entityID, copy);
 }
 
 

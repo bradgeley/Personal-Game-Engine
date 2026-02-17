@@ -14,9 +14,14 @@ struct CWeapon
 {
 public:
 
-    CWeapon() = default;
+    explicit CWeapon() = default;
+    explicit CWeapon(void const* xmlElement);
+    explicit CWeapon(CWeapon const& copyFrom);
+    CWeapon(CWeapon&& moveFrom) noexcept;
     ~CWeapon();
-    CWeapon(void const* xmlElement);
+
+    CWeapon& operator=(CWeapon const& copyFrom);
+    CWeapon& operator=(CWeapon&& moveFrom) noexcept;
     
 public:
 

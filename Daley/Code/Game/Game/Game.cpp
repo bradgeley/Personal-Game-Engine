@@ -210,7 +210,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CTransform>();
 
     // Map Components
-    g_ecs->RegisterComponentMap<CWeapon>();
+    g_ecs->RegisterComponentArray<CWeapon>();
 
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCAudio>();
