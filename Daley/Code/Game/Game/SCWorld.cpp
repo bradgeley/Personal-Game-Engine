@@ -397,6 +397,56 @@ void SCWorld::ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachPathTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const
+{
+	AABB2 boundingBox = GeometryUtils::GetDiscBounds(pos, radius);
+
+	ForEachPlayableTileOverlappingAABB(boundingBox, [&](IntVec2 const& worldCoords)
+	{
+		if (!IsTileOnPath(worldCoords))
+		{
+			return true;
+		}
+		AABB2 tileBounds = GetTileBounds(worldCoords);
+		if (GeometryUtils::DoesDiscOverlapAABB(pos, radius, tileBounds))
+		{
+			if (!func(worldCoords))
+			{
+				return false;
+			}
+		}
+		return true;
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachPathTileInRange(Vec2 const& pos, float minRadius, float maxRadius, const std::function<bool(IntVec2 const&)>& func) const
+{
+	AABB2 boundingBox = GeometryUtils::GetDiscBounds(pos, maxRadius);
+
+	ForEachPlayableTileOverlappingAABB(boundingBox, [&](IntVec2 const& worldCoords)
+	{
+		if (!IsTileOnPath(worldCoords))
+		{
+			return true;
+		}
+		AABB2 tileBounds = GetTileBounds(worldCoords);
+		if (GeometryUtils::DoesRingOverlapAABB(pos, minRadius, maxRadius, tileBounds))
+		{
+			if (!func(worldCoords))
+			{
+				return false;
+			}
+		}
+		return true;
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const
 {
 	// Start in bot left, and iterate in a grid pattern

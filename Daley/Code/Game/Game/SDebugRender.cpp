@@ -3,6 +3,7 @@
 #include "CCollision.h"
 #include "CRender.h"
 #include "CTransform.h"
+#include "CWeapon.h"
 #include "SCCamera.h"
 #include "SCDebug.h"
 #include "SCWorld.h"
@@ -24,6 +25,7 @@ void SDebugRender::Startup()
     AddWriteAllDependencies();
 
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+
     scDebug.m_frameUntexVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
     scDebug.m_frameDefaultFontVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 
@@ -34,6 +36,27 @@ void SDebugRender::Startup()
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderWeapons", &SDebugRender::DebugRenderWeapons);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SDebugRender::Shutdown()
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+
+    g_renderer->ReleaseVertexBuffer(scDebug.m_frameDefaultFontVerts);
+    g_renderer->ReleaseVertexBuffer(scDebug.m_frameUntexVerts);
+
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderGrid", &SDebugRender::DebugRenderGrid);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderEdges", &SDebugRender::DebugRenderEdges);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugTileTags", &SDebugRender::DebugTileTags);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCostField", &SDebugRender::DebugRenderCostField);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderWeapons", &SDebugRender::DebugRenderWeapons);
 }
 
 
@@ -171,6 +194,23 @@ void SDebugRender::Run(SystemContext const& context)
         }
     }
 
+	// Weapons
+    if (scDebug.m_debugRenderWeapons)
+    {
+        for (auto it = g_ecs->Iterate<CWeapon, CTransform>(context); it.IsValid(); ++it)
+        {
+            CTransform const& transform = *transStorage.Get(it);
+            CWeapon const& weaponComponent = *g_ecs->GetComponent<CWeapon>(it);
+            Vec2 weaponPos = transform.m_pos;
+            VertexUtils::AddVertsForDisc2D(untexturedVerts, weaponPos, 0.25f, 8, Rgba8::Red);
+
+			for (Weapon const* weapon : weaponComponent.m_weapons)
+            {
+				weapon->AddDebugVerts(untexturedVerts, transform.m_pos);
+            }
+        }
+	}
+
     g_renderer->BindTexture(nullptr);
     g_renderer->BindShader(nullptr);
     g_renderer->DrawVertexBuffer(scDebug.m_frameUntexVerts);
@@ -180,25 +220,6 @@ void SDebugRender::Run(SystemContext const& context)
 
 	untexturedVerts.ClearVerts();
 	defaultFontVerts.ClearVerts();
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SDebugRender::Shutdown()
-{
-    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
-
-    g_renderer->ReleaseVertexBuffer(scDebug.m_frameDefaultFontVerts);
-    g_renderer->ReleaseVertexBuffer(scDebug.m_frameUntexVerts);
-
-    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderGrid", &SDebugRender::DebugRenderGrid);
-    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderEdges", &SDebugRender::DebugRenderEdges);
-    DevConsoleUtils::RemoveDevConsoleCommand("DebugTileTags", &SDebugRender::DebugTileTags);
-    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCostField", &SDebugRender::DebugRenderCostField);
-    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
-    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
-    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
 }
 
 
@@ -302,5 +323,15 @@ bool SDebugRender::DebugRenderCollision(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderCollision = !scDebug.m_debugRenderCollision;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderWeapons(NamedProperties&)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderWeapons = !scDebug.m_debugRenderWeapons;
     return false;
 }

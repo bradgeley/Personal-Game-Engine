@@ -4,9 +4,19 @@
 
 
 
+class VertexBuffer;
 struct EntityDef;
 struct ProjectileHitWeaponDef;
+struct Vec2;
 struct WeaponDef;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+enum class WeaponTargetingMode
+{
+	ClosestToGoal,
+};
 
 
 
@@ -16,8 +26,9 @@ class Weapon
 public:
 
 	virtual ~Weapon() = default;
-	virtual void Update(float deltaSeconds) = 0;
+	virtual void Update(float deltaSeconds, Vec2 const& location) = 0;
 	virtual Weapon* DeepCopy() const = 0;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 
 public:
 
@@ -33,13 +44,18 @@ public:
 
 	explicit ProjectileHitWeapon(ProjectileHitWeaponDef const& def);
 
-	virtual void Update(float deltaSeconds) override;
+	virtual void Update(float deltaSeconds, Vec2 const& location) override;
 	virtual Weapon* DeepCopy() const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 
 public:
 
-	EntityDef const* m_projectileDef	= nullptr;
+	Name m_projectileDefName			= Name::Invalid;
 	float m_damage						= 1.f;
 	float m_attacksPerSecond			= 1.f;
 	float m_projSpeedUnitsPerSec		= 1.f;
+	float m_minRange					= 0.f;
+	float m_maxRange					= 10.f;
+	float m_accumulatedAttackTime		= 0.f;
+	WeaponTargetingMode m_targetingMode = WeaponTargetingMode::ClosestToGoal;
 };

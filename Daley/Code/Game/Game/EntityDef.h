@@ -41,5 +41,6 @@ public:
     std::optional<CTime>                m_time;
     std::optional<CTransform>           m_transform;
     std::optional<CWeapon>              m_weapon;
+    std::optional<CProjectile>          m_proj;
 };
     

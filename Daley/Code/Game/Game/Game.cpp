@@ -210,7 +210,8 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CTransform>();
 
     // Map Components
-    g_ecs->RegisterComponentArray<CWeapon>();
+    g_ecs->RegisterComponentMap<CWeapon>();
+    g_ecs->RegisterComponentMap<CProjectile>();
 
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCAudio>();
@@ -256,6 +257,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
 
     // Post-Physics
+    g_ecs->RegisterSystem<SProjectile>((int)FramePhase::PostPhysics);
     g_ecs->RegisterSystem<SHealth>((int)FramePhase::PostPhysics);
 
     // Render

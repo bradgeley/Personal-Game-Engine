@@ -35,6 +35,7 @@ public:
 	bool m_debugRenderDistanceField			= false;						// Toggle used by SDebugRender
 	bool m_debugRenderFlowField				= false;						// Toggle used by SDebugRender
 	bool m_debugRenderCollision				= false;						// Toggle used by SDebugRender
+	bool m_debugRenderWeapons				= false;						// Toggle used by SDebugRender
 	uint8_t m_debugTileTags					= 0;							// Used by SDebugRender to display tiles that match the debug tags requested
 };
 

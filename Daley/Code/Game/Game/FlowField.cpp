@@ -91,3 +91,15 @@ Vec2 FlowField::GetFlowAtTileCoords(IntVec2 const& tileCoords) const
 	}
 	return Vec2::ZeroVector;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float FlowField::GetDistanceAtTileCoords(IntVec2 const& tileCoords) const
+{
+	if (m_hasGeneratedFlow && m_distanceField.IsValidCoords(tileCoords))
+	{
+		return m_distanceField.Get(tileCoords);
+	}
+	return 0.f;
+}

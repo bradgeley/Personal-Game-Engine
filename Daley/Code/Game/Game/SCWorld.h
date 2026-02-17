@@ -54,6 +54,8 @@ public:
     void ForEachPlayableTile(const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachPathTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachPathTileInRange(Vec2 const& pos, float minRadius, float maxRadius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
 
     void ForEachEdgeTile(const std::function<bool(IntVec2 const&)>& func) const;

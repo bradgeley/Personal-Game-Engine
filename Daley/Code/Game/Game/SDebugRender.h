@@ -15,8 +15,8 @@ public:
 
     SDebugRender(Name name = "DebugRender", Rgba8 const& debugTint = Rgba8::Magenta) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
     void Shutdown() override;
+    void Run(SystemContext const& context) override;
 
 protected:
 
@@ -27,4 +27,5 @@ protected:
     static bool DebugRenderDistanceField(NamedProperties& args);
     static bool DebugRenderFlowField(NamedProperties& args);
     static bool DebugRenderCollision(NamedProperties& args);
+    static bool DebugRenderWeapons(NamedProperties& args);
 };

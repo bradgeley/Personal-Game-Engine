@@ -83,6 +83,7 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
 	if (def->m_health.has_value())              g_ecs->AddComponent<CHealth>(id, *def->m_health);
 	if (def->m_death.has_value())               g_ecs->AddComponent<CDeath>(id, *def->m_death);
 	if (def->m_weapon.has_value())              g_ecs->AddComponent<CWeapon>(id, *def->m_weapon);
+	if (def->m_proj.has_value())                g_ecs->AddComponent<CProjectile>(id, *def->m_proj);
 
     return id;
 }

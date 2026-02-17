@@ -48,6 +48,28 @@ bool GeometryUtils::DoesDiscOverlapAABB(Vec2 const& discPos, float discRadius, A
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool GeometryUtils::DoesRingOverlapAABB(Vec2 const& ringPos, float innerRadius, float outerRadius, AABB2 const& aabb)
+{
+    Vec2 nearestPointOnAABB = aabb.GetNearestPoint(ringPos);
+    bool isWithinOuterRadius = IsPointInsideDisc2D(nearestPointOnAABB, ringPos, outerRadius);
+    if (!isWithinOuterRadius)
+    {
+        return false;
+	}
+
+	Vec2 farthestPointOnAABB = aabb.GetFarthestPoint(ringPos);
+	bool isFullyWithinInnerRadius = IsPointInsideDisc2D(farthestPointOnAABB, ringPos, innerRadius);
+    if (isFullyWithinInnerRadius)
+    {
+        return false;
+	}
+
+	return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool GeometryUtils::DoesCapsuleOverlapAABB(Vec2 const& capsuleStart, Vec2 const& capsuleEnd, float capsuleRadius, AABB2 const& aabb)
 {
     AABB2 capsuleBounds = GetCapsuleBounds(capsuleStart, capsuleEnd, capsuleRadius);

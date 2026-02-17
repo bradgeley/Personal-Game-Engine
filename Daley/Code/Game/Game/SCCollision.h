@@ -18,6 +18,7 @@ class SCCollision
 {
 public:
 
+	// Todo: add layers (Enemy layer)
 	std::vector<EntityBucket> m_tileBuckets;
 };
 

@@ -173,4 +173,11 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     {
         m_weapon.emplace(elem);
     }
+
+    // CProjectile
+    elem = xmlElement->FirstChildElement("Projectile");
+    if (elem)
+    {
+        m_proj.emplace(elem);
+    }
 }

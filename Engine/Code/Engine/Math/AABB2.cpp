@@ -159,6 +159,17 @@ Vec2 AABB2::GetNearestPoint(Vec2 const& point) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Vec2 AABB2::GetFarthestPoint(Vec2 const& point) const
+{
+    Vec2 result;
+	result.x = MathUtils::AbsF(point.x - mins.x) > MathUtils::AbsF(point.x - maxs.x) ? mins.x : maxs.x;
+	result.y = MathUtils::AbsF(point.y - mins.y) > MathUtils::AbsF(point.y - maxs.y) ? mins.y : maxs.y;
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool AABB2::IsPointInside(Vec2 const& point) const
 {
     return (point.x > mins.x) &&

@@ -24,6 +24,7 @@ namespace GeometryUtils
 	//
 	bool DoDiscsOverlap2D(Vec2 const& position1, float radius1, Vec2 const& position2, float radius2);
 	bool DoesDiscOverlapAABB(Vec2 const& discPos, float discRadius, AABB2 const& aabb);
+	bool DoesRingOverlapAABB(Vec2 const& ringPos, float innerRadius, float outerRadius, AABB2 const& aabb);
 	bool DoesCapsuleOverlapAABB(Vec2 const& capsuleStart, Vec2 const& capsuleEnd, float capsuleRadius, AABB2 const& aabb);
 
 

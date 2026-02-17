@@ -35,6 +35,7 @@
 #include "SMovement.h"
 #include "SMovementAnimation.h"
 #include "SPhysics.h"
+#include "SProjectile.h"
 #include "SRenderEntities.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"

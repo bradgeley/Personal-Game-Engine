@@ -24,6 +24,7 @@
 #include "CHealth.h"
 #include "CLifetime.h"
 #include "CMovement.h"
+#include "CProjectile.h"
 #include "CRender.h"
 #include "CTime.h"
 #include "CTransform.h"

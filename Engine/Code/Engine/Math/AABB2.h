@@ -41,6 +41,7 @@ public:
 
     // Geometric Queries
     Vec2 GetNearestPoint(Vec2 const& point) const;
+    Vec2 GetFarthestPoint(Vec2 const& point) const;
     bool IsPointInside(Vec2 const& point) const;
     bool IsOverlapping(AABB2 const& otherBox) const;
 

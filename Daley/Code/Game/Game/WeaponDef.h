@@ -51,5 +51,6 @@ public:
 	float m_baseDamage					= 1.f;
 	float m_baseAttacksPerSecond		= 1.f;
 	float m_baseProjSpeedUnitsPerSec	= 1.f;
-	float m_baseRange					= 1.f;
+	float m_baseMinRange				= 0.f;
+	float m_baseMaxRange				= 1.f;
 };

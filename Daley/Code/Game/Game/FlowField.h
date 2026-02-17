@@ -26,6 +26,7 @@ public:
 	void ResetConsideredCells();
 
 	Vec2 GetFlowAtTileCoords(IntVec2 const& tileCoords) const;
+	float GetDistanceAtTileCoords(IntVec2 const& tileCoords) const;
 
 public:
 

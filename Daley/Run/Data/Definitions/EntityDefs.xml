@@ -8,7 +8,7 @@
     <Death></Death>
     <Health maxHealth="100" healthRegen="1"></Health>
     <Transform></Transform>
-    <Movement moveSpeed="25" pathOnly="true"></Movement>
+    <Movement moveSpeed="3" pathOnly="true"></Movement>
     <Collision radius="0.5"></Collision>
     <Render scale="1.5" rotateSprite="true"></Render>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
@@ -32,14 +32,6 @@
   <!-- ==================================================================================================================== -->
   <!-- Towers -->
 
-  <EntityDef name = "VanillaProj">
-    <Transform></Transform>
-    <Collision radius="0.33"></Collision>
-    <Render scale="0.66"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanillaProj"></Animation>
-    <Time></Time>
-  </EntityDef>
-
   <EntityDef name = "Vanilla">
     <Transform></Transform>
     <Collision radius="1"></Collision>
@@ -47,6 +39,14 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanilla"></Animation>
     <Time></Time>
     <Weapon name="VanillaWeapon"></Weapon>
+  </EntityDef>
+
+  <EntityDef name = "VanillaProj">
+    <Transform></Transform>
+    <Render scale="0.66" rotateSprite="true"></Render>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanillaProj"></Animation>
+    <Time></Time>
+    <Projectile></Projectile>
   </EntityDef>
   
 </EntityDefs>
