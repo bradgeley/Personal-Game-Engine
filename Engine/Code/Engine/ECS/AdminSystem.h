@@ -124,8 +124,14 @@ public:
 
 	template<typename CType>
 	bool HasComponent(EntityID entityID) const;
+
+	template<typename CType>
+	bool HasComponentUnsafe(int entityIndex) const;
+
 	bool DoesEntityHaveComponents(EntityID entityID, BitMask componentBitMask) const;
-	bool DoesEntityExist(EntityID entityID) const;
+	bool DoesEntityHaveComponentsUnsafe(int entityIndex, BitMask componentBitMask) const;
+
+	bool IsValid(EntityID entityID) const;
 
 	template <typename...CTypes>
 	int Count() const;
@@ -140,7 +146,7 @@ public:
 public:
 
 	template <typename CType>
-	CType* GetComponent(EntityID entityID = ENTITY_ID_SINGLETON) const;
+	CType* GetComponent(EntityID entityID = EntityID::Singleton) const;
 
 	template <typename CType>
 	inline CType* GetComponent(GroupIter const& it) const;
@@ -189,7 +195,8 @@ public:
 	template <typename...CTypes>
 	BitMask GetComponentBitMask() const;
 
-	EntityID GetNextEntityWithGroup(BitMask groupMask, EntityID startIndex, EntityID endIndex) const;
+	EntityID GetNextEntityWithGroup(BitMask groupMask, int startIndex, int endIndex) const;
+	int GetNextEntityIndexWithGroup(BitMask groupMask, int startIndex, int endIndex) const;
 
 
 
@@ -230,6 +237,7 @@ protected:
 
 	BitArray<MAX_ENTITIES>			m_entities;
 	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 }; // Todo: if user needs more than 32 or 64 components, allow them to use a fixed size BitArray for entity composition, so the max component count would be uncapped
+	uint32_t						m_entityGeneration[MAX_ENTITIES] = { 0 };
 	int								m_highWatermarkEntityID = 0; // highest entity ID ever allocated, speeds up system iteration by only searching up to this ID
 
 	std::unordered_map<std::type_index, BaseStorage*>	m_componentStorage;
@@ -351,18 +359,24 @@ void AdminSystem::RegisterComponentSingleton()
 //----------------------------------------------------------------------------------------------------------------------
 template <typename CType, typename...Args>
 CType* AdminSystem::AddComponent(EntityID entityID, Args const& ...args)
-{    
-	std::type_index typeIndex(typeid(CType));
-	BitMask& componentBitMask = m_componentBitMasks.at(typeIndex);
-
-	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
-	if (HasComponent<CType>(entityID))
+{
+	if (!IsValid(entityID))
 	{
-		return typedStorage->Get(entityID);
+		return nullptr;
 	}
 
-	m_entityComposition[entityID] |= (componentBitMask);
-	return typedStorage->Add(entityID, CType(args...));
+	int entityIndex = entityID.GetIndex();
+	std::type_index typeIndex(typeid(CType));
+	BitMask& componentBitMask = m_componentBitMasks.at(typeIndex);
+	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
+
+	if (HasComponentUnsafe<CType>(entityIndex))
+	{
+		return typedStorage->Get(entityIndex);
+	}
+
+	m_entityComposition[entityIndex] |= (componentBitMask);
+	return typedStorage->Add(entityIndex, CType(args...));
 }
 
 
@@ -371,17 +385,24 @@ CType* AdminSystem::AddComponent(EntityID entityID, Args const& ...args)
 template <typename CType>
 CType* AdminSystem::AddComponent(EntityID entityID, CType const& copy)
 {
-	std::type_index typeIndex(typeid(CType));
-	BitMask& componentBitMask = m_componentBitMasks.at(typeIndex);
-
-	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
-	if (HasComponent<CType>(entityID))
+	if (!IsValid(entityID))
 	{
-		return typedStorage->Get(entityID);
+		return nullptr;
 	}
 
-	m_entityComposition[entityID] |= (componentBitMask);
-	return typedStorage->Add(entityID, copy);
+	int entityIndex = entityID.GetIndex();
+	std::type_index typeIndex(typeid(CType));
+	BitMask& componentBitMask = m_componentBitMasks.at(typeIndex);
+	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
+
+	if (HasComponentUnsafe<CType>(entityIndex))
+	{
+		return typedStorage->Get(entityIndex);
+	}
+
+	m_entityComposition[entityIndex] |= (componentBitMask);
+
+	return typedStorage->Add(entityIndex, copy);
 }
 
 
@@ -391,15 +412,22 @@ CType* AdminSystem::AddComponent(EntityID entityID, CType const& copy)
 // Use GetXXXStorage + operator[GroupIter] for maximum performance
 //
 template <typename CType>
-CType* AdminSystem::GetComponent(EntityID entityID /*= ENTITY_ID_SINGLETON*/) const
+CType* AdminSystem::GetComponent(EntityID entityID /*= EntityID::Singleton*/) const
 {
-	std::type_index typeIndex(typeid(CType));
-	if (!HasComponent<CType>(entityID))
+	if (!IsValid(entityID))
 	{
 		return nullptr;
 	}
+
+	int entityIndex = entityID.GetIndex();
+	if (!HasComponentUnsafe<CType>(entityIndex))
+	{
+		return nullptr;
+	}
+
+	std::type_index typeIndex(typeid(CType));
 	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
-	return typedStorage->Get(entityID);
+	return typedStorage->Get(entityIndex);
 }
 
 
@@ -408,7 +436,7 @@ CType* AdminSystem::GetComponent(EntityID entityID /*= ENTITY_ID_SINGLETON*/) co
 template<typename CType>
 inline CType* AdminSystem::GetComponent(GroupIter const& it) const
 {
-	return GetComponent<CType>(it.m_currentIndex);
+	return GetComponent<CType>(it.GetEntityID());
 }
 
 
@@ -419,7 +447,7 @@ CType& AdminSystem::GetSingleton() const
 {
 	std::type_index typeIndex(typeid(CType));
 	TypedBaseStorage<CType>* typedStorage = reinterpret_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
-	return *typedStorage->Get(ENTITY_ID_SINGLETON);
+	return *typedStorage->Get(0);
 }
 
 
@@ -472,8 +500,13 @@ TagStorage<CType>& AdminSystem::GetTagStorage() const
 template <typename CType>
 void AdminSystem::RemoveComponent(EntityID entityID)
 {
+	if (!IsValid(entityID))
+	{
+		return;
+	}
 	std::type_index typeIndex(typeid(CType));
-	BitMask& entityComp = m_entityComposition[entityID];
+	int entityIndex = entityID.GetIndex();
+	BitMask& entityComp = m_entityComposition[entityIndex];
 	BitMask& componentBitMask = m_componentBitMasks[typeIndex];
 	entityComp &= (~componentBitMask);
 }
@@ -502,7 +535,7 @@ GroupIter AdminSystem::Iterate(SystemContext const& context) const
 
 	result.m_groupMask = GetComponentBitMask<CTypes...>();
 
-	result.m_currentIndex = GetNextEntityWithGroup(result.m_groupMask, context.m_startEntityID, context.m_endEntityID);
+	result.m_currentIndex = GetNextEntityIndexWithGroup(result.m_groupMask, context.m_startEntityID, context.m_endEntityID);
 	return result;
 }
 
@@ -530,8 +563,22 @@ BitMask AdminSystem::GetComponentBitMask() const
 template<typename CType>
 inline bool AdminSystem::HasComponent(EntityID entityID) const
 {
+	if (!IsValid(entityID))
+	{
+		return false;
+	}
 	BitMask bitMask = GetComponentBit(std::type_index(typeid(CType)));
 	return DoesEntityHaveComponents(entityID, bitMask);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename CType>
+inline bool AdminSystem::HasComponentUnsafe(int entityIndex) const
+{
+	BitMask bitMask = GetComponentBit(std::type_index(typeid(CType)));
+	return DoesEntityHaveComponentsUnsafe(entityIndex, bitMask);
 }
 
 
@@ -543,7 +590,7 @@ int AdminSystem::Count() const
 	BitMask groupMask = GetComponentBitMask<CTypes...>();
 
 	int result = 0;
-	for (EntityID i = 0; i < MAX_ENTITIES; i++)
+	for (int i = 0; i < MAX_ENTITIES; i++)
 	{
 		if (m_entities.Get(i))
 		{

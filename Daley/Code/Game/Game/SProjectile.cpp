@@ -24,14 +24,14 @@ void SProjectile::Run(SystemContext const& context)
 	for (auto it = g_ecs->Iterate<CProjectile, CTransform>(context); it.IsValid(); ++it)
 	{
 		CProjectile& proj = *projStorage.Get(it);
-		if (proj.m_targetID == ENTITY_ID_INVALID)
+		if (proj.m_targetID == EntityID::Invalid || !g_ecs->IsValid(proj.m_targetID))
 		{
-			factory.m_entitiesToDestroy.push_back(it.m_currentIndex);
+			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 			continue;
 		}
 
 		CTransform& transform = *transStorage.Get(it);
-		CTransform& targetTransform = *transStorage.Get(proj.m_targetID);
+		CTransform& targetTransform = *transStorage.Get(proj.m_targetID.GetIndex());
 
 		Vec2 toTarget = targetTransform.m_pos - transform.m_pos;
 		float moveTimeThisFrame = context.m_deltaSeconds + proj.m_accumulatedTime;
@@ -41,7 +41,7 @@ void SProjectile::Run(SystemContext const& context)
 		if (distSquaredToTarget <= moveDistThisFrame * moveDistThisFrame)
 		{
 			// Hit target, destroy proj
-			factory.m_entitiesToDestroy.push_back(it.m_currentIndex);
+			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 			factory.m_entitiesToDestroy.push_back(proj.m_targetID);
 			continue;
 		}

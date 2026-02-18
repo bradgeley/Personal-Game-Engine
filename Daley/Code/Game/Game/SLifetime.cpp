@@ -30,7 +30,7 @@ void SLifetime::Run(SystemContext const& context)
 		if (lifetime.m_lifetimeRemaining >= 0.f)
 		{
 			float timeDilation = 1.f;
-			if (g_ecs->DoesEntityHaveComponents(it.m_currentIndex, timeBitMask))
+			if (g_ecs->DoesEntityHaveComponentsUnsafe(it.m_currentIndex, timeBitMask))
 			{
 				CTime const& time = timeStorage[it];
 				timeDilation = time.m_clock.GetTimeDilationF();
@@ -40,7 +40,8 @@ void SLifetime::Run(SystemContext const& context)
 
 			if (lifetime.m_lifetimeRemaining < 0.f)
 			{
-				entityFactory.m_entitiesToDestroy.push_back(it.m_currentIndex);
+				EntityID id = it.GetEntityID();
+				entityFactory.m_entitiesToDestroy.push_back(id);
 			}
 		}
 	}

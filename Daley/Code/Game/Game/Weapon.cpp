@@ -50,7 +50,7 @@ void ProjectileHitWeapon::Update(float deltaSeconds, Vec2 const& location)
     SCFlowField const& flowfield = g_ecs->GetSingleton<SCFlowField>();
     SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
 
-	EntityID targetID = ENTITY_ID_INVALID;
+	EntityID targetID = EntityID::Invalid;
     if (m_targetingMode == WeaponTargetingMode::ClosestToGoal)
     {
 		float closestToGoalDist = FLT_MAX;
@@ -69,7 +69,7 @@ void ProjectileHitWeapon::Update(float deltaSeconds, Vec2 const& location)
         });
     }
 
-    if (targetID != ENTITY_ID_INVALID)
+    if (targetID != EntityID::Invalid)
     {
         // Shoot at targets
         while (m_accumulatedAttackTime > timeBetweenAttacks)
@@ -81,6 +81,10 @@ void ProjectileHitWeapon::Update(float deltaSeconds, Vec2 const& location)
             spawnInfo.m_spawnOrientation = 0.f;
             spawnInfo.m_def = EntityDef::GetEntityDef(m_projectileDefName);
             EntityID projectileID = SEntityFactory::SpawnEntity(spawnInfo);
+            if (!g_ecs->IsValid(projectileID))
+            {
+                break;
+            }
 			CProjectile& projComp = *g_ecs->GetComponent<CProjectile>(projectileID);
 			projComp.m_targetID = targetID;
             projComp.m_accumulatedTime += m_accumulatedAttackTime;

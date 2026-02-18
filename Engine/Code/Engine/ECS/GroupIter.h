@@ -26,12 +26,13 @@ public:
 
 	bool IsValid() const;
 	void Next();
+	EntityID GetEntityID() const;
 
 	void operator++();
 	
 public:
 
-	EntityID				m_currentIndex		= 0;
-	EntityID				m_endIndex			= MAX_ENTITIES - 1;
+	int						m_currentIndex		= 0;
+	int						m_endIndex			= MAX_ENTITIES - 1;
 	BitMask					m_groupMask			= 0;
 };

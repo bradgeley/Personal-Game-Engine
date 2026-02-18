@@ -23,8 +23,8 @@ struct SystemContext
 
     // System Splitting Params
     bool		    m_didSystemSplit	        = false;
-    EntityID	    m_startEntityID				= 0;
-    EntityID	    m_endEntityID				= MAX_ENTITIES - 1;
+    int	            m_startEntityID				= 0;
+    int	            m_endEntityID				= MAX_ENTITIES - 1;
     int			    m_systemSplittingJobID		= 0; // Index ranging from 0 to (SystemSplittingNumJobs - 1)
     int             m_systemSplittingNumJobs    = 0;
 };

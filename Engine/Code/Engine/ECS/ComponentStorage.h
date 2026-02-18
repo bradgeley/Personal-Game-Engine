@@ -1,7 +1,6 @@
 // Bradley Christensen - 2022-2025
 #pragma once
 #include <unordered_map>
-#include "EntityID.h"
 #include "GroupIter.h"
 #include "Engine/DataStructures/BitArray.h"
 
@@ -20,8 +19,8 @@ public:
 
 	virtual ~BaseStorage() = default;
 
-	virtual void Destroy(EntityID index)							= 0;
-	virtual void Clear()											= 0;
+	virtual void Destroy(int index)											= 0;
+	virtual void Clear()													= 0;
 };
 
 
@@ -45,15 +44,15 @@ public:
 
 	virtual ~TypedBaseStorage() override = default;
 
-	virtual CType*			Get(GroupIter const& it)				= 0;
-	virtual CType const*	Get(GroupIter const& it) const			= 0;
-	virtual CType*			Get(EntityID eid)						= 0;
-	virtual CType const*	Get(EntityID eid) const					= 0;
-	virtual CType*			Add(EntityID eid)						= 0;
-	virtual CType*			Add(EntityID eid, CType const& copy)	= 0;
+	virtual CType*			Get(GroupIter const& it)						= 0;
+	virtual CType const*	Get(GroupIter const& it) const					= 0;
+	virtual CType*			Get(int entityIndex)							= 0;
+	virtual CType const*	Get(int entityIndex) const						= 0;
+	virtual CType*			Add(int entityIndex)							= 0;
+	virtual CType*			Add(int entityIndex, CType const& copy)			= 0;
 
 	// Not virtual on purpose for performance reasons - this is the most called function in the ECS
-	inline CType& operator [](EntityID id) { return *Get(id); }
+	inline CType& operator [](int id) { return *Get(id); }
 	inline CType& operator [](GroupIter const& it) { return *Get(it.m_currentIndex); }
 };
 
@@ -69,46 +68,46 @@ public:
 
 	virtual ~ArrayStorage() override = default;
 
-	virtual CType*			Get(GroupIter const& it)				override
+	virtual CType*			Get(GroupIter const& it)						override
 	{
 		return &m_data[it.m_currentIndex];
 	}
 
-	virtual CType const*	Get(GroupIter const& it)				const override
+	virtual CType const*	Get(GroupIter const& it)						const override
 	{
 		return &m_data[it.m_currentIndex];
 	}
 
-	virtual CType*			Get(EntityID eid)						override
+	virtual CType*			Get(int entityIndex)							override
 	{
-		return &m_data[eid];
+		return &m_data[entityIndex];
 	}
 
-	virtual CType const*	Get(EntityID eid)						const override
+	virtual CType const*	Get(int entityIndex)							const override
 	{
-		return &m_data[eid];
+		return &m_data[entityIndex];
 	}
 
-	virtual CType*			Add(EntityID eid)						override
+	virtual CType*			Add(int entityIndex)							override
 	{
-		CType& slot = m_data[eid];
+		CType& slot = m_data[entityIndex];
 		slot = CType();
 		return &slot;
 	}
 
-	virtual CType*			Add(EntityID eid, CType const& copy)	override
+	virtual CType*			Add(int entityIndex, CType const& copy)			override
 	{
-		CType& slot = m_data[eid];
+		CType& slot = m_data[entityIndex];
 		slot = copy;
 		return &slot;
 	}
 
-	virtual void			Destroy(EntityID eid)						override
+	virtual void			Destroy(int entityIndex)						override
 	{
-		m_data[eid].~CType();
+		m_data[entityIndex].~CType();
 	}
 
-	virtual void			Clear()									override
+	virtual void			Clear()											override
 	{
 		for (CType& component : m_data)
 		{
@@ -116,7 +115,7 @@ public:
 		}
 	}
 
-	inline CType& operator [](EntityID id) { return m_data[id]; }
+	inline CType& operator [](int id) { return m_data[id]; }
 	inline CType& operator [](GroupIter const& it) { return m_data[it.m_currentIndex]; }
 
 public:
@@ -136,9 +135,9 @@ public:
 
 	virtual ~MapStorage() override = default;
 
-	virtual CType*			Get(EntityID eid)						override
+	virtual CType*			Get(int entityIndex)							override
 	{
-		auto result = m_data.find(eid);
+		auto result = m_data.find(entityIndex);
 		if (result != m_data.end())
 		{
 			return &(result->second);
@@ -146,9 +145,9 @@ public:
 		return nullptr;
 	}
 	
-	virtual CType const*	Get(EntityID eid)						const override
+	virtual CType const*	Get(int entityIndex)							const override
 	{
-		auto result = m_data.find(eid);
+		auto result = m_data.find(entityIndex);
 		if (result != m_data.end())
 		{
 			return &(result->second);
@@ -156,7 +155,7 @@ public:
 		return nullptr;
 	}
 
-	virtual CType*			Get(GroupIter const& it)				override
+	virtual CType*			Get(GroupIter const& it)						override
 	{
 		auto result = m_data.find(it.m_currentIndex);
 		if (result != m_data.end())
@@ -166,7 +165,7 @@ public:
 		return nullptr;
 	}
 
-	virtual CType const*	Get(GroupIter const& it)				const override
+	virtual CType const*	Get(GroupIter const& it)						const override
 	{
 		auto result = m_data.find(it.m_currentIndex);
 		if (result != m_data.end())
@@ -176,38 +175,38 @@ public:
 		return nullptr;
 	}
 	
-	virtual CType*			Add(EntityID eid)						override
+	virtual CType*			Add(int entityIndex)							override
 	{
-		m_data.emplace(eid, CType());
-		return &m_data[eid];
+		m_data.emplace(entityIndex, CType());
+		return &m_data[entityIndex];
 	}
 	
-	virtual CType*			Add(EntityID eid, CType const& copy)	override
+	virtual CType*			Add(int entityIndex, CType const& copy)			override
 	{
-		m_data.emplace(eid, copy);
-		return &m_data[eid];
+		m_data.emplace(entityIndex, copy);
+		return &m_data[entityIndex];
 	}
 	
-	virtual void			Destroy(EntityID eid)					override
+	virtual void			Destroy(int entityIndex)						override
 	{
-		auto result = m_data.find(eid);
+		auto result = m_data.find(entityIndex);
 		if (result != m_data.end())
 		{
 			m_data.erase(result);
 		}
 	}
 	
-	virtual void			Clear()									override
+	virtual void			Clear()											override
 	{
 		m_data.clear();
 	}
 
-	inline CType& operator [](EntityID id) { return m_data[id]; }
+	inline CType& operator [](int id) { return m_data[id]; }
 	inline CType& operator [](GroupIter const& it) { return m_data[it.m_currentIndex]; }
 
 public:
 	
-	std::unordered_map<EntityID, CType> m_data;
+	std::unordered_map<int, CType> m_data;
 };
 
 
@@ -223,12 +222,12 @@ public:
 	SingletonStorage() = default;
 	virtual ~SingletonStorage() override = default;
 
-	virtual CType*			Get(EntityID)							override
+	virtual CType*			Get(int)								override
 	{
 		return &m_data;
 	}
 	
-	virtual CType const*	Get(EntityID)							const override
+	virtual CType const*	Get(int)								const override
 	{
 		return &m_data;
 	}
@@ -243,19 +242,19 @@ public:
 		return &m_data;
 	}
 	
-	virtual CType*			Add(EntityID)							override
+	virtual CType*			Add(int)								override
 	{
 		// not relevant to singleton
 		return nullptr;
 	}
 	
-	virtual CType*			Add(EntityID, CType const&)				override
+	virtual CType*			Add(int, CType const&)					override
 	{
 		// not relevant to singleton
 		return nullptr;
 	}
 	
-	virtual void			Destroy(EntityID)						override
+	virtual void			Destroy(int)							override
 	{
 		// not relevant to singleton
 	}
@@ -265,7 +264,7 @@ public:
 		// not relevant to singleton
 	}
 	
-	inline CType& operator [](EntityID) { return m_data; }
+	inline CType& operator [](int) { return m_data; }
 	inline CType& operator [](GroupIter const&) { return m_data; }
 
 public:
@@ -287,14 +286,14 @@ public:
 	
 	virtual ~TagStorage() override = default;
 
-	virtual CType*			Get(EntityID eid)						override
+	virtual CType*			Get(int entityIndex)					override
 	{
-		return (CType*) m_tags.Get(eid);
+		return (CType*) m_tags.Get(entityIndex);
 	}
 	
-	virtual CType const*	Get(EntityID eid)						const override
+	virtual CType const*	Get(int entityIndex)					const override
 	{
-		return (CType const*) m_tags.Get(eid);
+		return (CType const*) m_tags.Get(entityIndex);
 	}
 
 	virtual CType*			Get(GroupIter const& it)				override
@@ -307,21 +306,21 @@ public:
 		return (CType const*) m_tags.Get(it.m_currentIndex);
 	}
 	
-	virtual CType*			Add(EntityID eid)						override
+	virtual CType*			Add(int entityIndex)					override
 	{
-		m_tags.Set(eid);
+		m_tags.Set(entityIndex);
 		return nullptr;
 	}
 	
-	virtual CType*			Add(EntityID eid, CType const&)			override
+	virtual CType*			Add(int entityIndex, CType const&)		override
 	{
-		m_tags.Set(eid);
+		m_tags.Set(entityIndex);
 		return nullptr;
 	}
 	
-	virtual void			Destroy(EntityID eid)					override
+	virtual void			Destroy(int entityIndex)						override
 	{
-		m_tags.Unset(eid);
+		m_tags.Unset(entityIndex);
 	}
 	
 	virtual void			Clear()									override
@@ -329,7 +328,7 @@ public:
 		m_tags.SetAll(false);
 	}
 
-	inline bool operator[](EntityID id) { return m_tags.Get(id); }
+	inline bool operator[](int id) { return m_tags.Get(id); }
 	inline bool operator[](GroupIter const& it) { return m_tags.Get(it.m_currentIndex); }
 
 public:

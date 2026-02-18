@@ -34,7 +34,7 @@ void SEntityFactory::Run(SystemContext const&)
     for (SpawnInfo& spawnInfo : factory.m_entitiesToSpawn)
     {
         EntityID id = CreateEntityFromDef(spawnInfo.m_def);
-        if (id == ENTITY_ID_INVALID)
+        if (id == EntityID::Invalid)
         {
             continue;
 		}
@@ -65,10 +65,10 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
 	ASSERT_OR_DIE(def != nullptr, "Null entity definition passed to SEntityFactory::CreateEntityFromDef");
 
     EntityID id = g_ecs->CreateEntity();
-    if (id == ENTITY_ID_INVALID)
+    if (id == EntityID::Invalid)
     {
         DevConsoleUtils::LogError("Max entities (%i) reached, cannot spawn entity from definition: %s", MAX_ENTITIES, def->m_name.ToCStr());
-        return ENTITY_ID_INVALID;
+        return EntityID::Invalid;
     }
 
     // Add components that exist in the def
@@ -94,9 +94,9 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
 EntityID SEntityFactory::SpawnEntity(SpawnInfo const& spawnInfo)
 {
     EntityID id = SEntityFactory::CreateEntityFromDef(spawnInfo.m_def);
-    if (id == ENTITY_ID_INVALID)
+    if (id == EntityID::Invalid)
     {
-        return ENTITY_ID_INVALID;
+        return EntityID::Invalid;
     }
 
     if (CTransform* transform = g_ecs->GetComponent<CTransform>(id))

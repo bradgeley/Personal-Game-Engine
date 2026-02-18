@@ -107,12 +107,20 @@ void AdminSystem::RunSystemSubgraph(SystemSubgraphID subgraphID, float deltaSeco
 //----------------------------------------------------------------------------------------------------------------------
 bool AdminSystem::DestroyEntity(EntityID entityID)
 {
-	m_entities.Unset((int) entityID);
-	m_entityComposition[entityID] = (BitMask) 0;
+	if (!IsValid(entityID))
+	{
+		return false;
+	}
+
+	int entityIndex = entityID.GetIndex();
+	m_entities.Unset(entityIndex);
+	m_entityComposition[entityIndex] = (BitMask) 0;
+	m_entityGeneration[entityIndex]++;
+
 	for (auto it = m_componentStorage.begin(); it != m_componentStorage.end(); ++it)
 	{
 		BaseStorage* storage = it->second;
-		storage->Destroy(entityID); // Singleton storage ignores destroying
+		storage->Destroy(entityIndex); // Singleton storage ignores destroying
 	}
 	return true;
 }
@@ -332,7 +340,12 @@ void AdminSystem::RegisterComponentBit(std::type_index typeIndex)
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::RemoveComponent(EntityID entityID, BitMask componentBit)
 {
-	BitMask& entityComp = m_entityComposition[entityID];
+	if (!IsValid(entityID))
+	{
+		return;
+	}
+
+	BitMask& entityComp = m_entityComposition[entityID.GetIndex()];
 	entityComp &= (~componentBit);
 }
 
@@ -341,36 +354,73 @@ void AdminSystem::RemoveComponent(EntityID entityID, BitMask componentBit)
 //----------------------------------------------------------------------------------------------------------------------
 bool AdminSystem::DoesEntityHaveComponents(EntityID entityID, BitMask componentBitMask) const
 {
-	return componentBitMask == (m_entityComposition[entityID] & componentBitMask);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool AdminSystem::DoesEntityExist(EntityID entityID) const
-{
-	if (entityID >= MAX_ENTITIES)
+	if (!IsValid(entityID))
 	{
 		return false;
 	}
-	return m_entities.Get((int) entityID);
+
+	return componentBitMask == (m_entityComposition[entityID.GetIndex()] & componentBitMask);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-EntityID AdminSystem::GetNextEntityWithGroup(BitMask groupMask, EntityID startIndex, EntityID endIndex) const
+bool AdminSystem::DoesEntityHaveComponentsUnsafe(int entityIndex, BitMask componentBitMask) const
+{
+	return componentBitMask == (m_entityComposition[entityIndex] & componentBitMask);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AdminSystem::IsValid(EntityID entityID) const
+{
+	int entityIndex = entityID.GetIndex();
+	if (entityIndex >= MAX_ENTITIES)
+	{
+		return false;
+	}
+
+	if (m_entityGeneration[entityIndex] != entityID.GetGeneration())
+	{
+		return false;
+	}
+
+	return m_entities.Get(entityIndex);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EntityID AdminSystem::GetNextEntityWithGroup(BitMask groupMask, int startIndex, int endIndex) const
 {
 	int lastIndex = m_highWatermarkEntityID < static_cast<int>(endIndex) ? m_highWatermarkEntityID : static_cast<int>(endIndex);
 
-	for (EntityID entity = startIndex; entity <= static_cast<EntityID>(lastIndex); ++entity)
+	for (int entity = startIndex; entity <= lastIndex; ++entity)
+	{
+		if ((m_entityComposition[entity] & groupMask) == groupMask)
+		{
+			return EntityID(entity, m_entityGeneration[entity]);
+		}
+	}
+	return EntityID::Invalid;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int AdminSystem::GetNextEntityIndexWithGroup(BitMask groupMask, int startIndex, int endIndex) const
+{
+	int lastIndex = m_highWatermarkEntityID < static_cast<int>(endIndex) ? m_highWatermarkEntityID : static_cast<int>(endIndex);
+
+	for (int entity = startIndex; entity <= lastIndex; ++entity)
 	{
 		if ((m_entityComposition[entity] & groupMask) == groupMask)
 		{
 			return entity;
 		}
 	}
-	return UINT_MAX;
+	return INT_MAX;
 }
 
 
@@ -384,7 +434,7 @@ EntityID AdminSystem::CreateEntity(int searchBeginEntityID)
 	// check if we're at max entities
 	if (index == -1)
 	{
-		return ENTITY_ID_INVALID;
+		return EntityID::Invalid;
 	}
 
 	if (index > m_highWatermarkEntityID)
@@ -392,7 +442,7 @@ EntityID AdminSystem::CreateEntity(int searchBeginEntityID)
 		m_highWatermarkEntityID = index;
 	}
 
-	return (EntityID) index;
+	return EntityID(index, m_entityGeneration[index]);
 }
 
 
@@ -400,6 +450,11 @@ EntityID AdminSystem::CreateEntity(int searchBeginEntityID)
 //----------------------------------------------------------------------------------------------------------------------
 EntityID AdminSystem::CreateEntityInPlace(int entityID)
 {
+	if (m_entities.Get(entityID))
+	{
+		return EntityID::Invalid;
+	}
+
 	m_entities.Set(entityID);
 
 	if (entityID > m_highWatermarkEntityID)
@@ -407,7 +462,7 @@ EntityID AdminSystem::CreateEntityInPlace(int entityID)
 		m_highWatermarkEntityID = entityID;
 	}
 
-	return (EntityID) entityID;
+	return EntityID(entityID, m_entityGeneration[entityID]);
 }
 
 
@@ -415,15 +470,11 @@ EntityID AdminSystem::CreateEntityInPlace(int entityID)
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::DestroyAllEntities()
 {
-	m_entities.SetAll(false);
-	for (BitMask& entityComp : m_entityComposition)
+	for (int i = 0; i < MAX_ENTITIES; ++i)
 	{
-		entityComp = (BitMask) 0;
+		DestroyEntity(EntityID(i, m_entityGeneration[i]));
 	}
-	for (auto& storage : m_componentStorage)
-	{
-		auto& baseStorage = storage.second;
-		baseStorage->Clear();
-	}
+
 	m_highWatermarkEntityID = 0;
+
 }

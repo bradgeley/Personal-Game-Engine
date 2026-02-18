@@ -60,7 +60,7 @@ void SCollisionHash::Run(SystemContext const& context)
 			int index = world.m_tiles.GetIndexForCoords(worldCoords);
             if (world.m_tiles.IsValidIndex(index))
             {
-                scCollision.m_tileBuckets[index].push_back(it.m_currentIndex);
+                scCollision.m_tileBuckets[index].push_back(it.GetEntityID());
             }
             return true;
         });

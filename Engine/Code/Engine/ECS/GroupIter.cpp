@@ -39,6 +39,14 @@ void GroupIter::Next()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+EntityID GroupIter::GetEntityID() const
+{
+	return EntityID(m_currentIndex, g_ecs->m_entityGeneration[m_currentIndex]);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void GroupIter::operator++()
 {
 	Next();
