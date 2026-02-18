@@ -522,6 +522,12 @@ GroupIter AdminSystem::IterateAll() const
 	result.m_groupMask = GetComponentBitMask<CTypes...>();
 
 	result.m_currentIndex = GetNextEntityWithGroup(result.m_groupMask, 0, MAX_ENTITIES - 1);
+
+	if (m_highWatermarkEntityID < result.m_endIndex)
+	{
+		result.m_endIndex = g_ecs->m_highWatermarkEntityID;
+	}
+
 	return result;
 }
 
@@ -532,6 +538,11 @@ template <typename...CTypes>
 GroupIter AdminSystem::Iterate(SystemContext const& context) const
 {
 	GroupIter result(context);
+
+	if (m_highWatermarkEntityID < result.m_endIndex)
+	{
+		result.m_endIndex = g_ecs->m_highWatermarkEntityID;
+	}
 
 	result.m_groupMask = GetComponentBitMask<CTypes...>();
 
