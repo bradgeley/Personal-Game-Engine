@@ -115,7 +115,7 @@ bool AdminSystem::DestroyEntity(EntityID entityID)
 	int entityIndex = entityID.GetIndex();
 	m_entities.Unset(entityIndex);
 	m_entityComposition[entityIndex] = (BitMask) 0;
-	m_entityGeneration[entityIndex]++;
+	m_entityGeneration[entityIndex] = (m_entityGeneration[entityIndex] + 1) & ENTITY_GENERATION_MASK;
 
 	for (auto it = m_componentStorage.begin(); it != m_componentStorage.end(); ++it)
 	{

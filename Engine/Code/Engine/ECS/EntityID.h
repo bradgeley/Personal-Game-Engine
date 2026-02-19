@@ -7,11 +7,15 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-constexpr int ENTITY_INDEX_BITS = 24;
+constexpr int ENTITY_INDEX_BITS = 18;
 constexpr int ENTITY_INDEX_LIMIT = (1 << ENTITY_INDEX_BITS) - 1;
 constexpr int ENTITY_INDEX_MASK = ENTITY_INDEX_LIMIT;
+constexpr int ENTITY_GENERATION_BITS = 32 - ENTITY_INDEX_BITS;
+constexpr int ENTITY_GENERATION_LIMIT = (1 << ENTITY_GENERATION_BITS) - 1;
+constexpr int ENTITY_GENERATION_MASK = ENTITY_GENERATION_LIMIT; // This mask is for truncating higher generation values, not for isolating the generation bits.
 static_assert(MAX_ENTITIES <= ENTITY_INDEX_LIMIT, "MAX_ENTITIES is too high to fit in EntityID index bits.");
 static_assert(ENTITY_INDEX_BITS >= 16 && ENTITY_INDEX_BITS <= 31, "ENTITY_INDEX_BITS must be between 16 and 31.");
+static_assert(ENTITY_GENERATION_BITS <= 16 && ENTITY_GENERATION_BITS > 0, "ENTITY_GENERATION_BITS must be between 1 and 16.");
 
 
 
