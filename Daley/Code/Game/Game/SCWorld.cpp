@@ -7,6 +7,7 @@
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
+#include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexBuffer.h"
@@ -234,15 +235,15 @@ bool SCWorld::DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& 
 //----------------------------------------------------------------------------------------------------------------------
 void SCWorld::CacheValidSpawnLocations()
 {
-	m_spawnLocations.clear();
-	m_spawnLocations.reserve(16);
+	m_cachedSpawnLocations.clear();
+	m_cachedSpawnLocations.reserve(16);
 
 	ForEachEdgeTile([&](IntVec2 const& tileCoords)
 	{
 		Tile const& tile = m_tiles.Get(tileCoords);
 		if (tile.IsPath())
 		{
-			m_spawnLocations.push_back(tileCoords);
+			m_cachedSpawnLocations.push_back(tileCoords);
 		}
 		return true;
 	});
@@ -253,13 +254,13 @@ void SCWorld::CacheValidSpawnLocations()
 //----------------------------------------------------------------------------------------------------------------------
 Vec2 SCWorld::GetRandomSpawnLocation() const
 {
-	if (m_spawnLocations.empty())
+	if (m_cachedSpawnLocations.empty())
 	{
 		return Vec2();
 	}
 
-	int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(m_spawnLocations.size()) - 1);
-	IntVec2 tileCoords = m_spawnLocations[randomIndex];
+	int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(m_cachedSpawnLocations.size()) - 1);
+	IntVec2 tileCoords = m_cachedSpawnLocations[randomIndex];
 	AABB2 tileBounds = GetTileBounds(tileCoords);
 	Vec2 randomLocationInBounds = g_rng->GetRandomVecInRange2D(tileBounds.mins, tileBounds.maxs);
 	return randomLocationInBounds;

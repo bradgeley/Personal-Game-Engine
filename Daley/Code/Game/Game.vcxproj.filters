@@ -166,6 +166,9 @@
     <ClCompile Include="Game\SProjectile.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="Game\CEntityDebug.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -380,6 +383,9 @@
     </ClInclude>
     <ClInclude Include="Game\SProjectile.h">
       <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CEntityDebug.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

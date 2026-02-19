@@ -54,6 +54,12 @@ void SDebugOverlay::Run(SystemContext const&)
 	// Custom rendering stuff
 	// ...
 
+	Vec2 topLeft = screenBounds.GetTopLeft();
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -10.f), Vec2(1.f, -1.f), 25.f, "Debug Overlay Enabled", Rgba8::White);
+
+	int totalEntities = g_ecs->NumEntities();
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -40.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Total Entities: %d", totalEntities), Rgba8::White);
+
 	g_renderer->BeginCamera(&screenCamera);
 
 	// Render->clear debug verts 

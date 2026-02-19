@@ -33,18 +33,11 @@ void SEntityFactory::Run(SystemContext const&)
     // Spawn second
     for (SpawnInfo& spawnInfo : factory.m_entitiesToSpawn)
     {
-        EntityID id = CreateEntityFromDef(spawnInfo.m_def);
+        EntityID id = SpawnEntity(spawnInfo);
         if (id == EntityID::Invalid)
         {
             continue;
 		}
-
-        CTransform* transform = g_ecs->GetComponent<CTransform>(id);
-        if (transform)
-        {
-            transform->m_pos = spawnInfo.m_spawnPos;
-            transform->m_orientation = spawnInfo.m_spawnOrientation;
-        }
     }
     factory.m_entitiesToSpawn.clear();
 }
@@ -84,6 +77,10 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
 	if (def->m_death.has_value())               g_ecs->AddComponent<CDeath>(id, *def->m_death);
 	if (def->m_weapon.has_value())              g_ecs->AddComponent<CWeapon>(id, *def->m_weapon);
 	if (def->m_proj.has_value())                g_ecs->AddComponent<CProjectile>(id, *def->m_proj);
+
+    // Todo: don't add this component, in release only?
+    CEntityDebug* debugComponent = g_ecs->AddComponent<CEntityDebug>(id);
+    debugComponent->m_defName = def->m_name;
 
     return id;
 }

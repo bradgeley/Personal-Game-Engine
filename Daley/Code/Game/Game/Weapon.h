@@ -1,6 +1,8 @@
 // Bradley Christensen - 2022-2025
 #pragma once
 #include "Engine/Core/Name.h"
+#include "Engine/Math/IntVec2.h"
+#include <vector>
 
 
 
@@ -58,4 +60,8 @@ public:
 	float m_maxRange					= 10.f;
 	float m_accumulatedAttackTime		= 0.f;
 	WeaponTargetingMode m_targetingMode = WeaponTargetingMode::ClosestToGoal;
+
+	float m_minRangeAtTimeOfCache = -1.f;
+	float m_maxRangeAtTimeOfCache = -1.f;
+	std::vector<IntVec2> m_pathTilesInRange;
 };

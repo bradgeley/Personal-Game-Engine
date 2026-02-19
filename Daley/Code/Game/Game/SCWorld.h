@@ -94,6 +94,6 @@ public:
     bool m_playerChangedWorldCoordsThisFrame    = true;
     IntVec2 m_lastKnownPlayerWorldCoords;
 
-	std::vector<IntVec2> m_spawnLocations;
+	std::vector<IntVec2> m_cachedSpawnLocations;
 };
 

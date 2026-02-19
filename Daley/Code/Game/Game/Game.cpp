@@ -208,6 +208,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CRender>();
     g_ecs->RegisterComponentArray<CTime>();
     g_ecs->RegisterComponentArray<CTransform>();
+    g_ecs->RegisterComponentArray<CEntityDebug>();
 
     // Map Components
     g_ecs->RegisterComponentMap<CWeapon>();

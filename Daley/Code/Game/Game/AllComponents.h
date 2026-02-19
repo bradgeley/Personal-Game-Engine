@@ -21,6 +21,7 @@
 #include "CAnimation.h"
 #include "CCollision.h"
 #include "CDeath.h"
+#include "CEntityDebug.h"
 #include "CHealth.h"
 #include "CLifetime.h"
 #include "CMovement.h"

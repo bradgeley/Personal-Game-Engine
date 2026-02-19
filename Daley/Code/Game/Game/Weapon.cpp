@@ -10,6 +10,8 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Math/RandomNumberGenerator.h"
+#include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/VertexUtils.h"
 
 
@@ -50,23 +52,36 @@ void ProjectileHitWeapon::Update(float deltaSeconds, Vec2 const& location)
     SCFlowField const& flowfield = g_ecs->GetSingleton<SCFlowField>();
     SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
 
+    // Cache tiles in range as optimization, so we never search non path tiles that are out of range
+	bool hasRangeChanged = m_minRangeAtTimeOfCache != m_minRange || m_maxRangeAtTimeOfCache != m_maxRange;
+    if (hasRangeChanged)
+    {
+        world.ForEachPathTileInRange(location, m_minRange, m_maxRange, [&](IntVec2 const& worldCoords)
+        {
+            m_pathTilesInRange.push_back(worldCoords);
+            return true;
+        });
+		m_minRangeAtTimeOfCache = m_minRange;
+		m_maxRangeAtTimeOfCache = m_maxRange;
+	}
+
 	EntityID targetID = EntityID::Invalid;
     if (m_targetingMode == WeaponTargetingMode::ClosestToGoal)
     {
 		float closestToGoalDist = FLT_MAX;
 		IntVec2 closestToGoalCoords = IntVec2::ZeroVector;
-        world.ForEachPathTileInRange(location, m_minRange, m_maxRange, [&](IntVec2 const& worldCoords)
+        for (IntVec2 const& cachedPathTile : m_pathTilesInRange)
         {
-			int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
-			float distance = flowfield.m_toGoalFlowField.m_distanceField.Get(tileIndex);
+            int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
+            float distance = flowfield.m_toGoalFlowField.m_distanceField.Get(tileIndex);
             if (distance < closestToGoalDist && !collision.m_tileBuckets[tileIndex].empty()) // todo: only check "Enemy" collision layer
             {
-				closestToGoalCoords = worldCoords;
-				closestToGoalDist = distance;
-				targetID = collision.m_tileBuckets[tileIndex].front();
+                closestToGoalCoords = cachedPathTile;
+                closestToGoalDist = distance;
+				int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(collision.m_tileBuckets[tileIndex].size()) - 1);
+                targetID = collision.m_tileBuckets[tileIndex][randomIndex];
             }
-            return true;
-        });
+        }
     }
 
     if (targetID != EntityID::Invalid)

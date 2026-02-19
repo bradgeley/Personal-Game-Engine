@@ -11,14 +11,7 @@
 void SDebugCommands::Startup()
 {
 	DevConsoleUtils::AddDevConsoleCommand("Spawn", &SDebugCommands::Spawn, "name", DevConsoleArgType::String, "count", DevConsoleArgType::Int);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SDebugCommands::Run(SystemContext const&)
-{
-    // Empty
+	DevConsoleUtils::AddDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
 }
 
 
@@ -27,6 +20,15 @@ void SDebugCommands::Run(SystemContext const&)
 void SDebugCommands::Shutdown()
 {
 	DevConsoleUtils::RemoveDevConsoleCommand("Spawn", &SDebugCommands::Spawn);
+	DevConsoleUtils::RemoveDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SDebugCommands::Run(SystemContext const&)
+{
+    // Empty
 }
 
 
@@ -53,4 +55,18 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 		factory.m_entitiesToSpawn.push_back(spawnInfo);
 	}
 	return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::DumpEntityDebug(NamedProperties&)
+{
+	for (auto it = g_ecs->IterateAll<CEntityDebug>(); it.IsValid(); ++it)
+	{
+		CEntityDebug const& debugComp = *g_ecs->GetComponent<CEntityDebug>(it);
+		EntityID entityID = it.GetEntityID();
+		DevConsoleUtils::Log(Rgba8::Coral, "Entity %i: %s", entityID, debugComp.m_defName.ToCStr());
+	}
+	return false;
 }

@@ -15,10 +15,11 @@ public:
 
     SDebugCommands(Name name = "DebugCommands", Rgba8 const& debugTint = Rgba8::Magenta) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
     void Shutdown() override;
+    void Run(SystemContext const& context) override;
 
 protected:
 
     static bool Spawn(NamedProperties& args);
+    static bool DumpEntityDebug(NamedProperties& args);
 };

@@ -237,7 +237,7 @@ protected:
 
 	BitArray<MAX_ENTITIES>			m_entities;
 	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 }; // Todo: if user needs more than 32 or 64 components, allow them to use a fixed size BitArray for entity composition, so the max component count would be uncapped
-	uint32_t						m_entityGeneration[MAX_ENTITIES] = { 0 };
+	uint8_t							m_entityGeneration[MAX_ENTITIES] = { 0 }; // 8 bit to match the 8 bits inside of EntityID
 	int								m_highWatermarkEntityID = 0; // highest entity ID ever allocated, speeds up system iteration by only searching up to this ID
 
 	std::unordered_map<std::type_index, BaseStorage*>	m_componentStorage;
@@ -521,7 +521,7 @@ GroupIter AdminSystem::IterateAll() const
 
 	result.m_groupMask = GetComponentBitMask<CTypes...>();
 
-	result.m_currentIndex = GetNextEntityWithGroup(result.m_groupMask, 0, MAX_ENTITIES - 1);
+	result.m_currentIndex = GetNextEntityIndexWithGroup(result.m_groupMask, 0, MAX_ENTITIES - 1);
 
 	if (m_highWatermarkEntityID < result.m_endIndex)
 	{
