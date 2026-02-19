@@ -14,6 +14,9 @@ CHealth::CHealth(void const* xmlElement)
 
 	bool neverShowHealthBar = XmlUtils::ParseXmlAttribute(elem, "neverShowHealthBar", false);
 	SetNeverShowHealthBar(neverShowHealthBar);
+
+	bool isTargetable = XmlUtils::ParseXmlAttribute(elem, "isTargetable", false);
+	SetIsTargetable(isTargetable);
 }
 
 
@@ -28,6 +31,14 @@ void CHealth::TakeDamage(float damage)
 		m_currentHealth = 0.f;
 		SetHealthReachedZero(true);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CHealth::MatchesTagQuery(TagQuery query) const
+{
+	return query.Resolve(m_healthFlags);
 }
 
 
@@ -60,6 +71,14 @@ bool CHealth::GetNeverShowHealthBar() const
 bool CHealth::GetRegenSuppressed() const
 {
 	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::RegenSuppressed)) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CHealth::GetIsTargetable() const
+{
+	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::IsTargetable)) != 0;
 }
 
 
@@ -119,5 +138,20 @@ void CHealth::SetRegenSuppressed(bool regenSuppressed)
 	else
 	{
 		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::RegenSuppressed);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::SetIsTargetable(bool isTargetable)
+{
+	if (isTargetable)
+	{
+		m_healthFlags |= static_cast<uint8_t>(HealthFlags::IsTargetable);
+	}
+	else
+	{
+		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::IsTargetable);
 	}
 }

@@ -4,25 +4,25 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool TagQuery::Resolve(uint8_t tileTags) const
+bool TagQuery::Resolve(uint8_t tags) const
 {
     switch (m_queryOp)
     {
         case TagQueryOp::HasAny:
         {
-            return (tileTags & m_tagsToQuery) != 0;
+            return (tags & m_tagsToQuery) != 0;
         }
         case TagQueryOp::HasAll:
         {
-            return (tileTags & m_tagsToQuery) == m_tagsToQuery;
+            return (tags & m_tagsToQuery) == m_tagsToQuery;
         }
         case TagQueryOp::DoesNotHaveAny:
         {
-            return (tileTags & m_tagsToQuery) != m_tagsToQuery;
+            return (tags & m_tagsToQuery) != m_tagsToQuery;
         }
         case TagQueryOp::DoesNotHaveAll:
         {
-            return (tileTags & m_tagsToQuery) == 0;
+            return (tags & m_tagsToQuery) == 0;
         }
     }
     return false;

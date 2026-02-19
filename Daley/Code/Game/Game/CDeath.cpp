@@ -10,7 +10,7 @@ CDeath::CDeath(void const* xmlElement)
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 
 	m_deathAnimationName	= XmlUtils::ParseXmlAttribute(elem, "deathAnimation", m_deathAnimationName);
-	m_corpseDurationSeconds = XmlUtils::ParseXmlAttribute(elem, "corpseDurationSeconds", 5.f);
+	m_corpseDurationSeconds = XmlUtils::ParseXmlAttribute(elem, "corpseDurationSeconds", 1.f);
 }
 
 

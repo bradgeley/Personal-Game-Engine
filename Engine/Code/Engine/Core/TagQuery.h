@@ -18,7 +18,7 @@ enum class TagQueryOp
 //----------------------------------------------------------------------------------------------------------------------
 struct TagQuery
 {
-	bool Resolve(uint8_t tileTags) const;
+	bool Resolve(uint8_t tags) const;
 
 	uint8_t m_tagsToQuery;
 	TagQueryOp m_queryOp;

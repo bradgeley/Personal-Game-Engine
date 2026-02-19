@@ -51,6 +51,7 @@ void ProjectileHitWeapon::Update(float deltaSeconds, Vec2 const& location)
     SCCollision const& collision = g_ecs->GetSingleton<SCCollision>();
     SCFlowField const& flowfield = g_ecs->GetSingleton<SCFlowField>();
     SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+    auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
 	bool hasRangeChanged = m_minRangeAtTimeOfCache != m_minRange || m_maxRangeAtTimeOfCache != m_maxRange;
@@ -68,19 +69,42 @@ void ProjectileHitWeapon::Update(float deltaSeconds, Vec2 const& location)
 	EntityID targetID = EntityID::Invalid;
     if (m_targetingMode == WeaponTargetingMode::ClosestToGoal)
     {
+        static std::vector<EntityID> closestToGoalValidTargets;
+        closestToGoalValidTargets.clear();
+
 		float closestToGoalDist = FLT_MAX;
-		IntVec2 closestToGoalCoords = IntVec2::ZeroVector;
+		int closestToGoalTileIndex = -1;
         for (IntVec2 const& cachedPathTile : m_pathTilesInRange)
         {
             int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
             float distance = flowfield.m_toGoalFlowField.m_distanceField.Get(tileIndex);
             if (distance < closestToGoalDist && !collision.m_tileBuckets[tileIndex].empty()) // todo: only check "Enemy" collision layer
             {
-                closestToGoalCoords = cachedPathTile;
-                closestToGoalDist = distance;
-				int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(collision.m_tileBuckets[tileIndex].size()) - 1);
-                targetID = collision.m_tileBuckets[tileIndex][randomIndex];
+                static std::vector<EntityID> validTargets;
+                validTargets.clear();
+
+                for (auto& entityID : collision.m_tileBuckets[tileIndex])
+                {
+					CHealth const* healthComp = healthStorage.Get(entityID.GetIndex());
+                    if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())
+                    {
+                        validTargets.push_back(entityID);
+                    }
+				}
+
+                if (!validTargets.empty())
+                {
+                    closestToGoalTileIndex = tileIndex;
+                    closestToGoalDist = distance;
+                    closestToGoalValidTargets = validTargets;
+                }
             }
+        }
+
+        if (closestToGoalTileIndex != -1)
+        {
+            int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(closestToGoalValidTargets.size()) - 1);
+            targetID = closestToGoalValidTargets[randomIndex];
         }
     }
 

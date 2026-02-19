@@ -2,6 +2,7 @@
 #include "SProjectile.h"
 #include "CProjectile.h"
 #include "CTransform.h"
+#include "CHealth.h"
 #include "SCEntityFactory.h"
 
 
@@ -9,7 +10,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SProjectile::Startup()
 {
-	AddWriteDependencies<CProjectile, CTransform, SCEntityFactory>();
+	AddWriteDependencies<CProjectile, CTransform, CHealth, SCEntityFactory>();
 }
 
 
@@ -19,6 +20,7 @@ void SProjectile::Run(SystemContext const& context)
 {
 	auto& projStorage = g_ecs->GetMapStorage<CProjectile>();
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	for (auto it = g_ecs->Iterate<CProjectile, CTransform>(context); it.IsValid(); ++it)
@@ -40,9 +42,15 @@ void SProjectile::Run(SystemContext const& context)
 		float distSquaredToTarget = toTarget.GetLengthSquared();
 		if (distSquaredToTarget <= moveDistThisFrame * moveDistThisFrame)
 		{
-			// Hit target, destroy proj
+			// Projectile hit target
 			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
-			factory.m_entitiesToDestroy.push_back(proj.m_targetID);
+
+			CHealth* targetHealth = healthStorage.Get(proj.m_targetID.GetIndex());
+			if (targetHealth)
+			{
+				targetHealth->TakeDamage(proj.m_damage);
+			}
+
 			continue;
 		}
 		Vec2 moveThisFrame = toTarget.GetNormalized() * proj.m_projSpeedUnitsPerSec * moveTimeThisFrame;

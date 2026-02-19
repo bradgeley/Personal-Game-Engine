@@ -6,7 +6,7 @@
   <EntityDef name = "ant">
     <Lifetime></Lifetime>
     <Death></Death>
-    <Health maxHealth="100" healthRegen="1"></Health>
+    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Transform></Transform>
     <Movement moveSpeed="3" pathOnly="true"></Movement>
     <Collision radius="0.5"></Collision>
@@ -19,7 +19,7 @@
   <EntityDef name = "pig">
     <Lifetime></Lifetime>
     <Death></Death>
-    <Health maxHealth="100" healthRegen="1"></Health>
+    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Transform></Transform>
     <Movement moveSpeed="1" pathOnly="true"></Movement>
     <Collision radius="1"></Collision>

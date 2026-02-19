@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2025
 #pragma once
+#include "Engine/Core/TagQuery.h"
 #include <cstdint>
 
 
@@ -7,10 +8,16 @@
 //----------------------------------------------------------------------------------------------------------------------
 enum class HealthFlags : uint8_t
 {
-    Invincible              = 1 << 0,
+    // Usually immutable
+	IsTargetable            = 1 << 0,
 	NeverShowHealthBar      = 1 << 1,
-	HealthReachedZero       = 1 << 2,
-	RegenSuppressed         = 1 << 3
+
+    // Statuses
+    Invincible              = 1 << 2,
+	RegenSuppressed         = 1 << 3,
+
+    // State
+	HealthReachedZero       = 1 << 4,
 };
 
 
@@ -25,15 +32,18 @@ public:
 
     void TakeDamage(float damage);
 
+    bool MatchesTagQuery(TagQuery query) const;
     bool GetHealthReachedZero() const;
     bool GetIsInvincible() const;
     bool GetNeverShowHealthBar() const;
     bool GetRegenSuppressed() const;
+	bool GetIsTargetable() const;
 
 	void SetHealthReachedZero(bool reachedZero);
     void SetInvincible(bool isInvincible);
 	void SetNeverShowHealthBar(bool neverShowHealthBar);
 	void SetRegenSuppressed(bool regenSuppressed); // maybe replace with a int counter for multiple sources of suppress regen
+	void SetIsTargetable(bool isTargetable);
 
 public:
     
