@@ -41,9 +41,9 @@ void SAIController::Run(SystemContext const& context)
         if (ai.GetIsMovementWiggly())
         {
             float maxDegreesOffset = 15.f;
-            float wiggliness = 10.f; // lower = wigglier
-            float wigglinessOctaves = 3;
-            float noiseFactor = maxDegreesOffset * GetPerlinNoise1D(time.m_clock.GetCurrentTimeSecondsF() + static_cast<float>(it.m_currentIndex), wiggliness, wigglinessOctaves);
+            float wigglinessScale = 10.f;
+            unsigned int wigglinessOctaves = 3;
+            float noiseFactor = maxDegreesOffset * GetPerlinNoise1D(time.m_clock.GetCurrentTimeSecondsF() + static_cast<float>(it.m_currentIndex), wigglinessScale, wigglinessOctaves);
 
 			Vec2 wigglyMoveDir = movement.m_frameMoveDir.GetRotated(noiseFactor);
 

@@ -5,8 +5,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-CProjectile::CProjectile(void const* xmlElement)
+CProjectile::CProjectile(void const*)
 {
-    //XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 
 }

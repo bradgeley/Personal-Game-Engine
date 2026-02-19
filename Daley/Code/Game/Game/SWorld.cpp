@@ -100,7 +100,6 @@ void SWorld::GenerateMap(SCWorld& world)
 	Vec2 wormLocation = goalCenter;
 	Vec2 wormGeneralDirection = Vec2(1.f, 0.f);
 	IntVec2 wormTileCoords = world.GetTileCoordsAtWorldPos(wormLocation);
-	Tile& tile = world.m_tiles.GetRef(wormTileCoords);
 
 	int maxInterations = 10'000;
 	int iterationCount = 0;
