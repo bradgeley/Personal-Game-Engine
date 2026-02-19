@@ -260,6 +260,7 @@ void Game::ConfigureECS()
     // Post-Physics
     g_ecs->RegisterSystem<SProjectile>((int)FramePhase::PostPhysics);
     g_ecs->RegisterSystem<SHealth>((int)FramePhase::PostPhysics);
+    g_ecs->RegisterSystem<SGoal>((int)FramePhase::PostPhysics);
 
     // Render
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);

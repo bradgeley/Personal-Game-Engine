@@ -27,6 +27,7 @@
 #include "SDebugOverlay.h"
 #include "SEntityFactory.h"
 #include "SFlowField.h"
+#include "SGoal.h"
 #include "SHealth.h"
 #include "SInitView.h"
 #include "SInput.h"

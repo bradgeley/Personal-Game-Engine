@@ -224,6 +224,37 @@ bool SCWorld::IsTileOnPath(IntVec2 const& worldCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::IsTileInGoal(int tileIndex) const
+{
+	Tile const& tile = m_tiles.Get(tileIndex);
+	return tile.IsGoal();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::IsTileInGoal(IntVec2 const& worldCoords) const
+{
+	Tile const& tile = m_tiles.Get(worldCoords);
+	return tile.IsGoal();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::IsLocationInGoal(Vec2 const& worldPos) const
+{
+	Tile const* tile = GetTileAtWorldPos(worldPos);
+	if (tile)
+	{
+		return tile->IsGoal();
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& tagQuery) const
 {
 	Tile const& tile = m_tiles.Get(worldCoords);

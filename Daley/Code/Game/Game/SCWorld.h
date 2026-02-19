@@ -38,6 +38,10 @@ public:
     bool IsTileOnPath(int tileIndex) const;
     bool IsTileOnPath(IntVec2 const& worldCoords) const;
 
+	bool IsTileInGoal(int tileIndex) const;
+	bool IsTileInGoal(IntVec2 const& worldCoords) const;
+    bool IsLocationInGoal(Vec2 const& worldPos) const;
+
     bool DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& tagQuery) const;
 
     void CacheValidSpawnLocations();

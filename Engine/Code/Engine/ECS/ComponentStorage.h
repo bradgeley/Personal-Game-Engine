@@ -66,6 +66,9 @@ class ArrayStorage : public TypedBaseStorage<CType>
 {
 public:
 
+	ArrayStorage() = default;
+	ArrayStorage(const ArrayStorage&) = delete;
+	ArrayStorage& operator=(const ArrayStorage&) = delete;
 	virtual ~ArrayStorage() override = default;
 
 	virtual CType*			Get(GroupIter const& it)						override
@@ -133,6 +136,9 @@ class MapStorage : public TypedBaseStorage<CType>
 {
 public:
 
+	MapStorage() = default;
+	MapStorage(const MapStorage&) = delete;
+	MapStorage& operator=(const MapStorage&) = delete;
 	virtual ~MapStorage() override = default;
 
 	virtual CType*			Get(int entityIndex)							override
@@ -220,6 +226,8 @@ class SingletonStorage : public TypedBaseStorage<CType>
 public:
 
 	SingletonStorage() = default;
+	SingletonStorage(const SingletonStorage&) = delete;
+	SingletonStorage& operator=(const SingletonStorage&) = delete;
 	virtual ~SingletonStorage() override = default;
 
 	virtual CType*			Get(int)								override
@@ -283,7 +291,8 @@ class TagStorage : public TypedBaseStorage<CType>
 public:
 
 	TagStorage() : m_tags(false) {}
-	
+	TagStorage(const TagStorage&) = delete;
+	TagStorage& operator=(const TagStorage&) = delete;
 	virtual ~TagStorage() override = default;
 
 	virtual CType*			Get(int entityIndex)					override
