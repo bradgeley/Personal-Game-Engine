@@ -612,6 +612,14 @@ bool DevConsole::HandleKeyDown(NamedProperties& args)
             m_inputLine.MoveCaretToEndOfLine();
         }
     }
+    else if (key == (uint8_t) KeyCode::Home)
+    {
+		m_log.ScrollToTop();
+    }
+    else if (key == (uint8_t) KeyCode::End)
+    {
+        m_log.ScrollToBottom();
+    }
     
     return m_isShowing;
 }

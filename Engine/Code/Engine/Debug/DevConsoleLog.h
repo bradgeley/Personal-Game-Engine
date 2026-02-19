@@ -21,6 +21,8 @@ public:
     void AddLine(DevConsoleLine const& line);
     void RenderToBox(AABB2 const& box) const;
     void Scroll(int scrollAmount);
+    void ScrollToTop();
+    void ScrollToBottom();
     void SetNumLines(float numLines);
     void Clear();
 

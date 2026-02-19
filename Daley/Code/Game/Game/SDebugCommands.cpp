@@ -66,7 +66,7 @@ bool SDebugCommands::DumpEntityDebug(NamedProperties&)
 	{
 		CEntityDebug const& debugComp = *g_ecs->GetComponent<CEntityDebug>(it);
 		EntityID entityID = it.GetEntityID();
-		DevConsoleUtils::Log(Rgba8::Coral, "Entity %i: %s", entityID, debugComp.m_defName.ToCStr());
+		DevConsoleUtils::Log(Rgba8::Coral, "Entity %i, gen %i: %s", entityID.GetIndex(), entityID.GetGeneration(), debugComp.m_defName.ToCStr());
 	}
 	return false;
 }
