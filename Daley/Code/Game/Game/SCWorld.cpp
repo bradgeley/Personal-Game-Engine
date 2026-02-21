@@ -224,6 +224,19 @@ bool SCWorld::IsTileOnPath(IntVec2 const& worldCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::IsLocationOnPath(Vec2 const& worldPos) const
+{
+	Tile const* tile = GetTileAtWorldPos(worldPos);
+	if (tile)
+	{
+		return tile->IsPath();
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsTileInGoal(int tileIndex) const
 {
 	Tile const& tile = m_tiles.Get(tileIndex);
@@ -700,4 +713,15 @@ AABB2 SCWorld::GetTileBounds(IntVec2 const& tileCoords) const
 	tileBounds.mins = Vec2(tileCoords) * StaticWorldSettings::s_tileWidth + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
 	tileBounds.maxs = tileBounds.mins + tileDims;
 	return tileBounds;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 SCWorld::GetTileCenter(IntVec2 const& tileCoords) const
+{
+	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
+	Vec2 tileMins = Vec2(tileCoords) * StaticWorldSettings::s_tileWidth + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
+	Vec2 tileCenter = tileMins + tileDims * 0.5f;
+	return tileCenter;
 }

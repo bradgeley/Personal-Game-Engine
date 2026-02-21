@@ -37,6 +37,7 @@ public:
 
     bool IsTileOnPath(int tileIndex) const;
     bool IsTileOnPath(IntVec2 const& worldCoords) const;
+    bool IsLocationOnPath(Vec2 const& worldPos) const;
 
 	bool IsTileInGoal(int tileIndex) const;
 	bool IsTileInGoal(IntVec2 const& worldCoords) const;
@@ -77,6 +78,7 @@ public:
     Tile* GetTileAtWorldPos(Vec2 const& worldPos);
     AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos) const;
     AABB2 GetTileBounds(IntVec2 const& tileCoords) const;
+    Vec2 GetTileCenter(IntVec2 const& tileCoords) const;
 
 public:
 

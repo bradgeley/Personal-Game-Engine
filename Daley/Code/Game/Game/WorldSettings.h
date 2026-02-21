@@ -30,6 +30,11 @@ namespace StaticWorldSettings
     //constexpr float   s_collisionSingleHashRadiusThreshold = 0.5f;    // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
 
     //----------------------------------------------------------------------------------------------------------------------
+    // Static AI Settings
+    //
+	constexpr float   s_pathTileSnapRadius = 3.f;     // If an entity is off the path and within this distance of a path tile, it will snap to the center of that tile.
+
+    //----------------------------------------------------------------------------------------------------------------------
     // Static Flow Settings
     //
     constexpr float   s_maximumFlowDistance = 999.f;    // Maximum value a tile can contain in the flow distance field

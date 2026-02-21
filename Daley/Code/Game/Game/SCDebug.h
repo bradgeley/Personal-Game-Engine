@@ -23,7 +23,7 @@ public:
 
 	// Debug Placement
 	TileID m_debugPlacementTileID			= 12;							// Tile to place when using ctrl+B, used by SDebugInput
-	Name m_debugPlacementTowerName			= "Vanilla";					// Tower to place when using ctrl+T, used by SDebugInput
+	Name m_debugPlacementEntityName			= "Vanilla";					// Tower to place when using ctrl+T, used by SDebugInput
 
 	// Overlay
 	bool m_debugOverlayEnabled				= false;						// Toggle used by SDebugOverlay

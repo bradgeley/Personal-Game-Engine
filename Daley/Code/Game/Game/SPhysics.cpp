@@ -29,6 +29,31 @@ void SPhysics::Run(SystemContext const& context)
         CMovement& move = moveStorage[it];
         CTransform& transform = transStorage[it];
 
+        if (!move.GetIsConstrainedToPath())
+        {
+            transform.m_pos += move.m_frameMovement;
+            move.m_frameMovement = Vec2::ZeroVector;
+            continue;
+		}
+
+        if (!world.IsLocationOnPath(transform.m_pos))
+        {
+            float nearestPathTileDistanceSquared = FLT_MAX;
+            Vec2 nearestPathTileCenter = transform.m_pos;
+            world.ForEachPathTileOverlappingCircle(transform.m_pos, StaticWorldSettings::s_pathTileSnapRadius, [&world, &transform, &nearestPathTileDistanceSquared, &nearestPathTileCenter](IntVec2 const& pathTileCoords)
+            {
+                Vec2 pathTileCenter = world.GetTileCenter(pathTileCoords);
+                float distanceSquared = transform.m_pos.GetDistanceSquaredTo(pathTileCenter);
+                if (distanceSquared < nearestPathTileDistanceSquared)
+                {
+                    nearestPathTileDistanceSquared = distanceSquared;
+                    nearestPathTileCenter = pathTileCenter;
+                }
+                return true;
+			});
+			transform.m_pos = nearestPathTileCenter;
+        }
+
         Vec2 frameMovement = move.m_frameMovement;
 		float distanceRemaining = frameMovement.GetLength();
 
@@ -57,13 +82,13 @@ void SPhysics::Run(SystemContext const& context)
 
                 // Clamp frame movement to the remaining distance
                 float distanceTraveled = result.m_distance;
-				float distanceRemaining = raycast.m_maxDistance - distanceTraveled;
+				distanceRemaining = raycast.m_maxDistance - distanceTraveled;
                 frameMovement.ClampLength(distanceRemaining);
             }
             else
             {
                 Vec2 wouldBePosition = transform.m_pos + frameMovement;
-                if (!world.IsTileOnPath(world.GetTileCoordsAtWorldPos(wouldBePosition)))
+                if (!world.IsLocationOnPath(wouldBePosition))
                 {
                     break;
                 }
