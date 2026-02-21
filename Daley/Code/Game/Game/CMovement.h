@@ -8,8 +8,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 enum class MovementFlags : uint8_t
 {
-    IsTeleporting       = 1 << 0,
-	ConstrainedToPath   = 1 << 1
+	ConstrainedToPath   = 1 << 0
 };
 
 
@@ -22,10 +21,8 @@ public:
     CMovement() = default;
     CMovement(void const* xmlElement);
 
-	bool GetIsTeleporting() const;
 	bool GetIsConstrainedToPath() const;
 
-	void SetIsTeleporting(bool isTeleporting);
 	void SetIsConstrainedToPath(bool isConstrainedToPath);
 
 public:

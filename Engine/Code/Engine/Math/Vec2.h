@@ -34,6 +34,7 @@ public:
     float GetLength() const;
     float GetLengthSquared() const;
     float GetAngleDegrees() const;
+    float GetAngleRadians() const;
     void Normalize();
     float NormalizeAndReturnLength();
     bool IsNormalized() const;

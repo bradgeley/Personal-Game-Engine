@@ -80,29 +80,39 @@ void ProjectileHitWeapon::Update(float deltaSeconds, Vec2 const& location)
             float distance = flowfield.m_toGoalFlowField.m_distanceField.Get(tileIndex);
             if (distance < closestToGoalDist && !collision.m_tileBuckets[tileIndex].empty()) // todo: only check "Enemy" collision layer
             {
-                static std::vector<EntityID> validTargets;
-                validTargets.clear();
+				bool tileHasValidTarget = false;
 
                 for (auto& entityID : collision.m_tileBuckets[tileIndex])
                 {
 					CHealth const* healthComp = healthStorage.Get(entityID.GetIndex());
                     if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())
                     {
-                        validTargets.push_back(entityID);
+                        tileHasValidTarget = true;
+                        break;
                     }
 				}
 
-                if (!validTargets.empty())
+                if (tileHasValidTarget)
                 {
                     closestToGoalTileIndex = tileIndex;
                     closestToGoalDist = distance;
-                    closestToGoalValidTargets = validTargets;
                 }
             }
         }
 
         if (closestToGoalTileIndex != -1)
         {
+            for (auto& entityID : collision.m_tileBuckets[closestToGoalTileIndex])
+            {
+                CHealth const* healthComp = healthStorage.Get(entityID.GetIndex());
+                if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())
+                {
+					closestToGoalValidTargets.push_back(entityID);
+                }
+            }
+
+			ASSERT_OR_DIE(!closestToGoalValidTargets.empty(), "ProjectileHitWeapon::Update - closest to goal tile has no valid targets. Should be impossible.");
+
             int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(closestToGoalValidTargets.size()) - 1);
             targetID = closestToGoalValidTargets[randomIndex];
         }
@@ -126,6 +136,7 @@ void ProjectileHitWeapon::Update(float deltaSeconds, Vec2 const& location)
             }
 			CProjectile& projComp = *g_ecs->GetComponent<CProjectile>(projectileID);
 			projComp.m_targetID = targetID;
+			projComp.m_targetPos = std::nullopt;
             projComp.m_accumulatedTime += m_accumulatedAttackTime;
 			projComp.m_damage = m_damage;
 			projComp.m_projSpeedUnitsPerSec = m_projSpeedUnitsPerSec;

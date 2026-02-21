@@ -36,18 +36,8 @@ void SMovement::Run(SystemContext const& context)
             {
                 move.m_frameMoveDir = Vec2::ZeroVector;
                 move.m_frameMovement = Vec2::ZeroVector;
-                move.SetIsTeleporting(false);
                 continue;
             }
-        }
-
-		CTransform& transform = transformStorage[it];
-
-        if (move.GetIsTeleporting())
-        {
-            transform.m_pos += move.m_frameMovement;
-            move.m_frameMovement = Vec2::ZeroVector;
-            continue;
         }
 
         CTime const& time = timeStorage[it];
@@ -55,6 +45,7 @@ void SMovement::Run(SystemContext const& context)
 
         if (!move.m_frameMoveDir.IsZero())
         {
+            CTransform& transform = transformStorage[it];
             transform.m_orientation = move.m_frameMoveDir.GetAngleDegrees();
         }
     }

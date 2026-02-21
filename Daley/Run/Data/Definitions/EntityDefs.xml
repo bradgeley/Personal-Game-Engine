@@ -9,7 +9,7 @@
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Transform></Transform>
     <Movement moveSpeed="3" pathOnly="true"></Movement>
-    <Collision radius="0.5"></Collision>
+    <Collision radius="0.5" singleHash="true"></Collision>
     <Render scale="1.5" rotateSprite="true"></Render>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Time></Time>

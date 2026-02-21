@@ -63,7 +63,7 @@ void SPhysics::Run(SystemContext const& context)
 
         constexpr int maxNumBounces = 1;
         int numBounces = 0;
-        while (!frameMovement.IsNearlyZero() && numBounces <= maxNumBounces)
+        while (!MathUtils::IsNearlyZero(distanceRemaining) && numBounces <= maxNumBounces)
         {
             raycast.m_start = transform.m_pos;
             raycast.m_direction = frameMovement / distanceRemaining;
@@ -82,7 +82,7 @@ void SPhysics::Run(SystemContext const& context)
 
                 // Clamp frame movement to the remaining distance
                 float distanceTraveled = result.m_distance;
-				distanceRemaining = raycast.m_maxDistance - distanceTraveled;
+				distanceRemaining -= distanceTraveled;
                 frameMovement.ClampLength(distanceRemaining);
             }
             else

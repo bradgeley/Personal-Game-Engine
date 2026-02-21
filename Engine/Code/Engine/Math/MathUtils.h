@@ -62,6 +62,7 @@ namespace MathUtils
 	float CrossProduct2D(Vec2 const& vecA, Vec2 const& vecB);
 	float GetDistance2D(Vec2 const& vecA, Vec2 const& vecB);
 	float GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB);
+	void RotateVector2D(Vec2& vec, float radians);
 
 
 	//----------------------------------------------------------------------------------------------------------------------

@@ -28,14 +28,18 @@ void SProjectile::Run(SystemContext const& context)
 		CProjectile& proj = *projStorage.Get(it);
 		if (proj.m_targetID == EntityID::Invalid || !g_ecs->IsValid(proj.m_targetID))
 		{
-			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
-			continue;
+			if (!proj.m_targetPos.has_value())
+			{
+				factory.m_entitiesToDestroy.push_back(it.GetEntityID());
+				continue;
+			}
 		}
 
 		CTransform& transform = *transStorage.Get(it);
 		CTransform& targetTransform = *transStorage.Get(proj.m_targetID.GetIndex());
+		proj.m_targetPos = targetTransform.m_pos;
 
-		Vec2 toTarget = targetTransform.m_pos - transform.m_pos;
+		Vec2 toTarget = proj.m_targetPos.value() - transform.m_pos;
 		float moveTimeThisFrame = context.m_deltaSeconds + proj.m_accumulatedTime;
 		proj.m_accumulatedTime = 0.f;
 		float moveDistThisFrame = proj.m_projSpeedUnitsPerSec * moveTimeThisFrame;

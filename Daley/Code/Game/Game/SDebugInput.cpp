@@ -70,6 +70,16 @@ void SDebugInput::Run(SystemContext const&)
 		args.Set("count", 100);
 		g_eventSystem->FireEvent("Spawn", args);
 	}
+
+	// Debug Enemy Spawning
+	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->IsKeyDown('K'))
+	{
+		for (auto it = g_ecs->IterateAll<CHealth>(); it.IsValid(); ++it)
+		{
+			SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
+			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
+		}
+	}
 }
 
 

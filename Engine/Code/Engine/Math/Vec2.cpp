@@ -66,6 +66,14 @@ float Vec2::GetAngleDegrees() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float Vec2::GetAngleRadians() const
+{
+    return atan2f(y, x);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Vec2::Normalize()
 {
     MathUtils::NormalizeVector2D(*this);
@@ -241,11 +249,7 @@ void Vec2::RotateMinus90()
 //----------------------------------------------------------------------------------------------------------------------
 void Vec2::Rotate(float degrees)
 {
-    float angle = GetAngleDegrees();
-    float length = GetLength();
-    angle += degrees;
-    x = MathUtils::CosDegrees(angle) * length;
-    y = MathUtils::SinDegrees(angle) * length;
+	MathUtils::RotateVector2D(*this, MathUtils::DegreesToRadians(degrees));
 }
 
 

@@ -4,7 +4,7 @@
 #include "Vec3.h"
 
 #define _USE_MATH_DEFINES
-#include "cmath"
+#include <cmath>
 
 
 
@@ -171,6 +171,19 @@ float MathUtils::GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB)
 {
     Vec2 aToB = vecA - vecB;
     return aToB.GetLengthSquared();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void MathUtils::RotateVector2D(Vec2& vec, float radians)
+{
+    float cos = CosRadians(radians);
+    float sin = SinRadians(radians);
+    float x = vec.x * cos - vec.y * sin;
+    float y = vec.x * sin + vec.y * cos;
+    vec.x = x;
+	vec.y = y;
 }
 
 

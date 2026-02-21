@@ -17,32 +17,9 @@ CMovement::CMovement(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CMovement::GetIsTeleporting() const
-{
-	return (m_movementFlags & static_cast<uint8_t>(MovementFlags::IsTeleporting)) != 0;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 bool CMovement::GetIsConstrainedToPath() const
 {
     return (m_movementFlags & static_cast<uint8_t>(MovementFlags::ConstrainedToPath)) != 0;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void CMovement::SetIsTeleporting(bool isTeleporting)
-{
-    if (isTeleporting)
-    {
-        m_movementFlags |= static_cast<uint8_t>(MovementFlags::IsTeleporting);
-    }
-    else
-    {
-        m_movementFlags &= ~static_cast<uint8_t>(MovementFlags::IsTeleporting);
-	}
 }
 
 
