@@ -478,7 +478,7 @@ bool MathUtils::IsNearlyEqual(float val, float comparison, float epsilon /*= 0.0
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool MathUtils::IsNearlyZero(float val, float epsilon /*= 0.000001f*/)
+bool MathUtils::IsNearlyZero(float val, float epsilon /*= 0.000'001f*/)
 {
     return MathUtils::AbsF(val) <= epsilon;
 }

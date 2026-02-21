@@ -4,6 +4,7 @@
 #include "CTransform.h"
 #include "SCWorld.h"
 #include "SCCollision.h"
+#include "WorldSettings.h"
 #include "Engine/Core/ErrorUtils.h"
 #include <thread>
 
@@ -44,26 +45,35 @@ void SCollisionHash::Run(SystemContext const& context)
 
     for (GroupIter it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
     {
-        CCollision& coll = *collStorage.Get(it);
+        CCollision const& coll = *collStorage.Get(it);
         if (!coll.IsCollisionEnabled())
         {
             continue;
         }
     
-        CTransform& trans = transStorage[it];
+        CTransform const& trans = transStorage[it];
     
         Vec2 pos = trans.m_pos + coll.m_offset;
-        float radius = coll.m_radius + StaticWorldSettings::s_collisionHashWiggleRoom;
-    
-        world.ForEachPlayableTileOverlappingCircle(pos, radius, [&](IntVec2 const& worldCoords)
-        {								  
-			int index = world.m_tiles.GetIndexForCoords(worldCoords);
-            if (world.m_tiles.IsValidIndex(index))
+
+        if (coll.GetIsSingleHash())
+        {
+			IntVec2 worldCoords = world.GetTileCoordsAtWorldPosClamped(pos);
+            int index = world.m_tiles.GetIndexForCoords(worldCoords);
+            scCollision.m_tileBuckets[index].push_back(it.GetEntityID());
+        }
+        else
+        {
+            float radius = coll.m_radius + StaticWorldSettings::s_collisionHashWiggleRoom;
+            world.ForEachPlayableTileOverlappingCircle(pos, radius, [&](IntVec2 const& worldCoords)
             {
-                scCollision.m_tileBuckets[index].push_back(it.GetEntityID());
-            }
-            return true;
-        });
+                int index = world.m_tiles.GetIndexForCoords(worldCoords);
+                if (world.m_tiles.IsValidIndex(index))
+                {
+                    scCollision.m_tileBuckets[index].push_back(it.GetEntityID());
+                }
+                return true;
+            });
+        }
     }
 }
 

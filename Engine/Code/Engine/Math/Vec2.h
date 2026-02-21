@@ -48,8 +48,8 @@ public:
     float GetDistanceTo(Vec2 const& other) const;
     float GetDistanceSquaredTo(Vec2 const& other) const;
     bool IsZero() const;
-    bool IsNearlyZero(float epsilon) const;
-    bool IsNearlyEqual(Vec2 const& other, float epsilon = 0.000001f) const;
+    bool IsNearlyZero(float epsilon = 0.000'001f) const;
+    bool IsNearlyEqual(Vec2 const& other, float epsilon = 0.000'001f) const;
     float Dot(Vec2 const& other) const;
     float Cross(Vec2 const& other) const;
     

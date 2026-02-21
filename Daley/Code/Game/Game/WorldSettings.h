@@ -26,7 +26,8 @@ namespace StaticWorldSettings
     // Static Collision Settings
     //
     constexpr float   s_collisionEntityWallBuffer   = 0.01f;    // Minimum space between a wall and an entity after collision is resolved, in world units.
-    constexpr float   s_collisionHashWiggleRoom     = 0.25f;    // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
+    constexpr float   s_collisionHashWiggleRoom     = 0.01f;    // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
+    //constexpr float   s_collisionSingleHashRadiusThreshold = 0.5f;    // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
 
     //----------------------------------------------------------------------------------------------------------------------
     // Static Flow Settings

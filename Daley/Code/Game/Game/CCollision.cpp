@@ -14,7 +14,10 @@ CCollision::CCollision(void const* xmlElement)
 	m_offset = XmlUtils::ParseXmlAttribute(elem, "offset", m_offset);
 
     bool immovable = XmlUtils::ParseXmlAttribute(elem, "immovable", false);
-    m_collisionFlags |= immovable ? (uint8_t) CollisionFlags::Immovable : 0;
+	SetImmovable(immovable);
+
+	bool singleHash = XmlUtils::ParseXmlAttribute(elem, "singleHash", false);
+	SetIsSingleHash(singleHash);
 }
 
 
@@ -23,6 +26,14 @@ CCollision::CCollision(void const* xmlElement)
 bool CCollision::IsImmovable() const
 {
     return (m_collisionFlags & (uint8_t) CollisionFlags::Immovable) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CCollision::GetIsSingleHash() const
+{
+	return (m_collisionFlags & (uint8_t) CollisionFlags::SingleHash) != 0;
 }
 
 
@@ -61,4 +72,19 @@ void CCollision::SetImmovable(bool immovable)
     {
         m_collisionFlags &= ~((uint8_t) CollisionFlags::Immovable);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CCollision::SetIsSingleHash(bool singleHash)
+{
+    if (singleHash)
+    {
+        m_collisionFlags |= (uint8_t) CollisionFlags::SingleHash;
+    }
+    else
+    {
+        m_collisionFlags &= ~((uint8_t) CollisionFlags::SingleHash);
+    }
 }

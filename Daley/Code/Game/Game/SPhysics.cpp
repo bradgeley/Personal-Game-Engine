@@ -30,27 +30,44 @@ void SPhysics::Run(SystemContext const& context)
         CTransform& transform = transStorage[it];
 
         Vec2 frameMovement = move.m_frameMovement;
+		float distanceRemaining = frameMovement.GetLength();
 
         WorldRaycast raycast;
         raycast.m_tileTagQuery.m_tagsToQuery = (uint8_t) TileTag::IsPath;
         raycast.m_tileTagQuery.m_queryOp = TagQueryOp::DoesNotHaveAll;
 
-        constexpr int maxBounces = 1;
-        for (int bounce = 0; bounce <= maxBounces; ++bounce)
+        constexpr int maxNumBounces = 1;
+        int numBounces = 0;
+        while (!frameMovement.IsNearlyZero() && numBounces <= maxNumBounces)
         {
             raycast.m_start = transform.m_pos;
-            raycast.m_direction = frameMovement.GetNormalizedAndReturnLength(raycast.m_maxDistance);
+            raycast.m_direction = frameMovement / distanceRemaining;
+            raycast.m_maxDistance = distanceRemaining;
 
             WorldRaycastResult result = Raycast(world, raycast);
             if (result.m_blockingHit)
             {
+                numBounces++;
+
                 transform.m_pos = result.m_hitLocation + result.m_hitNormal * StaticWorldSettings::s_collisionEntityWallBuffer;
+
+                // Zero out movement towards the hit wall
                 Vec2 lostMomentum = frameMovement.GetProjectedOntoNormal(result.m_hitNormal);
                 frameMovement -= lostMomentum;
+
+                // Clamp frame movement to the remaining distance
+                float distanceTraveled = result.m_distance;
+				float distanceRemaining = raycast.m_maxDistance - distanceTraveled;
+                frameMovement.ClampLength(distanceRemaining);
             }
             else
             {
-                transform.m_pos += frameMovement;
+                Vec2 wouldBePosition = transform.m_pos + frameMovement;
+                if (!world.IsTileOnPath(world.GetTileCoordsAtWorldPos(wouldBePosition)))
+                {
+                    break;
+                }
+                transform.m_pos = wouldBePosition;
                 break;
             }
         }

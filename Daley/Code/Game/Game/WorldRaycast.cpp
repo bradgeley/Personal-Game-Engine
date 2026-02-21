@@ -69,7 +69,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
                 return result; // Cannot continue, no-hit
             }
 
-            if (totalRayLengthX >= result.m_raycast.m_maxDistance)
+            if (totalRayLengthX > raycast.m_maxDistance)
             {
                 return result;
             }
@@ -96,7 +96,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
                 return result; // Cannot continue, no-hit
             }
 
-            if (totalRayLengthY >= result.m_raycast.m_maxDistance)
+            if (totalRayLengthY > raycast.m_maxDistance)
             {
                 return result;
             }

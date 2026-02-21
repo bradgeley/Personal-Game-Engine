@@ -12,6 +12,7 @@ void SDebugCommands::Startup()
 {
 	DevConsoleUtils::AddDevConsoleCommand("Spawn", &SDebugCommands::Spawn, "name", DevConsoleArgType::String, "count", DevConsoleArgType::Int);
 	DevConsoleUtils::AddDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
+	DevConsoleUtils::AddDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity, "name", DevConsoleArgType::String);
 }
 
 
@@ -21,6 +22,7 @@ void SDebugCommands::Shutdown()
 {
 	DevConsoleUtils::RemoveDevConsoleCommand("Spawn", &SDebugCommands::Spawn);
 	DevConsoleUtils::RemoveDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
+	DevConsoleUtils::RemoveDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity);
 }
 
 
@@ -67,6 +69,21 @@ bool SDebugCommands::DumpEntityDebug(NamedProperties&)
 		CEntityDebug const& debugComp = *g_ecs->GetComponent<CEntityDebug>(it);
 		EntityID entityID = it.GetEntityID();
 		DevConsoleUtils::Log(Rgba8::Coral, "Entity %i, gen %i: %s", entityID.GetIndex(), entityID.GetGeneration(), debugComp.m_defName.ToCStr());
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::SetDebugPlacementEntity(NamedProperties& args)
+{
+	std::string name = args.Get("name", "");
+	EntityDef const* def = EntityDef::GetEntityDef(name);
+	if (def)
+	{
+		SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+		scDebug.m_debugPlacementEntityName = name;
 	}
 	return false;
 }

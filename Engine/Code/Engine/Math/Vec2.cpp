@@ -187,7 +187,7 @@ bool Vec2::IsZero() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Vec2::IsNearlyZero(float epsilon) const
+bool Vec2::IsNearlyZero(float epsilon /*= 0.000'001f*/) const
 {
     return (MathUtils::AbsF(x) < epsilon) && (MathUtils::AbsF(y) < epsilon);
 }
@@ -276,7 +276,7 @@ void Vec2::ClampLength(float maxLength)
 void Vec2::ClampLengthMin(float minLength)
 {
     float length = GetLength();
-    if (length < minLength)
+    if (length < minLength && !IsNearlyZero(length))
     {
         *this /= length; // Normalize
         *this *= minLength; // Set length to new min

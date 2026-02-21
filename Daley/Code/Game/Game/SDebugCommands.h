@@ -22,4 +22,5 @@ protected:
 
     static bool Spawn(NamedProperties& args);
     static bool DumpEntityDebug(NamedProperties& args);
+    static bool SetDebugPlacementEntity(NamedProperties& args);
 };

@@ -48,15 +48,15 @@ void SDebugInput::Run(SystemContext const&)
 	// Debug Tower Placement
 	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('T'))
 	{
-		EntityDef const* towerDef = EntityDef::GetEntityDef(scDebug.m_debugPlacementTowerName);
+		EntityDef const* towerDef = EntityDef::GetEntityDef(scDebug.m_debugPlacementEntityName);
 		if (!towerDef)
 		{
-			DevConsoleUtils::LogError("Invalid EntityDef name for debug tower placement: %s", scDebug.m_debugPlacementTowerName.ToCStr());
+			DevConsoleUtils::LogError("Invalid EntityDef name for debug tower placement: %s", scDebug.m_debugPlacementEntityName.ToCStr());
 		}
 		else
 		{
 			SpawnInfo info;
-			info.m_def = EntityDef::GetEntityDef(scDebug.m_debugPlacementTowerName);
+			info.m_def = EntityDef::GetEntityDef(scDebug.m_debugPlacementEntityName);
 			info.m_spawnPos = scDebug.m_debugMouseWorldLocation;
 			entityFactory.m_entitiesToSpawn.push_back(info);
 		}
@@ -67,7 +67,7 @@ void SDebugInput::Run(SystemContext const&)
 	{
 		NamedProperties args;
 		args.Set<std::string>("name", "Ant");
-		args.Set("count", 20);
+		args.Set("count", 100);
 		g_eventSystem->FireEvent("Spawn", args);
 	}
 }
