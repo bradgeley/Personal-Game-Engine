@@ -74,6 +74,8 @@ void Game::Startup()
 
     g_devConsole->AddDevConsoleCommandInfo("TimeDilation", "t", DevConsoleArgType::Float);
     g_eventSystem->SubscribeMethod("TimeDilation", this, &Game::TimeDilation);
+
+    g_eventSystem->SubscribeMethod("TogglePaused", this, &Game::TogglePaused);
 }
 
 
@@ -119,6 +121,7 @@ void Game::Render() const
 void Game::Shutdown()
 {
     g_eventSystem->UnsubscribeMethod("TimeDilation", this, &Game::TimeDilation);
+    g_eventSystem->UnsubscribeMethod("TogglePaused", this, &Game::TogglePaused);
     g_devConsole->RemoveDevConsoleCommandInfo("TimeDilation");
 
     g_ecs->Shutdown();
@@ -299,5 +302,14 @@ bool Game::TimeDilation(NamedProperties& args)
     {
         g_devConsole->LogWarning("time dilation unchanged");
     }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Game::TogglePaused(NamedProperties& args)
+{
+    m_gameClock->TogglePaused();
     return false;
 }

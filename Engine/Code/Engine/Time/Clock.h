@@ -32,6 +32,10 @@ public:
 	void SetLocalTimeDilation(double timeDilation);
 	void GetAggregateTimeDilation(double& out_timeDilation) const;
 
+	void SetPaused(bool isPaused);
+	void TogglePaused();
+	bool IsPaused() const;
+
 	Clock* GetParentClock() const;
 	Clock const* GetParentmostClock() const;
 	std::vector<Clock*>& GetChildrenClocks();
@@ -48,9 +52,10 @@ protected:
 	Clock* m_parentClock = nullptr;
 	std::vector<Clock*> m_childClocks;
 
-	double m_deltaSeconds = 0.0;
-	double m_currentTimeSeconds = 0.0;
-	double m_timeDilation = 1.0;
+	double	m_deltaSeconds			= 0.0;
+	double	m_currentTimeSeconds	= 0.0;
+	double	m_timeDilation			= 1.0;
+	bool	m_isPaused				= false;
 
 private:
 

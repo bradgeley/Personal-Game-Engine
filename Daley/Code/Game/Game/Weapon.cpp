@@ -8,6 +8,7 @@
 #include "SEntityFactory.h"
 #include "WeaponDef.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
@@ -171,4 +172,18 @@ void ProjectileHitWeapon::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& locat
     {
         VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_maxRange, 0.1f, 32, Rgba8::Orange);
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void ProjectileHitWeapon::GetDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("Weapon Type: Projectile Hit\n");
+    out_string += StringUtils::StringF("Projectile Def: %s\n", m_projectileDefName.ToString().c_str());
+    out_string += StringUtils::StringF("Damage: %.1f\n", m_damage);
+    out_string += StringUtils::StringF("Attacks Per Second: %.1f\n", m_attacksPerSecond);
+    out_string += StringUtils::StringF("Projectile Speed: %.1f\n", m_projSpeedUnitsPerSec);
+    out_string += StringUtils::StringF("Min Range: %.1f\n", m_minRange);
+	out_string += StringUtils::StringF("Max Range: %.1f\n", m_maxRange);
 }

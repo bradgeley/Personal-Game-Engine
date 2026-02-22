@@ -32,6 +32,7 @@ public:
 protected:
 
     bool TimeDilation(NamedProperties& args);
+    bool TogglePaused(NamedProperties& args);
 
 protected:
 

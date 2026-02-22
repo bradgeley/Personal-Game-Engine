@@ -34,6 +34,7 @@ void SDebugInput::Run(SystemContext const&)
 	if (g_window->HasFocus())
 	{
 		Vec2 relMousePos = g_input->GetMouseViewportRelativePosition(StaticWorldSettings::s_visibleWorldAspect);
+		scDebug.m_debugMouseViewportRelativePos = relMousePos;
 		scDebug.m_debugMouseWorldLocation = camera.m_camera.ScreenToWorldOrtho(relMousePos);
 		scDebug.m_debugMouseTileCoords = world.GetTileCoordsAtWorldPosClamped(scDebug.m_debugMouseWorldLocation);
 	}
@@ -79,6 +80,13 @@ void SDebugInput::Run(SystemContext const&)
 			SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 		}
+	}
+
+	// Pause
+	if (g_input->WasKeyJustPressed(KeyCode::Space))
+	{
+		NamedProperties args;
+		g_eventSystem->FireEvent("TogglePaused", args);
 	}
 }
 

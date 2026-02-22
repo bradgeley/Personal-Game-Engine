@@ -41,8 +41,10 @@ public:
     AABB2 GetOrthoBounds2D() const;
     AABB2 GetTranslatedOrthoBounds2D() const;
     Vec3 GetOrthoDimensions() const;
+    Vec2 GetOrthoDimensions2D() const;
     Vec3 GetOrthoHalfDimensions() const;
     Vec2 ScreenToWorldOrtho(Vec2 const& relativeScreenPos) const;
+    Vec2 WorldToScreenRelativeOrtho(Vec2 const& worldPos) const;
 
     CameraConstants GetCameraConstants() const;
 

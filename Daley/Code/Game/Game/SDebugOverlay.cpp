@@ -1,6 +1,13 @@
 ﻿// Bradley Christensen - 2022-2025
 #include "SDebugOverlay.h"
+#include "SCCamera.h"
+#include "CCollision.h"
 #include "SCDebug.h"
+#include "CEntityDebug.h"
+#include "CHealth.h"
+#include "CTags.h"
+#include "CTransform.h"
+#include "CWeapon.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Input/InputSystem.h"
@@ -27,6 +34,7 @@ void SDebugOverlay::Startup()
 void SDebugOverlay::Run(SystemContext const&)
 {
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+	SCCamera& worldCamera = g_ecs->GetSingleton<SCCamera>();
 
 	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('D'))
 	{
@@ -46,6 +54,54 @@ void SDebugOverlay::Run(SystemContext const&)
 	IntVec2 resolution = g_window->GetRenderResolution();
 	AABB2 screenBounds = AABB2(0.f, 0.f, (float) resolution.x, (float) resolution.y);
 	screenCamera.SetOrthoBounds2D(screenBounds);
+
+	// Show tower weapon information for hovered tower
+	auto& tagsStorage = g_ecs->GetArrayStorage<CTags>();
+	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
+	auto& debugStorage = g_ecs->GetArrayStorage<CEntityDebug>();
+	auto& weaponStorage = g_ecs->GetMapStorage<CWeapon>();
+	for (auto it = g_ecs->IterateAll<CTags, CTransform, CEntityDebug>(); it.IsValid(); ++it)
+	{
+		CTags const& tags = *tagsStorage.Get(it);
+		if (tags.HasTag("Tower") || tags.HasTag("enemy"))
+		{
+			CTransform const& transform = *transStorage.Get(it);
+			CCollision const* collision = collStorage.Get(it);
+			float radius = collision ? collision->m_radius : 2.f;
+			if (scDebug.m_debugMouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
+			{
+				CEntityDebug const& debug = *debugStorage.Get(it);
+				Vec2 screenPos = worldCamera.m_camera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();
+				Vec2 cardMins = screenPos;
+				Vec2 cardDims = Vec2(300.f, 300.f);
+				AABB2 informationCardBounds = AABB2(cardMins, cardMins + cardDims);
+				VertexUtils::AddVertsForAABB2(untexVerts, informationCardBounds, Rgba8::DarkGray);
+				VertexUtils::AddVertsForWireBox2D(untexVerts, informationCardBounds, 5.f, Rgba8::Black);
+				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(5.f, -5.f), Vec2(1.f, -1.f), 33.f, debug.m_defName.ToString(), Rgba8::White);
+
+				std::string debugString;
+
+				CWeapon const* weapon = weaponStorage.Get(it);
+				if (weapon)
+				{
+					for (auto& weapon : weapon->m_weapons)
+					{
+						weapon->GetDebugString(debugString);
+					}
+				}
+
+				CHealth const* health = g_ecs->GetComponent<CHealth>(it);
+				if (health)
+				{
+					debugString += StringUtils::StringF("Health: %.1f / %.1f", health->m_currentHealth, health->m_maxHealth);
+				}
+
+				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(5.f, -50.f), Vec2(1.f, -1.f), 25.f, debugString, Rgba8::White, 0.33f);
+				break;
+			}
+		}
+	}
 
 	// Add transparent black background
 	VertexUtils::AddVertsForAABB2(untexVerts, screenBounds, Rgba8(0, 0, 0, 120), AABB2::ZeroToOne);

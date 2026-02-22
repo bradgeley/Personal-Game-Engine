@@ -32,13 +32,13 @@ void ClockInternalData::UpdateInternal(Clock& clock, std::chrono::time_point<std
 		// If we have a parent clock, don't calculate our own delta seconds, rather take our parent's deltaSeconds
 		// and tack on our time dilation. Because this function is recursive, our parent's deltaSeconds will also
 		// take into account all of its parents' time dilations up the chain.
-		clock.m_deltaSeconds = clock.m_parentClock->m_deltaSeconds * clock.m_timeDilation;
+		clock.m_deltaSeconds = clock.m_parentClock->m_deltaSeconds * clock.GetLocalTimeDilation();
 	}
 	else
 	{
 		// Parent-most clock update: Calculate the base deltaSeconds that will be passed down to all children
 		std::chrono::duration<double> timePassedSinceLastUpdated = updatedTime - clock.m_internalData->m_lastUpdatedTime;
-		clock.m_deltaSeconds = timePassedSinceLastUpdated.count() * clock.m_timeDilation;
+		clock.m_deltaSeconds = timePassedSinceLastUpdated.count() * clock.GetLocalTimeDilation();
 		clock.m_internalData->m_lastUpdatedTime = updatedTime;
 	}
 
@@ -136,7 +136,7 @@ void Clock::Update(double deltaSeconds)
 	// all children with that value. The children clocks don't use "now", and parent clocks wont use the last updated time
 	// so long as the clock is updating using this function instead of Update().
 
-	m_deltaSeconds = deltaSeconds * m_timeDilation;
+	m_deltaSeconds = deltaSeconds * GetLocalTimeDilation();
 
 	std::chrono::high_resolution_clock clock;
 	std::chrono::time_point<std::chrono::high_resolution_clock> now = clock.now();
@@ -339,6 +339,12 @@ void Clock::SetLocalTimeDilation(double timeDilation)
 //----------------------------------------------------------------------------------------------------------------------
 void Clock::GetAggregateTimeDilation(double& out_timeDilation) const
 {
+	if (m_isPaused)
+	{
+		out_timeDilation = 0.0;
+		return;
+	}
+
 	out_timeDilation *= m_timeDilation;
 	if (m_parentClock) 
 	{
@@ -349,8 +355,38 @@ void Clock::GetAggregateTimeDilation(double& out_timeDilation) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Clock::SetPaused(bool isPaused)
+{
+	m_isPaused = isPaused;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Clock::TogglePaused()
+{
+	m_isPaused = !m_isPaused;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Clock::IsPaused() const
+{
+	double timeDilation = 1.0;
+	GetAggregateTimeDilation(timeDilation);
+	return m_isPaused || timeDilation == 0.0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 double Clock::GetLocalTimeDilation() const
 {
+	if (IsPaused())
+	{
+		return 0.0;
+	}
 	return m_timeDilation;
 }
 
@@ -359,5 +395,9 @@ double Clock::GetLocalTimeDilation() const
 //----------------------------------------------------------------------------------------------------------------------
 float Clock::GetLocalTimeDilationF() const
 {
+	if (IsPaused())
+	{
+		return 0.f;
+	}
 	return static_cast<float>(m_timeDilation);
 }

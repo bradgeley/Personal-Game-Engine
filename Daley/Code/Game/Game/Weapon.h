@@ -31,6 +31,7 @@ public:
 	virtual void Update(float deltaSeconds, Vec2 const& location) = 0;
 	virtual Weapon* DeepCopy() const = 0;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
+	virtual void GetDebugString(std::string& out_string) const = 0;
 
 public:
 
@@ -49,6 +50,7 @@ public:
 	virtual void Update(float deltaSeconds, Vec2 const& location) override;
 	virtual Weapon* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
+	virtual void GetDebugString(std::string& out_string) const override;
 
 public:
 

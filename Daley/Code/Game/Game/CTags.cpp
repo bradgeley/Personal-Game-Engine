@@ -25,12 +25,6 @@ CTags::CTags(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 void CTags::AddTag(Name const& tag)
 {
-	if (m_tags.size() >= MAX_TAGS)
-	{
-		DevConsoleUtils::LogError("Cannot add tag '%s': maximum number of tags (%d) reached", tag.ToCStr(), MAX_TAGS);
-		return;
-	}
-
 	if (HasTag(tag))
 	{
 		return;

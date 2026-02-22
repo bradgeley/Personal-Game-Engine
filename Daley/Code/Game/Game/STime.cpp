@@ -16,8 +16,10 @@ void STime::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void STime::Run(SystemContext const& context)
 {
-	SCTime const& scTime = g_ecs->GetSingleton<SCTime>();
+	SCTime& scTime = g_ecs->GetSingleton<SCTime>();
 	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
+
+	scTime.m_currentTimeSeconds += context.m_deltaSeconds;
 
 	for (auto it = g_ecs->Iterate<CTime>(context); it.IsValid(); ++it)
 	{

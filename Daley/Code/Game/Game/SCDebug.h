@@ -17,6 +17,7 @@ public:
 
 	// Debug cached info
 	Vec2 m_debugMouseWorldLocation			= Vec2::ZeroVector;				// Updated by SDebugInput
+	Vec2 m_debugMouseViewportRelativePos	= Vec2::ZeroVector;				// Updated by SDebugInput
 	IntVec2 m_debugMouseTileCoords			= IntVec2::ZeroVector;			// Updated by SDebugInput
 	VertexBufferID m_frameUntexVerts		= RendererUtils::InvalidID;		// Rendered then cleared each frame by SDebugRender
 	VertexBufferID m_frameDefaultFontVerts	= RendererUtils::InvalidID;		// Rendered then cleared each frame by SDebugRender

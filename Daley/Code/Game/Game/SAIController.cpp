@@ -4,6 +4,7 @@
 #include "CMovement.h"
 #include "CTime.h"
 #include "CTransform.h"
+#include "SCTime.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
 #include "Engine/Time/Time.h"
@@ -15,7 +16,7 @@
 void SAIController::Startup()
 {
     AddWriteDependencies<CMovement>();
-    AddReadDependencies<CTransform, CTime, CAIController, SCFlowField, SCWorld>();
+    AddReadDependencies<CTransform, CTime, CAIController, SCFlowField, SCWorld, SCTime>();
 }
 
 
@@ -29,9 +30,10 @@ void SAIController::Run(SystemContext const& context)
 	auto& aiStorage = g_ecs->GetArrayStorage<CAIController>();
     SCFlowField const& scFlow = g_ecs->GetSingleton<SCFlowField>();
     SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>(); // not a true dependency bc we are just calling GetWorldCoordsAtLocation, which is essentially a static function
+	SCTime const& scTime = g_ecs->GetSingleton<SCTime>();
 
-    float timeSeconds = GetCurrentTimeSecondsF();
-	constexpr int numPrecomputedNoiseValues = 1279; // prime number to avoid patterns
+    float timeSeconds = scTime.m_currentTimeSeconds;
+	constexpr int numPrecomputedNoiseValues = 1279;
     float precomputedWiggleNoise[numPrecomputedNoiseValues];
     for (int i = 0; i < numPrecomputedNoiseValues; i++)
     {
