@@ -4,56 +4,52 @@
   <!-- Enemies -->
 
   <EntityDef name = "ant">
-    <Transform></Transform>
-    <Time></Time>
-    <Death></Death>
-    <Lifetime></Lifetime>
-    
-    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
-    <Movement moveSpeed="3" pathOnly="true"></Movement>
-    <Collision radius="0.5" singleHash="true"></Collision>
-    <Render scale="1.5" rotateSprite="true"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
-    <Tags small="" enemy=""></Tags>
     <AIController isWiggly="true"></AIController>
+    <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
+    <Collision radius="0.5" singleHash="true"></Collision>
+    <Death></Death>
+    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
+    <Lifetime></Lifetime>
+    <Movement moveSpeed="3" pathOnly="true"></Movement>
+    <Render scale="1.5" rotateSprite="true"></Render>
+    <Tags small="" enemy=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
   </EntityDef>
 
   <EntityDef name = "pig">
-    <Transform></Transform>
-    <Time></Time>
-    <Death></Death>
-    <Lifetime></Lifetime>
-    
-    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
-    <Movement moveSpeed="1" pathOnly="true"></Movement>
-    <Collision radius="1"></Collision>
-    <Render scale="2"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
-    <Tags medium="" enemy=""></Tags>
     <AIController></AIController>
+    <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
+    <Collision radius="1"></Collision>
+    <Death></Death>
+    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
+    <Lifetime></Lifetime>
+    <Movement moveSpeed="1" pathOnly="true"></Movement>
+    <Render scale="2"></Render>
+    <Tags medium="" enemy=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
   </EntityDef>
 
   <!-- ==================================================================================================================== -->
   <!-- Towers -->
 
   <EntityDef name = "Vanilla">
-    <Transform></Transform>
-    <Time></Time>
-    
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanilla"></Animation>
     <Collision radius="1"></Collision>
     <Render scale="2"></Render>
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanilla"></Animation>
     <Tags tower=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
     <Weapon name="VanillaWeapon"></Weapon>
   </EntityDef>
 
   <EntityDef name = "VanillaProj">
-    <Transform></Transform>
-    <Time></Time>
-    
-    <Render scale="0.66" rotateSprite="true"></Render>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanillaProj"></Animation>
     <Projectile></Projectile>
+    <Render scale="0.66" rotateSprite="true"></Render>
+    <Time></Time>
+    <Transform></Transform>
   </EntityDef>
   
 </EntityDefs>

@@ -30,8 +30,6 @@ void SAIController::Run(SystemContext const& context)
 	auto& aiStorage = g_ecs->GetArrayStorage<CAIController>();
     SCFlowField const& scFlow = g_ecs->GetSingleton<SCFlowField>();
     SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>(); // not a true dependency bc we are just calling GetWorldCoordsAtLocation, which is essentially a static function
-	SCTime const& scTime = g_ecs->GetSingleton<SCTime>();
-    float timeSeconds = scTime.m_currentTimeSeconds;
 
     for (auto it = g_ecs->Iterate<CTransform, CMovement, CTime, CAIController>(context); it.IsValid(); ++it)
     {

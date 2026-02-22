@@ -36,8 +36,6 @@ void Application::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void Application::Run()
 {
-    static float timeThen = GetCurrentTimeSecondsF();
-    
     while (!IsQuitting())
     {
         g_engine->BeginFrame();

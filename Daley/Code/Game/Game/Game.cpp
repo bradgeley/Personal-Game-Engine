@@ -308,7 +308,7 @@ bool Game::TimeDilation(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Game::TogglePaused(NamedProperties& args)
+bool Game::TogglePaused(NamedProperties&)
 {
     m_gameClock->TogglePaused();
     return false;
