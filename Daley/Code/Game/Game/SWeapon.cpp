@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2025
+﻿// Bradley Christensen - 2022-2026
 #include "SWeapon.h"
 #include "CTransform.h"
 #include "CWeapon.h"

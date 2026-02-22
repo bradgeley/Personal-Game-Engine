@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2025
+﻿// Bradley Christensen - 2022-2026
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Core/ErrorUtils.h"

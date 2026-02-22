@@ -4,30 +4,32 @@
   <!-- Enemies -->
 
   <EntityDef name = "ant">
-    <Lifetime></Lifetime>
-    <Death></Death>
-    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Transform></Transform>
+    <Time></Time>
+    <Death></Death>
+    <Lifetime></Lifetime>
+    
+    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Movement moveSpeed="3" pathOnly="true"></Movement>
     <Collision radius="0.5" singleHash="true"></Collision>
     <Render scale="1.5" rotateSprite="true"></Render>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Tags small="" enemy=""></Tags>
-    <Time></Time>
     <AIController isWiggly="true"></AIController>
   </EntityDef>
 
   <EntityDef name = "pig">
-    <Lifetime></Lifetime>
-    <Death></Death>
-    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Transform></Transform>
+    <Time></Time>
+    <Death></Death>
+    <Lifetime></Lifetime>
+    
+    <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Movement moveSpeed="1" pathOnly="true"></Movement>
     <Collision radius="1"></Collision>
     <Render scale="2"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
     <Tags medium="" enemy=""></Tags>
-    <Time></Time>
     <AIController></AIController>
   </EntityDef>
 
@@ -36,19 +38,21 @@
 
   <EntityDef name = "Vanilla">
     <Transform></Transform>
+    <Time></Time>
+    
     <Collision radius="1"></Collision>
     <Render scale="2"></Render>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanilla"></Animation>
-    <Time></Time>
     <Tags tower=""></Tags>
     <Weapon name="VanillaWeapon"></Weapon>
   </EntityDef>
 
   <EntityDef name = "VanillaProj">
     <Transform></Transform>
+    <Time></Time>
+    
     <Render scale="0.66" rotateSprite="true"></Render>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanillaProj"></Animation>
-    <Time></Time>
     <Projectile></Projectile>
   </EntityDef>
   

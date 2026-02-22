@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2025
+﻿// Bradley Christensen - 2022-2026
 #include "SDebugInput.h"
 #include "SCCamera.h"
 #include "SCDebug.h"
@@ -80,13 +80,6 @@ void SDebugInput::Run(SystemContext const&)
 			SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 		}
-	}
-
-	// Pause
-	if (g_input->WasKeyJustPressed(KeyCode::Space))
-	{
-		NamedProperties args;
-		g_eventSystem->FireEvent("TogglePaused", args);
 	}
 }
 

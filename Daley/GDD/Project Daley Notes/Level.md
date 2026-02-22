@@ -1,0 +1,1 @@
+A level contains a randomly generated tile map, and metadata about what kind of [[Waves]] spawn on this level.

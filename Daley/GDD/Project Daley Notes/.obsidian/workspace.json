@@ -41,29 +41,33 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Waves.md",
+                "file": "Level.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Waves"
+              "title": "Level"
             }
           }
         ],
         "currentTab": 2
       },
       {
-        "id": "01f9af18b5fdb894",
+        "id": "8e383ce4ee60eef4",
         "type": "tabs",
         "children": [
           {
             "id": "4fbb88a3477924a1",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "Wave System.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Wave System"
             }
           }
         ]
@@ -230,8 +234,10 @@
   },
   "active": "4fbb88a3477924a1",
   "lastOpenFiles": [
+    "Level.md",
+    "Wave System.md",
+    "Welcome.md",
     "Waves.md",
-    "Tower.md",
-    "Welcome.md"
+    "Tower.md"
   ]
 }

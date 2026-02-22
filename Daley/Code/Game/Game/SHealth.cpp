@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2025
+﻿// Bradley Christensen - 2022-2026
 #include "SHealth.h"
 #include "CHealth.h"
 #include "Engine/Math/MathUtils.h"

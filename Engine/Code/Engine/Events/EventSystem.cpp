@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2025
+﻿// Bradley Christensen - 2022-2026
 #include "Engine/Events/EventSystem.h"
 #include "EventSubscriber.h"
 #include "Engine/DataStructures/NamedProperties.h"

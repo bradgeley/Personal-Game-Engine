@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2025
+﻿// Bradley Christensen - 2022-2026
 #include "Window.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/EngineCommon.h"

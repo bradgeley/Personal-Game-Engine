@@ -1,4 +1,5 @@
 Enemies spawn in a combination of generated and curated waves, potentially using player modifiers to affect the generation process.
+Spawned by the [[Wave System]]
 
 ##### Level Parameters
 - X (float) cooldown between waves
