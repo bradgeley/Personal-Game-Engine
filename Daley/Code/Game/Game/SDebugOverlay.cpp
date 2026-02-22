@@ -82,10 +82,10 @@ void SDebugOverlay::Run(SystemContext const&)
 
 				std::string debugString;
 
-				CWeapon const* weapon = weaponStorage.Get(it);
-				if (weapon)
+				CWeapon const* weaponComp = weaponStorage.Get(it);
+				if (weaponComp)
 				{
-					for (auto& weapon : weapon->m_weapons)
+					for (auto& weapon : weaponComp->m_weapons)
 					{
 						weapon->GetDebugString(debugString);
 					}

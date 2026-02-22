@@ -31,17 +31,7 @@ void SAIController::Run(SystemContext const& context)
     SCFlowField const& scFlow = g_ecs->GetSingleton<SCFlowField>();
     SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>(); // not a true dependency bc we are just calling GetWorldCoordsAtLocation, which is essentially a static function
 	SCTime const& scTime = g_ecs->GetSingleton<SCTime>();
-
     float timeSeconds = scTime.m_currentTimeSeconds;
-	constexpr int numPrecomputedNoiseValues = 1279;
-    float precomputedWiggleNoise[numPrecomputedNoiseValues];
-    for (int i = 0; i < numPrecomputedNoiseValues; i++)
-    {
-        constexpr float maxDegreesOffset = 25.f;
-        constexpr float wigglinessScale = 15.f;
-        constexpr unsigned int wigglinessOctaves = 2;
-        precomputedWiggleNoise[i] = maxDegreesOffset * GetPerlinNoise1D(timeSeconds + static_cast<float>(i), wigglinessScale, wigglinessOctaves);
-	}
 
     for (auto it = g_ecs->Iterate<CTransform, CMovement, CTime, CAIController>(context); it.IsValid(); ++it)
     {
@@ -53,11 +43,14 @@ void SAIController::Run(SystemContext const& context)
 
         if (ai.GetIsMovementWiggly())
         {
-			int noiseIndex = static_cast<int>(it.m_currentIndex) % numPrecomputedNoiseValues;
-			float noiseValue = precomputedWiggleNoise[noiseIndex];
+			CTime const& time = *timeStorage.Get(it);
 
-			Vec2 wigglyMoveDir = movement.m_frameMoveDir.GetRotated(noiseValue);
+            constexpr float maxDegreesOffset = 25.f;
+            constexpr float wigglinessScale = 15.f;
+            constexpr unsigned int wigglinessOctaves = 2;
+            float angleOffset = maxDegreesOffset * GetPerlinNoise1D(time.m_clock.GetCurrentTimeSecondsF() + static_cast<float>(it.m_currentIndex), wigglinessScale, wigglinessOctaves);
 
+            Vec2 wigglyMoveDir = movement.m_frameMoveDir.GetRotated(angleOffset);
             movement.m_frameMoveDir = wigglyMoveDir;
         }
     }
