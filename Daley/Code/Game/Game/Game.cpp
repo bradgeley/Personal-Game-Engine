@@ -206,6 +206,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CLifetime>();
     g_ecs->RegisterComponentArray<CMovement>();
     g_ecs->RegisterComponentArray<CRender>();
+    g_ecs->RegisterComponentArray<CTags>();
     g_ecs->RegisterComponentArray<CTime>();
     g_ecs->RegisterComponentArray<CTransform>();
     g_ecs->RegisterComponentArray<CEntityDebug>();

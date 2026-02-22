@@ -42,5 +42,6 @@ public:
     std::optional<CTransform>           m_transform;
     std::optional<CWeapon>              m_weapon;
     std::optional<CProjectile>          m_proj;
+    std::optional<CTags>                m_tags;
 };
     

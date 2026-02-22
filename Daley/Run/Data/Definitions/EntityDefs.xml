@@ -12,6 +12,7 @@
     <Collision radius="0.5" singleHash="true"></Collision>
     <Render scale="1.5" rotateSprite="true"></Render>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
+    <Tags small=""></Tags>
     <Time></Time>
     <AIController isWiggly="true"></AIController>
   </EntityDef>
@@ -25,6 +26,7 @@
     <Collision radius="1"></Collision>
     <Render scale="2"></Render>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
+    <Tags medium=""></Tags>
     <Time></Time>
     <AIController></AIController>
   </EntityDef>
@@ -38,6 +40,7 @@
     <Render scale="2"></Render>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanilla"></Animation>
     <Time></Time>
+    <Tags tower=""></Tags>
     <Weapon name="VanillaWeapon"></Weapon>
   </EntityDef>
 

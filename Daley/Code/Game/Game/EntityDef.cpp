@@ -180,4 +180,11 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     {
         m_proj.emplace(elem);
     }
+
+    // CTags
+    elem = xmlElement->FirstChildElement("Tags");
+    if (elem)
+    {
+        m_tags.emplace(elem);
+    }
 }

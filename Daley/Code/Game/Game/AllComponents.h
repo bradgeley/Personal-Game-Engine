@@ -27,6 +27,7 @@
 #include "CMovement.h"
 #include "CProjectile.h"
 #include "CRender.h"
+#include "CTags.h"
 #include "CTime.h"
 #include "CTransform.h"
 #include "CWeapon.h"
