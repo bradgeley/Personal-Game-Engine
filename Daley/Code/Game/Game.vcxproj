@@ -339,6 +339,7 @@
     <ClCompile Include="Game\SPhysics.cpp" />
     <ClCompile Include="Game\SRenderEntities.cpp" />
     <ClCompile Include="Game\SRenderWorld.cpp" />
+    <ClCompile Include="Game\SWaveSpawner.cpp" />
     <ClCompile Include="Game\SWeapon.cpp" />
     <ClCompile Include="Game\SWorld.cpp" />
     <ClCompile Include="Game\Tile.cpp" />
@@ -389,6 +390,7 @@
     <ClInclude Include="Game\SCollision.h" />
     <ClInclude Include="Game\SCollisionHash.h" />
     <ClInclude Include="Game\SCRender.h" />
+    <ClInclude Include="Game\SCWaves.h" />
     <ClInclude Include="Game\SDeath.h" />
     <ClInclude Include="Game\SDebugCommands.h" />
     <ClInclude Include="Game\SDebugInput.h" />
@@ -413,6 +415,7 @@
     <ClInclude Include="Game\SpriteShaderCPU.h" />
     <ClInclude Include="Game\SRenderEntities.h" />
     <ClInclude Include="Game\SRenderWorld.h" />
+    <ClInclude Include="Game\SWaveSpawner.h" />
     <ClInclude Include="Game\SWeapon.h" />
     <ClInclude Include="Game\SWorld.h" />
     <ClInclude Include="Game\Tile.h" />

@@ -46,6 +46,7 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 		return true;
 	}
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	int spawnCount = args.Get("count", 1);
 	for (int i = 0; i < spawnCount; i++)
@@ -53,7 +54,6 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 		SpawnInfo spawnInfo;
 		spawnInfo.m_def = def;
 		spawnInfo.m_spawnPos = world.GetRandomSpawnLocation();
-		SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 		factory.m_entitiesToSpawn.push_back(spawnInfo);
 	}
 	return true;

@@ -175,6 +175,9 @@
     <ClCompile Include="Game\CTags.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SWaveSpawner.cpp">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -398,6 +401,12 @@
     </ClInclude>
     <ClInclude Include="Game\CTags.h">
       <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCWaves.h">
+      <Filter>ECS\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SWaveSpawner.h">
+      <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -88,6 +88,8 @@ public:
 	template <typename CType>
 	void RegisterComponentSingleton();
 
+	int GetNumRegisteredComponents() const;
+
 private:
 
 	void RegisterComponentBit(std::type_index typeIndex);

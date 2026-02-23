@@ -320,6 +320,14 @@ SystemSubgraph& AdminSystem::CreateOrGetSystemSubgraph(SystemSubgraphID subgraph
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int AdminSystem::GetNumRegisteredComponents() const
+{
+	return static_cast<int>(m_componentBitMasks.size());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::RegisterComponentBit(std::type_index typeIndex)
 {
 	if (m_componentBitMasks.find(typeIndex) != m_componentBitMasks.end())
@@ -328,7 +336,8 @@ void AdminSystem::RegisterComponentBit(std::type_index typeIndex)
 		return;
 	}
 	
-	ASSERT_OR_DIE(m_componentBitMasks.size() < 64, "Max number of components reached.")
+	constexpr int maxComponents = sizeof(size_t) * 8;
+	ASSERT_OR_DIE(m_componentBitMasks.size() < maxComponents, "Max number of components reached.")
 
 	size_t componentIndex = m_componentBitMasks.size();
 	BitMask bitMask = ((BitMask) 1 << componentIndex);

@@ -38,6 +38,7 @@ public:
 	bool Set(Clock* parentClock, double durationSeconds, bool looping = false);
 	bool Update(); // returns whether or not the timer completed this frame
 	bool Update(double deltaSeconds); // returns whether or not the timer completed this frame
+	int UpdateAndCount(double deltaSeconds); // returns how many times the timer elapsed in the passed time.
 
 	// Getters
 	Clock* GetParentClock() const;
@@ -46,6 +47,7 @@ public:
 	double GetRemainingFraction() const;
 	double GetElapsedFraction() const;
 	bool IsComplete() const;
+	void ForceComplete();
 
 public:
 

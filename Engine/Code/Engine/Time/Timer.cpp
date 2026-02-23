@@ -87,6 +87,41 @@ bool Timer::Update(double deltaSeconds)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int Timer::UpdateAndCount(double deltaSeconds)
+{
+	ASSERT_OR_DIE(m_durationSeconds >= 0.0, "Timer has invalid duration.");
+
+	m_remainingSeconds -= deltaSeconds;
+
+	if (m_looping)
+	{
+		if (m_remainingSeconds > 0.0)
+		{
+			return 0;
+		}
+
+		double overshootAmount = -m_remainingSeconds;
+
+		int numElapsed = static_cast<int>(overshootAmount / m_durationSeconds) + 1; // +1 because we know we elapsed at least once if we are in this branch
+
+		m_remainingSeconds += numElapsed * m_durationSeconds; // add back the duration for each time we elapsed, to get the new remaining seconds
+
+		ASSERT_OR_DIE(m_remainingSeconds > 0.0, "Something went wrong with calculating the new remaining seconds after multiple loops elapsed. Remaining seconds should always be positive after this calculation.");
+
+		return numElapsed;
+	}
+	else if (m_remainingSeconds <= 0.0)
+	{
+		m_remainingSeconds = 0.0;
+		return 1;
+	}
+
+	return 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Clock* Timer::GetParentClock() const
 {
 	return m_parentClock;
@@ -141,4 +176,12 @@ double Timer::GetElapsedFraction() const
 bool Timer::IsComplete() const
 {
 	return m_remainingSeconds <= 0.0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Timer::ForceComplete()
+{
+	m_remainingSeconds = 0.0;
 }

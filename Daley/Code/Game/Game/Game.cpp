@@ -13,6 +13,7 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/DataStructures/NamedProperties.h"
 #include "Engine/Debug/DevConsole.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Input/InputSystem.h"
@@ -229,12 +230,17 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCRender>();
     g_ecs->RegisterComponentSingleton<SCTime>();
     g_ecs->RegisterComponentSingleton<SCWorld>();
+    g_ecs->RegisterComponentSingleton<SCWaves>();
 
     // Other resource types (Engine Subsystems)
     g_ecs->RegisterResourceByType<AudioSystem>();
     g_ecs->RegisterResourceByType<InputSystem>();
     g_ecs->RegisterResourceByType<Renderer>();
     g_ecs->RegisterResourceByType<AssetManager>();
+
+	int numRegisteredComponents = g_ecs->GetNumRegisteredComponents();
+    constexpr int maxComponents = sizeof(size_t) * 8;
+	DevConsoleUtils::LogWarning("Registered %i/%i components", numRegisteredComponents, maxComponents);
 
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -244,6 +250,7 @@ void Game::ConfigureECS()
     // Pre Physics
     g_ecs->RegisterSystem<STime>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLifetime>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SWaveSpawner>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SWeapon>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);

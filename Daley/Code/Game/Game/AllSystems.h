@@ -42,4 +42,5 @@
 #include "SRenderWorld.h"
 #include "STime.h"
 #include "SWeapon.h"
+#include "SWaveSpawner.h"
 #include "SWorld.h"

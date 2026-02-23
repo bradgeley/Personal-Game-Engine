@@ -14,4 +14,5 @@
 #include "SCLighting.h"
 #include "SCRender.h"
 #include "SCTime.h"
+#include "SCWaves.h"
 #include "SCWorld.h"

@@ -4,6 +4,11 @@
 
 
 
+struct NamedProperties;
+struct Wave;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 class SWaveSpawner : public System
 {
@@ -13,4 +18,9 @@ public:
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;
+
+public:
+
+    static bool StartWaves(NamedProperties& args);
+    void StartWave(Wave& wave) const;
 };
