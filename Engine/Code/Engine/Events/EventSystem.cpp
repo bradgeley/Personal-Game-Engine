@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "Engine/Events/EventSystem.h"
 #include "EventSubscriber.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 
 
 

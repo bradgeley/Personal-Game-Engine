@@ -10,7 +10,7 @@
 #include "SCFlowField.h"
 #include "FlowField.h"
 #include "Engine/Core/StringUtils.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"

@@ -265,11 +265,11 @@
     <ClCompile Include="Core\ErrorUtils.cpp" />
     <ClCompile Include="Core\FileUtils.cpp" />
     <ClCompile Include="Core\Name.cpp" />
+    <ClCompile Include="Core\NamedProperties.cpp" />
     <ClCompile Include="Core\NameTable.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
     <ClCompile Include="Core\TagQuery.cpp" />
     <ClCompile Include="Core\XmlUtils.cpp" />
-    <ClCompile Include="DataStructures\NamedProperties.cpp" />
     <ClCompile Include="Debug\DebugDrawUtils.cpp" />
     <ClCompile Include="Debug\DevConsole.cpp" />
     <ClCompile Include="Debug\DevConsoleCommandHistory.cpp" />
@@ -375,12 +375,12 @@
     <ClInclude Include="Core\ErrorUtils.h" />
     <ClInclude Include="Core\FileUtils.h" />
     <ClInclude Include="Core\Name.h" />
+    <ClInclude Include="Core\NamedProperties.h" />
     <ClInclude Include="Core\NameTable.h" />
     <ClInclude Include="Core\StringUtils.h" />
     <ClInclude Include="Core\TagQuery.h" />
     <ClInclude Include="Core\XmlUtils.h" />
     <ClInclude Include="DataStructures\BitArray.h" />
-    <ClInclude Include="DataStructures\NamedProperties.h" />
     <ClInclude Include="DataStructures\ThreadSafePrioQueue.h" />
     <ClInclude Include="DataStructures\ThreadSafeQueue.h" />
     <ClInclude Include="Debug\DebugDrawUtils.h" />

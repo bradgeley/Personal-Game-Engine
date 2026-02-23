@@ -5,7 +5,7 @@
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/DataStructures/BitArray.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/System.h"
 #include "Engine/Input/InputSystem.h"

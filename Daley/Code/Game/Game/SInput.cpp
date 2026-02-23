@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SInput.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Input/InputSystem.h"
 

@@ -11,7 +11,7 @@
 #include "Engine/Core/Engine.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/AdminSystem.h"

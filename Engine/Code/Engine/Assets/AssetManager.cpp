@@ -3,7 +3,7 @@
 #include "AsyncLoadAssetJob.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/SpriteAnimation.h"
 #include "Engine/Debug/DevConsoleUtils.h"

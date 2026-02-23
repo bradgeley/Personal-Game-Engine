@@ -61,9 +61,6 @@
     <ClCompile Include="Renderer\VertexUtils.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="DataStructures\NamedProperties.cpp">
-      <Filter>DataStructures</Filter>
-    </ClCompile>
     <ClCompile Include="Events\EventDelegate.cpp">
       <Filter>Events</Filter>
     </ClCompile>
@@ -313,6 +310,9 @@
     <ClCompile Include="Core\TagQuery.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\NamedProperties.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -380,9 +380,6 @@
     </ClInclude>
     <ClInclude Include="Renderer\VertexUtils.h">
       <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="DataStructures\NamedProperties.h">
-      <Filter>DataStructures</Filter>
     </ClInclude>
     <ClInclude Include="DataStructures\ThreadSafeQueue.h">
       <Filter>DataStructures</Filter>
@@ -673,6 +670,9 @@
       <Filter>Time</Filter>
     </ClInclude>
     <ClInclude Include="Core\TagQuery.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\NamedProperties.h">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

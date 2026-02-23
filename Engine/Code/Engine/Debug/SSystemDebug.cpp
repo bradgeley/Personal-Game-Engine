@@ -4,7 +4,7 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Events/EventSystem.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 
 
 

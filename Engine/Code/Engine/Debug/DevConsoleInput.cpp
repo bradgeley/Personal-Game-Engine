@@ -9,7 +9,7 @@
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Window/Window.h"
 #include "Engine/Debug/DevConsole.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN

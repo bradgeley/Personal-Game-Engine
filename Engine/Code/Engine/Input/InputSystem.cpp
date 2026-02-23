@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "InputSystem.h"
 #include "Engine/Core/EngineCommon.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Window/Window.h"
 #include "Engine/Math/MathUtils.h"
 

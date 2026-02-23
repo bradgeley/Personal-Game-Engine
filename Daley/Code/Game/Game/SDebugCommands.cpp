@@ -2,7 +2,7 @@
 #include "SDebugCommands.h"
 #include "EntityDef.h"
 #include "SCEntityFactory.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 
 

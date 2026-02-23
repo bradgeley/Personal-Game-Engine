@@ -4,7 +4,7 @@
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Debug/DevConsole.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 
 
 

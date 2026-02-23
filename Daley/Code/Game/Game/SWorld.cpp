@@ -4,7 +4,7 @@
 #include "SCFlowField.h"
 #include "TileDef.h"
 #include "WorldRaycast.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Math/Noise.h"

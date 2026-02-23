@@ -1,5 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 
 
 

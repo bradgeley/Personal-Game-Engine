@@ -6,7 +6,7 @@
 #include "SCWorld.h"
 #include "TileDef.h"
 #include "EntityDef.h"
-#include "Engine/DataStructures/NamedProperties.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Input/InputSystem.h"
