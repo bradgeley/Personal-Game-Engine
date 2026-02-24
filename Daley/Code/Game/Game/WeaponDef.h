@@ -53,4 +53,6 @@ public:
 	float m_baseProjSpeedUnitsPerSec	= 1.f;
 	float m_baseMinRange				= 0.f;
 	float m_baseMaxRange				= 1.f;
+	float m_splashRadius				= 0.f;
+	float m_splashDamage				= 0.f;
 };

@@ -41,7 +41,7 @@
     <Tags tower=""></Tags>
     <Time></Time>
     <Transform></Transform>
-    <Weapon name="VanillaWeapon"></Weapon>
+    <Weapon name="ChocolateWeapon"></Weapon>
   </EntityDef>
 
   <EntityDef name = "VanillaProj">

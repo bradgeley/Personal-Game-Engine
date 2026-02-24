@@ -1,5 +1,6 @@
 <WeaponDefs>
 
   <ProjectileHitWeaponDef name="VanillaWeapon" projectileDef="VanillaProj" baseAttacksPerSecond="10" baseDamage="10" baseMaxRange="10" baseProjSpeed="100"></ProjectileHitWeaponDef>
+  <ProjectileHitWeaponDef name="ChocolateWeapon" projectileDef="VanillaProj" baseAttacksPerSecond="0.5" baseDamage="75" baseMaxRange="12" baseProjSpeed="50" splashDamage="50" splashRadius="1"></ProjectileHitWeaponDef>
   
 </WeaponDefs>

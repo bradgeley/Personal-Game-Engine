@@ -60,6 +60,8 @@ public:
 	float m_projSpeedUnitsPerSec		= 1.f;
 	float m_minRange					= 0.f;
 	float m_maxRange					= 10.f;
+	float m_splashDamage				= 0.f;
+	float m_splashRadius				= 0.f;
 	float m_accumulatedAttackTime		= 0.f;
 	WeaponTargetingMode m_targetingMode = WeaponTargetingMode::ClosestToGoal;
 

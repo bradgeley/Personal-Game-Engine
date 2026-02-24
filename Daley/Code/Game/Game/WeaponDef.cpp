@@ -110,6 +110,8 @@ ProjectileHitWeaponDef::ProjectileHitWeaponDef(void const* xmlElement)
 	m_baseProjSpeedUnitsPerSec	= XmlUtils::ParseXmlAttribute(elem, "baseProjSpeed", m_baseProjSpeedUnitsPerSec);
     m_baseMinRange              = XmlUtils::ParseXmlAttribute(elem, "baseMinRange", m_baseMinRange);
 	m_baseMaxRange              = XmlUtils::ParseXmlAttribute(elem, "baseMaxRange", m_baseMaxRange);
+	m_splashDamage              = XmlUtils::ParseXmlAttribute(elem, "splashDamage", m_splashDamage);
+	m_splashRadius              = XmlUtils::ParseXmlAttribute(elem, "splashRadius", m_splashRadius);
 }
 
 

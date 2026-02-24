@@ -3,7 +3,9 @@
 #include "CProjectile.h"
 #include "CTransform.h"
 #include "CHealth.h"
+#include "SCCollision.h"
 #include "SCEntityFactory.h"
+#include "SCWorld.h"
 
 
 
@@ -22,6 +24,8 @@ void SProjectile::Run(SystemContext const& context)
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
+	auto& world = g_ecs->GetSingleton<SCWorld>();
+	auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
 	for (auto it = g_ecs->Iterate<CProjectile, CTransform>(context); it.IsValid(); ++it)
 	{
@@ -53,6 +57,27 @@ void SProjectile::Run(SystemContext const& context)
 			if (targetHealth)
 			{
 				targetHealth->TakeDamage(proj.m_damage);
+			}
+
+			if (proj.m_splashComp.has_value())
+			{
+				world.ForEachPathTileOverlappingCircle(transform.m_pos, proj.m_splashComp->m_splashRadius, [&](IntVec2 const& worldCoords)
+				{
+					int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
+					for (auto& entityID : scCollision.m_tileBuckets[tileIndex])
+					{
+						if (entityID == proj.m_targetID)
+						{
+							continue; // already damaged by direct hit
+						}
+						CHealth* health = healthStorage.Get(entityID.GetIndex());
+						if (health)
+						{
+							health->TakeDamage(proj.m_splashComp->m_splashDamage);
+						}
+					}
+					return true;
+				});
 			}
 
 			continue;

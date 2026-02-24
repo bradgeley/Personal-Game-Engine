@@ -27,6 +27,8 @@ ProjectileHitWeapon::ProjectileHitWeapon(ProjectileHitWeaponDef const& def)
     m_projSpeedUnitsPerSec = def.m_baseProjSpeedUnitsPerSec;
 	m_minRange = def.m_baseMinRange;
 	m_maxRange = def.m_baseMaxRange;
+    m_splashDamage = def.m_splashDamage;
+    m_splashRadius = def.m_splashRadius;
 }
 
 
@@ -141,6 +143,13 @@ void ProjectileHitWeapon::Update(float deltaSeconds, Vec2 const& location)
             projComp.m_accumulatedTime += m_accumulatedAttackTime;
 			projComp.m_damage = m_damage;
 			projComp.m_projSpeedUnitsPerSec = m_projSpeedUnitsPerSec;
+
+            if (m_splashDamage > 0.f && m_splashRadius > 0.f)
+            {
+                projComp.m_splashComp = SplashDamageProjComp();
+                projComp.m_splashComp->m_splashDamage = m_splashDamage;
+                projComp.m_splashComp->m_splashRadius = m_splashRadius;
+            }
         }
     }
     else

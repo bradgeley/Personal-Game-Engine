@@ -7,6 +7,15 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct SplashDamageProjComp
+{
+    float m_splashRadius = 0.f;
+	float m_splashDamage = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct CProjectile
 {
 public:
@@ -21,4 +30,6 @@ public:
     float m_accumulatedTime = 0.f;
     float m_damage = 1.f;
     float m_projSpeedUnitsPerSec = 1.f;
+
+    std::optional<SplashDamageProjComp> m_splashComp;
 };
