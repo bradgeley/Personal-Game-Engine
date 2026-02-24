@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2026
+// Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Time/Timer.h"
 #include <vector>

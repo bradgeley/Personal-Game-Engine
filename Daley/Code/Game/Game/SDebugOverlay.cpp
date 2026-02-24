@@ -1,13 +1,14 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SDebugOverlay.h"
-#include "SCCamera.h"
 #include "CCollision.h"
-#include "SCDebug.h"
 #include "CEntityDebug.h"
 #include "CHealth.h"
 #include "CTags.h"
 #include "CTransform.h"
 #include "CWeapon.h"
+#include "SCCamera.h"
+#include "SCDebug.h"
+#include "SCWaves.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Input/InputSystem.h"
@@ -54,6 +55,27 @@ void SDebugOverlay::Run(SystemContext const&)
 	IntVec2 resolution = g_window->GetRenderResolution();
 	AABB2 screenBounds = AABB2(0.f, 0.f, (float) resolution.x, (float) resolution.y);
 	screenCamera.SetOrthoBounds2D(screenBounds);
+
+	// Add transparent black background
+	VertexUtils::AddVertsForAABB2(untexVerts, screenBounds, Rgba8(0, 0, 0, 120), AABB2::ZeroToOne);
+
+	Vec2 topLeft = screenBounds.GetTopLeft();
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -10.f), Vec2(1.f, -1.f), 25.f, "Debug Overlay Enabled", Rgba8::White);
+
+	int totalEntities = g_ecs->NumEntities();
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -40.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Total Entities: %d", totalEntities), Rgba8::White);
+
+	// Wave spawner info
+	SCWaves const& waves = g_ecs->GetSingleton<SCWaves>();
+	Vec2 wavesTopLeft = screenBounds.maxs - Vec2(350.f, 10.f);
+	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft, Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Waves: %s", waves.m_wavesStarted ? (waves.m_wavesFinished ? "Finished" : "In Progress") : "Not Started"), Rgba8::White);
+	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 30.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Current Wave: %d/%d", waves.m_currentWaveIndex, waves.m_waves.size()), Rgba8::White);
+	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 60.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Time Until Next Wave: %.1f", waves.m_waveTimer.GetRemainingSeconds()), Rgba8::Yellow);
+	for (int streamIndex = 0; streamIndex < (int) waves.m_activeStreams.size(); ++streamIndex)
+	{
+		ActiveStream const& activeStream = waves.m_activeStreams[streamIndex];
+		font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 90.f + 30.f * (float) streamIndex), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Active Stream: %s (%d/%d)", activeStream.m_entityStream.m_entityName.ToCStr(), activeStream.m_numSpawned, activeStream.m_entityStream.m_numEntities), Rgba8::White);
+	}
 
 	// Show tower weapon information for hovered tower
 	auto& tagsStorage = g_ecs->GetArrayStorage<CTags>();
@@ -102,19 +124,6 @@ void SDebugOverlay::Run(SystemContext const&)
 			}
 		}
 	}
-
-	// Add transparent black background
-	VertexUtils::AddVertsForAABB2(untexVerts, screenBounds, Rgba8(0, 0, 0, 120), AABB2::ZeroToOne);
-
-	// ...
-	// Custom rendering stuff
-	// ...
-
-	Vec2 topLeft = screenBounds.GetTopLeft();
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -10.f), Vec2(1.f, -1.f), 25.f, "Debug Overlay Enabled", Rgba8::White);
-
-	int totalEntities = g_ecs->NumEntities();
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -40.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Total Entities: %d", totalEntities), Rgba8::White);
 
 	g_renderer->BeginCamera(&screenCamera);
 

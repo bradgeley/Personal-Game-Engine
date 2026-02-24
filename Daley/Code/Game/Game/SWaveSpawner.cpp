@@ -18,13 +18,22 @@ void SWaveSpawner::Startup()
 	EntityStream testStream;
 	testStream.m_entityName = Name("ant");
 	testStream.m_numEntities = 100;
-	testStream.m_overTimeSeconds = 10.f;
+	testStream.m_overTimeSeconds = 20.f;
 	testStream.m_waveNumber = 0;
+
+	EntityStream testStream2;
+	testStream2.m_entityName = Name("pig");
+	testStream2.m_numEntities = 10;
+	testStream2.m_overTimeSeconds = 20.f;
+	testStream2.m_waveNumber = 0;
 
 	Wave testWave;
 	testWave.m_entityStreams.push_back(testStream);
+	testWave.m_entityStreams.push_back(testStream2);
 
 	waves.m_currentWaveIndex = 0;
+	waves.m_waves.push_back(testWave);
+	waves.m_waves.push_back(testWave);
 	waves.m_waves.push_back(testWave);
 
 	DevConsoleUtils::AddDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
@@ -44,13 +53,24 @@ void SWaveSpawner::Run(SystemContext const& context)
 		return;
 	}
 
-	int numWavesStarted = waves.m_waveTimer.UpdateAndCount(context.m_deltaSeconds);
-	for (int waveIndex = 0; waveIndex < numWavesStarted; ++waveIndex)
+	if (waves.m_currentWaveIndex < waves.m_waves.size())
 	{
-		int currentWaveIndex = waves.m_currentWaveIndex + waveIndex;
-		Wave& wave = waves.m_waves[currentWaveIndex];
+		int numWavesStarted = waves.m_waveTimer.UpdateAndCount(context.m_deltaSeconds);
+		for (int waveIndex = 0; waveIndex < numWavesStarted; ++waveIndex)
+		{
+			int currentWaveIndex = waves.m_currentWaveIndex + waveIndex;
+			Wave& wave = waves.m_waves[currentWaveIndex];
 
-		StartWave(wave);
+			StartWave(wave);
+
+			waves.m_currentWaveIndex++;
+
+			if (waves.m_currentWaveIndex >= (int) waves.m_waves.size())
+			{
+				// no more waves
+				waves.m_waveTimer.ForceComplete();
+			}
+		}
 	}
 
 	// Update active streams
@@ -78,9 +98,9 @@ void SWaveSpawner::Run(SystemContext const& context)
 		}
 	}
 
-	// check if waves are complete
-	if (waves.m_activeStreams.size() == 0 && waves.m_currentWaveIndex == waves.m_waves.size() - 1)
+	if (waves.m_activeStreams.size() == 0 && waves.m_currentWaveIndex == waves.m_waves.size())
 	{
+		// Waves are complete, including all active streams
 		waves.m_wavesFinished = true;
 	}
 }
@@ -111,7 +131,7 @@ bool SWaveSpawner::StartWaves(NamedProperties&)
 	waves.m_currentWaveIndex = 0;
 
 	waves.m_waveTimer = Timer(waves.m_waveTimerDuration, true);
-	waves.m_waveTimer.ForceComplete(); // Force complete so that the first wave starts immediately
+	waves.m_waveTimer.ForceComplete(); // First wave starts immediately
 
 	ASSERT_OR_DIE(waves.m_waveTimer.IsComplete(), "Timer did not complete.");
 
@@ -136,7 +156,7 @@ void SWaveSpawner::StartWave(Wave& wave) const
 		activeStream.m_entityStream = stream;
 		activeStream.m_numSpawned = 0;
 		activeStream.m_spawnTimer = Timer(stream.m_overTimeSeconds / stream.m_numEntities, true);
-		activeStream.m_spawnTimer.ForceComplete(); // Force complete so that the first spawn happens immediately
+		activeStream.m_spawnTimer.ForceComplete(); // First wave starts immediately
 		waves.m_activeStreams.push_back(activeStream);
 	}
 }
