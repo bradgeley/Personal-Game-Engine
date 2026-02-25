@@ -2,6 +2,7 @@
 #include "SProjectile.h"
 #include "CProjectile.h"
 #include "CTransform.h"
+#include "CCollision.h"
 #include "CHealth.h"
 #include "SCCollision.h"
 #include "SCEntityFactory.h"
@@ -22,6 +23,7 @@ void SProjectile::Run(SystemContext const& context)
 {
 	auto& projStorage = g_ecs->GetMapStorage<CProjectile>();
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
 	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 	auto& world = g_ecs->GetSingleton<SCWorld>();
@@ -61,6 +63,8 @@ void SProjectile::Run(SystemContext const& context)
 
 			if (proj.m_splashComp.has_value())
 			{
+				float splashRadiusSquared = proj.m_splashComp->m_splashRadius * proj.m_splashComp->m_splashRadius;
+
 				world.ForEachPathTileOverlappingCircle(transform.m_pos, proj.m_splashComp->m_splashRadius, [&](IntVec2 const& worldCoords)
 				{
 					int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
@@ -69,6 +73,15 @@ void SProjectile::Run(SystemContext const& context)
 						if (entityID == proj.m_targetID)
 						{
 							continue; // already damaged by direct hit
+						}
+						CCollision* collision = collisionStorage.Get(entityID.GetIndex());
+						if (collision)
+						{
+							Vec2 entityPos = transStorage.Get(entityID.GetIndex())->m_pos;
+							if (entityPos.GetDistanceSquaredTo(proj.m_targetPos.value()) > splashRadiusSquared)
+							{
+								continue; // outside of splash radius
+							}
 						}
 						CHealth* health = healthStorage.Get(entityID.GetIndex());
 						if (health)
