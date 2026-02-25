@@ -41,13 +41,31 @@
     <Tags tower=""></Tags>
     <Time></Time>
     <Transform></Transform>
-    <Weapon name="ChocolateWeapon"></Weapon>
+    <Weapon name="VanillaWeapon"></Weapon>
   </EntityDef>
 
   <EntityDef name = "VanillaProj">
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanillaProj"></Animation>
     <Projectile></Projectile>
     <Render scale="0.66" rotateSprite="true"></Render>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "Chocolate">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="Chocolate"></Animation>
+    <Collision radius="1"></Collision>
+    <Render scale="2"></Render>
+    <Tags tower=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+    <Weapon name="ChocolateWeapon"></Weapon>
+  </EntityDef>
+
+  <EntityDef name = "ChocolateProj">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="chocolateProj"></Animation>
+    <Projectile></Projectile>
+    <Render scale="1.5" rotateSprite="true"></Render>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

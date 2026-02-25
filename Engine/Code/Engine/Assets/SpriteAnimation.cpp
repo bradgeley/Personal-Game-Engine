@@ -14,6 +14,7 @@ void SpriteAnimationDef::LoadFromXml(void const* xmlElement)
 	ASSERT_OR_DIE(element != nullptr, "SpriteAnimationDef::LoadFromXml - xmlElement cannot be null");
 
 	m_name = XmlUtils::ParseXmlAttribute(*element, "name", Name::Invalid);
+    m_groupName = m_name;
 	ASSERT_OR_DIE(m_name.IsValid(), "SpriteAnimationDef::LoadFromXml - Invalid name");
 
 	m_direction = XmlUtils::ParseXmlAttribute(*element, "dir", Vec2::ZeroVector);
@@ -109,6 +110,10 @@ SpriteAnimationType SpriteAnimationDef::GetType() const
 //----------------------------------------------------------------------------------------------------------------------
 Name SpriteAnimationDef::GetAnimGroupName() const
 {
+    if (m_groupName == Name::Invalid)
+    {
+        return m_name;
+    }
     return m_groupName;
 }
 

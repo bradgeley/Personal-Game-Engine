@@ -25,7 +25,7 @@ void SpriteAnimationGroup::LoadFromXml(void const* xmlElement)
 		size_t newIndex = m_animationDefs.size();
 		m_animationDefs.emplace_back(SpriteAnimationDef());
 		m_animationDefs[newIndex].LoadFromXml(animationDefElem);
-		m_animationDefs[newIndex].m_groupName = m_name;
+		m_animationDefs[newIndex].m_groupName = m_name; // override group name
 		animationDefElem = animationDefElem->NextSiblingElement("SpriteAnimation");
 	}
 }

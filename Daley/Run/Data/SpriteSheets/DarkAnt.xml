@@ -1,13 +1,15 @@
 
 
 
-<GridSpriteSheet name="Ant" texture="Data/SpriteSheets/DarkPixelAnt.png" layout="4,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Ant" texture="Data/SpriteSheets/DarkPixelAnt.png" layout="6,1" edgePadding="0,0" innerPadding="0,0">
   
-  <!-- Walk Anim -->
+  <!-- Walk -->
   <SpriteAnimation name="walk" frames="0-3" type="loop" secondsPerFrame="0.05"></SpriteAnimation>
+
+  <!-- Idle -->
   <SpriteAnimation name="idle" frames="0" type="singleFrame"></SpriteAnimation>
 
-  <!-- Death Anim -->
-  <SpriteAnimation name="death" frames="0" type="once" secondsPerFrame="0.33"></SpriteAnimation>
+  <!-- Death -->
+  <SpriteAnimation name="death" frames="4-5" type="once" secondsPerFrame="0.33"></SpriteAnimation>
   
 </GridSpriteSheet>
