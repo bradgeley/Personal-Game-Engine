@@ -69,5 +69,41 @@
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
+
+  <EntityDef name = "Strawberry">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="Strawberry"></Animation>
+    <Collision radius="1"></Collision>
+    <Render scale="2"></Render>
+    <Tags tower=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+    <Weapon name="StrawberryWeapon"></Weapon>
+  </EntityDef>
+
+  <EntityDef name = "StrawberryProj">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="strawberryProj"></Animation>
+    <Projectile></Projectile>
+    <Render scale="1.5" rotateSprite="true"></Render>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "Mint">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="Mint"></Animation>
+    <Collision radius="1"></Collision>
+    <Render scale="2"></Render>
+    <Tags tower=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+    <Weapon name="MintWeapon"></Weapon>
+  </EntityDef>
+
+  <EntityDef name = "MintProj">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="MintProj"></Animation>
+    <Projectile></Projectile>
+    <Render scale="1.5" rotateSprite="true"></Render>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
   
 </EntityDefs>
