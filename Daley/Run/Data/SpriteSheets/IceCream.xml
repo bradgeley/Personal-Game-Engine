@@ -1,12 +1,16 @@
 
 
 
-<GridSpriteSheet name="IceCream" texture="Data/SpriteSheets/IceCream.png" layout="4,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="IceCream" texture="Data/SpriteSheets/IceCream.png" layout="8,1" edgePadding="0,0" innerPadding="0,0">
 
     <!-- Tower Flavors -->
     <SpriteAnimation name="vanilla" frames="0" type="singleframe"></SpriteAnimation>
     <SpriteAnimation name="vanillaProj" frames="1" type="singleframe"></SpriteAnimation>
     <SpriteAnimation name="chocolate" frames="2" type="singleframe"></SpriteAnimation>
     <SpriteAnimation name="chocolateProj" frames="3" type="singleframe"></SpriteAnimation>
+    <SpriteAnimation name="strawberry" frames="4" type="singleframe"></SpriteAnimation>
+    <SpriteAnimation name="strawberryProj" frames="5" type="singleframe"></SpriteAnimation>
+    <SpriteAnimation name="mint" frames="6" type="singleframe"></SpriteAnimation>
+    <SpriteAnimation name="mintProj" frames="7" type="singleframe"></SpriteAnimation>
 
   </GridSpriteSheet>
