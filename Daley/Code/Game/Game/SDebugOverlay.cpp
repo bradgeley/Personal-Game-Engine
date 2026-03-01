@@ -73,7 +73,7 @@ void SDebugOverlay::Run(SystemContext const&)
 	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 60.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Time Until Next Wave: %.1f", waves.m_waveTimer.GetRemainingSeconds()), Rgba8::Yellow);
 	for (int streamIndex = 0; streamIndex < (int) waves.m_activeStreams.size(); ++streamIndex)
 	{
-		ActiveStream const& activeStream = waves.m_activeStreams[streamIndex];
+		ActiveWaveStream const& activeStream = waves.m_activeStreams[streamIndex];
 		font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 90.f + 30.f * (float) streamIndex), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Active Stream: %s (%d/%d)", activeStream.m_entityStream.m_entityName.ToCStr(), activeStream.m_numSpawned, activeStream.m_entityStream.m_numEntities), Rgba8::White);
 	}
 

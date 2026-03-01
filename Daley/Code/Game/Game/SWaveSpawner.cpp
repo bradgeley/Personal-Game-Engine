@@ -5,6 +5,7 @@
 #include "SCWaves.h"
 #include "SCWorld.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Math/MathUtils.h"
 
@@ -15,21 +16,21 @@ void SWaveSpawner::Startup()
 {
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
 
-	EntityStream testStream;
+	WaveStream testStream;
 	testStream.m_entityName = Name("ant");
 	testStream.m_numEntities = 100;
 	testStream.m_overTimeSeconds = 20.f;
 	testStream.m_waveNumber = 0;
 
-	EntityStream testStream2;
+	WaveStream testStream2;
 	testStream2.m_entityName = Name("pig");
 	testStream2.m_numEntities = 10;
 	testStream2.m_overTimeSeconds = 20.f;
 	testStream2.m_waveNumber = 0;
 
 	Wave testWave;
-	testWave.m_entityStreams.push_back(testStream);
-	testWave.m_entityStreams.push_back(testStream2);
+	testWave.m_waveStreams.push_back(testStream);
+	testWave.m_waveStreams.push_back(testStream2);
 
 	waves.m_currentWaveIndex = 0;
 	waves.m_waves.push_back(testWave);
@@ -37,6 +38,7 @@ void SWaveSpawner::Startup()
 	waves.m_waves.push_back(testWave);
 
 	DevConsoleUtils::AddDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
+	DevConsoleUtils::AddDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves, "seed", DevConsoleArgType::Int, "numWaves", DevConsoleArgType::Int);
 }
 
 
@@ -76,7 +78,7 @@ void SWaveSpawner::Run(SystemContext const& context)
 	// Update active streams
 	for (int streamIndex = (int) waves.m_activeStreams.size() - 1; streamIndex >= 0; --streamIndex)
 	{
-		ActiveStream& stream = waves.m_activeStreams[streamIndex];
+		ActiveWaveStream& stream = waves.m_activeStreams[streamIndex];
 		int remainingSpawns = stream.m_entityStream.m_numEntities - stream.m_numSpawned;
 		int numSpawns = stream.m_spawnTimer.UpdateAndCount(context.m_deltaSeconds);
 		numSpawns = MathUtils::Min(numSpawns, remainingSpawns);
@@ -111,6 +113,7 @@ void SWaveSpawner::Run(SystemContext const& context)
 void SWaveSpawner::Shutdown()
 {
 	DevConsoleUtils::RemoveDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
+	DevConsoleUtils::RemoveDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves);
 }
 
 
@@ -141,18 +144,34 @@ bool SWaveSpawner::StartWaves(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SWaveSpawner::GenerateWaves(NamedProperties& args)
+{
+	int seed = args.Get("seed", 0);
+	int numWaves = args.Get("numWaves", 0);
+
+	// Static wave gen def
+	LevelWaveGenDef waveGenDef;
+	waveGenDef.m_numWaves = numWaves;
+	waveGenDef.m_seed = seed;
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SWaveSpawner::StartWave(Wave& wave) const
 {
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
 
-	for (EntityStream const& stream : wave.m_entityStreams)
+	for (WaveStream const& stream : wave.m_waveStreams)
 	{
 		if (stream.m_numEntities <= 0)
 		{
 			continue;
 		}
 
-		ActiveStream activeStream;
+		ActiveWaveStream activeStream;
 		activeStream.m_entityStream = stream;
 		activeStream.m_numSpawned = 0;
 		activeStream.m_spawnTimer = Timer(stream.m_overTimeSeconds / stream.m_numEntities, true);

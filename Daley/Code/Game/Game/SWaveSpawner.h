@@ -22,5 +22,6 @@ public:
 public:
 
     static bool StartWaves(NamedProperties& args);
+    static bool GenerateWaves(NamedProperties& args);
     void StartWave(Wave& wave) const;
 };
