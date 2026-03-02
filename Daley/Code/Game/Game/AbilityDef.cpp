@@ -99,50 +99,51 @@ int AbilityDef::GetAbilityDefID(Name name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-//   <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="100">
-//<Cooldown cooldown = "0.1">< / Cooldown>
-//<Targeting maxRange = "15">< / Targeting>
-//<Crit critChance = "0.1">< / Crit>
-//<OnHit>
-//<Damage minDamage = "10" maxDamage = "15">< / Damage>
-//< / OnHit>
-//< / ProjectileHitAbilityDef>
+//  <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="100">
+//      <Cooldown cooldown = "0.1">< / Cooldown>
+//      <Targeting maxRange = "15">< / Targeting>
+//      <Crit critChance = "0.1">< / Crit>
+//      <OnHit>
+//          <Damage minDamage = "10" maxDamage = "15">< / Damage>
+//      </OnHit>
+//  </ProjectileHitAbilityDef>
+//  
+//  <ProjectileHitAbilityDef name = "ChocolateAttack" projectileDef = "ChocolateProj" projSpeed = "50">
+//  <Cooldown cooldown = "2">< / Cooldown>
+//  <Targeting maxRange = "12">< / Targeting>
+//  <Crit critChance = "0.05">< / Crit>
+//  <OnHit>
+//  <Damage minDamage = "25" maxDamage = "50">< / Damage>
+//  <AoEHit radius = "2">
+//  <Damage damage = "50">< / Damage>
+//  < / AoEHit>
+//  < / OnHit>
+//  < / ProjectileHitAbilityDef>
+//  
+//  <ProjectileHitAbilityDef name = "PistachioAttack" projectileDef = "PistachioProj" projSpeed = "50">
+//  <Cooldown cooldown = "2">< / Cooldown>
+//  <Targeting maxRange = "12">< / Targeting>
+//  <OnHit>
+//  <AoEHit radius = "2">
+//  <Poison poison = "5">< / Poison>
+//  < / AoEHit>
+//  <AoEEffect duration = "2" radius = "2">
+//  <Poison poison = "5">< / Poison>
+//  < / AoEEffect>
+//  < / OnHit>
+//  < / ProjectileHitAbilityDef>
+//  
+//  <ProjectileHitAbilityDef name = "StrawberryAttack" projectileDef = "StrawberryProj" projSpeed = "100">
+//  <Cooldown cooldown = "0.5">< / Cooldown>
+//  <Targeting maxRange = "6">< / Targeting>
+//  <OnHit>
+//  <Burn burn = "10">< / Burn>
+//  <AoEEffect duration = "0.5" radius = "0.5">
+//  <Burn burn = "10">< / Burn>
+//  < / AoEEffect>
+//  < / OnHit>
+//  < / ProjectileHitAbilityDef>
 //
-//<ProjectileHitAbilityDef name = "ChocolateAttack" projectileDef = "ChocolateProj" projSpeed = "50">
-//<Cooldown cooldown = "2">< / Cooldown>
-//<Targeting maxRange = "12">< / Targeting>
-//<Crit critChance = "0.05">< / Crit>
-//<OnHit>
-//<Damage minDamage = "25" maxDamage = "50">< / Damage>
-//<AoEHit radius = "2">
-//<Damage damage = "50">< / Damage>
-//< / AoEHit>
-//< / OnHit>
-//< / ProjectileHitAbilityDef>
-//
-//<ProjectileHitAbilityDef name = "PistachioAttack" projectileDef = "PistachioProj" projSpeed = "50">
-//<Cooldown cooldown = "2">< / Cooldown>
-//<Targeting maxRange = "12">< / Targeting>
-//<OnHit>
-//<AoEHit radius = "2">
-//<Poison poison = "5">< / Poison>
-//< / AoEHit>
-//<AoEEffect duration = "2" radius = "2">
-//<Poison poison = "5">< / Poison>
-//< / AoEEffect>
-//< / OnHit>
-//< / ProjectileHitAbilityDef>
-//
-//<ProjectileHitAbilityDef name = "StrawberryAttack" projectileDef = "StrawberryProj" projSpeed = "100">
-//<Cooldown cooldown = "0.5">< / Cooldown>
-//<Targeting maxRange = "6">< / Targeting>
-//<OnHit>
-//<Burn burn = "10">< / Burn>
-//<AoEEffect duration = "0.5" radius = "0.5">
-//<Burn burn = "10">< / Burn>
-//< / AoEEffect>
-//< / OnHit>
-//< / ProjectileHitAbilityDef>
 ProjectileHitAbilityDef::ProjectileHitAbilityDef(void const* xmlElement)
 {
 	// e.g. <ProjectileHitAbilityDef name = "VanillaAbility" projectileDef = "VanillaProj" baseAttacksPerSecond = "1" baseDamage = "10">< / ProjectileHitAbilityDef>
