@@ -41,6 +41,6 @@
 #include "SRenderUI.h"
 #include "SRenderWorld.h"
 #include "STime.h"
-#include "SWeapon.h"
+#include "SAbility.h"
 #include "SWaveSpawner.h"
 #include "SWorld.h"

@@ -5,7 +5,7 @@
 #include "CHealth.h"
 #include "CTags.h"
 #include "CTransform.h"
-#include "CWeapon.h"
+#include "CAbility.h"
 #include "SCCamera.h"
 #include "SCDebug.h"
 #include "SCWaves.h"
@@ -77,12 +77,12 @@ void SDebugOverlay::Run(SystemContext const&)
 		font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 90.f + 30.f * (float) streamIndex), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Active Stream: %s (%d/%d)", activeStream.m_entityStream.m_entityName.ToCStr(), activeStream.m_numSpawned, activeStream.m_entityStream.m_numEntities), Rgba8::White);
 	}
 
-	// Show tower weapon information for hovered tower
+	// Show tower ability information for hovered tower
 	auto& tagsStorage = g_ecs->GetArrayStorage<CTags>();
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
 	auto& debugStorage = g_ecs->GetArrayStorage<CEntityDebug>();
-	auto& weaponStorage = g_ecs->GetMapStorage<CWeapon>();
+	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
 	for (auto it = g_ecs->IterateAll<CTags, CTransform, CEntityDebug>(); it.IsValid(); ++it)
 	{
 		CTags const& tags = *tagsStorage.Get(it);
@@ -104,12 +104,12 @@ void SDebugOverlay::Run(SystemContext const&)
 
 				std::string debugString;
 
-				CWeapon const* weaponComp = weaponStorage.Get(it);
-				if (weaponComp)
+				CAbility const* abilityComp = abilityStorage.Get(it);
+				if (abilityComp)
 				{
-					for (auto& weapon : weaponComp->m_weapons)
+					for (auto& ability : abilityComp->m_abilitys)
 					{
-						weapon->GetDebugString(debugString);
+						ability->GetDebugString(debugString);
 					}
 				}
 

@@ -92,6 +92,37 @@ int EntityDef::GetEntityDefID(Name name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool EntityDef::GetAllEntityDefsWithTags(std::vector<Name> const& tags, std::vector<Name>& out_entityDefNames)
+{
+    for (EntityDef const& def : s_entityDefs)
+    {
+        if (!def.m_tags.has_value())
+        {
+            continue;
+        }
+
+        bool hasAllTags = true;
+        for (Name tag : tags)
+        {
+            if (!def.m_tags->HasTag(tag))
+            {
+                hasAllTags = false;
+                break;
+            }
+        }
+
+        if (hasAllTags)
+        {
+            out_entityDefNames.push_back(def.m_name);
+        }
+	}
+
+    return !out_entityDefNames.empty();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 EntityDef::EntityDef(XmlElement const* xmlElement)
 {
     m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
@@ -167,11 +198,11 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_death.emplace(elem);
     }
 
-    // CWeapon
-    elem = xmlElement->FirstChildElement("Weapon");
+    // CAbility
+    elem = xmlElement->FirstChildElement("Ability");
     if (elem)
     {
-        m_weapon.emplace(elem);
+        m_ability.emplace(elem);
     }
 
     // CProjectile

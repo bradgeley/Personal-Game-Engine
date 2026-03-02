@@ -20,6 +20,7 @@ public:
     static EntityDef const* GetEntityDef(uint8_t id);
     static EntityDef const* GetEntityDef(Name name);
     static int GetEntityDefID(Name name);
+	static bool GetAllEntityDefsWithTags(std::vector<Name> const& tags, std::vector<Name>& out_entityDefNames);
 
 private:
 
@@ -40,7 +41,7 @@ public:
 	std::optional<CRender>              m_render;
     std::optional<CTime>                m_time;
     std::optional<CTransform>           m_transform;
-    std::optional<CWeapon>              m_weapon;
+    std::optional<CAbility>             m_ability;
     std::optional<CProjectile>          m_proj;
     std::optional<CTags>                m_tags;
 };

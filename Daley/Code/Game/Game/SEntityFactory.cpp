@@ -75,7 +75,7 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
 	if (def->m_lifetime.has_value())            g_ecs->AddComponent<CLifetime>(id, *def->m_lifetime);
 	if (def->m_health.has_value())              g_ecs->AddComponent<CHealth>(id, *def->m_health);
 	if (def->m_death.has_value())               g_ecs->AddComponent<CDeath>(id, *def->m_death);
-	if (def->m_weapon.has_value())              g_ecs->AddComponent<CWeapon>(id, *def->m_weapon);
+	if (def->m_ability.has_value())              g_ecs->AddComponent<CAbility>(id, *def->m_ability);
 	if (def->m_proj.has_value())                g_ecs->AddComponent<CProjectile>(id, *def->m_proj);
 	if (def->m_tags.has_value())                g_ecs->AddComponent<CTags>(id, *def->m_tags);
 
@@ -112,7 +112,6 @@ EntityID SEntityFactory::SpawnEntity(SpawnInfo const& spawnInfo)
     if (CRender* render = g_ecs->GetComponent<CRender>(id))
     {
         render->m_renderRadius *= spawnInfo.m_spawnScale;
-		render->m_tint = spawnInfo.m_spawnTint;
     }
 
     CLifetime* lifetime = g_ecs->GetComponent<CLifetime>(id);

@@ -12,7 +12,35 @@
     <Lifetime></Lifetime>
     <Movement moveSpeed="3" pathOnly="true"></Movement>
     <Render scale="1.5" rotateSprite="true"></Render>
-    <Tags small="" enemy=""></Tags>
+    <Tags small="" enemy="" ant=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "mediumAnt">
+    <AIController isWiggly="true"></AIController>
+    <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
+    <Collision radius="1" singleHash="false"></Collision>
+    <Death></Death>
+    <Health maxHealth="1000" healthRegen="10" isTargetable="true"></Health>
+    <Lifetime></Lifetime>
+    <Movement moveSpeed="1.5" pathOnly="true"></Movement>
+    <Render scale="3" rotateSprite="true"></Render>
+    <Tags medium="" enemy="" ant=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "largeAnt">
+    <AIController isWiggly="true"></AIController>
+    <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
+    <Collision radius="1.5" singleHash="false"></Collision>
+    <Death></Death>
+    <Health maxHealth="2000" healthRegen="20" isTargetable="true"></Health>
+    <Lifetime></Lifetime>
+    <Movement moveSpeed="1" pathOnly="true"></Movement>
+    <Render scale="4.5" rotateSprite="true"></Render>
+    <Tags large="" enemy="" ant=""></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -35,73 +63,84 @@
   <!-- Towers -->
 
   <EntityDef name = "Vanilla">
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanilla"></Animation>
+    <Ability name="VanillaAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1"></Collision>
-    <Render scale="2"></Render>
+    <Render scale="2" tint="243,229,171"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
     <Transform></Transform>
-    <Weapon name="VanillaWeapon"></Weapon>
   </EntityDef>
 
   <EntityDef name = "VanillaProj">
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="vanillaProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
-    <Render scale="0.66" rotateSprite="true"></Render>
+    <Render scale="0.66" rotateSprite="true" tint="243,229,171"></Render>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
 
   <EntityDef name = "Chocolate">
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="Chocolate"></Animation>
+    <Ability name="ChocolateAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1"></Collision>
-    <Render scale="2"></Render>
+    <Render scale="2" tint="112,66,20"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
     <Transform></Transform>
-    <Weapon name="ChocolateWeapon"></Weapon>
   </EntityDef>
 
   <EntityDef name = "ChocolateProj">
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="chocolateProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
-    <Render scale="1.5" rotateSprite="true"></Render>
+    <Render scale="1.5" rotateSprite="true" tint="112,66,20"></Render>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
 
   <EntityDef name = "Strawberry">
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="Strawberry"></Animation>
+    <Ability name="StrawberryAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1"></Collision>
-    <Render scale="2"></Render>
+    <Render scale="2" tint="250,80,83"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
     <Transform></Transform>
-    <Weapon name="StrawberryWeapon"></Weapon>
   </EntityDef>
 
   <EntityDef name = "StrawberryProj">
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="strawberryProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
-    <Render scale="1.5" rotateSprite="true"></Render>
+    <Render scale="1.5" rotateSprite="true" tint="250,80,83"></Render>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
 
   <EntityDef name = "Mint">
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="Mint"></Animation>
+    <Ability name="MintAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1"></Collision>
-    <Render scale="2"></Render>
+    <Render scale="2" tint="173,235,179"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
     <Transform></Transform>
-    <Weapon name="MintWeapon"></Weapon>
   </EntityDef>
 
   <EntityDef name = "MintProj">
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="MintProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
-    <Render scale="1.5" rotateSprite="true"></Render>
+    <Render scale="1.5" rotateSprite="true" tint="173,235,179"></Render>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <!-- ==================================================================================================================== -->
+  <!-- Ability Stuff -->
+
+  <EntityDef name="AoEEffect">
+    <Animation></Animation>
+    <AoEEffect></AoEEffect>
+    <Render scale="1" rotateSprite="false"></Render>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

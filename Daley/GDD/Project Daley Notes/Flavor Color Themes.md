@@ -8,3 +8,4 @@ Green/Yellow: Poison
 White: Single target, fast
 Brown: Splash, aoe
 
+![[Pasted image 20260301133253.png]]

@@ -3,7 +3,7 @@
 #include "CCollision.h"
 #include "CRender.h"
 #include "CTransform.h"
-#include "CWeapon.h"
+#include "CAbility.h"
 #include "SCCamera.h"
 #include "SCDebug.h"
 #include "SCWorld.h"
@@ -36,7 +36,7 @@ void SDebugRender::Startup()
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
-    DevConsoleUtils::AddDevConsoleCommand("DebugRenderWeapons", &SDebugRender::DebugRenderWeapons);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderAbilitys", &SDebugRender::DebugRenderAbilitys);
 }
 
 
@@ -56,7 +56,7 @@ void SDebugRender::Shutdown()
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
-    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderWeapons", &SDebugRender::DebugRenderWeapons);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderAbilitys", &SDebugRender::DebugRenderAbilitys);
 }
 
 
@@ -194,19 +194,19 @@ void SDebugRender::Run(SystemContext const& context)
         }
     }
 
-	// Weapons
-    if (scDebug.m_debugRenderWeapons)
+	// Abilitys
+    if (scDebug.m_debugRenderAbilities)
     {
-        for (auto it = g_ecs->Iterate<CWeapon, CTransform>(context); it.IsValid(); ++it)
+        for (auto it = g_ecs->Iterate<CAbility, CTransform>(context); it.IsValid(); ++it)
         {
             CTransform const& transform = *transStorage.Get(it);
-            CWeapon const& weaponComponent = *g_ecs->GetComponent<CWeapon>(it);
-            Vec2 weaponPos = transform.m_pos;
-            VertexUtils::AddVertsForDisc2D(untexturedVerts, weaponPos, 0.25f, 8, Rgba8::Red);
+            CAbility const& abilityComponent = *g_ecs->GetComponent<CAbility>(it);
+            Vec2 abilityPos = transform.m_pos;
+            VertexUtils::AddVertsForDisc2D(untexturedVerts, abilityPos, 0.25f, 8, Rgba8::Red);
 
-			for (Weapon const* weapon : weaponComponent.m_weapons)
+			for (Ability const* ability : abilityComponent.m_abilitys)
             {
-				weapon->AddDebugVerts(untexturedVerts, transform.m_pos);
+				ability->AddDebugVerts(untexturedVerts, transform.m_pos);
             }
         }
 	}
@@ -329,9 +329,9 @@ bool SDebugRender::DebugRenderCollision(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugRender::DebugRenderWeapons(NamedProperties&)
+bool SDebugRender::DebugRenderAbilitys(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
-    scDebug.m_debugRenderWeapons = !scDebug.m_debugRenderWeapons;
+    scDebug.m_debugRenderAbilities = !scDebug.m_debugRenderAbilities;
     return false;
 }

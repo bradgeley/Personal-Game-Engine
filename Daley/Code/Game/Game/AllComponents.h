@@ -17,6 +17,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Components
 //
+#include "CAbility.h"
 #include "CAIController.h"
 #include "CAnimation.h"
 #include "CCollision.h"
@@ -30,7 +31,6 @@
 #include "CTags.h"
 #include "CTime.h"
 #include "CTransform.h"
-#include "CWeapon.h"
 
 
 

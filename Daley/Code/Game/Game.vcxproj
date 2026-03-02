@@ -293,6 +293,9 @@
     <ClCompile Include="Framework\WASM\main.cpp" />
     <ClCompile Include="Framework\WASM\WebApplication.cpp" />
     <ClCompile Include="Framework\Windows\Main_Windows.cpp" />
+    <ClCompile Include="Game\Ability.cpp" />
+    <ClCompile Include="Game\AbilityDef.cpp" />
+    <ClCompile Include="Game\CAbility.cpp" />
     <ClCompile Include="Game\CAIController.cpp" />
     <ClCompile Include="Game\CAnimation.cpp" />
     <ClCompile Include="Game\CCollision.cpp" />
@@ -304,11 +307,11 @@
     <ClCompile Include="Game\CProjectile.cpp" />
     <ClCompile Include="Game\CRender.cpp" />
     <ClCompile Include="Game\CTags.cpp" />
-    <ClCompile Include="Game\CWeapon.cpp" />
     <ClCompile Include="Game\EntityDef.cpp" />
     <ClCompile Include="Game\FlowGenerationCoords.cpp" />
     <ClCompile Include="Game\FlowField.cpp" />
     <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\SAbility.cpp" />
     <ClCompile Include="Game\SAIController.cpp" />
     <ClCompile Include="Game\SAnimation.cpp" />
     <ClCompile Include="Game\SBackgroundMusic.cpp" />
@@ -340,12 +343,9 @@
     <ClCompile Include="Game\SRenderEntities.cpp" />
     <ClCompile Include="Game\SRenderWorld.cpp" />
     <ClCompile Include="Game\SWaveSpawner.cpp" />
-    <ClCompile Include="Game\SWeapon.cpp" />
     <ClCompile Include="Game\SWorld.cpp" />
     <ClCompile Include="Game\Tile.cpp" />
     <ClCompile Include="Game\TileDef.cpp" />
-    <ClCompile Include="Game\Weapon.cpp" />
-    <ClCompile Include="Game\WeaponDef.cpp" />
     <ClCompile Include="Game\WorldRaycast.cpp" />
     <ClCompile Include="Game\WorldShaderCPU.cpp" />
   </ItemGroup>
@@ -353,9 +353,12 @@
     <ClInclude Include="Framework\Application.h" />
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
     <ClInclude Include="Framework\WASM\WebApplication.h" />
+    <ClInclude Include="Game\Ability.h" />
+    <ClInclude Include="Game\AbilityDef.h" />
     <ClInclude Include="Game\AllComponents.h" />
     <ClInclude Include="Game\AllSingletonComponents.h" />
     <ClInclude Include="Game\AllSystems.h" />
+    <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
     <ClInclude Include="Game\CDeath.h" />
@@ -364,7 +367,7 @@
     <ClInclude Include="Game\CLifetime.h" />
     <ClInclude Include="Game\CProjectile.h" />
     <ClInclude Include="Game\CTags.h" />
-    <ClInclude Include="Game\CWeapon.h" />
+    <ClInclude Include="Game\SAbility.h" />
     <ClInclude Include="Game\SCCamera.h" />
     <ClInclude Include="Game\CCollision.h" />
     <ClInclude Include="Game\CMovement.h" />
@@ -416,13 +419,10 @@
     <ClInclude Include="Game\SRenderEntities.h" />
     <ClInclude Include="Game\SRenderWorld.h" />
     <ClInclude Include="Game\SWaveSpawner.h" />
-    <ClInclude Include="Game\SWeapon.h" />
     <ClInclude Include="Game\SWorld.h" />
     <ClInclude Include="Game\Tile.h" />
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
-    <ClInclude Include="Game\Weapon.h" />
-    <ClInclude Include="Game\WeaponDef.h" />
     <ClInclude Include="Game\WorldRaycast.h" />
     <ClInclude Include="Game\WorldSettings.h" />
     <ClInclude Include="Game\WorldShaderCPU.h" />
@@ -435,7 +435,7 @@
   <ItemGroup>
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
-    <Xml Include="..\..\Run\Data\Definitions\WeaponDefs.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\AbilityDefs.xml" />
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />

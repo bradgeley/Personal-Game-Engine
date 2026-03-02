@@ -16,7 +16,6 @@ struct SpawnInfo
     float m_spawnOrientation	= 0.f;
 	float m_spawnScale			= 1.f;
 	float m_spawnLifetime		= -1.f; // < 0 means infinite
-	Rgba8 m_spawnTint			= Rgba8::White;
 
     EntityDef const* m_def = nullptr;
 };

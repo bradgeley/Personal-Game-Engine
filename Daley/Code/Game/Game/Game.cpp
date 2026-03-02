@@ -216,7 +216,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CEntityDebug>();
 
     // Map Components
-    g_ecs->RegisterComponentMap<CWeapon>();
+    g_ecs->RegisterComponentMap<CAbility>();
     g_ecs->RegisterComponentMap<CProjectile>();
 
     // Singleton components
@@ -251,7 +251,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<STime>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLifetime>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SWaveSpawner>((int) FramePhase::PrePhysics);
-    g_ecs->RegisterSystem<SWeapon>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SAbility>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SDebugInput>((int) FramePhase::PrePhysics);

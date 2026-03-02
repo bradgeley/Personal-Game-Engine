@@ -62,9 +62,23 @@
               "icon": "lucide-file",
               "title": "Tower"
             }
+          },
+          {
+            "id": "960cb9d4faa9e9c8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Flavor.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Flavor"
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       },
       {
         "id": "8e383ce4ee60eef4",
@@ -273,15 +287,16 @@
       "bases:Create new base": false
     }
   },
-  "active": "1d97627631c9c929",
+  "active": "960cb9d4faa9e9c8",
   "lastOpenFiles": [
+    "Flavor Color Themes.md",
+    "Pasted image 20260301133253.png",
     "Tower Buffs.md",
     "Tower.md",
     "Enemy Status Effects.md",
     "Level.md",
     "Flavor.md",
     "IceCream.png",
-    "Flavor Color Themes.md",
     "Pasted image 20260228215712.png",
     "Waves.md",
     "Wave System.md",

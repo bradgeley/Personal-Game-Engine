@@ -8,10 +8,15 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct WaveStream
 {
+public:
+
+	bool IsValid() const { return m_entityName.IsValid() && m_numEntities > 0; }
+
+public:
+
 	Name m_entityName			= Name::Invalid;
 	int m_numEntities			= 0;
 	float m_overTimeSeconds		= 0.f;
-	int m_waveNumber			= 0;
 };
 
 
@@ -43,9 +48,6 @@ struct Wave
 //----------------------------------------------------------------------------------------------------------------------
 struct WaveStreamDef
 {
-	int m_minNumEntities = 5;
-	int m_maxNumEntities = 10;
-	std::vector<Name> m_enemyTags;
 	float m_overTimeSeconds = 10.f;
 };
 
@@ -55,6 +57,9 @@ struct WaveStreamDef
 // e.g. 20% chance for a wave to have "ant" "small" enemies, between 5 and 10 of them, spawning over 30 seconds
 struct RandomWaveStreamDef : public WaveStreamDef
 {
+	int m_minNumEntities = 5;
+	int m_maxNumEntities = 10;
+	std::vector<Name> m_enemyTags;				// Enemy type will be picked randomly from those matching these tags.
 	float m_weight = 1.f;						// Affects the chance that this wave type will be picked over others in the level gen def.
 };
 
@@ -67,6 +72,8 @@ struct FixedWaveStreamDef : public WaveStreamDef
 {
 	int m_waveIndex = 0;						// if -1, this will be ignored unless m_isGuaranteedLastWave is true, in which case this will only be the last wave.
 	int m_recurAfterNumWaves = -1;				// -1, not recurring. Otherwise, recur every this many waves.
+	Name m_entityName;
+	int m_numEntities = 0;
 	bool m_isGuaranteedLastWave = false;		// If true, this will also be placed into the last wave slot guaranteed
 };
 
@@ -117,9 +124,11 @@ public:
 
 	bool m_wavesStarted = false;
 	bool m_wavesFinished = false;
-	float m_waveTimerDuration = 30.f;
 	Timer m_waveTimer;
 	int m_currentWaveIndex = 0;
-	std::vector<Wave> m_waves;
 	std::vector<ActiveWaveStream> m_activeStreams;
+
+	// Generated Data
+	float m_secondsBetweenWaves = 30.f;
+	std::vector<Wave> m_waves;
 };

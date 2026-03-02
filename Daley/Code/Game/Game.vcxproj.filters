@@ -148,18 +148,6 @@
     <ClCompile Include="Game\CAIController.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Game\CWeapon.cpp">
-      <Filter>ECS\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SWeapon.cpp">
-      <Filter>ECS\Systems\Gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Weapon.cpp">
-      <Filter>Game\Gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\WeaponDef.cpp">
-      <Filter>Definitions</Filter>
-    </ClCompile>
     <ClCompile Include="Game\CProjectile.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
@@ -177,6 +165,18 @@
     </ClCompile>
     <ClCompile Include="Game\SWaveSpawner.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Ability.cpp">
+      <Filter>Game\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AbilityDef.cpp">
+      <Filter>Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SAbility.cpp">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\CAbility.cpp">
+      <Filter>ECS\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -375,18 +375,6 @@
     <ClInclude Include="Game\SCLighting.h">
       <Filter>ECS\Singletons</Filter>
     </ClInclude>
-    <ClInclude Include="Game\CWeapon.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SWeapon.h">
-      <Filter>ECS\Systems\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Weapon.h">
-      <Filter>Game\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\WeaponDef.h">
-      <Filter>Definitions</Filter>
-    </ClInclude>
     <ClInclude Include="Game\CProjectile.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
@@ -407,6 +395,18 @@
     </ClInclude>
     <ClInclude Include="Game\SWaveSpawner.h">
       <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Ability.h">
+      <Filter>Game\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AbilityDef.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SAbility.h">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CAbility.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -517,7 +517,7 @@
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
-    <Xml Include="..\..\Run\Data\Definitions\WeaponDefs.xml">
+    <Xml Include="..\..\Run\Data\Definitions\AbilityDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>
