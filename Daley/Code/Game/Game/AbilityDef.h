@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Core/Name.h"
+#include <optional>
 #include <vector>
 
 
@@ -46,7 +47,8 @@ struct AbilityDamageComponentDef
 {
 	explicit AbilityDamageComponentDef(void const* xmlElement);
 
-	float m_damage = 0.f;
+	float m_minDamage = 0.f;
+	float m_maxDamage = 0.f;
 };
 
 
@@ -152,10 +154,10 @@ public:
 public:
 
 	Name m_projectileDefName			= Name::Invalid;
-	float m_baseProjSpeedUnitsPerSec	= 1.f;
+	float m_projSpeed	= 1.f;
 
-	AbilityCooldownComponentDef				m_cooldownDef;
-	AbilityTargetingComponentDef			m_targetingDef;
-	std::optional<AbilityCritComponentDef>	m_critDef;
-	std::optional<AbilityOnHitComponentDef>	m_onHitDef;
+	std::optional<AbilityCooldownComponentDef>		m_cooldownDef;
+	std::optional<AbilityTargetingComponentDef>		m_targetingDef;
+	std::optional<AbilityCritComponentDef>			m_critDef;
+	std::optional<AbilityOnHitComponentDef>			m_onHitDef;
 };

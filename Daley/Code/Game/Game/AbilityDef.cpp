@@ -99,64 +99,29 @@ int AbilityDef::GetAbilityDefID(Name name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-//  <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="100">
-//      <Cooldown cooldown = "0.1">< / Cooldown>
-//      <Targeting maxRange = "15">< / Targeting>
-//      <Crit critChance = "0.1">< / Crit>
-//      <OnHit>
-//          <Damage minDamage = "10" maxDamage = "15">< / Damage>
-//      </OnHit>
-//  </ProjectileHitAbilityDef>
-//  
-//  <ProjectileHitAbilityDef name = "ChocolateAttack" projectileDef = "ChocolateProj" projSpeed = "50">
-//  <Cooldown cooldown = "2">< / Cooldown>
-//  <Targeting maxRange = "12">< / Targeting>
-//  <Crit critChance = "0.05">< / Crit>
-//  <OnHit>
-//  <Damage minDamage = "25" maxDamage = "50">< / Damage>
-//  <AoEHit radius = "2">
-//  <Damage damage = "50">< / Damage>
-//  < / AoEHit>
-//  < / OnHit>
-//  < / ProjectileHitAbilityDef>
-//  
-//  <ProjectileHitAbilityDef name = "PistachioAttack" projectileDef = "PistachioProj" projSpeed = "50">
-//  <Cooldown cooldown = "2">< / Cooldown>
-//  <Targeting maxRange = "12">< / Targeting>
-//  <OnHit>
-//  <AoEHit radius = "2">
-//  <Poison poison = "5">< / Poison>
-//  < / AoEHit>
-//  <AoEEffect duration = "2" radius = "2">
-//  <Poison poison = "5">< / Poison>
-//  < / AoEEffect>
-//  < / OnHit>
-//  < / ProjectileHitAbilityDef>
-//  
-//  <ProjectileHitAbilityDef name = "StrawberryAttack" projectileDef = "StrawberryProj" projSpeed = "100">
-//  <Cooldown cooldown = "0.5">< / Cooldown>
-//  <Targeting maxRange = "6">< / Targeting>
-//  <OnHit>
-//  <Burn burn = "10">< / Burn>
-//  <AoEEffect duration = "0.5" radius = "0.5">
-//  <Burn burn = "10">< / Burn>
-//  < / AoEEffect>
-//  < / OnHit>
-//  < / ProjectileHitAbilityDef>
-//
 ProjectileHitAbilityDef::ProjectileHitAbilityDef(void const* xmlElement)
 {
-	// e.g. <ProjectileHitAbilityDef name = "VanillaAbility" projectileDef = "VanillaProj" baseAttacksPerSecond = "1" baseDamage = "10">< / ProjectileHitAbilityDef>
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
     m_name                      = XmlUtils::ParseXmlAttribute(elem, "name", m_projectileDefName);
 	m_projectileDefName			= XmlUtils::ParseXmlAttribute(elem, "projectileDef", m_projectileDefName);
-	m_baseDamage				= XmlUtils::ParseXmlAttribute(elem, "baseDamage", m_baseDamage);
-	m_baseAttacksPerSecond		= XmlUtils::ParseXmlAttribute(elem, "baseAttacksPerSecond", m_baseAttacksPerSecond);
-	m_baseProjSpeedUnitsPerSec	= XmlUtils::ParseXmlAttribute(elem, "baseProjSpeed", m_baseProjSpeedUnitsPerSec);
-    m_baseMinRange              = XmlUtils::ParseXmlAttribute(elem, "baseMinRange", m_baseMinRange);
-	m_baseMaxRange              = XmlUtils::ParseXmlAttribute(elem, "baseMaxRange", m_baseMaxRange);
-	m_splashDamage              = XmlUtils::ParseXmlAttribute(elem, "splashDamage", m_splashDamage);
-	m_splashRadius              = XmlUtils::ParseXmlAttribute(elem, "splashRadius", m_splashRadius);
+	m_projSpeed	                = XmlUtils::ParseXmlAttribute(elem, "projSpeed", m_projSpeed);
+
+    if (XmlElement const* cooldownElem = elem.FirstChildElement("Cooldown"))
+    {
+        m_cooldownDef.emplace(cooldownElem);
+	}
+    if (XmlElement const* targetingElem = elem.FirstChildElement("Targeting"))
+    {
+        m_targetingDef.emplace(targetingElem);
+    }
+    if (XmlElement const* critElem = elem.FirstChildElement("Crit"))
+    {
+        m_critDef.emplace(critElem);
+	}
+    if (XmlElement const* onHitElem = elem.FirstChildElement("OnHit"))
+    {
+        m_onHitDef.emplace(onHitElem);
+	}
 }
 
 
@@ -166,4 +131,143 @@ Ability* ProjectileHitAbilityDef::MakeAbilityInstance() const
 {
 	ProjectileHitAbility* ability = new ProjectileHitAbility(*this);
     return ability;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityCooldownComponentDef::AbilityCooldownComponentDef(void const* xmlElement)
+{
+	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_cooldownSeconds = XmlUtils::ParseXmlAttribute(elem, "cooldown", m_cooldownSeconds);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityTargetingComponentDef::AbilityTargetingComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_minRange = XmlUtils::ParseXmlAttribute(elem, "minRange", m_minRange);
+	m_maxRange = XmlUtils::ParseXmlAttribute(elem, "maxRange", m_maxRange);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityCritComponentDef::AbilityCritComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_critChance = XmlUtils::ParseXmlAttribute(elem, "critChance", m_critChance);
+	m_critMulti = XmlUtils::ParseXmlAttribute(elem, "critMulti", m_critMulti);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityDamageComponentDef::AbilityDamageComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	float damage = XmlUtils::ParseXmlAttribute(elem, "damage", 0.f);
+
+    if (damage == 0.f)
+    {
+        m_minDamage = XmlUtils::ParseXmlAttribute(elem, "minDamage", m_minDamage);
+        m_maxDamage = XmlUtils::ParseXmlAttribute(elem, "maxDamage", m_maxDamage);
+    }
+    else
+    {
+        m_minDamage = damage;
+		m_maxDamage = damage;
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityBurnComponentDef::AbilityBurnComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_burn = XmlUtils::ParseXmlAttribute(elem, "burn", m_burn);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityPoisonComponentDef::AbilityPoisonComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_poison = XmlUtils::ParseXmlAttribute(elem, "poison", m_poison);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityAoeHitComponentDef::AbilityAoeHitComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
+    if (XmlElement const* damageElem = elem.FirstChildElement("Damage"))
+    {
+        m_damageOnHit.emplace(damageElem);
+    }
+    if (XmlElement const* poisonElem = elem.FirstChildElement("Poison"))
+    {
+        m_poisonOnHit.emplace(poisonElem);
+    }
+    if (XmlElement const* burnElem = elem.FirstChildElement("Burn"))
+    {
+        m_burnOnHit.emplace(burnElem);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityAoeEffectComponentDef::AbilityAoeEffectComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
+    m_durationSeconds = XmlUtils::ParseXmlAttribute(elem, "duration", m_durationSeconds);
+
+    if (XmlElement const* damageElem = elem.FirstChildElement("Damage"))
+    {
+        m_damagePerSecond.emplace(damageElem);
+    }
+    if (XmlElement const* poisonElem = elem.FirstChildElement("Poison"))
+    {
+        m_poisonPerSecond.emplace(poisonElem);
+    }
+    if (XmlElement const* burnElem = elem.FirstChildElement("Burn"))
+    {
+        m_burnPerSecond.emplace(burnElem);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityOnHitComponentDef::AbilityOnHitComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    if (XmlElement const* damageElem = elem.FirstChildElement("Damage"))
+    {
+        m_damageOnHit.emplace(damageElem);
+	}
+    if (XmlElement const* poisonElem = elem.FirstChildElement("Poison"))
+    {
+        m_poisonOnHit.emplace(poisonElem);
+    }
+    if (XmlElement const* burnElem = elem.FirstChildElement("Burn"))
+    {
+        m_burnOnHit.emplace(burnElem);
+	}
+    if (XmlElement const* aoeHitElem = elem.FirstChildElement("AoEHit"))
+    {
+        m_aoeHitOnHit.emplace(aoeHitElem);
+	}
+    if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoeEffect"))
+    {
+        m_aoeEffectOnHit.emplace(aoeEffectElem);
+    }
 }
