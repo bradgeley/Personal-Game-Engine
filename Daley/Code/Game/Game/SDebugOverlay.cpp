@@ -38,7 +38,6 @@ void SDebugOverlay::Run(SystemContext const&)
 {
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 	SCCamera& worldCamera = g_ecs->GetSingleton<SCCamera>();
-	SCFlowField const& scFlowField = g_ecs->GetSingleton<SCFlowField>();
 
 	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('D'))
 	{
