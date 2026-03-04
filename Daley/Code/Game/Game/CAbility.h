@@ -25,5 +25,5 @@ public:
     
 public:
 
-	std::vector<Ability*> m_abilitys;
+	std::vector<Ability*> m_abilities;
 };

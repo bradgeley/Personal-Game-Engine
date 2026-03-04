@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CHealth.h"
+#include "HitPayload.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
 
 
@@ -31,6 +33,17 @@ void CHealth::TakeDamage(float damage)
 		m_currentHealth = 0.f;
 		SetHealthReachedZero(true);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::TakePayload(HitPayload const& payload)
+{
+	m_currentBurn += payload.m_burn;
+	m_currentPoison += payload.m_poison;
+
+	TakeDamage(payload.m_damage);
 }
 
 
@@ -154,4 +167,15 @@ void CHealth::SetIsTargetable(bool isTargetable)
 	{
 		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::IsTargetable);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::AppendDebugString(std::string& out_string) const
+{
+	out_string += StringUtils::StringF("Health: %.1f/%.1f\n", m_currentHealth, m_maxHealth);
+	out_string += StringUtils::StringF("Health Regen: %.1f\n", m_healthRegen);
+	out_string += StringUtils::StringF("Current Burn: %.1f\n", m_currentBurn);
+	out_string += StringUtils::StringF("Current Poison: %.1f\n", m_currentPoison);
 }

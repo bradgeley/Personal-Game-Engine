@@ -126,7 +126,7 @@ Vec2 AABB2::GetCenterRight() const
 //----------------------------------------------------------------------------------------------------------------------
 Vec2 AABB2::GetTopCenter() const
 {
-	return Vec2((maxs.x + mins.x * 0.5f), maxs.y);
+	return Vec2((maxs.x + mins.x) * 0.5f, maxs.y);
 }
 
 

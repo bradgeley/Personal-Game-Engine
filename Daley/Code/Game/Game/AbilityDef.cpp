@@ -25,7 +25,7 @@ void AbilityDef::LoadFromXML()
         return;
     }
 
-    // Projectile abilitys
+    // Projectile abilities
     XmlElement* abilityDefElem = root->FirstChildElement("ProjectileHitAbilityDef");
     while (abilityDefElem)
     {

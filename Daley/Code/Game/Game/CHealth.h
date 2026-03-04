@@ -2,6 +2,11 @@
 #pragma once
 #include "Engine/Core/TagQuery.h"
 #include <cstdint>
+#include <string>
+
+
+
+struct HitPayload;
 
 
 
@@ -31,6 +36,7 @@ public:
     CHealth(void const* xmlElement);
 
     void TakeDamage(float damage);
+    void TakePayload(HitPayload const& payload);
 
     bool MatchesTagQuery(TagQuery query) const;
     bool GetHealthReachedZero() const;
@@ -45,10 +51,16 @@ public:
 	void SetRegenSuppressed(bool regenSuppressed); // maybe replace with a int counter for multiple sources of suppress regen
 	void SetIsTargetable(bool isTargetable);
 
+	void AppendDebugString(std::string& out_string) const;
+
 public:
     
 	float m_maxHealth       = 100.f;
-	float m_currentHealth   = 100.f;
     float m_healthRegen     = 0.f;
+
+	float m_currentHealth   = 100.f;
+    float m_currentBurn     = 0.f;
+    float m_currentPoison   = 0.f;
+
     uint8_t m_healthFlags   = false;
 };

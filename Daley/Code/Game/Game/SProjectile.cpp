@@ -49,101 +49,70 @@ void SProjectile::Run(SystemContext const& context)
 		Vec2 toTarget = proj.m_targetPos.value() - transform.m_pos;
 		float moveTimeThisFrame = context.m_deltaSeconds + proj.m_accumulatedTime;
 		proj.m_accumulatedTime = 0.f;
-		float moveDistThisFrame = proj.m_projSpeedUnitsPerSec * moveTimeThisFrame;
+		float moveDistThisFrame = proj.m_projSpeed * moveTimeThisFrame;
 		float distSquaredToTarget = toTarget.GetLengthSquared();
 		if (distSquaredToTarget <= moveDistThisFrame * moveDistThisFrame)
 		{
 			// Projectile hit target
 			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 
+			proj.RollDamageAndEffects();
+
 			if (proj.m_onHitComp.has_value())
 			{
-				float damage = 0.f;
-				if (proj.m_onHitComp->m_damageOnHit.has_value())
-				{
-					damage = g_rng->GetRandomFloatInRange(proj.m_onHitComp->m_damageOnHit->m_minDamage, proj.m_onHitComp->m_damageOnHit->m_maxDamage);
-				}
-
-				float burn = 0.f;
-				if (proj.m_onHitComp->m_burnOnHit.has_value())
-				{
-					burn = proj.m_onHitComp->m_burnOnHit->m_burn;
-				}
-
-				float poison = 0.f;
-				if (proj.m_onHitComp->m_poisonOnHit.has_value())
-				{
-					poison = proj.m_onHitComp->m_poisonOnHit->m_poison;
-				}
-
-				if (damage > 0.f)
+				HitPayload mainTargetPayload = proj.GetMainTargetPayload();
+				if (mainTargetPayload.HasValue())
 				{
 					CHealth* targetHealth = healthStorage.Get(proj.m_targetID.GetIndex());
 					if (targetHealth)
 					{
-						targetHealth->TakeDamage(damage);
+						targetHealth->TakePayload(mainTargetPayload);
 					}
 				}
 
 				if (proj.m_onHitComp->m_aoeHitOnHit.has_value())
 				{
+					// Projectile is doing aoe damage around target
 					float const& splashRadius = proj.m_onHitComp->m_aoeHitOnHit->m_radius;
 					float const& splashRadiusSquared = splashRadius * splashRadius;
 
-					float aoeDamage = 0.f;
-					if (proj.m_onHitComp->m_aoeHitOnHit->m_damageOnHit.has_value())
+					HitPayload aoeTargetPayload = proj.GetAoeTargetPayload();
+					if (aoeTargetPayload.HasValue())
 					{
-						aoeDamage = g_rng->GetRandomFloatInRange(proj.m_onHitComp->m_aoeHitOnHit->m_damageOnHit->m_minDamage, proj.m_onHitComp->m_aoeHitOnHit->m_damageOnHit->m_maxDamage);
-					}
-
-					float aoeBurn = 0.f;
-					if (proj.m_onHitComp->m_aoeHitOnHit->m_burnOnHit.has_value())
-					{
-						aoeBurn = proj.m_onHitComp->m_aoeHitOnHit->m_burnOnHit->m_burn;
-					}
-
-					float poison = 0.f;
-					if (proj.m_onHitComp->m_aoeHitOnHit->m_poisonOnHit.has_value())
-					{
-						poison = proj.m_onHitComp->m_aoeHitOnHit->m_poisonOnHit->m_poison;
-					}
-
-					world.ForEachPathTileOverlappingCircle(transform.m_pos, splashRadius, [&](IntVec2 const& worldCoords)
-					{
-						int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
-						for (auto& entityID : scCollision.m_tileBuckets[tileIndex])
+						world.ForEachPathTileOverlappingCircle(transform.m_pos, splashRadius, [&](IntVec2 const& worldCoords)
 						{
-							if (entityID == proj.m_targetID)
+							int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
+							for (EntityID const& entityID : scCollision.m_tileBuckets[tileIndex])
 							{
-								continue; // already damaged by direct hit
-							}
-							CCollision* collision = collisionStorage.Get(entityID.GetIndex());
-							if (collision)
-							{
-								Vec2 entityPos = transStorage.Get(entityID.GetIndex())->m_pos;
-								if (entityPos.GetDistanceSquaredTo(proj.m_targetPos.value()) > splashRadiusSquared)
+								if (entityID == proj.m_targetID)
 								{
-									continue; // outside of splash radius
+									continue; // already damaged by direct hit
 								}
-							}
+								CCollision* collision = collisionStorage.Get(entityID.GetIndex());
+								if (collision)
+								{
+									Vec2 entityPos = transStorage.Get(entityID.GetIndex())->m_pos;
+									if (entityPos.GetDistanceSquaredTo(proj.m_targetPos.value()) > splashRadiusSquared)
+									{
+										continue; // outside of splash radius
+									}
+								}
 
-							if (aoeDamage > 0.f)
-							{
 								CHealth* targetHealth = healthStorage.Get(entityID.GetIndex());
 								if (targetHealth)
 								{
-									targetHealth->TakeDamage(aoeDamage);
+									targetHealth->TakePayload(aoeTargetPayload);
 								}
 							}
-						}
-						return true;
-					});
+							return true;
+						});
+					}
 				}
 			}
 
 			continue;
 		}
-		Vec2 moveThisFrame = toTarget.GetNormalized() * proj.m_projSpeedUnitsPerSec * moveTimeThisFrame;
+		Vec2 moveThisFrame = toTarget.GetNormalized() * proj.m_projSpeed * moveTimeThisFrame;
 		transform.m_pos += moveThisFrame;
 		transform.m_orientation = toTarget.GetAngleDegrees();
 	}

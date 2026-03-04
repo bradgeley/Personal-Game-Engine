@@ -241,6 +241,22 @@ bool StringUtils::DoesStringContain(std::string const& string, char c)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int StringUtils::CountStringsByDelimiter(std::string const& string, char delimeter)
+{
+    int count = 1;
+    for (char const& c : string)
+    {
+        if (c == delimeter)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool StringUtils::StringToBool(std::string const& boolAsString)
 {
     std::string lower = GetToLower(boolAsString);

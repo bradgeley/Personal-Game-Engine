@@ -9,11 +9,11 @@
 //----------------------------------------------------------------------------------------------------------------------
 CAbility::~CAbility()
 {
-	for (Ability* ability : m_abilitys)
+	for (Ability* ability : m_abilities)
 	{
 		delete ability;
 	}
-	m_abilitys.clear();
+	m_abilities.clear();
 }
 
 
@@ -28,7 +28,7 @@ CAbility::CAbility(void const* xmlElement)
 	if (abilityDef)
 	{
 		Ability* ability = abilityDef->MakeAbilityInstance();
-		m_abilitys.push_back(ability);
+		m_abilities.push_back(ability);
 	}
 	else 
 	{
@@ -41,20 +41,20 @@ CAbility::CAbility(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 CAbility::CAbility(CAbility const& copyFrom)
 {
-	m_abilitys.reserve(copyFrom.m_abilitys.size());
+	m_abilities.reserve(copyFrom.m_abilities.size());
 
-	for (auto& ability : copyFrom.m_abilitys)
+	for (auto& ability : copyFrom.m_abilities)
 	{
-		m_abilitys.push_back(ability->DeepCopy());
+		m_abilities.push_back(ability->DeepCopy());
 	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-CAbility::CAbility(CAbility&& moveFrom) noexcept : m_abilitys(std::move(moveFrom.m_abilitys))
+CAbility::CAbility(CAbility&& moveFrom) noexcept : m_abilities(std::move(moveFrom.m_abilities))
 {
-	moveFrom.m_abilitys.clear();
+	moveFrom.m_abilities.clear();
 }
 
 
@@ -67,17 +67,17 @@ CAbility& CAbility::operator=(CAbility const& copyFrom)
 		return *this;
 	}
 
-	for (Ability* ability : m_abilitys)
+	for (Ability* ability : m_abilities)
 	{
 		delete ability;
 	}
-	m_abilitys.clear();
+	m_abilities.clear();
 
-	m_abilitys.reserve(copyFrom.m_abilitys.size());
+	m_abilities.reserve(copyFrom.m_abilities.size());
 
-	for (auto& ability : copyFrom.m_abilitys)
+	for (auto& ability : copyFrom.m_abilities)
 	{
-		m_abilitys.push_back(ability->DeepCopy());
+		m_abilities.push_back(ability->DeepCopy());
 	}
 
 	return *this;
@@ -93,14 +93,14 @@ CAbility& CAbility::operator=(CAbility&& moveFrom) noexcept
 		return *this;
 	}
 
-	for (Ability* ability : m_abilitys)
+	for (Ability* ability : m_abilities)
 	{
 		delete ability;
 	}
-	m_abilitys.clear();
+	m_abilities.clear();
 
-	m_abilitys = std::move(moveFrom.m_abilitys);
-	moveFrom.m_abilitys.clear();
+	m_abilities = std::move(moveFrom.m_abilities);
+	moveFrom.m_abilities.clear();
 
 	return *this;
 }

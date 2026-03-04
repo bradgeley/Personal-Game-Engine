@@ -227,47 +227,62 @@ void SFlowField::GenerateGradient(FlowField& flowField)
         {
             continue;
         }
+
         flowField.m_consideredCells.Set(currentTileIndex);
 
         float currentTileDistance = flowField.m_distanceField.Get(currentTileCoords);
 
-        Vec2 gradient = Vec2::ZeroVector;
-        for (IntVec2 const& neighborOffset : neighborOffsets)
+        // Boundary aware differentiation
+		IntVec2 northTile = currentTileCoords + IntVec2(0, 1);
+		IntVec2 southTile = currentTileCoords + IntVec2(0, -1);
+		IntVec2 eastTile = currentTileCoords + IntVec2(1, 0);
+		IntVec2 westTile = currentTileCoords + IntVec2(-1, 0);
+
+		bool isNorthValid = flowField.m_gradient.IsValidCoords(northTile) && world.IsTileOnPath(northTile);
+		bool isSouthValid = flowField.m_gradient.IsValidCoords(southTile) && world.IsTileOnPath(southTile);
+		bool isEastValid = flowField.m_gradient.IsValidCoords(eastTile) && world.IsTileOnPath(eastTile);
+		bool isWestValid = flowField.m_gradient.IsValidCoords(westTile) && world.IsTileOnPath(westTile);
+
+		float northDistance = isNorthValid ? flowField.m_distanceField.Get(northTile) : currentTileDistance;
+		float southDistance = isSouthValid ? flowField.m_distanceField.Get(southTile) : currentTileDistance;
+		float eastDistance = isEastValid ? flowField.m_distanceField.Get(eastTile) : currentTileDistance;
+		float westDistance = isWestValid ? flowField.m_distanceField.Get(westTile) : currentTileDistance;
+
+        float dY = northDistance - southDistance;
+		float dX = eastDistance - westDistance;
+
+        Vec2& gradient = flowField.m_gradient.GetRef(currentTileCoords);
+        if (MathUtils::IsNearlyZero(dX) && MathUtils::IsNearlyZero(dY))
         {
-            IntVec2 neighborTileCoords = currentTileCoords + neighborOffset;
-            if (!flowField.m_gradient.IsValidCoords(neighborTileCoords))
-            {
-                continue;
-			}
+            gradient = Vec2::ZeroVector;
+        }
+        else
+        {
+            gradient = -1.f * Vec2(dX, dY).GetNormalized();
+		}
 
-            float currentNeighborDistance = (float) flowField.m_distanceField.Get(neighborTileCoords);
-            float dDist = currentTileDistance - currentNeighborDistance;
-
-            if (!world.IsTileOnPath(neighborTileCoords))
-            {
-                // Always treat solid walls as being 0.5 distance away in that direction, so that flow always generates away from walls without skewing too much
-                // If we leave this as the actual distance, which is very large (999), then gradient will point away from walls too strongly
-                dDist = -0.33333333333333333333f;
-            }
-
-            if (neighborOffset.x != 0.f)
-            {
-                gradient.x += dDist * MathUtils::Sign(neighborOffset.x);
-            }
-            else
-            {
-                gradient.y += dDist * MathUtils::Sign(neighborOffset.y);
-            }
-
-            int neighborIndex = flowField.m_gradient.GetIndexForCoords(neighborTileCoords);
-            if (flowField.m_consideredCells.Get(neighborIndex) == false)
-            {
-                flowField.m_openList.push({ neighborTileCoords, currentNeighborDistance });
-            }
+        int northIndex = flowField.m_gradient.GetIndexForCoords(northTile);
+        if (isNorthValid && !flowField.m_consideredCells.Get(northIndex))
+        {
+            flowField.m_openList.push({ northTile, northDistance });
         }
 
-        gradient.Normalize();
+		int southIndex = flowField.m_gradient.GetIndexForCoords(southTile);
+        if (isSouthValid && !flowField.m_consideredCells.Get(southIndex))
+        {
+            flowField.m_openList.push({ southTile, southDistance });
+		}
 
-        flowField.m_gradient.Set(currentTileCoords, gradient);
+		int eastIndex = flowField.m_gradient.GetIndexForCoords(eastTile);
+        if (isEastValid && !flowField.m_consideredCells.Get(eastIndex))
+        {
+            flowField.m_openList.push({ eastTile, eastDistance });
+        }
+
+		int westIndex = flowField.m_gradient.GetIndexForCoords(westTile);
+        if (isWestValid && !flowField.m_consideredCells.Get(westIndex))
+        {
+            flowField.m_openList.push({ westTile, westDistance });
+		}
     }
 }

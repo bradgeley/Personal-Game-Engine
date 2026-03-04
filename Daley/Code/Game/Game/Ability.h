@@ -40,6 +40,8 @@ public:
 	AbilityCooldownComponent() = default;
 	AbilityCooldownComponent(AbilityCooldownComponentDef const& def);
 
+	void AppendDebugString(std::string& out_string) const;
+
 public:
 
 	float m_cooldownSeconds = 0.f;
@@ -57,6 +59,8 @@ public:
 	AbilityTargetingComponent(AbilityTargetingComponentDef const& def);
 
 	bool HasRangeChanged() const;
+
+	void AppendDebugString(std::string& out_string) const;
 
 public:
 
@@ -79,10 +83,14 @@ public:
 	AbilityCritComponent() = default;
 	AbilityCritComponent(AbilityCritComponentDef const& def);
 
+	void AppendDebugString(std::string& out_string) const;
+
 public:
 
 	float m_critChance = 0.f;
-	float m_critMulti = 0.f;
+	float m_critMulti = 0.f; // Additive with the base 2x crit multiplier
+
+	bool m_didCrit = false;
 };
 
 
@@ -95,10 +103,14 @@ public:
 	AbilityDamageComponent() = default;
 	AbilityDamageComponent(AbilityDamageComponentDef const& def);
 
+	void AppendDebugString(std::string& out_string) const;
+
 public:
 
 	float m_minDamage = 0.f;
 	float m_maxDamage = 0.f;
+
+	float m_damageDone = 0.f;
 };
 
 
@@ -111,9 +123,13 @@ public:
 	AbilityBurnComponent() = default;
 	AbilityBurnComponent(AbilityBurnComponentDef const& def);
 
+	void AppendDebugString(std::string& out_string) const;
+
 public:
 
 	float m_burn = 0.f;
+
+	float m_burnDone = 0.f;
 };
 
 
@@ -126,9 +142,13 @@ public:
 	AbilityPoisonComponent() = default;
 	AbilityPoisonComponent(AbilityPoisonComponentDef const& def);
 
+	void AppendDebugString(std::string& out_string) const;
+
 public:
 
 	float m_poison = 0.f;
+
+	float m_poisonDone = 0.f;
 };
 
 
@@ -140,6 +160,8 @@ public:
 
 	AbilityAoeHitComponent() = default;
 	AbilityAoeHitComponent(AbilityAoeHitComponentDef const& def);
+
+	void AppendDebugString(std::string& out_string) const;
 
 public:
 
@@ -159,6 +181,8 @@ public:
 	AbilityAoeEffectComponent() = default;
 	AbilityAoeEffectComponent(AbilityAoeEffectComponentDef const& def);
 
+	void AppendDebugString(std::string& out_string) const;
+
 public:
 
 	float m_radius = 0.f;
@@ -177,6 +201,8 @@ public:
 
 	AbilityOnHitComponent() = default;
 	AbilityOnHitComponent(AbilityOnHitComponentDef const& def);
+
+	void AppendDebugString(std::string& out_string) const;
 
 public:
 
@@ -200,7 +226,7 @@ public:
 	virtual void Update(float deltaSeconds, Vec2 const& location) = 0;
 	virtual Ability* DeepCopy() const = 0;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
-	virtual void GetDebugString(std::string& out_string) const = 0;
+	virtual void AppendDebugString(std::string& out_string) const = 0;
 
 public:
 
@@ -220,12 +246,12 @@ public:
 	virtual void Update(float deltaSeconds, Vec2 const& location) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
-	virtual void GetDebugString(std::string& out_string) const override;
+	virtual void AppendDebugString(std::string& out_string) const override;
 
 public:
 
 	Name m_projectileDefName = Name::Invalid;
-	float m_projSpeedUnitsPerSec = 1.f;
+	float m_projSpeed = 1.f;
 
 	std::optional<AbilityCooldownComponent>		m_cooldownComp;
 	std::optional<AbilityTargetingComponent>	m_targetingComp;

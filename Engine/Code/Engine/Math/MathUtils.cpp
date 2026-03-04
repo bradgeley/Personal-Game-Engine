@@ -187,6 +187,23 @@ void MathUtils::RotateVector2D(Vec2& vec, float radians)
 }
 
 
+//----------------------------------------------------------------------------------------------------------------------
+void MathUtils::Interpolate2D(Vec2 const& start, Vec2 const& end, float t, Vec2& out_result)
+{
+    out_result.x = Interpolate(start.x, end.x, t);
+    out_result.y = Interpolate(start.y, end.y, t);
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+void MathUtils::BilinearInterpolate2D(Vec2 const& botLeft, Vec2 const& botRight, Vec2 const& topLeft, Vec2 const& topRight, float tX, float tY, Vec2& out_result)
+{
+    Vec2 bottom;
+    Interpolate2D(botLeft, botRight, tX, bottom);
+    Vec2 top;
+    Interpolate2D(topLeft, topRight, tX, top);
+    Interpolate2D(bottom, top, tY, out_result);
+}
+
 
 //----------------------------------------------------------------------------------------------------------------------
 float MathUtils::GetLength3D(Vec3 const& vec)
@@ -288,6 +305,16 @@ float MathUtils::SmoothStart2(float valZeroToOne)
 float MathUtils::SmoothStart3(float valZeroToOne)
 {
     return valZeroToOne * valZeroToOne * valZeroToOne;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float MathUtils::BilinearInterpolate(float botLeft, float botRight, float topLeft, float topRight, float tX, float tY)
+{
+    float bottom = Interpolate(botLeft, botRight, tX);
+    float top = Interpolate(topLeft, topRight, tX);
+	return Interpolate(bottom, top, tY);
 }
 
 

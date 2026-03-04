@@ -63,6 +63,8 @@ namespace MathUtils
 	float GetDistance2D(Vec2 const& vecA, Vec2 const& vecB);
 	float GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB);
 	void RotateVector2D(Vec2& vec, float radians);
+	void Interpolate2D(Vec2 const& start, Vec2 const& end, float t, Vec2& out_result);
+	void BilinearInterpolate2D(Vec2 const& botLeft, Vec2 const& botRight, Vec2 const& topLeft, Vec2 const& topRight, float tX, float tY, Vec2& out_result);
 
 
 	//----------------------------------------------------------------------------------------------------------------------
@@ -85,6 +87,7 @@ namespace MathUtils
 	float SmoothStep3(float valZeroToOne);
 	float SmoothStart2(float valZeroToOne);
 	float SmoothStart3(float valZeroToOne);
+	float BilinearInterpolate(float botLeft, float botRight, float topLeft, float topRight, float tX, float tY);
 
 
 	//----------------------------------------------------------------------------------------------------------------------

@@ -76,6 +76,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="0.66" rotateSprite="true" tint="243,229,171"></Render>
+    <Tags projectile=""></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -94,6 +95,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="112,66,20"></Render>
+    <Tags projectile=""></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -112,6 +114,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="250,80,83"></Render>
+    <Tags projectile=""></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -130,6 +133,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="173,235,179"></Render>
+    <Tags projectile=""></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

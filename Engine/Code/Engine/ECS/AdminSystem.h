@@ -148,7 +148,7 @@ public:
 public:
 
 	template <typename CType>
-	CType* GetComponent(EntityID entityID = EntityID::Singleton) const;
+	CType* GetComponent(EntityID entityID) const;
 
 	template <typename CType>
 	inline CType* GetComponent(GroupIter const& it) const;
@@ -414,7 +414,7 @@ CType* AdminSystem::AddComponent(EntityID entityID, CType const& copy)
 // Use GetXXXStorage + operator[GroupIter] for maximum performance
 //
 template <typename CType>
-CType* AdminSystem::GetComponent(EntityID entityID /*= EntityID::Singleton*/) const
+CType* AdminSystem::GetComponent(EntityID entityID) const
 {
 	if (!IsValid(entityID))
 	{

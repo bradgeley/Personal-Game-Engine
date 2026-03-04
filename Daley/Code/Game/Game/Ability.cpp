@@ -22,7 +22,7 @@ ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def)
 {
     m_abilityDef = &def;
     m_projectileDefName = def.m_projectileDefName;
-    m_projSpeedUnitsPerSec = def.m_projSpeed;
+    m_projSpeed = def.m_projSpeed;
 
     if (def.m_cooldownDef.has_value())
     {
@@ -50,15 +50,15 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
 	ASSERT_OR_DIE(m_abilityDef, "ProjectileHitAbility::Update - m_abilityDef is null.");
 	ASSERT_OR_DIE(m_cooldownComp.has_value(), "ProjectileHitAbility::Update - m_cooldownComp is null.");
 	ASSERT_OR_DIE(m_targetingComp.has_value(), "ProjectileHitAbility::Update - m_targetingComp is null.");
-	ASSERT_OR_DIE(m_critComp.has_value(), "ProjectileHitAbility::Update - m_critComp is null.");
 	ASSERT_OR_DIE(m_onHitComp.has_value(), "ProjectileHitAbility::Update - m_onHitComp is null.");
 
 	m_cooldownComp->m_accumulatedTime += deltaSeconds;
 
 	constexpr float maxAttacksPerSecond = 1000.f;
+	constexpr float minTimeBetweenAttacks = 1.f / maxAttacksPerSecond;
 
 	float timeBetweenAttacks = m_cooldownComp->m_cooldownSeconds;
-    ASSERT_OR_DIE(timeBetweenAttacks > 0.f, "ProjectileHitAbility::Update - time between attacks is 0 or negative.");
+	timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
 
     // Find targets
     SCCollision const& collision = g_ecs->GetSingleton<SCCollision>();
@@ -153,7 +153,7 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
 			projComp.m_targetID = targetID;
 			projComp.m_targetPos = std::nullopt;
             projComp.m_accumulatedTime += m_cooldownComp->m_accumulatedTime;
-			projComp.m_projSpeedUnitsPerSec = m_projSpeedUnitsPerSec;
+			projComp.m_projSpeed = m_projSpeed;
             projComp.m_critComp = m_critComp;
 			projComp.m_onHitComp = m_onHitComp;
         }
@@ -192,15 +192,28 @@ void ProjectileHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& loca
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::GetDebugString(std::string& out_string) const
+void ProjectileHitAbility::AppendDebugString(std::string& out_string) const
 {
-    out_string += StringUtils::StringF("Ability Type: Projectile Hit\n");
-    out_string += StringUtils::StringF("Projectile Def: %s\n", m_projectileDefName.ToString().c_str());
-    out_string += StringUtils::StringF("Damage: %.1f\n", m_onHitComp->m_damageOnHit->m_minDamage);
-    out_string += StringUtils::StringF("Attack Cooldown: %.1f\n", m_cooldownComp->m_cooldownSeconds);
-    out_string += StringUtils::StringF("Projectile Speed: %.1f\n", m_projSpeedUnitsPerSec);
-    out_string += StringUtils::StringF("Min Range: %.1f\n", m_targetingComp->m_minRange);
-	out_string += StringUtils::StringF("Max Range: %.1f\n", m_targetingComp->m_maxRange);
+	out_string += StringUtils::StringF("Ability: %s\n", m_abilityDef->m_name.ToCStr());
+	out_string += StringUtils::StringF("Proj Def: %s\n", m_projectileDefName.ToCStr());
+	out_string += StringUtils::StringF("Proj Speed: %.1f\n", m_projSpeed);
+
+    if (m_cooldownComp.has_value())
+    {
+        m_cooldownComp->AppendDebugString(out_string);
+	}
+    if (m_targetingComp.has_value())
+    {
+        m_targetingComp->AppendDebugString(out_string);
+    }
+    if (m_critComp.has_value())
+    {
+        m_critComp->AppendDebugString(out_string);
+    }
+    if (m_onHitComp.has_value())
+    {
+        m_onHitComp->AppendDebugString(out_string);
+	}
 }
 
 
@@ -223,9 +236,33 @@ bool AbilityTargetingComponent::HasRangeChanged() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityTargetingComponent::AppendDebugString(std::string& out_string) const
+{
+    if (m_minRange > 0.f)
+    {
+        out_string += StringUtils::StringF("Range: %.1f - %.1f\n", m_minRange, m_maxRange);
+    }
+    else
+    {
+        out_string += StringUtils::StringF("Range: %.1f\n", m_maxRange);
+    }
+	out_string += StringUtils::StringF("Targeting Mode: %s\n", m_targetingMode == AbilityTargetingMode::ClosestToGoal ? "Closest To Goal" : "Unknown");
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityCooldownComponent::AbilityCooldownComponent(AbilityCooldownComponentDef const& def)
 {
 	m_cooldownSeconds = def.m_cooldownSeconds;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityCooldownComponent::AppendDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("Cooldown: %.1f\n", m_cooldownSeconds);
 }
 
 
@@ -240,10 +277,34 @@ AbilityCritComponent::AbilityCritComponent(AbilityCritComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityCritComponent::AppendDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("Crit Chance: %.1f%%\n", m_critChance * 100.f);
+    out_string += StringUtils::StringF("Crit Mult: %.1f\n", 2.f + m_critMulti);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityDamageComponent::AbilityDamageComponent(AbilityDamageComponentDef const& def)
 {
     m_minDamage = def.m_minDamage;
 	m_maxDamage = def.m_maxDamage;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityDamageComponent::AppendDebugString(std::string& out_string) const
+{
+    if (m_minDamage == m_maxDamage)
+    {
+        out_string += StringUtils::StringF("Damage: %.1f\n", m_minDamage);
+    }
+    else
+    {
+        out_string += StringUtils::StringF("Damage: %.1f - %.1f\n", m_minDamage, m_maxDamage);
+    }
 }
 
 
@@ -257,9 +318,25 @@ AbilityBurnComponent::AbilityBurnComponent(AbilityBurnComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityBurnComponent::AppendDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("Burn: %.1f\n", m_burn);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityPoisonComponent::AbilityPoisonComponent(AbilityPoisonComponentDef const& def)
 {
 	m_poison = def.m_poison;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityPoisonComponent::AppendDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("Poison: %.1f\n", m_poison);
 }
 
 
@@ -277,12 +354,60 @@ AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityOnHitComponent::AppendDebugString(std::string& out_string) const
+{
+    if (m_damageOnHit.has_value())
+    {
+		m_damageOnHit->AppendDebugString(out_string);
+    }
+    if (m_poisonOnHit.has_value())
+    {
+		m_poisonOnHit->AppendDebugString(out_string);
+    }
+    if (m_burnOnHit.has_value())
+    {
+		m_burnOnHit->AppendDebugString(out_string);
+	}
+    if (m_aoeHitOnHit.has_value())
+    {
+        m_aoeHitOnHit->AppendDebugString(out_string);
+    }
+    if (m_aoeEffectOnHit.has_value())
+    {
+        m_aoeEffectOnHit->AppendDebugString(out_string);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityAoeHitComponent::AbilityAoeHitComponent(AbilityAoeHitComponentDef const& def)
 {
     m_radius = def.m_radius;
     m_damageOnHit = def.m_damageOnHit;
     m_poisonOnHit = def.m_poisonOnHit;
 	m_burnOnHit = def.m_burnOnHit;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityAoeHitComponent::AppendDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("AOE Hit Radius: %.1f\n", m_radius);
+	out_string += "AoE Hit Components:\n";
+    if (m_damageOnHit.has_value())
+    {
+        m_damageOnHit->AppendDebugString(out_string);
+    }
+    if (m_poisonOnHit.has_value())
+    {
+        m_poisonOnHit->AppendDebugString(out_string);
+    }
+    if (m_burnOnHit.has_value())
+    {
+        m_burnOnHit->AppendDebugString(out_string);
+    }
 }
 
 
@@ -295,4 +420,26 @@ AbilityAoeEffectComponent::AbilityAoeEffectComponent(AbilityAoeEffectComponentDe
     m_damagePerSecond = def.m_damagePerSecond;
     m_poisonPerSecond = def.m_poisonPerSecond;
 	m_burnPerSecond = def.m_burnPerSecond;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityAoeEffectComponent::AppendDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("AOE Effect Radius: %.1f\n", m_radius);
+    out_string += StringUtils::StringF("AOE Effect Duration: %.1f\n", m_durationSeconds);
+    out_string += "AoE Effect Components:\n";
+    if (m_damagePerSecond.has_value())
+    {
+        m_damagePerSecond->AppendDebugString(out_string);
+    }
+    if (m_poisonPerSecond.has_value())
+    {
+        m_poisonPerSecond->AppendDebugString(out_string);
+    }
+    if (m_burnPerSecond.has_value())
+    {
+        m_burnPerSecond->AppendDebugString(out_string);
+    }
 }

@@ -36,7 +36,7 @@ void SDebugRender::Startup()
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
-    DevConsoleUtils::AddDevConsoleCommand("DebugRenderAbilitys", &SDebugRender::DebugRenderAbilitys);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderAbilities", &SDebugRender::DebugRenderAbilities);
 }
 
 
@@ -56,7 +56,7 @@ void SDebugRender::Shutdown()
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
-    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderAbilitys", &SDebugRender::DebugRenderAbilitys);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderAbilities", &SDebugRender::DebugRenderAbilities);
 }
 
 
@@ -194,7 +194,7 @@ void SDebugRender::Run(SystemContext const& context)
         }
     }
 
-	// Abilitys
+	// Abilities
     if (scDebug.m_debugRenderAbilities)
     {
         for (auto it = g_ecs->Iterate<CAbility, CTransform>(context); it.IsValid(); ++it)
@@ -204,7 +204,7 @@ void SDebugRender::Run(SystemContext const& context)
             Vec2 abilityPos = transform.m_pos;
             VertexUtils::AddVertsForDisc2D(untexturedVerts, abilityPos, 0.25f, 8, Rgba8::Red);
 
-			for (Ability const* ability : abilityComponent.m_abilitys)
+			for (Ability const* ability : abilityComponent.m_abilities)
             {
 				ability->AddDebugVerts(untexturedVerts, transform.m_pos);
             }
@@ -329,7 +329,7 @@ bool SDebugRender::DebugRenderCollision(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugRender::DebugRenderAbilitys(NamedProperties&)
+bool SDebugRender::DebugRenderAbilities(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderAbilities = !scDebug.m_debugRenderAbilities;

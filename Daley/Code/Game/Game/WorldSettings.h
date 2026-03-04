@@ -37,7 +37,7 @@ namespace StaticWorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Static Flow Settings
     //
-    constexpr float   s_maximumFlowDistance = 999.f;    // Maximum value a tile can contain in the flow distance field
+    constexpr float   s_maximumFlowDistance = 9999.f;    // Maximum value a tile can contain in the flow distance field
 
     //----------------------------------------------------------------------------------------------------------------------
     // Static Debug Settings

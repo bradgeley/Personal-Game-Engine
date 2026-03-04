@@ -367,6 +367,7 @@
     <ClInclude Include="Game\CLifetime.h" />
     <ClInclude Include="Game\CProjectile.h" />
     <ClInclude Include="Game\CTags.h" />
+    <ClInclude Include="Game\HitPayload.h" />
     <ClInclude Include="Game\SAbility.h" />
     <ClInclude Include="Game\SCCamera.h" />
     <ClInclude Include="Game\CCollision.h" />

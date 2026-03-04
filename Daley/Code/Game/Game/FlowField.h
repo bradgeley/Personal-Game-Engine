@@ -27,6 +27,7 @@ public:
 
 	Vec2 GetFlowAtTileCoords(IntVec2 const& tileCoords) const;
 	float GetDistanceAtTileCoords(IntVec2 const& tileCoords) const;
+	float GetInterpDistanceAtWorldPos(Vec2 const& worldPos) const;
 
 public:
 

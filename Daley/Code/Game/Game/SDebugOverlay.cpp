@@ -6,8 +6,10 @@
 #include "CTags.h"
 #include "CTransform.h"
 #include "CAbility.h"
+#include "CProjectile.h"
 #include "SCCamera.h"
 #include "SCDebug.h"
+#include "SCFlowField.h"
 #include "SCWaves.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Core/StringUtils.h"
@@ -36,6 +38,7 @@ void SDebugOverlay::Run(SystemContext const&)
 {
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 	SCCamera& worldCamera = g_ecs->GetSingleton<SCCamera>();
+	SCFlowField const& scFlowField = g_ecs->GetSingleton<SCFlowField>();
 
 	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('D'))
 	{
@@ -80,44 +83,65 @@ void SDebugOverlay::Run(SystemContext const&)
 	// Show tower ability information for hovered tower
 	auto& tagsStorage = g_ecs->GetArrayStorage<CTags>();
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
 	auto& debugStorage = g_ecs->GetArrayStorage<CEntityDebug>();
 	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
 	for (auto it = g_ecs->IterateAll<CTags, CTransform, CEntityDebug>(); it.IsValid(); ++it)
 	{
 		CTags const& tags = *tagsStorage.Get(it);
-		if (tags.HasTag("Tower") || tags.HasTag("enemy"))
+		bool isTower = tags.HasTag("Tower");
+		bool isEnemy = tags.HasTag("enemy");
+		bool isProj = tags.HasTag("projectile");
+		bool isDebugabble = isTower || isEnemy || isProj;
+		if (isDebugabble)
 		{
 			CTransform const& transform = *transStorage.Get(it);
-			CCollision const* collision = collStorage.Get(it);
+			CCollision const* collision = g_ecs->GetComponent<CCollision>(it);
 			float radius = collision ? collision->m_radius : 2.f;
 			if (scDebug.m_debugMouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
 			{
 				CEntityDebug const& debug = *debugStorage.Get(it);
 				Vec2 screenPos = worldCamera.m_camera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();
 				Vec2 cardMins = screenPos;
+
+				std::string debugString;
+
+				if (isTower)
+				{
+					CAbility const* abilityComp = abilityStorage.Get(it);
+					if (abilityComp)
+					{
+						for (auto& ability : abilityComp->m_abilities)
+						{
+							ability->AppendDebugString(debugString);
+						}
+					}
+				}
+
+				if (isEnemy)
+				{
+					CHealth const* health = g_ecs->GetComponent<CHealth>(it);
+					if (health)
+					{
+						health->AppendDebugString(debugString);
+					}
+				}
+
+				if (isProj)
+				{
+					CProjectile const* proj = g_ecs->GetComponent<CProjectile>(it);
+					if (proj)
+					{
+						proj->AppendDebugString(debugString);
+					}
+				}
+
 				Vec2 cardDims = Vec2(300.f, 300.f);
+				int numLines = StringUtils::CountStringsByDelimiter(debugString, '\n');
+				cardDims.y = 60.f + 30.f * (float) numLines;
 				AABB2 informationCardBounds = AABB2(cardMins, cardMins + cardDims);
 				VertexUtils::AddVertsForAABB2(untexVerts, informationCardBounds, Rgba8::DarkGray);
 				VertexUtils::AddVertsForWireBox2D(untexVerts, informationCardBounds, 5.f, Rgba8::Black);
 				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(5.f, -5.f), Vec2(1.f, -1.f), 33.f, debug.m_defName.ToString(), Rgba8::White);
-
-				std::string debugString;
-
-				CAbility const* abilityComp = abilityStorage.Get(it);
-				if (abilityComp)
-				{
-					for (auto& ability : abilityComp->m_abilitys)
-					{
-						ability->GetDebugString(debugString);
-					}
-				}
-
-				CHealth const* health = g_ecs->GetComponent<CHealth>(it);
-				if (health)
-				{
-					debugString += StringUtils::StringF("Health: %.1f / %.1f", health->m_currentHealth, health->m_maxHealth);
-				}
 
 				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(5.f, -50.f), Vec2(1.f, -1.f), 25.f, debugString, Rgba8::White, 0.33f);
 				break;

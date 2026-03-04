@@ -408,6 +408,9 @@
     <ClInclude Include="Game\CAbility.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Game\HitPayload.h">
+      <Filter>Game\Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">

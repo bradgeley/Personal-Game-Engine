@@ -32,6 +32,7 @@ namespace StringUtils
     bool IsUpper(char c);
     bool IsLower(char c);
     bool DoesStringContain(std::string const& string, char c);
+    int CountStringsByDelimiter(std::string const& string, char delimeter);
 
 
 
