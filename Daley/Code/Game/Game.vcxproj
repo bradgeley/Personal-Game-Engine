@@ -315,6 +315,7 @@
     <ClCompile Include="Game\SAbility.cpp" />
     <ClCompile Include="Game\SAIController.cpp" />
     <ClCompile Include="Game\SAnimation.cpp" />
+    <ClCompile Include="Game\SAttachment.cpp" />
     <ClCompile Include="Game\SBackgroundMusic.cpp" />
     <ClCompile Include="Game\SCamera.cpp" />
     <ClCompile Include="Game\SCCollision.cpp" />
@@ -330,6 +331,7 @@
     <ClCompile Include="Game\SLighting.cpp" />
     <ClCompile Include="Game\SMovementAnimation.cpp" />
     <ClCompile Include="Game\SProjectile.cpp" />
+    <ClCompile Include="Game\SRenderEffects.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
     <ClCompile Include="Game\STime.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
@@ -362,6 +364,7 @@
     <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
+    <ClInclude Include="Game\CAttachment.h" />
     <ClInclude Include="Game\CDeath.h" />
     <ClInclude Include="Game\CEntityDebug.h" />
     <ClInclude Include="Game\CHealth.h" />
@@ -370,6 +373,7 @@
     <ClInclude Include="Game\CTags.h" />
     <ClInclude Include="Game\HitPayload.h" />
     <ClInclude Include="Game\SAbility.h" />
+    <ClInclude Include="Game\SAttachment.h" />
     <ClInclude Include="Game\SCCamera.h" />
     <ClInclude Include="Game\CCollision.h" />
     <ClInclude Include="Game\CMovement.h" />
@@ -405,6 +409,7 @@
     <ClInclude Include="Game\SLighting.h" />
     <ClInclude Include="Game\SMovementAnimation.h" />
     <ClInclude Include="Game\SProjectile.h" />
+    <ClInclude Include="Game\SRenderEffects.h" />
     <ClInclude Include="Game\SRenderUI.h" />
     <ClInclude Include="Game\STime.h" />
     <ClInclude Include="Game\SDebugRender.h" />
@@ -442,6 +447,7 @@
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\DarkAnt.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\FireUnderlay.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\IceCream.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Pig.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />

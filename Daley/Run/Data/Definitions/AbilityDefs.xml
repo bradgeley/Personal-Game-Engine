@@ -34,6 +34,18 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
+  <ProjectileHitAbilityDef name="MintAttack" projectileDef="MintProj" projSpeed="50">
+    <Cooldown cooldown="2"></Cooldown>
+    <Targeting maxRange="12"></Targeting>
+    <OnHit>
+      <AoEHit radius="2">
+        <Damage damage="20"></Damage>
+        <Burn burn="20"></Burn>
+        <Poison poison="20"></Poison>
+      </AoEHit>
+    </OnHit>
+  </ProjectileHitAbilityDef>
+
   <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="StrawberryProj" projSpeed="100">
     <Cooldown cooldown="0.5"></Cooldown>
     <Targeting maxRange="6"></Targeting>

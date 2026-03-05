@@ -84,10 +84,6 @@ void SProjectile::Run(SystemContext const& context)
 							int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
 							for (EntityID const& entityID : scCollision.m_tileBuckets[tileIndex])
 							{
-								if (entityID == proj.m_targetID)
-								{
-									continue; // already damaged by direct hit
-								}
 								CCollision* collision = collisionStorage.Get(entityID.GetIndex());
 								if (collision)
 								{

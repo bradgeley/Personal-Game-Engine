@@ -53,17 +53,35 @@ void SRenderUI::Run(SystemContext const& context)
 			continue;
 		}
 
-		float healthPercentage = health.m_currentHealth / health.m_maxHealth;
-
-		Vec2 headLocation = render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius);
+		Vec2 healthBarLocation = render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius);
 		float healthBarWidth = render.m_renderRadius * 0.75f;
-		AABB2 backgroundVerts;
-		backgroundVerts.SetCenter(headLocation);
-		backgroundVerts.SetDimsAboutCenter(Vec2(healthBarWidth, 0.0833f));
-		AABB2 healthVerts = backgroundVerts;
-		healthVerts.maxs.x = healthVerts.mins.x + healthBarWidth * healthPercentage;
-		VertexUtils::AddVertsForAABB2(vbo, backgroundVerts, Rgba8::DarkGray);
-		VertexUtils::AddVertsForAABB2(vbo, healthVerts, Rgba8::Crimson);
+
+		float healthPercentage = health.m_currentHealth / health.m_maxHealth;
+		float burnSaturation = health.GetBurnSaturation();
+		float poisonSaturation = health.GetPoisonSaturation();
+
+		// Background
+		AABB2 backgroundBox;
+		backgroundBox.SetCenter(healthBarLocation);
+		backgroundBox.SetDimsAboutCenter(Vec2(healthBarWidth, 0.0833f));
+		VertexUtils::AddVertsForAABB2(vbo, backgroundBox, Rgba8::DarkGray);
+
+		AABB2 healthBox = backgroundBox;
+		healthBox.maxs.x = healthBox.mins.x + healthBarWidth * healthPercentage;
+
+		VertexUtils::AddVertsForAABB2(vbo, healthBox, Rgba8::Crimson);
+		if (burnSaturation > 0.f)
+		{
+			AABB2 burnBox = healthBox;
+			burnBox.maxs.x = burnBox.mins.x + healthBarWidth * healthPercentage * burnSaturation;
+			VertexUtils::AddVertsForAABB2(vbo, burnBox, Rgba8::Orange);
+		}
+		if (poisonSaturation > 0.f)
+		{
+			AABB2 poisonBox = healthBox;
+			poisonBox.mins.x = poisonBox.maxs.x - healthBarWidth * healthPercentage * poisonSaturation;
+			VertexUtils::AddVertsForAABB2(vbo, poisonBox, Rgba8::Green);
+		}
 	}
 
 	g_renderer->SetModelMatrix(Mat44::Identity);

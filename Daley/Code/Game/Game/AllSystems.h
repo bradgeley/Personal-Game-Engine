@@ -15,6 +15,7 @@
 //
 #include "SAIController.h"
 #include "SAnimation.h"
+#include "SAttachment.h"
 #include "SBackgroundMusic.h"
 #include "SCamera.h"
 #include "SCollision.h"
@@ -37,6 +38,7 @@
 #include "SMovementAnimation.h"
 #include "SPhysics.h"
 #include "SProjectile.h"
+#include "SRenderEffects.h"
 #include "SRenderEntities.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"

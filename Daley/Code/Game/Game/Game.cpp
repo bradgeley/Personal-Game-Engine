@@ -217,6 +217,7 @@ void Game::ConfigureECS()
 
     // Map Components
     g_ecs->RegisterComponentMap<CAbility>();
+    g_ecs->RegisterComponentMap<CAttachment>();
     g_ecs->RegisterComponentMap<CProjectile>();
 
     // Singleton components
@@ -265,6 +266,7 @@ void Game::ConfigureECS()
     //physics.m_timeStep = 0.005f;
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SAttachment>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
 
@@ -281,6 +283,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SAnimation>((int) FramePhase::Render);    
     g_ecs->RegisterSystem<SLighting>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderEffects>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);

@@ -4,6 +4,7 @@
 #include "GameCommon.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -53,6 +54,26 @@ void CHealth::TakePayload(HitPayload const& payload)
 float CHealth::GetTotalBurnDamageRemaining() const
 {
 	return m_currentBurn / StaticGameSettings::s_burnDecayK;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float CHealth::GetBurnSaturation() const
+{
+	float saturation = GetTotalBurnDamageRemaining() / m_currentHealth;
+	saturation = MathUtils::Clamp(saturation, 0.f, 1.f);
+	return saturation;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float CHealth::GetPoisonSaturation() const
+{
+	float saturation = (m_currentPoison - m_healthRegen) / (0.25f * m_currentHealth);
+	saturation = MathUtils::Clamp(saturation, 0.f, 1.f);
+	return saturation;
 }
 
 

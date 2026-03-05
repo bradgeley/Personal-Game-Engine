@@ -39,6 +39,8 @@ public:
     void TakePayload(HitPayload const& payload);
 
 	float GetTotalBurnDamageRemaining() const;
+    float GetBurnSaturation() const;
+	float GetPoisonSaturation() const;
 
     bool MatchesTagQuery(TagQuery query) const;
     bool GetHealthReachedZero() const;

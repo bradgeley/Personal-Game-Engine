@@ -1,0 +1,8 @@
+
+
+
+<GridSpriteSheet name="FireUnderlay" texture="Data/SpriteSheets/FireUnderlay.png" layout="3,1" edgePadding="0,0" innerPadding="0,0">
+  
+    <SpriteAnimation name="default" frames="0-2" type="loop" secondsPerFrame="0.15"></SpriteAnimation>
+  
+</GridSpriteSheet>

@@ -11,7 +11,8 @@ CRender::CRender(void const* xmlElement)
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
     m_renderRadius = XmlUtils::ParseXmlAttribute(elem, "scale", m_renderRadius);
     m_renderOffset = XmlUtils::ParseXmlAttribute(elem, "offset", m_renderOffset);
-	m_tint = XmlUtils::ParseXmlAttribute(elem, "tint", m_tint);
+	m_baseTint = XmlUtils::ParseXmlAttribute(elem, "tint", m_baseTint);
+	m_tint = m_baseTint;
 
 	bool rotateSprite = XmlUtils::ParseXmlAttribute(elem, "rotateSprite", false);
 	SetRotateSprite(rotateSprite);

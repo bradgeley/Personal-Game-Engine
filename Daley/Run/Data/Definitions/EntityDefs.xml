@@ -119,6 +119,25 @@
     <Transform></Transform>
   </EntityDef>
 
+  <EntityDef name = "Pistachio">
+    <Ability name="PistachioAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Collision radius="1"></Collision>
+    <Render scale="2" tint="147,197,114"></Render>
+    <Tags tower=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "PistachioProj">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
+    <Projectile></Projectile>
+    <Render scale="1.5" rotateSprite="true" tint="147,197,114"></Render>
+    <Tags projectile=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
   <EntityDef name = "Mint">
     <Ability name="MintAttack"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
@@ -139,11 +158,18 @@
   </EntityDef>
 
   <!-- ==================================================================================================================== -->
-  <!-- Ability Stuff -->
+  <!-- Effects -->
 
   <EntityDef name="AoEEffect">
     <Animation></Animation>
     <AoEEffect></AoEEffect>
+    <Render scale="1" rotateSprite="false"></Render>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name="BurnEffect">
+    <Animation spriteSheet="Data/SpriteSheets/FireUnderlay.xml" defaultAnim="default"></Animation>
     <Render scale="1" rotateSprite="false"></Render>
     <Time></Time>
     <Transform></Transform>

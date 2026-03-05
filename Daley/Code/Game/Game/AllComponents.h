@@ -20,6 +20,7 @@
 #include "CAbility.h"
 #include "CAIController.h"
 #include "CAnimation.h"
+#include "CAttachment.h"
 #include "CCollision.h"
 #include "CDeath.h"
 #include "CEntityDebug.h"

@@ -181,6 +181,12 @@
     <ClCompile Include="Game\GameCommon.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SRenderEffects.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SAttachment.cpp">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -414,6 +420,15 @@
     <ClInclude Include="Game\HitPayload.h">
       <Filter>Game\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="Game\SRenderEffects.h">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CAttachment.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SAttachment.h">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -525,6 +540,9 @@
     </Xml>
     <Xml Include="..\..\Run\Data\Definitions\AbilityDefs.xml">
       <Filter>Data\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\FireUnderlay.xml">
+      <Filter>Data\SpriteSheets</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

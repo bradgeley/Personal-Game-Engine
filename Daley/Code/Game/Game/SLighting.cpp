@@ -169,5 +169,9 @@ bool SLighting::ToggleLighting(NamedProperties&)
 {
 	SCLighting& scLighting = g_ecs->GetSingleton<SCLighting>();
 	scLighting.m_isLightingEnabled = !scLighting.m_isLightingEnabled;
+
+    SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+    scWorld.m_isLightingDirty = true;
+
     return false;
 }

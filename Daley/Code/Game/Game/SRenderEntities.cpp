@@ -114,6 +114,8 @@ void SRenderEntities::Run(SystemContext const& context)
         instance.m_scale = render.m_renderRadius;
         instance.m_rgba = render.m_tint;
         instance.m_spriteIndex = anim.m_animInstance.GetCurrentSpriteIndex();
+		instance.m_outdoorLight = 255; // todo:
+		instance.m_indoorLight = 255; // todo:
 
         ibo.AddInstance(instance);
     }
