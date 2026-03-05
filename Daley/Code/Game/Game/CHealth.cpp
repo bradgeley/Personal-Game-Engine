@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CHealth.h"
 #include "HitPayload.h"
+#include "GameCommon.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
 
@@ -44,6 +45,14 @@ void CHealth::TakePayload(HitPayload const& payload)
 	m_currentPoison += payload.m_poison;
 
 	TakeDamage(payload.m_damage);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float CHealth::GetTotalBurnDamageRemaining() const
+{
+	return m_currentBurn / StaticGameSettings::s_burnDecayK;
 }
 
 

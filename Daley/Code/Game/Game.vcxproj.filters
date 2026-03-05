@@ -178,6 +178,9 @@
     <ClCompile Include="Game\CAbility.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Game\GameCommon.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">

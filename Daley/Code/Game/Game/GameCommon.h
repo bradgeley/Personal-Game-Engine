@@ -20,3 +20,16 @@ enum class EDirection : int
     SouthEast,
     SouthWest,
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+namespace StaticGameSettings
+{
+    // Static
+    static constexpr float s_burnDecayedValueAfterOneSecond = 0.75f;
+
+    // Derived
+    extern float s_burnDecayK;
+	extern float s_oneOverBurnDecayK;
+};

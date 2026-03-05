@@ -109,6 +109,7 @@ namespace MathUtils
 	float	PowF(float base, float exp);
 	double	Log(double val);
 	float	LogF(float val);
+	float	ExpF(float val);
 	int		FloorF(float val);
 	int		CeilingF(float val);
 	int		RoundF(float val);

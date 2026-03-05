@@ -38,6 +38,8 @@ public:
     void TakeDamage(float damage);
     void TakePayload(HitPayload const& payload);
 
+	float GetTotalBurnDamageRemaining() const;
+
     bool MatchesTagQuery(TagQuery query) const;
     bool GetHealthReachedZero() const;
     bool GetIsInvincible() const;
