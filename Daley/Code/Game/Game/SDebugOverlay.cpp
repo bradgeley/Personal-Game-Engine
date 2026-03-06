@@ -4,6 +4,7 @@
 #include "CEntityDebug.h"
 #include "CHealth.h"
 #include "CTags.h"
+#include "CTime.h"
 #include "CTransform.h"
 #include "CAbility.h"
 #include "CProjectile.h"
@@ -122,6 +123,11 @@ void SDebugOverlay::Run(SystemContext const&)
 					if (health)
 					{
 						health->AppendDebugString(debugString);
+					}
+					CTime const* time = g_ecs->GetComponent<CTime>(it);
+					if (time)
+					{
+						time->AppendDebugString(debugString);
 					}
 				}
 

@@ -74,6 +74,16 @@ struct AbilityPoisonComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct AbilitySlowComponentDef
+{
+	explicit AbilitySlowComponentDef(void const* xmlElement);
+
+	float m_duration = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct AbilityAoeHitComponentDef
 {
 	explicit AbilityAoeHitComponentDef(void const* xmlElement);
@@ -82,6 +92,7 @@ struct AbilityAoeHitComponentDef
 	std::optional<AbilityDamageComponentDef>	m_damageOnHit;
 	std::optional<AbilityPoisonComponentDef>	m_poisonOnHit;
 	std::optional<AbilityBurnComponentDef>		m_burnOnHit;
+	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
 };
 
 
@@ -110,6 +121,7 @@ struct AbilityOnHitComponentDef
 	std::optional<AbilityBurnComponentDef>		m_burnOnHit;
 	std::optional<AbilityAoeHitComponentDef>	m_aoeHitOnHit;
 	std::optional<AbilityAoeEffectComponentDef>	m_aoeEffectOnHit;
+	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
 };
 
 

@@ -13,6 +13,7 @@ void SDebugCommands::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("Spawn", &SDebugCommands::Spawn, "name", DevConsoleArgType::String, "count", DevConsoleArgType::Int);
 	DevConsoleUtils::AddDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
 	DevConsoleUtils::AddDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity, "name", DevConsoleArgType::String);
+	DevConsoleUtils::AddDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies, "duration", DevConsoleArgType::Float);
 }
 
 
@@ -23,6 +24,7 @@ void SDebugCommands::Shutdown()
 	DevConsoleUtils::RemoveDevConsoleCommand("Spawn", &SDebugCommands::Spawn);
 	DevConsoleUtils::RemoveDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity);
+	DevConsoleUtils::RemoveDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies);
 }
 
 
@@ -85,5 +87,22 @@ bool SDebugCommands::SetDebugPlacementEntity(NamedProperties& args)
 		SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 		scDebug.m_debugPlacementEntityName = name;
 	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::SlowAllEnemies(NamedProperties& args)
+{
+	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
+	float duration = args.Get("duration", 5.f);
+
+	for (auto it = g_ecs->IterateAll<CTime>(); it.IsValid(); ++it)
+	{
+		CTime& time = timeStorage[it];
+		time.m_remainingSlowDuration += duration;
+	}
+
 	return false;
 }

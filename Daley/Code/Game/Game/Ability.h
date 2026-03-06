@@ -21,6 +21,7 @@ struct AbilityPoisonComponentDef;
 struct AbilityAoeHitComponentDef;
 struct AbilityAoeEffectComponentDef;
 struct AbilityOnHitComponentDef;
+struct AbilitySlowComponentDef;
 
 
 
@@ -154,6 +155,23 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct AbilitySlowComponent
+{
+public:
+
+	AbilitySlowComponent() = default;
+	AbilitySlowComponent(AbilitySlowComponentDef const& def);
+
+	void AppendDebugString(std::string& out_string) const;
+
+public:
+
+	float m_duration = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct AbilityAoeHitComponent
 {
 public:
@@ -169,6 +187,7 @@ public:
 	std::optional<AbilityDamageComponent>	m_damageOnHit;
 	std::optional<AbilityPoisonComponent>	m_poisonOnHit;
 	std::optional<AbilityBurnComponent>		m_burnOnHit;
+	std::optional<AbilitySlowComponent>		m_slowOnHit;
 };
 
 
@@ -211,6 +230,7 @@ public:
 	std::optional<AbilityBurnComponent>			m_burnOnHit;
 	std::optional<AbilityAoeHitComponent>		m_aoeHitOnHit;
 	std::optional<AbilityAoeEffectComponent>	m_aoeEffectOnHit;
+	std::optional<AbilitySlowComponent>			m_slowOnHit;
 };
 
 

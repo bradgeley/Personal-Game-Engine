@@ -111,6 +111,7 @@ HitPayload CProjectile::GetMainTargetPayload() const
 	result.m_damage = m_onHitComp.has_value() && m_onHitComp->m_damageOnHit.has_value() ? m_onHitComp->m_damageOnHit->m_damageDone : 0.f;
 	result.m_burn = m_onHitComp.has_value() && m_onHitComp->m_burnOnHit.has_value() ? m_onHitComp->m_burnOnHit->m_burnDone : 0.f;
 	result.m_poison = m_onHitComp.has_value() && m_onHitComp->m_poisonOnHit.has_value() ? m_onHitComp->m_poisonOnHit->m_poisonDone : 0.f;
+	result.m_slowDuration = m_onHitComp.has_value() && m_onHitComp->m_slowOnHit.has_value() ? m_onHitComp->m_slowOnHit->m_duration : 0.f;
 	return result;
 }
 
@@ -123,6 +124,7 @@ HitPayload CProjectile::GetAoeTargetPayload() const
 	result.m_damage = m_onHitComp.has_value() && m_onHitComp->m_aoeHitOnHit.has_value() && m_onHitComp->m_aoeHitOnHit->m_damageOnHit.has_value() ? m_onHitComp->m_aoeHitOnHit->m_damageOnHit->m_damageDone : 0.f;
 	result.m_burn = m_onHitComp.has_value() && m_onHitComp->m_aoeHitOnHit.has_value() && m_onHitComp->m_aoeHitOnHit->m_burnOnHit.has_value() ? m_onHitComp->m_aoeHitOnHit->m_burnOnHit->m_burnDone : 0.f;
 	result.m_poison = m_onHitComp.has_value() && m_onHitComp->m_aoeHitOnHit.has_value() && m_onHitComp->m_aoeHitOnHit->m_poisonOnHit.has_value() ? m_onHitComp->m_aoeHitOnHit->m_poisonOnHit->m_poisonDone : 0.f;
+	result.m_slowDuration = m_onHitComp.has_value() && m_onHitComp->m_aoeHitOnHit.has_value() && m_onHitComp->m_aoeHitOnHit->m_slowOnHit.has_value() ? m_onHitComp->m_aoeHitOnHit->m_slowOnHit->m_duration : 0.f;
 	return result;
 }
 

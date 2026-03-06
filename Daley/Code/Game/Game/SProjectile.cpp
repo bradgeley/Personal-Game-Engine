@@ -4,6 +4,7 @@
 #include "CTransform.h"
 #include "CCollision.h"
 #include "CHealth.h"
+#include "CTime.h"
 #include "SCCollision.h"
 #include "SCEntityFactory.h"
 #include "SCWorld.h"
@@ -68,6 +69,15 @@ void SProjectile::Run(SystemContext const& context)
 					{
 						targetHealth->TakePayload(mainTargetPayload);
 					}
+					if (mainTargetPayload.m_slowDuration > 0.f)
+					{
+						// Add slow effect to target
+						CTime* time = g_ecs->GetComponent<CTime>(proj.m_targetID);
+						if (time)
+						{
+							time->m_remainingSlowDuration += mainTargetPayload.m_slowDuration;
+						}
+					}
 				}
 
 				if (proj.m_onHitComp->m_aoeHitOnHit.has_value())
@@ -98,6 +108,16 @@ void SProjectile::Run(SystemContext const& context)
 								if (targetHealth)
 								{
 									targetHealth->TakePayload(aoeTargetPayload);
+								}
+
+								if (aoeTargetPayload.m_slowDuration > 0.f)
+								{
+									// Add slow effect to target
+									CTime* targetTime = g_ecs->GetComponent<CTime>(entityID);
+									if (targetTime)
+									{
+										targetTime->m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
+									}
 								}
 							}
 							return true;

@@ -28,6 +28,7 @@ namespace StaticGameSettings
 {
     // Static
     static constexpr float s_burnDecayedValueAfterOneSecond = 0.75f;
+	static constexpr double s_slowStatusTimeDilation = 0.5;
 
     // Derived
     extern float s_burnDecayK;

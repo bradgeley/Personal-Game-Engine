@@ -203,6 +203,15 @@ AbilityPoisonComponentDef::AbilityPoisonComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AbilitySlowComponentDef::AbilitySlowComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_duration = XmlUtils::ParseXmlAttribute(elem, "duration", m_duration);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityAoeHitComponentDef::AbilityAoeHitComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
@@ -218,6 +227,10 @@ AbilityAoeHitComponentDef::AbilityAoeHitComponentDef(void const* xmlElement)
     if (XmlElement const* burnElem = elem.FirstChildElement("Burn"))
     {
         m_burnOnHit.emplace(burnElem);
+	}
+    if (XmlElement const* slowElem = elem.FirstChildElement("Slow"))
+    {
+        m_slowOnHit.emplace(slowElem);
 	}
 }
 
@@ -269,5 +282,9 @@ AbilityOnHitComponentDef::AbilityOnHitComponentDef(void const* xmlElement)
     if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoeEffect"))
     {
         m_aoeEffectOnHit.emplace(aoeEffectElem);
+    }
+    if (XmlElement const* slowElem = elem.FirstChildElement("Slow"))
+    {
+        m_slowOnHit.emplace(slowElem);
     }
 }

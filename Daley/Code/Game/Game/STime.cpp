@@ -2,6 +2,7 @@
 #include "STime.h"
 #include "SCTime.h"
 #include "CTime.h"
+#include "GameCommon.h"
 
 
 
@@ -24,6 +25,17 @@ void STime::Run(SystemContext const& context)
 	for (auto it = g_ecs->Iterate<CTime>(context); it.IsValid(); ++it)
 	{
 		CTime& cTime = timeStorage[it];
+
+		cTime.m_remainingSlowDuration = std::max(0.f, cTime.m_remainingSlowDuration - context.m_deltaSeconds);
+
+		if (cTime.m_remainingSlowDuration > 0.f)
+		{
+			cTime.m_clock.SetTimeDilation(StaticGameSettings::s_slowStatusTimeDilation);
+		}
+		else
+		{
+			cTime.m_clock.SetTimeDilation(1.0);
+		}
 
 		cTime.m_clock.Update(context.m_deltaSeconds * scTime.m_entityTimeDilation);
 	}

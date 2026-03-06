@@ -342,6 +342,23 @@ void AbilityPoisonComponent::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AbilitySlowComponent::AbilitySlowComponent(AbilitySlowComponentDef const& def)
+{
+	m_duration = def.m_duration;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilitySlowComponent::AppendDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("Slow: %.1f\n", m_duration);
+}
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def)
 {
     m_damageOnHit = def.m_damageOnHit;
@@ -349,6 +366,7 @@ AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def
 	m_burnOnHit = def.m_burnOnHit;
 	m_aoeHitOnHit = def.m_aoeHitOnHit;
 	m_aoeEffectOnHit = def.m_aoeEffectOnHit;
+	m_slowOnHit = def.m_slowOnHit;
 }
 
 
@@ -376,6 +394,10 @@ void AbilityOnHitComponent::AppendDebugString(std::string& out_string) const
     {
         m_aoeEffectOnHit->AppendDebugString(out_string);
 	}
+    if (m_slowOnHit.has_value())
+    {
+        m_slowOnHit->AppendDebugString(out_string);
+	}
 }
 
 
@@ -387,6 +409,7 @@ AbilityAoeHitComponent::AbilityAoeHitComponent(AbilityAoeHitComponentDef const& 
     m_damageOnHit = def.m_damageOnHit;
     m_poisonOnHit = def.m_poisonOnHit;
 	m_burnOnHit = def.m_burnOnHit;
+	m_slowOnHit = def.m_slowOnHit;
 }
 
 
@@ -407,6 +430,10 @@ void AbilityAoeHitComponent::AppendDebugString(std::string& out_string) const
     if (m_burnOnHit.has_value())
     {
         m_burnOnHit->AppendDebugString(out_string);
+    }
+    if (m_slowOnHit.has_value())
+    {
+        m_slowOnHit->AppendDebugString(out_string);
     }
 }
 
