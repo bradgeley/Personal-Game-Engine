@@ -157,6 +157,25 @@
     <Transform></Transform>
   </EntityDef>
 
+  <EntityDef name = "Coffee">
+    <Ability name="CoffeeAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Collision radius="1"></Collision>
+    <Render scale="2" tint="111,78,55"></Render>
+    <Tags tower=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "CoffeeProj">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
+    <Projectile></Projectile>
+    <Render scale="1" rotateSprite="true" tint="111,78,55"></Render>
+    <Tags projectile=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
   <!-- ==================================================================================================================== -->
   <!-- Effects -->
 

@@ -21,6 +21,16 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
+  <ProjectileHitAbilityDef name="CoffeeAttack" projectileDef="CoffeeProj" projSpeed="150">
+    <Cooldown cooldown="0.1"></Cooldown>
+    <Targeting maxRange="10"></Targeting>
+    <Crit critChance="0.15"></Crit>
+    <OnHit>
+      <Damage minDamage="1" maxDamage="1"></Damage>
+      <Burn burn="2"></Burn>
+    </OnHit>
+  </ProjectileHitAbilityDef>
+
   <ProjectileHitAbilityDef name="PistachioAttack" projectileDef="PistachioProj" projSpeed="50">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="12"></Targeting>
