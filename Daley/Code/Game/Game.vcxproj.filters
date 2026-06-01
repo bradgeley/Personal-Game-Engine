@@ -188,6 +188,12 @@
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="Game\CTime.cpp" />
+    <ClCompile Include="Game\SCollisionEffect.cpp">
+      <Filter>ECS\Systems\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\CAoEEffect.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -429,6 +435,15 @@
     </ClInclude>
     <ClInclude Include="Game\SAttachment.h">
       <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\OverlapInfo.h">
+      <Filter>Game\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCollisionEffect.h">
+      <Filter>ECS\Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CAoEEffect.h">
+      <Filter>ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

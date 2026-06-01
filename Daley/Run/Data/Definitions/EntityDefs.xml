@@ -6,7 +6,7 @@
   <EntityDef name = "ant">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
-    <Collision radius="0.5" singleHash="true"></Collision>
+    <Collision radius="0.5" singleHash="true" type="enemy"></Collision>
     <Death></Death>
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
@@ -20,7 +20,7 @@
   <EntityDef name = "mediumAnt">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
-    <Collision radius="1" singleHash="false"></Collision>
+    <Collision radius="1" singleHash="false" type="enemy"></Collision>
     <Death></Death>
     <Health maxHealth="1000" healthRegen="10" isTargetable="true"></Health>
     <Lifetime></Lifetime>
@@ -34,7 +34,7 @@
   <EntityDef name = "largeAnt">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
-    <Collision radius="1.5" singleHash="false"></Collision>
+    <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
     <Death></Death>
     <Health maxHealth="2000" healthRegen="20" isTargetable="true"></Health>
     <Lifetime></Lifetime>
@@ -48,7 +48,7 @@
   <EntityDef name = "pig">
     <AIController></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
-    <Collision radius="1"></Collision>
+    <Collision radius="1" type="enemy"></Collision>
     <Death></Death>
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
@@ -65,7 +65,7 @@
   <EntityDef name = "Vanilla">
     <Ability name="VanillaAttack"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1"></Collision>
+    <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="243,229,171"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
@@ -84,7 +84,7 @@
   <EntityDef name = "Chocolate">
     <Ability name="ChocolateAttack"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1"></Collision>
+    <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="112,66,20"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
@@ -103,7 +103,7 @@
   <EntityDef name = "Strawberry">
     <Ability name="StrawberryAttack"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1"></Collision>
+    <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="250,80,83"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
@@ -122,7 +122,7 @@
   <EntityDef name = "Pistachio">
     <Ability name="PistachioAttack"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1"></Collision>
+    <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="147,197,114"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
@@ -141,7 +141,7 @@
   <EntityDef name = "Mint">
     <Ability name="MintAttack"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1"></Collision>
+    <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="173,235,179"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
@@ -160,7 +160,7 @@
   <EntityDef name = "Coffee">
     <Ability name="CoffeeAttack"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1"></Collision>
+    <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="111,78,55"></Render>
     <Tags tower=""></Tags>
     <Time></Time>
@@ -180,8 +180,9 @@
   <!-- Effects -->
 
   <EntityDef name="AoEEffect">
-    <Animation></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <AoEEffect></AoEEffect>
+    <Collision radius="1" type="AoEEffect"></Collision>
     <Render scale="1" rotateSprite="false"></Render>
     <Time></Time>
     <Transform></Transform>

@@ -19,6 +19,7 @@
 #include "SBackgroundMusic.h"
 #include "SCamera.h"
 #include "SCollision.h"
+#include "SCollisionEffect.h"
 #include "SCollisionHash.h"
 #include "SCopyTransform.h" 
 #include "SDeath.h" 

@@ -10,6 +10,7 @@ class SCollision : public System
 public:
 
     SCollision(Name name = "Collision", Rgba8 const& debugTint = Rgba8::Red) : System(name, debugTint) {};
-    void Startup() override;
-    void Run(SystemContext const& context) override;
+    virtual void Startup() override;
+	virtual void PreRun() override;
+    virtual void Run(SystemContext const& context) override;
 };

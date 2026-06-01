@@ -217,6 +217,7 @@ void Game::ConfigureECS()
 
     // Map Components
     g_ecs->RegisterComponentMap<CAbility>();
+    g_ecs->RegisterComponentMap<CAoEEffect>();
     g_ecs->RegisterComponentMap<CAttachment>();
     g_ecs->RegisterComponentMap<CProjectile>();
 
@@ -269,6 +270,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SAttachment>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SCollisionEffect>((int) FramePhase::Physics);
 
     // Post-Physics
     g_ecs->RegisterSystem<SProjectile>((int)FramePhase::PostPhysics);

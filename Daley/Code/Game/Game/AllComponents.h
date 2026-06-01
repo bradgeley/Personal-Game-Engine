@@ -18,6 +18,7 @@
 // Components
 //
 #include "CAbility.h"
+#include "CAoEEffect.h"
 #include "CAIController.h"
 #include "CAnimation.h"
 #include "CAttachment.h"

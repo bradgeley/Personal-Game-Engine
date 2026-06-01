@@ -206,6 +206,6 @@ void CHealth::AppendDebugString(std::string& out_string) const
 {
 	out_string += StringUtils::StringF("Health: %.1f/%.1f\n", m_currentHealth, m_maxHealth);
 	out_string += StringUtils::StringF("Health Regen: %.1f\n", m_healthRegen);
-	out_string += StringUtils::StringF("Current Burn: %.1f\n", m_currentBurn);
-	out_string += StringUtils::StringF("Current Poison: %.1f\n", m_currentPoison);
+	out_string += StringUtils::StringF("Burn: %.1f\n", m_currentBurn);
+	out_string += StringUtils::StringF("Poison: %.1f\n", m_currentPoison);
 }

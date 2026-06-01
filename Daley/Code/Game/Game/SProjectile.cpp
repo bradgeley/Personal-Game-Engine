@@ -1,13 +1,16 @@
 // Bradley Christensen - 2022-2026
 #include "SProjectile.h"
+#include "CAoEEffect.h"
 #include "CProjectile.h"
 #include "CTransform.h"
 #include "CCollision.h"
 #include "CHealth.h"
 #include "CTime.h"
+#include "EntityDef.h"
 #include "SCCollision.h"
 #include "SCEntityFactory.h"
 #include "SCWorld.h"
+#include "SEntityFactory.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 
 
@@ -26,6 +29,7 @@ void SProjectile::Run(SystemContext const& context)
 	auto& projStorage = g_ecs->GetMapStorage<CProjectile>();
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
+	auto& aoeStorage = g_ecs->GetMapStorage<CAoEEffect>();
 	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 	auto& world = g_ecs->GetSingleton<SCWorld>();
@@ -122,6 +126,38 @@ void SProjectile::Run(SystemContext const& context)
 							}
 							return true;
 						});
+					}
+				}
+
+				if (proj.m_onHitComp->m_aoeEffectOnHit.has_value())
+				{
+					SpawnInfo aoeEffectSpawnInfo;
+					aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef("AoEEffect");
+					aoeEffectSpawnInfo.m_spawnPos = proj.m_targetPos.value();
+					aoeEffectSpawnInfo.m_spawnOrientation = 0.f;
+					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp->m_aoeEffectOnHit->m_durationSeconds;
+					aoeEffectSpawnInfo.m_spawnScale = 2.f * proj.m_onHitComp->m_aoeEffectOnHit->m_radius;
+					// todo: spawn tint
+
+					EntityID aoeEffect = SEntityFactory::SpawnEntity(aoeEffectSpawnInfo);
+					if (g_ecs->IsValid(aoeEffect))
+					{
+						// Pass along damage, color, to aoe effect
+						if (CAoEEffect* aoeEffectComp = g_ecs->GetComponent<CAoEEffect>(aoeEffect))
+						{
+							if (proj.m_onHitComp->m_aoeEffectOnHit->m_damagePerSecond.has_value())
+							{
+								aoeEffectComp->m_damagePerSecond = proj.m_onHitComp->m_aoeEffectOnHit->m_damagePerSecond->m_maxDamage;
+							}
+							if (proj.m_onHitComp->m_aoeEffectOnHit->m_burnPerSecond.has_value())
+							{
+								aoeEffectComp->m_burnPerSecond = proj.m_onHitComp->m_aoeEffectOnHit->m_burnPerSecond->m_burn;
+							}
+							if (proj.m_onHitComp->m_aoeEffectOnHit->m_poisonPerSecond.has_value())
+							{
+								aoeEffectComp->m_poisonPerSecond = proj.m_onHitComp->m_aoeEffectOnHit->m_poisonPerSecond->m_poison;
+							}
+						}
 					}
 				}
 			}

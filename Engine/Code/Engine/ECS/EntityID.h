@@ -2,6 +2,7 @@
 #pragma once
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include "Config.h"
 
 
@@ -32,6 +33,7 @@ public:
 
 	inline uint32_t GetIndex() const		{ return m_generationAndId & ENTITY_INDEX_MASK; }
 	inline uint32_t GetGeneration() const	{ return m_generationAndId >> ENTITY_INDEX_BITS; }
+	inline uint32_t GetRawData() const		{ return m_generationAndId; }
 
 	bool operator==(EntityID const& other) const { return m_generationAndId == other.m_generationAndId; }
 	bool operator!=(EntityID const& other) const { return m_generationAndId != other.m_generationAndId; }
@@ -46,3 +48,18 @@ private:
 	// Generation is the top 8 bits, index is the bottom 24
 	uint32_t m_generationAndId = MAX_ENTITIES;
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+namespace std
+{
+    template<>
+    struct hash<EntityID>
+    {
+        size_t operator()(const EntityID& id) const noexcept
+        {
+			return std::hash<uint32_t>{}(id.GetRawData());
+        }
+    };
+}

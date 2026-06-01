@@ -1,10 +1,9 @@
 // Bradley Christensen - 2022-2026
 #pragma once
-#include "Engine/Math/AABB2.h"
-#include "Engine/Math/IntVec2.h"
 #include "Engine/ECS/EntityID.h"
-#include <unordered_map>
+#include "OverlapInfo.h"
 #include <vector>
+#include <unordered_set>
 
 
 
@@ -20,5 +19,6 @@ public:
 
 	// Todo: add layers (Enemy layer)
 	std::vector<EntityBucket> m_tileBuckets;
+	std::unordered_set<OverlapInfo> m_frameOverlaps;
 };
 

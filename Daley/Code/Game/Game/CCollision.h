@@ -16,6 +16,19 @@ enum class CollisionFlags : uint8_t
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class CollisionObjectType : uint8_t
+{
+	Projectile		= 1 << 0,
+	Enemy			= 1 << 1,
+	Building		= 1 << 2,
+	AoEEffect		= 1 << 3,
+
+	Invalid			= 1 << 4,
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct CCollision
 {
 public:
@@ -30,10 +43,14 @@ public:
 	void SetCollisionEnabled(bool enabled);
 	void SetImmovable(bool immovable);
 	void SetIsSingleHash(bool singleHash);
+
+	bool GetCollisionResponse(CollisionObjectType otherType) const;
     
 public:
 
-    float   m_radius            = 0.f;
-	Vec2    m_offset            = Vec2::ZeroVector;
-    uint8_t m_collisionFlags    = 1;
+    float   m_radius							= 0.f;
+	Vec2    m_offset							= Vec2::ZeroVector;
+    uint8_t m_collisionFlags					= 1;
+	uint8_t m_collisionObjectResponses			= 0;
+	CollisionObjectType m_collisionObjectType	= CollisionObjectType::Invalid;
 };

@@ -279,7 +279,7 @@ AbilityOnHitComponentDef::AbilityOnHitComponentDef(void const* xmlElement)
     {
         m_aoeHitOnHit.emplace(aoeHitElem);
 	}
-    if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoeEffect"))
+    if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoEEffect"))
     {
         m_aoeEffectOnHit.emplace(aoeEffectElem);
     }
