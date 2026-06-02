@@ -209,6 +209,7 @@ public:
 	std::optional<AbilityDamageComponent>	m_damagePerSecond;
 	std::optional<AbilityPoisonComponent>	m_poisonPerSecond;
 	std::optional<AbilityBurnComponent>		m_burnPerSecond;
+	std::optional<AbilitySlowComponent>		m_slowPerSecond;
 };
 
 

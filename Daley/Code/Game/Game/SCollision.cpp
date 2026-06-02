@@ -22,6 +22,7 @@ void SCollision::PreRun()
 {
 	SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
+	std::swap(scCollision.m_lastFrameOverlaps, scCollision.m_frameOverlaps);
 	scCollision.m_frameOverlaps.clear();
 }
 

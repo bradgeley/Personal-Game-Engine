@@ -69,14 +69,14 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
     if (def->m_time.has_value())                g_ecs->AddComponent<CTime>(id, *def->m_time);
     if (def->m_ai.has_value())                  g_ecs->AddComponent<CAIController>(id, *def->m_ai);
 	if (def->m_animation.has_value())           g_ecs->AddComponent<CAnimation>(id, *def->m_animation);
-	if (def->m_aoeEffect.has_value())           g_ecs->AddComponent<CAoEEffect>(id, *def->m_aoeEffect);
+	if (def->m_collisionEffect.has_value())     g_ecs->AddComponent<CCollisionEffect>(id, *def->m_collisionEffect);
 	if (def->m_collision.has_value())           g_ecs->AddComponent<CCollision>(id, *def->m_collision);
     if (def->m_movement.has_value())            g_ecs->AddComponent<CMovement>(id, *def->m_movement);
     if (def->m_render.has_value())              g_ecs->AddComponent<CRender>(id, *def->m_render);
 	if (def->m_lifetime.has_value())            g_ecs->AddComponent<CLifetime>(id, *def->m_lifetime);
 	if (def->m_health.has_value())              g_ecs->AddComponent<CHealth>(id, *def->m_health);
 	if (def->m_death.has_value())               g_ecs->AddComponent<CDeath>(id, *def->m_death);
-	if (def->m_ability.has_value())              g_ecs->AddComponent<CAbility>(id, *def->m_ability);
+	if (def->m_ability.has_value())             g_ecs->AddComponent<CAbility>(id, *def->m_ability);
 	if (def->m_proj.has_value())                g_ecs->AddComponent<CProjectile>(id, *def->m_proj);
 	if (def->m_tags.has_value())                g_ecs->AddComponent<CTags>(id, *def->m_tags);
 

@@ -447,6 +447,7 @@ AbilityAoeEffectComponent::AbilityAoeEffectComponent(AbilityAoeEffectComponentDe
     m_damagePerSecond = def.m_damagePerSecond;
     m_poisonPerSecond = def.m_poisonPerSecond;
 	m_burnPerSecond = def.m_burnPerSecond;
+	m_slowPerSecond = def.m_slowPerSecond;
 }
 
 

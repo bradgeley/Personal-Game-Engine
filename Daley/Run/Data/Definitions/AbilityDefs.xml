@@ -61,6 +61,7 @@
       <Burn burn="10"></Burn>
       <AoEEffect duration="0.5" radius="0.5">
         <Burn burn="10"></Burn>
+        <Slow duration="1"></Slow>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>

@@ -255,6 +255,10 @@ AbilityAoeEffectComponentDef::AbilityAoeEffectComponentDef(void const* xmlElemen
     {
         m_burnPerSecond.emplace(burnElem);
 	}
+    if (XmlElement const* slowElem = elem.FirstChildElement("Slow"))
+    {
+        m_slowPerSecond.emplace(slowElem);
+	}
 }
 
 

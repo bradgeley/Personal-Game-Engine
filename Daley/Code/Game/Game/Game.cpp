@@ -217,7 +217,7 @@ void Game::ConfigureECS()
 
     // Map Components
     g_ecs->RegisterComponentMap<CAbility>();
-    g_ecs->RegisterComponentMap<CAoEEffect>();
+    g_ecs->RegisterComponentMap<CCollisionEffect>();
     g_ecs->RegisterComponentMap<CAttachment>();
     g_ecs->RegisterComponentMap<CProjectile>();
 

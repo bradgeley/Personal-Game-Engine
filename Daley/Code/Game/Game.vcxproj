@@ -298,8 +298,8 @@
     <ClCompile Include="Game\CAbility.cpp" />
     <ClCompile Include="Game\CAIController.cpp" />
     <ClCompile Include="Game\CAnimation.cpp" />
-    <ClCompile Include="Game\CAoEEffect.cpp" />
     <ClCompile Include="Game\CCollision.cpp" />
+    <ClCompile Include="Game\CCollisionEffect.cpp" />
     <ClCompile Include="Game\CDeath.cpp" />
     <ClCompile Include="Game\CEntityDebug.cpp" />
     <ClCompile Include="Game\CHealth.cpp" />
@@ -367,8 +367,8 @@
     <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
-    <ClInclude Include="Game\CAoEEffect.h" />
     <ClInclude Include="Game\CAttachment.h" />
+    <ClInclude Include="Game\CCollisionEffect.h" />
     <ClInclude Include="Game\CDeath.h" />
     <ClInclude Include="Game\CEntityDebug.h" />
     <ClInclude Include="Game\CHealth.h" />

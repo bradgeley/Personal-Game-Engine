@@ -156,18 +156,18 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_animation.emplace(elem);
     }
 
-    // CAoEEffect
-    elem = xmlElement->FirstChildElement("AoEEffect");
-    if (elem)
-    {
-        m_aoeEffect.emplace();
-    }
-
     // CCollision
     elem = xmlElement->FirstChildElement("Collision");
     if (elem)
     {
         m_collision.emplace(elem);
+    }
+
+    // CCollisionEffect
+    elem = xmlElement->FirstChildElement("CollisionEffect");
+    if (elem)
+    {
+        m_collisionEffect.emplace();
     }
 
     // CMovement

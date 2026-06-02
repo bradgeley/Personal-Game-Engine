@@ -33,7 +33,7 @@ public:
     // Components
     std::optional<CAIController>        m_ai;
 	std::optional<CAnimation>           m_animation;
-    std::optional<CAoEEffect>        m_aoeEffect;
+    std::optional<CCollisionEffect>     m_collisionEffect;
 	std::optional<CCollision>           m_collision;
 	std::optional<CDeath>               m_death;
     std::optional<CHealth>              m_health;

@@ -107,6 +107,7 @@ struct AbilityAoeEffectComponentDef
 	std::optional<AbilityDamageComponentDef>	m_damagePerSecond;
 	std::optional<AbilityPoisonComponentDef>	m_poisonPerSecond;
 	std::optional<AbilityBurnComponentDef>		m_burnPerSecond;
+	std::optional<AbilitySlowComponentDef>		m_slowPerSecond;
 };
 
 

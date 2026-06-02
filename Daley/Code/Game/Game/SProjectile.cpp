@@ -1,6 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "SProjectile.h"
-#include "CAoEEffect.h"
+#include "CCollisionEffect.h"
 #include "CProjectile.h"
 #include "CTransform.h"
 #include "CCollision.h"
@@ -29,7 +29,6 @@ void SProjectile::Run(SystemContext const& context)
 	auto& projStorage = g_ecs->GetMapStorage<CProjectile>();
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
-	auto& aoeStorage = g_ecs->GetMapStorage<CAoEEffect>();
 	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 	auto& world = g_ecs->GetSingleton<SCWorld>();
@@ -137,13 +136,13 @@ void SProjectile::Run(SystemContext const& context)
 					aoeEffectSpawnInfo.m_spawnOrientation = 0.f;
 					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp->m_aoeEffectOnHit->m_durationSeconds;
 					aoeEffectSpawnInfo.m_spawnScale = 2.f * proj.m_onHitComp->m_aoeEffectOnHit->m_radius;
-					// todo: spawn tint
+					// todo: spawn tint/visuals
 
 					EntityID aoeEffect = SEntityFactory::SpawnEntity(aoeEffectSpawnInfo);
 					if (g_ecs->IsValid(aoeEffect))
 					{
 						// Pass along damage, color, to aoe effect
-						if (CAoEEffect* aoeEffectComp = g_ecs->GetComponent<CAoEEffect>(aoeEffect))
+						if (CCollisionEffect* aoeEffectComp = g_ecs->GetComponent<CCollisionEffect>(aoeEffect))
 						{
 							if (proj.m_onHitComp->m_aoeEffectOnHit->m_damagePerSecond.has_value())
 							{
@@ -156,6 +155,10 @@ void SProjectile::Run(SystemContext const& context)
 							if (proj.m_onHitComp->m_aoeEffectOnHit->m_poisonPerSecond.has_value())
 							{
 								aoeEffectComp->m_poisonPerSecond = proj.m_onHitComp->m_aoeEffectOnHit->m_poisonPerSecond->m_poison;
+							}
+							if (proj.m_onHitComp->m_aoeEffectOnHit->m_slowPerSecond.has_value())
+							{
+								aoeEffectComp->m_slowPerSecond = proj.m_onHitComp->m_aoeEffectOnHit->m_slowPerSecond->m_duration;
 							}
 						}
 					}

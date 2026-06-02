@@ -19,6 +19,7 @@ public:
 
 	// Todo: add layers (Enemy layer)
 	std::vector<EntityBucket> m_tileBuckets;
+	std::unordered_set<OverlapInfo> m_lastFrameOverlaps;
 	std::unordered_set<OverlapInfo> m_frameOverlaps;
 };
 
