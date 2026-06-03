@@ -182,9 +182,10 @@
   <EntityDef name="AoEEffect">
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <CollisionEffect></CollisionEffect>
-    <Collision radius="1" type="AoEEffect"></Collision>
+    <Collision radius="1" type="GroundEffect"></Collision>
     <Render scale="1" rotateSprite="false"></Render>
     <Time></Time>
+    
     <Transform></Transform>
   </EntityDef>
 

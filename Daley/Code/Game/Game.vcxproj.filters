@@ -194,6 +194,9 @@
     <ClCompile Include="Game\CCollisionEffect.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Game\CollisionProfile.cpp">
+      <Filter>Game\Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -444,6 +447,9 @@
     </ClInclude>
     <ClInclude Include="Game\CCollisionEffect.h">
       <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CollisionProfile.h">
+      <Filter>Game\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

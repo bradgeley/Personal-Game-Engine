@@ -20,28 +20,8 @@ CCollision::CCollision(void const* xmlElement)
 	bool singleHash = XmlUtils::ParseXmlAttribute(elem, "singleHash", false);
 	SetIsSingleHash(singleHash);
 
-	std::string typeString = StringUtils::GetToLower(XmlUtils::ParseXmlAttribute(elem, "type", std::string()));
-    if (typeString == "projectile")
-    {
-        m_collisionObjectType = CollisionObjectType::Projectile;
-    }
-	else if (typeString == "enemy")
-    {
-        m_collisionObjectType = CollisionObjectType::Enemy;
-    }
-    else if (typeString == "building")
-    {
-        m_collisionObjectType = CollisionObjectType::Building;
-    }
-    else if (typeString == "aoeeffect")
-    {
-        m_collisionObjectType = CollisionObjectType::AoEEffect;
-        m_collisionObjectResponses |= (uint8_t) CollisionObjectType::Enemy; // AoE Effects overlap with enemies by default
-	}
-    else
-    {
-        m_collisionObjectType = CollisionObjectType::Invalid;
-	}
+	Name collisionObjectType = XmlUtils::ParseXmlAttribute(elem, "type", Name());
+    m_collisionProfile = CollisionProfile::GetDefaultProfileByName(collisionObjectType);
 }
 
 
@@ -111,19 +91,4 @@ void CCollision::SetIsSingleHash(bool singleHash)
     {
         m_collisionFlags &= ~((uint8_t) CollisionFlags::SingleHash);
     }
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool CCollision::GetCollisionResponse(CollisionObjectType otherType) const
-{
-    if ((m_collisionObjectResponses & (uint8_t) otherType) != 0)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-	}
 }

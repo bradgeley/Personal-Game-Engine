@@ -59,8 +59,8 @@ void SCollision::Run(SystemContext const&)
 				CCollision& collision = *collisionStorage.Get(entityID.GetIndex());
 				CCollision& otherCollision = *collisionStorage.Get(otherEntityID.GetIndex());
 
-				if (!collision.GetCollisionResponse(otherCollision.m_collisionObjectType)
-					&& !otherCollision.GetCollisionResponse(collision.m_collisionObjectType))
+				if (collision.m_collisionProfile.GetCollisionResponse(otherCollision.m_collisionProfile.m_objectChannel) == false &&
+					otherCollision.m_collisionProfile.GetCollisionResponse(collision.m_collisionProfile.m_objectChannel) == false)
 				{
 					continue;
 				}
