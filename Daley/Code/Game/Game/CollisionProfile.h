@@ -14,10 +14,12 @@ constexpr uint32_t MAX_COLLISION_CHANNELS = 32;
 enum class CollisionChannel : uint32_t
 {
 	NoCollision			= 0,
-	Projectile			= 1 << 0,
-	Enemy				= 1 << 1,
-	Building			= 1 << 2,
-	GroundEffect		= 1 << 3,
+	Projectile			= 1,
+	Enemy				= 2,
+	Building			= 3,
+	GroundEffect		= 4,
+
+	Count				= 5,
 };
 
 
@@ -37,7 +39,8 @@ struct CollisionProfile
 
 	static CollisionProfile GetDefaultProfile(CollisionChannel objectChannel);
 	static CollisionProfile GetDefaultProfileByName(Name const& name);
+	static uint32_t GetChannelBit(CollisionChannel channel);
 
-	CollisionChannel m_objectChannel	= CollisionChannel::NoCollision;
-	CollisionChannel m_responseChannels = CollisionChannel::NoCollision;
+	CollisionChannel m_objectChannel = CollisionChannel::NoCollision;
+	uint32_t m_responseChannels	= 0;
 };

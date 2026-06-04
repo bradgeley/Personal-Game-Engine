@@ -12,14 +12,14 @@ CollisionProfile CollisionProfile::GetDefaultProfile(CollisionChannel objectChan
 	switch (objectChannel)
 	{
 		case CollisionChannel::Projectile:
-			result.m_responseChannels = static_cast<CollisionChannel>((uint32_t) CollisionChannel::Enemy);
+			result.m_responseChannels |= GetChannelBit(CollisionChannel::Enemy);
 			break;
 		case CollisionChannel::Enemy:
 			break;
 		case CollisionChannel::Building:
 			break;
 		case CollisionChannel::GroundEffect:
-			result.m_responseChannels = static_cast<CollisionChannel>((uint32_t) CollisionChannel::Enemy);
+			result.m_responseChannels |= GetChannelBit(CollisionChannel::Enemy);
 			break;
 	}
 
@@ -56,9 +56,17 @@ CollisionProfile CollisionProfile::GetDefaultProfileByName(Name const& name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+uint32_t CollisionProfile::GetChannelBit(CollisionChannel channel)
+{
+	return 1 << (uint32_t) channel;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 CollisionProfile::CollisionProfile(uint32_t objectChannel, uint32_t responseChannels) 
 	: m_objectChannel(static_cast<CollisionChannel>(objectChannel)),
-	  m_responseChannels(static_cast<CollisionChannel>(responseChannels))
+	  m_responseChannels(responseChannels)
 {
 }
 
@@ -67,7 +75,7 @@ CollisionProfile::CollisionProfile(uint32_t objectChannel, uint32_t responseChan
 //----------------------------------------------------------------------------------------------------------------------
 CollisionProfile::CollisionProfile(CollisionChannel objectChannel, uint32_t responseChannels)
 	: m_objectChannel(objectChannel),
-	  m_responseChannels(static_cast<CollisionChannel>(responseChannels))
+	  m_responseChannels(responseChannels)
 {
 }
 
@@ -76,5 +84,5 @@ CollisionProfile::CollisionProfile(CollisionChannel objectChannel, uint32_t resp
 //----------------------------------------------------------------------------------------------------------------------
 bool CollisionProfile::GetCollisionResponse(CollisionChannel channel) const
 {
-	return (static_cast<uint32_t>(m_responseChannels) & static_cast<uint32_t>(channel)) != 0;
+	return (static_cast<uint32_t>(m_responseChannels) & static_cast<uint32_t>(1 << (uint32_t) channel)) != 0;
 }

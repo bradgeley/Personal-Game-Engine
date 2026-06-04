@@ -14,22 +14,11 @@ CCollision::CCollision(void const* xmlElement)
 
 	m_offset = XmlUtils::ParseXmlAttribute(elem, "offset", m_offset);
 
-    bool immovable = XmlUtils::ParseXmlAttribute(elem, "immovable", false);
-	SetImmovable(immovable);
-
 	bool singleHash = XmlUtils::ParseXmlAttribute(elem, "singleHash", false);
 	SetIsSingleHash(singleHash);
 
 	Name collisionObjectType = XmlUtils::ParseXmlAttribute(elem, "type", Name());
     m_collisionProfile = CollisionProfile::GetDefaultProfileByName(collisionObjectType);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool CCollision::IsImmovable() const
-{
-    return (m_collisionFlags & (uint8_t) CollisionFlags::Immovable) != 0;
 }
 
 
@@ -45,7 +34,7 @@ bool CCollision::GetIsSingleHash() const
 //----------------------------------------------------------------------------------------------------------------------
 bool CCollision::IsCollisionEnabled() const
 {
-	return (m_collisionFlags & (uint8_t) CollisionFlags::Enabled) != 0;
+	return ((m_collisionFlags & (uint8_t) CollisionFlags::Enabled) != 0) || (m_collisionProfile.m_objectChannel == CollisionChannel::NoCollision);
 }
 
 
@@ -60,21 +49,6 @@ void CCollision::SetCollisionEnabled(bool enabled)
     else
     {
         m_collisionFlags &= ~((uint8_t) CollisionFlags::Enabled);
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void CCollision::SetImmovable(bool immovable)
-{
-    if (immovable)
-    {
-        m_collisionFlags |= (uint8_t) CollisionFlags::Immovable;
-    }
-    else
-    {
-        m_collisionFlags &= ~((uint8_t) CollisionFlags::Immovable);
 	}
 }
 

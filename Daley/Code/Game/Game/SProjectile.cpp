@@ -34,6 +34,8 @@ void SProjectile::Run(SystemContext const& context)
 	auto& world = g_ecs->GetSingleton<SCWorld>();
 	auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
+	CollisionLayer const& enemyLayer = scCollision.GetCollisionLayer(CollisionChannel::Enemy);
+
 	for (auto it = g_ecs->Iterate<CProjectile, CTransform>(context); it.IsValid(); ++it)
 	{
 		CProjectile& proj = *projStorage.Get(it);
@@ -95,7 +97,9 @@ void SProjectile::Run(SystemContext const& context)
 						world.ForEachPathTileOverlappingCircle(transform.m_pos, splashRadius, [&](IntVec2 const& worldCoords)
 						{
 							int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
-							for (EntityID const& entityID : scCollision.m_tileBuckets[tileIndex])
+							CollisionBucket const& enemyBucket = enemyLayer[tileIndex];
+
+							for (EntityID const& entityID : enemyBucket)
 							{
 								CCollision* collision = collisionStorage.Get(entityID.GetIndex());
 								if (collision)

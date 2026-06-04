@@ -36,45 +36,51 @@ void SCollision::Run(SystemContext const&)
 	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
 
-	for (auto& bucket : scCollision.m_tileBuckets)
+	for (CollisionLayer& layer : scCollision.m_collisionLayers)
 	{
-		for (int i = 0; i < (int) bucket.size(); ++i)
+		for (int bucketIndex = 0; bucketIndex < (int) layer.size(); ++bucketIndex)
 		{
-			EntityID entityID = bucket[i];
+			CollisionBucket& bucket = layer[bucketIndex];
 
-			for (int j = i + 1; j < (int) bucket.size(); ++j)
+			for (int entityIndex = 0; entityIndex < (int) bucket.size(); ++entityIndex)
 			{
-				EntityID otherEntityID = bucket[j];
-				if (otherEntityID == entityID)
-				{
-					continue;
-				}
-
-				OverlapInfo overlap(entityID, otherEntityID);
-				if (scCollision.m_frameOverlaps.find(overlap) != scCollision.m_frameOverlaps.end())
-				{
-					continue;
-				}
-
+				EntityID entityID = bucket[entityIndex];
 				CCollision& collision = *collisionStorage.Get(entityID.GetIndex());
-				CCollision& otherCollision = *collisionStorage.Get(otherEntityID.GetIndex());
 
-				if (collision.m_collisionProfile.GetCollisionResponse(otherCollision.m_collisionProfile.m_objectChannel) == false &&
-					otherCollision.m_collisionProfile.GetCollisionResponse(collision.m_collisionProfile.m_objectChannel) == false)
+				for (int responseChannelIndex = 1; responseChannelIndex < (int) CollisionChannel::Count; ++responseChannelIndex)
 				{
-					continue;
-				}
+					CollisionChannel responseChannel = static_cast<CollisionChannel>(responseChannelIndex);
+					if (collision.m_collisionProfile.GetCollisionResponse(responseChannel))
+					{
+						CollisionBucket& otherBucket = scCollision.m_collisionLayers[responseChannelIndex][bucketIndex];
+						for (EntityID otherEntityID : otherBucket)
+						{
+							if (otherEntityID == entityID)
+							{
+								continue;
+							}
 
-				CTransform& transform = *transformStorage.Get(entityID.GetIndex());
-				CTransform& otherTransform = *transformStorage.Get(otherEntityID.GetIndex());
+							OverlapInfo overlap(entityID, otherEntityID);
+							if (scCollision.m_frameOverlaps.find(overlap) != scCollision.m_frameOverlaps.end())
+							{
+								continue;
+							}
 
-				Vec2 collisionPos = transform.m_pos + collision.m_offset;
-				Vec2 otherCollisionPos = otherTransform.m_pos + otherCollision.m_offset;
+							CTransform& transform = *transformStorage.Get(entityID.GetIndex());
 
-				if (GeometryUtils::DoDiscsOverlap2D(collisionPos, collision.m_radius, otherCollisionPos, otherCollision.m_radius))
-				{
-					// Overlap detected
-					scCollision.m_frameOverlaps.emplace(overlap);
+							CCollision& otherCollision = *collisionStorage.Get(otherEntityID.GetIndex());
+							CTransform& otherTransform = *transformStorage.Get(otherEntityID.GetIndex());
+
+							Vec2 collisionPos = transform.m_pos + collision.m_offset;
+							Vec2 otherCollisionPos = otherTransform.m_pos + otherCollision.m_offset;
+
+							if (GeometryUtils::DoDiscsOverlap2D(collisionPos, collision.m_radius, otherCollisionPos, otherCollision.m_radius))
+							{
+								// Overlap detected
+								scCollision.m_frameOverlaps.emplace(overlap);
+							}
+						}
+					}
 				}
 			}
 		}

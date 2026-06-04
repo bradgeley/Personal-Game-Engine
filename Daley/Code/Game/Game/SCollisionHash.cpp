@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SCollisionHash.h"
+#include "CollisionProfile.h"
 #include "CCollision.h"
 #include "CTransform.h"
 #include "SCWorld.h"
@@ -17,7 +18,14 @@ void SCollisionHash::Startup()
     AddReadDependencies<CCollision, CTransform>();
 
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
-    scCollision.m_tileBuckets.resize(StaticWorldSettings::s_numTilesInPlayableWorld);
+
+    // Each collision channel gets a layer for hashing
+	scCollision.m_collisionLayers.resize((size_t) CollisionChannel::Count);
+
+    for (CollisionLayer& layer : scCollision.m_collisionLayers)
+    {
+        layer.resize(StaticWorldSettings::s_numTilesInPlayableWorld);
+	}
 }
 
 
@@ -27,10 +35,13 @@ void SCollisionHash::PreRun()
 {
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
-    for (auto& bucket : scCollision.m_tileBuckets)
+    for (CollisionLayer& layer : scCollision.m_collisionLayers)
     {
-        bucket.clear();
-	}
+        for (CollisionBucket& bucket : layer)
+        {
+            bucket.clear();
+        }
+    }
 }
 
 
@@ -55,11 +66,14 @@ void SCollisionHash::Run(SystemContext const& context)
     
         Vec2 pos = trans.m_pos + coll.m_offset;
 
+		CollisionChannel channel = coll.m_collisionProfile.m_objectChannel;
+		CollisionLayer& layer = scCollision.GetCollisionLayer(channel);
+
         if (coll.GetIsSingleHash())
         {
 			IntVec2 worldCoords = world.GetTileCoordsAtWorldPosClamped(pos);
             int index = world.m_tiles.GetIndexForCoords(worldCoords);
-            scCollision.m_tileBuckets[index].push_back(it.GetEntityID());
+            layer[index].push_back(it.GetEntityID());
         }
         else
         {
@@ -69,7 +83,7 @@ void SCollisionHash::Run(SystemContext const& context)
                 int index = world.m_tiles.GetIndexForCoords(worldCoords);
                 if (world.m_tiles.IsValidIndex(index))
                 {
-                    scCollision.m_tileBuckets[index].push_back(it.GetEntityID());
+                    layer[index].push_back(it.GetEntityID());
                 }
                 return true;
             });

@@ -66,6 +66,8 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
     SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
     auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 
+    CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
+
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
 	bool hasRangeChanged = m_targetingComp->HasRangeChanged();
     if (hasRangeChanged)
@@ -90,12 +92,18 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
         for (IntVec2 const& cachedPathTile : m_targetingComp->m_cachedPathTilesInRange)
         {
             int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
+			CollisionBucket const& tileBucket = enemyLayer[tileIndex];
+            if (tileBucket.empty())
+            {
+                continue;
+            }
+
             float distance = flowfield.m_toGoalFlowField.m_distanceField.Get(tileIndex);
-            if (distance < closestToGoalDist && !collision.m_tileBuckets[tileIndex].empty()) // todo: only check "Enemy" collision layer
+            if (distance < closestToGoalDist)
             {
 				bool tileHasValidTarget = false;
 
-                for (auto& entityID : collision.m_tileBuckets[tileIndex])
+                for (EntityID entityID : tileBucket)
                 {
 					CHealth const* healthComp = healthStorage.Get(entityID.GetIndex());
                     if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())
@@ -115,7 +123,7 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
 
         if (closestToGoalTileIndex != -1)
         {
-            for (auto& entityID : collision.m_tileBuckets[closestToGoalTileIndex])
+            for (EntityID entityID : enemyLayer[closestToGoalTileIndex])
             {
                 CHealth const* healthComp = healthStorage.Get(entityID.GetIndex());
                 if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())

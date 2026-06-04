@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "CollisionProfile.h"
 #include "Engine/ECS/EntityID.h"
 #include "OverlapInfo.h"
 #include <vector>
@@ -8,7 +9,8 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-typedef std::vector<EntityID> EntityBucket;
+typedef std::vector<EntityID> CollisionBucket;
+typedef std::vector<CollisionBucket> CollisionLayer;
 
 
 
@@ -17,7 +19,12 @@ class SCCollision
 {
 public:
 
-	std::vector<EntityBucket> m_tileBuckets;
+	CollisionLayer& GetCollisionLayer(CollisionChannel channel);
+	CollisionLayer const& GetCollisionLayer(CollisionChannel channel) const;
+
+public:
+
+	std::vector<CollisionLayer> m_collisionLayers;
 	std::unordered_set<OverlapInfo> m_lastFrameOverlaps;
 	std::unordered_set<OverlapInfo> m_frameOverlaps;
 };
