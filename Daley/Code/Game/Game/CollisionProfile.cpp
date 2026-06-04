@@ -84,5 +84,6 @@ CollisionProfile::CollisionProfile(CollisionChannel objectChannel, uint32_t resp
 //----------------------------------------------------------------------------------------------------------------------
 bool CollisionProfile::GetCollisionResponse(CollisionChannel channel) const
 {
-	return (static_cast<uint32_t>(m_responseChannels) & static_cast<uint32_t>(1 << (uint32_t) channel)) != 0;
+	uint32_t channelBit = GetChannelBit(channel);
+	return (static_cast<uint32_t>(m_responseChannels) & static_cast<uint32_t>(channelBit)) != 0;
 }
