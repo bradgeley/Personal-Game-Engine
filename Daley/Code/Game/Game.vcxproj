@@ -454,6 +454,7 @@
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\AoEEffect.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\DarkAnt.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\FireUnderlay.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\IceCream.xml" />

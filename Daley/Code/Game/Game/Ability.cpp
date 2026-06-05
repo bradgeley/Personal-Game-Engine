@@ -450,6 +450,7 @@ void AbilityAoeHitComponent::AppendDebugString(std::string& out_string) const
 //----------------------------------------------------------------------------------------------------------------------
 AbilityAoeEffectComponent::AbilityAoeEffectComponent(AbilityAoeEffectComponentDef const& def)
 {
+    m_aoeEffectDefName = def.m_aoeEffectDefName;
     m_radius = def.m_radius;
     m_durationSeconds = def.m_durationSeconds;
     m_damagePerSecond = def.m_damagePerSecond;

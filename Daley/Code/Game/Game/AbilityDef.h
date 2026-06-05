@@ -102,6 +102,7 @@ struct AbilityAoeEffectComponentDef
 {
 	explicit AbilityAoeEffectComponentDef(void const* xmlElement);
 
+	Name m_aoeEffectDefName	= Name::Invalid;
 	float m_radius = 0.f;
 	float m_durationSeconds = 0.f;
 	std::optional<AbilityDamageComponentDef>	m_damagePerSecond;

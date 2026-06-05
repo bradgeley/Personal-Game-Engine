@@ -9,6 +9,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 const char* s_abilityDefsFilePath = "Data/Definitions/AbilityDefs.xml";
+const char* s_defaultAoEEffectName = "AoEEffect";
 std::vector<AbilityDef*> AbilityDef::s_abilityDefs;
 
 
@@ -242,6 +243,7 @@ AbilityAoeEffectComponentDef::AbilityAoeEffectComponentDef(void const* xmlElemen
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
     m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
     m_durationSeconds = XmlUtils::ParseXmlAttribute(elem, "duration", m_durationSeconds);
+    m_aoeEffectDefName = XmlUtils::ParseXmlAttribute(elem, "name", Name(s_defaultAoEEffectName));
 
     if (XmlElement const* damageElem = elem.FirstChildElement("Damage"))
     {

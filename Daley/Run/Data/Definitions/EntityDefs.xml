@@ -180,13 +180,19 @@
   <!-- Effects -->
 
   <EntityDef name="AoEEffect">
-    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <CollisionEffect></CollisionEffect>
     <Collision radius="1" type="GroundEffect"></Collision>
-    <Render scale="1" rotateSprite="false"></Render>
     <Time></Time>
-    
     <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name="RedAoEEffect">
+    <Animation spriteSheet="Data/SpriteSheets/AoEEffect.xml" defaultAnim="default"></Animation>
+    <CollisionEffect></CollisionEffect>
+    <Collision radius="1" type="GroundEffect"></Collision>
+    <Time></Time>
+    <Transform></Transform>
+    <Render scale="2" tint="255,25,50,127"></Render>
   </EntityDef>
 
   <EntityDef name="BurnEffect">

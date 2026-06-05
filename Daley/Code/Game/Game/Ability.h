@@ -204,6 +204,7 @@ public:
 
 public:
 
+	Name m_aoeEffectDefName = Name::Invalid;
 	float m_radius = 0.f;
 	float m_durationSeconds = 0.f;
 	std::optional<AbilityDamageComponent>	m_damagePerSecond;

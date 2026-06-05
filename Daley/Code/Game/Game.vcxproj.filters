@@ -566,6 +566,9 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\FireUnderlay.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\AoEEffect.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">

@@ -495,8 +495,8 @@ void SCWorld::ForEachPathTileInRange(Vec2 const& pos, float minRadius, float max
 void SCWorld::ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const
 {
 	// Start in bot left, and iterate in a grid pattern
-	IntVec2 startGlobalTileCoords = GetTileCoordsAtWorldPosClamped(aabb.mins);
-	IntVec2 endGlobalTileCoords = GetTileCoordsAtWorldPosClamped(aabb.maxs);
+	IntVec2 startGlobalTileCoords = GetTileCoordsAtPlayableWorldPosClamped(aabb.mins);
+	IntVec2 endGlobalTileCoords = GetTileCoordsAtPlayableWorldPosClamped(aabb.maxs);
 
 	int startX = MathUtils::Min(startGlobalTileCoords.x, endGlobalTileCoords.x);
 	int endX = MathUtils::Max(startGlobalTileCoords.x, endGlobalTileCoords.x);
@@ -641,6 +641,18 @@ IntVec2 SCWorld::GetTileCoordsAtWorldPosClamped(Vec2 const& worldPos) const
 	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
 	globalTileCoords.x = MathUtils::Clamp(globalTileCoords.x, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
 	globalTileCoords.y = MathUtils::Clamp(globalTileCoords.y, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
+	return IntVec2(globalTileCoords.GetFloor());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 SCWorld::GetTileCoordsAtPlayableWorldPosClamped(Vec2 const& worldPos) const
+{
+	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
+	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
+	globalTileCoords.x = MathUtils::Clamp(globalTileCoords.x, 0.f, static_cast<float>(StaticWorldSettings::s_numPlayableWorldTilesX - 1));
+	globalTileCoords.y = MathUtils::Clamp(globalTileCoords.y, 0.f, static_cast<float>(StaticWorldSettings::s_numPlayableWorldTilesY - 1));
 	return IntVec2(globalTileCoords.GetFloor());
 }
 

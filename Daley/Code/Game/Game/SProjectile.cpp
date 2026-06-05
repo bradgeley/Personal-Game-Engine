@@ -135,12 +135,11 @@ void SProjectile::Run(SystemContext const& context)
 				if (proj.m_onHitComp->m_aoeEffectOnHit.has_value())
 				{
 					SpawnInfo aoeEffectSpawnInfo;
-					aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef("AoEEffect");
+					aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(proj.m_onHitComp->m_aoeEffectOnHit->m_aoeEffectDefName);
 					aoeEffectSpawnInfo.m_spawnPos = proj.m_targetPos.value();
 					aoeEffectSpawnInfo.m_spawnOrientation = 0.f;
 					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp->m_aoeEffectOnHit->m_durationSeconds;
-					aoeEffectSpawnInfo.m_spawnScale = 2.f * proj.m_onHitComp->m_aoeEffectOnHit->m_radius;
-					// todo: spawn tint/visuals
+					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp->m_aoeEffectOnHit->m_radius;
 
 					EntityID aoeEffect = SEntityFactory::SpawnEntity(aoeEffectSpawnInfo);
 					if (g_ecs->IsValid(aoeEffect))

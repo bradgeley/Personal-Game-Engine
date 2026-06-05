@@ -59,7 +59,7 @@
     <Targeting maxRange="6"></Targeting>
     <OnHit>
       <Burn burn="10"></Burn>
-      <AoEEffect duration="0.5" radius="0.5">
+      <AoEEffect duration="0.5" radius="0.5" name="RedAoEEffect">
         <Burn burn="10"></Burn>
         <Slow duration="1"></Slow>
       </AoEEffect>
