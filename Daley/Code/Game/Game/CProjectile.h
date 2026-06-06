@@ -16,7 +16,6 @@ public:
     CProjectile() = default;
     CProjectile(void const* xmlElement);
 
-    void RollDamageAndEffects();
 	HitPayload GetMainTargetPayload() const;
     HitPayload GetAoeTargetPayload() const;
 
@@ -29,7 +28,6 @@ public:
     float m_accumulatedTime = 0.f;
     float m_projSpeed = 1.f;
 
-	bool m_hasRolledDamageAndEffects = false;
     std::optional<AbilityCritComponent>	m_critComp;
     std::optional<AbilityOnHitComponent> m_onHitComp;
 };

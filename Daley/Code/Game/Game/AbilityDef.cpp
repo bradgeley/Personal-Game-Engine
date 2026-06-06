@@ -42,6 +42,23 @@ void AbilityDef::LoadFromXML()
 
         abilityDefElem = abilityDefElem->NextSiblingElement("ProjectileHitAbilityDef");
     }
+
+    // AoE Hit Abilities
+	XmlElement* aoeHitAbilityDefElem = root->FirstChildElement("AoEHitAbilityDef");
+    while (aoeHitAbilityDefElem)
+    {
+        Name name = XmlUtils::ParseXmlAttribute(*aoeHitAbilityDefElem, "name", Name::Invalid);
+        if (GetAbilityDefID(name) != -1)
+        {
+            DevConsoleUtils::LogError("Duplicate Ability Def: %s", name.ToCStr());
+        }
+
+        // Emplace new definition using the constructor that takes an Xml Element
+        AoEHitAbilityDef* newDef = new AoEHitAbilityDef(aoeHitAbilityDefElem);
+        s_abilityDefs.push_back(newDef);
+
+        aoeHitAbilityDefElem = aoeHitAbilityDefElem->NextSiblingElement("AoEHitAbilityDef");
+    }
 }
 
 
@@ -95,43 +112,6 @@ int AbilityDef::GetAbilityDefID(Name name)
         }
     }
     return -1;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-ProjectileHitAbilityDef::ProjectileHitAbilityDef(void const* xmlElement)
-{
-	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-    m_name                      = XmlUtils::ParseXmlAttribute(elem, "name", m_projectileDefName);
-	m_projectileDefName			= XmlUtils::ParseXmlAttribute(elem, "projectileDef", m_projectileDefName);
-	m_projSpeed	                = XmlUtils::ParseXmlAttribute(elem, "projSpeed", m_projSpeed);
-
-    if (XmlElement const* cooldownElem = elem.FirstChildElement("Cooldown"))
-    {
-        m_cooldownDef.emplace(cooldownElem);
-	}
-    if (XmlElement const* targetingElem = elem.FirstChildElement("Targeting"))
-    {
-        m_targetingDef.emplace(targetingElem);
-    }
-    if (XmlElement const* critElem = elem.FirstChildElement("Crit"))
-    {
-        m_critDef.emplace(critElem);
-	}
-    if (XmlElement const* onHitElem = elem.FirstChildElement("OnHit"))
-    {
-        m_onHitDef.emplace(onHitElem);
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Ability* ProjectileHitAbilityDef::MakeAbilityInstance() const
-{
-	ProjectileHitAbility* ability = new ProjectileHitAbility(*this);
-    return ability;
 }
 
 
@@ -213,7 +193,7 @@ AbilitySlowComponentDef::AbilitySlowComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityAoeHitComponentDef::AbilityAoeHitComponentDef(void const* xmlElement)
+AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
     m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
@@ -293,4 +273,83 @@ AbilityOnHitComponentDef::AbilityOnHitComponentDef(void const* xmlElement)
     {
         m_slowOnHit.emplace(slowElem);
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+ProjectileHitAbilityDef::ProjectileHitAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_projectileDefName = XmlUtils::ParseXmlAttribute(elem, "projectileDef", m_projectileDefName);
+    m_projSpeed = XmlUtils::ParseXmlAttribute(elem, "projSpeed", m_projSpeed);
+
+    if (XmlElement const* cooldownElem = elem.FirstChildElement("Cooldown"))
+    {
+        m_cooldownDef.emplace(cooldownElem);
+    }
+    if (XmlElement const* targetingElem = elem.FirstChildElement("Targeting"))
+    {
+        m_targetingDef.emplace(targetingElem);
+    }
+    if (XmlElement const* critElem = elem.FirstChildElement("Crit"))
+    {
+        m_critDef.emplace(critElem);
+    }
+    if (XmlElement const* onHitElem = elem.FirstChildElement("OnHit"))
+    {
+        m_onHitDef.emplace(onHitElem);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Ability* ProjectileHitAbilityDef::MakeAbilityInstance() const
+{
+    ProjectileHitAbility* ability = new ProjectileHitAbility(*this);
+    return ability;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AoEHitAbilityDef::AoEHitAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+
+    if (XmlElement const* cooldownElem = elem.FirstChildElement("Cooldown"))
+    {
+        m_cooldownDef.emplace(cooldownElem);
+    }
+    if (XmlElement const* targetingElem = elem.FirstChildElement("Targeting"))
+    {
+        m_targetingDef.emplace(targetingElem);
+    }
+    if (XmlElement const* critElem = elem.FirstChildElement("Crit"))
+    {
+        m_critDef.emplace(critElem);
+    }
+    if (XmlElement const* aoeHitElem = elem.FirstChildElement("AoEHit"))
+    {
+        m_aoeHitDef.emplace(aoeHitElem);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityDef::AbilityDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_name = XmlUtils::ParseXmlAttribute(elem, "name", m_name);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Ability* AoEHitAbilityDef::MakeAbilityInstance() const
+{
+    AoEHitAbility* ability = new AoEHitAbility(*this);
+    return ability;
 }

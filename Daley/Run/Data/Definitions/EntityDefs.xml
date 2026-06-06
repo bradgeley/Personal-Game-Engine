@@ -6,6 +6,7 @@
   <EntityDef name = "ant">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
+    <Attachment></Attachment>
     <Collision radius="0.5" singleHash="true" type="enemy"></Collision>
     <Death></Death>
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
@@ -20,6 +21,7 @@
   <EntityDef name = "mediumAnt">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
+    <Attachment></Attachment>
     <Collision radius="1" singleHash="false" type="enemy"></Collision>
     <Death></Death>
     <Health maxHealth="1000" healthRegen="10" isTargetable="true"></Health>
@@ -34,6 +36,7 @@
   <EntityDef name = "largeAnt">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
+    <Attachment></Attachment>
     <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
     <Death></Death>
     <Health maxHealth="2000" healthRegen="20" isTargetable="true"></Health>
@@ -48,6 +51,7 @@
   <EntityDef name = "pig">
     <AIController></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
+    <Attachment></Attachment>
     <Collision radius="1" type="enemy"></Collision>
     <Death></Death>
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
@@ -55,6 +59,38 @@
     <Movement moveSpeed="1" pathOnly="true"></Movement>
     <Render scale="2"></Render>
     <Tags medium="" enemy=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <!-- ==================================================================================================================== -->
+  <!-- Test Towers -->
+
+  <EntityDef name = "ProjectileHitAbility_TestTower">
+    <Ability name="ProjectileHitAbility_TestAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Collision radius="1" type="building"></Collision>
+    <Render scale="2" tint="255,0,255"></Render>
+    <Tags tower=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "ProjectileHitAbility_TestProj">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
+    <Projectile></Projectile>
+    <Render scale="0.66" rotateSprite="true" tint="255,0,255"></Render>
+    <Tags projectile=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "AoEHitAbility_TestTower">
+    <Ability name="AoEHitAbility_TestAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Collision radius="1" type="building"></Collision>
+    <Render scale="2" tint="255,0,255"></Render>
+    <Tags tower=""></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

@@ -13,5 +13,6 @@ struct CAttachment
 	EntityID m_attachedTo = EntityID::Invalid;
 	bool m_destroyIfAttachedToEntityDestroyed = false;
 
+	// Slots for different possible attachments
 	EntityID m_attachedBurnVFX = EntityID::Invalid;
 };

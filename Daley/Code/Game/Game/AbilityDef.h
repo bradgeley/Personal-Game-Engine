@@ -84,9 +84,9 @@ struct AbilitySlowComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityAoeHitComponentDef
+struct AbilityAoEHitComponentDef
 {
-	explicit AbilityAoeHitComponentDef(void const* xmlElement);
+	explicit AbilityAoEHitComponentDef(void const* xmlElement);
 
 	float m_radius = 0.f;
 	std::optional<AbilityDamageComponentDef>	m_damageOnHit;
@@ -121,7 +121,7 @@ struct AbilityOnHitComponentDef
 	std::optional<AbilityDamageComponentDef>	m_damageOnHit;
 	std::optional<AbilityPoisonComponentDef>	m_poisonOnHit;
 	std::optional<AbilityBurnComponentDef>		m_burnOnHit;
-	std::optional<AbilityAoeHitComponentDef>	m_aoeHitOnHit;
+	std::optional<AbilityAoEHitComponentDef>	m_aoeHitOnHit;
 	std::optional<AbilityAoeEffectComponentDef>	m_aoeEffectOnHit;
 	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
 };
@@ -135,6 +135,7 @@ struct AbilityDef
 public:
 
 	virtual ~AbilityDef() = default;
+	AbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const = 0;
 
 public:
@@ -162,7 +163,6 @@ struct ProjectileHitAbilityDef : public AbilityDef
 public:
 
 	explicit ProjectileHitAbilityDef(void const* xmlElement);
-
 	virtual Ability* MakeAbilityInstance() const override;
 
 public:
@@ -174,4 +174,23 @@ public:
 	std::optional<AbilityTargetingComponentDef>		m_targetingDef;
 	std::optional<AbilityCritComponentDef>			m_critDef;
 	std::optional<AbilityOnHitComponentDef>			m_onHitDef;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct AoEHitAbilityDef : public AbilityDef
+{
+public:
+
+	explicit AoEHitAbilityDef(void const* xmlElement);
+	virtual Ability* MakeAbilityInstance() const override;
+
+public:
+
+	Name m_aoeEffectDefName = Name::Invalid; // AoEEffect to spawn when this ability activates for visuals or extra effects.
+	std::optional<AbilityCooldownComponentDef>		m_cooldownDef;
+	std::optional<AbilityTargetingComponentDef>		m_targetingDef;
+	std::optional<AbilityCritComponentDef>			m_critDef;
+	std::optional<AbilityAoEHitComponentDef>		m_aoeHitDef;
 };

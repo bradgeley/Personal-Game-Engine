@@ -37,6 +37,7 @@ public:
 
 	bool operator==(EntityID const& other) const { return m_generationAndId == other.m_generationAndId; }
 	bool operator!=(EntityID const& other) const { return m_generationAndId != other.m_generationAndId; }
+	bool operator<(const EntityID& other) const { return m_generationAndId < other.m_generationAndId; }
 
 public:
 

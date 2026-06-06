@@ -19,17 +19,17 @@ void SAttachment::Startup()
 void SAttachment::Run(SystemContext const& context)
 {
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& attachStorage = g_ecs->GetMapStorage<CAttachment>();
+	auto& attachStorage = g_ecs->GetArrayStorage<CAttachment>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	for (auto it = g_ecs->Iterate<CAttachment, CTransform>(context); it.IsValid(); ++it)
 	{
-		CTransform& transform = *transStorage.Get(it);
 		CAttachment const& attach = *attachStorage.Get(it);
 
 		bool hasValidAttachment = g_ecs->IsValid(attach.m_attachedTo);
 		if (hasValidAttachment)
 		{
+			CTransform& transform = *transStorage.Get(it);
 			CTransform const& attachedToTransform = *transStorage.Get(attach.m_attachedTo.GetIndex());
 			transform.m_pos = attachedToTransform.m_pos;
 		}

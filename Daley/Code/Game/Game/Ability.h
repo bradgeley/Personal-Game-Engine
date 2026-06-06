@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Core/Name.h"
 #include "Engine/Math/IntVec2.h"
+#include "HitPayload.h"
 #include <optional>
 #include <vector>
 
@@ -10,6 +11,7 @@
 class VertexBuffer;
 struct EntityDef;
 struct ProjectileHitAbilityDef;
+struct AoEHitAbilityDef;
 struct Vec2;
 struct AbilityDef;
 struct AbilityCooldownComponentDef;
@@ -18,7 +20,7 @@ struct AbilityCritComponentDef;
 struct AbilityDamageComponentDef;
 struct AbilityBurnComponentDef;
 struct AbilityPoisonComponentDef;
-struct AbilityAoeHitComponentDef;
+struct AbilityAoEHitComponentDef;
 struct AbilityAoeEffectComponentDef;
 struct AbilityOnHitComponentDef;
 struct AbilitySlowComponentDef;
@@ -172,12 +174,14 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityAoeHitComponent
+struct AbilityAoEHitComponent
 {
 public:
 
-	AbilityAoeHitComponent() = default;
-	AbilityAoeHitComponent(AbilityAoeHitComponentDef const& def);
+	AbilityAoEHitComponent() = default;
+	AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def);
+
+	HitPayload GetPayload() const;
 
 	void AppendDebugString(std::string& out_string) const;
 
@@ -223,6 +227,8 @@ public:
 	AbilityOnHitComponent() = default;
 	AbilityOnHitComponent(AbilityOnHitComponentDef const& def);
 
+	HitPayload GetPayload() const;
+
 	void AppendDebugString(std::string& out_string) const;
 
 public:
@@ -230,7 +236,7 @@ public:
 	std::optional<AbilityDamageComponent>		m_damageOnHit;
 	std::optional<AbilityPoisonComponent>		m_poisonOnHit;
 	std::optional<AbilityBurnComponent>			m_burnOnHit;
-	std::optional<AbilityAoeHitComponent>		m_aoeHitOnHit;
+	std::optional<AbilityAoEHitComponent>		m_aoeHitOnHit;
 	std::optional<AbilityAoeEffectComponent>	m_aoeEffectOnHit;
 	std::optional<AbilitySlowComponent>			m_slowOnHit;
 };
@@ -249,6 +255,8 @@ public:
 	virtual Ability* DeepCopy() const = 0;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(std::string& out_string) const = 0;
+
+	virtual void RollDamageAndEffects() = 0;
 
 public:
 
@@ -270,6 +278,8 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;
 
+	virtual void RollDamageAndEffects() override;
+
 public:
 
 	Name m_projectileDefName = Name::Invalid;
@@ -279,4 +289,30 @@ public:
 	std::optional<AbilityTargetingComponent>	m_targetingComp;
 	std::optional<AbilityCritComponent>			m_critComp;
 	std::optional<AbilityOnHitComponent>		m_onHitComp;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+class AoEHitAbility : public Ability
+{
+public:
+
+	AoEHitAbility() = default;
+	explicit AoEHitAbility(AoEHitAbilityDef const& def);
+
+	virtual void Update(float deltaSeconds, Vec2 const& location) override;
+	virtual Ability* DeepCopy() const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
+	virtual void AppendDebugString(std::string& out_string) const override;
+
+	virtual void RollDamageAndEffects() override;
+
+public:
+
+	Name m_aoeEffectDefName = Name::Invalid; // AoEEffect to spawn when this ability activates for visuals or extra effects.
+	std::optional<AbilityCooldownComponent>		m_cooldownComp;
+	std::optional<AbilityTargetingComponent>	m_targetingComp;
+	std::optional<AbilityCritComponent>			m_critComp;
+	std::optional<AbilityAoEHitComponent>		m_aoeHitComp;
 };

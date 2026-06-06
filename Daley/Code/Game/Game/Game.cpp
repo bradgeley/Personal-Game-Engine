@@ -204,6 +204,7 @@ void Game::ConfigureECS()
     // Array components
     g_ecs->RegisterComponentArray<CAIController>();
     g_ecs->RegisterComponentArray<CAnimation>();
+    g_ecs->RegisterComponentArray<CAttachment>();
     g_ecs->RegisterComponentArray<CCollision>();
     g_ecs->RegisterComponentArray<CDeath>();
     g_ecs->RegisterComponentArray<CHealth>();
@@ -218,7 +219,6 @@ void Game::ConfigureECS()
     // Map Components
     g_ecs->RegisterComponentMap<CAbility>();
     g_ecs->RegisterComponentMap<CCollisionEffect>();
-    g_ecs->RegisterComponentMap<CAttachment>();
     g_ecs->RegisterComponentMap<CProjectile>();
 
     // Singleton components

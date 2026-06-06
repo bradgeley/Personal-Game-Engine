@@ -62,8 +62,6 @@ void SProjectile::Run(SystemContext const& context)
 			// Projectile hit target
 			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 
-			proj.RollDamageAndEffects();
-
 			if (proj.m_onHitComp.has_value())
 			{
 				HitPayload mainTargetPayload = proj.GetMainTargetPayload();

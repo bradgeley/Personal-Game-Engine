@@ -27,9 +27,9 @@ void SAbility::Run(SystemContext const& context)
 		CAbility& ability = *abilityStorage.Get(it);
 		CTransform const& transform = *transStorage.Get(it);
 
-		for (Ability* w : ability.m_abilities)
+		for (Ability* abilityInstance : ability.m_abilities)
 		{
-			w->Update(context.m_deltaSeconds, transform.m_pos);
+			abilityInstance->Update(context.m_deltaSeconds, transform.m_pos);
 		}
 	}
 }

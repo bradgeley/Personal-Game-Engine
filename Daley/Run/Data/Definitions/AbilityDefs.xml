@@ -1,5 +1,41 @@
 <AbilityDefs>
 
+  <!-- ==================================================================================================================== -->
+  <!-- Test Attacks -->
+
+  <ProjectileHitAbilityDef name="ProjectileHitAbility_TestAttack" projectileDef="ProjectileHitAbility_TestProj" projSpeed="100">
+    <Cooldown cooldown="2"></Cooldown>
+    <Targeting minRange="5" maxRange="15"></Targeting>
+    <Crit critChance="0.5"></Crit>
+    <OnHit>
+      <Damage minDamage="5" maxDamage="10"></Damage>
+      <Burn burn="10"></Burn>
+      <Poison poison="10"></Poison>
+      <Slow duration="1"></Slow>
+      <AoEHit radius="2">
+        <Damage damage="1"></Damage>
+        <Burn burn="1"></Burn>
+        <Poison poison="1"></Poison>
+        <Slow duration="1"></Slow>
+      </AoEHit>
+    </OnHit>
+  </ProjectileHitAbilityDef>
+
+  <AoEHitAbilityDef name="AoEHitAbility_TestAttack">
+    <Cooldown cooldown="3"></Cooldown>
+    <Targeting maxRange="10"></Targeting>
+    <Crit critChance="0.5"></Crit>
+    <AoEHit radius="5">
+      <Damage damage="5"></Damage>
+      <Burn burn="5"></Burn>
+      <Poison poison="5"></Poison>
+      <Slow duration="1"></Slow>
+    </AoEHit>
+  </AoEHitAbilityDef>
+
+  <!-- ==================================================================================================================== -->
+  <!-- Attacks -->
+
   <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="100">
     <Cooldown cooldown="0.1"></Cooldown>
     <Targeting maxRange="15"></Targeting>
@@ -61,24 +97,23 @@
       <Burn burn="10"></Burn>
       <AoEEffect duration="0.5" radius="0.5" name="RedAoEEffect">
         <Burn burn="10"></Burn>
-        <Slow duration="1"></Slow>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <AoEBurstAbilityDef name="RasberrySorbetAttack">
+  <AoEHitAbilityDef name="RasberrySorbetAttack">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="5"></Targeting>
     <AoEHit radius="5">
       <Burn burn="20"></Burn>
     </AoEHit>
-  </AoEBurstAbilityDef>
+  </AoEHitAbilityDef>
 
-  <PassiveAbilityDef name="OrangeSorbetAttack">
+  <PassiveAoEAbilityDef name="OrangeSorbetAttack">
     <Targeting maxRange="5"></Targeting>
     <AoEEffect radius="5">
       <Burn burn="10"></Burn>
     </AoEEffect>
-  </PassiveAbilityDef>
+  </PassiveAoEAbilityDef>
 
 </AbilityDefs>
