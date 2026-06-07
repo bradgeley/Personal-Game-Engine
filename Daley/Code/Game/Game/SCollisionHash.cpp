@@ -14,8 +14,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::Startup()
 {
+    AddReadDependencies<SCWorld, CCollision, CTransform>();
 	AddWriteDependencies<SCCollision>();
-    AddReadDependencies<CCollision, CTransform, SCWorld>();
 
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
@@ -52,10 +52,13 @@ void SCollisionHash::PreRun()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::Run(SystemContext const& context)
 {
-    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
+    // Read dependencies
     SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
     auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
     auto const& collStorage = g_ecs->GetArrayStorage<CCollision>();
+
+    // Write Dependencies
+    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
     for (GroupIter it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
     {

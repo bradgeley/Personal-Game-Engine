@@ -9,8 +9,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SAttachment::Startup()
 {
-	AddWriteDependencies<CTransform>();
-	AddReadDependencies<CAttachment, SCEntityFactory>();
+	AddReadDependencies<CAttachment>();
+	AddWriteDependencies<CTransform, SCEntityFactory>();
 }
 
 
@@ -18,8 +18,11 @@ void SAttachment::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAttachment::Run(SystemContext const& context)
 {
+	// Read dependencies
+	auto const& attachStorage = g_ecs->GetArrayStorage<CAttachment>();
+
+	// Write dependencies
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& attachStorage = g_ecs->GetArrayStorage<CAttachment>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	for (auto it = g_ecs->Iterate<CAttachment, CTransform>(context); it.IsValid(); ++it)

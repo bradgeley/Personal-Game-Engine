@@ -21,7 +21,7 @@ void SCollisionEffect::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionEffect::Run(SystemContext const& context)
 {
-    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
+    SCCollision const& scCollision = g_ecs->GetSingleton<SCCollision>();
 	
     for (OverlapInfo const& overlap : scCollision.m_frameOverlaps)
     {
@@ -30,7 +30,7 @@ void SCollisionEffect::Run(SystemContext const& context)
 
 		bool isFirstTouch = scCollision.m_lastFrameOverlaps.find(overlap) == scCollision.m_lastFrameOverlaps.end();
 
-		if (CCollisionEffect* aoeA = g_ecs->GetComponent<CCollisionEffect>(entityA))
+		if (CCollisionEffect const* aoeA = g_ecs->GetComponent<CCollisionEffect>(entityA))
 		{
 			HitPayload payload = isFirstTouch ? aoeA->GetFirstTouchPayload() : aoeA->GetWhileTouchingPayload(context.m_deltaSeconds);
 

@@ -16,8 +16,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderWorld::Startup()
 {
-    AddWriteDependencies<SCRender, Renderer, AssetManager>();
-    AddReadDependencies<SCWorld>();
+    AddReadDependencies<AssetManager>();
+    AddWriteDependencies<SCWorld, SCRender, Renderer>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 	scRender.m_staticWorldConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(StaticWorldConstants));
@@ -50,8 +50,9 @@ void SRenderWorld::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderWorld::Run(SystemContext const&)
 {
-	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+	// Write Dependencies
     SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 
     world.GenerateVBO();
 

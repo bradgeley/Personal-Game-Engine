@@ -11,8 +11,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SPhysics::Startup()
 {
-    AddWriteDependencies<CMovement, CTransform>();
     AddReadDependencies<SCWorld>();
+    AddWriteDependencies<CMovement, CTransform>();
 }
 
 
@@ -20,9 +20,12 @@ void SPhysics::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SPhysics::Run(SystemContext const& context)
 {
+    // Read Dependencies
+	auto const& world = g_ecs->GetSingleton<SCWorld>();
+
+	// Write Dependencies
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
     auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& world = g_ecs->GetSingleton<SCWorld>();
 
     for (auto it = g_ecs->Iterate<CMovement, CTransform>(context); it.IsValid(); ++it)
     {

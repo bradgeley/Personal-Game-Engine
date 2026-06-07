@@ -16,6 +16,9 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SWaveSpawner::Startup()
 {
+	AddReadDependencies<SCWorld>();
+	AddWriteDependencies<SCWaves, SCEntityFactory>();
+
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
 
 	WaveStream testStream;
@@ -46,8 +49,11 @@ void SWaveSpawner::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SWaveSpawner::Run(SystemContext const& context)
 {
+	// Read Dependencies
+	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+
+	// Write Dependencies
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
-	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	if (waves.m_wavesFinished || !waves.m_wavesStarted)

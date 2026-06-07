@@ -17,6 +17,7 @@ void STime::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void STime::Run(SystemContext const& context)
 {
+	// Write Dependencies
 	SCTime& scTime = g_ecs->GetSingleton<SCTime>();
 	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
 

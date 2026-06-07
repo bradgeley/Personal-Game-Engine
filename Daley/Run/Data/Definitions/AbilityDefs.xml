@@ -33,14 +33,14 @@
     </AoEHit>
   </AoEHitAbilityDef>
 
-  <AoEPassiveAbilityDef name="AoEPassiveAbility_TestAttack" aoeEffectDef="MagentaVisualEffect">
+  <PassiveAoEAbilityDef name="PassiveAoEAbility_TestAttack" aoeEffectDef="MagentaVisualEffect">
     <AoEEffect radius="5">
       <Damage damage="5"></Damage>
       <Burn burn="5"></Burn>
       <Poison poison="5"></Poison>
       <Slow duration="1"></Slow>
     </AoEEffect>
-  </AoEPassiveAbilityDef>
+  </PassiveAoEAbilityDef>
 
   <!-- ==================================================================================================================== -->
   <!-- Attacks -->
@@ -104,7 +104,7 @@
     <Targeting maxRange="6"></Targeting>
     <OnHit>
       <Burn burn="10"></Burn>
-      <AoEEffect duration="0.5" radius="5" name="RedAoEEffect">
+      <AoEEffect duration="0.5" radius="0.5" name="RedAoEEffect">
         <Burn burn="10"></Burn>
       </AoEEffect>
     </OnHit>

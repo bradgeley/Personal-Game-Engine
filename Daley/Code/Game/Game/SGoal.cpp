@@ -10,8 +10,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SGoal::Startup()
 {
-	AddWriteDependencies<SCEntityFactory>();
 	AddReadDependencies<CTransform, CHealth, SCWorld>();
+	AddWriteDependencies<SCEntityFactory>();
 }
 
 
@@ -19,9 +19,12 @@ void SGoal::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SGoal::Run(SystemContext const& context)
 {
-	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
-	auto& world = g_ecs->GetSingleton<SCWorld>();
+	// Read Dependencies
+	auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+	auto const& world = g_ecs->GetSingleton<SCWorld>();
+
+	// Write Dependencies
 	auto& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	for (auto it = g_ecs->Iterate<CTransform, CHealth>(context); it.IsValid(); ++it)

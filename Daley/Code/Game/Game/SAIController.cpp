@@ -4,7 +4,6 @@
 #include "CMovement.h"
 #include "CTime.h"
 #include "CTransform.h"
-#include "SCTime.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
 #include "Engine/Time/Time.h"
@@ -15,8 +14,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SAIController::Startup()
 {
+    AddReadDependencies<CTransform, CTime, CAIController, SCFlowField, SCWorld>();
     AddWriteDependencies<CMovement>();
-    AddReadDependencies<CTransform, CTime, CAIController, SCFlowField, SCWorld, SCTime>();
 }
 
 
@@ -24,12 +23,15 @@ void SAIController::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAIController::Run(SystemContext const& context)
 {
-    auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-    auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
-	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
-	auto& aiStorage = g_ecs->GetArrayStorage<CAIController>();
+	// Read Dependencies
+    auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto const& timeStorage = g_ecs->GetArrayStorage<CTime>();
+	auto const& aiStorage = g_ecs->GetArrayStorage<CAIController>();
     SCFlowField const& scFlow = g_ecs->GetSingleton<SCFlowField>();
     SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>(); // not a true dependency bc we are just calling GetWorldCoordsAtLocation, which is essentially a static function
+
+    // Write Dependencies
+    auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
 
     for (auto it = g_ecs->Iterate<CTransform, CMovement, CTime, CAIController>(context); it.IsValid(); ++it)
     {

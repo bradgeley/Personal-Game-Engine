@@ -19,8 +19,8 @@ void SAbility::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAbility::Run(SystemContext const& context)
 {
+	auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
-	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
 
 	for (auto it = g_ecs->Iterate<CAbility, CTransform>(context); it.IsValid(); ++it)
 	{

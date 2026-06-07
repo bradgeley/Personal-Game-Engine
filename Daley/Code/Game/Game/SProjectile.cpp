@@ -18,7 +18,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SProjectile::Startup()
 {
-	AddWriteDependencies<CProjectile, CTransform, CHealth, SCEntityFactory>();
+	AddReadDependencies<SCWorld, SCCollision>();
+	AddWriteDependencies<CProjectile, CTransform, CCollision, CHealth, SCEntityFactory>();
 }
 
 
@@ -26,13 +27,16 @@ void SProjectile::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SProjectile::Run(SystemContext const& context)
 {
+	// Read Dependencies
+	auto const& world = g_ecs->GetSingleton<SCWorld>();
+	auto const& scCollision = g_ecs->GetSingleton<SCCollision>();
+
+	// Write Dependencies
 	auto& projStorage = g_ecs->GetMapStorage<CProjectile>();
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
 	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
-	auto& world = g_ecs->GetSingleton<SCWorld>();
-	auto& scCollision = g_ecs->GetSingleton<SCCollision>();
 
 	CollisionLayer const& enemyLayer = scCollision.GetCollisionLayer(CollisionChannel::Enemy);
 

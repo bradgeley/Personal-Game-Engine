@@ -21,14 +21,18 @@ void SInitView::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SInitView::Run(SystemContext const& context)
 {
+	// Read Dependencies
 	SCCamera const& camera = g_ecs->GetSingleton<SCCamera>();
+
+	// Write Dependencies
+	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
+
     AABB2 cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
 
 	g_renderer->BeginWindowLetterboxed(g_window, StaticWorldSettings::s_visibleWorldAspect);
     g_renderer->BeginCamera(&camera.m_camera);
     g_renderer->ClearScreen(Rgba8::LightGray);
 
-	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 
     for (auto it = g_ecs->Iterate<CRender>(context); it.IsValid(); ++it)
     {

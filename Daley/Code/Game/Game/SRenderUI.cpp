@@ -26,8 +26,9 @@ void SRenderUI::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderUI::Run(SystemContext const& context)
 {
-	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+	// Read Dependencies
+	auto const& renderStorage = g_ecs->GetArrayStorage<CRender>();
+	auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 	SCRender const& scRender = g_ecs->GetSingleton<SCRender>();
 
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(scRender.m_uiVBO);

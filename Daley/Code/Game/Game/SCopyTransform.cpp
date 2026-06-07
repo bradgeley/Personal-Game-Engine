@@ -8,8 +8,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SCopyTransform::Startup()
 {
-    AddWriteDependencies<CRender>();
     AddReadDependencies<CTransform>();
+    AddWriteDependencies<CRender>();
 }
 
 
@@ -17,8 +17,11 @@ void SCopyTransform::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SCopyTransform::Run(SystemContext const& context)
 {
+	// Read Dependencies
+    auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
+
+	// Write Dependencies
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-    auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
 
     for (auto renderIt = g_ecs->Iterate<CRender, CTransform>(context); renderIt.IsValid(); ++renderIt)
     {

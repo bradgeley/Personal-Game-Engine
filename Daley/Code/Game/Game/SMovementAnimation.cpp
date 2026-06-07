@@ -9,8 +9,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SMovementAnimation::Startup()
 {
-    AddWriteDependencies<CAnimation>();
     AddReadDependencies<CMovement, CRender>();
+    AddWriteDependencies<CAnimation>();
 }
 
 
@@ -18,9 +18,12 @@ void SMovementAnimation::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SMovementAnimation::Run(SystemContext const& context)
 {
-    auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
+    // Read Dependencies
+    auto const& moveStorage = g_ecs->GetArrayStorage<CMovement>();
+	auto const& renderStorage = g_ecs->GetArrayStorage<CRender>();
+
+    // Write Dependencies
     auto& animationStorage = g_ecs->GetArrayStorage<CAnimation>();
-	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 
     static Name idleAnimName = "Idle";
     static Name walkAnimName = "Walk";

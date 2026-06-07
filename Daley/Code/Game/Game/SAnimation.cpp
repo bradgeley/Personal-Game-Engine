@@ -11,8 +11,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SAnimation::Startup()
 {
-	AddWriteDependencies<CAnimation, AssetManager>();
 	AddReadDependencies<CRender>();
+	AddWriteDependencies<CAnimation, AssetManager>();
 }
 
 
@@ -20,7 +20,10 @@ void SAnimation::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAnimation::Run(SystemContext const& context)
 {
-	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
+    // Read Dependencies
+	auto const& renderStorage = g_ecs->GetArrayStorage<CRender>();
+
+    // Write Dependencies
 	auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
 
     for (auto it = g_ecs->Iterate<CRender, CAnimation>(context); it.IsValid(); ++it)

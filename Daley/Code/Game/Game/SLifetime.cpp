@@ -10,7 +10,7 @@
 void SLifetime::Startup()
 {
 	AddReadDependencies<CTime>();
-	AddWriteDependencies< CLifetime, SCEntityFactory>();
+	AddWriteDependencies<CLifetime, SCEntityFactory>();
 }
 
 
@@ -18,9 +18,12 @@ void SLifetime::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SLifetime::Run(SystemContext const& context)
 {
+	// Read Dependencies
+	auto const& timeStorage = g_ecs->GetArrayStorage<CTime>();
+
+	// Write Dependencies
 	SCEntityFactory& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
 	auto& lifetimeStorage = g_ecs->GetArrayStorage<CLifetime>();
-	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
 
 	BitMask timeBitMask = g_ecs->GetComponentBitMask<CTime>();
 

@@ -17,6 +17,7 @@ void SHealth::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SHealth::Run(SystemContext const& context)
 {
+	// Write Dependencies
 	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 
 	for (auto it = g_ecs->Iterate<CHealth>(context); it.IsValid(); ++it)

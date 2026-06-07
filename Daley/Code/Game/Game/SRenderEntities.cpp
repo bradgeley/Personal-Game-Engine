@@ -23,8 +23,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderEntities::Startup()
 {
-    AddWriteDependencies<Renderer, SCRender>();
-    AddReadDependencies<CRender, SCCamera, CAnimation>();
+    AddReadDependencies<CRender, CAnimation, SCCamera, AssetManager>();
+    AddWriteDependencies<SCRender, Renderer>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
     scRender.m_spriteSheetConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(SpriteSheetConstants));
@@ -38,9 +38,12 @@ void SRenderEntities::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderEntities::Run(SystemContext const& context)
 {
+    // Read Dependencies
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
     auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
     SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
+
+	// Write Dependencies
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 
     ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);

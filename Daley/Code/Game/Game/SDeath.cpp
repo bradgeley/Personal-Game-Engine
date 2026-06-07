@@ -12,7 +12,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SDeath::Startup()
 {
-	AddWriteDependencies<CHealth, CAnimation, CDeath, CLifetime>();
+	AddReadDependencies<CHealth>();
+	AddWriteDependencies<CAnimation, CDeath, CLifetime>();
 }
 
 
@@ -20,14 +21,17 @@ void SDeath::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SDeath::Run(SystemContext const& context)
 {
-	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+	// Read Dependencies
+	auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+
+	// Write Dependencies
 	auto& deathStorage = g_ecs->GetArrayStorage<CDeath>();
 	auto& lifetimeStorage = g_ecs->GetArrayStorage<CLifetime>();
 	auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
 
 	for (auto it = g_ecs->Iterate<CHealth, CDeath, CLifetime>(context); it.IsValid(); ++it)
 	{
-		CHealth& health = healthStorage[it];
+		CHealth const& health = healthStorage[it];
 		if (!health.GetHealthReachedZero())
 		{
 			continue;

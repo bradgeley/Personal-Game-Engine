@@ -17,8 +17,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SLighting::Startup()
 {
-    AddReadDependencies<SCWorld, SCCamera, SCRender>();
-	AddWriteDependencies<SCLighting, Renderer>();
+    AddReadDependencies<SCCamera, SCRender>();
+	AddWriteDependencies<SCWorld, SCLighting, Renderer>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
     scRender.m_lightingConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(LightingConstants));

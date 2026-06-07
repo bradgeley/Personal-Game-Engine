@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SFlowField.h"
-#include "CTransform.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
 #include "TileDef.h"
@@ -24,7 +23,7 @@ IntVec2 neighborOffsets[4] = { IntVec2(1,  0),
 //----------------------------------------------------------------------------------------------------------------------
 void SFlowField::Startup()
 {
-    AddReadDependencies<CTransform, SCWorld>();
+    AddReadDependencies<SCWorld>();
     AddWriteDependencies<SCFlowField>();
 }
 

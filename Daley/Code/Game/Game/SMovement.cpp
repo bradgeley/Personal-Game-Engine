@@ -10,8 +10,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SMovement::Startup()
 {
-    AddWriteDependencies<CMovement, CTransform>();
     AddReadDependencies<CTime, CDeath>();
+    AddWriteDependencies<CMovement, CTransform>();
 }
 
 
@@ -19,10 +19,13 @@ void SMovement::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SMovement::Run(SystemContext const& context)
 {
+    // Read Dependencies
+    auto const& timeStorage = g_ecs->GetArrayStorage<CTime>();
+    auto const& deathStorage = g_ecs->GetArrayStorage<CDeath>();
+
+	// Write Dependencies
     auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
-    auto& deathStorage = g_ecs->GetArrayStorage<CDeath>();
     auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
-    auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
 
 	BitMask deathBitMask = g_ecs->GetComponentBitMask<CDeath>();
 

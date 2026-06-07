@@ -27,8 +27,11 @@ void SRenderEffects::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderEffects::Run(SystemContext const& context)
 {
+    // Read Dependencies
+    auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+
+	// Write Dependencies
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-    auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
 	auto& attachStorage = g_ecs->GetArrayStorage<CAttachment>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
