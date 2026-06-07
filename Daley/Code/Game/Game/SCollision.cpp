@@ -11,8 +11,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SCollision::Startup()
 {
-    AddWriteDependencies<CTransform, SCCollision>();
-    AddReadDependencies<CCollision>();
+    AddWriteDependencies<SCCollision>();
+    AddReadDependencies<CCollision, CTransform>();
 }
 
 
@@ -32,20 +32,20 @@ void SCollision::PreRun()
 void SCollision::Run(SystemContext const&)
 {
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
-	
-	auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
 
-	for (CollisionLayer& layer : scCollision.m_collisionLayers)
+	auto const& transformStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto const& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
+
+	for (int bucketIndex : scCollision.m_dirtyBuckets)
 	{
-		for (int bucketIndex = 0; bucketIndex < (int) layer.size(); ++bucketIndex)
+		for (CollisionLayer& layer : scCollision.m_collisionLayers)
 		{
 			CollisionBucket& bucket = layer[bucketIndex];
 
 			for (int entityIndex = 0; entityIndex < (int) bucket.size(); ++entityIndex)
 			{
 				EntityID entityID = bucket[entityIndex];
-				CCollision& collision = *collisionStorage.Get(entityID.GetIndex());
+				CCollision const& collision = *collisionStorage.Get(entityID.GetIndex());
 
 				for (int responseChannelIndex = 1; responseChannelIndex < (int) CollisionChannel::Count; ++responseChannelIndex)
 				{
@@ -66,10 +66,10 @@ void SCollision::Run(SystemContext const&)
 								continue;
 							}
 
-							CTransform& transform = *transformStorage.Get(entityID.GetIndex());
+							CTransform const& transform = *transformStorage.Get(entityID.GetIndex());
 
-							CCollision& otherCollision = *collisionStorage.Get(otherEntityID.GetIndex());
-							CTransform& otherTransform = *transformStorage.Get(otherEntityID.GetIndex());
+							CCollision const& otherCollision = *collisionStorage.Get(otherEntityID.GetIndex());
+							CTransform const& otherTransform = *transformStorage.Get(otherEntityID.GetIndex());
 
 							Vec2 collisionPos = transform.m_pos + collision.m_offset;
 							Vec2 otherCollisionPos = otherTransform.m_pos + otherCollision.m_offset;

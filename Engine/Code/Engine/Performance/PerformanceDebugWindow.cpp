@@ -14,6 +14,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Time/Time.h"
 #include "Engine/Window/Window.h"
 #include "Engine/Window/WindowUtils.h"
 #include "Engine/Math/MathUtils.h"
@@ -591,6 +592,10 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
         itemOutline.mins.y = rowOutline.mins.y;
         itemOutline.maxs.x = rowOutline.mins.x + rowOutline.GetWidth() * itemEndTimeFraction;
         itemOutline.maxs.y = rowOutline.maxs.y;
+
+		double itemDuration = item.m_endTime - item.m_startTime;
+        std::string duration = Time::GetDisplayString(itemDuration);
+        g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterLeft(), Vec2(1.f, 0.f), itemOutline.GetHeight(), duration.c_str());
     }
 
     g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());

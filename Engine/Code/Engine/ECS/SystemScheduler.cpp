@@ -212,7 +212,7 @@ void RunSystem(SystemContext const& context)
 {
 	PerfItemData perfItem;
 	perfItem.m_tint = context.m_system->GetDebugTint();
-	perfItem.m_startTime = GetCurrentTimeSeconds();
+	perfItem.m_startTime = Time::GetCurrentTimeSeconds();
 
 	context.m_system->PreRun();
 	
@@ -228,7 +228,7 @@ void RunSystem(SystemContext const& context)
 	
 	context.m_system->PostRun();
 
-	perfItem.m_endTime = GetCurrentTimeSeconds();
+	perfItem.m_endTime = Time::GetCurrentTimeSeconds();
 
 	if (g_performanceDebugWindow)
 	{
@@ -275,19 +275,7 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 		}
 
 		SystemContext context(system, deltaSeconds);
-
-		PerfItemData perfItem;
-		perfItem.m_tint = system->GetDebugTint();
-		perfItem.m_startTime = GetCurrentTimeSeconds();
-
 		RunSystem(context);
-
-		perfItem.m_endTime = GetCurrentTimeSeconds();
-
-		if (g_performanceDebugWindow)
-		{
-			g_performanceDebugWindow->LogItem(perfItem, s_ecsSectionName, system->GetName());
-		}
 	}
 }
 

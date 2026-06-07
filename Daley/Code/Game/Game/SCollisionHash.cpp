@@ -14,8 +14,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::Startup()
 {
-	AddWriteDependencies<SCWorld, SCCollision>();
-    AddReadDependencies<CCollision, CTransform>();
+	AddWriteDependencies<SCCollision>();
+    AddReadDependencies<CCollision, CTransform, SCWorld>();
 
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
@@ -35,13 +35,16 @@ void SCollisionHash::PreRun()
 {
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
-    for (CollisionLayer& layer : scCollision.m_collisionLayers)
+    for (int dirtyBucket : scCollision.m_dirtyBuckets)
     {
-        for (CollisionBucket& bucket : layer)
+        for (CollisionLayer& layer : scCollision.m_collisionLayers)
         {
+			CollisionBucket& bucket = layer[dirtyBucket];
             bucket.clear();
         }
     }
+
+	scCollision.m_dirtyBuckets.clear();
 }
 
 
@@ -49,10 +52,10 @@ void SCollisionHash::PreRun()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::Run(SystemContext const& context)
 {
-    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
-    auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-    auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
+    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+    auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
+    auto const& collStorage = g_ecs->GetArrayStorage<CCollision>();
 
     for (GroupIter it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
     {
@@ -74,6 +77,7 @@ void SCollisionHash::Run(SystemContext const& context)
 			IntVec2 worldCoords = world.GetTileCoordsAtWorldPosClamped(pos);
             int index = world.m_tiles.GetIndexForCoords(worldCoords);
             layer[index].push_back(it.GetEntityID());
+			scCollision.m_dirtyBuckets.insert(index);
         }
         else
         {
@@ -84,6 +88,7 @@ void SCollisionHash::Run(SystemContext const& context)
                 if (world.m_tiles.IsValidIndex(index))
                 {
                     layer[index].push_back(it.GetEntityID());
+                    scCollision.m_dirtyBuckets.insert(index);
                 }
                 return true;
             });

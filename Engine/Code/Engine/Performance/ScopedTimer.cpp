@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 ScopedTimer::ScopedTimer(Name name) : m_name(name)
 {
-	m_startTimeSeconds = GetCurrentTimeSeconds();
+	m_startTimeSeconds = Time::GetCurrentTimeSeconds();
 }
 
 
@@ -18,7 +18,7 @@ ScopedTimer::ScopedTimer(Name name) : m_name(name)
 //----------------------------------------------------------------------------------------------------------------------
 ScopedTimer::~ScopedTimer()
 {
-	double endTimeSeconds = GetCurrentTimeSeconds();
+	double endTimeSeconds = Time::GetCurrentTimeSeconds();
 	double deltaSeconds = endTimeSeconds - m_startTimeSeconds;
 	deltaSeconds *= 1000.0;
 
@@ -35,7 +35,7 @@ PerfWindowScopedTimer::PerfWindowScopedTimer(Name sectionName, Name rowName, Rgb
 		m_perfSectionID = g_performanceDebugWindow->GetOrCreateSectionID(sectionName);
 		m_perfRowID = g_performanceDebugWindow->GetOrCreateRowID(m_perfSectionID, rowName);
 	}
-	m_startTimeSeconds = GetCurrentTimeSeconds();
+	m_startTimeSeconds = Time::GetCurrentTimeSeconds();
 }
 
 
@@ -43,7 +43,7 @@ PerfWindowScopedTimer::PerfWindowScopedTimer(Name sectionName, Name rowName, Rgb
 //----------------------------------------------------------------------------------------------------------------------
 PerfWindowScopedTimer::PerfWindowScopedTimer(int sectionID, int rowID, Rgba8 tint /*= Rgba8::White*/) : m_perfSectionID(sectionID), m_perfRowID(rowID), m_tint(tint)
 {
-	m_startTimeSeconds = GetCurrentTimeSeconds();
+	m_startTimeSeconds = Time::GetCurrentTimeSeconds();
 }
 
 
@@ -53,7 +53,7 @@ PerfWindowScopedTimer::~PerfWindowScopedTimer()
 {
 	PerfItemData item;
 	item.m_startTime = m_startTimeSeconds;
-	item.m_endTime = GetCurrentTimeSeconds();
+	item.m_endTime = Time::GetCurrentTimeSeconds();
 	item.m_tint = m_tint;
 	if (g_performanceDebugWindow)
 	{

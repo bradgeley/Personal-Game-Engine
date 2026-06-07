@@ -163,7 +163,7 @@ void Engine::EndFrame()
     }
 
     #if defined(PERF_WINDOW_LOG_ENGINE_FRAME_DATA)
-        s_frameData.m_engineFrameEndTime = GetCurrentTimeSeconds();
+        s_frameData.m_engineFrameEndTime = Time::GetCurrentTimeSeconds();
 
         if (g_performanceDebugWindow)
         {

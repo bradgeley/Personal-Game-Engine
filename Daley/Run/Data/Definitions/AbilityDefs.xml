@@ -104,7 +104,7 @@
     <Targeting maxRange="6"></Targeting>
     <OnHit>
       <Burn burn="10"></Burn>
-      <AoEEffect duration="0.5" radius="0.5" name="RedAoEEffect">
+      <AoEEffect duration="0.5" radius="5" name="RedAoEEffect">
         <Burn burn="10"></Burn>
       </AoEEffect>
     </OnHit>

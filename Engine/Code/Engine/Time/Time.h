@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
+#include <string>
 
 
 
@@ -8,5 +9,9 @@
 //
 // Common time related functions
 //
-double GetCurrentTimeSeconds();
-float GetCurrentTimeSecondsF();
+namespace Time
+{
+	double GetCurrentTimeSeconds();
+	float GetCurrentTimeSecondsF();
+	std::string GetDisplayString(double seconds);
+}

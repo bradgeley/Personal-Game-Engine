@@ -119,7 +119,9 @@ public:
 	}
 
 	inline CType& operator [](int id) { return m_data[id]; }
+	inline CType const& operator [](int id) const { return m_data[id]; }
 	inline CType& operator [](GroupIter const& it) { return m_data[it.m_currentIndex]; }
+	inline CType const& operator [](GroupIter const& it) const { return m_data[it.m_currentIndex]; }
 
 public:
 

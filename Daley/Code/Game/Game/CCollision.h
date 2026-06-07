@@ -10,7 +10,7 @@
 enum class CollisionFlags : uint8_t
 {
 	Enabled         = 1 << 0,
-	SingleHash      = 1 << 1 // single tile spatial hash, for small entities
+	SingleHash      = 1 << 1, // single tile spatial hash, for small entities
 };
 
 

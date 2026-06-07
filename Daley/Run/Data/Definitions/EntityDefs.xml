@@ -7,7 +7,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Attachment></Attachment>
-    <Collision radius="0.5" singleHash="true" type="enemy"></Collision>
+    <Collision radius="0.5" singleHash="true" type="enemy" ></Collision>
     <Death></Death>
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>

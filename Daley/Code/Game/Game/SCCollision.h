@@ -25,6 +25,8 @@ public:
 public:
 
 	std::vector<CollisionLayer> m_collisionLayers;
+	std::unordered_set<int> m_dirtyBuckets;
+
 	std::unordered_set<OverlapInfo> m_lastFrameOverlaps;
 	std::unordered_set<OverlapInfo> m_frameOverlaps;
 };
