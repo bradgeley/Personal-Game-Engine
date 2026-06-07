@@ -222,6 +222,13 @@
     <Transform></Transform>
   </EntityDef>
 
+  <EntityDef name="MagentaVisualEffect">
+    <Animation spriteSheet="Data/SpriteSheets/AoEEffect.xml" defaultAnim="default"></Animation>
+    <Time></Time>
+    <Transform></Transform>
+    <Render scale="2" tint="255,0,255,127"></Render>
+  </EntityDef>
+
   <EntityDef name="RedAoEEffect">
     <Animation spriteSheet="Data/SpriteSheets/AoEEffect.xml" defaultAnim="default"></Animation>
     <CollisionEffect></CollisionEffect>

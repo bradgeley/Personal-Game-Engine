@@ -350,6 +350,11 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
     float timeBetweenAttacks = m_cooldownComp->m_cooldownSeconds;
     timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
 
+    if (m_cooldownComp->m_accumulatedTime <= timeBetweenAttacks)
+    {
+        return;
+    }
+
     // Find targets
     SCCollision const& collision = g_ecs->GetSingleton<SCCollision>();
     SCFlowField const& flowfield = g_ecs->GetSingleton<SCFlowField>();
@@ -644,6 +649,11 @@ void AoEHitAbility::Update(float deltaSeconds, Vec2 const& location)
     float timeBetweenAttacks = m_cooldownComp->m_cooldownSeconds;
     timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
 
+    if (m_cooldownComp->m_accumulatedTime <= timeBetweenAttacks)
+    {
+        return;
+    }
+
     // Find targets
     SCCollision const& collision = g_ecs->GetSingleton<SCCollision>();
     SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
@@ -691,6 +701,17 @@ void AoEHitAbility::Update(float deltaSeconds, Vec2 const& location)
         m_cooldownComp->m_accumulatedTime -= timeBetweenAttacks;
 
 		RollDamageAndEffects();
+
+		EntityDef const* aoeEffectDef = EntityDef::GetEntityDef(m_aoeEffectDefName);
+        if (aoeEffectDef)
+        {
+            SpawnInfo spawnInfo;
+            spawnInfo.m_spawnPos = location;
+            spawnInfo.m_def = aoeEffectDef;
+			spawnInfo.m_spawnLifetime = 0.5f;
+            spawnInfo.m_spawnScale = 2.f * m_aoeHitComp->m_radius;
+            SEntityFactory::SpawnEntity(spawnInfo);
+        }
 
         HitPayload payload;
 		payload.m_burn = m_aoeHitComp->m_burnOnHit.has_value() ? m_aoeHitComp->m_burnOnHit->m_burn : 0.f;

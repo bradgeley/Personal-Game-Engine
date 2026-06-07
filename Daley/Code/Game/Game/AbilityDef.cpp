@@ -317,6 +317,7 @@ Ability* ProjectileHitAbilityDef::MakeAbilityInstance() const
 AoEHitAbilityDef::AoEHitAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_aoeEffectDefName = XmlUtils::ParseXmlAttribute(elem, "aoeEffectDef", m_aoeEffectDefName);
 
     if (XmlElement const* cooldownElem = elem.FirstChildElement("Cooldown"))
     {

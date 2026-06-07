@@ -21,7 +21,7 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <AoEHitAbilityDef name="AoEHitAbility_TestAttack">
+  <AoEHitAbilityDef name="AoEHitAbility_TestAttack" aoeEffectDef="MagentaVisualEffect">
     <Cooldown cooldown="3"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <Crit critChance="0.5"></Crit>
