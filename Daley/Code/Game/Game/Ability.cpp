@@ -376,11 +376,12 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
         m_targetingComp->m_maxRangeAtTimeOfCache = m_targetingComp->m_maxRange;
     }
 
+    static std::vector<EntityID> validTargets;
+    validTargets.clear();
+
     EntityID targetID = EntityID::Invalid;
     if (m_targetingComp->m_targetingMode == AbilityTargetingMode::ClosestToGoal)
     {
-        static std::vector<EntityID> closestToGoalValidTargets;
-        closestToGoalValidTargets.clear();
 
         float closestToGoalDist = FLT_MAX;
         int closestToGoalTileIndex = -1;
@@ -423,14 +424,14 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
                 CHealth const* healthComp = healthStorage.Get(entityID.GetIndex());
                 if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())
                 {
-                    closestToGoalValidTargets.push_back(entityID);
+                    validTargets.push_back(entityID);
                 }
             }
 
-            ASSERT_OR_DIE(!closestToGoalValidTargets.empty(), "ProjectileHitAbility::Update - closest to goal tile has no valid targets. Should be impossible.");
+            ASSERT_OR_DIE(!validTargets.empty(), "ProjectileHitAbility::Update - closest to goal tile has no valid targets. Should be impossible.");
 
-            int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(closestToGoalValidTargets.size()) - 1);
-            targetID = closestToGoalValidTargets[randomIndex];
+            int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(validTargets.size()) - 1);
+            targetID = validTargets[randomIndex];
         }
     }
 

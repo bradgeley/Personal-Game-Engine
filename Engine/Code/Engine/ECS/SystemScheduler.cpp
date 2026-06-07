@@ -242,7 +242,7 @@ void RunSystem(SystemContext const& context)
 void SplitSystem(SystemContext const& context, int numJobs)
 {
 	// Split system into multiple run jobs (this can be significantly slower than single threaded if the entity count is low
-	static std::vector<JobID> jobReceipts;
+	std::vector<JobID> jobReceipts;
 	jobReceipts.clear();
 	jobReceipts.resize(numJobs);
 

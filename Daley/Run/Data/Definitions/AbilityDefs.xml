@@ -33,6 +33,15 @@
     </AoEHit>
   </AoEHitAbilityDef>
 
+  <AoEPassiveAbilityDef name="AoEPassiveAbility_TestAttack" aoeEffectDef="MagentaVisualEffect">
+    <AoEEffect radius="5">
+      <Damage damage="5"></Damage>
+      <Burn burn="5"></Burn>
+      <Poison poison="5"></Poison>
+      <Slow duration="1"></Slow>
+    </AoEEffect>
+  </AoEPassiveAbilityDef>
+
   <!-- ==================================================================================================================== -->
   <!-- Attacks -->
 
