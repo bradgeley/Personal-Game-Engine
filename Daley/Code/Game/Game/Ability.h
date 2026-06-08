@@ -21,7 +21,7 @@ struct AbilityDamageComponentDef;
 struct AbilityBurnComponentDef;
 struct AbilityPoisonComponentDef;
 struct AbilityAoEHitComponentDef;
-struct AbilityAoeEffectComponentDef;
+struct AbilityAoEEffectComponentDef;
 struct AbilityOnHitComponentDef;
 struct AbilitySlowComponentDef;
 
@@ -197,12 +197,12 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityAoeEffectComponent
+struct AbilityAoEEffectComponent
 {
 public:
 
-	AbilityAoeEffectComponent() = default;
-	AbilityAoeEffectComponent(AbilityAoeEffectComponentDef const& def);
+	AbilityAoEEffectComponent() = default;
+	AbilityAoEEffectComponent(AbilityAoEEffectComponentDef const& def);
 
 	void AppendDebugString(std::string& out_string) const;
 
@@ -237,7 +237,7 @@ public:
 	std::optional<AbilityPoisonComponent>		m_poisonOnHit;
 	std::optional<AbilityBurnComponent>			m_burnOnHit;
 	std::optional<AbilityAoEHitComponent>		m_aoeHitOnHit;
-	std::optional<AbilityAoeEffectComponent>	m_aoeEffectOnHit;
+	std::optional<AbilityAoEEffectComponent>	m_aoeEffectOnHit;
 	std::optional<AbilitySlowComponent>			m_slowOnHit;
 };
 
@@ -310,9 +310,9 @@ public:
 
 public:
 
-	Name m_aoeEffectDefName = Name::Invalid; // AoEEffect to spawn when this ability activates for visuals or extra effects.
 	std::optional<AbilityCooldownComponent>		m_cooldownComp;
 	std::optional<AbilityTargetingComponent>	m_targetingComp;
 	std::optional<AbilityCritComponent>			m_critComp;
 	std::optional<AbilityAoEHitComponent>		m_aoeHitComp;
+	std::optional<AbilityAoEEffectComponent>	m_aoeEffectComp;
 };

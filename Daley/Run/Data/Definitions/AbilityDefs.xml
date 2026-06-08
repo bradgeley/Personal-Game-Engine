@@ -21,20 +21,26 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <AoEHitAbilityDef name="AoEHitAbility_TestAttack" aoeEffectDef="MagentaVisualEffect">
+  <AoEHitAbilityDef name="AoEHitAbility_TestAttack">
     <Cooldown cooldown="3"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <Crit critChance="0.5"></Crit>
-    <AoEHit radius="5">
-      <Damage damage="5"></Damage>
-      <Burn burn="5"></Burn>
-      <Poison poison="5"></Poison>
+    <AoEEffect name="MagentaVisualEffect" duration="0.25">
+      <Damage damage="1"></Damage>
+      <Burn burn="1"></Burn>
+      <Poison poison="1"></Poison>
       <Slow duration="1"></Slow>
+    </AoEEffect>
+    <AoEHit>
+      <Damage damage="10"></Damage>
+      <Burn burn="10"></Burn>
+      <Poison poison="10"></Poison>
+      <Slow duration="2"></Slow>
     </AoEHit>
   </AoEHitAbilityDef>
 
-  <PassiveAoEAbilityDef name="PassiveAoEAbility_TestAttack" aoeEffectDef="MagentaVisualEffect">
-    <AoEEffect radius="5">
+  <PassiveAoEAbilityDef name="PassiveAoEAbility_TestAttack" >
+    <AoEEffect name="MagentaVisualEffect" radius="5">
       <Damage damage="5"></Damage>
       <Burn burn="5"></Burn>
       <Poison poison="5"></Poison>

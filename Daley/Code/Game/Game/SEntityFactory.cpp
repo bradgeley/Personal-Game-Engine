@@ -69,6 +69,7 @@ EntityID SEntityFactory::CreateEntityFromDef(EntityDef const* def)
     if (def->m_time.has_value())                g_ecs->AddComponent<CTime>(id, *def->m_time);
     if (def->m_ai.has_value())                  g_ecs->AddComponent<CAIController>(id, *def->m_ai);
 	if (def->m_animation.has_value())           g_ecs->AddComponent<CAnimation>(id, *def->m_animation);
+	if (def->m_attachment.has_value())          g_ecs->AddComponent<CAttachment>(id, *def->m_attachment);
 	if (def->m_collisionEffect.has_value())     g_ecs->AddComponent<CCollisionEffect>(id, *def->m_collisionEffect);
 	if (def->m_collision.has_value())           g_ecs->AddComponent<CCollision>(id, *def->m_collision);
     if (def->m_movement.has_value())            g_ecs->AddComponent<CMovement>(id, *def->m_movement);

@@ -218,7 +218,7 @@ AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityAoeEffectComponentDef::AbilityAoeEffectComponentDef(void const* xmlElement)
+AbilityAoEEffectComponentDef::AbilityAoEEffectComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
     m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
@@ -317,7 +317,6 @@ Ability* ProjectileHitAbilityDef::MakeAbilityInstance() const
 AoEHitAbilityDef::AoEHitAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-	m_aoeEffectDefName = XmlUtils::ParseXmlAttribute(elem, "aoeEffectDef", m_aoeEffectDefName);
 
     if (XmlElement const* cooldownElem = elem.FirstChildElement("Cooldown"))
     {
@@ -335,6 +334,10 @@ AoEHitAbilityDef::AoEHitAbilityDef(void const* xmlElement) : AbilityDef(xmlEleme
     {
         m_aoeHitDef.emplace(aoeHitElem);
     }
+    if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoEEffect"))
+    {
+        m_aoeEffectDef.emplace(aoeEffectElem);
+	}
 }
 
 

@@ -156,6 +156,13 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_animation.emplace(elem);
     }
 
+    // CAttachment
+    elem = xmlElement->FirstChildElement("Attachment");
+    if (elem)
+    {
+        m_attachment.emplace();
+    }
+
     // CCollision
     elem = xmlElement->FirstChildElement("Collision");
     if (elem)

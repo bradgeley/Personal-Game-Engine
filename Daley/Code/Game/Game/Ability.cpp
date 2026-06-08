@@ -272,7 +272,7 @@ void AbilityAoEHitComponent::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityAoeEffectComponent::AbilityAoeEffectComponent(AbilityAoeEffectComponentDef const& def)
+AbilityAoEEffectComponent::AbilityAoEEffectComponent(AbilityAoEEffectComponentDef const& def)
 {
     m_aoeEffectDefName = def.m_aoeEffectDefName;
     m_radius = def.m_radius;
@@ -286,7 +286,7 @@ AbilityAoeEffectComponent::AbilityAoeEffectComponent(AbilityAoeEffectComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityAoeEffectComponent::AppendDebugString(std::string& out_string) const
+void AbilityAoEEffectComponent::AppendDebugString(std::string& out_string) const
 {
     out_string += StringUtils::StringF("AOE Effect Radius: %.1f\n", m_radius);
     out_string += StringUtils::StringF("AOE Effect Duration: %.1f\n", m_durationSeconds);
@@ -613,7 +613,6 @@ void ProjectileHitAbility::RollDamageAndEffects()
 AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def)
 {
     m_abilityDef = &def;
-    m_aoeEffectDefName = def.m_aoeEffectDefName;
     if (def.m_cooldownDef.has_value())
     {
         m_cooldownComp.emplace(def.m_cooldownDef.value());
@@ -629,6 +628,10 @@ AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def)
     if (def.m_aoeHitDef.has_value())
     {
         m_aoeHitComp.emplace(def.m_aoeHitDef.value());
+	}
+    if (def.m_aoeEffectDef.has_value())
+    {
+        m_aoeEffectComp.emplace(def.m_aoeEffectDef.value());
 	}
 }
 
@@ -703,16 +706,15 @@ void AoEHitAbility::Update(float deltaSeconds, Vec2 const& location)
 
 		RollDamageAndEffects();
 
-		EntityDef const* aoeEffectDef = EntityDef::GetEntityDef(m_aoeEffectDefName);
-        if (aoeEffectDef)
+        if (m_aoeEffectComp.has_value())
         {
             SpawnInfo spawnInfo;
             spawnInfo.m_spawnPos = location;
-            spawnInfo.m_def = aoeEffectDef;
-			spawnInfo.m_spawnLifetime = 0.5f;
-            spawnInfo.m_spawnScale = 2.f * m_aoeHitComp->m_radius;
+            spawnInfo.m_spawnLifetime = m_aoeEffectComp->m_durationSeconds;
+            spawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp->m_aoeEffectDefName);
+            spawnInfo.m_spawnScale = 2.f * m_targetingComp->m_maxRange;
             SEntityFactory::SpawnEntity(spawnInfo);
-        }
+		}
 
         HitPayload payload;
 		payload.m_burn = m_aoeHitComp->m_burnOnHit.has_value() ? m_aoeHitComp->m_burnOnHit->m_burn : 0.f;
@@ -771,7 +773,6 @@ void AoEHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) c
 void AoEHitAbility::AppendDebugString(std::string& out_string) const
 {
     out_string += StringUtils::StringF("Ability: %s\n", m_abilityDef->m_name.ToCStr());
-    out_string += StringUtils::StringF("AoEEffect Def: %s\n", m_aoeEffectDefName.ToCStr());
 
     if (m_cooldownComp.has_value())
     {
@@ -789,6 +790,10 @@ void AoEHitAbility::AppendDebugString(std::string& out_string) const
     {
         m_aoeHitComp->AppendDebugString(out_string);
     }
+    if (m_aoeEffectComp.has_value())
+    {
+        m_aoeEffectComp->AppendDebugString(out_string);
+	}
 }
 
 

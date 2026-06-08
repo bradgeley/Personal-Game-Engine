@@ -98,13 +98,13 @@ struct AbilityAoEHitComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityAoeEffectComponentDef
+struct AbilityAoEEffectComponentDef
 {
-	explicit AbilityAoeEffectComponentDef(void const* xmlElement);
+	explicit AbilityAoEEffectComponentDef(void const* xmlElement);
 
 	Name m_aoeEffectDefName	= Name::Invalid;
 	float m_radius = 0.f;
-	float m_durationSeconds = 0.f;
+	float m_durationSeconds = -1.f; // negative == infinite
 	std::optional<AbilityDamageComponentDef>	m_damagePerSecond;
 	std::optional<AbilityPoisonComponentDef>	m_poisonPerSecond;
 	std::optional<AbilityBurnComponentDef>		m_burnPerSecond;
@@ -122,7 +122,7 @@ struct AbilityOnHitComponentDef
 	std::optional<AbilityPoisonComponentDef>	m_poisonOnHit;
 	std::optional<AbilityBurnComponentDef>		m_burnOnHit;
 	std::optional<AbilityAoEHitComponentDef>	m_aoeHitOnHit;
-	std::optional<AbilityAoeEffectComponentDef>	m_aoeEffectOnHit;
+	std::optional<AbilityAoEEffectComponentDef>	m_aoeEffectOnHit;
 	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
 };
 
@@ -188,9 +188,24 @@ public:
 
 public:
 
-	Name m_aoeEffectDefName = Name::Invalid; // AoEEffect to spawn when this ability activates for visuals or extra effects.
 	std::optional<AbilityCooldownComponentDef>		m_cooldownDef;
 	std::optional<AbilityTargetingComponentDef>		m_targetingDef;
 	std::optional<AbilityCritComponentDef>			m_critDef;
 	std::optional<AbilityAoEHitComponentDef>		m_aoeHitDef;
+	std::optional<AbilityAoEEffectComponentDef>		m_aoeEffectDef;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct PassiveAoEAbilityDef : public AbilityDef
+{
+public:
+
+	explicit PassiveAoEAbilityDef(void const* xmlElement);
+	virtual Ability* MakeAbilityInstance() const override;
+
+public:
+
+	std::optional<AbilityAoEEffectComponentDef>	m_aoeEffectDef;
 };
