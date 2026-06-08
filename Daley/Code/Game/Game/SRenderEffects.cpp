@@ -37,7 +37,7 @@ void SRenderEffects::Run(SystemContext const& context)
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
     // Push back an instance for every entity in camera view this frame
-    for (auto it = g_ecs->Iterate<CHealth, CRender, CAttachment>(context); it.IsValid(); ++it)
+    for (auto it = g_ecs->Iterate<CHealth, CRender, CAttachment, CTransform>(context); it.IsValid(); ++it)
     {
         CRender& render = *renderStorage.Get(it);
         if (!render.GetIsInCameraView() || render.GetIsHidden())
