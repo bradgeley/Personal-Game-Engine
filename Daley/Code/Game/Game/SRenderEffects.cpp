@@ -29,6 +29,7 @@ void SRenderEffects::Run(SystemContext const& context)
 {
     // Read Dependencies
     auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+    auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
 
 	// Write Dependencies
     auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
@@ -57,9 +58,12 @@ void SRenderEffects::Run(SystemContext const& context)
         {
             if (!g_ecs->IsValid(attachment.m_attachedBurnVFX))
             {
+				CTransform const& transform = *transStorage.Get(it);
                 // Spawn and attach the vfx on the entity side
                 SpawnInfo spawnInfo;
                 spawnInfo.m_def = EntityDef::GetEntityDef("BurnEffect");
+                spawnInfo.m_spawnPos = transform.m_pos;
+                spawnInfo.m_spawnOrientation = transform.m_orientation;
                 attachment.m_attachedBurnVFX = SEntityFactory::SpawnEntity(spawnInfo);
             }
 

@@ -37,11 +37,10 @@ void SAttachment::Run(SystemContext const& context)
 			CTransform& transform = *transStorage.Get(it);
 			CTransform const& attachedToTransform = *transStorage.Get(attach.m_attachedTo.GetIndex());
 			transform.m_pos = attachedToTransform.m_pos;
+			transform.m_orientation = attachedToTransform.m_orientation;
 		}
 		else if (attach.m_destroyIfAttachedToEntityDestroyed)
 		{
-			CRender& render = *renderStorage.Get(it);
-			render.SetIsHidden(true); // Hide while pending kill, prevents a bug where attachments pop up at 0,0
 			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 		}
 	}
