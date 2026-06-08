@@ -222,8 +222,10 @@
     <Transform></Transform>
   </EntityDef>
 
-  <EntityDef name="MagentaVisualEffect">
+  <EntityDef name="MagentaAoEEffect">
     <Animation spriteSheet="Data/SpriteSheets/AoEEffect.xml" defaultAnim="default"></Animation>
+    <CollisionEffect></CollisionEffect>
+    <Collision radius="1" type="GroundEffect"></Collision>
     <Time></Time>
     <Transform></Transform>
     <Render scale="2" tint="255,0,255,127"></Render>

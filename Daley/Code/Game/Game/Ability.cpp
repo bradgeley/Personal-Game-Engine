@@ -708,12 +708,36 @@ void AoEHitAbility::Update(float deltaSeconds, Vec2 const& location)
 
         if (m_aoeEffectComp.has_value())
         {
-            SpawnInfo spawnInfo;
-            spawnInfo.m_spawnPos = location;
-            spawnInfo.m_spawnLifetime = m_aoeEffectComp->m_durationSeconds;
-            spawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp->m_aoeEffectDefName);
-            spawnInfo.m_spawnScale = 2.f * m_targetingComp->m_maxRange;
-            SEntityFactory::SpawnEntity(spawnInfo);
+            SpawnInfo aoeEffectSpawnInfo;
+            aoeEffectSpawnInfo.m_spawnPos = location;
+            aoeEffectSpawnInfo.m_spawnLifetime = m_aoeEffectComp->m_durationSeconds;
+            aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp->m_aoeEffectDefName);
+            aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange;
+
+            EntityID aoeEffect = SEntityFactory::SpawnEntity(aoeEffectSpawnInfo);
+            if (g_ecs->IsValid(aoeEffect))
+            {
+                // Pass along damage, color, to aoe effect
+                if (CCollisionEffect* aoeEffectComp = g_ecs->GetComponent<CCollisionEffect>(aoeEffect))
+                {
+                    if (m_aoeEffectComp->m_damagePerSecond.has_value())
+                    {
+                        aoeEffectComp->m_damagePerSecond = m_aoeEffectComp->m_damagePerSecond->m_maxDamage;
+                    }
+                    if (m_aoeEffectComp->m_burnPerSecond.has_value())
+                    {
+                        aoeEffectComp->m_burnPerSecond = m_aoeEffectComp->m_burnPerSecond->m_burn;
+                    }
+                    if (m_aoeEffectComp->m_poisonPerSecond.has_value())
+                    {
+                        aoeEffectComp->m_poisonPerSecond = m_aoeEffectComp->m_poisonPerSecond->m_poison;
+                    }
+                    if (m_aoeEffectComp->m_slowPerSecond.has_value())
+                    {
+                        aoeEffectComp->m_slowPerSecond = m_aoeEffectComp->m_slowPerSecond->m_duration;
+                    }
+                }
+            }
 		}
 
         HitPayload payload;
