@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SAttachment.h"
 #include "CAttachment.h"
+#include "CRender.h"
 #include "CTransform.h"
 #include "SCEntityFactory.h"
 
@@ -10,7 +11,7 @@
 void SAttachment::Startup()
 {
 	AddReadDependencies<CAttachment>();
-	AddWriteDependencies<CTransform, SCEntityFactory>();
+	AddWriteDependencies<CTransform, CRender, SCEntityFactory>();
 }
 
 
@@ -23,6 +24,7 @@ void SAttachment::Run(SystemContext const& context)
 
 	// Write dependencies
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
+	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	for (auto it = g_ecs->Iterate<CAttachment, CTransform>(context); it.IsValid(); ++it)
@@ -38,6 +40,8 @@ void SAttachment::Run(SystemContext const& context)
 		}
 		else if (attach.m_destroyIfAttachedToEntityDestroyed)
 		{
+			CRender& render = *renderStorage.Get(it);
+			render.SetIsHidden(true); // Hide while pending kill, prevents a bug where attachments pop up at 0,0
 			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 		}
 	}

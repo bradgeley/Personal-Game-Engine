@@ -222,6 +222,14 @@ void AbilityOnHitComponent::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Ability::RollDamageAndEffects()
+{
+    // Empty
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def)
 {
     m_radius = def.m_radius;
@@ -869,4 +877,101 @@ void AoEHitAbility::RollDamageAndEffects()
             }
         }
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def)
+{
+    m_abilityDef = &def;
+    if (def.m_targetingDef.has_value())
+    {
+        m_targetingComp.emplace(def.m_targetingDef.value());
+    }
+    if (def.m_aoeEffectDef.has_value())
+    {
+        m_aoeEffectComp.emplace(def.m_aoeEffectDef.value());
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PassiveAoEAbility::Update(float, Vec2 const& location)
+{
+    ASSERT_OR_DIE(m_abilityDef, "PassiveAoEAbility::Update - m_abilityDef is null.");
+    ASSERT_OR_DIE(m_targetingComp.has_value(), "PassiveAoEAbility::Update - m_targetingComp is null.");
+    ASSERT_OR_DIE(m_aoeEffectComp.has_value(), "PassiveAoEAbility::Update - m_aoeEffectComp is null.");
+
+    if (m_activeAoEEffect == EntityID::Invalid)
+    {
+        SpawnInfo aoeEffectSpawnInfo;
+        aoeEffectSpawnInfo.m_spawnPos = location;
+        aoeEffectSpawnInfo.m_spawnLifetime = -1.f; // Infinite bc this is a passive ability
+        aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp->m_aoeEffectDefName);
+        aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange;
+
+        m_activeAoEEffect = SEntityFactory::SpawnEntity(aoeEffectSpawnInfo);
+
+        if (g_ecs->IsValid(m_activeAoEEffect))
+        {
+            // Pass along damage, color, to aoe effect
+            if (CCollisionEffect* aoeEffectComp = g_ecs->GetComponent<CCollisionEffect>(m_activeAoEEffect))
+            {
+                if (m_aoeEffectComp->m_damagePerSecond.has_value())
+                {
+                    aoeEffectComp->m_damagePerSecond = m_aoeEffectComp->m_damagePerSecond->m_maxDamage;
+                }
+                if (m_aoeEffectComp->m_burnPerSecond.has_value())
+                {
+                    aoeEffectComp->m_burnPerSecond = m_aoeEffectComp->m_burnPerSecond->m_burn;
+                }
+                if (m_aoeEffectComp->m_poisonPerSecond.has_value())
+                {
+                    aoeEffectComp->m_poisonPerSecond = m_aoeEffectComp->m_poisonPerSecond->m_poison;
+                }
+                if (m_aoeEffectComp->m_slowPerSecond.has_value())
+                {
+                    aoeEffectComp->m_slowPerSecond = m_aoeEffectComp->m_slowPerSecond->m_duration;
+                }
+            }
+		}
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Ability* PassiveAoEAbility::DeepCopy() const
+{
+    PassiveAoEAbility* copy = new PassiveAoEAbility(*reinterpret_cast<PassiveAoEAbilityDef const*>(m_abilityDef));
+    *copy = *this;
+	return copy;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PassiveAoEAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
+{
+    if (m_targetingComp->m_minRange > 0.f)
+    {
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
+    }
+    if (m_targetingComp->m_maxRange > 0.f)
+    {
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PassiveAoEAbility::AppendDebugString(std::string& out_string) const
+{
+    if (m_aoeEffectComp.has_value())
+    {
+        m_aoeEffectComp->AppendDebugString(out_string);
+	}
 }

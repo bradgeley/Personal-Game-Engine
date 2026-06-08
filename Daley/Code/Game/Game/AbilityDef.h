@@ -207,5 +207,6 @@ public:
 
 public:
 
+	std::optional<AbilityTargetingComponentDef> m_targetingDef;
 	std::optional<AbilityAoEEffectComponentDef>	m_aoeEffectDef;
 };

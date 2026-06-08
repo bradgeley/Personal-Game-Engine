@@ -59,6 +59,22 @@ void AbilityDef::LoadFromXML()
 
         aoeHitAbilityDefElem = aoeHitAbilityDefElem->NextSiblingElement("AoEHitAbilityDef");
     }
+
+
+	// Passive AoE Abilities
+	XmlElement* passiveAoEAbilityDefElem = root->FirstChildElement("PassiveAoEAbilityDef");
+    while (passiveAoEAbilityDefElem)
+    {
+        Name name = XmlUtils::ParseXmlAttribute(*passiveAoEAbilityDefElem, "name", Name::Invalid);
+        if (GetAbilityDefID(name) != -1)
+        {
+            DevConsoleUtils::LogError("Duplicate Ability Def: %s", name.ToCStr());
+        }
+        // Emplace new definition using the constructor that takes an Xml Element
+        PassiveAoEAbilityDef* newDef = new PassiveAoEAbilityDef(passiveAoEAbilityDefElem);
+        s_abilityDefs.push_back(newDef);
+        passiveAoEAbilityDefElem = passiveAoEAbilityDefElem->NextSiblingElement("PassiveAoEAbilityDef");
+	}
 }
 
 
@@ -356,4 +372,29 @@ Ability* AoEHitAbilityDef::MakeAbilityInstance() const
 {
     AoEHitAbility* ability = new AoEHitAbility(*this);
     return ability;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+PassiveAoEAbilityDef::PassiveAoEAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    if (XmlElement const* targetingElem = elem.FirstChildElement("Targeting"))
+    {
+        m_targetingDef.emplace(targetingElem);
+	}
+    if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoEEffect"))
+    {
+        m_aoeEffectDef.emplace(aoeEffectElem);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Ability* PassiveAoEAbilityDef::MakeAbilityInstance() const
+{
+    PassiveAoEAbility* ability = new PassiveAoEAbility(*this);
+	return ability;
 }

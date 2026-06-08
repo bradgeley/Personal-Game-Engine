@@ -95,6 +95,16 @@
     <Transform></Transform>
   </EntityDef>
 
+  <EntityDef name = "PassiveAoEAbility_TestTower">
+    <Ability name="PassiveAoEAbility_TestAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Collision radius="1" type="building"></Collision>
+    <Render scale="2" tint="255,0,255"></Render>
+    <Tags tower=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
   <!-- ==================================================================================================================== -->
   <!-- Towers -->
 
@@ -242,6 +252,7 @@
 
   <EntityDef name="BurnEffect">
     <Animation spriteSheet="Data/SpriteSheets/FireUnderlay.xml" defaultAnim="default"></Animation>
+    <Attachment></Attachment>
     <Render scale="1" rotateSprite="false"></Render>
     <Time></Time>
     <Transform></Transform>

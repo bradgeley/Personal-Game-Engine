@@ -39,7 +39,7 @@ void SRenderEffects::Run(SystemContext const& context)
     for (auto it = g_ecs->Iterate<CHealth, CRender, CAttachment>(context); it.IsValid(); ++it)
     {
         CRender& render = *renderStorage.Get(it);
-        if (!render.GetIsInCameraView())
+        if (!render.GetIsInCameraView() || render.GetIsHidden())
         {
             continue;
         }
@@ -66,16 +66,13 @@ void SRenderEffects::Run(SystemContext const& context)
             if (g_ecs->IsValid(attachment.m_attachedBurnVFX))
             {
                 // Attach the vfx on the vfx side
-                CAttachment* burnAttachment = g_ecs->AddComponent<CAttachment>(attachment.m_attachedBurnVFX);
-                burnAttachment->m_attachedTo = it.GetEntityID();
-                burnAttachment->m_destroyIfAttachedToEntityDestroyed = true;
+				CAttachment& burnVFXAttachment = *attachStorage.Get(attachment.m_attachedBurnVFX.GetIndex());
+                burnVFXAttachment.m_attachedTo = it.GetEntityID();
+                burnVFXAttachment.m_destroyIfAttachedToEntityDestroyed = true;
 
                 // Update burn effect position and scale
-				CRender* burnEffectRender = g_ecs->GetComponent<CRender>(attachment.m_attachedBurnVFX);
-                if (burnEffectRender)
-                {
-                    burnEffectRender->m_renderRadius = render.m_renderRadius * burnSaturation * 0.8f;
-                }
+				CRender& burnEffectRender = *renderStorage.Get(attachment.m_attachedBurnVFX.GetIndex());
+                burnEffectRender.m_renderRadius = render.m_renderRadius * burnSaturation * 0.8f;
             }
         }
         else

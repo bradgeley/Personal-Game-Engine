@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Core/Name.h"
+#include "Engine/ECS/EntityID.h"
 #include "Engine/Math/IntVec2.h"
 #include "HitPayload.h"
 #include <optional>
@@ -9,10 +10,6 @@
 
 
 class VertexBuffer;
-struct EntityDef;
-struct ProjectileHitAbilityDef;
-struct AoEHitAbilityDef;
-struct Vec2;
 struct AbilityDef;
 struct AbilityCooldownComponentDef;
 struct AbilityTargetingComponentDef;
@@ -24,6 +21,11 @@ struct AbilityAoEHitComponentDef;
 struct AbilityAoEEffectComponentDef;
 struct AbilityOnHitComponentDef;
 struct AbilitySlowComponentDef;
+struct AoEHitAbilityDef;
+struct EntityDef;
+struct PassiveAoEAbilityDef;
+struct ProjectileHitAbilityDef;
+struct Vec2;
 
 
 
@@ -256,7 +258,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(std::string& out_string) const = 0;
 
-	virtual void RollDamageAndEffects() = 0;
+	virtual void RollDamageAndEffects();
 
 public:
 
@@ -314,5 +316,27 @@ public:
 	std::optional<AbilityTargetingComponent>	m_targetingComp;
 	std::optional<AbilityCritComponent>			m_critComp;
 	std::optional<AbilityAoEHitComponent>		m_aoeHitComp;
+	std::optional<AbilityAoEEffectComponent>	m_aoeEffectComp;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+class PassiveAoEAbility : public Ability
+{
+public:
+
+	PassiveAoEAbility() = default;
+	explicit PassiveAoEAbility(PassiveAoEAbilityDef const& def);
+
+	virtual void Update(float deltaSeconds, Vec2 const& location) override;
+	virtual Ability* DeepCopy() const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
+	virtual void AppendDebugString(std::string& out_string) const override;
+
+public:
+
+	EntityID m_activeAoEEffect = EntityID::Invalid;
+	std::optional<AbilityTargetingComponent>	m_targetingComp;
 	std::optional<AbilityAoEEffectComponent>	m_aoeEffectComp;
 };

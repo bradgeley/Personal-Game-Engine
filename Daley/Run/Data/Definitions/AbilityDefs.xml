@@ -25,25 +25,26 @@
     <Cooldown cooldown="3"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <Crit critChance="0.5"></Crit>
-    <AoEEffect name="MagentaAoEEffect" duration="0.25">
-      <Damage damage="10"></Damage>
-      <Burn burn="10"></Burn>
-      <Poison poison="10"></Poison>
-      <Slow duration="1"></Slow>
-    </AoEEffect>
     <AoEHit>
       <Damage damage="10"></Damage>
       <Burn burn="10"></Burn>
       <Poison poison="10"></Poison>
       <Slow duration="2"></Slow>
     </AoEHit>
+    <AoEEffect name="MagentaAoEEffect" duration="0.25">
+      <Damage damage="10"></Damage>
+      <Burn burn="10"></Burn>
+      <Poison poison="10"></Poison>
+      <Slow duration="1"></Slow>
+    </AoEEffect>
   </AoEHitAbilityDef>
 
   <PassiveAoEAbilityDef name="PassiveAoEAbility_TestAttack" >
-    <AoEEffect name="MagentaAoEEffect" radius="5">
-      <Damage damage="5"></Damage>
-      <Burn burn="5"></Burn>
-      <Poison poison="5"></Poison>
+    <Targeting maxRange="3"></Targeting>
+    <AoEEffect name="MagentaAoEEffect">
+      <Damage damage="10"></Damage>
+      <Burn burn="10"></Burn>
+      <Poison poison="10"></Poison>
       <Slow duration="1"></Slow>
     </AoEEffect>
   </PassiveAoEAbilityDef>

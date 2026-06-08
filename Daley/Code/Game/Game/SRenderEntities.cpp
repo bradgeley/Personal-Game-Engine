@@ -74,7 +74,7 @@ void SRenderEntities::Run(SystemContext const& context)
     for (auto renderIt = g_ecs->Iterate<CRender, CAnimation>(context); renderIt.IsValid(); ++renderIt)
     {
         CRender const& render = *renderStorage.Get(renderIt);
-        if (!render.GetIsInCameraView())
+        if (!render.GetIsInCameraView() || render.GetIsHidden())
         {
             continue;
         }

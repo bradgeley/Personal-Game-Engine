@@ -61,7 +61,7 @@ float CHealth::GetTotalBurnDamageRemaining() const
 //----------------------------------------------------------------------------------------------------------------------
 float CHealth::GetBurnSaturation() const
 {
-	float saturation = GetTotalBurnDamageRemaining() / m_currentHealth;
+	float saturation = GetTotalBurnDamageRemaining() / m_maxHealth;
 	saturation = MathUtils::Clamp(saturation, 0.f, 1.f);
 	return saturation;
 }

@@ -12,6 +12,7 @@ enum class RenderFlags : uint8_t
 {
 	RotateSprite    = 1 << 0, // if true, render the sprite rotated to orientation, if false, do not rotate
 	IsInCameraView  = 1 << 1, // True if the entity is in camera view this frame, according to size and location.
+	IsHidden        = 1 << 2, // If true, do not render at all
 };
 
 
@@ -29,9 +30,11 @@ public:
 
     bool GetRotateSprite() const;
 	bool GetIsInCameraView() const;
+	bool GetIsHidden() const;
 
     void SetRotateSprite(bool rotate);
 	void SetIsInCameraView(bool isInView);
+	void SetIsHidden(bool isHidden);
 
 public:
     
