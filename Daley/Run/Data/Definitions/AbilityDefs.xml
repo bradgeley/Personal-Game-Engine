@@ -127,7 +127,7 @@
 
   <PassiveAoEAbilityDef name="OrangeSorbetAttack">
     <Targeting maxRange="5"></Targeting>
-    <AoEEffect radius="5">
+    <AoEEffect radius="5" name="OrangeAoEEffect">
       <Burn burn="10"></Burn>
     </AoEEffect>
   </PassiveAoEAbilityDef>

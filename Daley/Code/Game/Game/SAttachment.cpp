@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SAttachment.h"
 #include "CAttachment.h"
-#include "CRender.h"
 #include "CTransform.h"
 #include "SCEntityFactory.h"
 
@@ -11,7 +10,7 @@
 void SAttachment::Startup()
 {
 	AddReadDependencies<CAttachment>();
-	AddWriteDependencies<CTransform, CRender, SCEntityFactory>();
+	AddWriteDependencies<CTransform, SCEntityFactory>();
 }
 
 
@@ -24,7 +23,6 @@ void SAttachment::Run(SystemContext const& context)
 
 	// Write dependencies
 	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
 	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	for (auto it = g_ecs->Iterate<CAttachment, CTransform>(context); it.IsValid(); ++it)

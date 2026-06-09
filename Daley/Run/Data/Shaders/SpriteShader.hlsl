@@ -224,7 +224,6 @@ float4 PixelMain(VSOutput input) : SV_Target0
         totalLightContribution = saturate(totalLightContribution);
         
         finalColor *= float4(totalLightContribution, 1);
-
     }
     
     if (finalColor.a <= 0.001f)

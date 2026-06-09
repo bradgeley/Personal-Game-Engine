@@ -8,6 +8,20 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+namespace RenderConstants
+{
+    // Higher depth = deeper into screen = background
+	// Lower depth = closer to camera = foreground
+    constexpr float s_minSpriteRenderDepth      = 0.1f;
+    constexpr float s_defaultSpriteRenderDepth  = 0.5f;
+    constexpr float s_maxSpriteRenderDepth      = 0.9f;
+	constexpr float s_invalidSpriteRenderDepth  = -1.f;
+	constexpr float s_maxExpectedSpriteHeight   = 10.f;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 enum class RenderFlags : uint8_t
 {
 	RotateSprite    = 1 << 0, // if true, render the sprite rotated to orientation, if false, do not rotate
@@ -39,6 +53,7 @@ public:
 public:
     
 	uint8_t m_renderFlags           = 0;
+    float m_depthOverride           = RenderConstants::s_invalidSpriteRenderDepth;
     Vec2 m_pos                      = Vec2::ZeroVector;
     Vec2 m_renderOffset			    = Vec2::ZeroVector;
     float m_orientation             = 0.f;

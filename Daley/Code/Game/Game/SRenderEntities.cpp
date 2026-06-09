@@ -110,9 +110,17 @@ void SRenderEntities::Run(SystemContext const& context)
         InstanceBufferID iboID = scRender.instancesPerSpriteSheet[anim.m_gridSpriteSheet];
         InstanceBuffer& ibo = *g_renderer->GetInstanceBuffer(iboID);
 
+		float renderDepth = render.m_depthOverride;
+        if (renderDepth == RenderConstants::s_invalidSpriteRenderDepth)
+        {
+            // If not overriden, do depth based on y location on the screen, so things get farther back the higher up on the screen they are rendered.
+            float baseY = render.GetRenderPosition().y - (render.m_renderRadius * 0.5f);
+			float minExpectedSpriteBaseY = cameraBounds.mins.y - RenderConstants::s_maxExpectedSpriteHeight;
+            renderDepth = MathUtils::RangeMap(baseY, minExpectedSpriteBaseY, cameraBounds.maxs.y, RenderConstants::s_minSpriteRenderDepth, RenderConstants::s_maxSpriteRenderDepth);
+		}
+
         SpriteInstance instance;
-        float instanceDepth = MathUtils::RangeMap(render.GetRenderPosition().y - (render.m_renderRadius * 0.5f), cameraBounds.mins.y - 100.f, cameraBounds.maxs.y + 100.f, 0.05f, 0.95f);
-        instance.m_position = Vec3(render.GetRenderPosition(), instanceDepth); // todo: z-order
+        instance.m_position = Vec3(render.GetRenderPosition(), renderDepth);
         instance.m_orientation = render.GetRenderOrientation();
         instance.m_scale = render.m_renderRadius;
         instance.m_rgba = render.m_tint;
