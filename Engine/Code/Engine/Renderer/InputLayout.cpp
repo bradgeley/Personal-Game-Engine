@@ -6,31 +6,6 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::string InputLayout::GetInputLayoutSemanticName(InputLayoutSemantic semantic)
-{
-    return s_inputLayoutSemanticNames[(int) semantic];
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-InputLayoutSemantic InputLayout::GetInputLayoutSemanticFromString(std::string const& str)
-{
-    StringUtils::CaseInsensitiveStringEquals comparator;
-    for (int i = 0; i < (int) InputLayoutSemantic::Count; ++i)
-    {
-        if (comparator(str, s_inputLayoutSemanticNames[i]))
-        {
-            return (InputLayoutSemantic) i;
-		}
-    }
-    ERROR_AND_DIE(StringUtils::StringF("Invalid input layout semantic string: %s", str.c_str()));
-    //return InputLayoutSemantic::Invalid;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 InputLayoutAttributeFormat InputLayout::GetInputLayoutAttributeFormatFromString(std::string const& str)
 {
     StringUtils::CaseInsensitiveStringEquals comparator;

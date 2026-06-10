@@ -29,10 +29,10 @@ public:
 
     virtual void ClearScreen(Rgba8 const& tint) override;
     virtual void ClearDepth(float depth) override;
-    virtual void BindVertexBuffer(VertexBufferID vbo) const override;
-    virtual void BindVertexBuffer(VertexBuffer& vbo) const override;
-	virtual void BindInstanceBuffer(InstanceBufferID ibo) const override;
-	virtual void BindInstanceBuffer(InstanceBuffer& ibo) const override;
+    virtual void BindVertexBuffer(VertexBufferID vbo, int slot = 0) const override;
+    virtual void BindVertexBuffer(VertexBuffer& vbo, int slot = 0) const override;
+	virtual void BindInstanceBuffer(InstanceBufferID ibo, int slot = 1) const override;
+	virtual void BindInstanceBuffer(InstanceBuffer& ibo, int slot = 1) const override;
     virtual void BindConstantBuffer(ConstantBufferID cbo, int slot) const override;
 
     // Factory Functions

@@ -33,7 +33,7 @@ InputLayout* Vertex_PCU::GetInputLayout()
 
         s_vertexPcuInputLayout.m_attributes.push_back(InputLayoutAttribute
         {
-            InputLayoutSemantic::Position,                      // Semantic: POSITION
+            Name("POSITION"),                                   // Semantic: POSITION
             0,                                                  // Semantic index
             InputLayoutAttributeFormat::Float3,                 // Format: 3 floats
             0,                                                  // Input slot
@@ -43,7 +43,7 @@ InputLayout* Vertex_PCU::GetInputLayout()
 
         s_vertexPcuInputLayout.m_attributes.push_back(InputLayoutAttribute
         {
-            InputLayoutSemantic::Tint,                          // Semantic: TINT
+            Name("TINT"),                                       // Semantic: TINT
             0,                                                  // Semantic index
             InputLayoutAttributeFormat::Rgba8,                  // Format: packed RGBA8
             0,                                                  // Input slot
@@ -53,7 +53,7 @@ InputLayout* Vertex_PCU::GetInputLayout()
 
         s_vertexPcuInputLayout.m_attributes.push_back(InputLayoutAttribute
         {
-            InputLayoutSemantic::Uvs,                           // Semantic: UVS
+            Name("UVS"),                           // Semantic: UVS
             0,                                                  // Semantic index
             InputLayoutAttributeFormat::Float2,                 // Format: 2 floats
             0,                                                  // Input slot

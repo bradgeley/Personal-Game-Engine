@@ -51,6 +51,14 @@ void CHealth::TakePayload(HitPayload const& payload)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float CHealth::GetHealthFraction() const
+{
+	return m_currentHealth / m_maxHealth;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float CHealth::GetTotalBurnDamageRemaining() const
 {
 	return m_currentBurn / StaticGameSettings::s_burnDecayK;

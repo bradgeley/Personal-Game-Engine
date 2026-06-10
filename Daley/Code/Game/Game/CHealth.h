@@ -38,6 +38,7 @@ public:
     void TakeDamage(float damage);
     void TakePayload(HitPayload const& payload);
 
+	float GetHealthFraction() const;
 	float GetTotalBurnDamageRemaining() const;
     float GetBurnSaturation() const;
 	float GetPoisonSaturation() const;

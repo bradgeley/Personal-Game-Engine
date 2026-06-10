@@ -179,7 +179,6 @@ bool D3D11Shader::CreateInputLayout(void* byteCode, size_t byteCodeSize)
 
 	constexpr int maxElements = 20;
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[maxElements]; // 10 slots for now
-	std::string semanticNames[maxElements];
 
 	int numElements = (int) m_config.m_inputLayout.m_attributes.size();
 	ASSERT_OR_DIE(numElements <= maxElements, "Too many input layout elements, raise the max.");
@@ -187,8 +186,7 @@ bool D3D11Shader::CreateInputLayout(void* byteCode, size_t byteCodeSize)
 	for (int i = 0; i < numElements; ++i)
 	{
 		InputLayoutAttribute const& attribute = m_config.m_inputLayout.m_attributes[i];
-		semanticNames[i] = InputLayout::GetInputLayoutSemanticName(attribute.m_semantic);
-		vertexDesc[i].SemanticName = semanticNames[i].c_str();
+		vertexDesc[i].SemanticName = attribute.m_semantic.ToCStr();
 		vertexDesc[i].SemanticIndex = attribute.m_semanticIndex;
 		vertexDesc[i].Format = GetD3D11Format(attribute.m_format);
 		vertexDesc[i].InputSlot = attribute.m_inputSlot;

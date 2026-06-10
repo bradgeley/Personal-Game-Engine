@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
+#include "Engine/Core/Name.h"
 #include <cstddef>
 #include <vector>
 #include <string>
@@ -47,55 +48,9 @@ static std::string s_inputLayoutAttributeFormatNames[] =
 
 
 //----------------------------------------------------------------------------------------------------------------------
-enum class InputLayoutSemantic
-{
-    Position = 0,
-    Tint,
-    Uvs,
-    Normal,
-    Tangent,
-    InstancePosition,
-    InstanceScale,
-    InstanceRotation,
-    InstanceTint,
-    Index,
-    IndoorLight,
-    OutdoorLight,
-    LightmapUVs,
-
-    Count,
-    Invalid,
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-static std::string s_inputLayoutSemanticNames[] =
-{
-    "POSITION",
-    "TINT",
-    "UVS",
-    "NORMAL",
-    "TANGENT",
-    "INSTANCEPOSITION",
-    "INSTANCESCALE",
-    "INSTANCEROTATION",
-    "INSTANCETINT",
-	"INDEX",
-    "INDOORLIGHT",
-    "OUTDOORLIGHT",
-    "LIGHTMAPUVS",
-
-    "COUNT",
-    "INVALID",
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 struct InputLayoutAttribute
 {
-	InputLayoutSemantic         m_semantic          = InputLayoutSemantic::Invalid;
+	Name                        m_semantic;
 	uint32_t 	                m_semanticIndex     = 0;
 	InputLayoutAttributeFormat  m_format            = InputLayoutAttributeFormat::Invalid;
 	uint32_t                    m_inputSlot         = 0;
@@ -112,8 +67,6 @@ struct InputLayout
 {
 public:
 
-    static std::string GetInputLayoutSemanticName(InputLayoutSemantic semantic);
-	static InputLayoutSemantic GetInputLayoutSemanticFromString(std::string const& str);
 	static InputLayoutAttributeFormat GetInputLayoutAttributeFormatFromString(std::string const& str);
 	static InputLayout Combine(InputLayout const& a, InputLayout const& b);
 	static InputLayout Combine(InputLayout const** ppData, size_t numLayouts);

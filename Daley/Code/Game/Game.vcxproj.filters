@@ -451,6 +451,9 @@
     <ClInclude Include="Game\CollisionProfile.h">
       <Filter>Game\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="Game\HealthBarShaderCPU.h">
+      <Filter>Data\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -569,12 +572,18 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\AoEEffect.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
+    <Xml Include="..\..\Run\Data\Shaders\HealthBarShader.xml">
+      <Filter>Data\Shaders</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">
       <Filter>Data\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Run\Data\Shaders\WorldShader.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Run\Data\Shaders\HealthBarShader.hlsl">
       <Filter>Data\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

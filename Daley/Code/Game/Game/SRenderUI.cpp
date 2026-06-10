@@ -3,7 +3,12 @@
 #include "CHealth.h"
 #include "CRender.h"
 #include "CTime.h"
+#include "HealthBarShaderCPU.h"
 #include "SCRender.h"
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/ShaderAsset.h"
+#include "Engine/Renderer/ConstantBuffer.h"
+#include "Engine/Renderer/InstanceBuffer.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Vertex_PCU.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -19,6 +24,23 @@ void SRenderUI::Startup()
 
 	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 	scRender.m_uiVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
+
+	scRender.m_healthBarConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(HealthBarRenderConstants));
+	scRender.m_healthBarInstanceBuffer = g_renderer->MakeInstanceBuffer();
+
+	InstanceBuffer& healthBarIBO = *g_renderer->GetInstanceBuffer(scRender.m_healthBarInstanceBuffer);
+	healthBarIBO.Initialize<HealthBarInstance>();
+
+	HealthBarRenderConstants constants;
+	Rgba8::DarkGray.GetAsFloats(constants.m_backgroundTint);
+	Rgba8::Crimson.GetAsFloats(constants.m_healthTint);
+	Rgba8::Green.GetAsFloats(constants.m_poisonTint);
+	Rgba8::Orange.GetAsFloats(constants.m_fireTint);
+
+	ConstantBuffer& healthBarCBO = *g_renderer->GetConstantBuffer(scRender.m_healthBarConstantsBuffer);
+	healthBarCBO.Update(constants);
+
+	scRender.m_healthBarShaderAsset = g_assetManager->AsyncLoad<ShaderAsset>("Data/Shaders/HealthBarShader.xml");
 }
 
 
@@ -34,6 +56,17 @@ void SRenderUI::Run(SystemContext const& context)
 	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(scRender.m_uiVBO);
 	vbo.ClearVerts();
 
+	InstanceBuffer& healthBarIBO = *g_renderer->GetInstanceBuffer(scRender.m_healthBarInstanceBuffer);
+	healthBarIBO.ClearInstances();
+
+	g_renderer->BindConstantBuffer(scRender.m_healthBarConstantsBuffer, 5);
+
+	ShaderAsset* healthBarShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_healthBarShaderAsset);
+	if (!healthBarShaderAsset)
+	{
+		return;
+	}
+
 	// Render Health bars
 	for (auto it = g_ecs->Iterate<CRender, CHealth>(context); it.IsValid(); ++it)
 	{
@@ -48,35 +81,14 @@ void SRenderUI::Run(SystemContext const& context)
 
 		if (shouldShowHealthBar)
 		{
-			Vec2 healthBarLocation = render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius);
-			float healthBarWidth = render.m_renderRadius * 0.75f;
-
-			float healthPercentage = health.m_currentHealth / health.m_maxHealth;
-			float burnSaturation = health.GetBurnSaturation();
-			float poisonSaturation = health.GetPoisonSaturation();
-
-			// Background
-			AABB2 backgroundBox;
-			backgroundBox.SetCenter(healthBarLocation);
-			backgroundBox.SetDimsAboutCenter(Vec2(healthBarWidth, 0.0833f));
-			VertexUtils::AddVertsForAABB2(vbo, backgroundBox, Rgba8::DarkGray);
-
-			AABB2 healthBox = backgroundBox;
-			healthBox.maxs.x = healthBox.mins.x + healthBarWidth * healthPercentage;
-
-			VertexUtils::AddVertsForAABB2(vbo, healthBox, Rgba8::Crimson);
-			if (burnSaturation > 0.f)
-			{
-				AABB2 burnBox = healthBox;
-				burnBox.maxs.x = burnBox.mins.x + healthBarWidth * healthPercentage * burnSaturation;
-				VertexUtils::AddVertsForAABB2(vbo, burnBox, Rgba8::Orange);
-			}
-			if (poisonSaturation > 0.f)
-			{
-				AABB2 poisonBox = healthBox;
-				poisonBox.mins.x = poisonBox.maxs.x - healthBarWidth * healthPercentage * poisonSaturation;
-				VertexUtils::AddVertsForAABB2(vbo, poisonBox, Rgba8::Green);
-			}
+			HealthBarInstance instance;
+			instance.m_position = render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius);
+			instance.m_dimensions.x = 0.75f * render.m_renderRadius;
+			instance.m_dimensions.y = 0.0833f;
+			instance.m_fireFraction = health.GetBurnSaturation();
+			instance.m_poisonFraction = health.GetPoisonSaturation();
+			instance.m_healthFraction = health.GetHealthFraction();
+			healthBarIBO.AddInstance(instance);
 		}
 
 		CTime* time = g_ecs->GetComponent<CTime>(it);
@@ -92,6 +104,9 @@ void SRenderUI::Run(SystemContext const& context)
 	g_renderer->BindTexture(nullptr);
 	g_renderer->BindShader(nullptr);
 	g_renderer->DrawVertexBuffer(vbo);
+
+	g_renderer->BindShader(healthBarShaderAsset->GetShaderID());
+	g_renderer->DrawInstanced(6, *g_renderer->GetInstanceBuffer(scRender.m_healthBarInstanceBuffer));
 }
 
 

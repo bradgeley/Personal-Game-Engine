@@ -47,16 +47,12 @@ void SRenderEntities::Run(SystemContext const& context)
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 
     ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
-    if (spriteShaderAsset)
+    if (spriteShaderAsset == nullptr)
     {
-        scRender.m_spriteShaderID = spriteShaderAsset->GetShaderID();
-    }
-    else
-    {
-        scRender.m_spriteShaderID = RendererUtils::InvalidID;
         return;
     }
 
+    ShaderID spriteShaderID = spriteShaderAsset->GetShaderID();
     AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
 
     // Clear last frame's instances
@@ -162,7 +158,7 @@ void SRenderEntities::Run(SystemContext const& context)
         g_renderer->SetModelConstants(ModelConstants());
         g_renderer->BindConstantBuffer(scRender.m_spriteSheetConstantsBuffer, 5);
         spriteSheet->SetRendererState();
-        g_renderer->BindShader(scRender.m_spriteShaderID);
+        g_renderer->BindShader(spriteShaderID);
         g_renderer->DrawInstanced(*vbo, *ibo);
     }
 }
@@ -183,6 +179,5 @@ void SRenderEntities::Shutdown()
     }
 
     g_renderer->ReleaseConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
-    scRender.m_spriteShaderID = RendererUtils::InvalidID;
     g_assetManager->Release(scRender.m_spriteShaderAsset);
 }

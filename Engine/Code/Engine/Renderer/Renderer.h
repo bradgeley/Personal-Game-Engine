@@ -77,9 +77,10 @@ public:
     RendererUserSettings GetPerUserSettings() const;
 
     virtual void ClearScreen(Rgba8 const& tint) = 0;
-    void DrawVertexBuffer(VertexBufferID id);
-    void DrawVertexBuffer(VertexBuffer& vbo);
+    void DrawVertexBuffer(VertexBufferID id, int slot = 0);
+    void DrawVertexBuffer(VertexBuffer& vbo, int slot = 0);
     void DrawInstanced(VertexBuffer& vbo, InstanceBuffer& ibo);
+    void DrawInstanced(int numVertsPerInstance, InstanceBuffer& ibo);
 
     void SetMSAA(bool msaaEnabled);
     virtual void MSAAChanged() = 0;
@@ -147,10 +148,10 @@ public:
     void BindTexture(Texture* texture, int slot = 0);
     void BindTexture(TextureID texture, int slot = 0);
     virtual void BindRenderTarget(RenderTargetID renderTarget, float letterboxedAspect = -1.f) = 0;
-    virtual void BindVertexBuffer(VertexBufferID vbo) const = 0;
-    virtual void BindVertexBuffer(VertexBuffer& vbo) const = 0;
-	virtual void BindInstanceBuffer(InstanceBufferID ibo) const = 0;
-	virtual void BindInstanceBuffer(InstanceBuffer& ibo) const = 0;
+    virtual void BindVertexBuffer(VertexBufferID vbo, int slot = 0) const = 0;
+    virtual void BindVertexBuffer(VertexBuffer& vbo, int slot = 0) const = 0;
+	virtual void BindInstanceBuffer(InstanceBufferID ibo, int slot = 1) const = 0;
+	virtual void BindInstanceBuffer(InstanceBuffer& ibo, int slot = 1) const = 0;
     virtual void BindConstantBuffer(ConstantBufferID cbo, int slot) const = 0;
 
     virtual void ResizeSwapChainRenderTarget(RenderTargetID renderTarget, IntVec2 const& newSize) = 0;

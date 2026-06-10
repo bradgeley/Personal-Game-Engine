@@ -46,6 +46,11 @@ void AssetManager::Startup()
     DevConsoleUtils::AddDevConsoleCommand("ReloadAsset", &AssetManager::StaticReload, 
                                           "type", DevConsoleArgType::String,
                                           "name", DevConsoleArgType::String);
+
+    DevConsoleUtils::AddDevConsoleCommand("ReloadAllAssets", &AssetManager::StaticReloadAllAssets);
+
+    DevConsoleUtils::AddDevConsoleCommand("ReloadAllAssetsOfType", &AssetManager::StaticReloadAllAssetsOfType,
+										  "type", DevConsoleArgType::String);
 }
 
 
@@ -86,6 +91,8 @@ void AssetManager::Shutdown()
     }
 
     DevConsoleUtils::RemoveDevConsoleCommand("ReloadAsset", &AssetManager::StaticReload);
+    DevConsoleUtils::RemoveDevConsoleCommand("ReloadAllAssets", &AssetManager::StaticReloadAllAssets);
+    DevConsoleUtils::RemoveDevConsoleCommand("ReloadAllAssetsOfType", &AssetManager::StaticReloadAllAssetsOfType);
 }
 
 
@@ -607,5 +614,67 @@ bool AssetManager::StaticReload(NamedProperties& params)
             return true;
         }
     }
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AssetManager::StaticReloadAllAssets(NamedProperties&)
+{
+    if (!g_assetManager)
+    {
+        return false;
+    }
+
+    auto copy = g_assetManager->m_assetIDs;
+
+    for (std::pair<AssetKey, AssetID> const& assetPair : copy)
+	{
+		AssetID assetID = assetPair.second;
+        AssetKey assetKey = assetPair.first;
+
+        if (g_assetManager->FindAssetKey(assetID, assetKey))
+        {
+            g_assetManager->AsyncReloadInternal(assetID, assetKey, 0);
+        }
+	}
+
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AssetManager::StaticReloadAllAssetsOfType(NamedProperties& params)
+{
+    Name assetTypeName = params.Get<std::string>("type", "");
+
+    if (!g_assetManager)
+    {
+        return false;
+    }
+
+    std::type_index typeIndexToReload = std::type_index(typeid(void));
+    for (auto& debugNamePair : g_assetManager->m_loaderDebugNames)
+    {
+        if (debugNamePair.second == assetTypeName)
+        {
+            typeIndexToReload = debugNamePair.first;
+            break;
+        }
+    }
+
+    auto copy = g_assetManager->m_assetIDs;
+    for (std::pair<AssetKey, AssetID> const& assetPair : copy)
+    {
+		AssetID assetID = assetPair.second;
+		AssetKey assetKey = assetPair.first;
+        if (assetKey.m_typeIndex == typeIndexToReload)
+        {
+            g_assetManager->AsyncReloadInternal(assetID, assetKey, 0);
+        }
+    }
+
     return false;
 }

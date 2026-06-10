@@ -217,23 +217,23 @@ RendererUserSettings Renderer::GetPerUserSettings() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::DrawVertexBuffer(VertexBufferID id)
+void Renderer::DrawVertexBuffer(VertexBufferID id, int slot)
 {
 	VertexBuffer* vbo = GetVertexBuffer(id);
 	ASSERT_OR_DIE(vbo, "Trying to draw invalid vbo.");
 
-	DrawVertexBuffer(*vbo);
+	DrawVertexBuffer(*vbo, slot);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::DrawVertexBuffer(VertexBuffer& vbo)
+void Renderer::DrawVertexBuffer(VertexBuffer& vbo, int slot)
 {
 	size_t numVertsToDraw = vbo.GetNumVerts();
 	if (numVertsToDraw > 0)
 	{
-		BindVertexBuffer(vbo);
+		BindVertexBuffer(vbo, slot);
 		Draw((int) numVertsToDraw, 0);
 	}
 
@@ -268,6 +268,19 @@ void Renderer::DrawInstanced(VertexBuffer& vbo, InstanceBuffer& ibo)
 		BindVertexBuffer(vbo);
 		BindInstanceBuffer(ibo);
 		DrawInstanced((int) numVertsToDraw, (int) numInstances);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::DrawInstanced(int numVertsPerInstance, InstanceBuffer& ibo)
+{
+	size_t numInstances = ibo.GetNumInstances();
+	if (numVertsPerInstance > 0 && numInstances > 0)
+	{
+		BindInstanceBuffer(ibo, 0);
+		DrawInstanced(numVertsPerInstance, (int) numInstances);
 	}
 }
 

@@ -145,6 +145,8 @@ protected:
 	// Hot reload from dev console, expects 2 String parameters "type" and "name",
     // where "type" is the debug name of the asset type (e.g. "GridSpriteSheet") and "name" is the name of the asset to reload (e.g. "Data/SpriteSheets/Soldier.xml").
     static bool StaticReload(NamedProperties& params);
+    static bool StaticReloadAllAssets(NamedProperties& params);
+    static bool StaticReloadAllAssetsOfType(NamedProperties& params);
 
 protected:
 

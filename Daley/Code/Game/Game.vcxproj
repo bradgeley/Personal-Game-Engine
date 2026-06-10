@@ -377,6 +377,7 @@
     <ClInclude Include="Game\CollisionProfile.h" />
     <ClInclude Include="Game\CProjectile.h" />
     <ClInclude Include="Game\CTags.h" />
+    <ClInclude Include="Game\HealthBarShaderCPU.h" />
     <ClInclude Include="Game\HitPayload.h" />
     <ClInclude Include="Game\OverlapInfo.h" />
     <ClInclude Include="Game\SAbility.h" />
@@ -451,6 +452,7 @@
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\AbilityDefs.xml" />
+    <Xml Include="..\..\Run\Data\Shaders\HealthBarShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />
@@ -463,6 +465,11 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\..\Run\Data\Shaders\HealthBarShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='FastBreak|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='FastBreak|x64'">true</ExcludedFromBuild>

@@ -38,7 +38,7 @@ ShaderConfig ShaderConfig::MakeFromXML(char const* xmlFilePath)
 		{
 			InputLayoutAttribute attribute;
 			std::string inputLayoutSemanticString = XmlUtils::ParseXmlAttribute(*attributeElement, "semantic", "");
-			attribute.m_semantic = InputLayout::GetInputLayoutSemanticFromString(inputLayoutSemanticString);
+			attribute.m_semantic = inputLayoutSemanticString;
 			attribute.m_semanticIndex = (uint32_t) XmlUtils::ParseXmlAttribute(*attributeElement, "semanticIndex", 0);
 			std::string formatString = XmlUtils::ParseXmlAttribute(*attributeElement, "format", "");
 			attribute.m_format = InputLayout::GetInputLayoutAttributeFormatFromString(formatString);

@@ -1,0 +1,13 @@
+
+
+
+<Shader name="HealthBarShader" source="Data/Shaders/HealthBarShader.hlsl" pixel="PixelMain" vertex="VertexMain" geometry="GeometryMain">
+  <InputLayout>
+    <!--Instance Data-->
+    <InputLayoutAttribute semantic="POSITION" semanticIndex="0" format="float2" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="DIMENSIONS" semanticIndex="0" format="float2" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="HEALTHFRACTION" semanticIndex="0" format="float1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="FIREFRACTION" semanticIndex="0" format="float1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="POISONFRACTION" semanticIndex="0" format="float1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+  </InputLayout>
+</Shader>

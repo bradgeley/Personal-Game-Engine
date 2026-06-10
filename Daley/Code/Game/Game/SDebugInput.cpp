@@ -49,15 +49,15 @@ void SDebugInput::Run(SystemContext const&)
 	// Debug Tower Placement
 	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('T'))
 	{
-		EntityDef const* towerDef = EntityDef::GetEntityDef(scDebug.m_debugPlacementEntityName);
-		if (!towerDef)
+		EntityDef const* def = EntityDef::GetEntityDef(scDebug.m_debugPlacementEntityName);
+		if (!def)
 		{
-			DevConsoleUtils::LogError("Invalid EntityDef name for debug tower placement: %s", scDebug.m_debugPlacementEntityName.ToCStr());
+			DevConsoleUtils::LogError("Invalid EntityDef name for debug placement: %s", scDebug.m_debugPlacementEntityName.ToCStr());
 		}
 		else
 		{
 			SpawnInfo info;
-			info.m_def = EntityDef::GetEntityDef(scDebug.m_debugPlacementEntityName);
+			info.m_def = def;
 			info.m_spawnPos = scDebug.m_debugMouseWorldLocation;
 			entityFactory.m_entitiesToSpawn.push_back(info);
 		}

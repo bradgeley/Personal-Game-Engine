@@ -272,7 +272,7 @@
   <EntityDef name="BurnEffect">
     <Animation spriteSheet="Data/SpriteSheets/FireUnderlay.xml" defaultAnim="default"></Animation>
     <Attachment></Attachment>
-    <Render scale="1" rotateSprite="false" depth="0.95"></Render>
+    <Render scale="1" rotateSprite="false" depth="0.94"></Render>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

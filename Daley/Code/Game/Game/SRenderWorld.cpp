@@ -67,18 +67,15 @@ void SRenderWorld::Run(SystemContext const&)
     }
 
 	ShaderAsset* shaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_worldShaderAsset);
-    if (shaderAsset)
+    if (shaderAsset == nullptr)
     {
-		scRender.m_worldShaderID = shaderAsset->GetShaderID();
-    }
-    else
-    {
-		scRender.m_worldShaderID = RendererUtils::InvalidID;
         return;
     }
 
+    ShaderID worldShader = shaderAsset->GetShaderID();
+
     g_renderer->BindTexture(world.m_lightmap, 1);
-    g_renderer->BindShader(scRender.m_worldShaderID);
+    g_renderer->BindShader(worldShader);
 	g_renderer->BindConstantBuffer(scRender.m_staticWorldConstantsBuffer, StaticWorldConstants::GetSlot());
     g_renderer->BindConstantBuffer(scRender.m_lightingConstantsBuffer, LightingConstants::GetSlot());
 

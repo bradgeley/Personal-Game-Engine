@@ -76,7 +76,7 @@ void SRenderEffects::Run(SystemContext const& context)
 
                 // Update burn effect position and scale
 				CRender& burnEffectRender = *renderStorage.Get(attachment.m_attachedBurnVFX.GetIndex());
-                burnEffectRender.m_renderRadius = render.m_renderRadius * burnSaturation * 0.8f;
+                burnEffectRender.m_renderRadius = render.m_renderRadius * burnSaturation;
             }
         }
         else

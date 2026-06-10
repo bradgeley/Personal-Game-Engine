@@ -181,18 +181,18 @@ void D3D11Renderer::ClearDepth(float depth)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::BindVertexBuffer(VertexBufferID id) const
+void D3D11Renderer::BindVertexBuffer(VertexBufferID id, int slot) const
 {
 	VertexBuffer* vbo = GetVertexBuffer(id);
 	ASSERT_OR_DIE(vbo, "Binding invalid vertex buffer");
 
-	BindVertexBuffer(*vbo);
+	BindVertexBuffer(*vbo, slot);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::BindVertexBuffer(VertexBuffer& vbo) const
+void D3D11Renderer::BindVertexBuffer(VertexBuffer& vbo, int slot) const
 {
 	vbo.UpdateGPUBuffer();
 
@@ -206,7 +206,7 @@ void D3D11Renderer::BindVertexBuffer(VertexBuffer& vbo) const
 	UINT offset = 0;
 
 	m_deviceContext->IASetVertexBuffers(
-		0,
+		slot,
 		1,
 		&gpuBuffer->m_handle,
 		&stride,
@@ -217,18 +217,18 @@ void D3D11Renderer::BindVertexBuffer(VertexBuffer& vbo) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::BindInstanceBuffer(InstanceBufferID ibo) const
+void D3D11Renderer::BindInstanceBuffer(InstanceBufferID ibo, int slot) const
 {
 	InstanceBuffer* ibuffer = GetInstanceBuffer(ibo);
 	ASSERT_OR_DIE(ibuffer, "Binding invalid vertex buffer");
 
-	BindInstanceBuffer(*ibuffer);
+	BindInstanceBuffer(*ibuffer, slot);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::BindInstanceBuffer(InstanceBuffer& ibo) const
+void D3D11Renderer::BindInstanceBuffer(InstanceBuffer& ibo, int slot) const
 {
 	ibo.UpdateGPUBuffer();
 
@@ -242,7 +242,7 @@ void D3D11Renderer::BindInstanceBuffer(InstanceBuffer& ibo) const
 	UINT offset = 0;
 
 	m_deviceContext->IASetVertexBuffers(
-		1,
+		slot,
 		1,
 		&gpuBuffer->m_handle,
 		&stride,
