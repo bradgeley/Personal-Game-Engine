@@ -75,6 +75,11 @@ void SpriteAnimationDef::LoadFromXml(void const* xmlElement)
 			ERROR_AND_DIE("SpriteAnimationDef::LoadFromXml - Invalid frame range format");
         }
     }
+
+    if (m_frames.size() == 1)
+    {
+		m_type = SpriteAnimationType::SingleFrame;
+    }
 }
 
 

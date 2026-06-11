@@ -132,4 +132,12 @@
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
+  <PassiveAoEAbilityDef name="MintAoEAttack">
+    <Targeting maxRange="5"></Targeting>
+    <AoEEffect radius="5" name="MintAoEEffect">
+      <Poison poison="1"></Poison>
+      <Slow duration="1"></Slow>
+    </AoEEffect>
+  </PassiveAoEAbilityDef>
+
 </AbilityDefs>

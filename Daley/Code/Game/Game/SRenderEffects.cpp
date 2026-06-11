@@ -40,7 +40,7 @@ void SRenderEffects::Run(SystemContext const& context)
     for (auto it = g_ecs->Iterate<CHealth, CRender, CAttachment, CTransform>(context); it.IsValid(); ++it)
     {
         CRender& render = *renderStorage.Get(it);
-        if (!render.GetIsInCameraView() || render.GetIsHidden())
+        if (!render.GetIsInCameraView())
         {
             continue;
         }

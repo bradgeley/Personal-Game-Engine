@@ -18,20 +18,11 @@ void SCollision::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCollision::PreRun()
-{
-	SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
-
-	std::swap(scCollision.m_lastFrameOverlaps, scCollision.m_frameOverlaps);
-	scCollision.m_frameOverlaps.clear();
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SCollision::Run(SystemContext const&)
+void SCollision::Run(SystemContext const& context)
 {
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
+	std::swap(scCollision.m_lastFrameOverlaps, scCollision.m_frameOverlaps);
+	scCollision.m_frameOverlaps.clear();
 
 	auto const& transformStorage = g_ecs->GetArrayStorage<CTransform>();
 	auto const& collisionStorage = g_ecs->GetArrayStorage<CCollision>();

@@ -31,25 +31,6 @@ void SCollisionHash::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCollisionHash::PreRun()
-{
-    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
-
-    for (int dirtyBucket : scCollision.m_dirtyBuckets)
-    {
-        for (CollisionLayer& layer : scCollision.m_collisionLayers)
-        {
-			CollisionBucket& bucket = layer[dirtyBucket];
-            bucket.clear();
-        }
-    }
-
-	scCollision.m_dirtyBuckets.clear();
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::Run(SystemContext const& context)
 {
     // Read dependencies
@@ -59,6 +40,17 @@ void SCollisionHash::Run(SystemContext const& context)
 
     // Write Dependencies
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
+
+    // Clear out old data
+    for (int dirtyBucket : scCollision.m_dirtyBuckets)
+    {
+        for (CollisionLayer& layer : scCollision.m_collisionLayers)
+        {
+            CollisionBucket& bucket = layer[dirtyBucket];
+            bucket.clear();
+        }
+    }
+    scCollision.m_dirtyBuckets.clear();
 
     for (GroupIter it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
     {
@@ -97,12 +89,4 @@ void SCollisionHash::Run(SystemContext const& context)
             });
         }
     }
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SCollisionHash::PostRun()
-{
-
 }

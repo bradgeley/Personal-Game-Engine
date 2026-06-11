@@ -14,6 +14,7 @@ public:
 	AssetID m_spriteShaderAsset = AssetID::Invalid;				// Owned by SRenderEntities
 	AssetID m_worldShaderAsset = AssetID::Invalid;				// Owned by SRenderWorld
 	AssetID m_healthBarShaderAsset = AssetID::Invalid;			// Owned by SRenderUI
+	AssetID m_iconsSpriteSheet = AssetID::Invalid;				// Owned by SRenderUI
 
 	ConstantBufferID m_spriteSheetConstantsBuffer	= RendererUtils::InvalidID; // Owned by SRenderEntities
 	ConstantBufferID m_lightingConstantsBuffer		= RendererUtils::InvalidID; // Owned by SLighting
@@ -23,7 +24,8 @@ public:
 	std::unordered_map<AssetID, VertexBufferID> m_entityVBOsBySpriteSheet; // Owned by SRenderEntities
 	std::unordered_map<AssetID, InstanceBufferID> instancesPerSpriteSheet; // Owned by SRenderEntities
 
-	VertexBufferID m_uiVBO							= RendererUtils::InvalidID;	// Owned by SRenderUI
+	VertexBufferID m_iconsVBO						= RendererUtils::InvalidID;	// Owned by SRenderUI
 	InstanceBufferID m_healthBarInstanceBuffer		= RendererUtils::InvalidID;	// Owned by SRenderUI
+	InstanceBufferID m_iconsInstanceBuffer			= RendererUtils::InvalidID;	// Owned by SRenderUI
 };
 

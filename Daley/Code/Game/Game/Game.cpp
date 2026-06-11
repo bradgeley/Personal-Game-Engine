@@ -155,7 +155,7 @@ void Game::ConfigureEngine(Engine* engine)
 
     RendererConfig rendererConfig;
 	rendererConfig.m_startupUserSettings.m_vsyncEnabled = false;
-	rendererConfig.m_startupUserSettings.m_msaaEnabled = true;
+	rendererConfig.m_startupUserSettings.m_msaaEnabled = false;
     g_renderer = RendererUtils::MakeRenderer(rendererConfig);
     engine->RegisterSubsystem(g_renderer);
 
@@ -168,6 +168,7 @@ void Game::ConfigureEngine(Engine* engine)
 
     // Dev console before input, so it steals input from the window when active
     DevConsoleConfig dcConfig;
+	dcConfig.m_backgroundTint = Rgba8(0, 0, 0, 100);
     dcConfig.m_backgroundImageSustainSeconds = 30.f;
     dcConfig.m_backgroundImageFadeSeconds = 1.f;
     dcConfig.m_openCloseAnimationSpeed = 10.f;

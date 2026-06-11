@@ -21,7 +21,7 @@ void SCollisionEffect::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionEffect::Run(SystemContext const& context)
 {
-    SCCollision const& scCollision = g_ecs->GetSingleton<SCCollision>();
+	SCCollision const& scCollision = g_ecs->GetSingleton<SCCollision>();
 	
     for (OverlapInfo const& overlap : scCollision.m_frameOverlaps)
     {

@@ -34,7 +34,7 @@ struct HealthBarRenderConstants
 	float	m_backgroundTint[4];	// BACKGROUNDTINT	(16 bytes)
 	float	m_healthTint[4];		// HEALTHTINT		(16 bytes)
 	//------------------------------------------------------
-	float	m_poisonTint[4];		// POISONTINT		(16 bytes)
 	float	m_fireTint[4];			// FIRETINT			(16 bytes)
+	float	m_poisonTint[4];		// POISONTINT		(16 bytes)
 	//------------------------------------------------------
 };

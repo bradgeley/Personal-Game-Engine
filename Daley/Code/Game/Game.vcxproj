@@ -460,6 +460,7 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\DarkAnt.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\FireUnderlay.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\IceCream.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\Icons.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Pig.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Zombie.xml" />

@@ -85,9 +85,6 @@
     <ClCompile Include="Game\SCamera.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SCopyTransform.cpp">
-      <Filter>ECS\Systems\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SFlowField.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
@@ -196,6 +193,9 @@
     </ClCompile>
     <ClCompile Include="Game\CollisionProfile.cpp">
       <Filter>Game\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCopyTransform.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -574,6 +574,9 @@
     </Xml>
     <Xml Include="..\..\Run\Data\Shaders\HealthBarShader.xml">
       <Filter>Data\Shaders</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Icons.xml">
+      <Filter>Data\SpriteSheets</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

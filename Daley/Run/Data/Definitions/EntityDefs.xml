@@ -185,7 +185,7 @@
   </EntityDef>
 
   <EntityDef name = "Mint">
-    <Ability name="MintAttack"></Ability>
+    <Ability name="MintAoEAttack"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="173,235,179"></Render>
@@ -258,6 +258,15 @@
     <Time></Time>
     <Transform></Transform>
     <Render scale="2" tint="255,165,0,25" depth="0.95"></Render>
+  </EntityDef>
+
+  <EntityDef name="MintAoEEffect">
+    <Animation spriteSheet="Data/SpriteSheets/AoEEffect.xml" defaultAnim="default"></Animation>
+    <CollisionEffect></CollisionEffect>
+    <Collision radius="1" type="GroundEffect"></Collision>
+    <Time></Time>
+    <Transform></Transform>
+    <Render scale="2" tint="173,235,179,25" depth="0.95"></Render>
   </EntityDef>
 
   <EntityDef name="RedAoEEffect">

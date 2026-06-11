@@ -70,7 +70,7 @@ void SRenderEntities::Run(SystemContext const& context)
     for (auto renderIt = g_ecs->Iterate<CRender, CAnimation>(context); renderIt.IsValid(); ++renderIt)
     {
         CRender const& render = *renderStorage.Get(renderIt);
-        if (!render.GetIsInCameraView() || render.GetIsHidden())
+        if (!render.GetIsInCameraView())
         {
             continue;
         }
@@ -95,7 +95,7 @@ void SRenderEntities::Run(SystemContext const& context)
             VertexBufferID vboID = scRender.m_entityVBOsBySpriteSheet[anim.m_gridSpriteSheet];
 
             VertexBuffer& vbo = *g_renderer->GetVertexBuffer(vboID);
-            VertexUtils::AddVertsForAABB2(vbo, spriteSheet->GetGenericSpriteQuad(1.f), Rgba8::White); // UVs will be passed deduced via information in the sprite instance data in the shader
+            VertexUtils::AddVertsForAABB2(vbo, spriteSheet->GetGenericSpriteQuad(1.f), Rgba8::White); // UVs will be deduced via information in the sprite instance data in the shader
         }
 
         // Get or create instance buffer for this sprite sheet

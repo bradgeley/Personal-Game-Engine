@@ -99,7 +99,24 @@ VSOutput VertexMain(VSInput vin, uint vertexID : SV_VertexID, uint instanceID : 
 //----------------------------------------------------------------------------------------------------------------------
 float4 PixelMain(VSOutput input) : SV_Target0
 {
-    float4 finalColor = float4(1, 1, 1, 1);
+    float4 finalColor = backgroundTint;
+    
+    if (input.uvs.x < input.healthFraction)
+    {
+        finalColor = healthTint;
+        
+        float fireThreshold = input.fireFraction * input.healthFraction;
+        if (input.uvs.x < fireThreshold)
+        {
+            finalColor = fireTint;
+        }
+    
+        float poisonThreshold = input.healthFraction - input.poisonFraction * input.healthFraction;
+        if (input.uvs.x > poisonThreshold)
+        {
+            finalColor = poisonTint;
+        }
+    }
     
 	return finalColor;
 }

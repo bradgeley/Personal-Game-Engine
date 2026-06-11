@@ -55,6 +55,10 @@ bool CRender::GetRotateSprite() const
 //----------------------------------------------------------------------------------------------------------------------
 bool CRender::GetIsInCameraView() const
 {
+	if (GetIsHidden())
+	{
+		return false;
+	}
 	return (m_renderFlags & static_cast<uint8_t>(RenderFlags::IsInCameraView)) != 0;
 }
 

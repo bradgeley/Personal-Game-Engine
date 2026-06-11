@@ -7,7 +7,7 @@
   <SpriteAnimation name="walk" frames="0-3" type="loop" secondsPerFrame="0.05"></SpriteAnimation>
 
   <!-- Idle -->
-  <SpriteAnimation name="idle" frames="0" type="singleFrame"></SpriteAnimation>
+  <SpriteAnimation name="idle" frames="0"></SpriteAnimation>
 
   <!-- Death -->
   <SpriteAnimation name="death" frames="4-5" type="once" secondsPerFrame="0.33"></SpriteAnimation>

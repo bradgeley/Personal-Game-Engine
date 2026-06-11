@@ -4,7 +4,7 @@
 <GridSpriteSheet name="IceCream" texture="Data/SpriteSheets/IceCream.png" layout="2,1" edgePadding="0,0" innerPadding="0,0">
 
     <!-- Tower Flavors -->
-    <SpriteAnimation name="iceCreamScoop" frames="0" type="singleframe"></SpriteAnimation>
-    <SpriteAnimation name="iceCreamProj" frames="1" type="singleframe"></SpriteAnimation>
+    <SpriteAnimation name="iceCreamScoop" frames="0"></SpriteAnimation>
+    <SpriteAnimation name="iceCreamProj" frames="1"></SpriteAnimation>
 
   </GridSpriteSheet>

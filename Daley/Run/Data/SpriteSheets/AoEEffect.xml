@@ -3,6 +3,6 @@
 
 <GridSpriteSheet name="AoEEffect" texture="Data/SpriteSheets/AoEEffect.png" layout="1,1" edgePadding="0,0" innerPadding="0,0">
 
-    <SpriteAnimation name="default" frames="0" type="singleframe"></SpriteAnimation>
+    <SpriteAnimation name="default" frames="0"></SpriteAnimation>
 
 </GridSpriteSheet>
