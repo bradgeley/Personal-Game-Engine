@@ -61,7 +61,7 @@ void SRenderEffects::Run(SystemContext const& context)
 				CTransform const& transform = *transStorage.Get(it);
                 // Spawn and attach the vfx on the entity side
                 SpawnInfo spawnInfo;
-                spawnInfo.m_def = EntityDef::GetEntityDef("BurnEffect");
+                spawnInfo.m_def = EntityDef::GetEntityDef("BurnUnderlay");
                 spawnInfo.m_spawnPos = transform.m_pos;
                 spawnInfo.m_spawnOrientation = transform.m_orientation;
                 attachment.m_attachedBurnVFX = SEntityFactory::SpawnEntity(spawnInfo);

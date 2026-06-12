@@ -65,6 +65,11 @@ void SWaveSpawner::Run(SystemContext const& context)
 		}
 	}
 
+	float waveIndexForScaling = static_cast<float>(waves.m_currentWaveIndex - 1);
+	float multiplyAdditiveHealthScaling = (waveIndexForScaling * waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave);
+	float exponentialHealthScaling = MathUtils::PowF(waves.m_waveGenDef.m_waveGenModifiers.m_healthExponentialScalingPerWave, waveIndexForScaling + 1.f);
+	float healthScaling = (1.f + multiplyAdditiveHealthScaling) * exponentialHealthScaling;
+
 	// Update active streams
 	for (int streamIndex = (int) waves.m_activeStreams.size() - 1; streamIndex >= 0; --streamIndex)
 	{
@@ -75,8 +80,8 @@ void SWaveSpawner::Run(SystemContext const& context)
 
 		SpawnInfo spawnInfo;
 		spawnInfo.m_def = EntityDef::GetEntityDef(stream.m_entityStream.m_entityName);
-		spawnInfo.m_spawnHealthMultiplier = 1.f + (waves.m_currentWaveIndex * waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave);
-		spawnInfo.m_spawnSpeedMultiplier = 1.f + (waves.m_currentWaveIndex * waves.m_waveGenDef.m_waveGenModifiers.m_speedMultiplierIncreasePerWave);
+		spawnInfo.m_spawnHealthMultiplier = 1.f + (waveIndexForScaling * waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave);
+		spawnInfo.m_spawnSpeedMultiplier = 1.f + (waveIndexForScaling * waves.m_waveGenDef.m_waveGenModifiers.m_speedMultiplierIncreasePerWave);
 
 		for (int spawnIndex = 0; spawnIndex < (int) numSpawns; ++spawnIndex)
 		{
@@ -201,7 +206,7 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "ant", "small" }, 1.f });
 	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 5, 10, { "ant", "medium" },  0.5f });
 	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "largeAnt", 1, true });
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "Ant", 20, true });
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "ant", 20, true });
 
 	// Modifiers
 	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier = 10.5f;

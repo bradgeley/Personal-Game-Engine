@@ -9,7 +9,7 @@ class SRenderStatusIcons : public System
 {
 public:
 
-    SRenderStatusIcons(Name name = "SRenderStatusIcons", Rgba8 const& debugTint = Rgba8::DarkGray) : System(name, debugTint) {};
+    SRenderStatusIcons(Name name = "RenderStatusIcons", Rgba8 const& debugTint = Rgba8::DarkGray) : System(name, debugTint) {};
     void Startup() override;
     void Run(SystemContext const& context) override;
     void Shutdown() override;

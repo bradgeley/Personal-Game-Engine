@@ -155,7 +155,7 @@ void Game::ConfigureEngine(Engine* engine)
 
     RendererConfig rendererConfig;
 	rendererConfig.m_startupUserSettings.m_vsyncEnabled = false;
-	rendererConfig.m_startupUserSettings.m_msaaEnabled = false;
+	rendererConfig.m_startupUserSettings.m_msaaEnabled = true;
     g_renderer = RendererUtils::MakeRenderer(rendererConfig);
     engine->RegisterSubsystem(g_renderer);
 
@@ -192,7 +192,7 @@ void Game::ConfigureEngine(Engine* engine)
 void Game::ConfigureECS()
 {
     AdminSystemConfig ecsConfig;
-    ecsConfig.m_maxDeltaSeconds = 0.1f;
+    ecsConfig.m_maxDeltaSeconds = 1.f;
     ecsConfig.m_enableMultithreading = true;
     ecsConfig.m_autoMultithreadingEntityThreshold = 1;
     ecsConfig.m_systemSplittingEntityThreshold = 1;

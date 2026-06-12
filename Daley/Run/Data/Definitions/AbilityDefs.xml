@@ -18,6 +18,12 @@
         <Poison poison="1"></Poison>
         <Slow duration="1"></Slow>
       </AoEHit>
+      <AoEEffect name="MagentaAoEEffect" radius="2" duration="2">
+        <Damage damage="10"></Damage>
+        <Burn burn="10"></Burn>
+        <Poison poison="10"></Poison>
+        <Slow duration="1"></Slow>
+      </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
 
