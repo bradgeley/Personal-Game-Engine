@@ -207,6 +207,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentArray<CAnimation>();
     g_ecs->RegisterComponentArray<CAttachment>();
     g_ecs->RegisterComponentArray<CCollision>();
+    g_ecs->RegisterComponentArray<CCollisionEffect>();
     g_ecs->RegisterComponentArray<CDeath>();
     g_ecs->RegisterComponentArray<CHealth>();
     g_ecs->RegisterComponentArray<CLifetime>();
@@ -219,7 +220,6 @@ void Game::ConfigureECS()
 
     // Map Components
     g_ecs->RegisterComponentMap<CAbility>();
-    g_ecs->RegisterComponentMap<CCollisionEffect>();
     g_ecs->RegisterComponentMap<CProjectile>();
 
     // Singleton components
@@ -288,6 +288,8 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEffects>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderHealthBars>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderStatusIcons>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 	g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);

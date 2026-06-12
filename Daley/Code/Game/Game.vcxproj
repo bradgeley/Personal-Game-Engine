@@ -336,6 +336,8 @@
     <ClCompile Include="Game\SMovementAnimation.cpp" />
     <ClCompile Include="Game\SProjectile.cpp" />
     <ClCompile Include="Game\SRenderEffects.cpp" />
+    <ClCompile Include="Game\SRenderHealthBars.cpp" />
+    <ClCompile Include="Game\SRenderStatusIcons.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
     <ClCompile Include="Game\STime.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
@@ -419,6 +421,8 @@
     <ClInclude Include="Game\SMovementAnimation.h" />
     <ClInclude Include="Game\SProjectile.h" />
     <ClInclude Include="Game\SRenderEffects.h" />
+    <ClInclude Include="Game\SRenderHealthBars.h" />
+    <ClInclude Include="Game\SRenderStatusIcons.h" />
     <ClInclude Include="Game\SRenderUI.h" />
     <ClInclude Include="Game\STime.h" />
     <ClInclude Include="Game\SDebugRender.h" />

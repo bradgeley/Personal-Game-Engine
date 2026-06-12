@@ -197,6 +197,12 @@
     <ClCompile Include="Game\SCopyTransform.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SRenderHealthBars.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRenderStatusIcons.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -453,6 +459,12 @@
     </ClInclude>
     <ClInclude Include="Game\HealthBarShaderCPU.h">
       <Filter>Data\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderHealthBars.h">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderStatusIcons.h">
+      <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -41,6 +41,8 @@
 #include "SProjectile.h"
 #include "SRenderEffects.h"
 #include "SRenderEntities.h"
+#include "SRenderHealthBars.h"
+#include "SRenderStatusIcons.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"
 #include "STime.h"

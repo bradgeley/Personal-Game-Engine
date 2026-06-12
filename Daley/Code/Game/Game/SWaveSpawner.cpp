@@ -19,27 +19,6 @@ void SWaveSpawner::Startup()
 	AddReadDependencies<SCWorld>();
 	AddWriteDependencies<SCWaves, SCEntityFactory>();
 
-	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
-
-	WaveStream testStream;
-	testStream.m_entityName = Name("ant");
-	testStream.m_numEntities = 100;
-	testStream.m_overTimeSeconds = 20.f;
-
-	WaveStream testStream2;
-	testStream2.m_entityName = Name("pig");
-	testStream2.m_numEntities = 10;
-	testStream2.m_overTimeSeconds = 20.f;
-
-	Wave testWave;
-	testWave.m_waveStreams.push_back(testStream);
-	testWave.m_waveStreams.push_back(testStream2);
-
-	waves.m_currentWaveIndex = 0;
-	waves.m_waves.push_back(testWave);
-	waves.m_waves.push_back(testWave);
-	waves.m_waves.push_back(testWave);
-
 	DevConsoleUtils::AddDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
 	DevConsoleUtils::AddDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves, "seed", DevConsoleArgType::Int, "numWaves", DevConsoleArgType::Int);
 }
@@ -55,6 +34,11 @@ void SWaveSpawner::Run(SystemContext const& context)
 	// Write Dependencies
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
 	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
+
+	if (waves.m_waves.size() == 0)
+	{
+		GenerateWaves(0, 5);
+	}
 
 	if (waves.m_wavesFinished || !waves.m_wavesStarted)
 	{
@@ -91,6 +75,8 @@ void SWaveSpawner::Run(SystemContext const& context)
 
 		SpawnInfo spawnInfo;
 		spawnInfo.m_def = EntityDef::GetEntityDef(stream.m_entityStream.m_entityName);
+		spawnInfo.m_spawnHealthMultiplier = 1.f + (waves.m_currentWaveIndex * waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave);
+		spawnInfo.m_spawnSpeedMultiplier = 1.f + (waves.m_currentWaveIndex * waves.m_waveGenDef.m_waveGenModifiers.m_speedMultiplierIncreasePerWave);
 
 		for (int spawnIndex = 0; spawnIndex < (int) numSpawns; ++spawnIndex)
 		{
@@ -207,28 +193,32 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 {
 	RandomNumberGenerator rng(static_cast<size_t>(seed));
 
-	// Static wave gen def for now, later get from a file
-	LevelWaveGenDef waveGenDef;
-	waveGenDef.m_numWaves = numWaves;
-	waveGenDef.m_seed = seed;
-	waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "ant", "small" }, 1.f });
-	waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 5, 10, { "ant", "medium" },  0.5f });
-	waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "largeAnt", 1, true });
-	waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "Ant", 20, true });
-	waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier = 1.5f;
-	waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave = 0.1f;
-	waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier = 2.f;
-
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
+
+	// Static wave gen def for now, later get from a file
+	waves.m_waveGenDef.m_numWaves = numWaves;
+	waves.m_waveGenDef.m_seed = seed;
+	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "ant", "small" }, 1.f });
+	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 5, 10, { "ant", "medium" },  0.5f });
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "largeAnt", 1, true });
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "Ant", 20, true });
+
+	// Modifiers
+	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier = 10.5f;
+	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave = 0.1f;
+	waves.m_waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier = 1.f;
+	waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave = 0.05f;
+	waves.m_waveGenDef.m_waveGenModifiers.m_speedMultiplierIncreasePerWave = 0.01f;
+
 	waves.m_waves.clear();
 
 	// Seconds Between Waves
-	float spawnRateMultiplier = MathUtils::Clamp(waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier, 0.01f, 100.f);
+	float spawnRateMultiplier = MathUtils::Clamp(waves.m_waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier, 0.01f, 100.f);
 	float oneOverSpawnRateMultiplier = 1.f / spawnRateMultiplier;
 	waves.m_secondsBetweenWaves = 30.f * oneOverSpawnRateMultiplier;
 
 	// Entity count multiplier
-	float numEntitiesMultiplier = waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier;
+	float numEntitiesMultiplier = waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier;
 
 	// Waves
 	for (int waveIndex = 0; waveIndex < numWaves; ++waveIndex)
@@ -236,9 +226,9 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 		Wave wave;
 
 		// Figure out if there is a fixed wave at this index
-		for (int fixedWaveIndex = 0; fixedWaveIndex < (int) waveGenDef.m_fixedWaves.size(); ++fixedWaveIndex)
+		for (int fixedWaveIndex = 0; fixedWaveIndex < (int) waves.m_waveGenDef.m_fixedWaves.size(); ++fixedWaveIndex)
 		{
-			FixedWaveStreamDef const& fixedDef = waveGenDef.m_fixedWaves[fixedWaveIndex];
+			FixedWaveStreamDef const& fixedDef = waves.m_waveGenDef.m_fixedWaves[fixedWaveIndex];
 
 			bool isMatchingWave = fixedDef.m_waveIndex == waveIndex;
 			bool isRecurringWave = fixedDef.m_recurAfterNumWaves > 0 && (waveIndex - fixedDef.m_waveIndex) % fixedDef.m_recurAfterNumWaves == 0;
@@ -263,13 +253,13 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 			continue;
 		}
 
-		ASSERT_OR_DIE(waveGenDef.m_randomWaves.size() > 0, StringUtils::StringF("No random waves defined in wave gen def, and there was not a fixed wave for index %i.", waveIndex).c_str());
+		ASSERT_OR_DIE(waves.m_waveGenDef.m_randomWaves.size() > 0, StringUtils::StringF("No random waves defined in wave gen def, and there was not a fixed wave for index %i.", waveIndex).c_str());
 
 		// No fixed wave, roll a random one
 
 		// Choose which random wave definition to use based on weights
 		float totalWeight = 0.f;
-		for (RandomWaveStreamDef const& randomDef : waveGenDef.m_randomWaves)
+		for (RandomWaveStreamDef const& randomDef : waves.m_waveGenDef.m_randomWaves)
 		{
 			totalWeight += randomDef.m_weight;
 		}
@@ -277,9 +267,9 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 		int chosenRandomDefIndex = -1;
 		float roll = rng.GetRandomFloatInRange(0.f, totalWeight);
 		float cumulativeWeight = 0.f;
-		for (int randomDefIndex = 0; randomDefIndex < (int) waveGenDef.m_randomWaves.size(); ++randomDefIndex)
+		for (int randomDefIndex = 0; randomDefIndex < (int) waves.m_waveGenDef.m_randomWaves.size(); ++randomDefIndex)
 		{
-			RandomWaveStreamDef const& randomDef = waveGenDef.m_randomWaves[randomDefIndex];
+			RandomWaveStreamDef const& randomDef = waves.m_waveGenDef.m_randomWaves[randomDefIndex];
 			cumulativeWeight += randomDef.m_weight;
 
 			if (roll <= cumulativeWeight)
@@ -291,7 +281,7 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 
 		ASSERT_OR_DIE(chosenRandomDefIndex != -1, "Failed to choose a random wave def.");
 
-		RandomWaveStreamDef const& randomDef = waveGenDef.m_randomWaves[chosenRandomDefIndex];
+		RandomWaveStreamDef const& randomDef = waves.m_waveGenDef.m_randomWaves[chosenRandomDefIndex];
 		WaveStream stream;
 		stream.m_entityName = GetRandomEnemyWithTags(randomDef.m_enemyTags, rng);
 		ASSERT_OR_DIE(EntityDef::GetEntityDef(stream.m_entityName) != nullptr, StringUtils::StringF("Invalid entity name in fixed wave def: %s", stream.m_entityName.ToCStr()).c_str());
@@ -302,6 +292,6 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 		wave.m_waveStreams.push_back(stream);
 		waves.m_waves.push_back(wave);
 
-		numEntitiesMultiplier += waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave;
+		numEntitiesMultiplier += waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave;
 	}
 }

@@ -86,6 +86,8 @@ struct LevelWaveGenModifiers
 	float m_numEntitiesMultiplier = 1.f;					// Multiplies the number of entities spawned in the wave by this amount.
 	float m_numEntitiesMultiplierIncreasePerWave = 0.01f;	// Increase numEntitiesMultiplier by this amount per wave
 	float m_waveSpawnRateMultiplier = 1.f;					// Multiplies the spawn rate (both time between waves and stream spawn rate) of waves by this amount (2.0 means twice as fast)
+	float m_healthMultiplierIncreasePerWave = 0.f;			// Increase health multiplier by this amount per wave
+	float m_speedMultiplierIncreasePerWave = 0.f;			// Increase speed multiplier by this amount per wave
 };
 
 
@@ -127,6 +129,7 @@ public:
 	Timer m_waveTimer;
 	int m_currentWaveIndex = 0;
 	std::vector<ActiveWaveStream> m_activeStreams;
+	LevelWaveGenDef m_waveGenDef;
 
 	// Generated Data
 	float m_secondsBetweenWaves = 30.f;

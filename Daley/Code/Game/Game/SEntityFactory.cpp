@@ -116,6 +116,17 @@ EntityID SEntityFactory::SpawnEntity(SpawnInfo const& spawnInfo)
         render->m_renderRadius *= spawnInfo.m_spawnScale;
     }
 
+    if (CHealth* health = g_ecs->GetComponent<CHealth>(id))
+    {
+        health->m_maxHealth *= spawnInfo.m_spawnHealthMultiplier;
+        health->m_currentHealth *= spawnInfo.m_spawnHealthMultiplier;
+	}
+
+    if (CMovement* movement = g_ecs->GetComponent<CMovement>(id))
+    {
+        movement->m_movementSpeedMultiplier = spawnInfo.m_spawnSpeedMultiplier;
+	}
+
     CLifetime* lifetime = g_ecs->GetComponent<CLifetime>(id);
     if (!lifetime && spawnInfo.m_spawnLifetime >= 0.f)
     {

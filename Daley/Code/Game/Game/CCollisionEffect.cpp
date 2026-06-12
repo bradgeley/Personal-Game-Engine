@@ -4,7 +4,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-HitPayload CCollisionEffect::GetFirstTouchPayload() const
+HitPayload CCollisionEffect::GetFirstOverlapPayload() const
 {
 	HitPayload payload;
 	payload.m_damage = m_firstOverlapDamage;
@@ -17,7 +17,7 @@ HitPayload CCollisionEffect::GetFirstTouchPayload() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-HitPayload CCollisionEffect::GetWhileTouchingPayload(float deltaSeconds) const
+HitPayload CCollisionEffect::GetWhileOverlappingPayload(float deltaSeconds) const
 {
 	HitPayload payload;
 	payload.m_damage = m_damagePerSecond * deltaSeconds;

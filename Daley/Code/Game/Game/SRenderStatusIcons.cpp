@@ -1,0 +1,119 @@
+﻿// Bradley Christensen - 2022-2026
+#include "SRenderStatusIcons.h"
+#include "CRender.h"
+#include "CTime.h"
+#include "SCRender.h"
+#include "SpriteShaderCPU.h"
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/GridSpriteSheet.h"
+#include "Engine/Assets/ShaderAsset.h"
+#include "Engine/Core/ErrorUtils.h"
+#include "Engine/Renderer/ConstantBuffer.h"
+#include "Engine/Renderer/InstanceBuffer.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/VertexBuffer.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SRenderStatusIcons::Startup()
+{
+	AddReadDependencies<CRender, CTime, SCRender>();
+	AddWriteDependencies<Renderer>();
+
+	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+
+	scRender.m_iconsVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
+	scRender.m_iconsInstanceBuffer = g_renderer->MakeInstanceBuffer();
+
+	InstanceBuffer& iconsIBO = *g_renderer->GetInstanceBuffer(scRender.m_iconsInstanceBuffer);
+	iconsIBO.Initialize<SpriteInstance>();
+
+	scRender.m_iconsSpriteSheet = g_assetManager->LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Icons.xml");
+	GridSpriteSheet& iconsSpriteSheet = *g_assetManager->Get<GridSpriteSheet>(scRender.m_iconsSpriteSheet);
+
+	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(scRender.m_iconsVBO);
+	VertexUtils::AddVertsForAABB2(vbo, iconsSpriteSheet.GetGenericSpriteQuad(1.f), Rgba8::White);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SRenderStatusIcons::Run(SystemContext const& context)
+{
+	// Read Dependencies
+	auto const& renderStorage = g_ecs->GetArrayStorage<CRender>();
+	auto const& timeStorage = g_ecs->GetArrayStorage<CTime>();
+	SCRender const& scRender = g_ecs->GetSingleton<SCRender>();
+
+	// Render Slow Icons
+	InstanceBuffer& iconsIBO = *g_renderer->GetInstanceBuffer(scRender.m_iconsInstanceBuffer);
+	iconsIBO.ClearInstances();
+
+	GridSpriteSheet const& iconsSpriteSheet = *g_assetManager->Get<GridSpriteSheet>(scRender.m_iconsSpriteSheet);
+	SpriteAnimationDef const* slowAnimDef = iconsSpriteSheet.GetAnimationDef("Slow");
+	if (!slowAnimDef)
+	{
+		ERROR_AND_DIE("SRenderUI::Run - Failed to find Slow animation in Icons sprite sheet.");
+	}
+	SpriteAnimation slowAnim = slowAnimDef->MakeAnimInstance();
+
+	for (auto it = g_ecs->Iterate<CRender, CTime>(context); it.IsValid(); ++it)
+	{
+		CTime const& time = timeStorage[it];
+		if (!time.IsSlowed())
+		{
+			continue;
+		}
+		CRender const& render = renderStorage[it];
+		if (!render.GetIsInCameraView())
+		{
+			continue;
+		}
+
+		SpriteInstance instance;
+		instance.m_position = Vec3(render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius) + Vec2(-0.75f, -0.0f), 0.f);
+		instance.m_orientation = 0.f;
+		instance.m_scale = 0.2f;
+		instance.m_rgba = Rgba8(80, 80, 80, 255);
+		instance.m_spriteIndex = slowAnim.GetCurrentFrameIndex();
+		instance.m_outdoorLight = 255;
+		instance.m_indoorLight = 255;
+		iconsIBO.AddInstance(instance);
+	}
+
+	ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
+	if (spriteShaderAsset)
+	{
+		VertexBuffer& iconsVBO = *g_renderer->GetVertexBuffer(scRender.m_iconsVBO);
+		ConstantBuffer* spriteCbo = g_renderer->GetConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
+
+		ASSERT_OR_DIE(spriteCbo != nullptr, "SRenderStatusIcons::Run - Invalid constant buffer.");
+
+		SpriteSheetConstants spriteSheetConstants;
+		spriteSheetConstants.m_layout = iconsSpriteSheet.GetLayout();
+		spriteSheetConstants.m_edgePadding = iconsSpriteSheet.GetEdgePadding();
+		spriteSheetConstants.m_innerPadding = iconsSpriteSheet.GetInnerPadding();
+		spriteSheetConstants.m_textureDims = iconsSpriteSheet.GetTextureDimensions();
+		spriteCbo->Update(spriteSheetConstants);
+
+		g_renderer->BindConstantBuffer(scRender.m_spriteSheetConstantsBuffer, 5);
+
+		iconsSpriteSheet.SetRendererState();
+		g_renderer->SetModelMatrix(Mat44::Identity);
+		g_renderer->BindShader(spriteShaderAsset->GetShaderID());
+		g_renderer->DrawInstanced(iconsVBO, iconsIBO);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SRenderStatusIcons::Shutdown()
+{
+	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+	g_renderer->ReleaseVertexBuffer(scRender.m_iconsVBO);
+	g_renderer->ReleaseInstanceBuffer(scRender.m_iconsInstanceBuffer);
+	g_assetManager->Release(scRender.m_iconsSpriteSheet);
+}
