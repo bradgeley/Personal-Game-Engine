@@ -3,9 +3,8 @@
 #include "ComponentStorage.h"
 #include "GroupIter.h"
 #include "EntityID.h"
-#include "SystemSubgraph.h"
-#include "SystemContext.h"
 #include "Engine/Core/Name.h"
+#include "SystemSubgraph.h"
 #include <vector>
 #include <unordered_map>
 #include <typeindex>
@@ -15,6 +14,7 @@
 class System;
 class TaskSystem;
 class SystemScheduler;
+struct SystemContext;
 
 
 
@@ -144,19 +144,16 @@ public:
 //
 public:
 
+	inline BitMask GetComponentBit(std::type_index type) const { return m_componentBitMasks.at(type); }
+
 	template <typename CType>
 	CType* GetComponent(EntityID entityID) const;
 
 	template <typename CType>
-	inline CType* GetComponent(GroupIter const& it) const;
+	CType* GetComponent(GroupIter const& it) const;
 
 	template <typename CType>
 	CType& GetSingleton() const;
-
-	inline BitMask GetComponentBit(std::type_index type) const { return m_componentBitMasks.at(type); }
-
-	template <typename CType>
-	TypedBaseStorage<CType>* GetStorage() const;
 
 	template <typename CType>
 	ArrayStorage<CType>& GetArrayStorage() const;
@@ -166,8 +163,6 @@ public:
 
 	template <typename CType>
 	TagStorage<CType>& GetTagStorage() const;
-
-
 
 //----------------------------------------------------------------------------------------------------------------------
 // REMOVING COMPONENTS
@@ -425,17 +420,6 @@ CType& AdminSystem::GetSingleton() const
 
 //----------------------------------------------------------------------------------------------------------------------
 template <typename CType>
-TypedBaseStorage<CType>* AdminSystem::GetStorage() const
-{
-	std::type_index typeIndex(typeid(CType));
-	TypedBaseStorage<CType>* typedStorage = dynamic_cast<TypedBaseStorage<CType>*>(m_componentStorage.at(typeIndex));
-	return typedStorage;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-template <typename CType>
 ArrayStorage<CType>& AdminSystem::GetArrayStorage() const
 {
 	std::type_index typeIndex(typeid(CType));
@@ -517,7 +501,7 @@ GroupIter AdminSystem::Iterate(SystemContext const& context) const
 
 	result.m_groupMask = GetComponentBitMask<CTypes...>();
 
-	result.m_currentIndex = GetNextEntityIndexWithGroup(result.m_groupMask, context.m_startEntityID, context.m_endEntityID);
+	result.m_currentIndex = GetNextEntityIndexWithGroup(result.m_groupMask, result.m_currentIndex, result.m_endIndex);
 	return result;
 }
 

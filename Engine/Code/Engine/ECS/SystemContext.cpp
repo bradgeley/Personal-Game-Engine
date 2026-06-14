@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SystemContext.h"
+#include "AdminSystem.h"
+#include "System.h"
 
 
 
@@ -31,4 +33,22 @@ void SystemContext::SplitEntities(int systemSplittingJobID, int systemSplittingN
     
     m_startEntityID = startIndex;
     m_endEntityID = endIndex;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SystemContext::IsComponentAccessValid(std::type_index componentType, bool isWriteAccess) const
+{
+	BitMask componentBit = g_ecs->GetComponentBit(componentType);
+	if (isWriteAccess)
+	{
+		return (m_system->GetWriteDependencies() & componentBit) != 0;
+	}
+	else
+	{
+		bool isWriteOk = (m_system->GetWriteDependencies() & componentBit) != 0;
+		bool isReadOk = (m_system->GetReadDependencies() & componentBit) != 0;
+		return isWriteOk || isReadOk;
+	}
 }

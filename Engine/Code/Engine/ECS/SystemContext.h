@@ -1,11 +1,12 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
 #include "EntityID.h"
+#include <typeindex>
 
 
 
-class System;
 class AdminSystem;
+class System;
 
 
 
@@ -17,6 +18,10 @@ struct SystemContext
 
     // Sets start and end entity based on which job this system context is out of the total jobs
     void SplitEntities(int systemSplittingJobID, int systemSplittingNumJobs);
+
+	bool IsComponentAccessValid(std::type_index componentType, bool isWriteAccess) const;
+
+
 	
     System*         m_system                    = nullptr;
     float		    m_deltaSeconds				= 0.f;
