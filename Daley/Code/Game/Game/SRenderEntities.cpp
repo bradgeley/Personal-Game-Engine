@@ -56,9 +56,9 @@ void SRenderEntities::Run(SystemContext const& context)
     AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
 
     // Clear last frame's instances
-    for (auto it : scRender.m_entityVBOsBySpriteSheet)
+    for (auto it : scRender.m_instancesPerSpriteSheet)
     {
-        InstanceBufferID iboID = scRender.instancesPerSpriteSheet[it.first];
+        InstanceBufferID iboID = it.second;
         InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
         if (ibo)
         {
@@ -88,29 +88,21 @@ void SRenderEntities::Run(SystemContext const& context)
             continue;
         }
 
-        // Get or create vertex buffer for this sprite sheet
-        if (scRender.m_entityVBOsBySpriteSheet.find(anim.m_gridSpriteSheet) == scRender.m_entityVBOsBySpriteSheet.end())
-        {
-            scRender.m_entityVBOsBySpriteSheet[anim.m_gridSpriteSheet] = g_renderer->MakeVertexBuffer<Vertex_PCU>();
-            VertexBufferID vboID = scRender.m_entityVBOsBySpriteSheet[anim.m_gridSpriteSheet];
-
-            VertexBuffer& vbo = *g_renderer->GetVertexBuffer(vboID);
-            VertexUtils::AddVertsForAABB2(vbo, spriteSheet->GetGenericSpriteQuad(1.f), Rgba8::White); // UVs will be deduced via information in the sprite instance data in the shader
-        }
-
         // Get or create instance buffer for this sprite sheet
-        if (scRender.instancesPerSpriteSheet.find(anim.m_gridSpriteSheet) == scRender.instancesPerSpriteSheet.end())
+        if (scRender.m_instancesPerSpriteSheet.find(anim.m_gridSpriteSheet) == scRender.m_instancesPerSpriteSheet.end())
         {
-            scRender.instancesPerSpriteSheet[anim.m_gridSpriteSheet] = g_renderer->MakeInstanceBuffer<SpriteInstance>();
+            scRender.m_instancesPerSpriteSheet[anim.m_gridSpriteSheet] = g_renderer->MakeInstanceBuffer<SpriteInstance>();
         }
-        InstanceBufferID iboID = scRender.instancesPerSpriteSheet[anim.m_gridSpriteSheet];
-        InstanceBuffer& ibo = *g_renderer->GetInstanceBuffer(iboID);
+        InstanceBufferID iboID = scRender.m_instancesPerSpriteSheet[anim.m_gridSpriteSheet];
+        InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
+
+        ASSERT_OR_DIE(ibo != nullptr, "SRenderEntities::Run - Invalid instance buffer.");
 
 		float renderDepth = render.m_depthOverride;
         if (renderDepth == RenderConstants::s_invalidSpriteRenderDepth)
         {
             // If not overriden, do depth based on y location on the screen, so things get farther back the higher up on the screen they are rendered.
-            float baseY = render.GetRenderPosition().y - (render.m_renderRadius * 0.5f);
+            float baseY = render.GetRenderPosition().y - (render.m_renderRadius);
 			float minExpectedSpriteBaseY = cameraBounds.mins.y - RenderConstants::s_maxExpectedSpriteHeight;
             renderDepth = MathUtils::RangeMap(baseY, minExpectedSpriteBaseY, cameraBounds.maxs.y, RenderConstants::s_minSpriteRenderDepth, RenderConstants::s_maxSpriteRenderDepth);
 		}
@@ -118,21 +110,20 @@ void SRenderEntities::Run(SystemContext const& context)
         SpriteInstance instance;
         instance.m_position = Vec3(render.GetRenderPosition(), renderDepth);
         instance.m_orientation = render.GetRenderOrientation();
-        instance.m_scale = render.m_renderRadius;
         instance.m_rgba = render.m_tint;
-        instance.m_spriteIndex = anim.m_animInstance.GetCurrentSpriteIndex();
-		instance.m_outdoorLight = 255; // todo:
+        instance.m_dims = spriteSheet->GetSpriteDimensions(render.m_renderRadius * 2.f);
 		instance.m_indoorLight = 255; // todo:
+		instance.m_outdoorLight = 255; // todo:
+        instance.m_spriteIndex = anim.m_animInstance.GetCurrentSpriteIndex();
 
-        ibo.AddInstance(instance);
+        ibo->AddInstance(instance);
     }
 
     // 1 Draw call per sprite sheet
-    for (auto pair : scRender.m_entityVBOsBySpriteSheet)
+    for (auto pair : scRender.m_instancesPerSpriteSheet)
     {
         AssetID assetID = pair.first;
-        VertexBufferID vboID = pair.second;
-        InstanceBufferID iboID = scRender.instancesPerSpriteSheet[assetID];
+        InstanceBufferID iboID = pair.second;
 
         GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(assetID);
         if (!spriteSheet)
@@ -140,12 +131,14 @@ void SRenderEntities::Run(SystemContext const& context)
             // May be reloading right now
             continue;
         }
-        VertexBuffer* vbo = g_renderer->GetVertexBuffer(vboID);
         InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
+        if (!ibo || ibo->GetNumInstances() == 0)
+        {
+            continue;
+		}
+
         ConstantBuffer* spriteCbo = g_renderer->GetConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
 
-        ASSERT_OR_DIE(vbo != nullptr, "SRenderEntities::Run - Invalid vertex buffer.");
-        ASSERT_OR_DIE(ibo != nullptr, "SRenderEntities::Run - Invalid instance buffer.");
         ASSERT_OR_DIE(spriteCbo != nullptr, "SRenderEntities::Run - Invalid constant buffer.");
 
         SpriteSheetConstants spriteSheetConstants;
@@ -159,7 +152,7 @@ void SRenderEntities::Run(SystemContext const& context)
         g_renderer->BindConstantBuffer(scRender.m_spriteSheetConstantsBuffer, 5);
         spriteSheet->SetRendererState();
         g_renderer->BindShader(spriteShaderID);
-        g_renderer->DrawInstanced(*vbo, *ibo);
+        g_renderer->DrawInstanced(6, *ibo);
     }
 }
 
@@ -172,10 +165,10 @@ void SRenderEntities::Shutdown()
     ASSERT_OR_DIE(g_renderer != nullptr, "SRenderEntities::Shutdown - Renderer is null.");
 
     SCRender scRender = g_ecs->GetSingleton<SCRender>();
-    for (auto it : scRender.m_entityVBOsBySpriteSheet)
+    for (auto it : scRender.m_instancesPerSpriteSheet)
     {
         g_assetManager->Release(it.first);
-        g_renderer->ReleaseVertexBuffer(it.second);
+        g_renderer->ReleaseInstanceBuffer(it.second);
     }
 
     g_renderer->ReleaseConstantBuffer(scRender.m_spriteSheetConstantsBuffer);

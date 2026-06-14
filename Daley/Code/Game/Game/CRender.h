@@ -57,7 +57,7 @@ public:
     Vec2 m_pos                      = Vec2::ZeroVector;
     Vec2 m_renderOffset			    = Vec2::ZeroVector;
     float m_orientation             = 0.f;
-    float m_renderRadius            = 1.f;
+    float m_renderRadius            = 0.5f;
     Rgba8 m_tint                    = Rgba8::White;
     Rgba8 m_baseTint                = Rgba8::White;
 };

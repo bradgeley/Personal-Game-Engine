@@ -190,7 +190,7 @@ void SDebugRender::Run(SystemContext const& context)
             Vec2 collisionPos = transform.m_pos + collision.m_offset;
 
             VertexUtils::AddVertsForWireDisc2D(untexturedVerts, collisionPos, collision.m_radius, 0.05f, 8, Rgba8::Magenta);
-            VertexUtils::AddVertsForWireDisc2D(untexturedVerts, render.GetRenderPosition(), 0.5f * render.m_renderRadius, 0.05f, 8, Rgba8::Cyan);
+            VertexUtils::AddVertsForWireDisc2D(untexturedVerts, render.GetRenderPosition(), render.m_renderRadius, 0.05f, 8, Rgba8::Cyan);
         }
     }
 

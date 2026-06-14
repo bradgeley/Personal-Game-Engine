@@ -36,7 +36,8 @@ public:
 	IntVec2 GetLayout() const;
 	IntVec2 GetEdgePadding() const;
 	IntVec2 GetInnerPadding() const;
-	AABB2 GetGenericSpriteQuad(float size = 1.f) const;		// In NDC space, centered on origin, with correct aspect ratio
+	AABB2 GetGenericSpriteQuad(float size = 1.f) const;	// size == largest dimension x or y
+	Vec2 GetSpriteDimensions(float size = 1.f) const;	// size == largest dimension x or y
 	int CountNumAnimations() const;
 	int GetNumAnimations() const;
 
@@ -56,7 +57,7 @@ protected:
 	IntVec2		m_edgePadding	= IntVec2::ZeroVector;			// Around the whole sheet
 	IntVec2		m_innerPadding	= IntVec2::ZeroVector;			// Between sprites
 	int			m_numAnimations = 0;
-	std::vector<SpriteAnimationGroup> m_animationGroups;		// Animations that use this sprite sheet, loaded from the xml
+	std::vector<SpriteAnimationGroup> m_animationGroups;		// Animations that use this sprite sheet, loaded from xml
 
 	// Used during the load process
 	Name		m_textureName	= Name::Invalid;

@@ -6,24 +6,17 @@
 struct VSInput
 {
 	//------------------------------------------------------
-	// Vertex Data (0)
-	//------------------------------------------------------
-    float3	position			: POSITION;
-    float4	tint				: TINT;
-    float2	uvs					: UVS;
-	//------------------------------------------------------
-	
-	//------------------------------------------------------
-	// Instance Data (1)
+	// Instance Data (0)
 	//------------------------------------------------------
 	float3	instancePosition	: INSTANCEPOSITION;	// 12 bytes
-    float	instanceRotation	: INSTANCEROTATION; // 4 bytes
+    float   instanceRotation    : INSTANCEROTATION; // 4 bytes
 	//------------------------------------------------------
     float4	instanceTint		: INSTANCETINT;		// 16 bytes
 	//------------------------------------------------------
-	float	instanceScale		: INSTANCESCALE;	// 4 bytes
-	uint	spriteIndex			: INDEX;			// 4 bytes
-	float	indoorLight			: INDOORLIGHT;		// 4 bytes
+	float2	instanceDims		: INSTANCEDIMS;	    // 8 bytes
+    uint    spriteIndex         : INDEX;            // 4 bytes
+    float   indoorLight         : INDOORLIGHT;      // 4 bytes
+	//------------------------------------------------------
     float   outdoorLight        : OUTDOORLIGHT;     // 4 bytes
 	//------------------------------------------------------
 };
@@ -38,6 +31,20 @@ struct VSOutput
     float2 uvs : UVS;
     float indoorLight : INDOORLIGHT;
     float outdoorLight : OUTDOORLIGHT;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+static const float3 QuadVerts[6] =
+{
+    float3(-0.5f, -0.5f, 0.f),  // Bot Left
+    float3(0.5f, -0.5f, 0.f),   // Bot Right
+    float3(0.5f, 0.5f, 0.f),    // Top Right
+
+    float3(-0.5f, -0.5f, 0.f),  // Bot Left
+    float3(0.5f, 0.5f, 0.f),    // Top Right
+    float3(-0.5f, 0.5f, 0.f)    // Top Left
 };
 
 
@@ -160,42 +167,40 @@ float3 GetRotatedBy(float3 vec, float degrees)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-VSOutput VertexMain(VSInput vin, uint instanceID : SV_InstanceID)
+VSOutput VertexMain(VSInput vin, uint vertexID : SV_VertexID, uint instanceID : SV_InstanceID)
 {
-    float3 pos = vin.position;
-    pos = GetRotatedBy(pos, vin.instanceRotation); // Rotate around Z axis
-    
-    pos = float3(pos.xy * vin.instanceScale, pos.z); // only scale XY
-    float3 outPos = pos + vin.instancePosition;
+    float3 pos = QuadVerts[vertexID];               // Local Position
+    pos *= float3(vin.instanceDims, 1.f);           // Scale
+    pos = GetRotatedBy(pos, vin.instanceRotation);  // Rotate around Z axis
+    pos += float3(vin.instancePosition);            // Translate
 	
 	VSOutput output;
-    output.position = float4(outPos, 1.f);
+    output.position = float4(pos, 1.f);
     output.position = mul(gameToRender, output.position);
     output.position = mul(worldToCamera, output.position);
     output.position = mul(cameraToClip, output.position);
 	
-    output.tint = (vin.tint * vin.instanceTint);
-    output.uvs = vin.uvs;
+    output.tint = vin.instanceTint;
     output.indoorLight = vin.indoorLight;
     output.outdoorLight = vin.outdoorLight;
 	
     float4 spriteUVs = ComputeUVs(vin);
-    if (all(vin.uvs == float2(0.f, 0.f)))
+    if (vertexID == 0 || vertexID == 3)
     {
 		// Bot left corner
         output.uvs = spriteUVs.rg;
     }
-    else if (all(vin.uvs == float2(0.f, 1.f)))
+    else if (vertexID == 5)
     {
 		// Top left corner
         output.uvs = float2(spriteUVs.r, spriteUVs.a);
     }
-    else if (all(vin.uvs == float2(1.f, 1.f)))
+    else if (vertexID == 2 || vertexID == 4)
     {
 		// Top right corner
         output.uvs = spriteUVs.ba;
     }
-    else // if (vin.uvs == float2(1.f, 0.f))
+    else // if (vertexID == 1)
     {
 		// Bot right corner
         output.uvs = float2(spriteUVs.b, spriteUVs.g);

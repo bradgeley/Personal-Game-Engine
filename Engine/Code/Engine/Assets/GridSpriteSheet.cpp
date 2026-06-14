@@ -268,14 +268,30 @@ AABB2 GridSpriteSheet::GetGenericSpriteQuad(float size /*= 1.f*/) const
 	if (spriteAspect <= 1.f)
 	{
 		spriteAABB.mins = Vec2(-halfSize, -halfSize * spriteAspect);
-		spriteAABB.maxs = spriteAABB.mins + Vec2(2.f * halfSize, 2.f * halfSize / spriteAspect);
+		spriteAABB.maxs = spriteAABB.mins + Vec2(size, size / spriteAspect);
 	}
 	else
 	{
 		spriteAABB.mins = Vec2(-halfSize * spriteAspect, -halfSize);
-		spriteAABB.maxs = spriteAABB.mins + Vec2(2.f * halfSize * spriteAspect, 2.f * halfSize);
+		spriteAABB.maxs = spriteAABB.mins + Vec2(size * spriteAspect, size);
 	}
 	return spriteAABB;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 GridSpriteSheet::GetSpriteDimensions(float size /*= 1.f*/) const
+{
+	float spriteAspect = GetSpriteAspect();
+	if (spriteAspect <= 1.f)
+	{
+		return Vec2(spriteAspect * size, size);
+	}
+	else
+	{
+		return Vec2(size, size / spriteAspect);
+	}
 }
 
 
