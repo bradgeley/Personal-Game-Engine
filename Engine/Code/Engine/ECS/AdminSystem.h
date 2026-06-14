@@ -71,9 +71,6 @@ public:
 	SystemSubgraph& CreateOrGetSystemSubgraph(SystemSubgraphID subgraphID);
 
 	template <typename CType>
-	void RegisterComponent(ComponentStorageType storageType = ComponentStorageType::Array);
-
-	template <typename CType>
 	void RegisterResourceByType();
 	
 	template <typename CType>
@@ -260,34 +257,6 @@ void AdminSystem::RegisterSystem(SystemSubgraphID subgraphID)
 {
 	System* s = new T();
 	RegisterSystem(s, subgraphID);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-template <typename CType>
-void AdminSystem::RegisterComponent(ComponentStorageType storageType /*= ComponentStorageType::Array*/)
-{
-	std::type_index typeIndex(typeid(CType));
-	if (m_componentStorage.find(typeIndex) == m_componentStorage.end())
-	{
-		switch (storageType)
-		{
-		case ComponentStorageType::Map:
-			m_componentStorage.emplace(typeIndex, new MapStorage<CType>());
-			break;
-		case ComponentStorageType::Singleton:
-			m_componentStorage.emplace(typeIndex, new SingletonStorage<CType>());
-			break;
-		case ComponentStorageType::Tag:
-			m_componentStorage.emplace(typeIndex, new TagStorage<CType>());
-			break;
-		default:
-			m_componentStorage.emplace(typeIndex, new ArrayStorage<CType>());
-			break;
-		}
-		RegisterComponentBit(typeIndex);
-	}
 }
 
 

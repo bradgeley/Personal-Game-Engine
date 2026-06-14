@@ -12,16 +12,16 @@ struct InputLayout;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct alignas(16) SpriteInstance
+struct SpriteInstance
 {
 	//------------------------------------------------------
 	Vec3		m_position;			// INSTANCEPOSITION	(12 bytes)
 	float		m_orientation;		// INSTANCEROTATION	(4 bytes)
 	//------------------------------------------------------
-	Rgba8		m_rgba;				// INSTANCETINT		(4 bytes -> 16 bytes as float4)
-	//------------------------------------------------------
+	Rgba8		m_rgba;				// INSTANCETINT		(4 bytes)
 	Vec2		m_dims;				// INSTANCEDIMS		(8 bytes)
 	uint32_t	m_spriteIndex;		// INDEX			(4 byte)
+	//------------------------------------------------------
 	uint8_t		m_indoorLight;		// INDOORLIGHT		(1 byte)
 	uint8_t		m_outdoorLight;		// OUTDOORLIGHT		(1 byte)
 	//------------------------------------------------------
