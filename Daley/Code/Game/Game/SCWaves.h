@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "Engine/Core/Name.h"
 #include "Engine/Time/Timer.h"
 #include <vector>
 
@@ -17,6 +18,9 @@ public:
 	Name m_entityName			= Name::Invalid;
 	int m_numEntities			= 0;
 	float m_overTimeSeconds		= 0.f;
+
+	float m_healthMultiplier	= 1.f;
+	float m_speedMultiplier		= 1.f;
 };
 
 
@@ -111,6 +115,9 @@ struct LevelWaveGenModifiers
 // Every wave, increase the number of monsters spawned by 1%
 struct LevelWaveGenDef
 {
+	float GetHealthScaling(int waveIndex) const;
+	float GetSpeedScaling(int waveIndex) const;
+
 	int m_seed = 0;
 	int m_numWaves = 5;
 	std::vector<RandomWaveStreamDef> m_randomWaves;

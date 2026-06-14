@@ -325,6 +325,7 @@
     <ClCompile Include="Game\SCollision.cpp" />
     <ClCompile Include="Game\SCollisionEffect.cpp" />
     <ClCompile Include="Game\SCollisionHash.cpp" />
+    <ClCompile Include="Game\SCWaves.cpp" />
     <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\SDeath.cpp" />
     <ClCompile Include="Game\SDebugCommands.cpp" />

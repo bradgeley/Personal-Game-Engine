@@ -65,11 +65,6 @@ void SWaveSpawner::Run(SystemContext const& context)
 		}
 	}
 
-	float waveIndexForScaling = static_cast<float>(waves.m_currentWaveIndex - 1);
-	float multiplyAdditiveHealthScaling = (waveIndexForScaling * waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave);
-	float exponentialHealthScaling = MathUtils::PowF(waves.m_waveGenDef.m_waveGenModifiers.m_healthExponentialScalingPerWave, waveIndexForScaling + 1.f);
-	float healthScaling = (1.f + multiplyAdditiveHealthScaling) * exponentialHealthScaling;
-
 	// Update active streams
 	for (int streamIndex = (int) waves.m_activeStreams.size() - 1; streamIndex >= 0; --streamIndex)
 	{
@@ -80,8 +75,8 @@ void SWaveSpawner::Run(SystemContext const& context)
 
 		SpawnInfo spawnInfo;
 		spawnInfo.m_def = EntityDef::GetEntityDef(stream.m_entityStream.m_entityName);
-		spawnInfo.m_spawnHealthMultiplier = 1.f + (waveIndexForScaling * waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave);
-		spawnInfo.m_spawnSpeedMultiplier = 1.f + (waveIndexForScaling * waves.m_waveGenDef.m_waveGenModifiers.m_speedMultiplierIncreasePerWave);
+		spawnInfo.m_spawnHealthMultiplier = stream.m_entityStream.m_healthMultiplier;
+		spawnInfo.m_spawnSpeedMultiplier = stream.m_entityStream.m_speedMultiplier;
 
 		for (int spawnIndex = 0; spawnIndex < (int) numSpawns; ++spawnIndex)
 		{
@@ -209,7 +204,7 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "ant", 20, true });
 
 	// Modifiers
-	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier = 10.5f;
+	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier = 1.5f;
 	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave = 0.1f;
 	waves.m_waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier = 1.f;
 	waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave = 0.05f;
@@ -248,6 +243,8 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 				stream.m_numEntities = MathUtils::Max(1, stream.m_numEntities);
 				stream.m_overTimeSeconds = fixedDef.m_overTimeSeconds * oneOverSpawnRateMultiplier;
 				stream.m_overTimeSeconds = MathUtils::Max(0.f, stream.m_overTimeSeconds);
+				stream.m_healthMultiplier = waves.m_waveGenDef.GetHealthScaling(waveIndex);
+				stream.m_speedMultiplier = waves.m_waveGenDef.GetSpeedScaling(waveIndex);
 				wave.m_waveStreams.push_back(stream);
 			}
 		}
@@ -294,6 +291,8 @@ void SWaveSpawner::GenerateWaves(int seed, int numWaves)
 		stream.m_numEntities = MathUtils::Max(1, stream.m_numEntities);
 		stream.m_overTimeSeconds = randomDef.m_overTimeSeconds * oneOverSpawnRateMultiplier;
 		stream.m_overTimeSeconds = MathUtils::Max(0.f, stream.m_overTimeSeconds);
+		stream.m_healthMultiplier = waves.m_waveGenDef.GetHealthScaling(waveIndex);
+		stream.m_speedMultiplier = waves.m_waveGenDef.GetSpeedScaling(waveIndex);
 		wave.m_waveStreams.push_back(stream);
 		waves.m_waves.push_back(wave);
 

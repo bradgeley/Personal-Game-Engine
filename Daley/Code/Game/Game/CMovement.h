@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Math/Vec2.h"
 #include <cstdint>
+#include <string>
 
 
 
@@ -20,6 +21,8 @@ public:
 
     CMovement() = default;
     CMovement(void const* xmlElement);
+
+    void AppendDebugString(std::string& out_string) const;
 
 	bool GetIsConstrainedToPath() const;
 

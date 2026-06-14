@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CMovement.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
 
 
@@ -15,6 +16,15 @@ CMovement::CMovement(void const* xmlElement)
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
+void CMovement::AppendDebugString(std::string& out_string) const
+{
+	float totalMovementSpeed = m_movementSpeed * m_movementSpeedMultiplier;
+    out_string += StringUtils::StringF("Speed: %.1f (Base:%.1f)\n", totalMovementSpeed, m_movementSpeed);
+}
+
+ 
 
 //----------------------------------------------------------------------------------------------------------------------
 bool CMovement::GetIsConstrainedToPath() const

@@ -1,13 +1,14 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SDebugOverlay.h"
+#include "CAbility.h"
 #include "CCollision.h"
 #include "CEntityDebug.h"
 #include "CHealth.h"
+#include "CMovement.h"
+#include "CProjectile.h"
 #include "CTags.h"
 #include "CTime.h"
 #include "CTransform.h"
-#include "CAbility.h"
-#include "CProjectile.h"
 #include "SCCamera.h"
 #include "SCDebug.h"
 #include "SCFlowField.h"
@@ -128,6 +129,11 @@ void SDebugOverlay::Run(SystemContext const&)
 					if (time)
 					{
 						time->AppendDebugString(debugString);
+					}
+					CMovement const* movement = g_ecs->GetComponent<CMovement>(it);
+					if (movement)
+					{
+						movement->AppendDebugString(debugString);
 					}
 				}
 
