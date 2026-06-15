@@ -125,6 +125,9 @@ public:
 	bool HasComponent(EntityID entityID) const;
 
 	template<typename CType>
+	bool HasComponentUnsafe(EntityID entityIndex) const;
+
+	template<typename CType>
 	bool HasComponentUnsafe(int entityIndex) const;
 
 	bool DoesEntityHaveComponents(EntityID entityID, BitMask componentBitMask) const;
@@ -535,6 +538,16 @@ inline bool AdminSystem::HasComponent(EntityID entityID) const
 	}
 	BitMask bitMask = GetComponentBit(std::type_index(typeid(CType)));
 	return DoesEntityHaveComponents(entityID, bitMask);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename CType>
+inline bool AdminSystem::HasComponentUnsafe(EntityID entityID) const
+{
+	BitMask bitMask = GetComponentBit(std::type_index(typeid(CType)));
+	return DoesEntityHaveComponentsUnsafe(entityID.GetIndex(), bitMask);
 }
 
 

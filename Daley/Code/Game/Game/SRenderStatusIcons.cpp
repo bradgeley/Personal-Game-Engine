@@ -73,7 +73,7 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 
 	SpriteAnimation slowAnim = slowAnimDef->MakeAnimInstance();
 
-	for (auto it = g_ecs->Iterate<CRender, CTime>(context); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CRender, CTime>(); it.IsValid(); ++it)
 	{
 		CTime const& time = timeStorage[it];
 		if (!time.IsSlowed())

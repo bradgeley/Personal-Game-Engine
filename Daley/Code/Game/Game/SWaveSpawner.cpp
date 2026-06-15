@@ -46,7 +46,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 
 	if (waves.m_waves.size() == 0)
 	{
-		GenerateWaves(0, 5);
+		GenerateWaves(waves, 0, 5);
 	}
 
 	if (waves.m_wavesFinished || !waves.m_wavesStarted)
@@ -141,7 +141,9 @@ bool SWaveSpawner::GenerateWaves(NamedProperties& args)
 	int seed = args.Get("seed", 0);
 	int numWaves = args.Get("numWaves", 0);
 
-	GenerateWaves(seed, numWaves);
+	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
+
+	GenerateWaves(waves, seed, numWaves);
 
 	return false;
 }
@@ -189,11 +191,9 @@ static Name GetRandomEnemyWithTags(std::vector<Name> const& tags, RandomNumberGe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWaveSpawner::GenerateWaves(int seed, int numWaves)
+void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 {
 	RandomNumberGenerator rng(static_cast<size_t>(seed));
-
-	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
 
 	// Static wave gen def for now, later get from a file
 	waves.m_waveGenDef.m_numWaves = numWaves;

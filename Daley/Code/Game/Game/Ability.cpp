@@ -676,12 +676,12 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
     }
 
 	// Read Dependencies
-    SCCollision const& collision = g_ecs->GetSingleton<SCCollision>();
-    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+    SCCollision const& collision = context.GetSingletonConst<SCCollision>();
+    SCWorld const& world = context.GetSingletonConst<SCWorld>();
 
 	// Write Dependencies
-    auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
-	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
+    auto& healthStorage = context.GetArrayStorage<CHealth>();
+	auto& timeStorage = context.GetArrayStorage<CTime>();
 	// CAbility (bc this is an ability in a CAbility that can update itself)
 	// Spawn Entities (All)
 
@@ -740,7 +740,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
             if (g_ecs->IsValid(aoeEffect))
             {
                 // Pass along damage, color, to aoe effect
-                if (CCollisionEffect* aoeEffectComp = g_ecs->GetComponent<CCollisionEffect>(aoeEffect))
+                if (CCollisionEffect* aoeEffectComp = context.GetComponent<CCollisionEffect>(aoeEffect))
                 {
                     if (m_aoeEffectComp->m_damagePerSecond.has_value())
                     {
@@ -934,7 +934,7 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
         if (g_ecs->IsValid(m_activeAoEEffect))
         {
             // Pass along damage, color, to aoe effect
-            if (CCollisionEffect* aoeEffectComp = g_ecs->GetComponent<CCollisionEffect>(m_activeAoEEffect))
+            if (CCollisionEffect* aoeEffectComp = context.GetComponent<CCollisionEffect>(m_activeAoEEffect))
             {
                 if (m_aoeEffectComp->m_damagePerSecond.has_value())
                 {

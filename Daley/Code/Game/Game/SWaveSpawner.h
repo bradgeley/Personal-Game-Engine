@@ -4,6 +4,7 @@
 
 
 
+class SCWaves;
 struct NamedProperties;
 struct Wave;
 
@@ -27,5 +28,5 @@ public:
 public:
 
     static void StartWave(Wave& wave);
-	static void GenerateWaves(int seed, int numWaves);
+	static void GenerateWaves(SCWaves& waves, int seed, int numWaves);
 };

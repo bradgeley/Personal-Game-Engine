@@ -114,7 +114,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 		if (isDebugabble)
 		{
 			CTransform const& transform = *transStorage.Get(it);
-			CCollision const* collision = g_ecs->GetComponent<CCollision>(it);
+			CCollision const* collision = context.GetComponent<CCollision>(it);
 			float radius = collision ? collision->m_radius : 2.f;
 			if (scDebug.m_debugMouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
 			{
@@ -138,17 +138,17 @@ void SDebugOverlay::Run(SystemContext const& context) const
 
 				if (isEnemy)
 				{
-					CHealth const* health = g_ecs->GetComponent<CHealth>(it);
+					CHealth const* health = context.GetComponent<CHealth>(it);
 					if (health)
 					{
 						health->AppendDebugString(debugString);
 					}
-					CTime const* time = g_ecs->GetComponent<CTime>(it);
+					CTime const* time = context.GetComponent<CTime>(it);
 					if (time)
 					{
 						time->AppendDebugString(debugString);
 					}
-					CMovement const* movement = g_ecs->GetComponent<CMovement>(it);
+					CMovement const* movement = context.GetComponent<CMovement>(it);
 					if (movement)
 					{
 						movement->AppendDebugString(debugString);
@@ -157,7 +157,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 
 				if (isProj)
 				{
-					CProjectile const* proj = g_ecs->GetComponent<CProjectile>(it);
+					CProjectile const* proj = context.GetComponent<CProjectile>(it);
 					if (proj)
 					{
 						proj->AppendDebugString(debugString);

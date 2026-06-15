@@ -41,51 +41,51 @@ void SCollisionEffect::Run(SystemContext const& context) const
 
 		bool isFirstTouch = scCollision.m_lastFrameOverlaps.find(overlap) == scCollision.m_lastFrameOverlaps.end();
 
-		if (g_ecs->HasComponentUnsafe<CCollisionEffect>(entityA.GetIndex()))
+		if (g_ecs->HasComponentUnsafe<CCollisionEffect>(entityA))
 		{
-			CCollisionEffect const& aoeA = collisionEffectStorage[entityA.GetIndex()];
+			CCollisionEffect const& aoeA = collisionEffectStorage[entityA];
 
 			HitPayload payload = isFirstTouch ? aoeA.GetFirstOverlapPayload() : aoeA.GetWhileOverlappingPayload(context.m_deltaSeconds);
 
 			if (payload.IsRelevantToHealth())
 			{
-				if (g_ecs->HasComponentUnsafe<CHealth>(entityB.GetIndex()))
+				if (g_ecs->HasComponentUnsafe<CHealth>(entityB))
 				{
-					CHealth& healthB = healthStorage[entityB.GetIndex()];
+					CHealth& healthB = healthStorage[entityB];
 					healthB.TakePayload(payload);
 				}
 			}
 
 			if (payload.IsRelevantToTime())
 			{
-				if (g_ecs->HasComponentUnsafe<CTime>(entityB.GetIndex()))
+				if (g_ecs->HasComponentUnsafe<CTime>(entityB))
 				{
-					CTime& timeB = timeStorage[entityB.GetIndex()];
+					CTime& timeB = timeStorage[entityB];
 					timeB.m_remainingSlowDuration += payload.m_slowDuration;
 				}
 			}
 		}
 
-		if (g_ecs->HasComponentUnsafe<CCollisionEffect>(entityB.GetIndex()))
+		if (g_ecs->HasComponentUnsafe<CCollisionEffect>(entityB))
 		{
-			CCollisionEffect const& aoeB = collisionEffectStorage[entityB.GetIndex()];
+			CCollisionEffect const& aoeB = collisionEffectStorage[entityB];
 
 			HitPayload payload = isFirstTouch ? aoeB.GetFirstOverlapPayload() : aoeB.GetWhileOverlappingPayload(context.m_deltaSeconds);
 
 			if (payload.IsRelevantToHealth())
 			{
-				if (g_ecs->HasComponentUnsafe<CHealth>(entityA.GetIndex()))
+				if (g_ecs->HasComponentUnsafe<CHealth>(entityA))
 				{
-					CHealth& healthA = healthStorage[entityA.GetIndex()];
+					CHealth& healthA = healthStorage[entityA];
 					healthA.TakePayload(payload);
 				}
 			}
 
 			if (payload.IsRelevantToTime())
 			{
-				if (g_ecs->HasComponentUnsafe<CTime>(entityA.GetIndex()))
+				if (g_ecs->HasComponentUnsafe<CTime>(entityA))
 				{
-					CTime& timeA = timeStorage[entityA.GetIndex()];
+					CTime& timeA = timeStorage[entityA];
 					timeA.m_remainingSlowDuration += payload.m_slowDuration;
 				}
 			}

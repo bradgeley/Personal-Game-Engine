@@ -79,7 +79,7 @@ void SProjectile::Run(SystemContext const& context) const
 					if (mainTargetPayload.m_slowDuration > 0.f)
 					{
 						// Add slow effect to target
-						CTime* time = g_ecs->GetComponent<CTime>(proj.m_targetID);
+						CTime* time = context.GetComponent<CTime>(proj.m_targetID);
 						if (time)
 						{
 							time->m_remainingSlowDuration += mainTargetPayload.m_slowDuration;

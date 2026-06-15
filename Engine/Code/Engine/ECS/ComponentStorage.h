@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include <unordered_map>
+#include "EntityID.h"
 #include "GroupIter.h"
 #include "Engine/DataStructures/BitArray.h"
 
@@ -43,6 +44,8 @@ public:
 	// Not virtual on purpose for performance reasons - this is the most called function in the ECS
 	inline CType& operator [](int id) { return *Get(id); }
 	inline CType const& operator [](int id) const { return *Get(id); }
+	inline CType& operator [](EntityID id) { return *Get(id.GetIndex()); }
+	inline CType const& operator [](EntityID id) const { return *Get(id.GetIndex()); }
 	inline CType& operator [](GroupIter const& it) { return *Get(it.m_currentIndex); }
 	inline CType const& operator [](GroupIter const& it) const { return *Get(it.m_currentIndex); }
 };
@@ -111,6 +114,8 @@ public:
 
 	inline CType& operator [](int id) { return m_data[id]; }
 	inline CType const& operator [](int id) const { return m_data[id]; }
+	inline CType& operator [](EntityID id) { return m_data[id.GetIndex()]; }
+	inline CType const& operator [](EntityID id) const { return m_data[id.GetIndex()]; }
 	inline CType& operator [](GroupIter const& it) { return m_data[it.m_currentIndex]; }
 	inline CType const& operator [](GroupIter const& it) const { return m_data[it.m_currentIndex]; }
 
@@ -202,6 +207,8 @@ public:
 
 	inline CType& operator [](int id) { return m_data[id]; }
 	inline CType const& operator [](int id) const { return m_data.at(id); }
+	inline CType& operator [](EntityID id) { return m_data[id.GetIndex()]; }
+	inline CType const& operator [](EntityID id) const { return m_data.at(id.GetIndex()); }
 	inline CType& operator [](GroupIter const& it) { return m_data[it.m_currentIndex]; }
 	inline CType const& operator [](GroupIter const& it) const { return m_data.at(it.m_currentIndex); }
 
@@ -269,6 +276,8 @@ public:
 	
 	inline CType& operator [](int) { return m_data; }
 	inline CType const& operator [](int) const { return m_data; }
+	inline CType& operator [](EntityID id) { return m_data; }
+	inline CType const& operator [](EntityID id) const { return m_data; }
 	inline CType& operator [](GroupIter const&) { return m_data; }
 	inline CType const& operator [](GroupIter const&) const { return m_data; }
 
@@ -336,6 +345,8 @@ public:
 
 	inline bool operator[](int id) { return m_tags.Get(id); }
 	inline bool operator[](int id) const { return m_tags.Get(id); }
+	inline bool operator[](EntityID id) { return m_tags.Get(id.GetIndex()); }
+	inline bool operator[](EntityID id) const { return m_tags.Get(id.GetIndex()); }
 	inline bool operator[](GroupIter const& it) { return m_tags.Get(it.m_currentIndex); }
 	inline bool operator[](GroupIter const& it) const { return m_tags.Get(it.m_currentIndex); }
 

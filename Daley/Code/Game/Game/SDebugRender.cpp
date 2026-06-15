@@ -65,7 +65,7 @@ void SDebugRender::Shutdown() const
 void SDebugRender::Run(SystemContext const& context) const
 {
 	// Write Dependencies
-	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+	SCDebug& scDebug = context.GetSingleton<SCDebug>();
     SCCamera& scCamera = context.GetSingleton<SCCamera>();
 
     // Read Dependencies

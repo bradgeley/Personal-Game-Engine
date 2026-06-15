@@ -19,7 +19,7 @@ void SLifetime::Startup()
 void SLifetime::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	auto& timeStorage = context.GetArrayStorageConst<CTime>();
+	auto & timeStorage = context.GetArrayStorageConst<CTime>();
 
 	// Write Dependencies
 	SCEntityFactory& entityFactory = context.GetSingleton<SCEntityFactory>();
