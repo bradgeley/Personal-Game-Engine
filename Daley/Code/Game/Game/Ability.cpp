@@ -415,7 +415,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
 
                 for (EntityID entityID : tileBucket)
                 {
-                    CHealth const* healthComp = healthStorage.Get(entityID.GetIndex());
+                    CHealth const* healthComp = healthStorage.Get(entityID);
                     if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())
                     {
                         tileHasValidTarget = true;
@@ -435,7 +435,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
         {
             for (EntityID entityID : enemyLayer[closestToGoalTileIndex])
             {
-                CHealth const* healthComp = healthStorage.Get(entityID.GetIndex());
+                CHealth const* healthComp = healthStorage.Get(entityID);
                 if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())
                 {
                     validTargets.push_back(entityID);
@@ -474,7 +474,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
         RollDamageAndEffects();
 
         // Copy ability data to proj, snapshotted with damage and effects already rolled.
-		CProjectile* projComp = projectileStorage.Get(projectileID.GetIndex());
+		CProjectile* projComp = projectileStorage.Get(projectileID);
 		ASSERT_OR_DIE(projComp, "ProjectileHitAbility::Update - spawned projectile is missing CProjectile component.");
 
         projComp->m_targetID = targetID;
@@ -682,6 +682,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
 	// Write Dependencies
     auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& timeStorage = context.GetArrayStorage<CTime>();
+	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
 	// CAbility (bc this is an ability in a CAbility that can update itself)
 	// Spawn Entities (All)
 
@@ -740,7 +741,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
             if (g_ecs->IsValid(aoeEffect))
             {
                 // Pass along damage, color, to aoe effect
-                if (CCollisionEffect* aoeEffectComp = context.GetComponent<CCollisionEffect>(aoeEffect))
+                if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(aoeEffect))
                 {
                     if (m_aoeEffectComp->m_damagePerSecond.has_value())
                     {
@@ -772,7 +773,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
         {
             if (payload.IsRelevantToHealth())
             {
-                CHealth* healthComp = healthStorage.Get(entityID.GetIndex());
+                CHealth* healthComp = healthStorage.Get(entityID);
                 if (healthComp)
                 {
                     healthComp->TakePayload(payload);
@@ -781,7 +782,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
 
             if (payload.IsRelevantToTime())
             {
-				CTime* timeComp = timeStorage.Get(entityID.GetIndex());
+				CTime* timeComp = timeStorage.Get(entityID);
                 if (timeComp)
                 {
                     timeComp->m_remainingSlowDuration += payload.m_slowDuration;
@@ -921,6 +922,9 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
     ASSERT_OR_DIE(m_targetingComp.has_value(), "PassiveAoEAbility::Update - m_targetingComp is null.");
     ASSERT_OR_DIE(m_aoeEffectComp.has_value(), "PassiveAoEAbility::Update - m_aoeEffectComp is null.");
 
+    // Write Dependencies
+	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
+
     if (m_activeAoEEffect == EntityID::Invalid)
     {
         SpawnInfo aoeEffectSpawnInfo;
@@ -934,7 +938,7 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
         if (g_ecs->IsValid(m_activeAoEEffect))
         {
             // Pass along damage, color, to aoe effect
-            if (CCollisionEffect* aoeEffectComp = context.GetComponent<CCollisionEffect>(m_activeAoEEffect))
+            if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(m_activeAoEEffect))
             {
                 if (m_aoeEffectComp->m_damagePerSecond.has_value())
                 {

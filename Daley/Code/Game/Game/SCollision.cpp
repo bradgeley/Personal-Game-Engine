@@ -40,7 +40,7 @@ void SCollision::Run(SystemContext const& context) const
 			for (int entityIndex = 0; entityIndex < (int) bucket.size(); ++entityIndex)
 			{
 				EntityID entityID = bucket[entityIndex];
-				CCollision const& collision = *collisionStorage.Get(entityID.GetIndex());
+				CCollision const& collision = collisionStorage[entityID];
 
 				for (int responseChannelIndex = 1; responseChannelIndex < (int) CollisionChannel::Count; ++responseChannelIndex)
 				{
@@ -61,10 +61,10 @@ void SCollision::Run(SystemContext const& context) const
 								continue;
 							}
 
-							CTransform const& transform = *transformStorage.Get(entityID.GetIndex());
+							CTransform const& transform = transformStorage[entityID];
 
-							CCollision const& otherCollision = *collisionStorage.Get(otherEntityID.GetIndex());
-							CTransform const& otherTransform = *transformStorage.Get(otherEntityID.GetIndex());
+							CCollision const& otherCollision = collisionStorage[otherEntityID];
+							CTransform const& otherTransform = transformStorage[otherEntityID];
 
 							Vec2 collisionPos = transform.m_pos + collision.m_offset;
 							Vec2 otherCollisionPos = otherTransform.m_pos + otherCollision.m_offset;

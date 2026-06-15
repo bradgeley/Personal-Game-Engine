@@ -33,7 +33,7 @@ void SAttachment::Run(SystemContext const& context) const
 		if (hasValidAttachment)
 		{
 			CTransform& transform = transStorage[it];
-			CTransform const& attachedToTransform = transStorage[attach.m_attachedTo.GetIndex()];
+			CTransform const& attachedToTransform = transStorage[attach.m_attachedTo];
 			transform.m_pos = attachedToTransform.m_pos;
 			transform.m_orientation = attachedToTransform.m_orientation;
 		}

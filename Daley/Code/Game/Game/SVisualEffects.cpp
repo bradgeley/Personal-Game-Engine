@@ -70,12 +70,12 @@ void SVisualEffects::Run(SystemContext const& context) const
             if (g_ecs->IsValid(attachment.m_attachedBurnVFX))
             {
                 // Attach the vfx on the vfx side
-				CAttachment& burnVFXAttachment = *attachStorage.Get(attachment.m_attachedBurnVFX.GetIndex());
+				CAttachment& burnVFXAttachment = attachStorage[attachment.m_attachedBurnVFX];
                 burnVFXAttachment.m_attachedTo = it.GetEntityID();
                 burnVFXAttachment.m_destroyIfAttachedToEntityDestroyed = true;
 
                 // Update burn effect position and scale
-				CRender& burnEffectRender = *renderStorage.Get(attachment.m_attachedBurnVFX.GetIndex());
+				CRender& burnEffectRender = renderStorage[attachment.m_attachedBurnVFX];
                 burnEffectRender.m_renderRadius = render.m_renderRadius * burnSaturation;
             }
         }

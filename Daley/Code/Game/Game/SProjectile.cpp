@@ -31,11 +31,13 @@ void SProjectile::Run(SystemContext const& context) const
 	SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
 
 	// Write Dependencies
+	auto& collisionStorage = context.GetArrayStorage<CCollision>();
+	auto& factory = context.GetSingleton<SCEntityFactory>();
+	auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& projStorage = context.GetMapStorage<CProjectile>();
 	auto& transStorage = context.GetArrayStorage<CTransform>();
-	auto& collisionStorage = context.GetArrayStorage<CCollision>();
-	auto& healthStorage = context.GetArrayStorage<CHealth>();
-	auto& factory = context.GetSingleton<SCEntityFactory>();
+	auto& timeStorage = context.GetArrayStorage<CTime>();
+	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
 	// Spawn Entity (All)
 
 	CollisionLayer const& enemyLayer = scCollision.GetCollisionLayer(CollisionChannel::Enemy);
@@ -53,7 +55,7 @@ void SProjectile::Run(SystemContext const& context) const
 		}
 
 		CTransform& transform = transStorage[it];
-		CTransform& targetTransform = transStorage[proj.m_targetID.GetIndex()];
+		CTransform& targetTransform = transStorage[proj.m_targetID];
 		proj.m_targetPos = targetTransform.m_pos;
 
 		Vec2 toTarget = proj.m_targetPos.value() - transform.m_pos;
@@ -71,15 +73,18 @@ void SProjectile::Run(SystemContext const& context) const
 				HitPayload mainTargetPayload = proj.GetMainTargetPayload();
 				if (mainTargetPayload.HasValue())
 				{
-					CHealth* targetHealth = healthStorage.Get(proj.m_targetID.GetIndex());
-					if (targetHealth)
+					if (mainTargetPayload.IsRelevantToHealth())
 					{
-						targetHealth->TakePayload(mainTargetPayload);
+						CHealth* targetHealth = healthStorage.Get(proj.m_targetID);
+						if (targetHealth)
+						{
+							targetHealth->TakePayload(mainTargetPayload);
+						}
 					}
-					if (mainTargetPayload.m_slowDuration > 0.f)
+					if (mainTargetPayload.IsRelevantToTime())
 					{
 						// Add slow effect to target
-						CTime* time = context.GetComponent<CTime>(proj.m_targetID);
+						CTime* time = timeStorage.Get(proj.m_targetID);
 						if (time)
 						{
 							time->m_remainingSlowDuration += mainTargetPayload.m_slowDuration;
@@ -103,26 +108,29 @@ void SProjectile::Run(SystemContext const& context) const
 
 							for (EntityID const& entityID : enemyBucket)
 							{
-								CCollision* collision = collisionStorage.Get(entityID.GetIndex());
+								CCollision* collision = collisionStorage.Get(entityID);
 								if (collision)
 								{
-									Vec2 entityPos = transStorage[entityID.GetIndex()].m_pos;
+									Vec2 entityPos = transStorage[entityID].m_pos;
 									if (entityPos.GetDistanceSquaredTo(proj.m_targetPos.value()) > splashRadiusSquared)
 									{
 										continue; // outside of splash radius
 									}
 								}
 
-								CHealth* targetHealth = healthStorage.Get(entityID.GetIndex());
-								if (targetHealth)
+								if (aoeTargetPayload.IsRelevantToHealth())
 								{
-									targetHealth->TakePayload(aoeTargetPayload);
+									CHealth* targetHealth = healthStorage.Get(entityID);
+									if (targetHealth)
+									{
+										targetHealth->TakePayload(aoeTargetPayload);
+									}
 								}
 
-								if (aoeTargetPayload.m_slowDuration > 0.f)
+								if (aoeTargetPayload.IsRelevantToTime())
 								{
 									// Add slow effect to target
-									CTime* targetTime = context.GetComponent<CTime>(entityID);
+									CTime* targetTime = timeStorage.Get(entityID);
 									if (targetTime)
 									{
 										targetTime->m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
@@ -147,7 +155,7 @@ void SProjectile::Run(SystemContext const& context) const
 					if (g_ecs->IsValid(aoeEffect))
 					{
 						// Pass along damage, color, to aoe effect
-						if (CCollisionEffect* aoeEffectComp = context.GetComponent<CCollisionEffect>(aoeEffect))
+						if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(aoeEffect))
 						{
 							if (proj.m_onHitComp->m_aoeEffectOnHit->m_damagePerSecond.has_value())
 							{

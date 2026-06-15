@@ -36,6 +36,8 @@ public:
 
 	virtual CType*			Get(GroupIter const& it)						= 0;
 	virtual CType const*	Get(GroupIter const& it) const					= 0;
+	virtual CType*			Get(EntityID entityID)							= 0;
+	virtual CType const*	Get(EntityID entityID) const					= 0;
 	virtual CType*			Get(int entityIndex)							= 0;
 	virtual CType const*	Get(int entityIndex) const						= 0;
 	virtual CType*			Add(int entityIndex)							= 0;
@@ -73,6 +75,16 @@ public:
 	virtual CType const*	Get(GroupIter const& it)						const override
 	{
 		return &m_data[it.m_currentIndex];
+	}
+
+	virtual CType*			Get(EntityID entityID)							override
+	{
+		return &m_data[entityID.GetIndex()];
+	}
+
+	virtual CType const*	Get(EntityID entityID)							const override
+	{
+		return &m_data[entityID.GetIndex()];
 	}
 
 	virtual CType*			Get(int entityIndex)							override
@@ -152,6 +164,26 @@ public:
 	virtual CType const*	Get(int entityIndex)							const override
 	{
 		auto result = m_data.find(entityIndex);
+		if (result != m_data.end())
+		{
+			return &(result->second);
+		}
+		return nullptr;
+	}
+
+	virtual CType*			Get(EntityID entityID)							override
+	{
+		auto result = m_data.find(entityID.GetIndex());
+		if (result != m_data.end())
+		{
+			return &(result->second);
+		}
+		return nullptr;
+	}
+
+	virtual CType const*	Get(EntityID entityID)							const override
+	{
+		auto result = m_data.find(entityID.GetIndex());
 		if (result != m_data.end())
 		{
 			return &(result->second);
@@ -242,6 +274,16 @@ public:
 		return &m_data;
 	}
 
+	virtual CType*			Get(EntityID)							override
+	{
+		return &m_data;
+	}
+
+	virtual CType const*	Get(EntityID)							const override
+	{
+		return &m_data;
+	}
+
 	virtual CType*			Get(GroupIter const&)					override
 	{
 		return &m_data;
@@ -309,6 +351,16 @@ public:
 	virtual CType const*	Get(int entityIndex)					const override
 	{
 		return (CType const*) m_tags.Get(entityIndex);
+	}
+
+	virtual CType*			Get(EntityID entityID)					override
+	{
+		return (CType*) m_tags.Get(entityID.GetIndex());
+	}
+
+	virtual CType const*	Get(EntityID entityID)					const override
+	{
+		return (CType const*) m_tags.Get(entityID.GetIndex());
 	}
 
 	virtual CType*			Get(GroupIter const& it)				override

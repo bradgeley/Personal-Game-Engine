@@ -52,14 +52,15 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	// Read Dependencies
 	SCCamera const& worldCamera = context.GetSingletonConst<SCCamera>();
 	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
+	auto& collisionStorage = context.GetArrayStorageConst<CCollision>();
 	auto& tagsStorage = context.GetArrayStorageConst<CTags>();
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();
 	auto& debugStorage = context.GetArrayStorageConst<CEntityDebug>();
 	auto& abilityStorage = context.GetMapStorageConst<CAbility>();
-	// CHealth
-	// CTime
-	// CMovement
-	// CProjectile
+	auto& healthStorage = context.GetMapStorageConst<CHealth>();
+	auto& timeStorage = context.GetMapStorageConst<CTime>();
+	auto& movementStorage = context.GetMapStorageConst<CMovement>();
+	auto& projectileStorage = context.GetMapStorageConst<CProjectile>();
 	// g_input
 	// g_renderer
 	// g_window
@@ -113,12 +114,12 @@ void SDebugOverlay::Run(SystemContext const& context) const
 		bool isDebugabble = isTower || isEnemy || isProj;
 		if (isDebugabble)
 		{
-			CTransform const& transform = *transStorage.Get(it);
-			CCollision const* collision = context.GetComponent<CCollision>(it);
+			CTransform const& transform = transStorage[it];
+			CCollision const* collision = collisionStorage.Get(it);
 			float radius = collision ? collision->m_radius : 2.f;
 			if (scDebug.m_debugMouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
 			{
-				CEntityDebug const& debug = *debugStorage.Get(it);
+				CEntityDebug const& debug = debugStorage[it];
 				Vec2 screenPos = worldCamera.m_camera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();
 				Vec2 cardMins = screenPos;
 
@@ -138,17 +139,17 @@ void SDebugOverlay::Run(SystemContext const& context) const
 
 				if (isEnemy)
 				{
-					CHealth const* health = context.GetComponent<CHealth>(it);
+					CHealth const* health = healthStorage.Get(it);
 					if (health)
 					{
 						health->AppendDebugString(debugString);
 					}
-					CTime const* time = context.GetComponent<CTime>(it);
+					CTime const* time = timeStorage.Get(it);
 					if (time)
 					{
 						time->AppendDebugString(debugString);
 					}
-					CMovement const* movement = context.GetComponent<CMovement>(it);
+					CMovement const* movement = movementStorage.Get(it);
 					if (movement)
 					{
 						movement->AppendDebugString(debugString);
@@ -157,7 +158,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 
 				if (isProj)
 				{
-					CProjectile const* proj = context.GetComponent<CProjectile>(it);
+					CProjectile const* proj = projectileStorage.Get(it);
 					if (proj)
 					{
 						proj->AppendDebugString(debugString);
