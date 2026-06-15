@@ -48,7 +48,7 @@ void SAIController::Run(SystemContext const& context) const
             constexpr float maxDegreesOffset = 25.f;
             constexpr float wigglinessScale = 15.f;
             constexpr unsigned int wigglinessOctaves = 2;
-            float angleOffset = maxDegreesOffset * GetPerlinNoise1D(time.m_clock.GetCurrentTimeSecondsF() + static_cast<float>(it.m_currentIndex), wigglinessScale, wigglinessOctaves);
+            float angleOffset = maxDegreesOffset * GetPerlinNoise1D(time.m_clock.GetCurrentTimeSecondsF() + static_cast<float>(it.m_currentIndex) * 500.f, wigglinessScale, wigglinessOctaves);
 
             Vec2 wigglyMoveDir = movement.m_frameMoveDir.GetRotated(angleOffset);
             movement.m_frameMoveDir = wigglyMoveDir;
