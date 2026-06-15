@@ -4,7 +4,6 @@
 #include "CRender.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
-#include "Engine/Renderer/Renderer.h"
 #include "Engine/Core/StringUtils.h"
 
 
@@ -13,7 +12,7 @@
 void SAnimation::Startup()
 {
 	AddReadDependencies<CRender>();
-	AddWriteDependencies<CAnimation, AssetManager, Renderer>(); // Renderer because of asset loading
+	AddWriteDependencies<CAnimation, AssetManager>(); // Renderer because of asset loading
 }
 
 
@@ -27,7 +26,6 @@ void SAnimation::Run(SystemContext const& context) const
     // Write Dependencies
 	auto& animStorage = context.GetArrayStorage<CAnimation>();
     // g_assetManager
-    // g_renderer (because of asset loading)
 
     for (auto it = context.Iterate<CRender, CAnimation>(); it.IsValid(); ++it)
     {

@@ -94,7 +94,7 @@ public:
     bool RegisterLoader(AssetLoaderFunction loader, Name debugName);
 
     template<typename T>
-    T* Get(AssetID assetID);
+    T* Get(AssetID assetID, bool threadSafe = true);
 
     template<typename T>
     AssetID LoadSynchronous(Name assetName);
@@ -245,11 +245,14 @@ inline bool AssetManager::RegisterLoader(AssetLoaderFunction loader, Name debugN
 
 //----------------------------------------------------------------------------------------------------------------------
 template<typename T>
-inline T* AssetManager::Get(AssetID assetID)
+inline T* AssetManager::Get(AssetID assetID, bool threadSafe /*= true*/)
 {
-    if (m_futureAssets.find(assetID) != m_futureAssets.end())
+    if (threadSafe == false)
     {
-        TryCompleteFuture(assetID, false);
+        if (m_futureAssets.find(assetID) != m_futureAssets.end())
+        {
+            TryCompleteFuture(assetID, false);
+        }
     }
 
 	auto it = m_loadedAssets.find(assetID);
