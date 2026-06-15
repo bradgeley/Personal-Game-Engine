@@ -14,8 +14,10 @@
 
 
 
-class VertexBuffer;
+class AssetManager;
 class Chunk;
+class Renderer;
+class VertexBuffer;
 
 
 
@@ -24,8 +26,8 @@ class SCWorld
 {
 public:
 
-    void GenerateVBO();
-    void GenerateLightmap();
+    void GenerateVBO(Renderer* renderer, AssetManager* assetManager);
+    void GenerateLightmap(Renderer* renderer);
 
     void Shutdown();
 
@@ -62,24 +64,25 @@ public:
     void ForEachPathTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPathTileInRange(Vec2 const& pos, float minRadius, float maxRadius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
-
-    void ForEachEdgeTile(const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachPlayableEdgeTile(const std::function<bool(IntVec2 const&)>& func) const;
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
-
-	AABB2 GetVisibleWorldBounds() const;
-	AABB2 GetPlayableWorldBounds() const;
-
-	IntVec2 GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const; // Returns relative coords where 0,0 is bottom left of visible world
-    IntVec2 GetTileCoordsAtWorldPos(Vec2 const& worldPos) const;
-    IntVec2 GetTileCoordsAtWorldPosClamped(Vec2 const& worldPos) const;
-	IntVec2 GetTileCoordsAtPlayableWorldPosClamped(Vec2 const& worldPos) const; // Clamps world pos to playable world bounds, and returns tile coords
     int GetTileIndexAtWorldPos(Vec2 const& worldPos) const;
     Tile const* GetTileAtWorldPos(Vec2 const& worldPos) const;
     Tile* GetTileAtWorldPos(Vec2 const& worldPos);
-    AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos) const;
-    AABB2 GetTileBounds(IntVec2 const& tileCoords) const;
-    Vec2 GetTileCenter(IntVec2 const& tileCoords) const;
+
+    // Static World Functions
+    static AABB2 GetVisibleWorldBounds();
+    static AABB2 GetPlayableWorldBounds();
+
+    static IntVec2 GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords); // Returns relative coords where 0,0 is bottom left of visible world
+    static IntVec2 GetTileCoordsAtWorldPos(Vec2 const& worldPos);
+    static IntVec2 GetTileCoordsAtWorldPosClamped(Vec2 const& worldPos);
+    static IntVec2 GetTileCoordsAtPlayableWorldPosClamped(Vec2 const& worldPos); // Clamps world pos to playable world bounds, and returns tile coords
+
+    static AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos);
+    static AABB2 GetTileBounds(IntVec2 const& tileCoords);
+    static Vec2 GetTileCenter(IntVec2 const& tileCoords);
 
 public:
 

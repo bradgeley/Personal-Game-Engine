@@ -31,15 +31,15 @@ void SCollisionHash::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCollisionHash::Run(SystemContext const& context)
+void SCollisionHash::Run(SystemContext const& context) const
 {
     // Read dependencies
-    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
-    auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
-    auto const& collStorage = g_ecs->GetArrayStorage<CCollision>();
+    SCWorld const& world = context.GetSingletonConst<SCWorld>();
+    auto& transStorage = context.GetArrayStorageConst<CTransform>();
+    auto& collStorage = context.GetArrayStorageConst<CCollision>();
 
     // Write Dependencies
-    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
+    SCCollision& scCollision = context.GetSingleton<SCCollision>();
 
     // Clear out old data
     for (int dirtyBucket : scCollision.m_dirtyBuckets)
@@ -52,9 +52,9 @@ void SCollisionHash::Run(SystemContext const& context)
     }
     scCollision.m_dirtyBuckets.clear();
 
-    for (GroupIter it = g_ecs->Iterate<CTransform, CCollision>(context); it.IsValid(); ++it)
+    for (GroupIter it = context.Iterate<CTransform, CCollision>(); it.IsValid(); ++it)
     {
-        CCollision const& coll = *collStorage.Get(it);
+        CCollision const& coll = collStorage[it];
         if (!coll.IsCollisionEnabled())
         {
             continue;

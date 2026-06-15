@@ -41,8 +41,8 @@ public:
     virtual void Shutdown() override;
 
     // Returns the number of subscribers that responded to the FireEvent call
-    int FireEvent(Name name);
-    int FireEvent(Name name, NamedProperties& args);
+    int FireEvent(Name name) const;
+    int FireEvent(Name name, NamedProperties& args) const;
 
     bool IsEventBound(Name name) const;
 

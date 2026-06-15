@@ -18,16 +18,16 @@ void SPhysics::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SPhysics::Run(SystemContext const& context)
+void SPhysics::Run(SystemContext const& context) const
 {
     // Read Dependencies
-	auto const& world = g_ecs->GetSingleton<SCWorld>();
+	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 
 	// Write Dependencies
-    auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
-    auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
+    auto& moveStorage = context.GetArrayStorage<CMovement>();
+    auto& transStorage = context.GetArrayStorage<CTransform>();
 
-    for (auto it = g_ecs->Iterate<CMovement, CTransform>(context); it.IsValid(); ++it)
+    for (auto it = context.Iterate<CMovement, CTransform>(); it.IsValid(); ++it)
     {
         CMovement& move = moveStorage[it];
         CTransform& transform = transStorage[it];
@@ -102,12 +102,4 @@ void SPhysics::Run(SystemContext const& context)
 		
         move.m_frameMovement = Vec2::ZeroVector;
     }
-}
-
- 
-
-//----------------------------------------------------------------------------------------------------------------------
-void SPhysics::Shutdown()
-{
-
 }

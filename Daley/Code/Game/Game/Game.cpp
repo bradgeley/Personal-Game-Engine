@@ -236,10 +236,11 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCWaves>();
 
     // Other resource types (Engine Subsystems)
+    g_ecs->RegisterResourceByType<AssetManager>();
     g_ecs->RegisterResourceByType<AudioSystem>();
+    g_ecs->RegisterResourceByType<EventSystem>();
     g_ecs->RegisterResourceByType<InputSystem>();
     g_ecs->RegisterResourceByType<Renderer>();
-    g_ecs->RegisterResourceByType<AssetManager>();
 
 	int numRegisteredComponents = g_ecs->GetNumRegisteredComponents();
     constexpr int maxComponents = sizeof(size_t) * 8;
@@ -286,11 +287,10 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SAnimation>((int) FramePhase::Render);    
     g_ecs->RegisterSystem<SLighting>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SRenderEffects>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SVisualEffects>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderHealthBars>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderStatusIcons>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 	g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);
 

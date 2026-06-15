@@ -15,28 +15,20 @@ void SCopyTransform::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCopyTransform::Run(SystemContext const& context)
+void SCopyTransform::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-    auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
+    auto& transStorage = context.GetArrayStorageConst<CTransform>();
 
 	// Write Dependencies
-    auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
+    auto& renderStorage = context.GetArrayStorage<CRender>();
 
-    for (auto renderIt = g_ecs->Iterate<CRender, CTransform>(context); renderIt.IsValid(); ++renderIt)
+    for (auto it = context.Iterate<CRender, CTransform>(); it.IsValid(); ++it)
     {
-        CRender& render = *renderStorage.Get(renderIt);
-        CTransform const& transform = *transStorage.Get(renderIt);
+        CRender& render = renderStorage[it];
+        CTransform const& transform = transStorage[it];
 
         render.m_pos = transform.m_pos;
         render.m_orientation = transform.m_orientation;
     }
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SCopyTransform::Shutdown()
-{
-
 }

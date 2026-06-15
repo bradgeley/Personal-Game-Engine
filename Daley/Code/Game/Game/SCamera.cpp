@@ -17,12 +17,6 @@ void SCamera::Startup()
     AABB2 cameraBounds = world.GetVisibleWorldBounds();
     camera.m_camera.SetOrthoBounds2D(cameraBounds);
     camera.m_camera.SetPosition2D(Vec2(0.f, 0.f));
-}
 
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SCamera::Run(SystemContext const&)
-{
-    // empty, camera doesnt move
+	m_ignoreRun = true;
 }

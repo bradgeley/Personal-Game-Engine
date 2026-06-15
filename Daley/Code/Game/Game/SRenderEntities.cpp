@@ -23,10 +23,11 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderEntities::Startup()
 {
-    AddReadDependencies<CRender, CAnimation, SCCamera, AssetManager>();
-    AddWriteDependencies<SCRender, Renderer>();
+    AddReadDependencies<CAnimation, CRender, SCCamera>();
+    AddWriteDependencies<SCRender, AssetManager, Renderer>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+
     scRender.m_spriteSheetConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(SpriteSheetConstants));
 
     // Sprite Shader
@@ -36,15 +37,37 @@ void SRenderEntities::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SRenderEntities::Run(SystemContext const& context)
+void SRenderEntities::Shutdown() const
+{
+    ASSERT_OR_DIE(g_assetManager != nullptr, "SRenderEntities::Shutdown - Asset manager is null.");
+    ASSERT_OR_DIE(g_renderer != nullptr, "SRenderEntities::Shutdown - Renderer is null.");
+
+    SCRender scRender = g_ecs->GetSingleton<SCRender>();
+
+    for (auto it : scRender.m_instancesPerSpriteSheet)
+    {
+        g_assetManager->Release(it.first);
+        g_renderer->ReleaseInstanceBuffer(it.second);
+    }
+
+    g_renderer->ReleaseConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
+    g_assetManager->Release(scRender.m_spriteShaderAsset);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SRenderEntities::Run(SystemContext const& context) const
 {
     // Read Dependencies
-    auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-    auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
-    SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
+    auto& animStorage = context.GetArrayStorageConst<CAnimation>();
+    auto& renderStorage = context.GetArrayStorageConst<CRender>();
+    SCCamera const& scCamera = context.GetSingletonConst<SCCamera>();
 
 	// Write Dependencies
-    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+    SCRender& scRender = context.GetSingleton<SCRender>();
+    // g_assetManager
+    // g_renderer
 
     ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
     if (spriteShaderAsset == nullptr)
@@ -67,15 +90,15 @@ void SRenderEntities::Run(SystemContext const& context)
     }
 
     // Push back an instance for every entity in camera view this frame
-    for (auto renderIt = g_ecs->Iterate<CRender, CAnimation>(context); renderIt.IsValid(); ++renderIt)
+    for (auto it = context.Iterate<CRender, CAnimation>(); it.IsValid(); ++it)
     {
-        CRender const& render = *renderStorage.Get(renderIt);
+        CRender const& render = renderStorage[it];
         if (!render.GetIsInCameraView())
         {
             continue;
         }
 
-        CAnimation const& anim = *animStorage.Get(renderIt);
+        CAnimation const& anim = animStorage[it];
         if (anim.m_gridSpriteSheet == AssetID::Invalid || !anim.m_animInstance.IsValid())
         {
             continue;
@@ -154,23 +177,4 @@ void SRenderEntities::Run(SystemContext const& context)
         g_renderer->BindShader(spriteShaderID);
         g_renderer->DrawInstanced(6, *ibo);
     }
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SRenderEntities::Shutdown()
-{
-    ASSERT_OR_DIE(g_assetManager != nullptr, "SRenderEntities::Shutdown - Asset manager is null.");
-    ASSERT_OR_DIE(g_renderer != nullptr, "SRenderEntities::Shutdown - Renderer is null.");
-
-    SCRender scRender = g_ecs->GetSingleton<SCRender>();
-    for (auto it : scRender.m_instancesPerSpriteSheet)
-    {
-        g_assetManager->Release(it.first);
-        g_renderer->ReleaseInstanceBuffer(it.second);
-    }
-
-    g_renderer->ReleaseConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
-    g_assetManager->Release(scRender.m_spriteShaderAsset);
 }

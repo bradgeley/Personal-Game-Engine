@@ -17,7 +17,7 @@ public:
 
 	SSystemDebug(Name name = "SystemDebug", Rgba8 const& debugTint = Rgba8::Magenta);
 	virtual void Startup() override;
-	virtual void Shutdown() override;
+	virtual void Shutdown() const override;
 
 protected:
 

@@ -37,19 +37,34 @@ void SLighting::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SLighting::Run(SystemContext const&)
+void SLighting::Shutdown() const
 {
-    SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+    g_renderer->ReleaseConstantBuffer(scRender.m_lightingConstantsBuffer);
+
+    DevConsoleUtils::RemoveDevConsoleCommand("ToggleLighting", &SLighting::ToggleLighting);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SLighting::Run(SystemContext const& context) const
+{
+	// Read Dependencies
+    SCRender const& scRender = context.GetSingletonConst<SCRender>();
+    SCCamera const& scCamera = context.GetSingletonConst<SCCamera>();
+
+    // Write Dependencies
+    SCWorld& scWorld = context.GetSingleton<SCWorld>();
+    SCLighting& scLighting = context.GetSingleton<SCLighting>();
+    // g_renderer
+
     if (!scWorld.m_isLightingDirty)
     {
         return;
 	}
 
 	scWorld.m_isLightingDirty = false;
-
-    SCRender const& scRender = g_ecs->GetSingleton<SCRender>();
-	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
-	SCLighting& scLighting = g_ecs->GetSingleton<SCLighting>();
 
     static IntVec2 neighborOffsets[4] = { IntVec2(1, 0), IntVec2(-1, 0), IntVec2(0, 1), IntVec2(0, -1) };
 
@@ -148,18 +163,7 @@ void SLighting::Run(SystemContext const&)
         it = scLighting.m_dirtyLightingTiles.begin();
     }
 
-    scWorld.GenerateLightmap();
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SLighting::Shutdown()
-{
-    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-    g_renderer->ReleaseConstantBuffer(scRender.m_lightingConstantsBuffer);
-
-	DevConsoleUtils::RemoveDevConsoleCommand("ToggleLighting", &SLighting::ToggleLighting);
+    scWorld.GenerateLightmap(g_renderer);
 }
 
 

@@ -20,7 +20,7 @@
 void SRenderStatusIcons::Startup()
 {
 	AddReadDependencies<CRender, CTime, SCRender>();
-	AddWriteDependencies<Renderer>();
+	AddWriteDependencies<AssetManager, Renderer>();
 
 	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 
@@ -35,12 +35,28 @@ void SRenderStatusIcons::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SRenderStatusIcons::Run(SystemContext const& context)
+void SRenderStatusIcons::Shutdown() const
+{
+	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+
+	g_renderer->ReleaseInstanceBuffer(scRender.m_iconsInstanceBuffer);
+
+	g_assetManager->Release(scRender.m_iconsSpriteSheet);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SRenderStatusIcons::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	auto const& renderStorage = g_ecs->GetArrayStorage<CRender>();
-	auto const& timeStorage = g_ecs->GetArrayStorage<CTime>();
-	SCRender const& scRender = g_ecs->GetSingleton<SCRender>();
+	auto& renderStorage = context.GetArrayStorageConst<CRender>();
+	auto& timeStorage = context.GetArrayStorageConst<CTime>();
+	SCRender const& scRender = context.GetSingletonConst<SCRender>();
+
+	// Write Dependencies
+	// g_assetManager
+	// g_renderer
 
 	// Render Slow Icons
 	InstanceBuffer& iconsIBO = *g_renderer->GetInstanceBuffer(scRender.m_iconsInstanceBuffer);
@@ -102,14 +118,4 @@ void SRenderStatusIcons::Run(SystemContext const& context)
 		g_renderer->BindShader(spriteShaderAsset->GetShaderID());
 		g_renderer->DrawInstanced(6, iconsIBO);
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SRenderStatusIcons::Shutdown()
-{
-	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-	g_renderer->ReleaseInstanceBuffer(scRender.m_iconsInstanceBuffer);
-	g_assetManager->Release(scRender.m_iconsSpriteSheet);
 }

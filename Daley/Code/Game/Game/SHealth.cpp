@@ -15,12 +15,12 @@ void SHealth::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SHealth::Run(SystemContext const& context)
+void SHealth::Run(SystemContext const& context) const
 {
 	// Write Dependencies
-	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+	auto& healthStorage = context.GetArrayStorage<CHealth>();
 
-	for (auto it = g_ecs->Iterate<CHealth>(context); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CHealth>(); it.IsValid(); ++it)
 	{
 		CHealth& health = healthStorage[it];
 
@@ -55,12 +55,4 @@ void SHealth::Run(SystemContext const& context)
 
 		health.m_currentHealth = MathUtils::Clamp(health.m_currentHealth, 0.f, health.m_maxHealth);
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SHealth::Shutdown()
-{
-
 }

@@ -11,5 +11,5 @@ public:
 
     SDeath(Name name = "Death", Rgba8 const& debugTint = Rgba8::Black) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
+    void Run(SystemContext const& context) const override;
 };

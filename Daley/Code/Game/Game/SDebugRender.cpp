@@ -42,7 +42,7 @@ void SDebugRender::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDebugRender::Shutdown()
+void SDebugRender::Shutdown() const
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 
@@ -62,17 +62,22 @@ void SDebugRender::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDebugRender::Run(SystemContext const& context)
+void SDebugRender::Run(SystemContext const& context) const
 {
-	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+	// Write Dependencies
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
-    SCFlowField const& scFlowfield = g_ecs->GetSingleton<SCFlowField>();
+    SCCamera& scCamera = context.GetSingleton<SCCamera>();
+
+    // Read Dependencies
+	SCWorld const& world = context.GetSingletonConst<SCWorld>();
+    SCFlowField const& scFlowfield = context.GetSingletonConst<SCFlowField>();
+    auto& abilityStorage = context.GetArrayStorageConst<CAbility>();
+    auto& collStorage = context.GetArrayStorageConst<CCollision>();
+    auto& renderStorage = context.GetArrayStorageConst<CRender>();
+    auto& transStorage = context.GetArrayStorageConst<CTransform>();
+    // g_renderer
+
     FlowField const& toGoalFlowField = scFlowfield.m_toGoalFlowField;
-
-    auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-    auto& collStorage = g_ecs->GetArrayStorage<CCollision>();
-    auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-
     Font* defaultFont = g_renderer->GetDefaultFont();
 
     VertexBuffer& untexturedVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameUntexVerts);
@@ -85,7 +90,6 @@ void SDebugRender::Run(SystemContext const& context)
         g_renderer->DrawVertexBuffer(world.m_debugVBO);
     }
 
-	SCCamera& scCamera = g_ecs->GetSingleton<SCCamera>();
     if (scDebug.m_debugRenderEdges)
     {
         scCamera.m_camera.SetOrthoBounds2D(world.GetPlayableWorldBounds());
@@ -181,11 +185,11 @@ void SDebugRender::Run(SystemContext const& context)
     // Render Flow Field
     if (scDebug.m_debugRenderCollision)
     {
-        for (auto it = g_ecs->Iterate<CCollision, CTransform, CRender>(context); it.IsValid(); ++it)
+        for (auto it = context.Iterate<CCollision, CTransform, CRender>(); it.IsValid(); ++it)
         {
-            CTransform const& transform = *transStorage.Get(it);
-            CCollision const& collision = *collStorage.Get(it);
-            CRender const& render       = *renderStorage.Get(it);
+            CTransform const& transform = transStorage[it];
+            CCollision const& collision = collStorage[it];
+            CRender const& render       = renderStorage[it];
 
             Vec2 collisionPos = transform.m_pos + collision.m_offset;
 
@@ -197,10 +201,11 @@ void SDebugRender::Run(SystemContext const& context)
 	// Abilities
     if (scDebug.m_debugRenderAbilities)
     {
-        for (auto it = g_ecs->Iterate<CAbility, CTransform>(context); it.IsValid(); ++it)
+        for (auto it = context.Iterate<CAbility, CTransform>(); it.IsValid(); ++it)
         {
-            CTransform const& transform = *transStorage.Get(it);
-            CAbility const& abilityComponent = *g_ecs->GetComponent<CAbility>(it);
+            CTransform const& transform = transStorage[it];
+            CAbility const& abilityComponent = abilityStorage[it];
+
             Vec2 abilityPos = transform.m_pos;
             VertexUtils::AddVertsForDisc2D(untexturedVerts, abilityPos, 0.25f, 8, Rgba8::Red);
 

@@ -121,9 +121,6 @@
     <ClCompile Include="Game\CHealth.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SRenderUI.cpp">
-      <Filter>ECS\Systems\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SDeath.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
@@ -178,7 +175,7 @@
     <ClCompile Include="Game\GameCommon.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SRenderEffects.cpp">
+    <ClCompile Include="Game\SVisualEffects.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Game\SAttachment.cpp">
@@ -377,9 +374,6 @@
     <ClInclude Include="Game\CHealth.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SRenderUI.h">
-      <Filter>ECS\Systems\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SDeath.h">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
@@ -437,7 +431,7 @@
     <ClInclude Include="Game\HitPayload.h">
       <Filter>Game\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SRenderEffects.h">
+    <ClInclude Include="Game\SVisualEffects.h">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Game\CAttachment.h">

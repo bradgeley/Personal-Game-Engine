@@ -25,6 +25,7 @@ struct AoEHitAbilityDef;
 struct EntityDef;
 struct PassiveAoEAbilityDef;
 struct ProjectileHitAbilityDef;
+struct SystemContext;
 struct Vec2;
 
 
@@ -253,7 +254,7 @@ public:
 	Ability() = default;
 	virtual ~Ability() = default;
 
-	virtual void Update(float deltaSeconds, Vec2 const& location) = 0;
+	virtual void Update(SystemContext const& context, Vec2 const& location) = 0;
 	virtual Ability* DeepCopy() const = 0;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(std::string& out_string) const = 0;
@@ -275,7 +276,7 @@ public:
 	ProjectileHitAbility() = default;
 	explicit ProjectileHitAbility(ProjectileHitAbilityDef const& def);
 
-	virtual void Update(float deltaSeconds, Vec2 const& location) override;
+	virtual void Update(SystemContext const& context, Vec2 const& location) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;
@@ -303,7 +304,7 @@ public:
 	AoEHitAbility() = default;
 	explicit AoEHitAbility(AoEHitAbilityDef const& def);
 
-	virtual void Update(float deltaSeconds, Vec2 const& location) override;
+	virtual void Update(SystemContext const& context, Vec2 const& location) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;
@@ -329,7 +330,7 @@ public:
 	PassiveAoEAbility() = default;
 	explicit PassiveAoEAbility(PassiveAoEAbilityDef const& def);
 
-	virtual void Update(float deltaSeconds, Vec2 const& location) override;
+	virtual void Update(SystemContext const& context, Vec2 const& location) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;

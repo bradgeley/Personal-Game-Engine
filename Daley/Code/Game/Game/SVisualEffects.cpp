@@ -1,5 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
-#include "SRenderEffects.h"
+#include "SVisualEffects.h"
 #include "CAttachment.h"
 #include "CHealth.h"
 #include "CRender.h"
@@ -17,7 +17,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SRenderEffects::Startup()
+void SVisualEffects::Startup()
 {
     AddWriteAllDependencies(); // Spawns entities
 }
@@ -25,46 +25,46 @@ void SRenderEffects::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SRenderEffects::Run(SystemContext const& context)
+void SVisualEffects::Run(SystemContext const& context) const
 {
     // Read Dependencies
-    auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
-    auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
+    auto const& healthStorage = context.GetArrayStorageConst<CHealth>();
+    auto const& transStorage = context.GetArrayStorageConst<CTransform>();
 
 	// Write Dependencies
-    auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
-	auto& attachStorage = g_ecs->GetArrayStorage<CAttachment>();
-	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
+    auto& renderStorage = context.GetArrayStorage<CRender>();
+	auto& attachStorage = context.GetArrayStorage<CAttachment>();
+	auto& factory = context.GetSingleton<SCEntityFactory>();
+    // g_renderer
 
     // Push back an instance for every entity in camera view this frame
-    for (auto it = g_ecs->Iterate<CHealth, CRender, CAttachment, CTransform>(context); it.IsValid(); ++it)
+    for (auto it = context.Iterate<CHealth, CRender, CAttachment, CTransform>(); it.IsValid(); ++it)
     {
-        CRender& render = *renderStorage.Get(it);
+        CRender& render = renderStorage[it];
         if (!render.GetIsInCameraView())
         {
             continue;
         }
 
-        CHealth const& health = *healthStorage.Get(it);
+        CAttachment& attachment = attachStorage[it];
+        CHealth const& health = healthStorage[it];
 
 		float poisonSaturation = health.GetPoisonSaturation();
         render.m_tint = Rgba8::Lerp(render.m_baseTint, Rgba8::Green, poisonSaturation);
 
 		float burnSaturation = health.GetBurnSaturation();
 
-        CAttachment& attachment = *attachStorage.Get(it);
-
         if (burnSaturation > 0.f)
         {
             if (!g_ecs->IsValid(attachment.m_attachedBurnVFX))
             {
-				CTransform const& transform = *transStorage.Get(it);
+                CTransform const& transform = transStorage[it];
                 // Spawn and attach the vfx on the entity side
                 SpawnInfo spawnInfo;
                 spawnInfo.m_def = EntityDef::GetEntityDef("BurnUnderlay");
                 spawnInfo.m_spawnPos = transform.m_pos;
                 spawnInfo.m_spawnOrientation = transform.m_orientation;
-                attachment.m_attachedBurnVFX = SEntityFactory::SpawnEntity(spawnInfo);
+                attachment.m_attachedBurnVFX = SEntityFactory::SpawnEntity(context, spawnInfo);
             }
 
             if (g_ecs->IsValid(attachment.m_attachedBurnVFX))
@@ -89,12 +89,4 @@ void SRenderEffects::Run(SystemContext const& context)
             }
         }
     }
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SRenderEffects::Shutdown()
-{
-
 }

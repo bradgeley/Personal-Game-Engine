@@ -24,20 +24,14 @@ void SBackgroundMusic::Startup()
 
 	g_eventSystem->SubscribeMethod("SetVolume_BGM", this, &SBackgroundMusic::SetVolume_BGM);
 	g_devConsole->AddDevConsoleCommandInfo("SetVolume_BGM", "volume", DevConsoleArgType::Float);
+
+	m_ignoreRun = true;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SBackgroundMusic::Run(SystemContext const&)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SBackgroundMusic::Shutdown()
+void SBackgroundMusic::Shutdown() const
 {
 	g_eventSystem->UnsubscribeMethod("ToggleBGM", this, &SBackgroundMusic::ToggleBGM);
 	g_devConsole->RemoveDevConsoleCommandInfo("SetVolume_BGM");

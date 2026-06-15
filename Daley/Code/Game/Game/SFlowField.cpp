@@ -7,7 +7,6 @@
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Debug/DevConsoleUtils.h"
-#include <cfloat>
 #include <queue>
 
 
@@ -30,25 +29,7 @@ void SFlowField::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::Run(SystemContext const&)
-{
-    SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
-    if (scFlowField.m_toGoalFlowField.m_hasGeneratedFlow)
-    {
-        return;
-	}
-
-    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
-
-    SeedFlowField(scFlowField.m_toGoalFlowField, world);
-    SetCostField(scFlowField.m_toGoalFlowField, world);
-    GenerateFlow(scFlowField.m_toGoalFlowField);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SFlowField::Shutdown()
+void SFlowField::Shutdown() const
 {
     SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
     scFlowField.m_toGoalFlowField.Reset();
@@ -57,7 +38,28 @@ void SFlowField::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::SeedFlowField(FlowField& flowField, SCWorld const& world)
+void SFlowField::Run(SystemContext const& context) const
+{
+    // Read Dependencies
+    SCWorld const& world = context.GetSingletonConst<SCWorld>();
+
+	// Write Dependencies
+    SCFlowField& scFlowField = context.GetSingleton<SCFlowField>();
+
+    if (scFlowField.m_toGoalFlowField.m_hasGeneratedFlow)
+    {
+        return;
+	}
+
+    SeedFlowField(scFlowField.m_toGoalFlowField, world);
+    SetCostField(scFlowField.m_toGoalFlowField, world);
+    GenerateFlow(scFlowField.m_toGoalFlowField, world);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SFlowField::SeedFlowField(FlowField& flowField, SCWorld const& world) const
 {
     for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
     {
@@ -75,7 +77,7 @@ void SFlowField::SeedFlowField(FlowField& flowField, SCWorld const& world)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::SetCostField(FlowField& flowField, SCWorld const& world)
+void SFlowField::SetCostField(FlowField& flowField, SCWorld const& world) const
 {
     int index = 0; // trick only works if iterating from 0,0
     for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
@@ -91,22 +93,21 @@ void SFlowField::SetCostField(FlowField& flowField, SCWorld const& world)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::GenerateFlow(FlowField& flowField)
+void SFlowField::GenerateFlow(FlowField& flowField, SCWorld const& world) const
 {
     ScopedTimer timer("GenerateFlow");
 
-    GenerateDistanceField(flowField);
-    GenerateGradient(flowField);
+    GenerateDistanceField(flowField, world);
+    GenerateGradient(flowField, world);
 	flowField.m_hasGeneratedFlow = true;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::GenerateDistanceField(FlowField& flowField)
+void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& world) const
 {
     ScopedTimer timer("- Generate Distance Field");
-    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
 
     flowField.AddSeedsToOpenList();
 
@@ -201,10 +202,12 @@ void SFlowField::GenerateDistanceField(FlowField& flowField)
     }
 }
 
-void SFlowField::GenerateGradient(FlowField& flowField)
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SFlowField::GenerateGradient(FlowField& flowField, SCWorld const& world) const
 {
     ScopedTimer timer("- Generate Gradient");
-    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
 
     flowField.ResetConsideredCells();
 

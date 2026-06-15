@@ -11,5 +11,5 @@ public:
 
     SGoal(Name name = "Goal", Rgba8 const& debugTint = Rgba8::White) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
+    void Run(SystemContext const& context) const override;
 };

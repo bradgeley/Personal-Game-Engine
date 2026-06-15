@@ -7,6 +7,7 @@
 class AdminSystem;
 class System;
 class SystemSubgraph;
+struct SystemContext;
 
 
 
@@ -20,6 +21,8 @@ public:
 	void ScheduleFrame(std::vector<SystemSubgraph>& systems);
 	void RunFrame(float deltaSeconds);
 	void RunSubgraph(SystemSubgraph const& subgraph, float deltaSeconds) const;
+
+	static void SplitEntities(SystemContext& context, int jobID, int numJobs);
 
 private:
 

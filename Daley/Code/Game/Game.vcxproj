@@ -336,10 +336,9 @@
     <ClCompile Include="Game\SLighting.cpp" />
     <ClCompile Include="Game\SMovementAnimation.cpp" />
     <ClCompile Include="Game\SProjectile.cpp" />
-    <ClCompile Include="Game\SRenderEffects.cpp" />
+    <ClCompile Include="Game\SVisualEffects.cpp" />
     <ClCompile Include="Game\SRenderHealthBars.cpp" />
     <ClCompile Include="Game\SRenderStatusIcons.cpp" />
-    <ClCompile Include="Game\SRenderUI.cpp" />
     <ClCompile Include="Game\STime.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
     <ClCompile Include="Game\SEntityFactory.cpp" />
@@ -421,10 +420,9 @@
     <ClInclude Include="Game\SLighting.h" />
     <ClInclude Include="Game\SMovementAnimation.h" />
     <ClInclude Include="Game\SProjectile.h" />
-    <ClInclude Include="Game\SRenderEffects.h" />
+    <ClInclude Include="Game\SVisualEffects.h" />
     <ClInclude Include="Game\SRenderHealthBars.h" />
     <ClInclude Include="Game\SRenderStatusIcons.h" />
-    <ClInclude Include="Game\SRenderUI.h" />
     <ClInclude Include="Game\STime.h" />
     <ClInclude Include="Game\SDebugRender.h" />
     <ClInclude Include="Game\SEntityFactory.h" />

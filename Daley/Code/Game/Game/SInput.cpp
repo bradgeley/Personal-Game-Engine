@@ -9,14 +9,18 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SInput::Startup()
 {
-    AddReadDependencies<InputSystem>();
+    AddReadDependencies<InputSystem, EventSystem>();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SInput::Run(SystemContext const&)
+void SInput::Run(SystemContext const&) const
 {
+	// Read Dependencies
+	// g_input
+	// g_eventSystem
+
 	// Pause
 	if (g_input->WasKeyJustPressed(KeyCode::Space))
 	{

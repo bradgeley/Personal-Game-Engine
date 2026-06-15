@@ -156,6 +156,30 @@ void SystemScheduler::RunSubgraph(SystemSubgraph const& subgraph, float deltaSec
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SystemScheduler::SplitEntities(SystemContext& context, int jobID, int numJobs)
+{
+	context.m_didSystemSplit = true;
+	context.m_systemSplittingJobID = jobID;
+	context.m_systemSplittingNumJobs = numJobs;
+
+	int startIndex = (int) MAX_ENTITIES * jobID / numJobs;
+	int endIndex;
+	if (jobID == numJobs - 1)
+	{
+		endIndex = MAX_ENTITIES - 1;
+	}
+	else
+	{
+		endIndex = ((int) MAX_ENTITIES * (jobID + 1) / numJobs) - 1;
+	}
+
+	context.m_startEntityID = startIndex;
+	context.m_endEntityID = endIndex;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SystemScheduler::RunFrame_AutoMultithreaded(float deltaSeconds)
 {
 	for (SystemSubgraph* subgraph : m_systemSubgraphs)
@@ -250,7 +274,7 @@ void SplitSystem(SystemContext const& context, int numJobs)
 	{
 		// Copy the context, but split the entities amongst them
 		SystemContext splitContext = context;
-		splitContext.SplitEntities(systemSplittingJobID, numJobs);
+		SystemScheduler::SplitEntities(splitContext, systemSplittingJobID, numJobs);
 		
 		Job* job = new SplitSystemJob(splitContext);
 		jobReceipts[systemSplittingJobID] = g_jobSystem->PostJob(job);
@@ -269,7 +293,7 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 {
 	for (System* const& system : subgraph.m_systems)
 	{
-		if (!system->IsActive())
+		if (!system->ShouldRun())
 		{
 			continue;
 		}
@@ -292,7 +316,7 @@ void SystemScheduler::RunSubgraph_AutoMultithreaded(SystemSubgraph const& subgra
 	
 	for (System* const& system : subgraph.m_systems)
 	{
-		if (!system->IsActive())
+		if (!system->ShouldRun())
 		{
 			continue;
 		}

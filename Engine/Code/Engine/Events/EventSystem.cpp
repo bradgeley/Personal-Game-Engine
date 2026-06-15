@@ -43,7 +43,7 @@ void EventSystem::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int EventSystem::FireEvent(Name name)
+int EventSystem::FireEvent(Name name) const
 {
     NamedProperties emptyArgs;
     return FireEvent(name, emptyArgs);
@@ -52,7 +52,7 @@ int EventSystem::FireEvent(Name name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int EventSystem::FireEvent(Name name, NamedProperties& args)
+int EventSystem::FireEvent(Name name, NamedProperties& args) const
 {
     auto it = m_events.find(name);
     if (it != m_events.end())

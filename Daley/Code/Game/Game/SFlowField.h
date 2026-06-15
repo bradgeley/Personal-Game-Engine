@@ -20,14 +20,14 @@ public:
 
     SFlowField(Name name = "FlowField", Rgba8 const& debugTint = Rgba8::Cyan) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
-    void Shutdown() override;
+    void Shutdown() const override;
+    void Run(SystemContext const& context) const override;
 
 private:
 
-    void SeedFlowField(FlowField& flowField, SCWorld const& world);
-    void SetCostField(FlowField& flowField, SCWorld const& world);
-    void GenerateFlow(FlowField& flowField);
-    void GenerateDistanceField(FlowField& flowField);
-    void GenerateGradient(FlowField& flowField);
+    void SeedFlowField(FlowField& flowField, SCWorld const& world) const;
+    void SetCostField(FlowField& flowField, SCWorld const& world) const;
+    void GenerateFlow(FlowField& flowField, SCWorld const& world) const;
+    void GenerateDistanceField(FlowField& flowField, SCWorld const& world) const;
+    void GenerateGradient(FlowField& flowField, SCWorld const& world) const;
 };

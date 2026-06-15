@@ -2,10 +2,9 @@
 #pragma once
 #include "AdminSystem.h"
 #include "SystemContext.h"
-#include "Engine/Renderer/Rgba8.h" // <-- may want to remove outside dependencies
-#include "Engine/Core/Name.h" // <-- may want to remove outside dependencies
+#include "Engine/Renderer/Rgba8.h"
+#include "Engine/Core/Name.h"
 #include "Config.h"
-#include <typeindex>
 
 
 
@@ -14,18 +13,9 @@ class AdminSystem;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-enum class AccessType
-{
-	READ,
-	WRITE
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 // System
 //
-// One pass of logic over the game.
+// One pass of logic over the game
 //
 class System
 {
@@ -37,15 +27,17 @@ public:
 	virtual ~System() = default;
 
 	virtual void Startup()											{}  // Main thread, once per system
-	virtual void BeginFrame()										{}  // Main thread, once per system, before any systems run
-	virtual void PreRun()											{}	// Main thread, once per system
-	virtual void Run(SystemContext const&)							{}  // Worker threads, depending on system splitting settings
-	virtual void PostRun()											{}  // Main thread, once per system
-	virtual void EndFrame()											{}  // Main thread, once per system, after all systems run
-	virtual void Shutdown()											{}  // Main thread, once per system
+	virtual void Shutdown() const									{}  // Main thread, once per system
+
+	virtual void BeginFrame() const									{}  // Main thread, once per system, before any systems run
+	virtual void PreRun() const										{}	// Main thread, once per system
+	virtual void Run(SystemContext const&) const					{}  // Workers or main, may be more than 1 thread when splitting
+	virtual void PostRun() const									{}  // Main thread, once per system
+	virtual void EndFrame() const									{}  // Main thread, once per system, after all systems run
 
 	bool IsActive() const											{ return m_isActive; }
 	void SetActive(bool isActive)									{ m_isActive = isActive; }
+	bool ShouldRun() const											{ return m_isActive && !m_ignoreRun; }
 	void ToggleIsActive();
 	void SetLocalPriority(int localPriority)						{ m_localPriority = localPriority; }
 	void SetGlobalPriority(int globalPriority)						{ m_globalPriority = globalPriority; }
@@ -61,10 +53,6 @@ public:
 
 protected:
 
-	// Call these during system creation or startup, but AFTER registering component types to the admin system
-	template<typename CType>
-	void AddResourceDependency(AccessType access);
-
 	template<typename...CTypes>
 	void AddWriteDependencies();
 
@@ -78,6 +66,7 @@ protected:
 	Name				m_name						= "Unnamed System";
 	Rgba8				m_debugTint					= Rgba8::Magenta;
 	bool				m_isActive					= true;
+	bool				m_ignoreRun					= false;
 	int					m_systemSplittingNumJobs	= 1; // 0-1 means do not split the system
 
 	int					m_localPriority				= -1;
@@ -85,25 +74,6 @@ protected:
 	BitMask				m_readDependenciesBitMask	= 0;
 	BitMask				m_writeDependenciesBitMask	= 0;
 };
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-template<typename CType>
-void System::AddResourceDependency(AccessType access)
-{
-	std::type_index typeIndex = std::type_index(typeid(CType));
-	BitMask componentBit = g_ecs->GetComponentBit(typeIndex); // all used components must be registered before this...
-
-	if (access == AccessType::WRITE)
-	{
-		m_writeDependenciesBitMask |= componentBit;
-	}
-	else
-	{
-		m_readDependenciesBitMask |= componentBit;
-	}
-}
 
 
 

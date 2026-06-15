@@ -19,13 +19,13 @@ void SInitView::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SInitView::Run(SystemContext const& context)
+void SInitView::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	SCCamera const& camera = g_ecs->GetSingleton<SCCamera>();
+	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
 
 	// Write Dependencies
-	auto& renderStorage = g_ecs->GetArrayStorage<CRender>();
+	auto& renderStorage = context.GetArrayStorage<CRender>();
 
     AABB2 cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
 
@@ -34,7 +34,7 @@ void SInitView::Run(SystemContext const& context)
     g_renderer->ClearScreen(Rgba8::LightGray);
 
 
-    for (auto it = g_ecs->Iterate<CRender>(context); it.IsValid(); ++it)
+    for (auto it = context.Iterate<CRender>(); it.IsValid(); ++it)
     {
         CRender& render = renderStorage[it];
 

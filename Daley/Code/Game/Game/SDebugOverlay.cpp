@@ -36,10 +36,33 @@ void SDebugOverlay::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDebugOverlay::Run(SystemContext const&)
+void SDebugOverlay::Shutdown() const
 {
-	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
-	SCCamera& worldCamera = g_ecs->GetSingleton<SCCamera>();
+	DevConsoleUtils::RemoveDevConsoleCommand("ToggleDebugOverlay", &SDebugOverlay::ToggleDebugOverlay);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SDebugOverlay::Run(SystemContext const& context) const
+{
+	// Write Dependencies
+	SCDebug& scDebug = context.GetSingleton<SCDebug>();
+
+	// Read Dependencies
+	SCCamera const& worldCamera = context.GetSingletonConst<SCCamera>();
+	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
+	auto& tagsStorage = context.GetArrayStorageConst<CTags>();
+	auto& transStorage = context.GetArrayStorageConst<CTransform>();
+	auto& debugStorage = context.GetArrayStorageConst<CEntityDebug>();
+	auto& abilityStorage = context.GetMapStorageConst<CAbility>();
+	// CHealth
+	// CTime
+	// CMovement
+	// CProjectile
+	// g_input
+	// g_renderer
+	// g_window
 
 	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('D'))
 	{
@@ -70,7 +93,6 @@ void SDebugOverlay::Run(SystemContext const&)
 	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -40.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Total Entities: %d", totalEntities), Rgba8::White);
 
 	// Wave spawner info
-	SCWaves const& waves = g_ecs->GetSingleton<SCWaves>();
 	Vec2 wavesTopLeft = screenBounds.maxs - Vec2(350.f, 10.f);
 	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft, Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Waves: %s", waves.m_wavesStarted ? (waves.m_wavesFinished ? "Finished" : "In Progress") : "Not Started"), Rgba8::White);
 	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 30.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Current Wave: %d/%d", waves.m_currentWaveIndex, waves.m_waves.size()), Rgba8::White);
@@ -82,11 +104,7 @@ void SDebugOverlay::Run(SystemContext const&)
 	}
 
 	// Show tower ability information for hovered tower
-	auto& tagsStorage = g_ecs->GetArrayStorage<CTags>();
-	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& debugStorage = g_ecs->GetArrayStorage<CEntityDebug>();
-	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
-	for (auto it = g_ecs->IterateAll<CTags, CTransform, CEntityDebug>(); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CTags, CTransform, CEntityDebug>(); it.IsValid(); ++it)
 	{
 		CTags const& tags = *tagsStorage.Get(it);
 		bool isTower = tags.HasTag("Tower");
@@ -150,10 +168,17 @@ void SDebugOverlay::Run(SystemContext const&)
 				int numLines = StringUtils::CountStringsByDelimiter(debugString, '\n');
 				cardDims.y = 60.f + 30.f * (float) numLines;
 				AABB2 informationCardBounds = AABB2(cardMins, cardMins + cardDims);
+
+				// Background
 				VertexUtils::AddVertsForAABB2(untexVerts, informationCardBounds, Rgba8::DarkGray);
+
+				// Background Outline
 				VertexUtils::AddVertsForWireBox2D(untexVerts, informationCardBounds, 5.f, Rgba8::Black);
+
+				// Title
 				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(5.f, -5.f), Vec2(1.f, -1.f), 33.f, debug.m_defName.ToString(), Rgba8::White);
 
+				// Debug Information
 				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(5.f, -50.f), Vec2(1.f, -1.f), 25.f, debugString, Rgba8::White, 0.33f);
 				break;
 			}
@@ -172,14 +197,6 @@ void SDebugOverlay::Run(SystemContext const&)
 	font->SetRendererState();
 	g_renderer->DrawVertexBuffer(fontVerts);
 	fontVerts.ClearVerts();
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SDebugOverlay::Shutdown()
-{
-	DevConsoleUtils::RemoveDevConsoleCommand("ToggleDebugOverlay", &SDebugOverlay::ToggleDebugOverlay);
 }
 
 

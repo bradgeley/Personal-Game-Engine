@@ -16,24 +16,24 @@ void SAttachment::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SAttachment::Run(SystemContext const& context)
+void SAttachment::Run(SystemContext const& context) const
 {
 	// Read dependencies
-	auto const& attachStorage = g_ecs->GetArrayStorage<CAttachment>();
+	auto& attachStorage = context.GetArrayStorageConst<CAttachment>();
 
 	// Write dependencies
-	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
+	auto& transStorage = context.GetArrayStorage<CTransform>();
+	auto& factory = context.GetSingleton<SCEntityFactory>();
 
-	for (auto it = g_ecs->Iterate<CAttachment, CTransform>(context); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CAttachment, CTransform>(); it.IsValid(); ++it)
 	{
-		CAttachment const& attach = *attachStorage.Get(it);
+		CAttachment const& attach = attachStorage[it];
 
 		bool hasValidAttachment = g_ecs->IsValid(attach.m_attachedTo);
 		if (hasValidAttachment)
 		{
-			CTransform& transform = *transStorage.Get(it);
-			CTransform const& attachedToTransform = *transStorage.Get(attach.m_attachedTo.GetIndex());
+			CTransform& transform = transStorage[it];
+			CTransform const& attachedToTransform = transStorage[attach.m_attachedTo.GetIndex()];
 			transform.m_pos = attachedToTransform.m_pos;
 			transform.m_orientation = attachedToTransform.m_orientation;
 		}
@@ -42,12 +42,4 @@ void SAttachment::Run(SystemContext const& context)
 			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 		}
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SAttachment::Shutdown()
-{
-
 }

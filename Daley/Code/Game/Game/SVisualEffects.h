@@ -5,12 +5,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SRenderUI : public System
+class SVisualEffects : public System
 {
 public:
 
-    SRenderUI(Name name = "RenderUI", Rgba8 const& debugTint = Rgba8::White) : System(name, debugTint) {};
+    SVisualEffects(Name name = "VisualEffects", Rgba8 const& debugTint = Rgba8::Purple) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
-    void Shutdown() override;
+    void Run(SystemContext const& context) const override;
 };

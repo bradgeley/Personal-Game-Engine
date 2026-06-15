@@ -14,36 +14,36 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SAIController::Startup()
 {
-    AddReadDependencies<CTransform, CTime, CAIController, SCFlowField, SCWorld>();
+    AddReadDependencies<CTransform, CTime, CAIController, SCFlowField>();
     AddWriteDependencies<CMovement>();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SAIController::Run(SystemContext const& context)
+void SAIController::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-    auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto const& timeStorage = g_ecs->GetArrayStorage<CTime>();
-	auto const& aiStorage = g_ecs->GetArrayStorage<CAIController>();
-    SCFlowField const& scFlow = g_ecs->GetSingleton<SCFlowField>();
-    SCWorld const& scWorld = g_ecs->GetSingleton<SCWorld>(); // not a true dependency bc we are just calling GetWorldCoordsAtLocation, which is essentially a static function
+    auto& transStorage = context.GetArrayStorageConst<CTransform>();
+	auto& timeStorage = context.GetArrayStorageConst<CTime>();
+	auto& aiStorage = context.GetArrayStorageConst<CAIController>();
+    SCFlowField const& scFlow = context.GetSingletonConst<SCFlowField>();
 
     // Write Dependencies
-    auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
+    auto& moveStorage = context.GetArrayStorage<CMovement>();
 
-    for (auto it = g_ecs->Iterate<CTransform, CMovement, CTime, CAIController>(context); it.IsValid(); ++it)
+    for (auto it = context.Iterate<CTransform, CMovement, CTime, CAIController>(); it.IsValid(); ++it)
     {
-        CTransform const& transform = *transStorage.Get(it);
-        CMovement& movement = *moveStorage.Get(it);
-		CAIController const& ai = *aiStorage.Get(it);
-        IntVec2 worldCoords = scWorld.GetTileCoordsAtWorldPos(transform.m_pos);
+        CTransform const& transform = transStorage[it];
+		CAIController const& ai = aiStorage[it];
+        CMovement& movement = moveStorage[it];
+
+        IntVec2 worldCoords = SCWorld::GetTileCoordsAtWorldPos(transform.m_pos);
         movement.m_frameMoveDir = scFlow.m_toGoalFlowField.GetFlowAtTileCoords(worldCoords);
 
         if (ai.GetIsMovementWiggly())
         {
-			CTime const& time = *timeStorage.Get(it);
+			CTime const& time = timeStorage[it];
 
             constexpr float maxDegreesOffset = 25.f;
             constexpr float wigglinessScale = 15.f;
@@ -54,12 +54,4 @@ void SAIController::Run(SystemContext const& context)
             movement.m_frameMoveDir = wigglyMoveDir;
         }
     }
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SAIController::Shutdown()
-{
-
 }

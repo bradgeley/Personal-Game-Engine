@@ -16,18 +16,18 @@ void SLifetime::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SLifetime::Run(SystemContext const& context)
+void SLifetime::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	auto const& timeStorage = g_ecs->GetArrayStorage<CTime>();
+	auto& timeStorage = context.GetArrayStorageConst<CTime>();
 
 	// Write Dependencies
-	SCEntityFactory& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
-	auto& lifetimeStorage = g_ecs->GetArrayStorage<CLifetime>();
+	SCEntityFactory& entityFactory = context.GetSingleton<SCEntityFactory>();
+	auto& lifetimeStorage = context.GetArrayStorage<CLifetime>();
 
 	BitMask timeBitMask = g_ecs->GetComponentBitMask<CTime>();
 
-	for (auto it = g_ecs->Iterate<CLifetime>(context); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CLifetime>(); it.IsValid(); ++it)
 	{
 		CLifetime& lifetime = lifetimeStorage[it];
 		if (lifetime.m_lifetimeRemaining >= 0.f)
@@ -48,12 +48,4 @@ void SLifetime::Run(SystemContext const& context)
 			}
 		}
 	}
-}
-
- 
-
-//----------------------------------------------------------------------------------------------------------------------
-void SLifetime::Shutdown()
-{
-
 }

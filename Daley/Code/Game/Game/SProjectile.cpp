@@ -18,31 +18,31 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SProjectile::Startup()
 {
-	AddReadDependencies<SCWorld, SCCollision>();
-	AddWriteDependencies<CProjectile, CTransform, CCollision, CHealth, SCEntityFactory>();
+	AddWriteAllDependencies();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SProjectile::Run(SystemContext const& context)
+void SProjectile::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	auto const& world = g_ecs->GetSingleton<SCWorld>();
-	auto const& scCollision = g_ecs->GetSingleton<SCCollision>();
+	SCWorld const& world = context.GetSingletonConst<SCWorld>();
+	SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
 
 	// Write Dependencies
-	auto& projStorage = g_ecs->GetMapStorage<CProjectile>();
-	auto& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
-	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
-	auto& factory = g_ecs->GetSingleton<SCEntityFactory>();
+	auto& projStorage = context.GetMapStorage<CProjectile>();
+	auto& transStorage = context.GetArrayStorage<CTransform>();
+	auto& collisionStorage = context.GetArrayStorage<CCollision>();
+	auto& healthStorage = context.GetArrayStorage<CHealth>();
+	auto& factory = context.GetSingleton<SCEntityFactory>();
+	// Spawn Entity (All)
 
 	CollisionLayer const& enemyLayer = scCollision.GetCollisionLayer(CollisionChannel::Enemy);
 
-	for (auto it = g_ecs->Iterate<CProjectile, CTransform>(context); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CProjectile, CTransform>(); it.IsValid(); ++it)
 	{
-		CProjectile& proj = *projStorage.Get(it);
+		CProjectile& proj = projStorage[it];
 		if (proj.m_targetID == EntityID::Invalid || !g_ecs->IsValid(proj.m_targetID))
 		{
 			if (!proj.m_targetPos.has_value())
@@ -52,8 +52,8 @@ void SProjectile::Run(SystemContext const& context)
 			}
 		}
 
-		CTransform& transform = *transStorage.Get(it);
-		CTransform& targetTransform = *transStorage.Get(proj.m_targetID.GetIndex());
+		CTransform& transform = transStorage[it];
+		CTransform& targetTransform = transStorage[proj.m_targetID.GetIndex()];
 		proj.m_targetPos = targetTransform.m_pos;
 
 		Vec2 toTarget = proj.m_targetPos.value() - transform.m_pos;
@@ -106,7 +106,7 @@ void SProjectile::Run(SystemContext const& context)
 								CCollision* collision = collisionStorage.Get(entityID.GetIndex());
 								if (collision)
 								{
-									Vec2 entityPos = transStorage.Get(entityID.GetIndex())->m_pos;
+									Vec2 entityPos = transStorage[entityID.GetIndex()].m_pos;
 									if (entityPos.GetDistanceSquaredTo(proj.m_targetPos.value()) > splashRadiusSquared)
 									{
 										continue; // outside of splash radius
@@ -122,7 +122,7 @@ void SProjectile::Run(SystemContext const& context)
 								if (aoeTargetPayload.m_slowDuration > 0.f)
 								{
 									// Add slow effect to target
-									CTime* targetTime = g_ecs->GetComponent<CTime>(entityID);
+									CTime* targetTime = context.GetComponent<CTime>(entityID);
 									if (targetTime)
 									{
 										targetTime->m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
@@ -143,11 +143,11 @@ void SProjectile::Run(SystemContext const& context)
 					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp->m_aoeEffectOnHit->m_durationSeconds;
 					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp->m_aoeEffectOnHit->m_radius;
 
-					EntityID aoeEffect = SEntityFactory::SpawnEntity(aoeEffectSpawnInfo);
+					EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 					if (g_ecs->IsValid(aoeEffect))
 					{
 						// Pass along damage, color, to aoe effect
-						if (CCollisionEffect* aoeEffectComp = g_ecs->GetComponent<CCollisionEffect>(aoeEffect))
+						if (CCollisionEffect* aoeEffectComp = context.GetComponent<CCollisionEffect>(aoeEffect))
 						{
 							if (proj.m_onHitComp->m_aoeEffectOnHit->m_damagePerSecond.has_value())
 							{

@@ -11,6 +11,5 @@ public:
 
     SHealth(Name name = "Health", Rgba8 const& debugTint = Rgba8::Green) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
-    void Shutdown() override;
+    void Run(SystemContext const& context) const override;
 };

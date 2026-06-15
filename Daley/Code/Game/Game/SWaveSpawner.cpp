@@ -26,14 +26,23 @@ void SWaveSpawner::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWaveSpawner::Run(SystemContext const& context)
+void SWaveSpawner::Shutdown() const
+{
+	DevConsoleUtils::RemoveDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
+	DevConsoleUtils::RemoveDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SWaveSpawner::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 
 	// Write Dependencies
-	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
-	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
+	SCWaves& waves = context.GetSingleton<SCWaves>();
+	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
 
 	if (waves.m_waves.size() == 0)
 	{
@@ -97,15 +106,6 @@ void SWaveSpawner::Run(SystemContext const& context)
 		// Waves are complete, including all active streams
 		waves.m_wavesFinished = true;
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SWaveSpawner::Shutdown()
-{
-	DevConsoleUtils::RemoveDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
-	DevConsoleUtils::RemoveDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves);
 }
 
 

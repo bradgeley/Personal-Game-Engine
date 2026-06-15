@@ -4,6 +4,7 @@
 #include "SCEntityFactory.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -14,25 +15,19 @@ void SDebugCommands::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
 	DevConsoleUtils::AddDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity, "name", DevConsoleArgType::String);
 	DevConsoleUtils::AddDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies, "duration", DevConsoleArgType::Float);
+
+	m_ignoreRun = true;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDebugCommands::Shutdown()
+void SDebugCommands::Shutdown() const
 {
 	DevConsoleUtils::RemoveDevConsoleCommand("Spawn", &SDebugCommands::Spawn);
 	DevConsoleUtils::RemoveDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity);
 	DevConsoleUtils::RemoveDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SDebugCommands::Run(SystemContext const&)
-{
-    // Empty
 }
 
 
@@ -51,6 +46,7 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
 	int spawnCount = args.Get("count", 1);
+	spawnCount = MathUtils::Clamp(spawnCount, 0, (int) MAX_ENTITIES - g_ecs->Count() + 1); // + 1 to show one error message if spawning past MAX_ENTITIES
 	for (int i = 0; i < spawnCount; i++)
 	{
 		SpawnInfo spawnInfo;

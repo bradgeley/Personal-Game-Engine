@@ -10,33 +10,33 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SGoal::Startup()
 {
-	AddReadDependencies<CTransform, CHealth, SCWorld>();
+	AddReadDependencies<CHealth, CTransform, SCWorld>();
 	AddWriteDependencies<SCEntityFactory>();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SGoal::Run(SystemContext const& context)
+void SGoal::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
-	auto const& world = g_ecs->GetSingleton<SCWorld>();
+	auto const& healthStorage = context.GetArrayStorageConst<CHealth>();
+	auto const& transStorage =context.GetArrayStorageConst<CTransform>();
+	auto const& world = context.GetSingletonConst<SCWorld>();
 
 	// Write Dependencies
-	auto& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
+	auto& entityFactory = context.GetSingleton<SCEntityFactory>();
 
-	for (auto it = g_ecs->Iterate<CTransform, CHealth>(context); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CTransform, CHealth>(); it.IsValid(); ++it)
 	{
-		CHealth const& health = *healthStorage.Get(it);
+		CHealth const& health = healthStorage[it];
 
 		if (!health.GetIsTargetable())
 		{
 			continue;
 		}
 
-		CTransform const& transform = *transStorage.Get(it);
+		CTransform const& transform = transStorage[it];
 
 		if (world.IsLocationInGoal(transform.m_pos))
 		{

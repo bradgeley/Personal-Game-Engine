@@ -23,12 +23,18 @@ void SDebugInput::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDebugInput::Run(SystemContext const&)
+void SDebugInput::Run(SystemContext const& context) const
 {
-	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
-	SCCamera& camera = g_ecs->GetSingleton<SCCamera>();
-	SCEntityFactory& entityFactory = g_ecs->GetSingleton<SCEntityFactory>();
+	// Read Dependencies
+	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
+	// g_eventSystem
+	// g_input
+	// g_window
+
+	// Write Dependencies
+	SCWorld& world = context.GetSingleton<SCWorld>();
+	SCDebug& scDebug = context.GetSingleton<SCDebug>();
+	SCEntityFactory& entityFactory = context.GetSingleton<SCEntityFactory>();
 
 	// Debug mouse position
 	if (g_window->HasFocus())
@@ -75,18 +81,9 @@ void SDebugInput::Run(SystemContext const&)
 	// Debug Enemy Spawning
 	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->IsKeyDown('K'))
 	{
-		for (auto it = g_ecs->IterateAll<CHealth>(); it.IsValid(); ++it)
+		for (auto it = context.Iterate<CHealth>(); it.IsValid(); ++it)
 		{
-			SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
-			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
+			entityFactory.m_entitiesToDestroy.push_back(it.GetEntityID());
 		}
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SDebugInput::Shutdown()
-{
-
 }

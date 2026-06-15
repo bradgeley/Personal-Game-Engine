@@ -17,19 +17,19 @@ void SMovement::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SMovement::Run(SystemContext const& context)
+void SMovement::Run(SystemContext const& context) const
 {
     // Read Dependencies
-    auto const& timeStorage = g_ecs->GetArrayStorage<CTime>();
-    auto const& deathStorage = g_ecs->GetArrayStorage<CDeath>();
+    auto& timeStorage = context.GetArrayStorageConst<CTime>();
+    auto& deathStorage = context.GetArrayStorageConst<CDeath>();
 
 	// Write Dependencies
-    auto& moveStorage = g_ecs->GetArrayStorage<CMovement>();
-    auto& transformStorage = g_ecs->GetArrayStorage<CTransform>();
+    auto& moveStorage = context.GetArrayStorage<CMovement>();
+    auto& transformStorage = context.GetArrayStorage<CTransform>();
 
 	BitMask deathBitMask = g_ecs->GetComponentBitMask<CDeath>();
 
-    for (auto it = g_ecs->Iterate<CMovement, CTransform, CTime>(context); it.IsValid(); ++it)
+    for (auto it = context.Iterate<CMovement, CTransform, CTime>(); it.IsValid(); ++it)
     {
         CMovement& move = moveStorage[it];
         if (g_ecs->DoesEntityHaveComponentsUnsafe(it.m_currentIndex, deathBitMask))

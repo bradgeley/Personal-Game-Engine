@@ -4,6 +4,7 @@
 #include "CRender.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Core/StringUtils.h"
 
 
@@ -12,21 +13,23 @@
 void SAnimation::Startup()
 {
 	AddReadDependencies<CRender>();
-	AddWriteDependencies<CAnimation, AssetManager>();
+	AddWriteDependencies<CAnimation, AssetManager, Renderer>(); // Renderer because of asset loading
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SAnimation::Run(SystemContext const& context)
+void SAnimation::Run(SystemContext const& context) const
 {
     // Read Dependencies
-	auto const& renderStorage = g_ecs->GetArrayStorage<CRender>();
+	auto& renderStorage = context.GetArrayStorageConst<CRender>();
 
     // Write Dependencies
-	auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
+	auto& animStorage = context.GetArrayStorage<CAnimation>();
+    // g_assetManager
+    // g_renderer (because of asset loading)
 
-    for (auto it = g_ecs->Iterate<CRender, CAnimation>(context); it.IsValid(); ++it)
+    for (auto it = context.Iterate<CRender, CAnimation>(); it.IsValid(); ++it)
     {
         CRender const& render = renderStorage[it];
         if (!render.GetIsInCameraView())

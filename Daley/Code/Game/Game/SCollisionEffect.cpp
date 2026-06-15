@@ -19,15 +19,15 @@ void SCollisionEffect::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCollisionEffect::Run(SystemContext const& context)
+void SCollisionEffect::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	SCCollision const& scCollision = g_ecs->GetSingleton<SCCollision>();
-	auto const& collisionEffectStorage = g_ecs->GetArrayStorage<CCollisionEffect>();
+	SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
+	auto const& collisionEffectStorage = context.GetArrayStorageConst<CCollisionEffect>();
 
 	// Write Dependencies
-	auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
-	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
+	auto& healthStorage = context.GetArrayStorage<CHealth>();
+	auto& timeStorage = context.GetArrayStorage<CTime>();
 	
     for (OverlapInfo const& overlap : scCollision.m_frameOverlaps)
     {
@@ -43,7 +43,7 @@ void SCollisionEffect::Run(SystemContext const& context)
 
 		if (g_ecs->HasComponentUnsafe<CCollisionEffect>(entityA.GetIndex()))
 		{
-			CCollisionEffect const& aoeA = *collisionEffectStorage.Get(entityA.GetIndex());
+			CCollisionEffect const& aoeA = collisionEffectStorage[entityA.GetIndex()];
 
 			HitPayload payload = isFirstTouch ? aoeA.GetFirstOverlapPayload() : aoeA.GetWhileOverlappingPayload(context.m_deltaSeconds);
 
@@ -51,7 +51,7 @@ void SCollisionEffect::Run(SystemContext const& context)
 			{
 				if (g_ecs->HasComponentUnsafe<CHealth>(entityB.GetIndex()))
 				{
-					CHealth& healthB = *healthStorage.Get(entityB.GetIndex());
+					CHealth& healthB = healthStorage[entityB.GetIndex()];
 					healthB.TakePayload(payload);
 				}
 			}
@@ -60,7 +60,7 @@ void SCollisionEffect::Run(SystemContext const& context)
 			{
 				if (g_ecs->HasComponentUnsafe<CTime>(entityB.GetIndex()))
 				{
-					CTime& timeB = *timeStorage.Get(entityB.GetIndex());
+					CTime& timeB = timeStorage[entityB.GetIndex()];
 					timeB.m_remainingSlowDuration += payload.m_slowDuration;
 				}
 			}
@@ -68,7 +68,7 @@ void SCollisionEffect::Run(SystemContext const& context)
 
 		if (g_ecs->HasComponentUnsafe<CCollisionEffect>(entityB.GetIndex()))
 		{
-			CCollisionEffect const& aoeB = *collisionEffectStorage.Get(entityB.GetIndex());
+			CCollisionEffect const& aoeB = collisionEffectStorage[entityB.GetIndex()];
 
 			HitPayload payload = isFirstTouch ? aoeB.GetFirstOverlapPayload() : aoeB.GetWhileOverlappingPayload(context.m_deltaSeconds);
 
@@ -76,7 +76,7 @@ void SCollisionEffect::Run(SystemContext const& context)
 			{
 				if (g_ecs->HasComponentUnsafe<CHealth>(entityA.GetIndex()))
 				{
-					CHealth& healthA = *healthStorage.Get(entityA.GetIndex());
+					CHealth& healthA = healthStorage[entityA.GetIndex()];
 					healthA.TakePayload(payload);
 				}
 			}
@@ -85,7 +85,7 @@ void SCollisionEffect::Run(SystemContext const& context)
 			{
 				if (g_ecs->HasComponentUnsafe<CTime>(entityA.GetIndex()))
 				{
-					CTime& timeA = *timeStorage.Get(entityA.GetIndex());
+					CTime& timeA = timeStorage[entityA.GetIndex()];
 					timeA.m_remainingSlowDuration += payload.m_slowDuration;
 				}
 			}

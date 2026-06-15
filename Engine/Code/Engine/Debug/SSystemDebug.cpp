@@ -24,12 +24,14 @@ void SSystemDebug::Startup()
 
 	g_eventSystem->SubscribeMethod("ToggleSystem", this, &SSystemDebug::ToggleSystem);
 	g_eventSystem->SubscribeMethod("PrintAllSystems", this, &SSystemDebug::PrintAllSystems);
+
+	m_ignoreRun = true;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SSystemDebug::Shutdown()
+void SSystemDebug::Shutdown() const
 {
 	ASSERT_OR_DIE(g_eventSystem, "Event System doesn't exist.")
 

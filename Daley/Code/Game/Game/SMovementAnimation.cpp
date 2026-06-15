@@ -16,19 +16,19 @@ void SMovementAnimation::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SMovementAnimation::Run(SystemContext const& context)
+void SMovementAnimation::Run(SystemContext const& context) const
 {
     // Read Dependencies
-    auto const& moveStorage = g_ecs->GetArrayStorage<CMovement>();
-	auto const& renderStorage = g_ecs->GetArrayStorage<CRender>();
+    auto& moveStorage = context.GetArrayStorageConst<CMovement>();
+	auto& renderStorage = context.GetArrayStorageConst<CRender>();
 
     // Write Dependencies
-    auto& animationStorage = g_ecs->GetArrayStorage<CAnimation>();
+    auto& animationStorage = context.GetArrayStorage<CAnimation>();
 
     static Name idleAnimName = "Idle";
     static Name walkAnimName = "Walk";
 
-    for (auto it = g_ecs->Iterate<CMovement, CAnimation, CRender>(context); it.IsValid(); ++it)
+    for (auto it = context.Iterate<CMovement, CAnimation, CRender>(); it.IsValid(); ++it)
     {
         CRender const& render = renderStorage[it];
         if (!render.GetIsInCameraView())

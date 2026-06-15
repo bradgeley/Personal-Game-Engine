@@ -15,15 +15,15 @@ void STime::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void STime::Run(SystemContext const& context)
+void STime::Run(SystemContext const& context) const
 {
 	// Write Dependencies
-	SCTime& scTime = g_ecs->GetSingleton<SCTime>();
-	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
+	SCTime& scTime = context.GetSingleton<SCTime>();
+	auto& timeStorage = context.GetArrayStorage<CTime>();
 
 	scTime.m_currentTimeSeconds += context.m_deltaSeconds;
 
-	for (auto it = g_ecs->Iterate<CTime>(context); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CTime>(); it.IsValid(); ++it)
 	{
 		CTime& cTime = timeStorage[it];
 

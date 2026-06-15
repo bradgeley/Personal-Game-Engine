@@ -11,6 +11,6 @@ public:
 
     SRenderHealthBars(Name name = "RenderHealthBars", Rgba8 const& debugTint = Rgba8::Red) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
-    void Shutdown() override;
+    void Shutdown() const override;
+    void Run(SystemContext const& context) const override;
 };

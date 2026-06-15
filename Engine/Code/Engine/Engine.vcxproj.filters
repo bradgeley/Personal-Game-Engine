@@ -695,9 +695,6 @@
     <Filter Include="Math">
       <UniqueIdentifier>{92cf47ec-7243-4b13-bd65-ee8691af17a5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Input">
-      <UniqueIdentifier>{95f7b6d2-5fd7-4602-911b-f1dbca134d6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ThirdParty">
       <UniqueIdentifier>{ebfb071c-4fa3-469b-9332-bcc1598129bf}</UniqueIdentifier>
     </Filter>
@@ -751,6 +748,9 @@
     </Filter>
     <Filter Include="Assets\Rendering">
       <UniqueIdentifier>{14f16be1-833e-4513-9c09-9cc56830f4fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{95f7b6d2-5fd7-4602-911b-f1dbca134d6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

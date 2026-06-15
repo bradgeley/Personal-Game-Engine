@@ -19,17 +19,17 @@ void SDeath::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SDeath::Run(SystemContext const& context)
+void SDeath::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+	auto& healthStorage = context.GetArrayStorageConst<CHealth>();
 
 	// Write Dependencies
-	auto& deathStorage = g_ecs->GetArrayStorage<CDeath>();
-	auto& lifetimeStorage = g_ecs->GetArrayStorage<CLifetime>();
-	auto& animStorage = g_ecs->GetArrayStorage<CAnimation>();
+	auto& animStorage = context.GetArrayStorage<CAnimation>();
+	auto& deathStorage = context.GetArrayStorage<CDeath>();
+	auto& lifetimeStorage = context.GetArrayStorage<CLifetime>();
 
-	for (auto it = g_ecs->Iterate<CHealth, CDeath, CLifetime>(context); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CHealth, CDeath, CLifetime>(); it.IsValid(); ++it)
 	{
 		CHealth const& health = healthStorage[it];
 		if (!health.GetHealthReachedZero())

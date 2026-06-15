@@ -20,28 +20,14 @@ void SWorld::Startup()
 
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
 	GenerateMap(scWorld);
+
+	m_ignoreRun = true;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWorld::Run(SystemContext const&)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SWorld::EndFrame()
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SWorld::Shutdown()
+void SWorld::Shutdown() const
 {
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
 	scWorld.Shutdown();

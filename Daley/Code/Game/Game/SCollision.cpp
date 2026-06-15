@@ -11,21 +11,25 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SCollision::Startup()
 {
-    AddWriteDependencies<SCCollision>();
     AddReadDependencies<CCollision, CTransform>();
+    AddWriteDependencies<SCCollision>();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCollision::Run(SystemContext const&)
+void SCollision::Run(SystemContext const& context) const
 {
-    SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
+	// Read Dependencies
+	auto& transformStorage = context.GetArrayStorageConst<CTransform>();
+	auto& collisionStorage = context.GetArrayStorageConst<CCollision>();
+
+	// Write Dependencies
+    SCCollision& scCollision = context.GetSingleton<SCCollision>();
+
+	// Swap the previous frame's overlaps into the last frame overlap slot, then clear out this frame for writing to.
 	std::swap(scCollision.m_lastFrameOverlaps, scCollision.m_frameOverlaps);
 	scCollision.m_frameOverlaps.clear();
-
-	auto const& transformStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto const& collisionStorage = g_ecs->GetArrayStorage<CCollision>();
 
 	for (int bucketIndex : scCollision.m_dirtyBuckets)
 	{

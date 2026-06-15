@@ -11,5 +11,5 @@ public:
 
     STime(Name name = "Time", Rgba8 const& debugTint = Rgba8::SkyBlue) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
+    void Run(SystemContext const& context) const override;
 };

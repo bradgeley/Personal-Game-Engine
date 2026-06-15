@@ -35,7 +35,7 @@ IntVec2 s_neighborOffsets[8] =
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::GenerateVBO()
+void SCWorld::GenerateVBO(Renderer* renderer, AssetManager* assetManager)
 {
 	if (!m_isVBODirty)
 	{
@@ -47,17 +47,17 @@ void SCWorld::GenerateVBO()
 	Vec2 lightmapUVsHalfStepSize = lightmapUVsStepSize * 0.5f;
 
 	// Get sprite sheet ready
-	AssetID terrainID = g_assetManager->LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
-	GridSpriteSheet const* terrainSpriteSheet = g_assetManager->Get<GridSpriteSheet>(terrainID);
+	AssetID terrainID = assetManager->LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
+	GridSpriteSheet const* terrainSpriteSheet = assetManager->Get<GridSpriteSheet>(terrainID);
 	ASSERT_OR_DIE(terrainSpriteSheet != nullptr, "SCWorld::GenerateMapVBO - Failed to load terrain sprite sheet");
 
 	// Get VBO ready
 	if (m_vbo == RendererUtils::InvalidID)
 	{
-		m_vbo = g_renderer->MakeVertexBuffer<TerrainVertex>(StaticWorldSettings::s_numVertsInVisibleWorld);
+		m_vbo = renderer->MakeVertexBuffer<TerrainVertex>(StaticWorldSettings::s_numVertsInVisibleWorld);
 	}	
 	
-	VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
+	VertexBuffer& vbo = *renderer->GetVertexBuffer(m_vbo);
 	vbo.Resize(StaticWorldSettings::s_numVertsInVisibleWorld);
 
 	Vec2 worldMins = Vec2(0.f, 0.f) + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
@@ -113,25 +113,25 @@ void SCWorld::GenerateVBO()
 		return true; // keep iterating
 	});
 
-	m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
-	VertexBuffer& debugVBO = *g_renderer->GetVertexBuffer(m_debugVBO);
+	m_debugVBO = renderer->MakeVertexBuffer<Vertex_PCU>();
+	VertexBuffer& debugVBO = *renderer->GetVertexBuffer(m_debugVBO);
 	VertexUtils::AddVertsForWireGrid(debugVBO, worldBounds, IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), StaticWorldSettings::s_tileGridDebugDrawThickness, Rgba8::Black);
 	VertexUtils::AddVertsForWireBox2D(debugVBO, worldBounds, 0.03f, Rgba8::Red);
 	VertexUtils::AddVertsForArrow2D(debugVBO, Vec2(0.f, 0.f), Vec2(1.f, 0.f), StaticWorldSettings::s_worldOriginDebugDrawThickness, Rgba8::Red);
 	VertexUtils::AddVertsForArrow2D(debugVBO, Vec2(0.f, 0.f), Vec2(0.f, 1.f), StaticWorldSettings::s_worldOriginDebugDrawThickness, Rgba8::Blue);
 
 	m_isVBODirty = false;
-	g_assetManager->Release(terrainID);
+	assetManager->Release(terrainID);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::GenerateLightmap()
+void SCWorld::GenerateLightmap(Renderer* renderer)
 {
 	if (m_lightmap == RendererUtils::InvalidID)
 	{
-		m_lightmap = g_renderer->MakeTexture();
+		m_lightmap = renderer->MakeTexture();
 	}
 
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
@@ -150,7 +150,7 @@ void SCWorld::GenerateLightmap()
 		return true; // keep iterating
 	});
 
-	Texture* lightmapTex = g_renderer->GetTexture(m_lightmap);
+	Texture* lightmapTex = renderer->GetTexture(m_lightmap);
 	lightmapTex->CreateFromImage(image, false, false);
 }
 
@@ -282,7 +282,7 @@ void SCWorld::CacheValidSpawnLocations()
 	m_cachedSpawnLocations.clear();
 	m_cachedSpawnLocations.reserve(16);
 
-	ForEachEdgeTile([&](IntVec2 const& tileCoords)
+	ForEachPlayableEdgeTile([&](IntVec2 const& tileCoords)
 	{
 		Tile const& tile = m_tiles.Get(tileCoords);
 		if (tile.IsPath())
@@ -520,7 +520,7 @@ void SCWorld::ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::f
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachEdgeTile(const std::function<bool(IntVec2 const&)>& func) const
+void SCWorld::ForEachPlayableEdgeTile(const std::function<bool(IntVec2 const&)>& func) const
 {
 	// Bottom row first, left to right
 	for (int y = 0; y < StaticWorldSettings::s_numWorldEdgeTiles; ++y)
@@ -591,88 +591,6 @@ bool SCWorld::IsPointInsideSolidTile(Vec2 const& worldPos) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AABB2 SCWorld::GetVisibleWorldBounds() const
-{
-	AABB2 result;
-	result.mins.x = StaticWorldSettings::s_visibleWorldMinsX;
-	result.mins.y = StaticWorldSettings::s_visibleWorldMinsY;
-	result.maxs.x = StaticWorldSettings::s_visibleWorldMaxsX;
-	result.maxs.y = StaticWorldSettings::s_visibleWorldMaxsY;
-	return result;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-AABB2 SCWorld::GetPlayableWorldBounds() const
-{
-	AABB2 result;
-	result.mins.x = StaticWorldSettings::s_playableWorldMinsX;
-	result.mins.y = StaticWorldSettings::s_playableWorldMinsY;
-	result.maxs.x = StaticWorldSettings::s_playableWorldMaxsX;
-	result.maxs.y = StaticWorldSettings::s_playableWorldMaxsY;
-	return result;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-IntVec2 SCWorld::GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords) const
-{
-	return worldCoords - IntVec2(StaticWorldSettings::s_visibleWorldBeginIndexX, StaticWorldSettings::s_visibleWorldBeginIndexY);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-IntVec2 SCWorld::GetTileCoordsAtWorldPos(Vec2 const& worldPos) const
-{
-	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
-	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
-	return IntVec2(globalTileCoords.GetFloor());
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-IntVec2 SCWorld::GetTileCoordsAtWorldPosClamped(Vec2 const& worldPos) const
-{
-	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
-	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
-	globalTileCoords.x = MathUtils::Clamp(globalTileCoords.x, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
-	globalTileCoords.y = MathUtils::Clamp(globalTileCoords.y, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
-	return IntVec2(globalTileCoords.GetFloor());
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-IntVec2 SCWorld::GetTileCoordsAtPlayableWorldPosClamped(Vec2 const& worldPos) const
-{
-	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
-	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
-	globalTileCoords.x = MathUtils::Clamp(globalTileCoords.x, 0.f, static_cast<float>(StaticWorldSettings::s_numPlayableWorldTilesX - 1));
-	globalTileCoords.y = MathUtils::Clamp(globalTileCoords.y, 0.f, static_cast<float>(StaticWorldSettings::s_numPlayableWorldTilesY - 1));
-	return IntVec2(globalTileCoords.GetFloor());
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-int SCWorld::GetTileIndexAtWorldPos(Vec2 const& worldPos) const
-{
-	IntVec2 tileCoords = GetTileCoordsAtWorldPos(worldPos);
-	if (!m_tiles.IsValidCoords(tileCoords))
-	{
-		return -1;
-	}
-	int index = m_tiles.GetIndexForCoords(tileCoords);
-	return index;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 Tile const* SCWorld::GetTileAtWorldPos(Vec2 const& worldPos) const
 {
 	int tileIndex = GetTileIndexAtWorldPos(worldPos);
@@ -705,7 +623,89 @@ Tile* SCWorld::GetTileAtWorldPos(Vec2 const& worldPos)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos) const
+AABB2 SCWorld::GetVisibleWorldBounds()
+{
+	AABB2 result;
+	result.mins.x = StaticWorldSettings::s_visibleWorldMinsX;
+	result.mins.y = StaticWorldSettings::s_visibleWorldMinsY;
+	result.maxs.x = StaticWorldSettings::s_visibleWorldMaxsX;
+	result.maxs.y = StaticWorldSettings::s_visibleWorldMaxsY;
+	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 SCWorld::GetPlayableWorldBounds()
+{
+	AABB2 result;
+	result.mins.x = StaticWorldSettings::s_playableWorldMinsX;
+	result.mins.y = StaticWorldSettings::s_playableWorldMinsY;
+	result.maxs.x = StaticWorldSettings::s_playableWorldMaxsX;
+	result.maxs.y = StaticWorldSettings::s_playableWorldMaxsY;
+	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 SCWorld::GetVisibleWorldRelativeCoords(IntVec2 const& worldCoords)
+{
+	return worldCoords - IntVec2(StaticWorldSettings::s_visibleWorldBeginIndexX, StaticWorldSettings::s_visibleWorldBeginIndexY);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 SCWorld::GetTileCoordsAtWorldPos(Vec2 const& worldPos)
+{
+	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
+	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
+	return IntVec2(globalTileCoords.GetFloor());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 SCWorld::GetTileCoordsAtWorldPosClamped(Vec2 const& worldPos)
+{
+	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
+	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
+	globalTileCoords.x = MathUtils::Clamp(globalTileCoords.x, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
+	globalTileCoords.y = MathUtils::Clamp(globalTileCoords.y, 0.f, static_cast<float>(StaticWorldSettings::s_numTilesInRow - 1));
+	return IntVec2(globalTileCoords.GetFloor());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 SCWorld::GetTileCoordsAtPlayableWorldPosClamped(Vec2 const& worldPos)
+{
+	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
+	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
+	globalTileCoords.x = MathUtils::Clamp(globalTileCoords.x, 0.f, static_cast<float>(StaticWorldSettings::s_numPlayableWorldTilesX - 1));
+	globalTileCoords.y = MathUtils::Clamp(globalTileCoords.y, 0.f, static_cast<float>(StaticWorldSettings::s_numPlayableWorldTilesY - 1));
+	return IntVec2(globalTileCoords.GetFloor());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int SCWorld::GetTileIndexAtWorldPos(Vec2 const& worldPos) const
+{
+	IntVec2 tileCoords = GetTileCoordsAtWorldPos(worldPos);
+	if (!m_tiles.IsValidCoords(tileCoords))
+	{
+		return -1;
+	}
+	int index = m_tiles.GetIndexForCoords(tileCoords);
+	return index;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos)
 {
 	IntVec2 tileCoords = GetTileCoordsAtWorldPos(worldPos);
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
@@ -718,7 +718,7 @@ AABB2 SCWorld::GetTileBoundsAtWorldPos(Vec2 const& worldPos) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AABB2 SCWorld::GetTileBounds(IntVec2 const& tileCoords) const
+AABB2 SCWorld::GetTileBounds(IntVec2 const& tileCoords)
 {
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 	AABB2 tileBounds;
@@ -730,7 +730,7 @@ AABB2 SCWorld::GetTileBounds(IntVec2 const& tileCoords) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 SCWorld::GetTileCenter(IntVec2 const& tileCoords) const
+Vec2 SCWorld::GetTileCenter(IntVec2 const& tileCoords)
 {
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
 	Vec2 tileMins = Vec2(tileCoords) * StaticWorldSettings::s_tileWidth + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);

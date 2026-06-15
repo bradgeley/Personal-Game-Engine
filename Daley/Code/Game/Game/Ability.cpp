@@ -343,13 +343,14 @@ ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
+void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& location)
 {
     ASSERT_OR_DIE(m_abilityDef, "ProjectileHitAbility::Update - m_abilityDef is null.");
     ASSERT_OR_DIE(m_cooldownComp.has_value(), "ProjectileHitAbility::Update - m_cooldownComp is null.");
     ASSERT_OR_DIE(m_targetingComp.has_value(), "ProjectileHitAbility::Update - m_targetingComp is null.");
     ASSERT_OR_DIE(m_onHitComp.has_value(), "ProjectileHitAbility::Update - m_onHitComp is null.");
 
+    float deltaSeconds = context.m_deltaSeconds;
     m_cooldownComp->m_accumulatedTime += deltaSeconds;
 
     constexpr float maxAttacksPerSecond = 1000.f;
@@ -363,11 +364,16 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
         return;
     }
 
-    // Find targets
-    SCCollision const& collision = g_ecs->GetSingleton<SCCollision>();
-    SCFlowField const& flowfield = g_ecs->GetSingleton<SCFlowField>();
-    SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
-    auto const& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+	// Read Dependencies
+    SCCollision const& collision = context.GetSingleton<SCCollision>();
+    SCFlowField const& flowfield = context.GetSingleton<SCFlowField>();
+    SCWorld const& world = context.GetSingleton<SCWorld>();
+    auto const& healthStorage = context.GetArrayStorageConst<CHealth>();
+
+	// Write Dependencies
+	auto& projectileStorage = context.GetArrayStorage<CProjectile>();
+    // CAbility (bc this is an ability in a CAbility that can update itself)
+    // Spawn Entities (All)
 
     CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
 
@@ -459,7 +465,7 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
         spawnInfo.m_spawnPos = location;
         spawnInfo.m_spawnOrientation = 0.f;
         spawnInfo.m_def = EntityDef::GetEntityDef(m_projectileDefName);
-        EntityID projectileID = SEntityFactory::SpawnEntity(spawnInfo);
+        EntityID projectileID = SEntityFactory::SpawnEntity(context, spawnInfo);
         if (!g_ecs->IsValid(projectileID))
         {
             break;
@@ -468,13 +474,15 @@ void ProjectileHitAbility::Update(float deltaSeconds, Vec2 const& location)
         RollDamageAndEffects();
 
         // Copy ability data to proj, snapshotted with damage and effects already rolled.
-        CProjectile& projComp = *g_ecs->GetComponent<CProjectile>(projectileID);
-        projComp.m_targetID = targetID;
-        projComp.m_targetPos = std::nullopt;
-        projComp.m_accumulatedTime += m_cooldownComp->m_accumulatedTime;
-        projComp.m_projSpeed = m_projSpeed;
-        projComp.m_critComp = m_critComp;
-        projComp.m_onHitComp = m_onHitComp;
+		CProjectile* projComp = projectileStorage.Get(projectileID.GetIndex());
+		ASSERT_OR_DIE(projComp, "ProjectileHitAbility::Update - spawned projectile is missing CProjectile component.");
+
+        projComp->m_targetID = targetID;
+        projComp->m_targetPos = std::nullopt;
+        projComp->m_accumulatedTime += m_cooldownComp->m_accumulatedTime;
+        projComp->m_projSpeed = m_projSpeed;
+        projComp->m_critComp = m_critComp;
+        projComp->m_onHitComp = m_onHitComp;
     }
 }
 
@@ -646,13 +654,14 @@ AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AoEHitAbility::Update(float deltaSeconds, Vec2 const& location)
+void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
 {
     ASSERT_OR_DIE(m_abilityDef, "ProjectileHitAbility::Update - m_abilityDef is null.");
     ASSERT_OR_DIE(m_cooldownComp.has_value(), "ProjectileHitAbility::Update - m_cooldownComp is null.");
     ASSERT_OR_DIE(m_targetingComp.has_value(), "ProjectileHitAbility::Update - m_targetingComp is null.");
     ASSERT_OR_DIE(m_aoeHitComp.has_value(), "ProjectileHitAbility::Update - m_aoeHitComp is null.");
 
+	float deltaSeconds = context.m_deltaSeconds;
     m_cooldownComp->m_accumulatedTime += deltaSeconds;
 
     constexpr float maxAttacksPerSecond = 1000.f;
@@ -666,10 +675,15 @@ void AoEHitAbility::Update(float deltaSeconds, Vec2 const& location)
         return;
     }
 
-    // Find targets
+	// Read Dependencies
     SCCollision const& collision = g_ecs->GetSingleton<SCCollision>();
     SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
+
+	// Write Dependencies
     auto& healthStorage = g_ecs->GetArrayStorage<CHealth>();
+	auto& timeStorage = g_ecs->GetArrayStorage<CTime>();
+	// CAbility (bc this is an ability in a CAbility that can update itself)
+	// Spawn Entities (All)
 
     CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
 
@@ -722,7 +736,7 @@ void AoEHitAbility::Update(float deltaSeconds, Vec2 const& location)
             aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp->m_aoeEffectDefName);
             aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange;
 
-            EntityID aoeEffect = SEntityFactory::SpawnEntity(aoeEffectSpawnInfo);
+            EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
             if (g_ecs->IsValid(aoeEffect))
             {
                 // Pass along damage, color, to aoe effect
@@ -767,8 +781,11 @@ void AoEHitAbility::Update(float deltaSeconds, Vec2 const& location)
 
             if (payload.IsRelevantToTime())
             {
-                CTime* timeComp = g_ecs->GetComponent<CTime>(entityID);
-				timeComp->m_remainingSlowDuration += payload.m_slowDuration;
+				CTime* timeComp = timeStorage.Get(entityID.GetIndex());
+                if (timeComp)
+                {
+                    timeComp->m_remainingSlowDuration += payload.m_slowDuration;
+                }
             }
         }
     }
@@ -898,7 +915,7 @@ PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::Update(float, Vec2 const& location)
+void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& location)
 {
     ASSERT_OR_DIE(m_abilityDef, "PassiveAoEAbility::Update - m_abilityDef is null.");
     ASSERT_OR_DIE(m_targetingComp.has_value(), "PassiveAoEAbility::Update - m_targetingComp is null.");
@@ -912,7 +929,7 @@ void PassiveAoEAbility::Update(float, Vec2 const& location)
         aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp->m_aoeEffectDefName);
         aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange;
 
-        m_activeAoEEffect = SEntityFactory::SpawnEntity(aoeEffectSpawnInfo);
+        m_activeAoEEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 
         if (g_ecs->IsValid(m_activeAoEEffect))
         {

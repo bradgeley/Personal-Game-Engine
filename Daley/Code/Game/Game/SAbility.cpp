@@ -11,33 +11,36 @@ void SAbility::Startup()
 {
 	AbilityDef::LoadFromXML();
 
-	AddWriteAllDependencies();
+	AddWriteAllDependencies(); // Abilities spawn things
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SAbility::Run(SystemContext const& context)
+void SAbility::Shutdown() const
 {
-	auto const& transStorage = g_ecs->GetArrayStorage<CTransform>();
-	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
+	AbilityDef::Shutdown();
+}
 
-	for (auto it = g_ecs->Iterate<CAbility, CTransform>(context); it.IsValid(); ++it)
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SAbility::Run(SystemContext const& context) const
+{
+	// Read Dependencies
+	auto& transStorage = context.GetArrayStorageConst<CTransform>();
+
+	// Write Dependencies
+	auto& abilityStorage = context.GetMapStorage<CAbility>();
+
+	for (auto it = context.Iterate<CAbility, CTransform>(); it.IsValid(); ++it)
 	{
-		CAbility& ability = *abilityStorage.Get(it);
-		CTransform const& transform = *transStorage.Get(it);
+		CAbility& ability = abilityStorage[it];
+		CTransform const& transform = transStorage[it];
 
 		for (Ability* abilityInstance : ability.m_abilities)
 		{
-			abilityInstance->Update(context.m_deltaSeconds, transform.m_pos);
+			abilityInstance->Update(context, transform.m_pos);
 		}
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SAbility::Shutdown()
-{
-	AbilityDef::Shutdown();
 }

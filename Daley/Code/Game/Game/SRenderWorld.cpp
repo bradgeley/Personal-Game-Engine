@@ -16,8 +16,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderWorld::Startup()
 {
-    AddReadDependencies<AssetManager>();
-    AddWriteDependencies<SCWorld, SCRender, Renderer>();
+    AddWriteDependencies<SCWorld, SCRender, AssetManager, Renderer>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 	scRender.m_staticWorldConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(StaticWorldConstants));
@@ -48,13 +47,29 @@ void SRenderWorld::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SRenderWorld::Run(SystemContext const&)
+void SRenderWorld::Shutdown() const
+{
+    auto& scWorld = g_ecs->GetSingleton<SCWorld>();
+    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+
+    g_renderer->ReleaseConstantBuffer(scRender.m_staticWorldConstantsBuffer);
+
+    g_assetManager->Release(scWorld.m_worldSpriteSheet);
+    g_assetManager->Release(scRender.m_worldShaderAsset);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SRenderWorld::Run(SystemContext const& context) const
 {
 	// Write Dependencies
-    SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+    SCWorld& world = context.GetSingleton<SCWorld>();
+	SCRender& scRender = context.GetSingleton<SCRender>();
+	// g_assetManager
+    // g_renderer
 
-    world.GenerateVBO();
+    world.GenerateVBO(g_renderer, g_assetManager);
 
 	GridSpriteSheet* worldSpriteSheet = g_assetManager->Get<GridSpriteSheet>(world.m_worldSpriteSheet);
     if (worldSpriteSheet)
@@ -80,17 +95,4 @@ void SRenderWorld::Run(SystemContext const&)
     g_renderer->BindConstantBuffer(scRender.m_lightingConstantsBuffer, LightingConstants::GetSlot());
 
 	g_renderer->DrawVertexBuffer(world.m_vbo);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SRenderWorld::Shutdown()
-{
-    auto& scWorld = g_ecs->GetSingleton<SCWorld>();
-	g_assetManager->Release(scWorld.m_worldSpriteSheet);
-
-    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-	g_assetManager->Release(scRender.m_worldShaderAsset);
-	g_renderer->ReleaseConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
 }

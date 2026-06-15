@@ -11,6 +11,5 @@ public:
 
     SAttachment(Name name = "Attachment", Rgba8 const& debugTint = Rgba8::Blue) : System(name, debugTint) {};
     void Startup() override;
-    void Run(SystemContext const& context) override;
-    void Shutdown() override;
+    void Run(SystemContext const& context) const override;
 };
