@@ -147,6 +147,11 @@ bool AssetManager::FindAssetKeyByTypeName(Name name, Name type, AssetKey& out_ke
 //----------------------------------------------------------------------------------------------------------------------
 void AssetManager::Release(AssetID assetID)
 {
+    if (!IsValid(assetID))
+    {
+        return;
+    }
+
     ChangeRefCount(assetID, -1);
 
     if (GetRefCount(assetID) <= 0 && IsFuture(assetID))
