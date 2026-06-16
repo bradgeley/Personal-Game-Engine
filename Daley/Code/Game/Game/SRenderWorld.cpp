@@ -71,7 +71,7 @@ void SRenderWorld::Run(SystemContext const& context) const
 
     world.GenerateVBO(g_renderer, g_assetManager);
 
-	GridSpriteSheet* worldSpriteSheet = g_assetManager->Get<GridSpriteSheet>(world.m_worldSpriteSheet);
+	GridSpriteSheet const* worldSpriteSheet = g_assetManager->Get<GridSpriteSheet>(world.m_worldSpriteSheet);
     if (worldSpriteSheet)
     {
         worldSpriteSheet->SetRendererState();
@@ -81,7 +81,7 @@ void SRenderWorld::Run(SystemContext const& context) const
         return;
     }
 
-	ShaderAsset* shaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_worldShaderAsset);
+	ShaderAsset const* shaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_worldShaderAsset);
     if (shaderAsset == nullptr)
     {
         return;

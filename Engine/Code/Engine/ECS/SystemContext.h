@@ -104,6 +104,8 @@ public:
     System const*   m_system                    = nullptr;
     float		    m_deltaSeconds				= 0.f;
 
+    bool            m_isPreOrPostRun            = false;
+
     // System Splitting Params
     bool		    m_didSystemSplit	        = false;
     int	            m_startEntityID				= 0;
@@ -238,7 +240,15 @@ TagStorage<CType> const& SystemContext::GetTagStorageConst() const
 template <typename...CTypes>
 GroupIter SystemContext::Iterate() const
 {
-	return g_ecs->Iterate<CTypes...>(*this);
+    if (m_isPreOrPostRun)
+    {
+        // System splitting should only apply to Run, not pre or post run.
+		return g_ecs->IterateAll<CTypes...>();
+    }
+    else
+    {
+        return g_ecs->Iterate<CTypes...>(*this);
+    }
 }
 
 

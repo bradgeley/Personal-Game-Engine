@@ -97,7 +97,7 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 		iconsIBO.AddInstance(instance);
 	}
 
-	ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
+	ShaderAsset const* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
 	if (spriteShaderAsset)
 	{
 		ConstantBuffer* spriteCbo = g_renderer->GetConstantBuffer(scRender.m_spriteSheetConstantsBuffer);

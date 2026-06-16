@@ -116,7 +116,7 @@ bool GridSpriteSheet::CompleteAsyncLoad()
 		m_textureAsset = g_assetManager->AsyncLoad<TextureAsset>(m_textureName);
 	}
 
-	TextureAsset* textureAsset = g_assetManager->Get<TextureAsset>(m_textureAsset);
+	TextureAsset const* textureAsset = g_assetManager->Get<TextureAsset>(m_textureAsset);
 	if (textureAsset == nullptr)
 	{
 		return false;
@@ -138,7 +138,7 @@ bool GridSpriteSheet::CompleteSyncLoad()
 	ASSERT_OR_DIE(g_assetManager != nullptr, "GridSpriteSheet::CompleteSyncLoad - Asset manager is null.");
 
 	m_textureAsset = g_assetManager->LoadSynchronous<TextureAsset>(m_textureName);
-	TextureAsset* textureAsset = g_assetManager->Get<TextureAsset>(m_textureAsset);
+	TextureAsset const* textureAsset = g_assetManager->Get<TextureAsset>(m_textureAsset);
 
 	ASSERT_OR_DIE(textureAsset != nullptr, "GridSpriteSheet::CompleteSyncLoad - Failed to load texture asset synchronously.");
 	if (textureAsset == nullptr)

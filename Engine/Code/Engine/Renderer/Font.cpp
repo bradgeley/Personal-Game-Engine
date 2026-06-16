@@ -275,7 +275,7 @@ void Font::LoadFNT(const char* fntFilepath)
 		m_textureAsset = g_assetManager->LoadSynchronous<TextureAsset>(fullFilePath);
 		ASSERT_OR_DIE(m_textureAsset != AssetID::Invalid, StringUtils::StringF("Font %s: failed to load texture %s", fntFilepath, fullFilePath.c_str()));
 
-		TextureAsset* asset = g_assetManager->Get<TextureAsset>(m_textureAsset);
+		TextureAsset const* asset = g_assetManager->Get<TextureAsset>(m_textureAsset);
 		m_texture = asset->GetTextureID();
 
 		auto charsElem = fontElem->FirstChildElement("chars");

@@ -371,7 +371,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
     auto const& healthStorage = context.GetArrayStorageConst<CHealth>();
 
 	// Write Dependencies
-	auto& projectileStorage = context.GetArrayStorage<CProjectile>();
+	auto& projectileStorage = context.GetMapStorage<CProjectile>();
     // CAbility (bc this is an ability in a CAbility that can update itself)
     // Spawn Entities (All)
 

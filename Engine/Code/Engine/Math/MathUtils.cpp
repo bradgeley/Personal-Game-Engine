@@ -101,6 +101,23 @@ float MathUtils::Clamp01F(float value)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void MathUtils::SplitIndices(int totalIndices, int numSplits, int splitIndex, int& out_startIndex, int& out_endIndex)
+{
+    out_startIndex = (int) totalIndices * splitIndex / numSplits;
+
+    if (splitIndex == numSplits - 1)
+    {
+        out_endIndex = totalIndices - 1;
+    }
+    else
+    {
+        out_endIndex = ((int) totalIndices * (splitIndex + 1) / numSplits) - 1;
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float MathUtils::GetLength2D(const Vec2& vec)
 {
     return sqrtf(vec.x * vec.x + vec.y * vec.y);

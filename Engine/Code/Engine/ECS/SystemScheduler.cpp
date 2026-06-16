@@ -7,6 +7,7 @@
 #include "AdminSystem.h"
 #include "Config.h"
 #include "SystemSubgraph.h"
+#include "Engine/Math/MathUtils.h"
 #include "Engine/Time/Time.h"
 #include <algorithm>
 
@@ -18,7 +19,7 @@ static std::string s_ecsSectionName = "ECS";
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RunSystem(SystemContext const& context);
+void RunSystem(SystemContext& context);
 void SplitSystem(SystemContext const& context, int numJobs);
 
 
@@ -162,19 +163,7 @@ void SystemScheduler::SplitEntities(SystemContext& context, int jobID, int numJo
 	context.m_systemSplittingJobID = jobID;
 	context.m_systemSplittingNumJobs = numJobs;
 
-	int startIndex = (int) MAX_ENTITIES * jobID / numJobs;
-	int endIndex;
-	if (jobID == numJobs - 1)
-	{
-		endIndex = MAX_ENTITIES - 1;
-	}
-	else
-	{
-		endIndex = ((int) MAX_ENTITIES * (jobID + 1) / numJobs) - 1;
-	}
-
-	context.m_startEntityID = startIndex;
-	context.m_endEntityID = endIndex;
+	MathUtils::SplitIndices((int) MAX_ENTITIES, numJobs, jobID, context.m_startEntityID, context.m_endEntityID);
 }
 
 
@@ -232,14 +221,12 @@ void SystemScheduler::TryRunSubgraph(SystemSubgraph& subgraph, float deltaSecond
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RunSystem(SystemContext const& context)
+void RunSystem(SystemContext& context)
 {
 	PerfItemData perfItem;
 	perfItem.m_tint = context.m_system->GetDebugTint();
 	perfItem.m_startTime = Time::GetCurrentTimeSeconds();
 
-	context.m_system->PreRun();
-	
 	int systemSplittingNumJobs = context.m_system->GetSystemSplittingNumJobs();
 	if (g_ecs->IsSystemSplittingActive() && systemSplittingNumJobs > 1)
 	{
@@ -247,10 +234,15 @@ void RunSystem(SystemContext const& context)
 	}
 	else
 	{
+		context.m_isPreOrPostRun = true;
+		context.m_system->PreRun(context);
+
+		context.m_isPreOrPostRun = false;
 		context.m_system->Run(context);
+
+		context.m_isPreOrPostRun = true;
+		context.m_system->PostRun(context);
 	}
-	
-	context.m_system->PostRun();
 
 	perfItem.m_endTime = Time::GetCurrentTimeSeconds();
 
@@ -270,10 +262,17 @@ void SplitSystem(SystemContext const& context, int numJobs)
 	jobReceipts.clear();
 	jobReceipts.resize(numJobs);
 
+	SystemContext splitContext = context;
+	splitContext.m_didSystemSplit = true;
+	splitContext.m_systemSplittingNumJobs = numJobs;
+
+	splitContext.m_isPreOrPostRun = true;
+	splitContext.m_system->PreRun(splitContext);
+
+	splitContext.m_isPreOrPostRun = false;
 	for (int systemSplittingJobID = 0; systemSplittingJobID < numJobs; ++systemSplittingJobID)
 	{
 		// Copy the context, but split the entities amongst them
-		SystemContext splitContext = context;
 		SystemScheduler::SplitEntities(splitContext, systemSplittingJobID, numJobs);
 		
 		Job* job = new SplitSystemJob(splitContext);
@@ -282,6 +281,10 @@ void SplitSystem(SystemContext const& context, int numJobs)
 
 	// Block until all the split jobs are complete
 	g_jobSystem->CompleteJobs(jobReceipts);
+
+
+	splitContext.m_isPreOrPostRun = true;
+	splitContext.m_system->PostRun(splitContext);
 }
 
 

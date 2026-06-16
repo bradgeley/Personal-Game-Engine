@@ -8,6 +8,7 @@
 #include "SCFlowField.h"
 #include "Engine/Time/Time.h"
 #include "Engine/Math/Noise.h"
+#include <thread>
 
 
 
@@ -16,6 +17,12 @@ void SAIController::Startup()
 {
     AddReadDependencies<CTransform, CTime, CAIController, SCFlowField>();
     AddWriteDependencies<CMovement>();
+
+    int numThreads = (int) std::thread::hardware_concurrency();
+    if (numThreads > 1)
+    {
+        m_systemSplittingNumJobs = numThreads - 1; // Leave one thread for the main thread to run other systems on
+    }
 }
 
 

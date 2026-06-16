@@ -5,6 +5,7 @@
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Core/StringUtils.h"
+#include <thread>
 
 
 
@@ -12,7 +13,35 @@
 void SAnimation::Startup()
 {
 	AddReadDependencies<CRender>();
-	AddWriteDependencies<CAnimation, AssetManager>();
+	AddWriteDependencies<AssetManager, CAnimation>();
+
+	int numThreads = std::thread::hardware_concurrency();
+    if (numThreads > 1)
+    {
+		SetSystemSplittingNumJobs(numThreads - 1);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SAnimation::PreRun(SystemContext const& context) const
+{
+    // Pull async load calls into PreRun so that Run can be split
+
+    auto& animStorage = context.GetArrayStorage<CAnimation>();
+
+    for (auto it = context.Iterate<CAnimation>(); it.IsValid(); ++it)
+    {
+        // Initialize sprite sheet and animation instance if not already done
+        CAnimation& anim = animStorage[it];
+
+        if (anim.m_gridSpriteSheet == AssetID::Invalid && anim.m_spriteSheetName != Name::Invalid)
+        {
+            // Released in CAnimation destructor (must have whole ECS write access for components to destruct, so should be ok)
+            anim.m_gridSpriteSheet = g_assetManager->AsyncLoad<GridSpriteSheet>(anim.m_spriteSheetName);
+        }
+    }
 }
 
 
@@ -22,10 +51,10 @@ void SAnimation::Run(SystemContext const& context) const
 {
     // Read Dependencies
 	auto& renderStorage = context.GetArrayStorageConst<CRender>();
+    // g_assetManager
 
     // Write Dependencies
 	auto& animStorage = context.GetArrayStorage<CAnimation>();
-    // g_assetManager
 
     for (auto it = context.Iterate<CRender, CAnimation>(); it.IsValid(); ++it)
     {
@@ -48,12 +77,7 @@ void SAnimation::Run(SystemContext const& context) const
             anim.PlayAnimation(defaultRequest);
 		}
 
-        if (anim.m_gridSpriteSheet == AssetID::Invalid && anim.m_spriteSheetName != Name::Invalid)
-        {
-            anim.m_gridSpriteSheet = g_assetManager->AsyncLoad<GridSpriteSheet>(anim.m_spriteSheetName);
-        }
-
-        GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
+        GridSpriteSheet const* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
         if (!spriteSheet)
         {
 			continue; // Wait until the sprite sheet is loaded before proceeding

@@ -66,7 +66,7 @@ void SRenderHealthBars::Run(SystemContext const& context) const
 	// g_assetManager
 	// g_renderer
 
-	ShaderAsset* healthBarShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_healthBarShaderAsset);
+	ShaderAsset const* healthBarShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_healthBarShaderAsset);
 
 	InstanceBuffer& healthBarIBO = *g_renderer->GetInstanceBuffer(scRender.m_healthBarInstanceBuffer);
 	healthBarIBO.ClearInstances();

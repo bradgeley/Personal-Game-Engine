@@ -69,7 +69,7 @@ void SRenderEntities::Run(SystemContext const& context) const
     // g_assetManager
     // g_renderer
 
-    ShaderAsset* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
+    ShaderAsset const* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
     if (spriteShaderAsset == nullptr)
     {
         return;
@@ -104,7 +104,7 @@ void SRenderEntities::Run(SystemContext const& context) const
             continue;
         }
 
-        GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
+        GridSpriteSheet const* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
         if (!spriteSheet)
         {
             // not loaded yet
@@ -148,7 +148,7 @@ void SRenderEntities::Run(SystemContext const& context) const
         AssetID assetID = pair.first;
         InstanceBufferID iboID = pair.second;
 
-        GridSpriteSheet* spriteSheet = g_assetManager->Get<GridSpriteSheet>(assetID);
+        GridSpriteSheet const* spriteSheet = g_assetManager->Get<GridSpriteSheet>(assetID);
         if (!spriteSheet)
         {
             // May be reloading right now

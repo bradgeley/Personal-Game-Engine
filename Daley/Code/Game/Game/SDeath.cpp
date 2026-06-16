@@ -6,6 +6,7 @@
 #include "CLifetime.h"
 #include "SCEntityFactory.h"
 #include "Engine/Core/ErrorUtils.h"
+#include <thread>
 
 
 
@@ -14,6 +15,12 @@ void SDeath::Startup()
 {
 	AddReadDependencies<CHealth>();
 	AddWriteDependencies<CAnimation, CDeath, CLifetime>();
+
+	int numThreads = (int) std::thread::hardware_concurrency();
+	if (numThreads > 1)
+	{
+		m_systemSplittingNumJobs = numThreads - 1; // Leave one thread for the main thread to run other systems on
+	}
 }
 
 

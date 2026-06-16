@@ -3,6 +3,7 @@
 #include "CHealth.h"
 #include "GameCommon.h"
 #include "Engine/Math/MathUtils.h"
+#include <thread>
 
 
 
@@ -10,6 +11,12 @@
 void SHealth::Startup()
 {
 	AddWriteDependencies<CHealth>();
+
+	int numThreads = (int) std::thread::hardware_concurrency();
+	if (numThreads > 1)
+	{
+		m_systemSplittingNumJobs = numThreads - 1; // Leave one thread for the main thread to run other systems on
+	}
 }
 
 

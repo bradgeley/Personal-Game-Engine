@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SGoal.h"
-#include "CHealth.h"
+#include "CTags.h"
 #include "CTransform.h"
 #include "SCEntityFactory.h"
 #include "SCWorld.h"
@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SGoal::Startup()
 {
-	AddReadDependencies<CHealth, CTransform, SCWorld>();
+	AddReadDependencies<CTags, CTransform, SCWorld>();
 	AddWriteDependencies<SCEntityFactory>();
 }
 
@@ -20,18 +20,20 @@ void SGoal::Startup()
 void SGoal::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	auto const& healthStorage = context.GetArrayStorageConst<CHealth>();
+	auto const& tagsStorage = context.GetArrayStorageConst<CTags>();
 	auto const& transStorage =context.GetArrayStorageConst<CTransform>();
 	auto const& world = context.GetSingletonConst<SCWorld>();
 
 	// Write Dependencies
 	auto& entityFactory = context.GetSingleton<SCEntityFactory>();
 
-	for (auto it = context.Iterate<CTransform, CHealth>(); it.IsValid(); ++it)
-	{
-		CHealth const& health = healthStorage[it];
+	Name enemyTag = "Enemy";
 
-		if (!health.GetIsTargetable())
+	for (auto it = context.Iterate<CTransform, CTags>(); it.IsValid(); ++it)
+	{
+		CTags const& tags = tagsStorage[it];
+
+		if (!tags.FindTag(enemyTag))
 		{
 			continue;
 		}

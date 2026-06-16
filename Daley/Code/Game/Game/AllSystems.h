@@ -13,6 +13,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Game Systems
 //
+#include "SAbility.h"
 #include "SAIController.h"
 #include "SAnimation.h"
 #include "SAttachment.h"
@@ -28,6 +29,7 @@
 #include "SDebugRender.h"
 #include "SDebugOverlay.h"
 #include "SEntityFactory.h"
+#include "SEntityTime.h"
 #include "SFlowField.h"
 #include "SGoal.h"
 #include "SHealth.h"
@@ -39,12 +41,11 @@
 #include "SMovementAnimation.h"
 #include "SPhysics.h"
 #include "SProjectile.h"
-#include "SVisualEffects.h"
 #include "SRenderEntities.h"
 #include "SRenderHealthBars.h"
 #include "SRenderStatusIcons.h"
 #include "SRenderWorld.h"
-#include "STime.h"
-#include "SAbility.h"
+#include "SVisualEffects.h"
 #include "SWaveSpawner.h"
 #include "SWorld.h"
+#include "SWorldTime.h"

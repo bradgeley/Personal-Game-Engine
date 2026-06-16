@@ -94,9 +94,6 @@
     <ClCompile Include="Game\SInput.cpp">
       <Filter>ECS\Systems\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Game\STime.cpp">
-      <Filter>ECS\Systems\World</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SDebugRender.cpp">
       <Filter>ECS\Systems\Debug</Filter>
     </ClCompile>
@@ -201,6 +198,12 @@
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Game\SCWaves.cpp" />
+    <ClCompile Include="Game\SWorldTime.cpp">
+      <Filter>ECS\Systems\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SEntityTime.cpp">
+      <Filter>ECS\Systems\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -341,9 +344,6 @@
     <ClInclude Include="Game\SCTime.h">
       <Filter>ECS\Singletons</Filter>
     </ClInclude>
-    <ClInclude Include="Game\STime.h">
-      <Filter>ECS\Systems\World</Filter>
-    </ClInclude>
     <ClInclude Include="Game\CTime.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
@@ -460,6 +460,12 @@
     </ClInclude>
     <ClInclude Include="Game\SRenderStatusIcons.h">
       <Filter>ECS\Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SWorldTime.h">
+      <Filter>ECS\Systems\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SEntityTime.h">
+      <Filter>ECS\Systems\World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

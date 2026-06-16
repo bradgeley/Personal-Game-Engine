@@ -241,6 +241,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterResourceByType<EventSystem>();
     g_ecs->RegisterResourceByType<InputSystem>();
     g_ecs->RegisterResourceByType<Renderer>();
+    g_ecs->RegisterResourceByType<Window>();
 
 	int numRegisteredComponents = g_ecs->GetNumRegisteredComponents();
     constexpr int maxComponents = sizeof(size_t) * 8;
@@ -252,7 +253,8 @@ void Game::ConfigureECS()
     // 
 
     // Pre Physics
-    g_ecs->RegisterSystem<STime>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SWorldTime>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<SEntityTime>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SLifetime>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SWaveSpawner>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SAbility>((int) FramePhase::PrePhysics);

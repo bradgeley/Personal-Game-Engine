@@ -17,7 +17,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugInput::Startup()
 {
-	AddWriteAllDependencies();
+	AddReadDependencies<SCCamera, InputSystem, Window>();
+	AddWriteDependencies<SCWorld, SCDebug, SCEntityFactory>();
 }
 
 
@@ -27,7 +28,6 @@ void SDebugInput::Run(SystemContext const& context) const
 {
 	// Read Dependencies
 	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
-	// g_eventSystem
 	// g_input
 	// g_window
 
@@ -67,15 +67,6 @@ void SDebugInput::Run(SystemContext const& context) const
 			info.m_spawnPos = scDebug.m_debugMouseWorldLocation;
 			entityFactory.m_entitiesToSpawn.push_back(info);
 		}
-	}
-
-	// Debug Enemy Spawning
-	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->IsKeyDown('W'))
-	{
-		NamedProperties args;
-		args.Set<std::string>("name", "Ant");
-		args.Set("count", 100);
-		g_eventSystem->FireEvent("Spawn", args);
 	}
 
 	// Debug Enemy Spawning

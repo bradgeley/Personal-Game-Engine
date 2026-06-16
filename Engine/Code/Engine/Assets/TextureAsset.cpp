@@ -49,7 +49,7 @@ bool TextureAsset::CompleteAsyncLoad()
         m_imageAssetID = g_assetManager->AsyncLoad<Image>(m_name);
 	}
 
-    Image* loadedImage = g_assetManager->Get<Image>(m_imageAssetID);
+    Image const* loadedImage = g_assetManager->Get<Image>(m_imageAssetID);
     if (loadedImage == nullptr)
     {
         // Try again later
@@ -81,7 +81,7 @@ bool TextureAsset::CompleteSyncLoad()
 {
     m_imageAssetID = g_assetManager->LoadSynchronous<Image>(m_name);
 
-    Image* loadedImage = g_assetManager->Get<Image>(m_imageAssetID);
+    Image const* loadedImage = g_assetManager->Get<Image>(m_imageAssetID);
     if (loadedImage == nullptr)
     {
         return false;

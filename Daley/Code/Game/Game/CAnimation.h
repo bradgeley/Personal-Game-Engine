@@ -24,6 +24,7 @@ public:
 
     CAnimation() = default;
     CAnimation(void const* xmlElement);
+	~CAnimation();
 
 	bool PlayAnimation(PlayAnimationRequest const& request, bool force = false);
 

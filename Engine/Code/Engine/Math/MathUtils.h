@@ -49,6 +49,7 @@ namespace MathUtils
 	//
 	double Clamp01(double value);
 	float Clamp01F(float value);
+	void SplitIndices(int totalIndices, int numSplits, int splitIndex, int& out_startIndex, int& out_endIndex);
 
 
 	//----------------------------------------------------------------------------------------------------------------------

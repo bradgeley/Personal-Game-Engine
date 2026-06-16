@@ -13,6 +13,12 @@ void SPhysics::Startup()
 {
     AddReadDependencies<SCWorld>();
     AddWriteDependencies<CMovement, CTransform>();
+
+	int numThreads = (int) std::thread::hardware_concurrency();
+    if (numThreads > 1)
+    {
+        m_systemSplittingNumJobs = numThreads - 1; // Leave one thread for the main thread to run other systems on
+    }
 }
 
 

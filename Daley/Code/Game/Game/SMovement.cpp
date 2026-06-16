@@ -4,6 +4,7 @@
 #include "CTransform.h"
 #include "CDeath.h"
 #include "CTime.h"
+#include <thread>
 
 
 
@@ -12,6 +13,12 @@ void SMovement::Startup()
 {
     AddReadDependencies<CTime, CDeath>();
     AddWriteDependencies<CMovement, CTransform>();
+
+    int numThreads = (int) std::thread::hardware_concurrency();
+    if (numThreads > 1)
+    {
+        m_systemSplittingNumJobs = numThreads - 1; // Leave one thread for the main thread to run other systems on
+    }
 }
 
 

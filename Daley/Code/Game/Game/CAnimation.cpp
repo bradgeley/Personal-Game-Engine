@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CAnimation.h"
+#include "Engine/Assets/AssetManager.h"
 #include "Engine/Core/XmlUtils.h"
 
 
@@ -15,6 +16,14 @@ CAnimation::CAnimation(void const* xmlElement)
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_spriteSheetName = XmlUtils::ParseXmlAttribute(elem, "spriteSheet", Name::Invalid);
     m_defaultAnimationName = XmlUtils::ParseXmlAttribute(elem, "defaultAnim", Name(s_defaultAnimName));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+CAnimation::~CAnimation()
+{
+    g_assetManager->Release(m_gridSpriteSheet);
 }
 
 
