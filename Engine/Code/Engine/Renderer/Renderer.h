@@ -112,8 +112,8 @@ public:
     VertexBuffer*               GetVertexBuffer(VertexBufferID id) const;
     InstanceBuffer*             GetInstanceBuffer(InstanceBufferID id) const;
     Swapchain*                  GetSwapchain(SwapchainID id) const;
-    RenderTarget*               GetRenderTarget(RenderTargetID id);
-    Font*                       GetFont(FontID id);
+    RenderTarget*               GetRenderTarget(RenderTargetID id) const;
+    Font*                       GetFont(FontID id) const;
 
     // Factory Release Functions
     void                        ReleaseTexture(TextureID id);

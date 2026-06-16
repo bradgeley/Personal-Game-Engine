@@ -20,7 +20,7 @@ void AsyncLoadAssetJob::Execute()
         m_loadedAsset = m_loaderFunc(m_assetKey.m_name);
         if (!m_loadedAsset)
         {
-            g_assetManager->LogError(m_assetKey.m_name, AssetManagerError::FailedToLoad);
+            AssetManager::LogError(m_assetKey.m_name, AssetManagerError::FailedToLoad);
             return;
         }
         m_loadedAsset->m_name = m_assetKey.m_name;

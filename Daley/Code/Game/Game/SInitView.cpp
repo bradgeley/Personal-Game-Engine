@@ -33,7 +33,6 @@ void SInitView::Run(SystemContext const& context) const
     g_renderer->BeginCamera(&camera.m_camera);
     g_renderer->ClearScreen(Rgba8::LightGray);
 
-
     for (auto it = context.Iterate<CRender>(); it.IsValid(); ++it)
     {
         CRender& render = renderStorage[it];

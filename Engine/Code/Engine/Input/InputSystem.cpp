@@ -179,7 +179,7 @@ bool InputSystem::IsMouseButtonDown(int mouseButton) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool InputSystem::WasMouseButtonJustPressed(int mouseButton)
+bool InputSystem::WasMouseButtonJustPressed(int mouseButton) const
 {
     if (IsValidMouseButton(mouseButton))
     {
@@ -191,7 +191,7 @@ bool InputSystem::WasMouseButtonJustPressed(int mouseButton)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool InputSystem::WasMouseButtonJustReleased(int mouseButton)
+bool InputSystem::WasMouseButtonJustReleased(int mouseButton) const
 {
     if (IsValidMouseButton(mouseButton))
     {
@@ -203,7 +203,7 @@ bool InputSystem::WasMouseButtonJustReleased(int mouseButton)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int InputSystem::GetMouseWheelChange()
+int InputSystem::GetMouseWheelChange() const
 {
     return m_frameMouseWheelChange;
 }

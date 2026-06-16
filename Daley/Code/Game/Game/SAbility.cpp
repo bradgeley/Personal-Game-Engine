@@ -32,6 +32,7 @@ void SAbility::Run(SystemContext const& context) const
 
 	// Write Dependencies
 	auto& abilityStorage = context.GetMapStorage<CAbility>();
+	// Spawning, anything else that abilities use
 
 	for (auto it = context.Iterate<CAbility, CTransform>(); it.IsValid(); ++it)
 	{

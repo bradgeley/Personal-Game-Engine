@@ -500,7 +500,7 @@ bool AssetManager::TryCancelOrCompleteFuture(AssetID assetID)
         bool cancelled = g_jobSystem->TryCancelLoadingJob(futureIt->second.m_jobID);
         if (!cancelled)
         {
-            completed = g_jobSystem->CompleteJob(futureIt->second.m_jobID, true);
+            completed = g_jobSystem->CompleteJob(futureIt->second.m_jobID, false); // Can't block and help here because it can stall the main thread while dependencies aren't complete.
         }
 
         // CompleteJob should remove from future Assets, but we need to manually do it if it was cancelled
@@ -576,7 +576,7 @@ void AssetManager::LogUnloaded(AssetKey key) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AssetManager::LogError(Name assetName, AssetManagerError errorType) const
+void AssetManager::LogError(Name assetName, AssetManagerError errorType)
 {
     switch (errorType)
     {

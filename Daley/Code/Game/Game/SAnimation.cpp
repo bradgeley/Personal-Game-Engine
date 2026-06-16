@@ -12,7 +12,7 @@
 void SAnimation::Startup()
 {
 	AddReadDependencies<CRender>();
-	AddWriteDependencies<CAnimation, AssetManager>(); // Renderer because of asset loading
+	AddWriteDependencies<CAnimation, AssetManager>();
 }
 
 

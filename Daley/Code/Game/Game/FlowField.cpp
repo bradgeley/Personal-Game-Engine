@@ -13,10 +13,6 @@ FlowField::FlowField() :
 	m_gradient(Vec2::ZeroVector),
 	m_consideredCells(false)
 {
-	if (g_renderer)
-	{
-		m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
-	}
 }
 
 
@@ -65,12 +61,6 @@ void FlowField::Reset()
 	m_costField.SetAll(0);
 	m_distanceField.SetAll(StaticWorldSettings::s_maximumFlowDistance);
 	m_gradient.SetAll(Vec2::ZeroVector);
-
-	if (g_renderer)
-	{
-		g_renderer->ReleaseVertexBuffer(m_debugVBO);
-		m_debugVBO = g_renderer->MakeVertexBuffer<Vertex_PCU>();
-	}
 }
 
 

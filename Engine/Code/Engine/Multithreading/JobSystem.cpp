@@ -38,13 +38,16 @@ void JobSystem::Startup()
 {
     EngineSubsystem::Startup();
 
-	int numGeneralThreads = (int) m_config.m_threadCount - m_config.m_deditatedLoadingWorker ? 1 : 0;
+	int numGeneralThreads = (int) m_config.m_threadCount - (m_config.m_deditatedLoadingWorker ? 1 : 0);
     for (int id = 0; id < numGeneralThreads; ++id)
     {
         CreateJobWorker(id);
     }
 
-	CreateLoadingJobWorker(numGeneralThreads, "Loading Job Worker");
+    if (m_config.m_deditatedLoadingWorker)
+    {
+        CreateLoadingJobWorker(numGeneralThreads, "Loading Job Worker");
+    }
 }
 
 

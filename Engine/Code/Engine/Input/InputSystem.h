@@ -54,9 +54,9 @@ public:
 
     bool IsValidMouseButton(int mouseButton) const;
     bool IsMouseButtonDown(int mouseButton) const;
-    bool WasMouseButtonJustPressed(int mouseButton);
-    bool WasMouseButtonJustReleased(int mouseButton);
-    int GetMouseWheelChange();
+    bool WasMouseButtonJustPressed(int mouseButton) const;
+    bool WasMouseButtonJustReleased(int mouseButton) const;
+    int GetMouseWheelChange() const;
     
     IntVec2	GetMouseClientPosition() const;
     Vec2 GetMouseClientRelativePosition() const;

@@ -392,7 +392,7 @@ Swapchain* Renderer::GetSwapchain(SwapchainID id) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RenderTarget* Renderer::GetRenderTarget(RenderTargetID id)
+RenderTarget* Renderer::GetRenderTarget(RenderTargetID id) const
 {
 	std::unique_lock lock(m_renderTargetsMutex);
 	auto it = m_renderTargets.find(id);
@@ -406,7 +406,7 @@ RenderTarget* Renderer::GetRenderTarget(RenderTargetID id)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Font* Renderer::GetFont(FontID id)
+Font* Renderer::GetFont(FontID id) const
 {
 	std::unique_lock lock(m_fontsMutex);
 	auto it = m_fonts.find(id);

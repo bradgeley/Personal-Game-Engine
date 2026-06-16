@@ -94,7 +94,7 @@ public:
     bool RegisterLoader(AssetLoaderFunction loader, Name debugName);
 
     template<typename T>
-    T* Get(AssetID assetID, bool threadSafe = true);
+    T* Get(AssetID assetID);
 
     template<typename T>
     AssetID LoadSynchronous(Name assetName);
@@ -138,7 +138,7 @@ protected:
     void LogAsyncLoadCompleted(AssetKey key) const;
     void LogLoaded(AssetKey key) const;
     void LogUnloaded(AssetKey key) const;
-    void LogError(Name assetName, AssetManagerError errorType) const;
+    static void LogError(Name assetName, AssetManagerError errorType);
 
 protected:
 
@@ -245,16 +245,8 @@ inline bool AssetManager::RegisterLoader(AssetLoaderFunction loader, Name debugN
 
 //----------------------------------------------------------------------------------------------------------------------
 template<typename T>
-inline T* AssetManager::Get(AssetID assetID, bool threadSafe /*= true*/)
+inline T* AssetManager::Get(AssetID assetID)
 {
-    if (threadSafe == false)
-    {
-        if (m_futureAssets.find(assetID) != m_futureAssets.end())
-        {
-            TryCompleteFuture(assetID, false);
-        }
-    }
-
 	auto it = m_loadedAssets.find(assetID);
     if (it == m_loadedAssets.end())
     {
