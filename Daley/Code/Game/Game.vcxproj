@@ -321,18 +321,11 @@
     <ClCompile Include="Game\SAttachment.cpp" />
     <ClCompile Include="Game\SBackgroundMusic.cpp" />
     <ClCompile Include="Game\SCamera.cpp" />
-    <ClCompile Include="Game\SCAssetManager.cpp" />
-    <ClCompile Include="Game\SCAudioSystem.cpp" />
     <ClCompile Include="Game\SCCollision.cpp" />
-    <ClCompile Include="Game\SCEventSystem.cpp" />
-    <ClCompile Include="Game\SCInputSystem.cpp" />
     <ClCompile Include="Game\SCollision.cpp" />
     <ClCompile Include="Game\SCollisionEffect.cpp" />
     <ClCompile Include="Game\SCollisionHash.cpp" />
-    <ClCompile Include="Game\SCRandomNumberGenerator.cpp" />
-    <ClCompile Include="Game\SCRenderer.cpp" />
     <ClCompile Include="Game\SCWaves.cpp" />
-    <ClCompile Include="Game\SCWindow.cpp" />
     <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\SDeath.cpp" />
     <ClCompile Include="Game\SDebugCommands.cpp" />
@@ -409,9 +402,9 @@
     <ClInclude Include="Game\SAnimation.h" />
     <ClInclude Include="Game\SBackgroundMusic.h" />
     <ClInclude Include="Game\SCamera.h" />
-    <ClInclude Include="Game\SCAudio.h" />
     <ClInclude Include="Game\SCCollision.h" />
     <ClInclude Include="Game\SCEventSystem.h" />
+    <ClInclude Include="Game\SCGame.h" />
     <ClInclude Include="Game\SCInputSystem.h" />
     <ClInclude Include="Game\SCLighting.h" />
     <ClInclude Include="Game\SCollisionEffect.h" />
@@ -423,7 +416,6 @@
     <ClInclude Include="Game\SCFlowField.h" />
     <ClInclude Include="Game\SCollision.h" />
     <ClInclude Include="Game\SCollisionHash.h" />
-    <ClInclude Include="Game\SCRender.h" />
     <ClInclude Include="Game\SCWaves.h" />
     <ClInclude Include="Game\SCWindow.h" />
     <ClInclude Include="Game\SDeath.h" />

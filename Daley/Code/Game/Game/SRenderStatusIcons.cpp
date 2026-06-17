@@ -3,14 +3,15 @@
 #include "CRender.h"
 #include "CTime.h"
 #include "SCAssetManager.h"
-#include "SCRender.h"
 #include "SCRenderer.h"
 #include "SpriteShaderCPU.h"
+#include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/ShaderAsset.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Renderer/ConstantBuffer.h"
 #include "Engine/Renderer/InstanceBuffer.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 
@@ -19,19 +20,20 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderStatusIcons::Startup()
 {
-	AddReadDependencies<CRender, CTime, SCRender>();
+	AddReadDependencies<CRender, CTime>();
 	AddWriteDependencies<SCAssetManager, SCRenderer>();
 
-	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-	Renderer* renderer = g_ecs->GetSingleton<SCRenderer>().m_renderer;
-	AssetManager* assetManager = g_ecs->GetSingleton<SCAssetManager>().m_assetManager;
+	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+	SCAssetManager& scAssetManager = g_ecs->GetSingleton<SCAssetManager>();
+	AssetManager& assetManager = *scAssetManager.GetAssetManager();
 
-	scRender.m_iconsInstanceBuffer = renderer->MakeInstanceBuffer();
+	scRenderer.m_iconsInstanceBuffer = renderer.MakeInstanceBuffer();
 
-	InstanceBuffer& iconsIBO = *renderer->GetInstanceBuffer(scRender.m_iconsInstanceBuffer);
+	InstanceBuffer& iconsIBO = *renderer.GetInstanceBuffer(scRenderer.m_iconsInstanceBuffer);
 	iconsIBO.Initialize<SpriteInstance>();
 
-	scRender.m_iconsSpriteSheet = assetManager->AsyncLoad<GridSpriteSheet>("Data/SpriteSheets/Icons.xml");
+	scRenderer.m_iconsSpriteSheet = assetManager.AsyncLoad<GridSpriteSheet>("Data/SpriteSheets/Icons.xml");
 }
 
 
@@ -39,13 +41,14 @@ void SRenderStatusIcons::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderStatusIcons::Shutdown() const
 {
-	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-	Renderer* renderer = g_ecs->GetSingleton<SCRenderer>().m_renderer;
-	AssetManager* assetManager = g_ecs->GetSingleton<SCAssetManager>().m_assetManager;
+	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+	SCAssetManager& scAssetManager = g_ecs->GetSingleton<SCAssetManager>();
+	AssetManager& assetManager = *scAssetManager.GetAssetManager();
 
-	renderer->ReleaseInstanceBuffer(scRender.m_iconsInstanceBuffer);
+	renderer.ReleaseInstanceBuffer(scRenderer.m_iconsInstanceBuffer);
 
-	assetManager->Release(scRender.m_iconsSpriteSheet);
+	assetManager.Release(scRenderer.m_iconsSpriteSheet);
 }
 
 
@@ -56,17 +59,18 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 	// Read Dependencies
 	auto& renderStorage = context.GetArrayStorageConst<CRender>();
 	auto& timeStorage = context.GetArrayStorageConst<CTime>();
-	SCRender const& scRender = context.GetSingletonConst<SCRender>();
 
 	// Write Dependencies
-	Renderer* renderer = context.GetSingleton<SCRenderer>().m_renderer;
-	AssetManager* assetManager = context.GetSingleton<SCAssetManager>().m_assetManager;
+	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+	SCAssetManager& scAssetManager = context.GetSingleton<SCAssetManager>();
+	AssetManager& assetManager = *scAssetManager.GetAssetManager();
 
 	// Render Slow Icons
-	InstanceBuffer& iconsIBO = *renderer->GetInstanceBuffer(scRender.m_iconsInstanceBuffer);
+	InstanceBuffer& iconsIBO = *renderer.GetInstanceBuffer(scRenderer.m_iconsInstanceBuffer);
 	iconsIBO.ClearInstances();
 
-	GridSpriteSheet const* iconsSpriteSheet = assetManager->Get<GridSpriteSheet>(scRender.m_iconsSpriteSheet);
+	GridSpriteSheet const* iconsSpriteSheet = assetManager.Get<GridSpriteSheet>(scRenderer.m_iconsSpriteSheet);
 	if (!iconsSpriteSheet)
 	{
 		return; // Not loaded yet
@@ -101,10 +105,10 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 		iconsIBO.AddInstance(instance);
 	}
 
-	ShaderAsset const* spriteShaderAsset = assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
+	ShaderAsset const* spriteShaderAsset = assetManager.Get<ShaderAsset>(scRenderer.m_spriteShaderAsset);
 	if (spriteShaderAsset)
 	{
-		ConstantBuffer* spriteCbo = renderer->GetConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
+		ConstantBuffer* spriteCbo = renderer.GetConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer);
 
 		ASSERT_OR_DIE(spriteCbo != nullptr, "SRenderStatusIcons::Run - Invalid constant buffer.");
 
@@ -115,11 +119,11 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 		spriteSheetConstants.m_textureDims = iconsSpriteSheet->GetTextureDimensions();
 		spriteCbo->Update(spriteSheetConstants);
 
-		renderer->BindConstantBuffer(scRender.m_spriteSheetConstantsBuffer, 5);
+		renderer.BindConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer, 5);
 
 		iconsSpriteSheet->SetRendererState();
-		renderer->SetModelMatrix(Mat44::Identity);
-		renderer->BindShader(spriteShaderAsset->GetShaderID());
-		renderer->DrawInstanced(6, iconsIBO);
+		renderer.SetModelMatrix(Mat44::Identity);
+		renderer.BindShader(spriteShaderAsset->GetShaderID());
+		renderer.DrawInstanced(6, iconsIBO);
 	}
 }

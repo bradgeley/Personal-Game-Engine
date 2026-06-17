@@ -239,10 +239,10 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void DebugDrawRaycast(WorldRaycastResult const& result)
+void DebugDrawRaycast(WorldRaycastResult const& result, Renderer& renderer)
 {
-    VertexBufferID id = g_renderer->MakeVertexBuffer<Vertex_PCU>();
-    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
+    VertexBufferID id = renderer.MakeVertexBuffer<Vertex_PCU>();
+    VertexBuffer& vbo = *renderer.GetVertexBuffer(id);
 
     VertexUtils::AddVertsForDisc2D(vbo, result.m_raycast.m_start, 0.1f, 16, Rgba8::Yellow);
     VertexUtils::AddVertsForDisc2D(vbo, result.m_hitLocation, 0.1f, 16, Rgba8::Yellow);
@@ -262,11 +262,11 @@ void DebugDrawRaycast(WorldRaycastResult const& result)
         VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Yellow);
     }
 
-    g_renderer->BindTexture(nullptr);
-    g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(vbo);
+    renderer.BindTexture(nullptr);
+    renderer.BindShader(nullptr);
+    renderer.DrawVertexBuffer(vbo);
 
-    g_renderer->ReleaseVertexBuffer(id);
+    renderer.ReleaseVertexBuffer(id);
 }
 
 

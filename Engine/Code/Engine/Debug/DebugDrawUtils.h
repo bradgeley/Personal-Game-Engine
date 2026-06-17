@@ -5,7 +5,11 @@
 
 
 
+class Renderer;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 // Debug Draw Utils
 //
-void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness = 1.f, Rgba8 tint = Rgba8::Red);
+void DebugDrawMesh2D(Renderer& renderer, std::vector<Vertex_PCU> const& triangles, float thickness = 1.f, Rgba8 tint = Rgba8::Red);

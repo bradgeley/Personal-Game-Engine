@@ -7,10 +7,10 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, Rgba8 tint)
+void DebugDrawMesh2D(Renderer& renderer, std::vector<Vertex_PCU> const& triangles, float thickness, Rgba8 tint)
 {
-    VertexBufferID id = g_renderer->MakeVertexBuffer<Vertex_PCU>();
-    VertexBuffer& vbo = *g_renderer->GetVertexBuffer(id);
+    VertexBufferID id = renderer.MakeVertexBuffer<Vertex_PCU>();
+    VertexBuffer& vbo = *renderer.GetVertexBuffer(id);
     
     for (size_t i = 0; i < triangles.size(); i += 3)
     {
@@ -23,9 +23,9 @@ void DebugDrawMesh2D(std::vector<Vertex_PCU> const& triangles, float thickness, 
         VertexUtils::AddVertsForLine2D(vbo, Vec2(v3.pos), Vec2(v1.pos), thickness, tint);
     }
 
-    g_renderer->BindTexture(nullptr);
-    g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(vbo);
+    renderer.BindTexture(nullptr);
+    renderer.BindShader(nullptr);
+    renderer.DrawVertexBuffer(vbo);
 
-    g_renderer->ReleaseVertexBuffer(id);
+    renderer.ReleaseVertexBuffer(id);
 }

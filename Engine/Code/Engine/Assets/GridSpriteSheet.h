@@ -37,8 +37,7 @@ public:
 	IntVec2 GetLayout() const;
 	IntVec2 GetEdgePadding() const;
 	IntVec2 GetInnerPadding() const;
-	AABB2 GetGenericSpriteQuad(float size = 1.f) const;	// size == largest dimension x or y
-	Vec2 GetSpriteDimensions(float size = 1.f) const;	// size == largest dimension x or y
+	Vec2 GetSpriteDimensions() const;
 	int CountNumAnimations() const;
 	int GetNumAnimations() const;
 
@@ -51,16 +50,18 @@ protected:
 
 protected:
 
-	TextureID	m_texture		= RendererUtils::InvalidID;		// Cached after load
-	IntVec2		m_layout		= IntVec2::ZeroVector;			// Dimensions in sprites (not pixels)
-	IntVec2		m_spriteDims	= IntVec2::ZeroVector;			// Dimensions of each sprite in pixels
-	Grid<AABB2> m_spriteUVs;									// Precomputed UVs for each sprite
-	IntVec2		m_edgePadding	= IntVec2::ZeroVector;			// Around the whole sheet
-	IntVec2		m_innerPadding	= IntVec2::ZeroVector;			// Between sprites
-	int			m_numAnimations = 0;
-	std::vector<SpriteAnimationGroup> m_animationGroups;		// Animations that use this sprite sheet, loaded from xml
+	TextureID	m_texture				= RendererUtils::InvalidID;		// Cached after load
+	IntVec2		m_layout				= IntVec2::ZeroVector;			// Dimensions in sprites (not pixels)
+	IntVec2		m_spriteDims			= IntVec2::ZeroVector;			// Dimensions of each sprite in pixels
+	Grid<AABB2> m_spriteUVs;											// Precomputed UVs for each sprite
+	float		m_spriteAspect			= 1.f;							// Precomputed aspect ratio of each sprite (same for all sprites in the sheet)
+	float		m_oneOverSpriteAspect	= 1.f;							// Precomputed inverse aspect ratio of each sprite (same for all sprites in the sheet)
+	IntVec2		m_edgePadding			= IntVec2::ZeroVector;			// Around the whole sheet
+	IntVec2		m_innerPadding			= IntVec2::ZeroVector;			// Between sprites
+	int			m_numAnimations			= 0;
+	std::vector<SpriteAnimationGroup> m_animationGroups;				// Animations that use this sprite sheet, loaded from xml
 
 	// Used during the load process
 	Name		m_textureName	= Name::Invalid;
-	AssetID		m_textureAsset	= AssetID::Invalid;				// Loaded texture asset id
+	AssetID		m_textureAsset	= AssetID::Invalid;						// Loaded texture asset id
 };

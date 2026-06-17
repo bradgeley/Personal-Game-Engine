@@ -4,15 +4,16 @@
 #include "CRender.h"
 #include "SCAssetManager.h"
 #include "SCCamera.h"
-#include "SCRender.h"
 #include "SCRenderer.h"
 #include "SCWorld.h"
 #include "SpriteShaderCPU.h"
+#include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/ShaderAsset.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/InstanceBuffer.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
@@ -24,14 +25,18 @@
 void SRenderEntities::Startup()
 {
     AddReadDependencies<CAnimation, CRender, SCCamera>();
-    AddWriteDependencies<SCRender, SCAssetManager, SCRenderer>();
+    AddWriteDependencies<SCAssetManager, SCRenderer>();
 
-    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
+	SCAssetManager& scAssetManager = g_ecs->GetSingleton<SCAssetManager>();
+	AssetManager& assetManager = *scAssetManager.GetAssetManager();
 
-    scRender.m_spriteSheetConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(SpriteSheetConstants));
+    SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+    Renderer& renderer = *scRenderer.GetRenderer();
+
+    scRenderer.m_spriteSheetConstantsBuffer = renderer.MakeConstantBuffer(sizeof(SpriteSheetConstants));
 
     // Sprite Shader
-    scRender.m_spriteShaderAsset = g_assetManager->AsyncLoad<ShaderAsset>("Data/Shaders/SpriteShader.xml");
+    scRenderer.m_spriteShaderAsset = assetManager.AsyncLoad<ShaderAsset>("Data/Shaders/SpriteShader.xml");
 }
 
 
@@ -39,19 +44,20 @@ void SRenderEntities::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderEntities::Shutdown() const
 {
-    ASSERT_OR_DIE(g_assetManager != nullptr, "SRenderEntities::Shutdown - Asset manager is null.");
-    ASSERT_OR_DIE(g_renderer != nullptr, "SRenderEntities::Shutdown - Renderer is null.");
+    SCAssetManager& scAssetManager = g_ecs->GetSingleton<SCAssetManager>();
+    AssetManager& assetManager = *scAssetManager.GetAssetManager();
 
-    SCRender scRender = g_ecs->GetSingleton<SCRender>();
+    SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+    Renderer& renderer = *scRenderer.GetRenderer();
 
-    for (auto it : scRender.m_instancesPerSpriteSheet)
+    for (auto it : scRenderer.m_instancesPerSpriteSheet)
     {
-        g_assetManager->Release(it.first);
-        g_renderer->ReleaseInstanceBuffer(it.second);
+        assetManager.Release(it.first);
+        renderer.ReleaseInstanceBuffer(it.second);
     }
 
-    g_renderer->ReleaseConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
-    g_assetManager->Release(scRender.m_spriteShaderAsset);
+    renderer.ReleaseConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer);
+    assetManager.Release(scRenderer.m_spriteShaderAsset);
 }
 
 
@@ -65,11 +71,13 @@ void SRenderEntities::Run(SystemContext const& context) const
     SCCamera const& scCamera = context.GetSingletonConst<SCCamera>();
 
 	// Write Dependencies
-    SCRender& scRender = context.GetSingleton<SCRender>();
-	AssetManager* assetManager = context.GetSingleton<SCAssetManager>().m_assetManager;
-	Renderer* renderer = context.GetSingleton<SCRenderer>().m_renderer;
+    SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+    Renderer& renderer = *scRenderer.GetRenderer();
 
-    ShaderAsset const* spriteShaderAsset = assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
+    SCAssetManager& scAssetManager = context.GetSingleton<SCAssetManager>();
+    AssetManager& assetManager = *scAssetManager.GetAssetManager();
+
+    ShaderAsset const* spriteShaderAsset = assetManager.Get<ShaderAsset>(scRenderer.m_spriteShaderAsset);
     if (spriteShaderAsset == nullptr)
     {
         return;
@@ -79,10 +87,10 @@ void SRenderEntities::Run(SystemContext const& context) const
     AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
 
     // Clear last frame's instances
-    for (auto it : scRender.m_instancesPerSpriteSheet)
+    for (auto it : scRenderer.m_instancesPerSpriteSheet)
     {
         InstanceBufferID iboID = it.second;
-        InstanceBuffer* ibo = renderer->GetInstanceBuffer(iboID);
+        InstanceBuffer* ibo = renderer.GetInstanceBuffer(iboID);
         if (ibo)
         {
             ibo->ClearInstances();
@@ -104,7 +112,7 @@ void SRenderEntities::Run(SystemContext const& context) const
             continue;
         }
 
-        GridSpriteSheet const* spriteSheet = assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
+        GridSpriteSheet const* spriteSheet = assetManager.Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
         if (!spriteSheet)
         {
             // not loaded yet
@@ -112,12 +120,12 @@ void SRenderEntities::Run(SystemContext const& context) const
         }
 
         // Get or create instance buffer for this sprite sheet
-        if (scRender.m_instancesPerSpriteSheet.find(anim.m_gridSpriteSheet) == scRender.m_instancesPerSpriteSheet.end())
+        if (scRenderer.m_instancesPerSpriteSheet.find(anim.m_gridSpriteSheet) == scRenderer.m_instancesPerSpriteSheet.end())
         {
-            scRender.m_instancesPerSpriteSheet[anim.m_gridSpriteSheet] = renderer->MakeInstanceBuffer<SpriteInstance>();
+            scRenderer.m_instancesPerSpriteSheet[anim.m_gridSpriteSheet] = renderer.MakeInstanceBuffer<SpriteInstance>();
         }
-        InstanceBufferID iboID = scRender.m_instancesPerSpriteSheet[anim.m_gridSpriteSheet];
-        InstanceBuffer* ibo = renderer->GetInstanceBuffer(iboID);
+        InstanceBufferID iboID = scRenderer.m_instancesPerSpriteSheet[anim.m_gridSpriteSheet];
+        InstanceBuffer* ibo = renderer.GetInstanceBuffer(iboID);
 
         ASSERT_OR_DIE(ibo != nullptr, "SRenderEntities::Run - Invalid instance buffer.");
 
@@ -134,7 +142,7 @@ void SRenderEntities::Run(SystemContext const& context) const
         instance.m_position = Vec3(render.GetRenderPosition(), renderDepth);
         instance.m_orientation = render.GetRenderOrientation();
         instance.m_rgba = render.m_tint;
-        instance.m_dims = spriteSheet->GetSpriteDimensions(render.m_renderRadius * 2.f);
+        instance.m_dims = spriteSheet->GetSpriteDimensions() * render.m_renderRadius * 2.f;
 		instance.m_indoorLight = 255; // todo:
 		instance.m_outdoorLight = 255; // todo:
         instance.m_spriteIndex = anim.m_animInstance.GetCurrentSpriteIndex();
@@ -143,24 +151,24 @@ void SRenderEntities::Run(SystemContext const& context) const
     }
 
     // 1 Draw call per sprite sheet
-    for (auto pair : scRender.m_instancesPerSpriteSheet)
+    for (auto pair : scRenderer.m_instancesPerSpriteSheet)
     {
         AssetID assetID = pair.first;
         InstanceBufferID iboID = pair.second;
 
-        GridSpriteSheet const* spriteSheet = assetManager->Get<GridSpriteSheet>(assetID);
+        GridSpriteSheet const* spriteSheet = assetManager.Get<GridSpriteSheet>(assetID);
         if (!spriteSheet)
         {
             // May be reloading right now
             continue;
         }
-        InstanceBuffer* ibo = renderer->GetInstanceBuffer(iboID);
+        InstanceBuffer* ibo = renderer.GetInstanceBuffer(iboID);
         if (!ibo || ibo->GetNumInstances() == 0)
         {
             continue;
 		}
 
-        ConstantBuffer* spriteCbo = renderer->GetConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
+        ConstantBuffer* spriteCbo = renderer.GetConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer);
 
         ASSERT_OR_DIE(spriteCbo != nullptr, "SRenderEntities::Run - Invalid constant buffer.");
 
@@ -171,10 +179,10 @@ void SRenderEntities::Run(SystemContext const& context) const
         spriteSheetConstants.m_textureDims = spriteSheet->GetTextureDimensions();
         spriteCbo->Update(spriteSheetConstants);
 
-        renderer->SetModelConstants(ModelConstants());
-        renderer->BindConstantBuffer(scRender.m_spriteSheetConstantsBuffer, 5);
+        renderer.SetModelConstants(ModelConstants());
+        renderer.BindConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer, 5);
         spriteSheet->SetRendererState();
-        renderer->BindShader(spriteShaderID);
-        renderer->DrawInstanced(6, *ibo);
+        renderer.BindShader(spriteShaderID);
+        renderer.DrawInstanced(6, *ibo);
     }
 }

@@ -4,11 +4,12 @@
 #include "CRender.h"
 #include "HealthBarShaderCPU.h"
 #include "SCAssetManager.h"
-#include "SCRender.h"
 #include "SCRenderer.h"
+#include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/ShaderAsset.h"
 #include "Engine/Renderer/ConstantBuffer.h"
 #include "Engine/Renderer/InstanceBuffer.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 
 
@@ -16,17 +17,18 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderHealthBars::Startup()
 {
-	AddReadDependencies<CHealth, CRender, SCRender>();
-	AddWriteDependencies<SCAssetManager, SCRenderer>();
+	AddReadDependencies<CHealth, CRender, SCAssetManager>();
+	AddWriteDependencies<SCRenderer>();
 
-	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-	Renderer* renderer = g_ecs->GetSingleton<SCRenderer>().m_renderer;
-	AssetManager* assetManager = g_ecs->GetSingleton<SCAssetManager>().m_assetManager;
+	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+	SCAssetManager& scAssetManager = g_ecs->GetSingleton<SCAssetManager>();
+	AssetManager& assetManager = *scAssetManager.GetAssetManager();
 
-	scRender.m_healthBarConstantsBuffer = renderer->MakeConstantBuffer(sizeof(HealthBarRenderConstants));
-	scRender.m_healthBarInstanceBuffer = renderer->MakeInstanceBuffer();
+	scRenderer.m_healthBarConstantsBuffer = renderer.MakeConstantBuffer(sizeof(HealthBarRenderConstants));
+	scRenderer.m_healthBarInstanceBuffer = renderer.MakeInstanceBuffer();
 
-	InstanceBuffer& healthBarIBO = *renderer->GetInstanceBuffer(scRender.m_healthBarInstanceBuffer);
+	InstanceBuffer& healthBarIBO = *renderer.GetInstanceBuffer(scRenderer.m_healthBarInstanceBuffer);
 	healthBarIBO.Initialize<HealthBarInstance>();
 
 	HealthBarRenderConstants constants;
@@ -35,10 +37,10 @@ void SRenderHealthBars::Startup()
 	Rgba8::Green.GetAsFloats(constants.m_poisonTint);
 	Rgba8::Orange.GetAsFloats(constants.m_fireTint);
 
-	ConstantBuffer& healthBarCBO = *renderer->GetConstantBuffer(scRender.m_healthBarConstantsBuffer);
+	ConstantBuffer& healthBarCBO = *renderer.GetConstantBuffer(scRenderer.m_healthBarConstantsBuffer);
 	healthBarCBO.Update(constants);
 
-	scRender.m_healthBarShaderAsset = assetManager->AsyncLoad<ShaderAsset>("Data/Shaders/HealthBarShader.xml");
+	scRenderer.m_healthBarShaderAsset = assetManager.AsyncLoad<ShaderAsset>("Data/Shaders/HealthBarShader.xml");
 }
 
 
@@ -46,14 +48,15 @@ void SRenderHealthBars::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderHealthBars::Shutdown() const
 {
-	SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-	Renderer* renderer = g_ecs->GetSingleton<SCRenderer>().m_renderer;
-	AssetManager* assetManager = g_ecs->GetSingleton<SCAssetManager>().m_assetManager;
+	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+	SCAssetManager& scAssetManager = g_ecs->GetSingleton<SCAssetManager>();
+	AssetManager& assetManager = *scAssetManager.GetAssetManager();
 
-	renderer->ReleaseConstantBuffer(scRender.m_healthBarConstantsBuffer);
-	renderer->ReleaseInstanceBuffer(scRender.m_healthBarInstanceBuffer);
+	renderer.ReleaseConstantBuffer(scRenderer.m_healthBarConstantsBuffer);
+	renderer.ReleaseInstanceBuffer(scRenderer.m_healthBarInstanceBuffer);
 
-	assetManager->Release(scRender.m_healthBarShaderAsset);
+	assetManager.Release(scRenderer.m_healthBarShaderAsset);
 }
 
 
@@ -64,15 +67,16 @@ void SRenderHealthBars::Run(SystemContext const& context) const
 	// Read Dependencies
 	auto& renderStorage = context.GetArrayStorageConst<CRender>();
 	auto& healthStorage = context.GetArrayStorageConst<CHealth>();
-	SCRender const& scRender = context.GetSingletonConst<SCRender>();
+	SCAssetManager const& scAssetManager = context.GetSingletonConst<SCAssetManager>();
+	AssetManager const& assetManager = *scAssetManager.GetAssetManager();
 
 	// Write Dependencies
-	AssetManager* assetManager = context.GetSingleton<SCAssetManager>().m_assetManager;
-	Renderer* renderer = context.GetSingleton<SCRenderer>().m_renderer;
+	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
 
-	ShaderAsset const* healthBarShaderAsset = assetManager->Get<ShaderAsset>(scRender.m_healthBarShaderAsset);
+	ShaderAsset const* healthBarShaderAsset = assetManager.Get<ShaderAsset>(scRenderer.m_healthBarShaderAsset);
 
-	InstanceBuffer& healthBarIBO = *renderer->GetInstanceBuffer(scRender.m_healthBarInstanceBuffer);
+	InstanceBuffer& healthBarIBO = *renderer.GetInstanceBuffer(scRenderer.m_healthBarInstanceBuffer);
 	healthBarIBO.ClearInstances();
 
 	for (auto it = context.Iterate<CRender, CHealth>(); it.IsValid(); ++it)
@@ -101,8 +105,8 @@ void SRenderHealthBars::Run(SystemContext const& context) const
 
 	if (healthBarShaderAsset)
 	{
-		renderer->BindConstantBuffer(scRender.m_healthBarConstantsBuffer, 5);
-		renderer->BindShader(healthBarShaderAsset->GetShaderID());
-		renderer->DrawInstanced(6, *renderer->GetInstanceBuffer(scRender.m_healthBarInstanceBuffer));
+		renderer.BindConstantBuffer(scRenderer.m_healthBarConstantsBuffer, 5);
+		renderer.BindShader(healthBarShaderAsset->GetShaderID());
+		renderer.DrawInstanced(6, *renderer.GetInstanceBuffer(scRenderer.m_healthBarInstanceBuffer));
 	}
 }

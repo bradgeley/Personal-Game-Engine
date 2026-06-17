@@ -1,6 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "SBackgroundMusic.h"
-#include "SCAudio.h"
+#include "SCAudioSystem.h"
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Debug/DevConsole.h"
@@ -36,8 +36,10 @@ void SBackgroundMusic::Shutdown() const
 	g_eventSystem->UnsubscribeMethod("ToggleBGM", this, &SBackgroundMusic::ToggleBGM);
 	g_devConsole->RemoveDevConsoleCommandInfo("SetVolume_BGM");
 
-	SCAudio& scAudio = g_ecs->GetSingleton<SCAudio>();
-	g_audioSystem->StopSound(scAudio.m_bgmSoundID);
+	SCAudioSystem& audio = g_ecs->GetSingleton<SCAudioSystem>();
+	AudioSystem& audioSystem = *audio.GetAudioSystem();
+
+	audioSystem.StopSound(audio.m_bgmSoundID);
 }
 
 
@@ -45,14 +47,16 @@ void SBackgroundMusic::Shutdown() const
 //----------------------------------------------------------------------------------------------------------------------
 bool SBackgroundMusic::ToggleBGM(NamedProperties&)
 {
-	SCAudio& scAudio = g_ecs->GetSingleton<SCAudio>();
-	if (!g_audioSystem->IsValidSoundID(scAudio.m_bgmSoundID))
+	SCAudioSystem& audio = g_ecs->GetSingleton<SCAudioSystem>();
+	AudioSystem& audioSystem = *audio.GetAudioSystem();
+
+	if (!audioSystem.IsValidSoundID(audio.m_bgmSoundID))
 	{
 		PlayBGM();
 	}
 	else
 	{
-		g_audioSystem->TogglePaused(scAudio.m_bgmSoundID);
+		audioSystem.TogglePaused(audio.m_bgmSoundID);
 	}
 
 	return false;
@@ -63,9 +67,11 @@ bool SBackgroundMusic::ToggleBGM(NamedProperties&)
 //----------------------------------------------------------------------------------------------------------------------
 bool SBackgroundMusic::SetVolume_BGM(NamedProperties& args)
 {
-	SCAudio& scAudio = g_ecs->GetSingleton<SCAudio>();
-	scAudio.m_bgmVolume = args.Get("volume", scAudio.m_bgmVolume);
-	g_audioSystem->SetSoundVolume(scAudio.m_bgmSoundID, scAudio.m_bgmVolume);
+	SCAudioSystem& audio = g_ecs->GetSingleton<SCAudioSystem>();
+	AudioSystem& audioSystem = *audio.GetAudioSystem();
+
+	audio.m_bgmVolume = args.Get("volume", audio.m_bgmVolume);
+	audioSystem.SetSoundVolume(audio.m_bgmSoundID, audio.m_bgmVolume);
 	return false;
 }
 
@@ -74,9 +80,11 @@ bool SBackgroundMusic::SetVolume_BGM(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 void SBackgroundMusic::PlayBGM()
 {
-	SCAudio& scAudio = g_ecs->GetSingleton<SCAudio>();
-	if (!g_audioSystem->IsSoundPlaying(scAudio.m_bgmSoundID))
+	SCAudioSystem& audio = g_ecs->GetSingleton<SCAudioSystem>();
+	AudioSystem& audioSystem = *audio.GetAudioSystem();
+
+	if (!audioSystem.IsSoundPlaying(audio.m_bgmSoundID))
 	{
-		scAudio.m_bgmSoundID = g_audioSystem->PlaySoundFromFile(BGM_FILEPATH, true, scAudio.m_bgmVolume);
+		audio.m_bgmSoundID = audioSystem.PlaySoundFromFile(BGM_FILEPATH, true, audio.m_bgmVolume);
 	}
 }

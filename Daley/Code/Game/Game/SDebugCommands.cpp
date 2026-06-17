@@ -44,6 +44,7 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 	}
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
+	RandomNumberGenerator& rng = *g_ecs->GetSingleton<SCRandomNumberGenerator>().GetRNG();
 
 	int spawnCount = args.Get("count", 1);
 	spawnCount = MathUtils::Clamp(spawnCount, 0, (int) MAX_ENTITIES - g_ecs->Count() + 1); // + 1 to show one error message if spawning past MAX_ENTITIES
@@ -51,7 +52,7 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 	{
 		SpawnInfo spawnInfo;
 		spawnInfo.m_def = def;
-		spawnInfo.m_spawnPos = world.GetRandomSpawnLocation();
+		spawnInfo.m_spawnPos = world.GetRandomSpawnLocation(rng);
 		factory.m_entitiesToSpawn.push_back(spawnInfo);
 	}
 	return true;

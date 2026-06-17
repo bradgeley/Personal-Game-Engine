@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SLighting.h"
-#include "SCRender.h"
 #include "SCWorld.h"
 #include "SCCamera.h"
 #include "SCLighting.h"
@@ -11,17 +10,20 @@
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/ConstantBuffer.h"
+#include "Engine/Renderer/Renderer.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SLighting::Startup()
 {
-    AddReadDependencies<SCCamera, SCRender>();
+    AddReadDependencies<SCCamera>();
 	AddWriteDependencies<SCWorld, SCLighting, SCRenderer>();
 
-    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-    scRender.m_lightingConstantsBuffer = g_renderer->MakeConstantBuffer(sizeof(LightingConstants));
+    SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+    Renderer& renderer = *scRenderer.GetRenderer();
+
+    scRenderer.m_lightingConstantsBuffer = renderer.MakeConstantBuffer(sizeof(LightingConstants));
 
 	DevConsoleUtils::AddDevConsoleCommand("ToggleLighting", &SLighting::ToggleLighting);
 
@@ -39,8 +41,9 @@ void SLighting::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SLighting::Shutdown() const
 {
-    SCRender& scRender = g_ecs->GetSingleton<SCRender>();
-    g_renderer->ReleaseConstantBuffer(scRender.m_lightingConstantsBuffer);
+    SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+    Renderer& renderer = *scRenderer.GetRenderer();
+    renderer.ReleaseConstantBuffer(scRenderer.m_lightingConstantsBuffer);
 
     DevConsoleUtils::RemoveDevConsoleCommand("ToggleLighting", &SLighting::ToggleLighting);
 }
@@ -51,13 +54,13 @@ void SLighting::Shutdown() const
 void SLighting::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-    SCRender const& scRender = context.GetSingletonConst<SCRender>();
     SCCamera const& scCamera = context.GetSingletonConst<SCCamera>();
 
     // Write Dependencies
+    SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
     SCWorld& scWorld = context.GetSingleton<SCWorld>();
     SCLighting& scLighting = context.GetSingleton<SCLighting>();
-	Renderer& renderer = *context.GetSingleton<SCRenderer>().m_renderer;
 
     if (!scWorld.m_isLightingDirty)
     {
@@ -75,7 +78,7 @@ void SLighting::Run(SystemContext const& context) const
     lightingConstants.m_ambientLightIntensity = 0.01f; // 0 = pitch black, 1 = full brightness
 	lightingConstants.m_isLightingEnabled = scLighting.m_isLightingEnabled ? 1 : 0;
 
-    ConstantBuffer* lightingCbo = renderer.GetConstantBuffer(scRender.m_lightingConstantsBuffer);
+    ConstantBuffer* lightingCbo = renderer.GetConstantBuffer(scRenderer.m_lightingConstantsBuffer);
     lightingCbo->Update(lightingConstants);
 
 	AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
@@ -163,7 +166,7 @@ void SLighting::Run(SystemContext const& context) const
         it = scLighting.m_dirtyLightingTiles.begin();
     }
 
-    scWorld.GenerateLightmap(&renderer);
+    scWorld.GenerateLightmap(renderer);
 }
 
 

@@ -14,6 +14,7 @@
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Renderer/Font.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 
@@ -25,9 +26,11 @@ void SDebugRender::Startup()
     AddWriteAllDependencies();
 
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+    Renderer& renderer = *scRenderer.GetRenderer();
 
-    scDebug.m_frameUntexVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
-    scDebug.m_frameDefaultFontVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
+    scDebug.m_frameUntexVerts = renderer.MakeVertexBuffer<Vertex_PCU>();
+    scDebug.m_frameDefaultFontVerts = renderer.MakeVertexBuffer<Vertex_PCU>();
 
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderGrid", &SDebugRender::DebugRenderGrid);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderEdges", &SDebugRender::DebugRenderEdges);
@@ -45,9 +48,11 @@ void SDebugRender::Startup()
 void SDebugRender::Shutdown() const
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+    Renderer& renderer = *scRenderer.GetRenderer();
 
-    g_renderer->ReleaseVertexBuffer(scDebug.m_frameDefaultFontVerts);
-    g_renderer->ReleaseVertexBuffer(scDebug.m_frameUntexVerts);
+    renderer.ReleaseVertexBuffer(scDebug.m_frameDefaultFontVerts);
+    renderer.ReleaseVertexBuffer(scDebug.m_frameUntexVerts);
 
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderGrid", &SDebugRender::DebugRenderGrid);
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderEdges", &SDebugRender::DebugRenderEdges);
@@ -67,7 +72,8 @@ void SDebugRender::Run(SystemContext const& context) const
 	// Write Dependencies
 	SCDebug& scDebug = context.GetSingleton<SCDebug>();
     SCCamera& scCamera = context.GetSingleton<SCCamera>();
-    Renderer& renderer = *context.GetSingleton<SCRenderer>().m_renderer;
+    SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+    Renderer& renderer = *scRenderer.GetRenderer();
 
     // Read Dependencies
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();

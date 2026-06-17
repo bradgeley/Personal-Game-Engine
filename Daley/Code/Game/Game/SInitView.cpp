@@ -6,6 +6,8 @@
 #include "SCWindow.h"
 #include "WorldSettings.h"
 #include "Engine/Math/GeometryUtils.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Window/Window.h"
 
 
 
@@ -26,8 +28,8 @@ void SInitView::Run(SystemContext const& context) const
 
 	// Write Dependencies
 	auto& renderStorage = context.GetArrayStorage<CRender>();
-	Renderer& renderer = *context.GetSingleton<SCRenderer>().m_renderer;
-	Window* window = context.GetSingleton<SCWindow>().m_window;
+	Renderer& renderer = *context.GetSingleton<SCRenderer>().GetRenderer();
+	Window* window = context.GetSingleton<SCWindow>().GetWindow();
 
     AABB2 cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
 

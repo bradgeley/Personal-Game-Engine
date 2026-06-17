@@ -95,7 +95,7 @@ public:
 
     // Assets are const at runtime to prevent multithreading issues.
     template<typename T>
-    T const* Get(AssetID assetID);
+    T const* Get(AssetID assetID) const;
 
 	FutureAsset const* GetFutureAsset(AssetID assetID) const;
 
@@ -248,7 +248,7 @@ inline bool AssetManager::RegisterLoader(AssetLoaderFunction loader, Name debugN
 
 //----------------------------------------------------------------------------------------------------------------------
 template<typename T>
-inline T const* AssetManager::Get(AssetID assetID)
+inline T const* AssetManager::Get(AssetID assetID) const
 {
 	auto it = m_loadedAssets.find(assetID);
     if (it == m_loadedAssets.end())

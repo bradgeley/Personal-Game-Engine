@@ -372,7 +372,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
 
 	// Write Dependencies
 	auto& projectileStorage = context.GetMapStorage<CProjectile>();
-    SCRandomNumberGenerator& rng = context.GetSingleton<SCRandomNumberGenerator>();
+    RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
     // CAbility (bc this is an ability in a CAbility that can update itself)
     // Spawn Entities (All)
 
@@ -445,7 +445,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
 
             ASSERT_OR_DIE(!validTargets.empty(), "ProjectileHitAbility::Update - closest to goal tile has no valid targets. Should be impossible.");
 
-            int randomIndex = rng.m_rng->GetRandomIntInRange(0, static_cast<int>(validTargets.size()) - 1);
+            int randomIndex = rng.GetRandomIntInRange(0, static_cast<int>(validTargets.size()) - 1);
             targetID = validTargets[randomIndex];
         }
     }
@@ -472,7 +472,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
             break;
         }
 
-        RollDamageAndEffects(*rng.m_rng);
+        RollDamageAndEffects(rng);
 
         // Copy ability data to proj, snapshotted with damage and effects already rolled.
 		CProjectile* projComp = projectileStorage.Get(projectileID);
@@ -684,7 +684,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
     auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& timeStorage = context.GetArrayStorage<CTime>();
 	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
-    SCRandomNumberGenerator& rng = context.GetSingleton<SCRandomNumberGenerator>();
+    RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
 	// CAbility (bc this is an ability in a CAbility that can update itself)
 	// Spawn Entities (All)
 
@@ -729,7 +729,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
     {
         m_cooldownComp->m_accumulatedTime -= timeBetweenAttacks;
 
-		RollDamageAndEffects(*rng.m_rng);
+		RollDamageAndEffects(rng);
 
         if (m_aoeEffectComp.has_value())
         {

@@ -17,7 +17,7 @@
 void SWaveSpawner::Startup()
 {
 	AddReadDependencies<SCWorld>();
-	AddWriteDependencies<SCWaves, SCEntityFactory>();
+	AddWriteDependencies<SCWaves, SCEntityFactory, SCRandomNumberGenerator>();
 
 	DevConsoleUtils::AddDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
 	DevConsoleUtils::AddDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves, "seed", DevConsoleArgType::Int, "numWaves", DevConsoleArgType::Int);
@@ -43,6 +43,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 	// Write Dependencies
 	SCWaves& waves = context.GetSingleton<SCWaves>();
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
+	RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
 
 	if (waves.m_waves.size() == 0)
 	{
@@ -89,7 +90,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 
 		for (int spawnIndex = 0; spawnIndex < (int) numSpawns; ++spawnIndex)
 		{
-			spawnInfo.m_spawnPos = world.GetRandomSpawnLocation();
+			spawnInfo.m_spawnPos = world.GetRandomSpawnLocation(rng);
 			factory.m_entitiesToSpawn.push_back(spawnInfo);
 			stream.m_numSpawned++;
 		}

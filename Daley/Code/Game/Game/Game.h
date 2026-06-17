@@ -29,10 +29,12 @@ public:
     void ConfigureEngine(Engine* engine);
     void ConfigureECS();
 
+    bool TogglePaused();
+
 protected:
 
     bool TimeDilation(NamedProperties& args);
-    bool TogglePaused(NamedProperties& args);
+    bool TogglePausedEvent(NamedProperties& args);
 
 protected:
 

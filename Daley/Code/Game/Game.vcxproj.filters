@@ -204,27 +204,6 @@
     <ClCompile Include="Game\SEntityTime.cpp">
       <Filter>ECS\Systems\World</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SCInputSystem.cpp">
-      <Filter>ECS\Singletons\EngineSingletonProxies</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SCRenderer.cpp">
-      <Filter>ECS\Singletons\EngineSingletonProxies</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SCWindow.cpp">
-      <Filter>ECS\Singletons\EngineSingletonProxies</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SCAssetManager.cpp">
-      <Filter>ECS\Singletons\EngineSingletonProxies</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SCAudioSystem.cpp">
-      <Filter>ECS\Singletons\EngineSingletonProxies</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SCEventSystem.cpp">
-      <Filter>ECS\Singletons\EngineSingletonProxies</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\SCRandomNumberGenerator.cpp">
-      <Filter>ECS\Singletons\EngineSingletonProxies</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -286,12 +265,6 @@
     </ClInclude>
     <ClInclude Include="Game\WorldSettings.h">
       <Filter>Game\World</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SCRender.h">
-      <Filter>ECS\Singletons</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SCAudio.h">
-      <Filter>ECS\Singletons</Filter>
     </ClInclude>
     <ClInclude Include="Game\AllSingletonComponents.h">
       <Filter>ECS\Singletons</Filter>
@@ -508,6 +481,9 @@
     </ClInclude>
     <ClInclude Include="Game\SCRandomNumberGenerator.h">
       <Filter>ECS\Singletons\EngineSingletonProxies</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCGame.h">
+      <Filter>ECS\Singletons</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -51,7 +51,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 {
 	// Write Dependencies
 	SCDebug& scDebug = context.GetSingleton<SCDebug>();
-	Renderer& renderer = *context.GetSingleton<SCRenderer>().m_renderer;
+	Renderer& renderer = *context.GetSingleton<SCRenderer>().GetRenderer();
 
 	// Read Dependencies
 	SCCamera const& worldCamera = context.GetSingletonConst<SCCamera>();
@@ -65,8 +65,8 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	auto& timeStorage = context.GetArrayStorageConst<CTime>();
 	auto& movementStorage = context.GetArrayStorageConst<CMovement>();
 	auto& projectileStorage = context.GetMapStorageConst<CProjectile>();
-	InputSystem const& input = *context.GetSingletonConst<SCInputSystem>().m_inputSystem;
-	Window const& window = *context.GetSingletonConst<SCWindow>().m_window;
+	InputSystem const& input = *context.GetSingletonConst<SCInputSystem>().GetInputSystem();
+	Window const& window = *context.GetSingletonConst<SCWindow>().GetWindow();
 
 	if (input.IsKeyDown(KeyCode::Ctrl) && input.WasKeyJustPressed('D'))
 	{

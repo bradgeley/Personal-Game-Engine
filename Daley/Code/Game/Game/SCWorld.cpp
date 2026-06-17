@@ -5,11 +5,13 @@
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/Image.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/ECS/AdminSystem.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/Texture.h"
+#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "TileDef.h"
@@ -35,7 +37,7 @@ IntVec2 s_neighborOffsets[8] =
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::GenerateVBO(Renderer* renderer, AssetManager* assetManager)
+void SCWorld::GenerateVBO(Renderer& renderer, AssetManager& assetManager)
 {
 	if (!m_isVBODirty)
 	{
@@ -47,17 +49,17 @@ void SCWorld::GenerateVBO(Renderer* renderer, AssetManager* assetManager)
 	Vec2 lightmapUVsHalfStepSize = lightmapUVsStepSize * 0.5f;
 
 	// Get sprite sheet ready
-	AssetID terrainID = assetManager->LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
-	GridSpriteSheet const* terrainSpriteSheet = assetManager->Get<GridSpriteSheet>(terrainID);
+	AssetID terrainID = assetManager.LoadSynchronous<GridSpriteSheet>("Data/SpriteSheets/Terrain.xml");
+	GridSpriteSheet const* terrainSpriteSheet = assetManager.Get<GridSpriteSheet>(terrainID);
 	ASSERT_OR_DIE(terrainSpriteSheet != nullptr, "SCWorld::GenerateMapVBO - Failed to load terrain sprite sheet");
 
 	// Get VBO ready
 	if (m_vbo == RendererUtils::InvalidID)
 	{
-		m_vbo = renderer->MakeVertexBuffer<TerrainVertex>(StaticWorldSettings::s_numVertsInVisibleWorld);
+		m_vbo = renderer.MakeVertexBuffer<TerrainVertex>(StaticWorldSettings::s_numVertsInVisibleWorld);
 	}	
 	
-	VertexBuffer& vbo = *renderer->GetVertexBuffer(m_vbo);
+	VertexBuffer& vbo = *renderer.GetVertexBuffer(m_vbo);
 	vbo.Resize(StaticWorldSettings::s_numVertsInVisibleWorld);
 
 	Vec2 worldMins = Vec2(0.f, 0.f) + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
@@ -113,25 +115,25 @@ void SCWorld::GenerateVBO(Renderer* renderer, AssetManager* assetManager)
 		return true; // keep iterating
 	});
 
-	m_debugVBO = renderer->MakeVertexBuffer<Vertex_PCU>();
-	VertexBuffer& debugVBO = *renderer->GetVertexBuffer(m_debugVBO);
+	m_debugVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
+	VertexBuffer& debugVBO = *renderer.GetVertexBuffer(m_debugVBO);
 	VertexUtils::AddVertsForWireGrid(debugVBO, worldBounds, IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), StaticWorldSettings::s_tileGridDebugDrawThickness, Rgba8::Black);
 	VertexUtils::AddVertsForWireBox2D(debugVBO, worldBounds, 0.03f, Rgba8::Red);
 	VertexUtils::AddVertsForArrow2D(debugVBO, Vec2(0.f, 0.f), Vec2(1.f, 0.f), StaticWorldSettings::s_worldOriginDebugDrawThickness, Rgba8::Red);
 	VertexUtils::AddVertsForArrow2D(debugVBO, Vec2(0.f, 0.f), Vec2(0.f, 1.f), StaticWorldSettings::s_worldOriginDebugDrawThickness, Rgba8::Blue);
 
 	m_isVBODirty = false;
-	assetManager->Release(terrainID);
+	assetManager.Release(terrainID);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::GenerateLightmap(Renderer* renderer)
+void SCWorld::GenerateLightmap(Renderer& renderer)
 {
 	if (m_lightmap == RendererUtils::InvalidID)
 	{
-		m_lightmap = renderer->MakeTexture();
+		m_lightmap = renderer.MakeTexture();
 	}
 
 	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
@@ -150,7 +152,7 @@ void SCWorld::GenerateLightmap(Renderer* renderer)
 		return true; // keep iterating
 	});
 
-	Texture* lightmapTex = renderer->GetTexture(m_lightmap);
+	Texture* lightmapTex = renderer.GetTexture(m_lightmap);
 	lightmapTex->CreateFromImage(image, false, false);
 }
 
@@ -159,11 +161,14 @@ void SCWorld::GenerateLightmap(Renderer* renderer)
 //----------------------------------------------------------------------------------------------------------------------
 void SCWorld::Shutdown()
 {
+	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	Renderer* renderer = scRenderer.GetRenderer();
+
 	m_tiles.Clear();	
-	g_renderer->ReleaseTexture(m_lightmap);
-	g_renderer->ReleaseVertexBuffer(m_vbo);
+	renderer->ReleaseTexture(m_lightmap);
+	renderer->ReleaseVertexBuffer(m_vbo);
 	#if defined(_DEBUG)
-	g_renderer->ReleaseVertexBuffer(m_debugVBO);
+	renderer->ReleaseVertexBuffer(m_debugVBO);
 	#endif
 }
 
@@ -296,17 +301,17 @@ void SCWorld::CacheValidSpawnLocations()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Vec2 SCWorld::GetRandomSpawnLocation() const
+Vec2 SCWorld::GetRandomSpawnLocation(RandomNumberGenerator& rng) const
 {
 	if (m_cachedSpawnLocations.empty())
 	{
 		return Vec2();
 	}
 
-	int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(m_cachedSpawnLocations.size()) - 1);
+	int randomIndex = rng.GetRandomIntInRange(0, static_cast<int>(m_cachedSpawnLocations.size()) - 1);
 	IntVec2 tileCoords = m_cachedSpawnLocations[randomIndex];
 	AABB2 tileBounds = GetTileBounds(tileCoords);
-	Vec2 randomLocationInBounds = g_rng->GetRandomVecInRange2D(tileBounds.mins, tileBounds.maxs);
+	Vec2 randomLocationInBounds = rng.GetRandomVecInRange2D(tileBounds.mins, tileBounds.maxs);
 	return randomLocationInBounds;
 }
 

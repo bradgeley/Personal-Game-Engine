@@ -197,7 +197,7 @@ AABB2 GridSpriteSheet::GetSpriteUVs(int spriteIndex) const
 //----------------------------------------------------------------------------------------------------------------------
 float GridSpriteSheet::GetSpriteAspect() const
 {
-	return static_cast<float>(m_spriteDims.x) / static_cast<float>(m_spriteDims.y);
+	return m_spriteAspect;
 }
 
 
@@ -273,37 +273,15 @@ IntVec2 GridSpriteSheet::GetInnerPadding() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AABB2 GridSpriteSheet::GetGenericSpriteQuad(float size /*= 1.f*/) const
+Vec2 GridSpriteSheet::GetSpriteDimensions() const
 {
-	AABB2 spriteAABB;
-	float spriteAspect = GetSpriteAspect();
-	float halfSize = size * 0.5f;
-	if (spriteAspect <= 1.f)
+	if (m_spriteAspect <= 1.f)
 	{
-		spriteAABB.mins = Vec2(-halfSize, -halfSize * spriteAspect);
-		spriteAABB.maxs = spriteAABB.mins + Vec2(size, size / spriteAspect);
+		return Vec2(m_spriteAspect, 1.f);
 	}
 	else
 	{
-		spriteAABB.mins = Vec2(-halfSize * spriteAspect, -halfSize);
-		spriteAABB.maxs = spriteAABB.mins + Vec2(size * spriteAspect, size);
-	}
-	return spriteAABB;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Vec2 GridSpriteSheet::GetSpriteDimensions(float size /*= 1.f*/) const
-{
-	float spriteAspect = GetSpriteAspect();
-	if (spriteAspect <= 1.f)
-	{
-		return Vec2(spriteAspect * size, size);
-	}
-	else
-	{
-		return Vec2(size, size / spriteAspect);
+		return Vec2(1.f, m_oneOverSpriteAspect);
 	}
 }
 
@@ -363,6 +341,9 @@ void GridSpriteSheet::ComputeSpriteUVs()
 	}
 
 	m_spriteDims = (textureDims - (m_edgePadding * 2) - (m_innerPadding * (m_layout - IntVec2::OneVector))) / m_layout;
+	m_spriteAspect = static_cast<float>(m_spriteDims.x) / static_cast<float>(m_spriteDims.y);
+	m_oneOverSpriteAspect = 1.f / m_spriteAspect;
+
 	for (int spriteY = 0; spriteY < m_layout.y; ++spriteY)
 	{
 		for (int spriteX = 0; spriteX < m_layout.x; ++spriteX)

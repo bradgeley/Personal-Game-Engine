@@ -13,5 +13,11 @@ class SCRandomNumberGenerator
 {
 public:
 
+	RandomNumberGenerator const* GetRNG() const	{ return m_rng; }
+	RandomNumberGenerator* GetRNG()				{ return m_rng; }
+	void SetRNG(RandomNumberGenerator* rng)		{ m_rng = rng; }
+
+private:
+
 	RandomNumberGenerator* m_rng = nullptr;
 };

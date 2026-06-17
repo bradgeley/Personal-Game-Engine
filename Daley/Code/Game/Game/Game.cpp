@@ -76,7 +76,7 @@ void Game::Startup()
     g_devConsole->AddDevConsoleCommandInfo("TimeDilation", "t", DevConsoleArgType::Float);
     g_eventSystem->SubscribeMethod("TimeDilation", this, &Game::TimeDilation);
 
-    g_eventSystem->SubscribeMethod("TogglePaused", this, &Game::TogglePaused);
+    g_eventSystem->SubscribeMethod("TogglePaused", this, &Game::TogglePausedEvent);
 }
 
 
@@ -122,7 +122,7 @@ void Game::Render() const
 void Game::Shutdown()
 {
     g_eventSystem->UnsubscribeMethod("TimeDilation", this, &Game::TimeDilation);
-    g_eventSystem->UnsubscribeMethod("TogglePaused", this, &Game::TogglePaused);
+    g_eventSystem->UnsubscribeMethod("TogglePaused", this, &Game::TogglePausedEvent);
     g_devConsole->RemoveDevConsoleCommandInfo("TimeDilation");
 
     g_ecs->Shutdown();
@@ -223,17 +223,19 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentMap<CProjectile>();
 
     // Singleton components
-    g_ecs->RegisterComponentSingleton<SCAudio>();
     g_ecs->RegisterComponentSingleton<SCCamera>();
     g_ecs->RegisterComponentSingleton<SCCollision>();
     g_ecs->RegisterComponentSingleton<SCDebug>();
     g_ecs->RegisterComponentSingleton<SCEntityFactory>();
     g_ecs->RegisterComponentSingleton<SCFlowField>();    
+    g_ecs->RegisterComponentSingleton<SCGame>();
     g_ecs->RegisterComponentSingleton<SCLighting>();
-    g_ecs->RegisterComponentSingleton<SCRender>();
     g_ecs->RegisterComponentSingleton<SCTime>();
     g_ecs->RegisterComponentSingleton<SCWorld>();
     g_ecs->RegisterComponentSingleton<SCWaves>();
+
+    // Connect game to ECS world
+	g_ecs->GetSingleton<SCGame>().m_game = this;
 
     // Engine Proxies
     g_ecs->RegisterComponentSingleton<SCAssetManager>();
@@ -244,13 +246,14 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCRenderer>();
     g_ecs->RegisterComponentSingleton<SCWindow>();
 
-	g_ecs->GetSingleton<SCAssetManager>().m_assetManager = g_assetManager;
-	g_ecs->GetSingleton<SCAudioSystem>().m_audioSystem = g_audioSystem;
-	g_ecs->GetSingleton<SCEventSystem>().m_eventSystem = g_eventSystem;
-	g_ecs->GetSingleton<SCInputSystem>().m_inputSystem = g_input;
-	g_ecs->GetSingleton<SCRenderer>().m_renderer = g_renderer;
-	g_ecs->GetSingleton<SCWindow>().m_window = g_window;
-    g_ecs->GetSingleton<SCRandomNumberGenerator>().m_rng = g_rng;
+    // Connect Engine to ECS world
+	g_ecs->GetSingleton<SCAssetManager>().SetAssetManager(g_assetManager);
+	g_ecs->GetSingleton<SCAudioSystem>().SetAudioSystem(g_audioSystem);
+	g_ecs->GetSingleton<SCEventSystem>().SetEventSystem(g_eventSystem);
+	g_ecs->GetSingleton<SCInputSystem>().SetInputSystem(g_input);
+	g_ecs->GetSingleton<SCRenderer>().SetRenderer(g_renderer);
+	g_ecs->GetSingleton<SCWindow>().SetWindow(g_window);
+    g_ecs->GetSingleton<SCRandomNumberGenerator>().SetRNG(new RandomNumberGenerator());
 
 	int numRegisteredComponents = g_ecs->GetNumRegisteredComponents();
     constexpr int maxComponents = sizeof(size_t) * 8;
@@ -314,6 +317,15 @@ void Game::ConfigureECS()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool Game::TogglePaused()
+{
+    m_gameClock->TogglePaused();
+    return m_gameClock->IsPaused();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Game::TimeDilation(NamedProperties& args)
 {
     float currentTimeDilation = m_gameClock->GetLocalTimeDilationF();
@@ -334,7 +346,7 @@ bool Game::TimeDilation(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Game::TogglePaused(NamedProperties&)
+bool Game::TogglePausedEvent(NamedProperties&)
 {
     m_gameClock->TogglePaused();
     return false;

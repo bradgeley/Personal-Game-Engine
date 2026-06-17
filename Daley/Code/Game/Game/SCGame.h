@@ -1,19 +1,16 @@
-// Bradley Christensen - 2022-2026
+// Bradley Christensen - 2022-2025
 #pragma once
-#include <cstdint>
 
 
 
-typedef uint32_t SoundID;
+class Game;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SCAudio
+class SCGame
 {
 public:
 
-	float m_bgmVolume = 0.05f;
-	SoundID m_bgmSoundID;
+	Game* m_game = nullptr;
 };
-

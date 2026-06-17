@@ -10,7 +10,8 @@
 #include "EntityDef.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
-#include "Engine/Events/EventSystem.h"
+#include "Engine/Input/InputSystem.h"
+#include "Engine/Window/Window.h"
 
 
 
@@ -28,8 +29,8 @@ void SDebugInput::Run(SystemContext const& context) const
 {
 	// Read Dependencies
 	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
-	InputSystem const& input = *context.GetSingletonConst<SCInputSystem>().m_inputSystem;
-	Window const& window = *context.GetSingletonConst<SCWindow>().m_window;
+	InputSystem const& input = *context.GetSingletonConst<SCInputSystem>().GetInputSystem();
+	Window const& window = *context.GetSingletonConst<SCWindow>().GetWindow();
 
 	// Write Dependencies
 	SCWorld& world = context.GetSingleton<SCWorld>();

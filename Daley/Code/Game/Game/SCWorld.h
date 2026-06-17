@@ -17,6 +17,7 @@
 class AssetManager;
 class Chunk;
 class Renderer;
+class RandomNumberGenerator;
 class VertexBuffer;
 
 
@@ -26,8 +27,8 @@ class SCWorld
 {
 public:
 
-    void GenerateVBO(Renderer* renderer, AssetManager* assetManager);
-    void GenerateLightmap(Renderer* renderer);
+    void GenerateVBO(Renderer& renderer, AssetManager& assetManager);
+    void GenerateLightmap(Renderer& renderer);
 
     void Shutdown();
 
@@ -48,7 +49,7 @@ public:
     bool DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& tagQuery) const;
 
     void CacheValidSpawnLocations();
-    Vec2 GetRandomSpawnLocation() const;
+    Vec2 GetRandomSpawnLocation(RandomNumberGenerator& rng) const;
 
     uint8_t GetTileCost(int tileIndex) const;
 
