@@ -170,6 +170,19 @@ void GridSpriteSheet::ReleaseResources()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AssetID GridSpriteSheet::GetLoadDependency() const
+{
+	TextureAsset const* textureAsset = g_assetManager->Get<TextureAsset>(m_textureAsset);
+	if (!textureAsset)
+	{
+		return m_textureAsset;
+	}
+	return AssetID::Invalid;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AABB2 GridSpriteSheet::GetSpriteUVs(int spriteIndex) const
 {
 	if (m_spriteUVs.IsValidIndex(spriteIndex)) 

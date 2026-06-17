@@ -98,6 +98,14 @@ void AssetManager::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+FutureAsset const* AssetManager::GetFutureAsset(AssetID assetID) const
+{
+	return IsFuture(assetID) ? &m_futureAssets.at(assetID) : nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool AssetManager::FindAssetKey(AssetID assetID, AssetKey& out_key) const
 {
 	// Search loaded assets first
@@ -505,7 +513,7 @@ bool AssetManager::TryCancelOrCompleteFuture(AssetID assetID)
         bool cancelled = g_jobSystem->TryCancelLoadingJob(futureIt->second.m_jobID);
         if (!cancelled)
         {
-            completed = g_jobSystem->CompleteJob(futureIt->second.m_jobID, false); // Can't block and help here because it can stall the main thread while dependencies aren't complete.
+            completed = g_jobSystem->CompleteJob(futureIt->second.m_jobID, true);
         }
 
         // CompleteJob should remove from future Assets, but we need to manually do it if it was cancelled

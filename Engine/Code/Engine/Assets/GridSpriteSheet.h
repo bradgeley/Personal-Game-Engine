@@ -26,6 +26,7 @@ public:
 	virtual bool CompleteAsyncLoad() override;
 	virtual bool CompleteSyncLoad() override;
 	virtual void ReleaseResources() override;
+	virtual AssetID GetLoadDependency() const override;
 
 	// Getters
 	AABB2 GetSpriteUVs(int spriteIndex) const;

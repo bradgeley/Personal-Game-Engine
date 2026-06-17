@@ -116,3 +116,16 @@ void TextureAsset::ReleaseResources()
         g_renderer->ReleaseTexture(m_textureID);
     }
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AssetID TextureAsset::GetLoadDependency() const
+{
+	Image const* loadedImage = g_assetManager->Get<Image>(m_imageAssetID);
+    if (loadedImage == nullptr)
+    {
+        return m_imageAssetID;
+	}
+	return AssetID::Invalid;
+}

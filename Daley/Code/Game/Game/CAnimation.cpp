@@ -23,7 +23,7 @@ CAnimation::CAnimation(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 CAnimation::~CAnimation()
 {
-    g_assetManager->Release(m_gridSpriteSheet);
+    g_assetManager->Release(m_gridSpriteSheet); // Todo: don't do this because assets will unload and load repeatedly as stuff spawns and destroyes
 }
 
 

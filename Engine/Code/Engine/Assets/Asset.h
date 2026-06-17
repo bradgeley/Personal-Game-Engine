@@ -23,6 +23,7 @@ protected:
 	virtual bool CompleteAsyncLoad()	= 0;
 	virtual bool CompleteSyncLoad()		= 0;
 	virtual void ReleaseResources()		= 0;
+	virtual AssetID GetLoadDependency() const { return AssetID::Invalid; };
 
 protected:
 

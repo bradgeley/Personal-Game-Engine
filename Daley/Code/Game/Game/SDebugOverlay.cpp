@@ -57,9 +57,9 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();
 	auto& debugStorage = context.GetArrayStorageConst<CEntityDebug>();
 	auto& abilityStorage = context.GetMapStorageConst<CAbility>();
-	auto& healthStorage = context.GetMapStorageConst<CHealth>();
-	auto& timeStorage = context.GetMapStorageConst<CTime>();
-	auto& movementStorage = context.GetMapStorageConst<CMovement>();
+	auto& healthStorage = context.GetArrayStorageConst<CHealth>();
+	auto& timeStorage = context.GetArrayStorageConst<CTime>();
+	auto& movementStorage = context.GetArrayStorageConst<CMovement>();
 	auto& projectileStorage = context.GetMapStorageConst<CProjectile>();
 	// g_input
 	// g_renderer

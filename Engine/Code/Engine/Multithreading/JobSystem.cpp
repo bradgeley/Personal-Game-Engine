@@ -255,6 +255,13 @@ bool JobSystem::CompleteJob(JobID jobID, bool blockAndHelp /*= true*/)
             {
                 // Allow us to retry later
                 AddJobToCompletedQueue(job);
+
+				JobID dependencyID = job->GetCompletionDependency();
+                if (dependencyID != JobID::Invalid)
+                {
+                    CompleteJob(dependencyID, blockAndHelp);
+				}
+
                 continue;
             }
 

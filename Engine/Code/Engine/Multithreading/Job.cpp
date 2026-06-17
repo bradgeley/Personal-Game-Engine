@@ -97,3 +97,11 @@ bool Job::Complete()
 {
     return true;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+JobID Job::GetCompletionDependency() const
+{
+    return JobID::Invalid;
+}

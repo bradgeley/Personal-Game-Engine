@@ -97,6 +97,8 @@ public:
     template<typename T>
     T const* Get(AssetID assetID);
 
+	FutureAsset const* GetFutureAsset(AssetID assetID) const;
+
     template<typename T>
     AssetID LoadSynchronous(Name assetName);
 

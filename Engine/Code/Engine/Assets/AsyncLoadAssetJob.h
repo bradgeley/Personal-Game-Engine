@@ -16,8 +16,9 @@ class AsyncLoadAssetJob : public Job
 {
 public:
 
-    void Execute() override;
-    bool Complete() override;
+    virtual void Execute() override;
+    virtual bool Complete() override;
+    virtual JobID GetCompletionDependency() const override;
 
 public:
 

@@ -65,3 +65,19 @@ bool AsyncLoadAssetJob::Complete()
     }
     return completed;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+JobID AsyncLoadAssetJob::GetCompletionDependency() const
+{
+	AssetID loadDependency = m_loadedAsset->GetLoadDependency();
+    if (loadDependency != AssetID::Invalid)
+    {
+        if (FutureAsset const* future = g_assetManager->GetFutureAsset(loadDependency))
+        {
+			return future->m_jobID;
+        }
+    }
+    return JobID();
+}

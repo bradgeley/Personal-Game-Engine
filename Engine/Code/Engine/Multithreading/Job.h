@@ -52,6 +52,7 @@ protected:
 
     virtual void Execute() = 0;
     virtual bool Complete();        // Called from the main thread only when the job is completed.
+    virtual JobID GetCompletionDependency() const;
 
 protected:
 
