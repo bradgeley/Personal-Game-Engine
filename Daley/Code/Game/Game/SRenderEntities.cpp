@@ -2,18 +2,18 @@
 #include "SRenderEntities.h"
 #include "CAnimation.h"
 #include "CRender.h"
+#include "SCAssetManager.h"
 #include "SCCamera.h"
 #include "SCRender.h"
+#include "SCRenderer.h"
 #include "SCWorld.h"
 #include "SpriteShaderCPU.h"
-#include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/ShaderAsset.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/InstanceBuffer.h"
 #include "Engine/Renderer/Shader.h"
-#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/ConstantBuffer.h"
@@ -24,7 +24,7 @@
 void SRenderEntities::Startup()
 {
     AddReadDependencies<CAnimation, CRender, SCCamera>();
-    AddWriteDependencies<SCRender, AssetManager, Renderer>();
+    AddWriteDependencies<SCRender, SCAssetManager, SCRenderer>();
 
     SCRender& scRender = g_ecs->GetSingleton<SCRender>();
 
@@ -66,10 +66,10 @@ void SRenderEntities::Run(SystemContext const& context) const
 
 	// Write Dependencies
     SCRender& scRender = context.GetSingleton<SCRender>();
-    // g_assetManager
-    // g_renderer
+	AssetManager* assetManager = context.GetSingleton<SCAssetManager>().m_assetManager;
+	Renderer* renderer = context.GetSingleton<SCRenderer>().m_renderer;
 
-    ShaderAsset const* spriteShaderAsset = g_assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
+    ShaderAsset const* spriteShaderAsset = assetManager->Get<ShaderAsset>(scRender.m_spriteShaderAsset);
     if (spriteShaderAsset == nullptr)
     {
         return;
@@ -82,7 +82,7 @@ void SRenderEntities::Run(SystemContext const& context) const
     for (auto it : scRender.m_instancesPerSpriteSheet)
     {
         InstanceBufferID iboID = it.second;
-        InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
+        InstanceBuffer* ibo = renderer->GetInstanceBuffer(iboID);
         if (ibo)
         {
             ibo->ClearInstances();
@@ -104,7 +104,7 @@ void SRenderEntities::Run(SystemContext const& context) const
             continue;
         }
 
-        GridSpriteSheet const* spriteSheet = g_assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
+        GridSpriteSheet const* spriteSheet = assetManager->Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
         if (!spriteSheet)
         {
             // not loaded yet
@@ -114,10 +114,10 @@ void SRenderEntities::Run(SystemContext const& context) const
         // Get or create instance buffer for this sprite sheet
         if (scRender.m_instancesPerSpriteSheet.find(anim.m_gridSpriteSheet) == scRender.m_instancesPerSpriteSheet.end())
         {
-            scRender.m_instancesPerSpriteSheet[anim.m_gridSpriteSheet] = g_renderer->MakeInstanceBuffer<SpriteInstance>();
+            scRender.m_instancesPerSpriteSheet[anim.m_gridSpriteSheet] = renderer->MakeInstanceBuffer<SpriteInstance>();
         }
         InstanceBufferID iboID = scRender.m_instancesPerSpriteSheet[anim.m_gridSpriteSheet];
-        InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
+        InstanceBuffer* ibo = renderer->GetInstanceBuffer(iboID);
 
         ASSERT_OR_DIE(ibo != nullptr, "SRenderEntities::Run - Invalid instance buffer.");
 
@@ -148,19 +148,19 @@ void SRenderEntities::Run(SystemContext const& context) const
         AssetID assetID = pair.first;
         InstanceBufferID iboID = pair.second;
 
-        GridSpriteSheet const* spriteSheet = g_assetManager->Get<GridSpriteSheet>(assetID);
+        GridSpriteSheet const* spriteSheet = assetManager->Get<GridSpriteSheet>(assetID);
         if (!spriteSheet)
         {
             // May be reloading right now
             continue;
         }
-        InstanceBuffer* ibo = g_renderer->GetInstanceBuffer(iboID);
+        InstanceBuffer* ibo = renderer->GetInstanceBuffer(iboID);
         if (!ibo || ibo->GetNumInstances() == 0)
         {
             continue;
 		}
 
-        ConstantBuffer* spriteCbo = g_renderer->GetConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
+        ConstantBuffer* spriteCbo = renderer->GetConstantBuffer(scRender.m_spriteSheetConstantsBuffer);
 
         ASSERT_OR_DIE(spriteCbo != nullptr, "SRenderEntities::Run - Invalid constant buffer.");
 
@@ -171,10 +171,10 @@ void SRenderEntities::Run(SystemContext const& context) const
         spriteSheetConstants.m_textureDims = spriteSheet->GetTextureDimensions();
         spriteCbo->Update(spriteSheetConstants);
 
-        g_renderer->SetModelConstants(ModelConstants());
-        g_renderer->BindConstantBuffer(scRender.m_spriteSheetConstantsBuffer, 5);
+        renderer->SetModelConstants(ModelConstants());
+        renderer->BindConstantBuffer(scRender.m_spriteSheetConstantsBuffer, 5);
         spriteSheet->SetRendererState();
-        g_renderer->BindShader(spriteShaderID);
-        g_renderer->DrawInstanced(6, *ibo);
+        renderer->BindShader(spriteShaderID);
+        renderer->DrawInstanced(6, *ibo);
     }
 }

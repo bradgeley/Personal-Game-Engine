@@ -5,6 +5,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 // Singletons
+//
 #include "SCAudio.h"
 #include "SCCamera.h"
 #include "SCCollision.h"
@@ -16,3 +17,16 @@
 #include "SCTime.h"
 #include "SCWaves.h"
 #include "SCWorld.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Engine Proxies
+//
+#include "SCAssetManager.h"
+#include "SCAudioSystem.h"
+#include "SCEventSystem.h"
+#include "SCInputSystem.h"
+#include "SCRandomNumberGenerator.h"
+#include "SCRenderer.h"
+#include "SCWindow.h"

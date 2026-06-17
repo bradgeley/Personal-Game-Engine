@@ -25,7 +25,7 @@ void SLifetime::Run(SystemContext const& context) const
 	SCEntityFactory& entityFactory = context.GetSingleton<SCEntityFactory>();
 	auto& lifetimeStorage = context.GetArrayStorage<CLifetime>();
 
-	BitMask timeBitMask = g_ecs->GetComponentBitMask<CTime>();
+	BitMask timeBitMask = context.GetComponentBitMask<CTime>();
 
 	for (auto it = context.Iterate<CLifetime>(); it.IsValid(); ++it)
 	{
@@ -33,7 +33,7 @@ void SLifetime::Run(SystemContext const& context) const
 		if (lifetime.m_lifetimeRemaining >= 0.f)
 		{
 			float timeDilation = 1.f;
-			if (g_ecs->DoesEntityHaveComponentsUnsafe(it.m_currentIndex, timeBitMask))
+			if (context.DoesEntityHaveComponentsUnsafe(it.m_currentIndex, timeBitMask))
 			{
 				CTime const& time = timeStorage[it];
 				timeDilation = time.m_clock.GetTimeDilationF();

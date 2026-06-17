@@ -12,7 +12,10 @@
 #include "SCCamera.h"
 #include "SCDebug.h"
 #include "SCFlowField.h"
+#include "SCInputSystem.h"
+#include "SCRenderer.h"
 #include "SCWaves.h"
+#include "SCWindow.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Input/InputSystem.h"
@@ -48,6 +51,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 {
 	// Write Dependencies
 	SCDebug& scDebug = context.GetSingleton<SCDebug>();
+	Renderer& renderer = *context.GetSingleton<SCRenderer>().m_renderer;
 
 	// Read Dependencies
 	SCCamera const& worldCamera = context.GetSingletonConst<SCCamera>();
@@ -61,11 +65,10 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	auto& timeStorage = context.GetArrayStorageConst<CTime>();
 	auto& movementStorage = context.GetArrayStorageConst<CMovement>();
 	auto& projectileStorage = context.GetMapStorageConst<CProjectile>();
-	// g_input
-	// g_renderer
-	// g_window
+	InputSystem const& input = *context.GetSingletonConst<SCInputSystem>().m_inputSystem;
+	Window const& window = *context.GetSingletonConst<SCWindow>().m_window;
 
-	if (g_input->IsKeyDown(KeyCode::Ctrl) && g_input->WasKeyJustPressed('D'))
+	if (input.IsKeyDown(KeyCode::Ctrl) && input.WasKeyJustPressed('D'))
 	{
 		scDebug.m_debugOverlayEnabled = !scDebug.m_debugOverlayEnabled;
 	}
@@ -75,12 +78,12 @@ void SDebugOverlay::Run(SystemContext const& context) const
 		return;
 	}
 
-	VertexBuffer& untexVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameUntexVerts);
-	VertexBuffer& fontVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
-	Font* font = g_renderer->GetDefaultFont();
+	VertexBuffer& untexVerts = *renderer.GetVertexBuffer(scDebug.m_frameUntexVerts);
+	VertexBuffer& fontVerts = *renderer.GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
+	Font* font = renderer.GetDefaultFont();
 
 	Camera screenCamera;
-	IntVec2 resolution = g_window->GetRenderResolution();
+	IntVec2 resolution = window.GetRenderResolution();
 	AABB2 screenBounds = AABB2(0.f, 0.f, (float) resolution.x, (float) resolution.y);
 	screenCamera.SetOrthoBounds2D(screenBounds);
 
@@ -90,7 +93,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	Vec2 topLeft = screenBounds.GetTopLeft();
 	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -10.f), Vec2(1.f, -1.f), 25.f, "Debug Overlay Enabled", Rgba8::White);
 
-	int totalEntities = g_ecs->NumEntities();
+	int totalEntities = context.NumEntities();
 	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -40.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Total Entities: %d", totalEntities), Rgba8::White);
 
 	// Wave spawner info
@@ -186,17 +189,17 @@ void SDebugOverlay::Run(SystemContext const& context) const
 		}
 	}
 
-	g_renderer->BeginCamera(&screenCamera);
+	renderer.BeginCamera(&screenCamera);
 
 	// Render->clear debug verts 
-	g_renderer->BindTexture(nullptr);
-	g_renderer->BindShader(nullptr);
-	g_renderer->DrawVertexBuffer(untexVerts);
+	renderer.BindTexture(nullptr);
+	renderer.BindShader(nullptr);
+	renderer.DrawVertexBuffer(untexVerts);
 	untexVerts.ClearVerts();
 
 	// Render->clear debug text verts 
 	font->SetRendererState();
-	g_renderer->DrawVertexBuffer(fontVerts);
+	renderer.DrawVertexBuffer(fontVerts);
 	fontVerts.ClearVerts();
 }
 

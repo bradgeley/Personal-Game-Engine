@@ -222,7 +222,7 @@ void AbilityOnHitComponent::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Ability::RollDamageAndEffects()
+void Ability::RollDamageAndEffects(RandomNumberGenerator&)
 {
     // Empty
 }
@@ -372,6 +372,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
 
 	// Write Dependencies
 	auto& projectileStorage = context.GetMapStorage<CProjectile>();
+    SCRandomNumberGenerator& rng = context.GetSingleton<SCRandomNumberGenerator>();
     // CAbility (bc this is an ability in a CAbility that can update itself)
     // Spawn Entities (All)
 
@@ -444,7 +445,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
 
             ASSERT_OR_DIE(!validTargets.empty(), "ProjectileHitAbility::Update - closest to goal tile has no valid targets. Should be impossible.");
 
-            int randomIndex = g_rng->GetRandomIntInRange(0, static_cast<int>(validTargets.size()) - 1);
+            int randomIndex = rng.m_rng->GetRandomIntInRange(0, static_cast<int>(validTargets.size()) - 1);
             targetID = validTargets[randomIndex];
         }
     }
@@ -466,12 +467,12 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
         spawnInfo.m_spawnOrientation = 0.f;
         spawnInfo.m_def = EntityDef::GetEntityDef(m_projectileDefName);
         EntityID projectileID = SEntityFactory::SpawnEntity(context, spawnInfo);
-        if (!g_ecs->IsValid(projectileID))
+        if (!context.IsValid(projectileID))
         {
             break;
         }
 
-        RollDamageAndEffects();
+        RollDamageAndEffects(*rng.m_rng);
 
         // Copy ability data to proj, snapshotted with damage and effects already rolled.
 		CProjectile* projComp = projectileStorage.Get(projectileID);
@@ -541,14 +542,14 @@ void ProjectileHitAbility::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::RollDamageAndEffects()
+void ProjectileHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng)
 {
 	float critMultiplier = s_baseCritMultiplier;
     bool didCrit = false;
     if (m_critComp.has_value())
     {
         AbilityCritComponent& critComp = m_critComp.value();
-        float critRoll = g_rng->GetRandomFloatZeroToOne();
+        float critRoll = rng.GetRandomFloatZeroToOne();
         critMultiplier += critComp.m_critMulti;
         critComp.m_didCrit = critRoll < critComp.m_critChance;
         didCrit = critComp.m_didCrit;
@@ -560,7 +561,7 @@ void ProjectileHitAbility::RollDamageAndEffects()
         if (onHitComp.m_damageOnHit.has_value())
         {
             AbilityDamageComponent& damageComp = onHitComp.m_damageOnHit.value();
-            damageComp.m_damageDone = g_rng->GetRandomFloatInRange(damageComp.m_minDamage, damageComp.m_maxDamage);
+            damageComp.m_damageDone = rng.GetRandomFloatInRange(damageComp.m_minDamage, damageComp.m_maxDamage);
             if (didCrit)
             {
                 damageComp.m_damageDone *= critMultiplier;
@@ -593,7 +594,7 @@ void ProjectileHitAbility::RollDamageAndEffects()
             if (aoeHitComp.m_damageOnHit.has_value())
             {
                 AbilityDamageComponent& aoeDamageComp = aoeHitComp.m_damageOnHit.value();
-                aoeDamageComp.m_damageDone = g_rng->GetRandomFloatInRange(aoeDamageComp.m_minDamage, aoeDamageComp.m_maxDamage);
+                aoeDamageComp.m_damageDone = rng.GetRandomFloatInRange(aoeDamageComp.m_minDamage, aoeDamageComp.m_maxDamage);
                 if (didCrit)
                 {
                     aoeDamageComp.m_damageDone *= critMultiplier;
@@ -683,6 +684,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
     auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& timeStorage = context.GetArrayStorage<CTime>();
 	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
+    SCRandomNumberGenerator& rng = context.GetSingleton<SCRandomNumberGenerator>();
 	// CAbility (bc this is an ability in a CAbility that can update itself)
 	// Spawn Entities (All)
 
@@ -727,7 +729,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
     {
         m_cooldownComp->m_accumulatedTime -= timeBetweenAttacks;
 
-		RollDamageAndEffects();
+		RollDamageAndEffects(*rng.m_rng);
 
         if (m_aoeEffectComp.has_value())
         {
@@ -738,7 +740,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
             aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange;
 
             EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
-            if (g_ecs->IsValid(aoeEffect))
+            if (context.IsValid(aoeEffect))
             {
                 // Pass along damage, color, to aoe effect
                 if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(aoeEffect))
@@ -849,14 +851,14 @@ void AoEHitAbility::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AoEHitAbility::RollDamageAndEffects()
+void AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng)
 {
     float critMultiplier = s_baseCritMultiplier;
     bool didCrit = false;
     if (m_critComp.has_value())
     {
         AbilityCritComponent& critComp = m_critComp.value();
-        float critRoll = g_rng->GetRandomFloatZeroToOne();
+        float critRoll = rng.GetRandomFloatZeroToOne();
         critMultiplier += critComp.m_critMulti;
         critComp.m_didCrit = critRoll < critComp.m_critChance;
         didCrit = critComp.m_didCrit;
@@ -868,7 +870,7 @@ void AoEHitAbility::RollDamageAndEffects()
         if (aoeHitComp.m_damageOnHit.has_value())
         {
             AbilityDamageComponent& damageComp = aoeHitComp.m_damageOnHit.value();
-            damageComp.m_damageDone = g_rng->GetRandomFloatInRange(damageComp.m_minDamage, damageComp.m_maxDamage);
+            damageComp.m_damageDone = rng.GetRandomFloatInRange(damageComp.m_minDamage, damageComp.m_maxDamage);
             if (didCrit)
             {
                 damageComp.m_damageDone *= critMultiplier;
@@ -935,7 +937,7 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
 
         m_activeAoEEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 
-        if (g_ecs->IsValid(m_activeAoEEffect))
+        if (context.IsValid(m_activeAoEEffect))
         {
             // Pass along damage, color, to aoe effect
             if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(m_activeAoEEffect))

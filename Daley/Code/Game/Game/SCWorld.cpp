@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "SCWorld.h"
+#include "SCRenderer.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/Image.h"
@@ -8,7 +9,6 @@
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Performance/ScopedTimer.h"
-#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"

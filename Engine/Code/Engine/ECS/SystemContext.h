@@ -65,6 +65,9 @@ public:
     template <typename...CTypes>
     GroupIter Iterate() const;
 
+    template <typename...CTypes>
+	BitMask GetComponentBitMask() const;
+
     //----------------------------------------------------------------------------------------------------------------------
     // CREATE/DESTROY ENTITIES
     //
@@ -87,6 +90,12 @@ public:
     void RemoveComponent(EntityID entityID) const;
 
     void RemoveComponent(EntityID entityID, BitMask componentBit) const;
+
+	int NumEntities() const;
+
+	bool IsValid(EntityID entityID) const;
+
+	bool DoesEntityHaveComponentsUnsafe(int entityIndex, BitMask componentBitMask) const;
 
 protected:
 
@@ -249,6 +258,15 @@ GroupIter SystemContext::Iterate() const
     {
         return g_ecs->Iterate<CTypes...>(*this);
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename...CTypes>
+BitMask SystemContext::GetComponentBitMask() const
+{
+	return g_ecs->GetComponentBitMask<CTypes...>();
 }
 
 

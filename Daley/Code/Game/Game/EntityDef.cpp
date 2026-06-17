@@ -1,7 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "EntityDef.h"
-#include "Engine/Debug/DevConsole.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Renderer/Texture.h"
 
 
@@ -20,7 +20,7 @@ void EntityDef::LoadFromXML()
     auto root = doc.RootElement();
     if (!root)
     {
-        g_devConsole->LogErrorF("SEntityFactory::LoadFromXml - Could not load file: %s", s_entityDefsFilePath);
+		DevConsoleUtils::LogError("SEntityFactory::LoadFromXml - Failed to load xml file: %s", s_entityDefsFilePath);
         return; 
     }
 
@@ -30,7 +30,7 @@ void EntityDef::LoadFromXML()
         Name name = XmlUtils::ParseXmlAttribute(*entityDefElem, "name", Name::Invalid);
         if (GetEntityDefID(name) != -1)
         {
-            g_devConsole->LogErrorF("Duplicate Entity Def: %s", name.ToCStr());
+			DevConsoleUtils::LogError("Duplicate Entity Def: %s", name.ToCStr());
         }
 
         // Emplace new definition using the constructor that takes an Xml Element
@@ -126,7 +126,7 @@ bool EntityDef::GetAllEntityDefsWithTags(std::vector<Name> const& tags, std::vec
 EntityDef::EntityDef(XmlElement const* xmlElement)
 {
     m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
-    g_devConsole->AddLine(StringUtils::StringF("Entity def loading: %s", m_name.ToCStr()));
+    DevConsoleUtils::Log(Rgba8::LightBlue, "Entity def loading: %s", m_name.ToCStr());
 
     // CTime
     auto elem = xmlElement->FirstChildElement("Time");

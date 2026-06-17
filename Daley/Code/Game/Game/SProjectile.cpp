@@ -45,7 +45,7 @@ void SProjectile::Run(SystemContext const& context) const
 	for (auto it = context.Iterate<CProjectile, CTransform>(); it.IsValid(); ++it)
 	{
 		CProjectile& proj = projStorage[it];
-		if (proj.m_targetID == EntityID::Invalid || !g_ecs->IsValid(proj.m_targetID))
+		if (proj.m_targetID == EntityID::Invalid || !context.IsValid(proj.m_targetID))
 		{
 			if (!proj.m_targetPos.has_value())
 			{
@@ -152,7 +152,7 @@ void SProjectile::Run(SystemContext const& context) const
 					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp->m_aoeEffectOnHit->m_radius;
 
 					EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
-					if (g_ecs->IsValid(aoeEffect))
+					if (context.IsValid(aoeEffect))
 					{
 						// Pass along damage, color, to aoe effect
 						if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(aoeEffect))

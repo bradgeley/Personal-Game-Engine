@@ -235,13 +235,22 @@ void Game::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCWorld>();
     g_ecs->RegisterComponentSingleton<SCWaves>();
 
-    // Other resource types (Engine Subsystems)
-    g_ecs->RegisterResourceByType<AssetManager>();
-    g_ecs->RegisterResourceByType<AudioSystem>();
-    g_ecs->RegisterResourceByType<EventSystem>();
-    g_ecs->RegisterResourceByType<InputSystem>();
-    g_ecs->RegisterResourceByType<Renderer>();
-    g_ecs->RegisterResourceByType<Window>();
+    // Engine Proxies
+    g_ecs->RegisterComponentSingleton<SCAssetManager>();
+    g_ecs->RegisterComponentSingleton<SCAudioSystem>();
+    g_ecs->RegisterComponentSingleton<SCEventSystem>();
+    g_ecs->RegisterComponentSingleton<SCInputSystem>();
+    g_ecs->RegisterComponentSingleton<SCRandomNumberGenerator>();
+    g_ecs->RegisterComponentSingleton<SCRenderer>();
+    g_ecs->RegisterComponentSingleton<SCWindow>();
+
+	g_ecs->GetSingleton<SCAssetManager>().m_assetManager = g_assetManager;
+	g_ecs->GetSingleton<SCAudioSystem>().m_audioSystem = g_audioSystem;
+	g_ecs->GetSingleton<SCEventSystem>().m_eventSystem = g_eventSystem;
+	g_ecs->GetSingleton<SCInputSystem>().m_inputSystem = g_input;
+	g_ecs->GetSingleton<SCRenderer>().m_renderer = g_renderer;
+	g_ecs->GetSingleton<SCWindow>().m_window = g_window;
+    g_ecs->GetSingleton<SCRandomNumberGenerator>().m_rng = g_rng;
 
 	int numRegisteredComponents = g_ecs->GetNumRegisteredComponents();
     constexpr int maxComponents = sizeof(size_t) * 8;

@@ -9,6 +9,7 @@
 
 
 
+class RandomNumberGenerator;
 class VertexBuffer;
 struct AbilityDef;
 struct AbilityCooldownComponentDef;
@@ -259,7 +260,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(std::string& out_string) const = 0;
 
-	virtual void RollDamageAndEffects();
+	virtual void RollDamageAndEffects(RandomNumberGenerator& rng);
 
 public:
 
@@ -281,7 +282,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;
 
-	virtual void RollDamageAndEffects() override;
+	virtual void RollDamageAndEffects(RandomNumberGenerator& rng) override;
 
 public:
 
@@ -309,7 +310,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;
 
-	virtual void RollDamageAndEffects() override;
+	virtual void RollDamageAndEffects(RandomNumberGenerator& rng) override;
 
 public:
 

@@ -1,30 +1,30 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SInput.h"
+#include "SCInputSystem.h"
+#include "SCEventSystem.h"
 #include "Engine/Core/NamedProperties.h"
-#include "Engine/Events/EventSystem.h"
-#include "Engine/Input/InputSystem.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SInput::Startup()
 {
-    AddReadDependencies<InputSystem, EventSystem>();
+    AddWriteAllDependencies(); // Currently, any event firing requires write all dependencies, as events can result in anything.
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SInput::Run(SystemContext const&) const
+void SInput::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	// g_input
-	// g_eventSystem
+	InputSystem& input = *context.GetSingleton<SCInputSystem>().m_inputSystem;
+	EventSystem& eventSystem = *context.GetSingleton<SCEventSystem>().m_eventSystem;
 
 	// Pause
-	if (g_input->WasKeyJustPressed(KeyCode::Space))
+	if (input.WasKeyJustPressed(KeyCode::Space))
 	{
 		NamedProperties args;
-		g_eventSystem->FireEvent("TogglePaused", args);
+		eventSystem.FireEvent("TogglePaused", args);
 	}
 }

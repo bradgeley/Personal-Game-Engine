@@ -16,7 +16,7 @@ const char* BGM_FILEPATH = "Data/Sounds/Music/alex-productions-racing-sport-gami
 //----------------------------------------------------------------------------------------------------------------------
 void SBackgroundMusic::Startup()
 {
-	// AddWriteDependencies<AudioSystem, SCAudio>(); todo: reenable if/when Run does more stuff
+	// AddWriteDependencies<SCAudioSystem, SCAudio>(); todo: reenable if/when Run does more stuff
 
 	PlayBGM();
 

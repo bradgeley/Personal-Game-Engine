@@ -34,12 +34,12 @@ void SMovement::Run(SystemContext const& context) const
     auto& moveStorage = context.GetArrayStorage<CMovement>();
     auto& transformStorage = context.GetArrayStorage<CTransform>();
 
-	BitMask deathBitMask = g_ecs->GetComponentBitMask<CDeath>();
+	BitMask deathBitMask = context.GetComponentBitMask<CDeath>();
 
     for (auto it = context.Iterate<CMovement, CTransform, CTime>(); it.IsValid(); ++it)
     {
         CMovement& move = moveStorage[it];
-        if (g_ecs->DoesEntityHaveComponentsUnsafe(it.m_currentIndex, deathBitMask))
+        if (context.DoesEntityHaveComponentsUnsafe(it.m_currentIndex, deathBitMask))
         {
             CDeath const& death = deathStorage[it];
             if (death.GetIsDead())

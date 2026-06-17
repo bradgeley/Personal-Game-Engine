@@ -62,7 +62,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 			int currentWaveIndex = waves.m_currentWaveIndex + waveIndex;
 			Wave& wave = waves.m_waves[currentWaveIndex];
 
-			StartWave(wave);
+			StartWave(waves, wave);
 
 			waves.m_currentWaveIndex++;
 
@@ -151,10 +151,8 @@ bool SWaveSpawner::GenerateWaves(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWaveSpawner::StartWave(Wave& wave)
+void SWaveSpawner::StartWave(SCWaves& waves, Wave& wave)
 {
-	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
-
 	for (WaveStream const& stream : wave.m_waveStreams)
 	{
 		if (stream.m_numEntities <= 0)

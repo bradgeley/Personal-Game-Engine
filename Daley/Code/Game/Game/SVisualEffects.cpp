@@ -8,9 +8,7 @@
 #include "SEntityFactory.h"
 #include "SCEntityFactory.h"
 #include "SpawnInfo.h"
-#include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
-#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Vertex_PCU.h"
 #include "Engine/Renderer/VertexUtils.h"
 
@@ -35,7 +33,6 @@ void SVisualEffects::Run(SystemContext const& context) const
     auto& renderStorage = context.GetArrayStorage<CRender>();
 	auto& attachStorage = context.GetArrayStorage<CAttachment>();
 	auto& factory = context.GetSingleton<SCEntityFactory>();
-    // g_renderer
 
     // Push back an instance for every entity in camera view this frame
     for (auto it = context.Iterate<CHealth, CRender, CAttachment, CTransform>(); it.IsValid(); ++it)
@@ -56,7 +53,7 @@ void SVisualEffects::Run(SystemContext const& context) const
 
         if (burnSaturation > 0.f)
         {
-            if (!g_ecs->IsValid(attachment.m_attachedBurnVFX))
+            if (!context.IsValid(attachment.m_attachedBurnVFX))
             {
                 CTransform const& transform = transStorage[it];
                 // Spawn and attach the vfx on the entity side
@@ -67,7 +64,7 @@ void SVisualEffects::Run(SystemContext const& context) const
                 attachment.m_attachedBurnVFX = SEntityFactory::SpawnEntity(context, spawnInfo);
             }
 
-            if (g_ecs->IsValid(attachment.m_attachedBurnVFX))
+            if (context.IsValid(attachment.m_attachedBurnVFX))
             {
                 // Attach the vfx on the vfx side
 				CAttachment& burnVFXAttachment = attachStorage[attachment.m_attachedBurnVFX];
@@ -81,7 +78,7 @@ void SVisualEffects::Run(SystemContext const& context) const
         }
         else
         {
-            if (g_ecs->IsValid(attachment.m_attachedBurnVFX))
+            if (context.IsValid(attachment.m_attachedBurnVFX))
             {
                 // Destroy the entity, and sever the attachment on the entity side
 				factory.m_entitiesToDestroy.push_back(attachment.m_attachedBurnVFX);

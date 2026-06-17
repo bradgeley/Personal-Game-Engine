@@ -29,7 +29,7 @@ void SAttachment::Run(SystemContext const& context) const
 	{
 		CAttachment const& attach = attachStorage[it];
 
-		bool hasValidAttachment = g_ecs->IsValid(attach.m_attachedTo);
+		bool hasValidAttachment = context.IsValid(attach.m_attachedTo);
 		if (hasValidAttachment)
 		{
 			CTransform& transform = transStorage[it];

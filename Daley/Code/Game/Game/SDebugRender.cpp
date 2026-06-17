@@ -8,12 +8,12 @@
 #include "SCDebug.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
+#include "SCRenderer.h"
 #include "FlowField.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Renderer/Font.h"
-#include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 
@@ -67,6 +67,7 @@ void SDebugRender::Run(SystemContext const& context) const
 	// Write Dependencies
 	SCDebug& scDebug = context.GetSingleton<SCDebug>();
     SCCamera& scCamera = context.GetSingleton<SCCamera>();
+    Renderer& renderer = *context.GetSingleton<SCRenderer>().m_renderer;
 
     // Read Dependencies
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
@@ -75,19 +76,18 @@ void SDebugRender::Run(SystemContext const& context) const
     auto& collStorage = context.GetArrayStorageConst<CCollision>();
     auto& renderStorage = context.GetArrayStorageConst<CRender>();
     auto& transStorage = context.GetArrayStorageConst<CTransform>();
-    // g_renderer
 
     FlowField const& toGoalFlowField = scFlowfield.m_toGoalFlowField;
-    Font* defaultFont = g_renderer->GetDefaultFont();
+    Font* defaultFont = renderer.GetDefaultFont();
 
-    VertexBuffer& untexturedVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameUntexVerts);
-    VertexBuffer& defaultFontVerts = *g_renderer->GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
+    VertexBuffer& untexturedVerts = *renderer.GetVertexBuffer(scDebug.m_frameUntexVerts);
+    VertexBuffer& defaultFontVerts = *renderer.GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
 
     if (scDebug.m_debugRenderGrid)
     {
-        g_renderer->BindTexture(nullptr);
-        g_renderer->BindShader(nullptr);
-        g_renderer->DrawVertexBuffer(world.m_debugVBO);
+        renderer.BindTexture(nullptr);
+        renderer.BindShader(nullptr);
+        renderer.DrawVertexBuffer(world.m_debugVBO);
     }
 
     if (scDebug.m_debugRenderEdges)
@@ -216,12 +216,12 @@ void SDebugRender::Run(SystemContext const& context) const
         }
 	}
 
-    g_renderer->BindTexture(nullptr);
-    g_renderer->BindShader(nullptr);
-    g_renderer->DrawVertexBuffer(scDebug.m_frameUntexVerts);
+    renderer.BindTexture(nullptr);
+    renderer.BindShader(nullptr);
+    renderer.DrawVertexBuffer(scDebug.m_frameUntexVerts);
 
 	defaultFont->SetRendererState();
-    g_renderer->DrawVertexBuffer(scDebug.m_frameDefaultFontVerts);
+    renderer.DrawVertexBuffer(scDebug.m_frameDefaultFontVerts);
 
 	untexturedVerts.ClearVerts();
 	defaultFontVerts.ClearVerts();

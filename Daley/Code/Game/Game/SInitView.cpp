@@ -2,9 +2,9 @@
 #include "SInitView.h"
 #include "CRender.h"
 #include "SCCamera.h"
+#include "SCRenderer.h"
+#include "SCWindow.h"
 #include "WorldSettings.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Window/Window.h"
 #include "Engine/Math/GeometryUtils.h"
 
 
@@ -13,7 +13,7 @@
 void SInitView::Startup()
 {
     AddReadDependencies<SCCamera>();
-    AddWriteDependencies<CRender, Renderer>();
+    AddWriteDependencies<CRender, SCRenderer, SCWindow>();
 }
 
 
@@ -26,12 +26,14 @@ void SInitView::Run(SystemContext const& context) const
 
 	// Write Dependencies
 	auto& renderStorage = context.GetArrayStorage<CRender>();
+	Renderer& renderer = *context.GetSingleton<SCRenderer>().m_renderer;
+	Window* window = context.GetSingleton<SCWindow>().m_window;
 
     AABB2 cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
 
-	g_renderer->BeginWindowLetterboxed(g_window, StaticWorldSettings::s_visibleWorldAspect);
-    g_renderer->BeginCamera(&camera.m_camera);
-    g_renderer->ClearScreen(Rgba8::LightGray);
+	renderer.BeginWindowLetterboxed(window, StaticWorldSettings::s_visibleWorldAspect);
+    renderer.BeginCamera(&camera.m_camera);
+    renderer.ClearScreen(Rgba8::LightGray);
 
     for (auto it = context.Iterate<CRender>(); it.IsValid(); ++it)
     {

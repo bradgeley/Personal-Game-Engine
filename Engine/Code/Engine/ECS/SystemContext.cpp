@@ -71,3 +71,27 @@ void SystemContext::RemoveComponent(EntityID entityID, BitMask componentBit) con
     ASSERT_OR_DIE(HasFullECSAccess(), "SystemContext::RemoveComponent - System does not have full ECS access, cannot remove component.");
     g_ecs->RemoveComponent(entityID, componentBit);
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int SystemContext::NumEntities() const
+{
+	return g_ecs->NumEntities();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SystemContext::IsValid(EntityID entityID) const
+{
+	return g_ecs->IsValid(entityID);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SystemContext::DoesEntityHaveComponentsUnsafe(int entityIndex, BitMask componentBitMask) const
+{
+	return g_ecs->DoesEntityHaveComponentsUnsafe(entityIndex, componentBitMask);
+}
