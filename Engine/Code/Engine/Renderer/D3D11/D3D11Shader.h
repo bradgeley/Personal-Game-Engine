@@ -27,6 +27,7 @@ protected:
 
 public:
 
+	virtual bool IsValid() override;
     virtual void ReleaseResources() override;
 
     virtual bool FullCompileFromSource(std::string const& sourceCode) override;

@@ -1,11 +1,11 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "DevConsoleCommandHistory.h"
 
+#include "Engine/Assets/Font.h"
 #include "Engine/Core/FileUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
-#include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -78,7 +78,11 @@ bool DevConsoleCommandHistory::IsActive() const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
 {
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font const* font = g_renderer->GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
 
     VertexBuffer& untexturedVerts = *g_renderer->GetVertexBuffer(m_untexturedVerts);
     VertexBuffer& textVerts = *g_renderer->GetVertexBuffer(m_textVerts);
@@ -111,11 +115,11 @@ void DevConsoleCommandHistory::RenderToBox(AABB2 const& box) const
         linesRendered += 1.f;
     }
 
-    g_renderer->BindShader(nullptr);
-    g_renderer->BindTexture(nullptr);
+    g_renderer->BindShader();
+    g_renderer->BindTexture();
     g_renderer->DrawVertexBuffer(untexturedVerts);
 
-    font->SetRendererState();
+    font->SetRendererState(*g_renderer);
     g_renderer->DrawVertexBuffer(textVerts);
 }
 

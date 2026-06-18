@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
+#include "Engine/Assets/AssetID.h"
 #include "Engine/Core/EngineSubsystem.h"
 #include "RendererSettings.h"
 #include "RendererUtils.h"
@@ -38,6 +39,7 @@ extern class Renderer* g_renderer;
 struct RendererConfig
 {
 	RendererUserSettings m_startupUserSettings;
+	Name m_defaultFontName = "Data/Fonts/Gypsy.fnt";
 };
 
 
@@ -96,7 +98,6 @@ public:
     virtual InstanceBufferID    MakeInstanceBuffer() = 0;
     virtual SwapchainID         MakeSwapchain() = 0;
     virtual RenderTargetID      MakeSwapchainRenderTarget(void* hwnd, IntVec2 const& initialDims) = 0;
-    virtual FontID              MakeFont();
 	virtual GPUBuffer*          MakeGPUBuffer(GpuBufferConfig const& config) = 0;    // Does not own lifetime of this buffer
 
     template<typename VertexType>
@@ -113,7 +114,6 @@ public:
     InstanceBuffer*             GetInstanceBuffer(InstanceBufferID id) const;
     Swapchain*                  GetSwapchain(SwapchainID id) const;
     RenderTarget*               GetRenderTarget(RenderTargetID id) const;
-    Font*                       GetFont(FontID id) const;
 
     // Factory Release Functions
     void                        ReleaseTexture(TextureID id);
@@ -123,7 +123,6 @@ public:
     void                        ReleaseInstanceBuffer(InstanceBufferID id);
     void                        ReleaseSwapchain(SwapchainID id);
     void                        ReleaseRenderTarget(RenderTargetID id);
-    void                        ReleaseFont(FontID id);
 
     // Rendering Pipeline State
     void ResetRenderingPipelineState();
@@ -143,10 +142,8 @@ public:
     void SetFillMode(FillMode fillMode);
 
     // Binding
-    void BindShader(Shader* shader);
-    void BindShader(ShaderID shader);
-    void BindTexture(Texture* texture, int slot = 0);
-    void BindTexture(TextureID texture, int slot = 0);
+    void BindShader(ShaderID shader = RendererUtils::InvalidID);
+    void BindTexture(TextureID texture = RendererUtils::InvalidID, int slot = 0);
     virtual void BindRenderTarget(RenderTargetID renderTarget, float letterboxedAspect = -1.f) = 0;
     virtual void BindVertexBuffer(VertexBufferID vbo, int slot = 0) const = 0;
     virtual void BindVertexBuffer(VertexBuffer& vbo, int slot = 0) const = 0;
@@ -161,9 +158,9 @@ public:
     int GetNumFrameDrawCalls() const;
 
     // Get Defaults
-    Font* GetDefaultFont() const;
-    Texture* GetDefaultTexture() const;
-    Shader* GetDefaultShader() const;
+    Font const* GetDefaultFont() const;
+    Texture const* GetDefaultTexture() const;
+    Shader const* GetDefaultShader() const;
 
     // Get Bound
     Shader* GetBoundShader() const;
@@ -179,7 +176,6 @@ protected:
     InstanceBufferID RequestInstanceBufferID() const;
     SwapchainID      RequestSwapchainID() const;
     RenderTargetID   RequestRenderTargetID() const;
-    FontID           RequestFontID() const;
 
     virtual VertexBufferID MakeTypedVertexBufferInternal(size_t vertSize, size_t numVerts);
     virtual InstanceBufferID MakeTypedInstanceBufferInternal(size_t instanceSize, size_t numInstances);
@@ -216,12 +212,13 @@ protected:
     virtual void CreateConstantBuffers();
     virtual void CreateBlendStates() = 0;
     virtual void CreateRasterizerState() = 0;
-    virtual void CreateDefaultShader() = 0;
+    virtual void CreateDefaultShader();
     virtual void CreateDefaultTexture();
-    virtual void CreateDefaultFont() = 0;
+    virtual void CreateDefaultFont();
 
     // State cleanup
     virtual void DestroyDebugLayer() = 0;
+	virtual void DestroyDefaultShader();
     virtual void DestroyDevice() = 0;
     virtual void DestroyBlendStates() = 0;
     virtual void DestroyDepthStencilState() = 0;
@@ -264,12 +261,12 @@ protected:
     ConstantBufferID    m_fontConstantsGPU     = RendererUtils::InvalidID;
 
     // Defaults
+	AssetID             m_defaultFontAssetID   = AssetID::Invalid;
+	AssetID             m_defaultShaderAssetID = AssetID::Invalid;
     ShaderID            m_defaultShader        = RendererUtils::InvalidID;
     TextureID           m_defaultTexture       = RendererUtils::InvalidID;
-    FontID              m_defaultFont          = RendererUtils::InvalidID;
 
     // GPU Objects
-    std::unordered_map<FontID, Font*> m_fonts;
     std::unordered_map<ShaderID, Shader*> m_shaders;
     std::unordered_map<TextureID, Texture*> m_textures;
     std::unordered_map<SwapchainID, Swapchain*> m_swapchains;
@@ -279,7 +276,6 @@ protected:
     std::unordered_map<ConstantBufferID, ConstantBuffer*> m_constantBuffers;
 
     // Mutexes
-    mutable std::mutex m_fontsMutex;
     mutable std::mutex m_shadersMutex;
     mutable std::mutex m_texturesMutex;
     mutable std::mutex m_swapchainsMutex;

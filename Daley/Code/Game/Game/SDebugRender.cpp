@@ -10,10 +10,10 @@
 #include "SCFlowField.h"
 #include "SCRenderer.h"
 #include "FlowField.h"
+#include "Engine/Assets/Font.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
-#include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -84,15 +84,19 @@ void SDebugRender::Run(SystemContext const& context) const
     auto& transStorage = context.GetArrayStorageConst<CTransform>();
 
     FlowField const& toGoalFlowField = scFlowfield.m_toGoalFlowField;
-    Font* defaultFont = renderer.GetDefaultFont();
+    Font const* font = renderer.GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
 
     VertexBuffer& untexturedVerts = *renderer.GetVertexBuffer(scDebug.m_frameUntexVerts);
     VertexBuffer& defaultFontVerts = *renderer.GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
 
     if (scDebug.m_debugRenderGrid)
     {
-        renderer.BindTexture(nullptr);
-        renderer.BindShader(nullptr);
+        renderer.BindTexture();
+        renderer.BindShader();
         renderer.DrawVertexBuffer(world.m_debugVBO);
     }
 
@@ -162,7 +166,7 @@ void SDebugRender::Run(SystemContext const& context) const
                 float t = MathUtils::RangeMapClamped(distance, 0.f, 100.f, 0.f, 1.f);
                 Rgba8 const& tint = Rgba8::Lerp(Rgba8::Green, Rgba8::Red, t);
                 std::string distanceText = StringUtils::StringF("%.2f", distance);
-                defaultFont->AddVertsForAlignedText2D(defaultFontVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, distanceText, tint);
+                font->AddVertsForAlignedText2D(defaultFontVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, distanceText, tint);
             }
         }
     }
@@ -222,11 +226,11 @@ void SDebugRender::Run(SystemContext const& context) const
         }
 	}
 
-    renderer.BindTexture(nullptr);
-    renderer.BindShader(nullptr);
+    renderer.BindTexture();
+    renderer.BindShader();
     renderer.DrawVertexBuffer(scDebug.m_frameUntexVerts);
 
-	defaultFont->SetRendererState();
+    font->SetRendererState(*g_renderer);
     renderer.DrawVertexBuffer(scDebug.m_frameDefaultFontVerts);
 
 	untexturedVerts.ClearVerts();

@@ -40,9 +40,6 @@
     <ClCompile Include="Renderer\EngineConstantBuffers.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer\Font.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer\Rgba8.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
@@ -313,6 +310,7 @@
     <ClCompile Include="Core\NamedProperties.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Assets\Font.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -355,9 +353,6 @@
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\EngineConstantBuffers.h">
-      <Filter>Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\Font.h">
       <Filter>Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\RendererSettings.h">
@@ -555,16 +550,10 @@
     <ClInclude Include="Renderer\D3D11\D3D11Internal.h">
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer\D3D11\HLSLDefaultShaderSource.h">
-      <Filter>Renderer\D3D11</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer\D3D11\D3D11Texture.h">
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\D3D11\D3D11Shader.h">
-      <Filter>Renderer\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer\D3D11\HLSLDefaultFontShaderSource.h">
       <Filter>Renderer\D3D11</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\RenderTarget.h">
@@ -675,6 +664,7 @@
     <ClInclude Include="Core\NamedProperties.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Assets\Font.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">

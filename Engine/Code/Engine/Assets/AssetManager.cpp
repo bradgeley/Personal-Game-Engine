@@ -4,6 +4,7 @@
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/NamedProperties.h"
+#include "Engine/Assets/Font.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/SpriteAnimation.h"
 #include "Engine/Debug/DevConsoleUtils.h"
@@ -24,10 +25,11 @@ AssetManager* g_assetManager = nullptr;
 //----------------------------------------------------------------------------------------------------------------------
 AssetManager::AssetManager(AssetManagerConfig const& config) : m_config(config)
 {
+    RegisterLoader<Font>(Font::Load, "Font");
     RegisterLoader<GridSpriteSheet>(GridSpriteSheet::Load, "GridSpriteSheet");
     RegisterLoader<Image>(Image::Load, "Image");
-    RegisterLoader<TextureAsset>(TextureAsset::Load, "Texture");
     RegisterLoader<ShaderAsset>(ShaderAsset::Load, "Shader");
+    RegisterLoader<TextureAsset>(TextureAsset::Load, "Texture");
 }
 
 
@@ -639,6 +641,12 @@ bool AssetManager::StaticReloadAllAssets(NamedProperties&)
     {
         return false;
     }
+
+    if (g_assetManager->m_futureAssets.size() > 0)
+    {
+        DevConsoleUtils::LogError("Cannot reload all assets while there are still %i assets in the process of being async loaded.", g_assetManager->m_futureAssets.size());
+        return false;
+	}
 
     auto copy = g_assetManager->m_assetIDs;
 

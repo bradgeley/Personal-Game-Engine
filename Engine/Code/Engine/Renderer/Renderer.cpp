@@ -1,13 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "Renderer.h"
-#include "Engine/Core/EngineCommon.h"
-#include "Engine/Core/ErrorUtils.h"
-#include "Engine/Debug/DevConsoleUtils.h"
-#include "Engine/Events/EventSystem.h"
-#include "Engine/Window/Window.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"
-#include "Font.h"
 #include "InstanceBuffer.h"
 #include "RenderTarget.h"
 #include "Shader.h"
@@ -15,6 +9,14 @@
 #include "Texture.h"
 #include "VertexBuffer.h"
 #include "VertexUtils.h"
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/Font.h"
+#include "Engine/Assets/ShaderAsset.h"
+#include "Engine/Core/EngineCommon.h"
+#include "Engine/Core/ErrorUtils.h"
+#include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/Events/EventSystem.h"
+#include "Engine/Window/Window.h"
 #include <thread>
 
 
@@ -75,6 +77,7 @@ void Renderer::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::Shutdown()
 {
+	DestroyDefaultShader();
 	DestroyShaders();
 	DestroyTextures();
 	DestroyConstantBuffers();
@@ -244,8 +247,8 @@ void Renderer::DrawVertexBuffer(VertexBuffer& vbo, int slot)
 
 			VertexBuffer& debugVBO = *GetVertexBuffer(m_debugVertexBuffer);
 			VertexUtils::AddVertsForWireMesh2D(debugVBO, vbo, thickness, Rgba8::Magenta);
-			BindShader(nullptr);
-			BindTexture(nullptr);
+			BindShader();
+			BindTexture();
 
 			m_debugDrawVertexBuffers = false; // avoid infinite recursion
 			DrawVertexBuffer(debugVBO);
@@ -406,20 +409,6 @@ RenderTarget* Renderer::GetRenderTarget(RenderTargetID id) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Font* Renderer::GetFont(FontID id) const
-{
-	std::unique_lock lock(m_fontsMutex);
-	auto it = m_fonts.find(id);
-	if (it != m_fonts.end())
-	{
-		return it->second;
-	}
-	return nullptr;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void Renderer::ReleaseTexture(TextureID id)
 {
 	std::unique_lock lock(m_texturesMutex);
@@ -527,22 +516,6 @@ void Renderer::ReleaseRenderTarget(RenderTargetID renderTargetID)
 		rt->ReleaseResources();
 		delete rt;
 		m_renderTargets.erase(pair);
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Renderer::ReleaseFont(FontID id)
-{
-	std::unique_lock lock(m_fontsMutex);
-	auto pair = m_fonts.find(id);
-	if (pair != m_fonts.end())
-	{
-		Font* font = pair->second;
-		font->ReleaseResources();
-		delete font;
-		m_fonts.erase(pair);
 	}
 }
 
@@ -666,7 +639,7 @@ void Renderer::SetFillMode(FillMode fillMode)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::BindTexture(TextureID texture, int slot /*= 0*/)
+void Renderer::BindTexture(TextureID texture /*= RendererUtils::InvalidID*/, int slot /*= 0*/)
 {
 	ASSERT_OR_DIE(slot >= 0 && slot < 16, "Texture slot out of range.");
 	m_dirtySettings.m_boundTextures[slot] = texture;
@@ -675,59 +648,13 @@ void Renderer::BindTexture(TextureID texture, int slot /*= 0*/)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::BindTexture(Texture* texture, int slot /*= 0*/)
+void Renderer::BindShader(ShaderID shader /*= RendererUtils::InvalidID*/)
 {
-	ASSERT_OR_DIE(slot >= 0 && slot < 16, "Texture slot out of range.");
-	if (!texture && slot == 0)
-	{
-		if (slot == 0)
-		{
-			m_dirtySettings.m_boundTextures[slot] = m_defaultTexture;
-		}
-		else
-		{
-			m_dirtySettings.m_boundTextures[slot] = RendererUtils::InvalidID;
-		}
-		return;
-	}
-
-	for (auto it : m_textures)
-	{
-		if (it.second == texture)
-		{
-			m_dirtySettings.m_boundTextures[slot] = it.first;
-			return;
-		}
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Renderer::BindShader(ShaderID shader)
-{
-	m_dirtySettings.m_boundShader = shader;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void Renderer::BindShader(Shader* shader)
-{
-	if (!shader)
+	if (shader == RendererUtils::InvalidID)
 	{
 		m_dirtySettings.m_boundShader = m_defaultShader;
-		return;
 	}
-
-	for (auto it : m_shaders)
-	{
-		if (it.second == shader)
-		{
-			m_dirtySettings.m_boundShader = it.first;
-			return;
-		}
-	}
+	m_dirtySettings.m_boundShader = shader;
 }
 
 
@@ -749,31 +676,26 @@ int Renderer::GetNumFrameDrawCalls() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Font* Renderer::GetDefaultFont() const
+Font const* Renderer::GetDefaultFont() const
 {
-	auto it = m_fonts.find(m_defaultFont);
-	ASSERT_OR_DIE(it != m_fonts.end(), "Cannot find default font.");
-	return it->second;
+	Font const* defaultFont = g_assetManager->Get<Font>(m_defaultFontAssetID);
+	return defaultFont;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Texture* Renderer::GetDefaultTexture() const
+Texture const* Renderer::GetDefaultTexture() const
 {
-	auto it = m_textures.find(m_defaultTexture);
-	ASSERT_OR_DIE(it != m_textures.end(), "Cannot find default texture.");
-	return it->second;
+	return GetTexture(m_defaultTexture);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Shader* Renderer::GetDefaultShader() const
+Shader const* Renderer::GetDefaultShader() const
 {
-	auto it = m_shaders.find(m_defaultShader);
-	ASSERT_OR_DIE(it != m_shaders.end(), "Cannot find default shader.");
-	return it->second;
+	return GetShader(m_defaultShader);
 }
 
 
@@ -853,15 +775,6 @@ SwapchainID Renderer::RequestSwapchainID() const
 RenderTargetID Renderer::RequestRenderTargetID() const
 {
 	static RenderTargetID s_id = 0;
-	return s_id++;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-FontID Renderer::RequestFontID() const
-{
-	static FontID s_id = 0;
 	return s_id++;
 }
 
@@ -1046,6 +959,12 @@ void Renderer::UpdateShader(bool force)
 	{
 		if (m_dirtySettings.m_boundShader == RendererUtils::InvalidID)
 		{
+			Shader const* defaultShader = GetDefaultShader();
+			if (!defaultShader)
+			{
+				CreateDefaultShader();
+				g_assetManager->Release(m_defaultShaderAssetID); // Get rid of extra ref count caused by reload
+			}
 			ASSERT_OR_DIE(m_defaultShader != RendererUtils::InvalidID, "No default shader exists.");
 			BindShader(m_defaultShader);
 		}
@@ -1067,6 +986,14 @@ void Renderer::CreateConstantBuffers()
 	BindConstantBuffer(m_cameraConstantsGPU, 2);
 	BindConstantBuffer(m_modelConstantsGPU, 3);
 	BindConstantBuffer(m_fontConstantsGPU, 4);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::DestroyDefaultShader()
+{
+	g_assetManager->Release(m_defaultShaderAssetID);
 }
 
 
@@ -1170,12 +1097,7 @@ void Renderer::DestroyRenderTargets()
 //----------------------------------------------------------------------------------------------------------------------
 void Renderer::DestroyFonts()
 {
-	for (auto font : m_fonts)
-	{
-		font.second->ReleaseResources();
-		delete font.second;
-	}
-	m_fonts.clear();
+	g_assetManager->Release(m_defaultFontAssetID);
 }
 
 
@@ -1214,10 +1136,34 @@ void Renderer::FontConstantsUpdated()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Renderer::CreateDefaultShader()
+{
+	m_defaultShaderAssetID = g_assetManager->LoadSynchronous<ShaderAsset>("Data/Shaders/DefaultShader.xml");
+	ShaderAsset const* shader = g_assetManager->Get<ShaderAsset>(m_defaultShaderAssetID);
+	ASSERT_OR_DIE(shader != nullptr, "Failed to load default shader.");
+	m_defaultShader = shader->GetShaderID();
+	ASSERT_OR_DIE(m_defaultShader != RendererUtils::InvalidID, "Default shader asset did not have a valid shader ID.");
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Renderer::CreateDefaultTexture()
 {
 	m_defaultTexture = MakeTexture();
-	GetDefaultTexture()->CreateUniformTexture(IntVec2(1, 1), Rgba8::White);
+	Texture* defaultTexture = GetTexture(m_defaultTexture);
+	defaultTexture->CreateUniformTexture(IntVec2(1, 1), Rgba8::White);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Renderer::CreateDefaultFont()
+{
+	if (m_config.m_defaultFontName != Name::Invalid)
+	{
+		m_defaultFontAssetID = g_assetManager->AsyncLoad<Font>(m_config.m_defaultFontName);
+	}
 }
 
 
@@ -1277,18 +1223,6 @@ bool Renderer::ToggleMSAA(NamedProperties&)
 	SetMSAA(!m_userSettings.m_msaaEnabled);
 
 	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-FontID Renderer::MakeFont()
-{
-	auto fontResult = new Font();
-	std::unique_lock lock(m_fontsMutex);
-	FontID fontID = RequestFontID();
-	m_fonts[fontID] = fontResult;
-	return fontID;
 }
 
 

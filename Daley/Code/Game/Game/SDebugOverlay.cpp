@@ -16,11 +16,11 @@
 #include "SCRenderer.h"
 #include "SCWaves.h"
 #include "SCWindow.h"
+#include "Engine/Assets/Font.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Camera.h"
-#include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
@@ -80,7 +80,11 @@ void SDebugOverlay::Run(SystemContext const& context) const
 
 	VertexBuffer& untexVerts = *renderer.GetVertexBuffer(scDebug.m_frameUntexVerts);
 	VertexBuffer& fontVerts = *renderer.GetVertexBuffer(scDebug.m_frameDefaultFontVerts);
-	Font* font = renderer.GetDefaultFont();
+	Font const* font = renderer.GetDefaultFont();
+	if (!font)
+	{
+		return;
+	}
 
 	Camera screenCamera;
 	IntVec2 resolution = window.GetRenderResolution();
@@ -192,13 +196,13 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	renderer.BeginCamera(&screenCamera);
 
 	// Render->clear debug verts 
-	renderer.BindTexture(nullptr);
-	renderer.BindShader(nullptr);
+	renderer.BindTexture();
+	renderer.BindShader();
 	renderer.DrawVertexBuffer(untexVerts);
 	untexVerts.ClearVerts();
 
 	// Render->clear debug text verts 
-	font->SetRendererState();
+	font->SetRendererState(*g_renderer);
 	renderer.DrawVertexBuffer(fontVerts);
 	fontVerts.ClearVerts();
 }

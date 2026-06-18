@@ -41,6 +41,17 @@ D3D11Shader::D3D11Shader(ShaderConfig const& config) : Shader(config)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool D3D11Shader::IsValid()
+{
+	bool isVertexShaderValid = m_vertexShader != nullptr;
+	bool isPixelShaderValid = m_pixelShader != nullptr;
+	bool isInputLayoutValid = m_inputLayout != nullptr;
+	return isVertexShaderValid && isPixelShaderValid && isInputLayoutValid;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void D3D11Shader::ReleaseResources()
 {
 	DX_SAFE_RELEASE(m_pixelShader);

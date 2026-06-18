@@ -37,6 +37,7 @@ public:
 	Shader(Shader const& copy) = delete;
     virtual ~Shader() = default;
 
+    virtual bool IsValid() = 0;
     virtual void ReleaseResources() = 0;
 
     virtual bool FullCompileFromSource(std::string const& sourceCode) = 0;

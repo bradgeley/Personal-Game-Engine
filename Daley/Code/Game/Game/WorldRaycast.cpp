@@ -262,8 +262,8 @@ void DebugDrawRaycast(WorldRaycastResult const& result, Renderer& renderer)
         VertexUtils::AddVertsForArrow2D(vbo, result.m_raycast.m_start, result.m_hitLocation, 0.05f, Rgba8::Yellow);
     }
 
-    renderer.BindTexture(nullptr);
-    renderer.BindShader(nullptr);
+    renderer.BindTexture();
+    renderer.BindShader();
     renderer.DrawVertexBuffer(vbo);
 
     renderer.ReleaseVertexBuffer(id);

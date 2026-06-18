@@ -1,9 +1,9 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "DevConsoleInput.h"
 #include "DevConsoleLog.h"
+#include "Engine/Assets/Font.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
-#include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -237,8 +237,8 @@ void DevConsoleInput::RenderBackground(AABB2 const& box) const
     vbo.ClearVerts();
     VertexUtils::AddVertsForAABB2(vbo, box, Rgba8::DarkGray);
 
-    g_renderer->BindShader(nullptr);
-    g_renderer->BindTexture(nullptr);
+    g_renderer->BindShader();
+    g_renderer->BindTexture();
     g_renderer->DrawVertexBuffer(vbo);
 }
 
@@ -247,7 +247,11 @@ void DevConsoleInput::RenderBackground(AABB2 const& box) const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::RenderText(AABB2 const& box) const
 {
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font const* font = g_renderer->GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
 
     std::string guess = g_devConsole->GuessCommandInput(m_input.m_line);
 
@@ -258,7 +262,7 @@ void DevConsoleInput::RenderText(AABB2 const& box) const
     font->AddVertsForText2D(vbo, box.mins, box.GetHeight(), LINE_PREFIX + guess, Rgba8(155, 155, 155, static_cast<uint8_t>(alpha)));
     font->AddVertsForText2D(vbo, box.mins, box.GetHeight(), LINE_PREFIX + m_input.m_line, Rgba8::White);
 
-    font->SetRendererState();
+    font->SetRendererState(*g_renderer);
     g_renderer->DrawVertexBuffer(vbo);
 }
 
@@ -272,7 +276,11 @@ void DevConsoleInput::RenderSelection(AABB2 const& box) const
         return;
     }
     
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font const* font = g_renderer->GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
     
     float caretThickness = 1.f / (float) g_window->GetWidth();
     
@@ -299,7 +307,11 @@ void DevConsoleInput::RenderSelection(AABB2 const& box) const
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleInput::RenderCaret(AABB2 const& box) const
 {
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font const* font = g_renderer->GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
 
     Rgba8 caretTint = Rgba8(255, 255, 255, (uint8_t) (m_caretAnimationFraction * 255.f));
     float textHeight = box.GetHeight();
@@ -317,8 +329,8 @@ void DevConsoleInput::RenderCaret(AABB2 const& box) const
     vbo.ClearVerts();
     
     VertexUtils::AddVertsForAABB2(vbo, caretBox, caretTint);
-    g_renderer->BindShader(nullptr);
-    g_renderer->BindTexture(nullptr);
+    g_renderer->BindShader();
+    g_renderer->BindTexture();
     g_renderer->DrawVertexBuffer(vbo);
 }
 
@@ -341,7 +353,12 @@ void DevConsoleInput::RenderInputGuessesToBox(AABB2 const& box, int maxLines /*=
     truncatedBox.maxs.y = truncatedBox.mins.y + lineHeight * (float) numLines;
 	RenderBackground(truncatedBox);
 
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font const* font = g_renderer->GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
+
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
     vbo.ClearVerts();
 
@@ -354,7 +371,8 @@ void DevConsoleInput::RenderInputGuessesToBox(AABB2 const& box, int maxLines /*=
         font->AddVertsForText2D(vbo, lineBox.mins, lineBox.GetHeight(), guess, Rgba8::White);
 	}
 
-    font->SetRendererState();
+    font->SetRendererState(*g_renderer);
+
     g_renderer->DrawVertexBuffer(vbo);
 }
 

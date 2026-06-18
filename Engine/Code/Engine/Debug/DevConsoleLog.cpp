@@ -1,9 +1,9 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "DevConsoleLog.h"
+#include "Engine/Assets/Font.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
-#include "Engine/Core/StringUtils.h"
-#include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include <cfloat>
@@ -41,7 +41,11 @@ void DevConsoleLog::AddLine(DevConsoleLine const& line)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsoleLog::RenderToBox(AABB2 const& box) const
 {
-    Font* font = g_renderer->GetDefaultFont(); // todo: let change fonts
+    Font const* font = g_renderer->GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
 
     VertexBuffer& vbo = *g_renderer->GetVertexBuffer(m_vbo);
     vbo.ClearVerts();
@@ -64,7 +68,7 @@ void DevConsoleLog::RenderToBox(AABB2 const& box) const
         linesRendered += 1.f;
     }
 
-    font->SetRendererState();
+    font->SetRendererState(*g_renderer);
     g_renderer->DrawVertexBuffer(vbo);
 }
 

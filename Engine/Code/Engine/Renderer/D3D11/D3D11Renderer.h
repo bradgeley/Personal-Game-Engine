@@ -74,8 +74,6 @@ private:
     virtual void CreateDevice() override;
     virtual void CreateBlendStates() override;
     virtual void CreateRasterizerState() override;
-    virtual void CreateDefaultShader() override;
-    virtual void CreateDefaultFont() override;
 
     // D3D11 Specific State Creation
     ID3D11BlendState* CreateBlendState(BlendMode blendMode);

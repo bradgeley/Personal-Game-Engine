@@ -6,6 +6,7 @@
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/Image.h"
 #include "Engine/Assets/GridSpriteSheet.h"
+#include "Engine/Assets/Font.h"
 #include "Engine/Assets/TextureAsset.h"
 #include "Engine/Time/Clock.h"
 #include "Engine/Core/Engine.h"
@@ -24,7 +25,6 @@
 #include "Engine/Window/WindowUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Camera.h"
-#include "Engine/Renderer/Font.h"
 
 #include "Game/Framework/Application.h"
 #include "AllComponents.h"
@@ -121,6 +121,10 @@ void Game::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 void Game::Shutdown()
 {
+	SCRandomNumberGenerator& scRNG = g_ecs->GetSingleton<SCRandomNumberGenerator>();
+    delete scRNG.GetRNG();
+	scRNG.SetRNG(nullptr);
+
     g_eventSystem->UnsubscribeMethod("TimeDilation", this, &Game::TimeDilation);
     g_eventSystem->UnsubscribeMethod("TogglePaused", this, &Game::TogglePausedEvent);
     g_devConsole->RemoveDevConsoleCommandInfo("TimeDilation");

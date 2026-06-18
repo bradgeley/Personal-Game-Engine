@@ -122,7 +122,7 @@ private:
 	void UpdateBackgroundImage(float deltaSeconds);
 	void DrawBackground() const;
 	void DrawTab() const;
-	void DrawText() const;
+	void DrawConsoleText() const;
 	void DrawCommandHistory() const;
 	void PickNextBackgroundImage();
 	float GetBackgroundImageAlpha() const;

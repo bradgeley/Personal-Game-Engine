@@ -2,6 +2,7 @@
 #include "Engine/Debug/DevConsole.h"
 #include "DebugDrawUtils.h"
 #include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/Font.h"
 #include "Engine/Assets/TextureAsset.h"
 #include "Engine/Assets/Image.h"
 #include "Engine/Core/EngineCommon.h"
@@ -13,7 +14,6 @@
 #include "Engine/Input/InputUtils.h"
 #include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/Camera.h"
-#include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/VertexBuffer.h"
@@ -142,7 +142,7 @@ void DevConsole::Render() const
     }
 
     DrawBackground();
-    DrawText();
+    DrawConsoleText();
 
     if (m_commandHistory.IsActive())
     {
@@ -849,8 +849,8 @@ void DevConsole::DrawBackground() const
     vbo.ClearVerts();
 
     VertexUtils::AddVertsForAABB2(vbo, backgroundBox, m_config.m_backgroundTint);
-    g_renderer->BindTexture(nullptr);
-    g_renderer->BindShader(nullptr);
+    g_renderer->BindTexture();
+    g_renderer->BindShader();
     g_renderer->DrawVertexBuffer(m_vbo);
 
     // Reusing the same vbo for 2 draw calls - todo: make more efficient
@@ -895,7 +895,7 @@ void DevConsole::DrawBackground() const
     
     VertexUtils::AddVertsForAABB2(vbo, imageBox, Rgba8(255,255,255,(uint8_t) (25.f * alpha)));
     g_renderer->BindTexture(textureID);
-    g_renderer->BindShader(nullptr);
+    g_renderer->BindShader();
     g_renderer->DrawVertexBuffer(vbo);
 }
 
@@ -924,22 +924,27 @@ void DevConsole::DrawTab() const
     vbo.ClearVerts();
 
     VertexUtils::AddVertsForAABB2(vbo, tabDims, m_config.m_backgroundTint);
-    g_renderer->BindTexture(nullptr);
-    g_renderer->BindShader(nullptr);
+    g_renderer->BindTexture();
+    g_renderer->BindShader();
     g_renderer->DrawVertexBuffer(vbo);
 
     vbo.ClearVerts();
 
-    auto font = g_renderer->GetDefaultFont();
+    Font const* font = g_renderer->GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
+
     font->AddVertsForAlignedText2D(vbo, tabDims.GetCenter(), Vec2::ZeroVector, tabDims.GetHeight(), "DevConsole (~)", Rgba8::White);
-    font->SetRendererState();
+    font->SetRendererState(*g_renderer);
     g_renderer->DrawVertexBuffer(vbo);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void DevConsole::DrawText() const
+void DevConsole::DrawConsoleText() const
 {
     float relativeLineThickness = m_config.m_inputLineThickness / (float) g_window->GetHeight();
     Vec2 inputLineMins = m_camera->GetOrthoBounds2D().mins;

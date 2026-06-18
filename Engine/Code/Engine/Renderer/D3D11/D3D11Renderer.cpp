@@ -13,11 +13,9 @@
 #include "D3D11VertexBuffer.h"
 #include "D3D11InstanceBuffer.h"
 #include "D3D11Swapchain.h"
-#include "HLSLDefaultShaderSource.h"
-#include "HLSLDefaultFontShaderSource.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
-#include "Engine/Renderer/Font.h"
+#include "Engine/Assets/Font.h"
 #include "Engine/Renderer/RenderTarget.h"
 
 #if defined(_DEBUG)
@@ -806,47 +804,6 @@ void D3D11Renderer::CreateRasterizerState()
 		std::string rasterizerName = StringUtils::StringF("Rasterizer State");
 		m_rasterizerState->SetPrivateData(WKPDID_D3DDebugObjectName, (int) rasterizerName.size(), rasterizerName.data());
 	#endif
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::CreateDefaultShader()
-{
-	ShaderConfig defaultShaderConfig;
-	defaultShaderConfig.m_name = "DefaultShader";
-	defaultShaderConfig.m_inputLayout = *Vertex_PCU::GetInputLayout();
-
-	m_defaultShader = MakeShader(defaultShaderConfig);
-
-	D3D11Shader* defaultShader = dynamic_cast<D3D11Shader*>(GetDefaultShader());
-	ASSERT_OR_DIE(defaultShader, "Invalid default shader.");
-
-	defaultShader->FullCompileFromSource(s_HLSLDefaultShaderSource);
-	defaultShader->GetD3D11InputLayout();
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void D3D11Renderer::CreateDefaultFont()
-{
-	m_defaultFont = MakeFont();
-
-	Font* font = GetFont(m_defaultFont);
-	ASSERT_OR_DIE(font, "Invalid default font.");
-
-	font->LoadFNT("Data/Fonts/Gypsy.fnt");
-
-	ShaderConfig config;
-	config.m_inputLayout = *Vertex_PCU::GetInputLayout();
-	config.m_name = "Default Font Shader";
-	font->m_shader = MakeShader(config);
-
-	Shader* shader = GetShader(font->m_shader);
-	ASSERT_OR_DIE(shader, "Invalid default font shader.");
-
-	shader->FullCompileFromSource(s_HLSLDefaultFontShaderSource);
 }
 
 

@@ -250,6 +250,7 @@
     <ClCompile Include="Assets\AssetKey.cpp" />
     <ClCompile Include="Assets\AssetManager.cpp" />
     <ClCompile Include="Assets\AsyncLoadAssetJob.cpp" />
+    <ClCompile Include="Assets\Font.cpp" />
     <ClCompile Include="Assets\GridSpriteSheet.cpp" />
     <ClCompile Include="Assets\Image.cpp" />
     <ClCompile Include="Assets\ShaderAsset.cpp" />
@@ -327,7 +328,6 @@
     <ClCompile Include="Renderer\D3D11\D3D11Utils.cpp" />
     <ClCompile Include="Renderer\D3D11\D3D11VertexBuffer.cpp" />
     <ClCompile Include="Renderer\EngineConstantBuffers.cpp" />
-    <ClCompile Include="Renderer\Font.cpp" />
     <ClCompile Include="Renderer\GPUBuffer.cpp" />
     <ClCompile Include="Renderer\InputLayout.cpp" />
     <ClCompile Include="Renderer\InstanceBuffer.cpp" />
@@ -359,6 +359,7 @@
     <ClInclude Include="Assets\AssetLoaderFunction.h" />
     <ClInclude Include="Assets\AssetManager.h" />
     <ClInclude Include="Assets\AsyncLoadAssetJob.h" />
+    <ClInclude Include="Assets\Font.h" />
     <ClInclude Include="Assets\GridSpriteSheet.h" />
     <ClInclude Include="Assets\Image.h" />
     <ClInclude Include="Assets\ShaderAsset.h" />
@@ -445,10 +446,7 @@
     <ClInclude Include="Renderer\D3D11\D3D11Texture.h" />
     <ClInclude Include="Renderer\D3D11\D3D11Utils.h" />
     <ClInclude Include="Renderer\D3D11\D3D11VertexBuffer.h" />
-    <ClInclude Include="Renderer\D3D11\HLSLDefaultFontShaderSource.h" />
-    <ClInclude Include="Renderer\D3D11\HLSLDefaultShaderSource.h" />
     <ClInclude Include="Renderer\EngineConstantBuffers.h" />
-    <ClInclude Include="Renderer\Font.h" />
     <ClInclude Include="Renderer\GPUBuffer.h" />
     <ClInclude Include="Renderer\InputLayout.h" />
     <ClInclude Include="Renderer\InstanceBuffer.h" />

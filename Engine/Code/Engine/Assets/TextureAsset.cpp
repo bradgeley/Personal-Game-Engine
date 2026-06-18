@@ -44,7 +44,7 @@ TextureID TextureAsset::GetTextureID() const
 //----------------------------------------------------------------------------------------------------------------------
 bool TextureAsset::CompleteAsyncLoad()
 {
-    if (m_imageAssetID == AssetID::Invalid)
+    if (!g_assetManager->IsValid(m_imageAssetID))
     {
         m_imageAssetID = g_assetManager->AsyncLoad<Image>(m_name);
 	}
@@ -122,6 +122,7 @@ void TextureAsset::ReleaseResources()
 //----------------------------------------------------------------------------------------------------------------------
 AssetID TextureAsset::GetLoadDependency() const
 {
+	ASSERT_OR_DIE(m_imageAssetID != AssetID::Invalid, "TextureAsset::GetLoadDependency - Image asset ID is invalid.");
 	Image const* loadedImage = g_assetManager->Get<Image>(m_imageAssetID);
     if (loadedImage == nullptr)
     {

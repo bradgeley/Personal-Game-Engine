@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "PerformanceDebugWindow.h"
+#include "Engine/Assets/Font.h"
 #include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
@@ -10,7 +11,6 @@
 #include "Engine/ECS/System.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Renderer/Camera.h"
-#include "Engine/Renderer/Font.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -326,26 +326,29 @@ void PerformanceDebugWindow::EngineFrameCompleted()
     g_renderer->DrawVertexBuffer(untexturedVBO);
 
     // Title
-    Font* font = g_renderer->GetDefaultFont();
-    font->AddVertsForAlignedText2D(textVBO, graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
-
-    // FPS Counter
-    float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
-    std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
-    font->AddVertsForAlignedText2D(textVBO, graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
-
-    // X-Axis Frame Time
-    Vec2 frameBounds = GetItemFrameBounds();
-    font->AddVertsForAlignedText2D(textVBO, graphOutline.mins, Vec2(1.f, -1.f), FPS_COUNTER_FONT_SIZE, "0", Rgba8::Black);
-    font->AddVertsForAlignedText2D(textVBO, graphOutline.GetBottomRight(), Vec2(-1.f, -1.f), FPS_COUNTER_FONT_SIZE, StringUtils::StringF("%0.3fms", (frameBounds.y - frameBounds.x) * 1000.f), Rgba8::Black);
-
-    for (PerfSection const& section : m_perfSections)
+    Font const* font = g_renderer->GetDefaultFont();
+    if (font)
     {
-        AddTextVertsForSection(textVBO, section);
-    }
+        font->AddVertsForAlignedText2D(textVBO, graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
 
-    font->SetRendererState();
-    g_renderer->DrawVertexBuffer(m_textVBO);
+        // FPS Counter
+        float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
+        std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
+        font->AddVertsForAlignedText2D(textVBO, graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
+
+        // X-Axis Frame Time
+        Vec2 frameBounds = GetItemFrameBounds();
+        font->AddVertsForAlignedText2D(textVBO, graphOutline.mins, Vec2(1.f, -1.f), FPS_COUNTER_FONT_SIZE, "0", Rgba8::Black);
+        font->AddVertsForAlignedText2D(textVBO, graphOutline.GetBottomRight(), Vec2(-1.f, -1.f), FPS_COUNTER_FONT_SIZE, StringUtils::StringF("%0.3fms", (frameBounds.y - frameBounds.x) * 1000.f), Rgba8::Black);
+
+        for (PerfSection const& section : m_perfSections)
+        {
+            AddTextVertsForSection(textVBO, section);
+        }
+
+        font->SetRendererState(*g_renderer);
+        g_renderer->DrawVertexBuffer(m_textVBO);
+    }
 
     // Custom present timing, so that the main game window finishes rendering before we display on our secondary window
     g_renderer->Present();
@@ -493,6 +496,12 @@ void PerformanceDebugWindow::AddTextVertsForSection(VertexBuffer& textVerts, Per
     UNUSED(textVerts);
     UNUSED(section);
 
+    Font const* font = g_renderer->GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
+
     int numTotalRows = CountNumRows();
     int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
     AABB2 graphOutline;
@@ -503,7 +512,7 @@ void PerformanceDebugWindow::AddTextVertsForSection(VertexBuffer& textVerts, Per
     sectionOutline.mins = Vec2(graphOutline.mins.x, graphOutline.mins.y + graphOutline.GetHeight() * sectionMinsYFraction);
     sectionOutline.maxs = Vec2(graphOutline.maxs.x, sectionOutline.mins.y + graphOutline.GetHeight() * sectionHeightFraction);
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts, sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name.ToString());
+    font->AddVertsForAlignedText2D(textVerts, sectionOutline.GetCenterLeft() - Vec2(SECTION_NAME_PADDING, 0.f), Vec2(-1, 0), SECTION_NAME_FONT_SIZE, section.m_name.ToString());
 
     for (PerfRow const& row : section.m_perfRows)
     {
@@ -560,6 +569,12 @@ void PerformanceDebugWindow::AddUntexturedVertsForRow(VertexBuffer& untexturedVe
 //----------------------------------------------------------------------------------------------------------------------
 void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSection const& section, PerfRow const& row)
 {
+    Font const* font = g_renderer->GetDefaultFont();
+    if (!font)
+    {
+        return;
+    }
+
     // Row outline
     int numTotalRows = CountNumRows();
     int numRowsBefore = CountNumRowsBeforeSection(section.m_id);
@@ -595,10 +610,10 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
 
 		double itemDuration = item.m_endTime - item.m_startTime;
         std::string duration = Time::GetDisplayString(itemDuration);
-        g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterLeft(), Vec2(1.f, 0.f), itemOutline.GetHeight(), duration.c_str());
+        font->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterLeft(), Vec2(1.f, 0.f), itemOutline.GetHeight(), duration.c_str());
     }
 
-    g_renderer->GetDefaultFont()->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
+    font->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
 }
 
 

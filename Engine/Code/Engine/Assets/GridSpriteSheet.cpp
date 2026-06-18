@@ -42,26 +42,26 @@ Asset* GridSpriteSheet::Load(Name assetName)
 
 	if (pathAndExt.size() == 2)
 	{
-		ASSERT_OR_DIE(pathAndExt[1] == "xml", "GridSpriteSheet::Load - Invalid asset name format. Expected 'path/to/spritesheet.xml'");
+		ASSERT_OR_DIE(pathAndExt[1] == "xml", StringUtils::StringF("GridSpriteSheet: %s::Load - Invalid asset name format. Expected 'path/to/spritesheet.xml'", assetName.ToCStr()).c_str());
 	}
 
 	if (pathAndExt.size() > 2)
 	{
-		ERROR_AND_DIE("GridSpriteSheet::Load - Invalid asset name format. Expected 'path/to/spritesheet.xml'");
+		ERROR_AND_DIE(StringUtils::StringF("GridSpriteSheet: %s::Load - Invalid asset name format. Expected 'path/to/spritesheet.xml'", assetName.ToCStr()).c_str());
 	}
 
 	XmlDocument doc;
 	XmlError error = doc.LoadFile(xmlPath.c_str());
 	if (error != tinyxml2::XML_SUCCESS)
 	{
-		DevConsoleUtils::LogError("GridSpriteSheet::Load - Failed to load xml file: %s, Error: %d", xmlPath.c_str(), error);
+		DevConsoleUtils::LogError("GridSpriteSheet: %s::Load - Failed to load xml file, Error: %d", assetName.ToCStr(), error);
 		return nullptr;
 	}
 
 	XmlElement* root = doc.RootElement();
 	if (!root)
 	{
-		DevConsoleUtils::LogError("GridSpriteSheet::Load - Failed to find root element in xml file: %s", xmlPath.c_str());
+		DevConsoleUtils::LogError("GridSpriteSheet: %s::Load - Failed to find root element in xml file.", assetName.ToCStr());
 		return nullptr;
 	}
 	
@@ -72,7 +72,7 @@ Asset* GridSpriteSheet::Load(Name assetName)
 	spriteSheet->m_edgePadding = XmlUtils::ParseXmlAttribute(*root, "edgePadding", IntVec2(0, 0));
 	spriteSheet->m_innerPadding = XmlUtils::ParseXmlAttribute(*root, "innerPadding", IntVec2(0, 0));
 
-	ASSERT_OR_DIE(spriteSheet->m_textureName != Name::Invalid, "GridSpriteSheet::Load - Sprite sheet texture name is invalid.");
+	ASSERT_OR_DIE(spriteSheet->m_textureName != Name::Invalid, StringUtils::StringF("GridSpriteSheet: %s::Load - Sprite sheet texture name is invalid.", assetName.ToCStr()).c_str());
 
 	XmlElement* animationGrpElem = root->FirstChildElement("SpriteAnimationGroup");
 	while (animationGrpElem != nullptr)
@@ -109,9 +109,9 @@ Asset* GridSpriteSheet::Load(Name assetName)
 //----------------------------------------------------------------------------------------------------------------------
 bool GridSpriteSheet::CompleteAsyncLoad()
 {
-	ASSERT_OR_DIE(g_assetManager != nullptr, "GridSpriteSheet::CompleteSyncLoad - Asset manager is null.");
+	ASSERT_OR_DIE(g_assetManager != nullptr, StringUtils::StringF("GridSpriteSheet: %s::CompleteAsyncLoad - Asset manager is null.", m_name.ToCStr()).c_str());
 
-	if (m_textureAsset == RendererUtils::InvalidID)
+	if (!g_assetManager->IsValid(m_textureAsset))
 	{
 		m_textureAsset = g_assetManager->AsyncLoad<TextureAsset>(m_textureName);
 	}
@@ -125,7 +125,7 @@ bool GridSpriteSheet::CompleteAsyncLoad()
 	m_texture = textureAsset->GetTextureID();
 
 	bool succeeded = CreateFromTexture(m_texture, m_layout, m_edgePadding, m_innerPadding);
-	ASSERT_OR_DIE(succeeded, "GridSpriteSheet::CompleteAsyncLoad - Failed to create sprite sheet from texture.");
+	ASSERT_OR_DIE(succeeded, StringUtils::StringF("GridSpriteSheet: %s::CompleteAsyncLoad - Failed to create sprite sheet from texture.", m_name.ToCStr()).c_str());
 
 	return succeeded;
 }
@@ -135,12 +135,12 @@ bool GridSpriteSheet::CompleteAsyncLoad()
 //----------------------------------------------------------------------------------------------------------------------
 bool GridSpriteSheet::CompleteSyncLoad()
 {
-	ASSERT_OR_DIE(g_assetManager != nullptr, "GridSpriteSheet::CompleteSyncLoad - Asset manager is null.");
+	ASSERT_OR_DIE(g_assetManager != nullptr, StringUtils::StringF("GridSpriteSheet: %s::CompleteSyncLoad - Asset manager is null.", m_name.ToCStr()).c_str());
 
 	m_textureAsset = g_assetManager->LoadSynchronous<TextureAsset>(m_textureName);
 	TextureAsset const* textureAsset = g_assetManager->Get<TextureAsset>(m_textureAsset);
 
-	ASSERT_OR_DIE(textureAsset != nullptr, "GridSpriteSheet::CompleteSyncLoad - Failed to load texture asset synchronously.");
+	ASSERT_OR_DIE(textureAsset != nullptr, StringUtils::StringF("GridSpriteSheet: %s::CompleteSyncLoad - Failed to load texture asset synchronously.", m_name.ToCStr()).c_str());
 	if (textureAsset == nullptr)
 	{
 		return false;
@@ -148,7 +148,7 @@ bool GridSpriteSheet::CompleteSyncLoad()
 
 	m_texture = textureAsset->GetTextureID();
 	bool succeeded = CreateFromTexture(m_texture, m_layout, m_edgePadding, m_innerPadding);
-	ASSERT_OR_DIE(succeeded, "GridSpriteSheet::CompleteSyncLoad - Failed to create sprite sheet from texture.");
+	ASSERT_OR_DIE(succeeded, StringUtils::StringF("GridSpriteSheet: %s::CompleteSyncLoad - Failed to create sprite sheet from texture.", m_name.ToCStr()).c_str());
 
 	return succeeded;
 }
@@ -172,6 +172,7 @@ void GridSpriteSheet::ReleaseResources()
 //----------------------------------------------------------------------------------------------------------------------
 AssetID GridSpriteSheet::GetLoadDependency() const
 {
+	ASSERT_OR_DIE(m_textureAsset != AssetID::Invalid, StringUtils::StringF("GridSpriteSheet: %s::GetLoadDependency - Texture asset ID is invalid.", m_name.ToCStr()).c_str());
 	TextureAsset const* textureAsset = g_assetManager->Get<TextureAsset>(m_textureAsset);
 	if (!textureAsset)
 	{
@@ -210,7 +211,7 @@ IntVec2 GridSpriteSheet::GetTextureDimensions() const
 	{
 		return texture->GetDimensions();
 	}
-	ERROR_AND_DIE("GridSpriteSheet::GetTextureDimensions: Cannot determine texture dimensions because texture is invalid.")
+	ERROR_AND_DIE(StringUtils::StringF("GridSpriteSheet: %s::GetTextureDimensions - Cannot determine texture dimensions because texture is invalid.", m_name.ToCStr()).c_str());
 }
 
 
@@ -324,19 +325,19 @@ void GridSpriteSheet::ComputeSpriteUVs()
 {
 	if (m_texture == RendererUtils::InvalidID)
 	{
-		ERROR_AND_DIE("Invalid texture ID.")
+		ERROR_AND_DIE(StringUtils::StringF("GridSpriteSheet: %s::ComputeSpriteUVs - Invalid texture ID.", m_name.ToCStr()).c_str());
 		return;
 	}
 	Texture* texture = g_renderer->GetTexture(m_texture);
 	if (!texture)
 	{
-		ERROR_AND_DIE("Invalid texture.")
+		ERROR_AND_DIE(StringUtils::StringF("GridSpriteSheet: %s::ComputeSpriteUVs - Invalid texture.", m_name.ToCStr()).c_str());
 		return;
 	}
 	IntVec2 textureDims = texture->GetDimensions();
 	if (textureDims == IntVec2::ZeroVector) 
 	{
-		ERROR_AND_DIE("Texture has no dimensions.")
+		ERROR_AND_DIE(StringUtils::StringF("GridSpriteSheet: %s::ComputeSpriteUVs - Texture has no dimensions.", m_name.ToCStr()).c_str());
 		return;
 	}
 

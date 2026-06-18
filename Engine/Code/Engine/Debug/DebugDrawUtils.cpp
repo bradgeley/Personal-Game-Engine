@@ -23,8 +23,8 @@ void DebugDrawMesh2D(Renderer& renderer, std::vector<Vertex_PCU> const& triangle
         VertexUtils::AddVertsForLine2D(vbo, Vec2(v3.pos), Vec2(v1.pos), thickness, tint);
     }
 
-    renderer.BindTexture(nullptr);
-    renderer.BindShader(nullptr);
+    renderer.BindTexture();
+    renderer.BindShader();
     renderer.DrawVertexBuffer(vbo);
 
     renderer.ReleaseVertexBuffer(id);
