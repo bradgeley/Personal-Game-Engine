@@ -180,7 +180,7 @@ void SRenderEntities::Run(SystemContext const& context) const
         spriteCbo->Update(spriteSheetConstants);
 
         renderer.SetModelConstants(ModelConstants());
-        renderer.BindConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer, 5);
+        renderer.BindConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer, SpriteSheetConstants::GetSlot());
         spriteSheet->SetRendererState();
         renderer.BindShader(spriteShaderID);
         renderer.DrawInstanced(6, *ibo);

@@ -30,6 +30,8 @@ struct alignas(16) HealthBarInstance
 //----------------------------------------------------------------------------------------------------------------------
 struct HealthBarRenderConstants
 {
+	static int GetSlot() { return 5; }
+
 	//------------------------------------------------------
 	float	m_backgroundTint[4];	// BACKGROUNDTINT	(16 bytes)
 	float	m_healthTint[4];		// HEALTHTINT		(16 bytes)

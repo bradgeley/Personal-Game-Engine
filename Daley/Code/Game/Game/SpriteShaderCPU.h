@@ -32,6 +32,8 @@ struct SpriteInstance
 //----------------------------------------------------------------------------------------------------------------------
 struct SpriteSheetConstants
 {
+	static int GetSlot() { return 5; }
+
 	//------------------------------------------------------
 	IntVec2	m_layout;			// LAYOUT		(8 bytes)
 	IntVec2	m_edgePadding;		// EDGEPADDING	(8 bytes)

@@ -105,7 +105,7 @@ void SRenderHealthBars::Run(SystemContext const& context) const
 
 	if (healthBarShaderAsset)
 	{
-		renderer.BindConstantBuffer(scRenderer.m_healthBarConstantsBuffer, 5);
+		renderer.BindConstantBuffer(scRenderer.m_healthBarConstantsBuffer, HealthBarRenderConstants::GetSlot());
 		renderer.BindShader(healthBarShaderAsset->GetShaderID());
 		renderer.DrawInstanced(6, *renderer.GetInstanceBuffer(scRenderer.m_healthBarInstanceBuffer));
 	}

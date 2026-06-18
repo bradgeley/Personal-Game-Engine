@@ -52,7 +52,11 @@ float4 PixelMain(v2p_t input) : SV_Target0
     
     float4 tint = input.tint;
     float4 finalColor = tint * surfaceColor;
-    if (surfaceColor.a == 0.0 || tint.a == 0.0)
+    
+    if (finalColor.a <= 0.001f)
+    {
         discard;
+    }
+    
     return finalColor;
 }

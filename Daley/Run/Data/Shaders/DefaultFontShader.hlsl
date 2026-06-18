@@ -83,7 +83,7 @@ float4 PixelMain(v2p_t input) : SV_Target0
 
     color.a *= fill;
     
-    if (color.a == 0.0)
+    if (finalColor.a <= 0.001f)
     {
         discard;
     }

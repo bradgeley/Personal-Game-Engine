@@ -119,7 +119,7 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 		spriteSheetConstants.m_textureDims = iconsSpriteSheet->GetTextureDimensions();
 		spriteCbo->Update(spriteSheetConstants);
 
-		renderer.BindConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer, 5);
+		renderer.BindConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer, SpriteSheetConstants::GetSlot());
 
 		iconsSpriteSheet->SetRendererState();
 		renderer.SetModelMatrix(Mat44::Identity);
