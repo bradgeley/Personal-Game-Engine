@@ -11,6 +11,8 @@ struct Rgba8;
 //----------------------------------------------------------------------------------------------------------------------
 struct alignas(16) CameraConstants
 {
+    static int GetSlot() { return 2; }
+
     Mat44 m_gameToRender    = Mat44();  // Game to Render Matrix (Simple axis transpose so user can define game axes)
     Mat44 m_worldToCamera   = Mat44();  // View Matrix
     Mat44 m_cameraToClip    = Mat44();  // Projection Matrix
@@ -24,6 +26,8 @@ struct alignas(16) CameraConstants
 //----------------------------------------------------------------------------------------------------------------------
 struct alignas(16) ModelConstants
 {
+	static int GetSlot() { return 3; }
+
     Mat44 m_modelMatrix     = Mat44();
     float m_modelRgba[4]    = { 1.f, 1.f, 1.f, 1.f };
     
@@ -38,6 +42,8 @@ struct alignas(16) FontConstants
 {
     FontConstants() = default;
     FontConstants(Rgba8 const& tint, float boldness, float antiAlias, float outlineThickness);
+
+    static int GetSlot() { return 4; }
     
     float m_outlineTint[4]              = { 0.f, 0.f, 0.f, 0.f };
     float m_boldness                    = 0.66f;

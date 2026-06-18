@@ -983,9 +983,9 @@ void Renderer::CreateConstantBuffers()
 	m_modelConstantsGPU = MakeConstantBuffer(sizeof(ModelConstants));
 	m_fontConstantsGPU = MakeConstantBuffer(sizeof(FontConstants));
 
-	BindConstantBuffer(m_cameraConstantsGPU, 2);
-	BindConstantBuffer(m_modelConstantsGPU, 3);
-	BindConstantBuffer(m_fontConstantsGPU, 4);
+	BindConstantBuffer(m_cameraConstantsGPU, CameraConstants::GetSlot());
+	BindConstantBuffer(m_modelConstantsGPU, ModelConstants::GetSlot());
+	BindConstantBuffer(m_fontConstantsGPU, FontConstants::GetSlot());
 }
 
 

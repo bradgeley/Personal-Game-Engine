@@ -118,5 +118,10 @@ float4 PixelMain(VSOutput input) : SV_Target0
         }
     }
     
+    if (finalColor.a <= 0.001f)
+    {
+        discard;
+    }
+    
 	return finalColor;
 }

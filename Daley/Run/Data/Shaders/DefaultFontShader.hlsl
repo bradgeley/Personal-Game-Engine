@@ -66,7 +66,7 @@ float4 PixelMain(v2p_t input) : SV_Target0
     float4 surfaceColor = SurfaceColorTexture.Sample(SurfaceSampler, texCoord);
 	
     float4 tint = input.tint;
-    float4 finalColor = tint * surfaceColor;
+    float4 color = tint * surfaceColor;
 
     float discardThreshold = 1 - (boldness + outlineThickness);
     float outlineThreshold = discardThreshold + outlineThickness;
@@ -79,14 +79,14 @@ float4 PixelMain(v2p_t input) : SV_Target0
 
     float outline = smoothstep(outlineThreshold - width, outlineThreshold + width, dist);
 
-    float4 color = lerp(outlineTint, finalColor, outline);
+    float4 finalColor = lerp(outlineTint, color, outline);
 
-    color.a *= fill;
+    finalColor.a *= fill;
     
     if (finalColor.a <= 0.001f)
     {
         discard;
     }
 
-    return color;
+    return finalColor;
 }
