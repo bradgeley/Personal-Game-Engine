@@ -71,37 +71,22 @@ float4 PixelMain(v2p_t input) : SV_Target0
     float discardThreshold = 1 - (boldness + outlineThickness);
     float outlineThreshold = discardThreshold + outlineThickness;
 
-    if (surfaceColor.a <= discardThreshold)
+    float dist = surfaceColor.a;
+
+    float width = max(fwidth(dist), 0.001f);
+
+    float fill = smoothstep(discardThreshold - width, discardThreshold + width, dist);
+
+    float outline = smoothstep(outlineThreshold - width, outlineThreshold + width, dist);
+
+    float4 color = lerp(outlineTint, finalColor, outline);
+
+    color.a *= fill;
+    
+    if (color.a == 0.0)
     {
         discard;
     }
 
-    if (surfaceColor.a <= discardThreshold + antiAliasAmount)
-    {
-        float outputAlpha = (surfaceColor.a - discardThreshold) / antiAliasAmount;
-        finalColor.a = outputAlpha;
-    }
-    else
-    {
-        finalColor.a = 1;
-    }
-
-    float innerBlendLowerThreshold = outlineThreshold - 0.05;
-    float innerBlendUpperThreshold = outlineThreshold + 0.05;
-    if (surfaceColor.a >= innerBlendLowerThreshold && surfaceColor.a <= innerBlendUpperThreshold)
-    {
-        // On the edge between the inner color and the outline, blend a bit
-        float t = (surfaceColor.a - innerBlendLowerThreshold) / 0.1f;
-        return lerp(outlineTint, finalColor, t);
-    }
-    if (surfaceColor.a <= outlineThreshold)
-    {
-        float a = finalColor.a;
-        finalColor = outlineTint;
-        finalColor.a = a;
-        return finalColor;
-    }
-
-    finalColor.a *= input.tint.a;
-    return finalColor;
+    return color;
 }

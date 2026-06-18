@@ -613,7 +613,7 @@ void PerformanceDebugWindow::AddTextVertsForRow(VertexBuffer& textVerts, PerfSec
         font->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterLeft(), Vec2(1.f, 0.f), itemOutline.GetHeight(), duration.c_str());
     }
 
-    font->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() / 2, row.m_name.ToString());
+    font->AddVertsForAlignedText2D(textVerts, rowOutline.GetCenterRight() - Vec2(ROW_NAME_PADDING, 0.f), Vec2(-1.f, 0.f), rowOutline.GetHeight() * 0.8f, row.m_name.ToString());
 }
 
 

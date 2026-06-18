@@ -235,6 +235,7 @@ void Font::SetRendererState(Renderer& renderer) const
 	renderer.SetWindingOrder(Winding::CounterClockwise);
 	renderer.SetFillMode(FillMode::Solid);
 	renderer.SetBlendMode(BlendMode::Alpha);
+	renderer.SetSamplerMode(SamplerFilter::Trilinear, SamplerAddressMode::Clamp);
 	renderer.BindTexture(m_texture);
 	renderer.BindShader(m_shader);
 }
