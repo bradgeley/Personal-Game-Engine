@@ -94,7 +94,7 @@ void SRenderHealthBars::Run(SystemContext const& context) const
 		{
 			HealthBarInstance instance;
 			instance.m_position = render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius);
-			instance.m_dimensions.x = 0.75f * render.m_renderRadius;
+			instance.m_dimensions.x = 0.75f * render.m_renderRadius * 2.f;
 			instance.m_dimensions.y = 0.0833f;
 			instance.m_fireFraction = health.GetBurnSaturation();
 			instance.m_poisonFraction = health.GetPoisonSaturation();
