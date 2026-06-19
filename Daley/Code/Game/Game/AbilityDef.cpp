@@ -1,7 +1,8 @@
 // Bradley Christensen - 2022-2026
 #include "AbilityDef.h"
-#include "EntityDef.h"
 #include "Ability.h"
+#include "EntityDef.h"
+#include "GameCommon.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 
@@ -257,6 +258,10 @@ AbilityAoEEffectComponentDef::AbilityAoEEffectComponentDef(void const* xmlElemen
     {
         m_slowPerSecond.emplace(slowElem);
 	}
+    if (XmlElement const* renderElem = elem.FirstChildElement("Render"))
+    {
+        m_renderDef.emplace(renderElem);
+	}
 }
 
 
@@ -388,10 +393,6 @@ PassiveAoEAbilityDef::PassiveAoEAbilityDef(void const* xmlElement) : AbilityDef(
     {
         m_aoeEffectDef.emplace(aoeEffectElem);
 	}
-    if (XmlElement const* renderTintElem = elem.FirstChildElement("RenderTint"))
-    {
-        m_renderTintDef.emplace(renderTintElem);
-	}
 }
 
 
@@ -406,8 +407,9 @@ Ability* PassiveAoEAbilityDef::MakeAbilityInstance() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityRenderTintComponentDef::AbilityRenderTintComponentDef(void const* xmlElement)
+AbilityRenderComponentDef::AbilityRenderComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_tint = XmlUtils::ParseXmlAttribute(elem, "tint", m_tint);
+	m_depth = XmlUtils::ParseXmlAttribute(elem, "depth", StaticGameSettings::s_defaultCollisionEffectDepth);
 }

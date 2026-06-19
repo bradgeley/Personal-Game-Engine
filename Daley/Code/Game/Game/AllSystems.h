@@ -42,6 +42,7 @@
 #include "SPhysics.h"
 #include "SProjectile.h"
 #include "SRenderAbilities.h"
+#include "SRenderCollisionEffects.h"
 #include "SRenderEntities.h"
 #include "SRenderHealthBars.h"
 #include "SRenderStatusIcons.h"

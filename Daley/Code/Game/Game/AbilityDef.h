@@ -99,6 +99,18 @@ struct AbilityAoEHitComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct AbilityRenderComponentDef
+{
+	explicit AbilityRenderComponentDef(void const* xmlElement);
+
+	Rgba8 m_tint	= Rgba8::White;
+	float m_depth	= 0.f;
+};
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct AbilityAoEEffectComponentDef
 {
 	explicit AbilityAoEEffectComponentDef(void const* xmlElement);
@@ -110,6 +122,9 @@ struct AbilityAoEEffectComponentDef
 	std::optional<AbilityPoisonComponentDef>	m_poisonPerSecond;
 	std::optional<AbilityBurnComponentDef>		m_burnPerSecond;
 	std::optional<AbilitySlowComponentDef>		m_slowPerSecond;
+
+	// Rendering
+	std::optional<AbilityRenderComponentDef>	m_renderDef;
 };
 
 
@@ -126,17 +141,6 @@ struct AbilityOnHitComponentDef
 	std::optional<AbilityAoEEffectComponentDef>	m_aoeEffectOnHit;
 	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
 };
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilityRenderTintComponentDef
-{
-	explicit AbilityRenderTintComponentDef(void const* xmlElement);
-
-	Rgba8 m_tint = Rgba8::White;
-};
-
 
 
 
@@ -220,7 +224,4 @@ public:
 
 	std::optional<AbilityTargetingComponentDef> m_targetingDef;
 	std::optional<AbilityAoEEffectComponentDef>	m_aoeEffectDef;
-
-	// Rendering
-	std::optional<AbilityRenderTintComponentDef> m_renderTintDef;
 };

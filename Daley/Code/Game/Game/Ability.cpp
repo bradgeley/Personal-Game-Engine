@@ -292,6 +292,7 @@ AbilityAoEEffectComponent::AbilityAoEEffectComponent(AbilityAoEEffectComponentDe
     m_poisonPerSecond = def.m_poisonPerSecond;
 	m_burnPerSecond = def.m_burnPerSecond;
 	m_slowPerSecond = def.m_slowPerSecond;
+	m_renderComp = def.m_renderDef;
 }
 
 
@@ -321,6 +322,14 @@ void AbilityAoEEffectComponent::AppendDebugString(std::string& out_string) const
 //----------------------------------------------------------------------------------------------------------------------
 Ability::Ability(AbilityDef const& def) : m_abilityDef(&def)
 {
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Ability::~Ability()
+{
+
 }
 
 
@@ -745,7 +754,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
             aoeEffectSpawnInfo.m_spawnPos = location;
             aoeEffectSpawnInfo.m_spawnLifetime = m_aoeEffectComp->m_durationSeconds;
             aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp->m_aoeEffectDefName);
-            aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange;
+            aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange; // Initial radius is assumed to be 1
 
             EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
             if (context.IsValid(aoeEffect))
@@ -753,22 +762,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
                 // Pass along damage, color, to aoe effect
                 if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(aoeEffect))
                 {
-                    if (m_aoeEffectComp->m_damagePerSecond.has_value())
-                    {
-                        aoeEffectComp->m_damagePerSecond = m_aoeEffectComp->m_damagePerSecond->m_maxDamage;
-                    }
-                    if (m_aoeEffectComp->m_burnPerSecond.has_value())
-                    {
-                        aoeEffectComp->m_burnPerSecond = m_aoeEffectComp->m_burnPerSecond->m_burn;
-                    }
-                    if (m_aoeEffectComp->m_poisonPerSecond.has_value())
-                    {
-                        aoeEffectComp->m_poisonPerSecond = m_aoeEffectComp->m_poisonPerSecond->m_poison;
-                    }
-                    if (m_aoeEffectComp->m_slowPerSecond.has_value())
-                    {
-                        aoeEffectComp->m_slowPerSecond = m_aoeEffectComp->m_slowPerSecond->m_duration;
-                    }
+					aoeEffectComp->InitializeFromAoEEffect(m_aoeEffectComp.value());
                 }
             }
 		}
@@ -949,56 +943,10 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
             // Pass along damage, color, to aoe effect
             if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(m_activeAoEEffect))
             {
-                if (m_aoeEffectComp->m_damagePerSecond.has_value())
-                {
-                    aoeEffectComp->m_damagePerSecond = m_aoeEffectComp->m_damagePerSecond->m_maxDamage;
-                }
-                if (m_aoeEffectComp->m_burnPerSecond.has_value())
-                {
-                    aoeEffectComp->m_burnPerSecond = m_aoeEffectComp->m_burnPerSecond->m_burn;
-                }
-                if (m_aoeEffectComp->m_poisonPerSecond.has_value())
-                {
-                    aoeEffectComp->m_poisonPerSecond = m_aoeEffectComp->m_poisonPerSecond->m_poison;
-                }
-                if (m_aoeEffectComp->m_slowPerSecond.has_value())
-                {
-                    aoeEffectComp->m_slowPerSecond = m_aoeEffectComp->m_slowPerSecond->m_duration;
-                }
+				aoeEffectComp->InitializeFromAoEEffect(m_aoeEffectComp.value());
             }
 		}
     }
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::Render(SystemContext const& context, Vec2 const& location) const
-{
-	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
-	Renderer& renderer = *scRenderer.GetRenderer();
-
-    if (scRenderer.m_immediateVBO == RendererUtils::InvalidID)
-    {
-        scRenderer.m_immediateVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
-    }
-
-	VertexBuffer* vbo = renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
-    vbo->ClearVerts();
-
-    Rgba8 tint = Rgba8::White;
-
-	PassiveAoEAbilityDef const* def = dynamic_cast<PassiveAoEAbilityDef const*>(m_abilityDef);
-    if (def->m_renderTintDef.has_value())
-    {
-        tint = def->m_renderTintDef->m_tint;
-    }
-
-	VertexUtils::AddVertsForDisc2D(*vbo, location, m_targetingComp->m_maxRange, 32, tint);
-
-    renderer.BindShader();
-    renderer.BindTexture();
-    renderer.DrawVertexBuffer(scRenderer.m_immediateVBO);
 }
 
 
@@ -1035,4 +983,13 @@ void PassiveAoEAbility::AppendDebugString(std::string& out_string) const
     {
         m_aoeEffectComp->AppendDebugString(out_string);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityRenderComponent::AbilityRenderComponent(AbilityRenderComponentDef const& def)
+{
+    m_tint = def.m_tint;
+	m_depth = def.m_depth;
 }

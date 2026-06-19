@@ -219,7 +219,7 @@ void VertexUtils::AddVertsForGrid(VertexBuffer& out_verts, AABB2 const& bounding
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void VertexUtils::AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint, AABB2 const& UVs)
+void VertexUtils::AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center, float radius, int numSides, Rgba8 const& tint, AABB2 const& UVs, float z /*= 0.f*/)
 {
     ASSERT_OR_DIE(radius > 0.f && numSides >= 3, StringUtils::StringF("Cannot add verts for a disc with: radius=%f numSides=%i", radius, numSides));
 
@@ -240,9 +240,9 @@ void VertexUtils::AddVertsForDisc2D(VertexBuffer& out_verts, Vec2 const& center,
         Vec2 uv1 = uvCenter + unitCirclePos1 * 0.5f;
         Vec2 uv2 = uvCenter + unitCirclePos2 * 0.5f;
 
-        out_verts.AddVert(Vertex_PCU(center, tint, uvCenter));
-		out_verts.AddVert(Vertex_PCU(cornerPt1, tint, uv1));
-		out_verts.AddVert(Vertex_PCU(cornerPt2, tint, uv2));
+        out_verts.AddVert(Vertex_PCU(Vec3(center, z), tint, uvCenter));
+		out_verts.AddVert(Vertex_PCU(Vec3(cornerPt1, z), tint, uv1));
+		out_verts.AddVert(Vertex_PCU(Vec3(cornerPt2, z), tint, uv2));
     }
 }
 

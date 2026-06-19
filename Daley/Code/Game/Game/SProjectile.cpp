@@ -157,22 +157,7 @@ void SProjectile::Run(SystemContext const& context) const
 						// Pass along damage, color, to aoe effect
 						if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(aoeEffect))
 						{
-							if (proj.m_onHitComp->m_aoeEffectOnHit->m_damagePerSecond.has_value())
-							{
-								aoeEffectComp->m_damagePerSecond = proj.m_onHitComp->m_aoeEffectOnHit->m_damagePerSecond->m_maxDamage;
-							}
-							if (proj.m_onHitComp->m_aoeEffectOnHit->m_burnPerSecond.has_value())
-							{
-								aoeEffectComp->m_burnPerSecond = proj.m_onHitComp->m_aoeEffectOnHit->m_burnPerSecond->m_burn;
-							}
-							if (proj.m_onHitComp->m_aoeEffectOnHit->m_poisonPerSecond.has_value())
-							{
-								aoeEffectComp->m_poisonPerSecond = proj.m_onHitComp->m_aoeEffectOnHit->m_poisonPerSecond->m_poison;
-							}
-							if (proj.m_onHitComp->m_aoeEffectOnHit->m_slowPerSecond.has_value())
-							{
-								aoeEffectComp->m_slowPerSecond = proj.m_onHitComp->m_aoeEffectOnHit->m_slowPerSecond->m_duration;
-							}
+							aoeEffectComp->InitializeFromAoEEffect(proj.m_onHitComp->m_aoeEffectOnHit.value());
 						}
 					}
 				}

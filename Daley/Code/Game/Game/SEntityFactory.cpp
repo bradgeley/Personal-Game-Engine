@@ -35,6 +35,12 @@ void SEntityFactory::Run(SystemContext const& context) const
     // Destroy first
     for (auto& entToDestroy : factory.m_entitiesToDestroy)
     {
+		CEntityDebug* debugComponent = context.GetComponent<CEntityDebug>(entToDestroy);
+		CAnimation* animationComponent = context.GetComponent<CAnimation>(entToDestroy);
+        if (animationComponent && animationComponent->m_spriteSheetName == "Data/SpriteSheets/IceCream.xml")
+        {
+             DevConsoleUtils::LogWarning("Destroying Ice Cream Entity: %s (ID:%i)", debugComponent ? debugComponent->m_defName.ToCStr() : "Unknown", entToDestroy);
+		}
         context.DestroyEntity(entToDestroy);
     }
     factory.m_entitiesToDestroy.clear();
@@ -56,6 +62,11 @@ void SEntityFactory::Run(SystemContext const& context) const
 //----------------------------------------------------------------------------------------------------------------------
 EntityID SEntityFactory::CreateEntityFromDef(SystemContext const& context, EntityDef const* def)
 {
+    if (!context.HasFullECSAccess())
+    {
+        ERROR_AND_DIE("SEntityFactory::SpawnEntity - SystemContext does not have full ECS access, cannot spawn entity.");
+    }
+
 	ASSERT_OR_DIE(def != nullptr, "Null entity definition passed to SEntityFactory::CreateEntityFromDef");
 
     EntityID id = context.CreateEntity();
@@ -94,6 +105,11 @@ EntityID SEntityFactory::CreateEntityFromDef(SystemContext const& context, Entit
 //----------------------------------------------------------------------------------------------------------------------
 EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo const& spawnInfo)
 {
+    if (!context.HasFullECSAccess())
+    {
+		ERROR_AND_DIE("SEntityFactory::SpawnEntity - SystemContext does not have full ECS access, cannot spawn entity.");
+    }
+
     EntityID id = SEntityFactory::CreateEntityFromDef(context, spawnInfo.m_def);
     if (id == EntityID::Invalid)
     {
@@ -132,13 +148,9 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
     if (!lifetime && spawnInfo.m_spawnLifetime >= 0.f)
     {
         lifetime = context.AddComponent<CLifetime>(id);
-    }
-
-    if (lifetime)
-    {
-		lifetime->m_lifetime = spawnInfo.m_spawnLifetime;
+        lifetime->m_lifetime = spawnInfo.m_spawnLifetime;
         lifetime->m_lifetimeRemaining = spawnInfo.m_spawnLifetime;
-	}
+    }
 
     return id;
 }

@@ -338,6 +338,7 @@
     <ClCompile Include="Game\SMovementAnimation.cpp" />
     <ClCompile Include="Game\SProjectile.cpp" />
     <ClCompile Include="Game\SRenderAbilities.cpp" />
+    <ClCompile Include="Game\SRenderCollisionEffects.cpp" />
     <ClCompile Include="Game\SVisualEffects.cpp" />
     <ClCompile Include="Game\SRenderHealthBars.cpp" />
     <ClCompile Include="Game\SRenderStatusIcons.cpp" />
@@ -430,6 +431,7 @@
     <ClInclude Include="Game\SMovementAnimation.h" />
     <ClInclude Include="Game\SProjectile.h" />
     <ClInclude Include="Game\SRenderAbilities.h" />
+    <ClInclude Include="Game\SRenderCollisionEffects.h" />
     <ClInclude Include="Game\SVisualEffects.h" />
     <ClInclude Include="Game\SRenderHealthBars.h" />
     <ClInclude Include="Game\SRenderStatusIcons.h" />

@@ -32,7 +32,7 @@ public:
 	InstanceBufferID m_healthBarInstanceBuffer		= RendererUtils::InvalidID;		// Owned by SRenderUI
 	InstanceBufferID m_iconsInstanceBuffer			= RendererUtils::InvalidID;		// Owned by SRenderUI
 
-	VertexBufferID m_immediateVBO					= RendererUtils::InvalidID;		// Owned by SRenderAbilities
+	VertexBufferID m_immediateVBO					= RendererUtils::InvalidID;		// Owned by SRenderCollisionEffects
 
 	std::unordered_map<AssetID, InstanceBufferID> m_instancesPerSpriteSheet;		// Owned by SRenderEntities
 

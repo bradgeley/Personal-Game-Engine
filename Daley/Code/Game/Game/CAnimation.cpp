@@ -2,6 +2,7 @@
 #include "CAnimation.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Core/XmlUtils.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 
 
 
@@ -23,7 +24,11 @@ CAnimation::CAnimation(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 CAnimation::~CAnimation()
 {
-    g_assetManager->Release(m_gridSpriteSheet); // Todo: don't do this because assets will unload and load repeatedly as stuff spawns and destroyes
+    if (g_assetManager && m_gridSpriteSheet != AssetID::Invalid)
+    {
+        g_assetManager->Release(m_gridSpriteSheet);
+        m_gridSpriteSheet = AssetID::Invalid; // Prevent multiple destructors from releasing the same sprite sheet multiple times. Todo: figure out why this can happen.
+    }
 }
 
 

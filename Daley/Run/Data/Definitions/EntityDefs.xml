@@ -236,6 +236,7 @@
   <!-- Effects -->
 
   <EntityDef name="AoEEffect">
+    <Ability></Ability>
     <CollisionEffect></CollisionEffect>
     <Collision radius="1" type="GroundEffect"></Collision>
     <Time></Time>

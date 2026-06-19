@@ -78,7 +78,7 @@ void SDebugRender::Run(SystemContext const& context) const
     // Read Dependencies
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
     SCFlowField const& scFlowfield = context.GetSingletonConst<SCFlowField>();
-    auto& abilityStorage = context.GetArrayStorageConst<CAbility>();
+    auto& abilityStorage = context.GetMapStorageConst<CAbility>();
     auto& collStorage = context.GetArrayStorageConst<CCollision>();
     auto& renderStorage = context.GetArrayStorageConst<CRender>();
     auto& transStorage = context.GetArrayStorageConst<CTransform>();

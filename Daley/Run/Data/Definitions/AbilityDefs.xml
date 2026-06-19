@@ -18,11 +18,12 @@
         <Poison poison="1"></Poison>
         <Slow duration="1"></Slow>
       </AoEHit>
-      <AoEEffect name="MagentaAoEEffect" radius="2" duration="2">
+      <AoEEffect radius="2" duration="2">
         <Damage damage="10"></Damage>
         <Burn burn="10"></Burn>
         <Poison poison="10"></Poison>
         <Slow duration="1"></Slow>
+        <Render tint="255,0,255,25"></Render>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -37,21 +38,23 @@
       <Poison poison="10"></Poison>
       <Slow duration="2"></Slow>
     </AoEHit>
-    <AoEEffect name="MagentaAoEEffect" duration="0.25">
+    <AoEEffect duration="0.25">
       <Damage damage="10"></Damage>
       <Burn burn="10"></Burn>
       <Poison poison="10"></Poison>
       <Slow duration="1"></Slow>
+      <Render tint="255,0,255,25"></Render>
     </AoEEffect>
   </AoEHitAbilityDef>
 
   <PassiveAoEAbilityDef name="PassiveAoEAbility_TestAttack" >
     <Targeting maxRange="3"></Targeting>
-    <AoEEffect name="MagentaAoEEffect">
+    <AoEEffect>
       <Damage damage="10"></Damage>
       <Burn burn="10"></Burn>
       <Poison poison="10"></Poison>
       <Slow duration="1"></Slow>
+      <Render tint="255,0,255,25"></Render>
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
@@ -98,6 +101,7 @@
       </AoEHit>
       <AoEEffect duration="2" radius="2">
         <Poison poison="5"></Poison>
+        <Render tint="0,255,0,25"></Render>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -117,8 +121,9 @@
     <Targeting maxRange="6"></Targeting>
     <OnHit>
       <Burn burn="10"></Burn>
-      <AoEEffect duration="0.5" radius="0.5" name="RedAoEEffect">
+      <AoEEffect duration="0.5" radius="0.5">
         <Burn burn="10"></Burn>
+        <Render tint="255,0,0,25"></Render>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -133,17 +138,18 @@
 
   <PassiveAoEAbilityDef name="OrangeSorbetAttack">
     <Targeting maxRange="5"></Targeting>
-    <RenderTint tint="255,165,0,25"></RenderTint>
     <AoEEffect radius="5">
       <Burn burn="10"></Burn>
+      <Render tint="255,165,0,25"></Render>
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
   <PassiveAoEAbilityDef name="MintAoEAttack">
     <Targeting maxRange="5"></Targeting>
-    <AoEEffect radius="5" name="MintAoEEffect">
+    <AoEEffect radius="5">
       <Poison poison="1"></Poison>
       <Slow duration="1"></Slow>
+      <Render tint="173,235,179,25"></Render>
     </AoEEffect>
   </PassiveAoEAbilityDef>
 

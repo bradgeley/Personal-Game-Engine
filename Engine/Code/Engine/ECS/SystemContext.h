@@ -97,6 +97,13 @@ public:
 
 	bool DoesEntityHaveComponentsUnsafe(int entityIndex, BitMask componentBitMask) const;
 
+    //----------------------------------------------------------------------------------------------------------------------
+    // ACCESS
+    //
+    bool IsComponentAccessValid(std::type_index componentType, bool isWriteAccess) const;
+    bool IsComponentAccessValid(BitMask componentBitMask, bool isWriteAccess) const;
+    bool HasFullECSAccess() const;
+
 protected:
 
     friend class SystemScheduler;
@@ -104,9 +111,6 @@ protected:
     SystemContext() = default;
     explicit SystemContext(System* system, float deltaSeconds = 0.f);
 
-    bool IsComponentAccessValid(std::type_index componentType, bool isWriteAccess) const;
-    bool IsComponentAccessValid(BitMask componentBitMask, bool isWriteAccess) const;
-    bool HasFullECSAccess() const;
 
 public:
 	

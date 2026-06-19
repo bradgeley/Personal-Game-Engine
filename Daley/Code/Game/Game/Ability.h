@@ -1,33 +1,35 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "HitPayload.h"
 #include "Engine/Core/Name.h"
 #include "Engine/ECS/EntityID.h"
 #include "Engine/Math/IntVec2.h"
-#include "HitPayload.h"
+#include "Engine/Renderer/Rgba8.h"
 #include <optional>
 #include <vector>
 
 
 
-class RandomNumberGenerator;
-class VertexBuffer;
-struct AbilityDef;
+struct AbilityAoEEffectComponentDef;
+struct AbilityAoEHitComponentDef;
+struct AbilityBurnComponentDef;
 struct AbilityCooldownComponentDef;
-struct AbilityTargetingComponentDef;
 struct AbilityCritComponentDef;
 struct AbilityDamageComponentDef;
-struct AbilityBurnComponentDef;
-struct AbilityPoisonComponentDef;
-struct AbilityAoEHitComponentDef;
-struct AbilityAoEEffectComponentDef;
+struct AbilityDef;
 struct AbilityOnHitComponentDef;
+struct AbilityPoisonComponentDef;
+struct AbilityRenderComponentDef;
 struct AbilitySlowComponentDef;
+struct AbilityTargetingComponentDef;
 struct AoEHitAbilityDef;
 struct EntityDef;
 struct PassiveAoEAbilityDef;
 struct ProjectileHitAbilityDef;
 struct SystemContext;
 struct Vec2;
+class RandomNumberGenerator;
+class VertexBuffer;
 
 
 
@@ -201,6 +203,24 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct AbilityRenderComponent
+{
+public:
+
+	AbilityRenderComponent() = default;
+	AbilityRenderComponent(AbilityRenderComponentDef const& def);
+
+	void AppendDebugString(std::string& out_string) const;
+
+public:
+
+	Rgba8 m_tint = Rgba8::White;
+	float m_depth = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct AbilityAoEEffectComponent
 {
 public:
@@ -219,6 +239,7 @@ public:
 	std::optional<AbilityPoisonComponent>	m_poisonPerSecond;
 	std::optional<AbilityBurnComponent>		m_burnPerSecond;
 	std::optional<AbilitySlowComponent>		m_slowPerSecond;
+	std::optional<AbilityRenderComponent>	m_renderComp;
 };
 
 
@@ -333,7 +354,6 @@ public:
 	explicit PassiveAoEAbility(PassiveAoEAbilityDef const& def);
 
 	virtual void Update(SystemContext const& context, Vec2 const& location) override;
-	virtual void Render(SystemContext const& context, Vec2 const& location) const override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;
