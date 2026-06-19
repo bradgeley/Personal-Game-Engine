@@ -252,10 +252,11 @@ class Ability
 {
 public:
 
-	Ability() = default;
+	Ability(AbilityDef const& def);
 	virtual ~Ability() = default;
 
 	virtual void Update(SystemContext const& context, Vec2 const& location) = 0;
+	virtual void Render([[maybe_unused]] SystemContext const& context, [[maybe_unused]] Vec2 const& location) const {};
 	virtual Ability* DeepCopy() const = 0;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(std::string& out_string) const = 0;
@@ -332,6 +333,7 @@ public:
 	explicit PassiveAoEAbility(PassiveAoEAbilityDef const& def);
 
 	virtual void Update(SystemContext const& context, Vec2 const& location) override;
+	virtual void Render(SystemContext const& context, Vec2 const& location) const override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;

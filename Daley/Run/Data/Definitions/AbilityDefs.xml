@@ -133,7 +133,8 @@
 
   <PassiveAoEAbilityDef name="OrangeSorbetAttack">
     <Targeting maxRange="5"></Targeting>
-    <AoEEffect radius="5" name="OrangeAoEEffect">
+    <RenderTint tint="255,165,0,25"></RenderTint>
+    <AoEEffect radius="5">
       <Burn burn="10"></Burn>
     </AoEEffect>
   </PassiveAoEAbilityDef>

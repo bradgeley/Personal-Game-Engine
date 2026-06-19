@@ -14,7 +14,10 @@
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Performance/ScopedTimer.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/Vertex_PCU.h"
 #include <set>
 
 
@@ -316,9 +319,15 @@ void AbilityAoEEffectComponent::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def)
+Ability::Ability(AbilityDef const& def) : m_abilityDef(&def)
 {
-    m_abilityDef = &def;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def) : Ability(def)
+{
     m_projectileDefName = def.m_projectileDefName;
     m_projSpeed = def.m_projSpeed;
 
@@ -627,9 +636,8 @@ void ProjectileHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def)
+AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def) : Ability(def)
 {
-    m_abilityDef = &def;
     if (def.m_cooldownDef.has_value())
     {
         m_cooldownComp.emplace(def.m_cooldownDef.value());
@@ -902,9 +910,8 @@ void AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def)
+PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def) : Ability(def)
 {
-    m_abilityDef = &def;
     if (def.m_targetingDef.has_value())
     {
         m_targetingComp.emplace(def.m_targetingDef.value());
@@ -961,6 +968,37 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
             }
 		}
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PassiveAoEAbility::Render(SystemContext const& context, Vec2 const& location) const
+{
+	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+
+    if (scRenderer.m_immediateVBO == RendererUtils::InvalidID)
+    {
+        scRenderer.m_immediateVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
+    }
+
+	VertexBuffer* vbo = renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
+    vbo->ClearVerts();
+
+    Rgba8 tint = Rgba8::White;
+
+	PassiveAoEAbilityDef const* def = dynamic_cast<PassiveAoEAbilityDef const*>(m_abilityDef);
+    if (def->m_renderTintDef.has_value())
+    {
+        tint = def->m_renderTintDef->m_tint;
+    }
+
+	VertexUtils::AddVertsForDisc2D(*vbo, location, m_targetingComp->m_maxRange, 32, tint);
+
+    renderer.BindShader();
+    renderer.BindTexture();
+    renderer.DrawVertexBuffer(scRenderer.m_immediateVBO);
 }
 
 

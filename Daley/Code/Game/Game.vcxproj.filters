@@ -204,6 +204,9 @@
     <ClCompile Include="Game\SEntityTime.cpp">
       <Filter>ECS\Systems\World</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SRenderAbilities.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -484,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="Game\SCGame.h">
       <Filter>ECS\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderAbilities.h">
+      <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

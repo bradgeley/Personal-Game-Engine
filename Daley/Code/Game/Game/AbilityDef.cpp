@@ -388,6 +388,10 @@ PassiveAoEAbilityDef::PassiveAoEAbilityDef(void const* xmlElement) : AbilityDef(
     {
         m_aoeEffectDef.emplace(aoeEffectElem);
 	}
+    if (XmlElement const* renderTintElem = elem.FirstChildElement("RenderTint"))
+    {
+        m_renderTintDef.emplace(renderTintElem);
+	}
 }
 
 
@@ -397,4 +401,13 @@ Ability* PassiveAoEAbilityDef::MakeAbilityInstance() const
 {
     PassiveAoEAbility* ability = new PassiveAoEAbility(*this);
 	return ability;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityRenderTintComponentDef::AbilityRenderTintComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_tint = XmlUtils::ParseXmlAttribute(elem, "tint", m_tint);
 }

@@ -41,6 +41,7 @@
 #include "SMovementAnimation.h"
 #include "SPhysics.h"
 #include "SProjectile.h"
+#include "SRenderAbilities.h"
 #include "SRenderEntities.h"
 #include "SRenderHealthBars.h"
 #include "SRenderStatusIcons.h"

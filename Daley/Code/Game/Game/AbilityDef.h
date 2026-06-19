@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Core/Name.h"
+#include "Engine/Renderer/Rgba8.h"
 #include <optional>
 #include <vector>
 
@@ -128,6 +129,16 @@ struct AbilityOnHitComponentDef
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+struct AbilityRenderTintComponentDef
+{
+	explicit AbilityRenderTintComponentDef(void const* xmlElement);
+
+	Rgba8 m_tint = Rgba8::White;
+};
+
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 struct AbilityDef
@@ -209,4 +220,7 @@ public:
 
 	std::optional<AbilityTargetingComponentDef> m_targetingDef;
 	std::optional<AbilityAoEEffectComponentDef>	m_aoeEffectDef;
+
+	// Rendering
+	std::optional<AbilityRenderTintComponentDef> m_renderTintDef;
 };
