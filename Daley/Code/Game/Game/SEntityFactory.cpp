@@ -35,12 +35,6 @@ void SEntityFactory::Run(SystemContext const& context) const
     // Destroy first
     for (auto& entToDestroy : factory.m_entitiesToDestroy)
     {
-		CEntityDebug* debugComponent = context.GetComponent<CEntityDebug>(entToDestroy);
-		CAnimation* animationComponent = context.GetComponent<CAnimation>(entToDestroy);
-        if (animationComponent && animationComponent->m_spriteSheetName == "Data/SpriteSheets/IceCream.xml")
-        {
-             DevConsoleUtils::LogWarning("Destroying Ice Cream Entity: %s (ID:%i)", debugComponent ? debugComponent->m_defName.ToCStr() : "Unknown", entToDestroy);
-		}
         context.DestroyEntity(entToDestroy);
     }
     factory.m_entitiesToDestroy.clear();

@@ -327,14 +327,6 @@ Ability::Ability(AbilityDef const& def) : m_abilityDef(&def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Ability::~Ability()
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def) : Ability(def)
 {
     m_projectileDefName = def.m_projectileDefName;
