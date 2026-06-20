@@ -44,10 +44,10 @@
       <Poison poison="10"></Poison>
       <Slow duration="1"></Slow>
       <Render tint="255,0,255,25"></Render>
-    </AoEEffect>
+    </AoEEffect> 
   </AoEHitAbilityDef>
 
-  <PassiveAoEAbilityDef name="PassiveAoEAbility_TestAttack" >
+  <PassiveAoEAbilityDef name="PassiveAoEAbility_TestAttack">
     <Targeting maxRange="3"></Targeting>
     <AoEEffect>
       <Damage damage="10"></Damage>

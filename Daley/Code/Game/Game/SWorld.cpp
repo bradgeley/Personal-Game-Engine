@@ -82,46 +82,85 @@ void SWorld::GenerateMap(SCWorld& world)
 		return true;
 	});
 
-	// Perlin worms to make paths
-	Vec2 wormLocation = goalCenter;
-	Vec2 wormGeneralDirection = Vec2(1.f, 0.f);
-	IntVec2 wormTileCoords = world.GetTileCoordsAtWorldPos(wormLocation);
 
-	int maxInterations = 10'000;
-	int iterationCount = 0;
-	float noiseLocation = static_cast<float>(world.m_worldSettings.m_seed + 1.f);
-
-	Tile pathTile = TileDef::GetDefaultTile(worldSettings.m_pathTileName);
-	pathTile.SetIsPath(true);
-
-	while (world.m_tiles.IsValidCoords(wormTileCoords))
+	struct PerlinWorm
 	{
-		iterationCount++;
-		if (iterationCount > maxInterations)
-		{
-			DevConsoleUtils::LogError("SWorld::InitializeMap - Reached max iterations while generating paths.");
-			break;
-		}
+		Vec2 m_pos;
+		Vec2 m_dir;
+		IntVec2 m_tileCoords;
+	};
 
-		noiseLocation += 0.01f;
-		float noiseValue = GetPerlinNoise1D(noiseLocation, 0.5f, 5);
-		Vec2 wormDir = wormGeneralDirection.GetRotated(noiseValue * 90.f);
-		Vec2 nextWormLocation = wormLocation + wormDir * 1.f;
+	std::vector<PerlinWorm> worms;
+	worms.emplace_back(PerlinWorm{goalCenter, Vec2(1.f, 0.f), world.GetTileCoordsAtWorldPos(goalCenter)});
 
-		world.ForEachPlayableTileOverlappingCapsule(wormLocation, nextWormLocation, 2.f, [&world, &pathTile](IntVec2 const& tileCoords)
+	float numWormsProcessed = 0.f;
+	int numSplits = 0;
+
+	while (!worms.empty())
+	{
+		PerlinWorm worm = worms.front();
+		worms.erase(worms.begin());
+
+		numWormsProcessed += 1.f;
+
+		int maxInterations = 10'000;
+		int iterationCount = 0;
+		float noiseLocation = static_cast<float>(world.m_worldSettings.m_seed + (999.f * numWormsProcessed));
+
+		Tile pathTile = TileDef::GetDefaultTile(worldSettings.m_pathTileName);
+		pathTile.SetIsPath(true);
+
+		while (world.m_tiles.IsValidCoords(worm.m_tileCoords))
 		{
-			Tile& tile = world.m_tiles.GetRef(tileCoords);
-			if (tile.IsGoal())
+			iterationCount++;
+			if (iterationCount > maxInterations)
 			{
-				return true;
+				DevConsoleUtils::LogError("SWorld::InitializeMap - Reached max iterations while generating paths.");
+				break;
 			}
-			tile = pathTile;
-			return true;
-		});
 
-		wormLocation = nextWormLocation;
-		wormTileCoords = world.GetTileCoordsAtWorldPos(wormLocation);
+			noiseLocation += 0.01f;
+			float noiseValue = GetPerlinNoise1D(noiseLocation, 0.5f, 5);
+			Vec2 wormDir = worm.m_dir.GetRotated(noiseValue * 45.f);
+			Vec2 nextWormLocation = worm.m_pos + wormDir;
+
+			bool canSplit = numSplits < worldSettings.m_maxSplits;
+			if (canSplit)
+			{
+				float splitNoise = GetNoiseZeroToOne1D(static_cast<int>(noiseLocation) + 1000, worldSettings.m_seed + iterationCount);
+				bool didSplit = splitNoise < worldSettings.m_splittiness;
+				if (didSplit)
+				{
+					numSplits++;
+					PerlinWorm splitWorm = worm;
+					float splitRotation = iterationCount % 2 == 0 ? 45.f : -45.f;
+					splitWorm.m_dir = worm.m_dir.GetRotated(splitRotation);
+					worms.push_back(splitWorm);
+				}
+			}
+
+			float capsuleRadius = 2.f;
+			float capsuleRadiusNoise = 2.f * GetPerlinNoise2D_01(noiseLocation + 500.f, 25.f, 2);
+			capsuleRadius *= capsuleRadiusNoise;
+			capsuleRadius = MathUtils::Max(capsuleRadius, 1.f); // minimum radius of 1
+
+			world.ForEachPlayableTileOverlappingCapsule(worm.m_pos, nextWormLocation, capsuleRadius, [&world, &pathTile](IntVec2 const& tileCoords)
+			{
+				Tile& tile = world.m_tiles.GetRef(tileCoords);
+				if (tile.IsGoal())
+				{
+					return true;
+				}
+				tile = pathTile;
+				return true;
+			});
+
+			worm.m_pos = nextWormLocation;
+			worm.m_tileCoords = world.GetTileCoordsAtWorldPos(worm.m_pos);
+		}
 	}
+
+	
 
 	world.CacheValidSpawnLocations();
 }

@@ -243,42 +243,6 @@
     <Transform></Transform>
   </EntityDef>
 
-  <EntityDef name="MagentaAoEEffect">
-    <Animation spriteSheet="Data/SpriteSheets/AoEEffect.xml" defaultAnim="default"></Animation>
-    <CollisionEffect></CollisionEffect>
-    <Collision radius="1" type="GroundEffect"></Collision>
-    <Time></Time>
-    <Transform></Transform>
-    <Render scale="2" tint="255,0,255,25" depth="0.95"></Render>
-  </EntityDef>
-
-  <EntityDef name="OrangeAoEEffect">
-    <Animation spriteSheet="Data/SpriteSheets/AoEEffect.xml" defaultAnim="default"></Animation>
-    <CollisionEffect></CollisionEffect>
-    <Collision radius="1" type="GroundEffect"></Collision>
-    <Time></Time>
-    <Transform></Transform>
-    <Render scale="2" tint="255,165,0,25" depth="0.95"></Render>
-  </EntityDef>
-
-  <EntityDef name="MintAoEEffect">
-    <Animation spriteSheet="Data/SpriteSheets/AoEEffect.xml" defaultAnim="default"></Animation>
-    <CollisionEffect></CollisionEffect>
-    <Collision radius="1" type="GroundEffect"></Collision>
-    <Time></Time>
-    <Transform></Transform>
-    <Render scale="2" tint="173,235,179,25" depth="0.95"></Render>
-  </EntityDef>
-
-  <EntityDef name="RedAoEEffect">
-    <Animation spriteSheet="Data/SpriteSheets/AoEEffect.xml" defaultAnim="default"></Animation>
-    <CollisionEffect></CollisionEffect>
-    <Collision radius="1" type="GroundEffect"></Collision>
-    <Time></Time>
-    <Transform></Transform>
-    <Render scale="2" tint="255,25,50,127" depth="0.95"></Render>
-  </EntityDef>
-
   <EntityDef name="BurnUnderlay">
     <Animation spriteSheet="Data/SpriteSheets/FireUnderlay.xml" defaultAnim="default"></Animation>
     <Attachment></Attachment>
