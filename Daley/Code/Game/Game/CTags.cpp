@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CTags.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 
@@ -10,13 +11,16 @@ CTags::CTags(void const* xmlElement)
 {
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 
-	XmlAttribute const* attribute = elem.FirstAttribute();
-	while (attribute)
+	XmlAttribute const* attribute = elem.FindAttribute("tags");
+	if (attribute)
 	{
-		std::string name = attribute->Name();
-		AddTag(Name(name));
+		std::string csv = attribute->Value();
+		Strings tags = StringUtils::SplitStringOnDelimiter(csv, ',');
 
-		attribute = attribute->Next();
+		for (std::string& tag : tags)
+		{
+			AddTag(Name(tag));
+		}
 	}
 }
 

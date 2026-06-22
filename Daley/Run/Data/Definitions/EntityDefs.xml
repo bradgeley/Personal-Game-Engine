@@ -13,7 +13,7 @@
     <Lifetime></Lifetime>
     <Movement moveSpeed="3" pathOnly="true"></Movement>
     <Render scale="1.5" rotateSprite="true"></Render>
-    <Tags small="" enemy="" ant=""></Tags>
+    <Tags tags="small,enemy,ant"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -28,7 +28,7 @@
     <Lifetime></Lifetime>
     <Movement moveSpeed="1.5" pathOnly="true"></Movement>
     <Render scale="3" rotateSprite="true"></Render>
-    <Tags medium="" enemy="" ant=""></Tags>
+    <Tags tags="medium,enemy,ant"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -43,7 +43,22 @@
     <Lifetime></Lifetime>
     <Movement moveSpeed="1" pathOnly="true"></Movement>
     <Render scale="4.5" rotateSprite="true"></Render>
-    <Tags large="" enemy="" ant=""></Tags>
+    <Tags tags="large,enemy,ant"></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "bossAnt">
+    <AIController isWiggly="true"></AIController>
+    <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
+    <Attachment></Attachment>
+    <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
+    <Death></Death>
+    <Health maxHealth="200000" healthRegen="500" isTargetable="true"></Health>
+    <Lifetime></Lifetime>
+    <Movement moveSpeed="0.75" pathOnly="true"></Movement>
+    <Render scale="7.5" rotateSprite="true"></Render>
+    <Tags tags="large,boss,enemy,ant"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -58,7 +73,7 @@
     <Lifetime></Lifetime>
     <Movement moveSpeed="1" pathOnly="true"></Movement>
     <Render scale="2"></Render>
-    <Tags medium="" enemy=""></Tags>
+    <Tags tags="medium,enemy,pig"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -71,7 +86,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -80,7 +95,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="0.66" rotateSprite="true" tint="255,0,255"></Render>
-    <Tags projectile=""></Tags>
+    <Tags tags="projectile"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -90,7 +105,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -100,7 +115,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -110,7 +125,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -123,7 +138,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="243,229,171"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -132,7 +147,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="0.66" rotateSprite="true" tint="243,229,171"></Render>
-    <Tags projectile=""></Tags>
+    <Tags tags="projectile"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -142,7 +157,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="112,66,20"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -151,7 +166,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="112,66,20"></Render>
-    <Tags projectile=""></Tags>
+    <Tags tags="projectile"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -161,7 +176,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="250,80,83"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -170,7 +185,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="250,80,83"></Render>
-    <Tags projectile=""></Tags>
+    <Tags tags="projectile"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -180,7 +195,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="147,197,114"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -189,7 +204,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="147,197,114"></Render>
-    <Tags projectile=""></Tags>
+    <Tags tags="projectile"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -199,7 +214,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="173,235,179"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -208,7 +223,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="173,235,179"></Render>
-    <Tags projectile=""></Tags>
+    <Tags tags="projectile"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -218,7 +233,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="111,78,55"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -227,7 +242,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="1" rotateSprite="true" tint="111,78,55"></Render>
-    <Tags projectile=""></Tags>
+    <Tags tags="projectile"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -237,7 +252,7 @@
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,165,0"></Render>
-    <Tags tower=""></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
