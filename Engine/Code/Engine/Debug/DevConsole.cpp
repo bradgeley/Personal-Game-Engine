@@ -357,43 +357,18 @@ DevConsoleCommandInfo const* DevConsole::GetDevConsoleCommandInfo(Name commandNa
 //----------------------------------------------------------------------------------------------------------------------
 std::string DevConsole::GuessCommandInput(std::string const& input) const
 {
-    int bestMatching = 0;
     std::string bestValidGuess = "";
-
-    int numInputChars = (int) input.size();
+    std::string lowerInput = StringUtils::GetToLower(input);
 
     Strings allEvents = g_eventSystem->GetAllEventNames();
     for (std::string const& eventName : allEvents)
     {
-        int numMatchingChars = 0;
-        for (int i = 0; i < numInputChars; ++i)
-        {
-            char inputChar = StringUtils::ToLowerChar(input[i]);
-            char eventChar = StringUtils::ToLowerChar(eventName[i]);
+		std::string lowerEventName = StringUtils::GetToLower(eventName);
 
-            if (inputChar != eventChar)
-            {
-                break;
-            }
-            else
-            {
-                ++numMatchingChars;
-            }
-        }
-
-        if (numMatchingChars == numInputChars && numMatchingChars > bestMatching)
+        if (lowerEventName.find(lowerInput) != std::string::npos)
         {
-            bestMatching = numMatchingChars;
-            bestValidGuess = eventName;
-        }
-    }
-
-    if (!bestValidGuess.empty())
-    {
-        for (int i = 0; i < MathUtils::Min((int) input.size(), (int) bestValidGuess.size()); ++i)
-        {
-            bestValidGuess[i] = input[i];
-        }
+			bestValidGuess = eventName;
+		}
     }
 
     return bestValidGuess;
@@ -421,30 +396,21 @@ std::vector<std::string> DevConsole::GetTopInputGuesses(std::string const& input
     guesses.reserve(maxGuesses);
 
     int numInputChars = (int) input.size();
+    std::string lowerInput = StringUtils::GetToLower(input);
 
     Strings allEvents = g_eventSystem->GetAllEventNames();
     for (std::string const& eventName : allEvents)
     {
+		std::string lowerEventName = StringUtils::GetToLower(eventName);
+
         if (eventName.size() < numInputChars)
         {
             continue;
         }
 
-        int numMatchingChars = 0;
-        for (int i = 0; i < numInputChars; ++i)
+        if (lowerEventName.find(lowerInput) != std::string::npos)
         {
-            char inputChar = StringUtils::ToLowerChar(input[i]);
-            char eventChar = StringUtils::ToLowerChar(eventName[i]);
-
-            if (inputChar == eventChar)
-            {
-                ++numMatchingChars;
-            }
-        }
-         
-        if (numMatchingChars == numInputChars)
-        {
-            guesses.insert(guesses.begin(), Guess(eventName, numMatchingChars));
+            guesses.insert(guesses.begin(), Guess(eventName, numInputChars));
         }
     }
 
