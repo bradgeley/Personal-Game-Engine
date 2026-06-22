@@ -76,6 +76,21 @@ void AbilityDef::LoadFromXML()
         s_abilityDefs.push_back(newDef);
         passiveAoEAbilityDefElem = passiveAoEAbilityDefElem->NextSiblingElement("PassiveAoEAbilityDef");
 	}
+
+    // Laser Abilities
+	XmlElement* laserAbilityDefElem = root->FirstChildElement("LaserAbilityDef");
+    while (laserAbilityDefElem)
+    {
+        Name name = XmlUtils::ParseXmlAttribute(*laserAbilityDefElem, "name", Name::Invalid);
+        if (GetAbilityDefID(name) != -1)
+        {
+            DevConsoleUtils::LogError("Duplicate Ability Def: %s", name.ToCStr());
+        }
+        // Emplace new definition using the constructor that takes an Xml Element
+        LaserAbilityDef* newDef = new LaserAbilityDef(laserAbilityDefElem);
+        s_abilityDefs.push_back(newDef);
+        laserAbilityDefElem = laserAbilityDefElem->NextSiblingElement("LaserAbilityDef");
+	}
 }
 
 
@@ -412,4 +427,33 @@ AbilityRenderComponentDef::AbilityRenderComponentDef(void const* xmlElement)
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_tint = XmlUtils::ParseXmlAttribute(elem, "tint", m_tint);
 	m_depth = XmlUtils::ParseXmlAttribute(elem, "depth", StaticGameSettings::s_defaultCollisionEffectDepth);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+LaserAbilityDef::LaserAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    if (XmlElement const* targetingElem = elem.FirstChildElement("Targeting"))
+    {
+        m_targetingDef.emplace(targetingElem);
+    }
+    if (XmlElement const* onHitElem = elem.FirstChildElement("OnHit"))
+    {
+        m_onHitDef.emplace(onHitElem);
+	}
+    if (XmlElement const* renderElem = elem.FirstChildElement("Render"))
+    {
+        m_renderDef.emplace(renderElem);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Ability* LaserAbilityDef::MakeAbilityInstance() const
+{
+    LaserAbility* ability = new LaserAbility(*this);
+	return ability;
 }

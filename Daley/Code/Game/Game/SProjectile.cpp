@@ -31,7 +31,6 @@ void SProjectile::Run(SystemContext const& context) const
 	SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
 
 	// Write Dependencies
-	auto& collisionStorage = context.GetArrayStorage<CCollision>();
 	auto& factory = context.GetSingleton<SCEntityFactory>();
 	auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& projStorage = context.GetMapStorage<CProjectile>();
@@ -75,19 +74,19 @@ void SProjectile::Run(SystemContext const& context) const
 				{
 					if (mainTargetPayload.IsRelevantToHealth())
 					{
-						CHealth* targetHealth = healthStorage.Get(proj.m_targetID);
-						if (targetHealth)
+						if (context.HasComponent<CHealth>(proj.m_targetID))
 						{
-							targetHealth->TakePayload(mainTargetPayload);
+							CHealth& targetHealth = healthStorage[proj.m_targetID];
+							targetHealth.TakePayload(mainTargetPayload);
 						}
 					}
 					if (mainTargetPayload.IsRelevantToTime())
 					{
 						// Add slow effect to target
-						CTime* time = timeStorage.Get(proj.m_targetID);
-						if (time)
+						if (context.HasComponent<CTime>(proj.m_targetID))
 						{
-							time->m_remainingSlowDuration += mainTargetPayload.m_slowDuration;
+							CTime& targetTime = timeStorage[proj.m_targetID];
+							targetTime.m_remainingSlowDuration += mainTargetPayload.m_slowDuration;
 						}
 					}
 				}
@@ -108,32 +107,28 @@ void SProjectile::Run(SystemContext const& context) const
 
 							for (EntityID const& entityID : enemyBucket)
 							{
-								CCollision* collision = collisionStorage.Get(entityID);
-								if (collision)
+								Vec2 entityPos = transStorage[entityID].m_pos;
+								if (entityPos.GetDistanceSquaredTo(proj.m_targetPos.value()) > splashRadiusSquared)
 								{
-									Vec2 entityPos = transStorage[entityID].m_pos;
-									if (entityPos.GetDistanceSquaredTo(proj.m_targetPos.value()) > splashRadiusSquared)
-									{
-										continue; // outside of splash radius
-									}
+									// outside of splash radius
+									continue;
 								}
 
 								if (aoeTargetPayload.IsRelevantToHealth())
 								{
-									CHealth* targetHealth = healthStorage.Get(entityID);
-									if (targetHealth)
+									if (context.HasComponent<CHealth>(entityID))
 									{
-										targetHealth->TakePayload(aoeTargetPayload);
+										CHealth& targetHealth = healthStorage[entityID];
+										targetHealth.TakePayload(aoeTargetPayload);
 									}
 								}
 
 								if (aoeTargetPayload.IsRelevantToTime())
 								{
-									// Add slow effect to target
-									CTime* targetTime = timeStorage.Get(entityID);
-									if (targetTime)
+									if (context.HasComponent<CTime>(entityID))
 									{
-										targetTime->m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
+										CTime& targetTime = timeStorage[entityID];
+										targetTime.m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
 									}
 								}
 							}
@@ -155,9 +150,10 @@ void SProjectile::Run(SystemContext const& context) const
 					if (context.IsValid(aoeEffect))
 					{
 						// Pass along damage, color, to aoe effect
-						if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(aoeEffect))
+						if (context.HasComponent<CCollisionEffect>(aoeEffect))
 						{
-							aoeEffectComp->InitializeFromAoEEffect(proj.m_onHitComp->m_aoeEffectOnHit.value());
+							CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
+							aoeEffectComp.InitializeFromAoEEffect(proj.m_onHitComp->m_aoeEffectOnHit.value());
 						}
 					}
 				}

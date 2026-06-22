@@ -91,7 +91,15 @@ bool SystemContext::IsValid(EntityID entityID) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SystemContext::DoesEntityHaveComponentsUnsafe(int entityIndex, BitMask componentBitMask) const
+bool SystemContext::HasComponents(EntityID entityID, BitMask componentBitMask) const
 {
-	return g_ecs->DoesEntityHaveComponentsUnsafe(entityIndex, componentBitMask);
+	return g_ecs->HasComponents(entityID, componentBitMask);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SystemContext::HasComponentsUnsafe(int entityIndex, BitMask componentBitMask) const
+{
+	return g_ecs->HasComponentsUnsafe(entityIndex, componentBitMask);
 }

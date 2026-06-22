@@ -95,7 +95,11 @@ public:
 
 	bool IsValid(EntityID entityID) const;
 
-	bool DoesEntityHaveComponentsUnsafe(int entityIndex, BitMask componentBitMask) const;
+    bool HasComponents(EntityID entityID, BitMask componentBitMask) const;
+	bool HasComponentsUnsafe(int entityID, BitMask componentBitMask) const;
+
+	template <typename CType>
+	bool HasComponent(EntityID entityID) const;
 
     //----------------------------------------------------------------------------------------------------------------------
     // ACCESS
@@ -301,4 +305,13 @@ void SystemContext::RemoveComponent(EntityID entityID) const
 {
     ASSERT_OR_DIE(HasFullECSAccess(), "SystemContext::RemoveComponent - System does not have full ECS access, cannot remove component.");
     g_ecs->RemoveComponent<CType>(entityID);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename CType>
+bool SystemContext::HasComponent(EntityID entityID) const
+{
+    return g_ecs->HasComponent<CType>(entityID);
 }

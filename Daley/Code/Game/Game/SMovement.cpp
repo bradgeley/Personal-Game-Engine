@@ -39,7 +39,7 @@ void SMovement::Run(SystemContext const& context) const
     for (auto it = context.Iterate<CMovement, CTransform, CTime>(); it.IsValid(); ++it)
     {
         CMovement& move = moveStorage[it];
-        if (context.DoesEntityHaveComponentsUnsafe(it.m_currentIndex, deathBitMask))
+        if (context.HasComponentsUnsafe(it.m_currentIndex, deathBitMask))
         {
             CDeath const& death = deathStorage[it];
             if (death.GetIsDead())

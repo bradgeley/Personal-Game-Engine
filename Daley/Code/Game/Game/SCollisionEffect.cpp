@@ -45,15 +45,19 @@ void SCollisionEffect::Run(SystemContext const& context) const
 
 		bool isFirstTouch = scCollision.m_lastFrameOverlaps.find(overlap) == scCollision.m_lastFrameOverlaps.end();
 
-		if (context.DoesEntityHaveComponentsUnsafe(entityA.GetIndex(), collisionBit))
+		if (context.HasComponentsUnsafe(entityA.GetIndex(), collisionBit))
 		{
 			CCollisionEffect const& aoeA = collisionEffectStorage[entityA];
 
-			HitPayload payload = isFirstTouch ? aoeA.GetFirstOverlapPayload() : aoeA.GetWhileOverlappingPayload(context.m_deltaSeconds);
+			HitPayload payload = aoeA.GetWhileOverlappingPayload(context.m_deltaSeconds);
+			if (isFirstTouch)
+			{
+				payload += aoeA.GetFirstOverlapPayload();
+			}
 
 			if (payload.IsRelevantToHealth())
 			{
-				if (context.DoesEntityHaveComponentsUnsafe(entityB.GetIndex(), healthBit))
+				if (context.HasComponentsUnsafe(entityB.GetIndex(), healthBit))
 				{
 					CHealth& healthB = healthStorage[entityB];
 					healthB.TakePayload(payload);
@@ -62,7 +66,7 @@ void SCollisionEffect::Run(SystemContext const& context) const
 
 			if (payload.IsRelevantToTime())
 			{
-				if (context.DoesEntityHaveComponentsUnsafe(entityB.GetIndex(), timeBit))
+				if (context.HasComponentsUnsafe(entityB.GetIndex(), timeBit))
 				{
 					CTime& timeB = timeStorage[entityB];
 					timeB.m_remainingSlowDuration += payload.m_slowDuration;
@@ -70,15 +74,19 @@ void SCollisionEffect::Run(SystemContext const& context) const
 			}
 		}
 
-		if (context.DoesEntityHaveComponentsUnsafe(entityB.GetIndex(), collisionBit))
+		if (context.HasComponentsUnsafe(entityB.GetIndex(), collisionBit))
 		{
 			CCollisionEffect const& aoeB = collisionEffectStorage[entityB];
 
-			HitPayload payload = isFirstTouch ? aoeB.GetFirstOverlapPayload() : aoeB.GetWhileOverlappingPayload(context.m_deltaSeconds);
+			HitPayload payload = aoeB.GetWhileOverlappingPayload(context.m_deltaSeconds);
+			if (isFirstTouch)
+			{
+				payload += aoeB.GetFirstOverlapPayload();
+			}
 
 			if (payload.IsRelevantToHealth())
 			{
-				if (context.DoesEntityHaveComponentsUnsafe(entityA.GetIndex(), healthBit))
+				if (context.HasComponentsUnsafe(entityA.GetIndex(), healthBit))
 				{
 					CHealth& healthA = healthStorage[entityA];
 					healthA.TakePayload(payload);
@@ -87,7 +95,7 @@ void SCollisionEffect::Run(SystemContext const& context) const
 
 			if (payload.IsRelevantToTime())
 			{
-				if (context.DoesEntityHaveComponentsUnsafe(entityA.GetIndex(), timeBit))
+				if (context.HasComponentsUnsafe(entityA.GetIndex(), timeBit))
 				{
 					CTime& timeA = timeStorage[entityA];
 					timeA.m_remainingSlowDuration += payload.m_slowDuration;

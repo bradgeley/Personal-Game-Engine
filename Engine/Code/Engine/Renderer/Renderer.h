@@ -79,8 +79,8 @@ public:
     RendererUserSettings GetPerUserSettings() const;
 
     virtual void ClearScreen(Rgba8 const& tint) = 0;
-    void DrawVertexBuffer(VertexBufferID id, int slot = 0);
-    void DrawVertexBuffer(VertexBuffer& vbo, int slot = 0);
+    void DrawVertexBuffer(VertexBufferID id);
+    void DrawVertexBuffer(VertexBuffer& vbo);
     void DrawInstanced(VertexBuffer& vbo, InstanceBuffer& ibo);
     void DrawInstanced(int numVertsPerInstance, InstanceBuffer& ibo);
 

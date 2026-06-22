@@ -33,7 +33,7 @@ void SLifetime::Run(SystemContext const& context) const
 		if (lifetime.m_lifetimeRemaining >= 0.f)
 		{
 			float timeDilation = 1.f;
-			if (context.DoesEntityHaveComponentsUnsafe(it.m_currentIndex, timeBitMask))
+			if (context.HasComponentsUnsafe(it.m_currentIndex, timeBitMask))
 			{
 				CTime const& time = timeStorage[it];
 				timeDilation = time.m_clock.GetTimeDilationF();

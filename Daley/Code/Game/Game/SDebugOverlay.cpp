@@ -68,6 +68,8 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	InputSystem const& input = *context.GetSingletonConst<SCInputSystem>().GetInputSystem();
 	Window const& window = *context.GetSingletonConst<SCWindow>().GetWindow();
 
+	BitMask collisionBit = context.GetComponentBitMask<CCollision>();
+
 	if (input.IsKeyDown(KeyCode::Ctrl) && input.WasKeyJustPressed('D'))
 	{
 		scDebug.m_debugOverlayEnabled = !scDebug.m_debugOverlayEnabled;
@@ -114,7 +116,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	// Show tower ability information for hovered tower
 	for (auto it = context.Iterate<CTags, CTransform, CEntityDebug>(); it.IsValid(); ++it)
 	{
-		CTags const& tags = *tagsStorage.Get(it);
+		CTags const& tags = tagsStorage[it];
 		bool isTower = tags.HasTag("Tower");
 		bool isEnemy = tags.HasTag("enemy");
 		bool isProj = tags.HasTag("projectile");
@@ -122,7 +124,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 		if (isDebugabble)
 		{
 			CTransform const& transform = transStorage[it];
-			CCollision const* collision = collisionStorage.Get(it);
+			CCollision const* collision = context.HasComponents(it.GetEntityID(), collisionBit) ? &collisionStorage[it] : nullptr;
 			float radius = collision ? collision->m_radius : 2.f;
 			if (scDebug.m_debugMouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
 			{
@@ -132,44 +134,35 @@ void SDebugOverlay::Run(SystemContext const& context) const
 
 				std::string debugString;
 
-				if (isTower)
+				if (context.HasComponent<CAbility>(it.GetEntityID()))
 				{
-					CAbility const* abilityComp = abilityStorage.Get(it);
-					if (abilityComp)
+					CAbility const& abilityComp = abilityStorage[it];
+					for (auto& ability : abilityComp.m_abilities)
 					{
-						for (auto& ability : abilityComp->m_abilities)
-						{
-							ability->AppendDebugString(debugString);
-						}
+						ability->AppendDebugString(debugString);
 					}
 				}
 
-				if (isEnemy)
+				if (context.HasComponent<CHealth>(it.GetEntityID()))
 				{
-					CHealth const* health = healthStorage.Get(it);
-					if (health)
-					{
-						health->AppendDebugString(debugString);
-					}
-					CTime const* time = timeStorage.Get(it);
-					if (time)
-					{
-						time->AppendDebugString(debugString);
-					}
-					CMovement const* movement = movementStorage.Get(it);
-					if (movement)
-					{
-						movement->AppendDebugString(debugString);
-					}
+					CHealth const& health = healthStorage[it];
+					health.AppendDebugString(debugString);
+				}
+				if (context.HasComponent<CTime>(it.GetEntityID()))
+				{
+					CTime const& time = timeStorage[it];
+					time.AppendDebugString(debugString);
+				}
+				if (context.HasComponent<CMovement>(it.GetEntityID()))
+				{
+					CMovement const& movement = movementStorage[it];
+					movement.AppendDebugString(debugString);
 				}
 
-				if (isProj)
+				if (context.HasComponent<CProjectile>(it.GetEntityID()))
 				{
-					CProjectile const* proj = projectileStorage.Get(it);
-					if (proj)
-					{
-						proj->AppendDebugString(debugString);
-					}
+					CProjectile const& proj = projectileStorage[it];
+					proj.AppendDebugString(debugString);
 				}
 
 				Vec2 cardDims = Vec2(300.f, 300.f);

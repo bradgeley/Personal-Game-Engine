@@ -220,23 +220,23 @@ RendererUserSettings Renderer::GetPerUserSettings() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::DrawVertexBuffer(VertexBufferID id, int slot)
+void Renderer::DrawVertexBuffer(VertexBufferID id)
 {
 	VertexBuffer* vbo = GetVertexBuffer(id);
 	ASSERT_OR_DIE(vbo, "Trying to draw invalid vbo.");
 
-	DrawVertexBuffer(*vbo, slot);
+	DrawVertexBuffer(*vbo);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Renderer::DrawVertexBuffer(VertexBuffer& vbo, int slot)
+void Renderer::DrawVertexBuffer(VertexBuffer& vbo)
 {
 	size_t numVertsToDraw = vbo.GetNumVerts();
 	if (numVertsToDraw > 0)
 	{
-		BindVertexBuffer(vbo, slot);
+		BindVertexBuffer(vbo, 0);
 		Draw((int) numVertsToDraw, 0);
 	}
 

@@ -10,7 +10,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void VertexUtils::AddVertsForLine2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint)
+void VertexUtils::AddVertsForLine2D(VertexBuffer& out_verts, Vec2 const& start, Vec2 const& end, float thickness, Rgba8 const& tint, float z /*= 0.f*/)
 {
     float halfThickness = thickness * 0.5f;
     Vec2 lineDir = (end - start).GetNormalized();
@@ -23,13 +23,13 @@ void VertexUtils::AddVertsForLine2D(VertexBuffer& out_verts, Vec2 const& start, 
     Vec2 topLeftCorner  = end + lineDir * halfThickness + lineRotated90 * halfThickness;
     
     // Push some verts
-	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner), tint));
-	out_verts.AddVert(Vertex_PCU(Vec3(botRightCorner), tint));
-	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner, z), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(botRightCorner, z), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner, z), tint));
 
-	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner), tint));
-	out_verts.AddVert(Vertex_PCU(Vec3(topLeftCorner), tint));
-	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(topRightCorner, z), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(topLeftCorner, z), tint));
+	out_verts.AddVert(Vertex_PCU(Vec3(botLeftCorner, z), tint));
 }
 
 

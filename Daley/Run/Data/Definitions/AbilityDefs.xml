@@ -58,6 +58,24 @@
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
+  <LaserAbilityDef name="LaserAbility_TestAttack">
+    <Targeting minRange="5" maxRange="15"></Targeting>
+    <Render tint="255,0,255, 100" depth="0.05"></Render>
+    <OnHit> <!-- per second -->
+      <Damage damage="100"></Damage>
+      <Burn burn="100"></Burn>
+      <Poison poison="100"></Poison>
+      <Slow duration="1"></Slow>
+      <AoEEffect radius="0.5" duration="0">
+        <Damage damage="2"></Damage>
+        <Burn burn="2"></Burn>
+        <Poison poison="2"></Poison>
+        <Slow duration="1"></Slow>
+        <Render tint="255,0,255, 100" depth="0.95"></Render>
+      </AoEEffect>
+    </OnHit>
+  </LaserAbilityDef>
+
   <!-- ==================================================================================================================== -->
   <!-- Attacks -->
 

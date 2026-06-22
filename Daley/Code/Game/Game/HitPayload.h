@@ -14,4 +14,12 @@ struct HitPayload
 	float m_burn = 0.f;
 	float m_poison = 0.f;
 	float m_slowDuration = 0.f;
+
+	void operator+=(HitPayload const& other)
+	{
+		m_damage += other.m_damage;
+		m_burn += other.m_burn;
+		m_poison += other.m_poison;
+		m_slowDuration += other.m_slowDuration;
+	}
 };

@@ -225,3 +225,20 @@ public:
 	std::optional<AbilityTargetingComponentDef> m_targetingDef;
 	std::optional<AbilityAoEEffectComponentDef>	m_aoeEffectDef;
 };
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct LaserAbilityDef : public AbilityDef
+{
+public:
+
+	explicit LaserAbilityDef(void const* xmlElement);
+	virtual Ability* MakeAbilityInstance() const override;
+
+public:
+
+	std::optional<AbilityTargetingComponentDef> m_targetingDef;
+	std::optional<AbilityOnHitComponentDef>		m_onHitDef;
+	std::optional<AbilityRenderComponentDef>	m_renderDef;
+};

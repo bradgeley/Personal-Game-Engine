@@ -37,9 +37,140 @@ AbilityTargetingComponent::AbilityTargetingComponent(AbilityTargetingComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityTargetingComponent::HasRangeChanged() const
+bool AbilityTargetingComponent::NeedsCacheUpdate(Vec2 const& location) const
 {
-	return m_minRange != m_minRangeAtTimeOfCache || m_maxRange != m_maxRangeAtTimeOfCache;
+	return m_minRange != m_minRangeAtTimeOfCache || m_maxRange != m_maxRangeAtTimeOfCache || m_locationAtTimeOfCache != location;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, Vec2 const& location)
+{
+    bool needsUpdate = NeedsCacheUpdate(location);
+    if (needsUpdate)
+    {
+        SCWorld const& world = context.GetSingletonConst<SCWorld>();
+
+        world.ForEachPathTileInRange(location, m_minRange, m_maxRange, [&](IntVec2 const& worldCoords)
+        {
+            m_cachedPathTilesInRange.push_back(worldCoords);
+            return true;
+        });
+
+        m_minRangeAtTimeOfCache = m_minRange;
+        m_maxRangeAtTimeOfCache = m_maxRange;
+        m_locationAtTimeOfCache = location;
+
+        if (m_targetingMode == AbilityTargetingMode::ClosestToGoal)
+        {
+			SCFlowField const& flowfield = context.GetSingletonConst<SCFlowField>();
+            std::sort(m_cachedPathTilesInRange.begin(), m_cachedPathTilesInRange.end(), [&](IntVec2 const& a, IntVec2 const& b)
+            {
+                int aTileIndex = world.m_tiles.GetIndexForCoords(a);
+                int bTileIndex = world.m_tiles.GetIndexForCoords(b);
+                return flowfield.m_toGoalFlowField.m_distanceField.Get(aTileIndex) < flowfield.m_toGoalFlowField.m_distanceField.Get(bTileIndex);
+            });
+		}
+    }
+    return needsUpdate;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AbilityTargetingComponent::FindTargets(SystemContext const& context, std::vector<EntityID>& out_targetIDs) const
+{
+	SCWorld const& world = context.GetSingletonConst<SCWorld>();
+	SCFlowField const& flowfield = context.GetSingletonConst<SCFlowField>();
+	SCCollision const& collision = context.GetSingletonConst<SCCollision>();
+    CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
+	auto const& healthStorage = context.GetArrayStorageConst<CHealth>();
+
+	BitMask healthBit = context.GetComponentBitMask<CHealth>();
+
+    if (m_targetingMode == AbilityTargetingMode::ClosestToGoal)
+    {
+        float closestToGoalDist = FLT_MAX;
+        int closestToGoalTileIndex = -1;
+        for (IntVec2 const& cachedPathTile : m_cachedPathTilesInRange)
+        {
+            // todo: sort by distance and search closest tiles first.
+
+            int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
+            CollisionBucket const& tileBucket = enemyLayer[tileIndex];
+            if (tileBucket.empty())
+            {
+                continue;
+            }
+
+            float distance = flowfield.m_toGoalFlowField.m_distanceField.Get(tileIndex);
+            if (distance < closestToGoalDist)
+            {
+                bool tileHasValidTarget = false;
+
+                for (EntityID entityID : tileBucket)
+                {
+                    if (context.HasComponents(entityID, healthBit))
+                    {
+						CHealth const& healthComp = healthStorage[entityID];
+                        if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
+                        {
+                            tileHasValidTarget = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (tileHasValidTarget)
+                {
+                    closestToGoalTileIndex = tileIndex;
+                    closestToGoalDist = distance;
+                    break; // Tiles are sorted by distance, so break as soon as we find 1 tile with a valid target in it. Todo: support multiple targets
+                }
+            }
+        }
+
+        if (closestToGoalTileIndex != -1)
+        {
+            for (EntityID entityID : enemyLayer[closestToGoalTileIndex])
+            {
+                if (context.HasComponents(entityID, healthBit))
+                {
+                    CHealth const& healthComp = healthStorage[entityID];
+                    if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
+                    {
+                        out_targetIDs.push_back(entityID);
+                    }
+                }
+            }
+
+            ASSERT_OR_DIE(!out_targetIDs.empty(), "ProjectileHitAbility::Update - closest to goal tile has no valid targets. Should be impossible.");
+        }
+    }
+
+    if (m_targetingMode == AbilityTargetingMode::AllInRange)
+    {
+        for (IntVec2 const& cachedPathTile : m_cachedPathTilesInRange)
+        {
+            int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
+            CollisionBucket const& tileBucket = enemyLayer[tileIndex];
+
+            for (EntityID entityID : tileBucket)
+            {
+                if (context.HasComponents(entityID, healthBit))
+                {
+					CHealth const& healthComp = healthStorage[entityID];
+                    if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
+                    {
+                        out_targetIDs.push_back(entityID);
+					}
+                }
+            }
+        }
+	}
+
+	return !out_targetIDs.empty();
 }
 
 
@@ -194,6 +325,19 @@ HitPayload AbilityOnHitComponent::GetPayload() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+HitPayload AbilityOnHitComponent::GetDoTPayload(float deltaSeconds) const
+{
+    HitPayload payload = GetPayload();
+	payload.m_burn *= deltaSeconds;
+	payload.m_poison *= deltaSeconds;
+	payload.m_damage *= deltaSeconds;
+	payload.m_slowDuration *= deltaSeconds;
+    return payload;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AbilityOnHitComponent::AppendDebugString(std::string& out_string) const
 {
     if (m_damageOnHit.has_value())
@@ -327,6 +471,14 @@ Ability::Ability(AbilityDef const& def) : m_abilityDef(&def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Ability::AppendDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("Ability: %s\n", m_abilityDef ? m_abilityDef->m_name.ToCStr() : "Invalid");
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def) : Ability(def)
 {
     m_projectileDefName = def.m_projectileDefName;
@@ -374,98 +526,26 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
         return;
     }
 
-	// Read Dependencies
-    SCCollision const& collision = context.GetSingleton<SCCollision>();
-    SCFlowField const& flowfield = context.GetSingleton<SCFlowField>();
-    SCWorld const& world = context.GetSingleton<SCWorld>();
-    auto const& healthStorage = context.GetArrayStorageConst<CHealth>();
-
 	// Write Dependencies
 	auto& projectileStorage = context.GetMapStorage<CProjectile>();
     RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
-    // CAbility (bc this is an ability in a CAbility that can update itself)
-    // Spawn Entities (All)
-
-    CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
 
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
-    bool hasRangeChanged = m_targetingComp->HasRangeChanged();
-    if (hasRangeChanged)
-    {
-        world.ForEachPathTileInRange(location, m_targetingComp->m_minRange, m_targetingComp->m_maxRange, [&](IntVec2 const& worldCoords)
-        {
-            m_targetingComp->m_cachedPathTilesInRange.push_back(worldCoords);
-            return true;
-        });
-        m_targetingComp->m_minRangeAtTimeOfCache = m_targetingComp->m_minRange;
-        m_targetingComp->m_maxRangeAtTimeOfCache = m_targetingComp->m_maxRange;
-    }
+    m_targetingComp->UpdateCachedTiles(context, location);
 
     static std::vector<EntityID> validTargets;
     validTargets.clear();
 
-    EntityID targetID = EntityID::Invalid;
-    if (m_targetingComp->m_targetingMode == AbilityTargetingMode::ClosestToGoal)
-    {
+	m_targetingComp->FindTargets(context, validTargets);
 
-        float closestToGoalDist = FLT_MAX;
-        int closestToGoalTileIndex = -1;
-        for (IntVec2 const& cachedPathTile : m_targetingComp->m_cachedPathTilesInRange)
-        {
-            int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
-            CollisionBucket const& tileBucket = enemyLayer[tileIndex];
-            if (tileBucket.empty())
-            {
-                continue;
-            }
-
-            float distance = flowfield.m_toGoalFlowField.m_distanceField.Get(tileIndex);
-            if (distance < closestToGoalDist)
-            {
-                bool tileHasValidTarget = false;
-
-                for (EntityID entityID : tileBucket)
-                {
-                    CHealth const* healthComp = healthStorage.Get(entityID);
-                    if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())
-                    {
-                        tileHasValidTarget = true;
-                        break;
-                    }
-                }
-
-                if (tileHasValidTarget)
-                {
-                    closestToGoalTileIndex = tileIndex;
-                    closestToGoalDist = distance;
-                }
-            }
-        }
-
-        if (closestToGoalTileIndex != -1)
-        {
-            for (EntityID entityID : enemyLayer[closestToGoalTileIndex])
-            {
-                CHealth const* healthComp = healthStorage.Get(entityID);
-                if (healthComp && healthComp->GetIsTargetable() && !healthComp->GetHealthReachedZero())
-                {
-                    validTargets.push_back(entityID);
-                }
-            }
-
-            ASSERT_OR_DIE(!validTargets.empty(), "ProjectileHitAbility::Update - closest to goal tile has no valid targets. Should be impossible.");
-
-            int randomIndex = rng.GetRandomIntInRange(0, static_cast<int>(validTargets.size()) - 1);
-            targetID = validTargets[randomIndex];
-        }
-    }
-
-    if (targetID == EntityID::Invalid)
+    if (validTargets.empty())
     {
         // No targets in range, clamp cooldown
         m_cooldownComp->m_accumulatedTime = MathUtils::Clamp(m_cooldownComp->m_accumulatedTime, 0.f, timeBetweenAttacks);
         return;
 	}
+
+	EntityID targetID = validTargets.front(); // todo: support multiple targets
 
     // Shoot at targets
     while (m_cooldownComp->m_accumulatedTime > timeBetweenAttacks)
@@ -485,15 +565,15 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
         RollDamageAndEffects(rng);
 
         // Copy ability data to proj, snapshotted with damage and effects already rolled.
-		CProjectile* projComp = projectileStorage.Get(projectileID);
-		ASSERT_OR_DIE(projComp, "ProjectileHitAbility::Update - spawned projectile is missing CProjectile component.");
+		ASSERT_OR_DIE(context.HasComponent<CProjectile>(projectileID), "ProjectileHitAbility::Update - spawned projectile is missing CProjectile component.");
+		CProjectile& projComp = projectileStorage[projectileID];
 
-        projComp->m_targetID = targetID;
-        projComp->m_targetPos = std::nullopt;
-        projComp->m_accumulatedTime += m_cooldownComp->m_accumulatedTime;
-        projComp->m_projSpeed = m_projSpeed;
-        projComp->m_critComp = m_critComp;
-        projComp->m_onHitComp = m_onHitComp;
+        projComp.m_targetID = targetID;
+        projComp.m_targetPos = std::nullopt;
+        projComp.m_accumulatedTime += m_cooldownComp->m_accumulatedTime;
+        projComp.m_projSpeed = m_projSpeed;
+        projComp.m_critComp = m_critComp;
+        projComp.m_onHitComp = m_onHitComp;
     }
 }
 
@@ -512,13 +592,16 @@ Ability* ProjectileHitAbility::DeepCopy() const
 //----------------------------------------------------------------------------------------------------------------------
 void ProjectileHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
 {
-    if (m_targetingComp->m_minRange > 0.f)
+    if (m_targetingComp.has_value())
     {
-        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
-    }
-    if (m_targetingComp->m_maxRange > 0.f)
-    {
-        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
+        if (m_targetingComp->m_minRange > 0.f)
+        {
+            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
+        }
+        if (m_targetingComp->m_maxRange > 0.f)
+        {
+            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
+        }
     }
 }
 
@@ -527,7 +610,7 @@ void ProjectileHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& loca
 //----------------------------------------------------------------------------------------------------------------------
 void ProjectileHitAbility::AppendDebugString(std::string& out_string) const
 {
-    out_string += StringUtils::StringF("Ability: %s\n", m_abilityDef->m_name.ToCStr());
+	Ability::AppendDebugString(out_string);
     out_string += StringUtils::StringF("Proj Def: %s\n", m_projectileDefName.ToCStr());
     out_string += StringUtils::StringF("Proj Speed: %.1f\n", m_projSpeed);
 
@@ -646,6 +729,7 @@ AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def) : Ability(def)
     if (def.m_targetingDef.has_value())
     {
         m_targetingComp.emplace(def.m_targetingDef.value());
+		m_targetingComp->m_targetingMode = AbilityTargetingMode::AllInRange; // All In Range is the only targeting mode that makes sense for an AoE hit
     }
     if (def.m_critDef.has_value())
     {
@@ -685,10 +769,6 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
         return;
     }
 
-	// Read Dependencies
-    SCCollision const& collision = context.GetSingletonConst<SCCollision>();
-    SCWorld const& world = context.GetSingletonConst<SCWorld>();
-
 	// Write Dependencies
     auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& timeStorage = context.GetArrayStorage<CTime>();
@@ -697,35 +777,17 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
 	// CAbility (bc this is an ability in a CAbility that can update itself)
 	// Spawn Entities (All)
 
-    CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
+	BitMask healthBit = context.GetComponentBitMask<CHealth>();
+	BitMask timeBit = context.GetComponentBitMask<CTime>();
+	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
 
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
-    bool hasRangeChanged = m_targetingComp->HasRangeChanged();
-    if (hasRangeChanged)
-    {
-        world.ForEachPathTileInRange(location, m_targetingComp->m_minRange, m_targetingComp->m_maxRange, [&](IntVec2 const& worldCoords)
-        {
-            m_targetingComp->m_cachedPathTilesInRange.push_back(worldCoords);
-            return true;
-        });
-        m_targetingComp->m_minRangeAtTimeOfCache = m_targetingComp->m_minRange;
-        m_targetingComp->m_maxRangeAtTimeOfCache = m_targetingComp->m_maxRange;
-    }
+	m_targetingComp->UpdateCachedTiles(context, location);
 
-    static std::set<EntityID> validTargets;
+    static std::vector<EntityID> validTargets;
     validTargets.clear();
 
-    for (IntVec2 const& cachedPathTile : m_targetingComp->m_cachedPathTilesInRange)
-    {
-        int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
-        CollisionBucket const& tileBucket = enemyLayer[tileIndex];
-        if (tileBucket.empty())
-        {
-            continue;
-        }
-
-        validTargets.insert(tileBucket.begin(), tileBucket.end());
-    }
+	m_targetingComp->FindTargets(context, validTargets);
 
     if (validTargets.empty())
     {
@@ -749,13 +811,12 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
             aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange; // Initial radius is assumed to be 1
 
             EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
-            if (context.IsValid(aoeEffect))
+
+            // Pass along damage, color, to aoe effect
+            if (context.HasComponents(aoeEffect, collisionEffectBit))
             {
-                // Pass along damage, color, to aoe effect
-                if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(aoeEffect))
-                {
-					aoeEffectComp->InitializeFromAoEEffect(m_aoeEffectComp.value());
-                }
+                CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
+                aoeEffectComp.InitializeFromAoEEffect(m_aoeEffectComp.value());
             }
 		}
 
@@ -765,24 +826,23 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
 		payload.m_poison = m_aoeHitComp->m_poisonOnHit.has_value() ? m_aoeHitComp->m_poisonOnHit->m_poison : 0.f;
 		payload.m_slowDuration = m_aoeHitComp->m_slowOnHit.has_value() ? m_aoeHitComp->m_slowOnHit->m_duration : 0.f;
 
+        if (!payload.HasValue())
+        {
+            continue;
+        }
+
         for (EntityID entityID : validTargets)
         {
-            if (payload.IsRelevantToHealth())
+            if (payload.IsRelevantToHealth() && context.HasComponents(entityID, healthBit))
             {
-                CHealth* healthComp = healthStorage.Get(entityID);
-                if (healthComp)
-                {
-                    healthComp->TakePayload(payload);
-                }
+                CHealth& healthComp = healthStorage[entityID];
+                healthComp.TakePayload(payload);
             }
 
-            if (payload.IsRelevantToTime())
+            if (payload.IsRelevantToTime() && context.HasComponents(entityID, timeBit))
             {
-				CTime* timeComp = timeStorage.Get(entityID);
-                if (timeComp)
-                {
-                    timeComp->m_remainingSlowDuration += payload.m_slowDuration;
-                }
+				CTime& timeComp = timeStorage[entityID];
+                timeComp.m_remainingSlowDuration += payload.m_slowDuration;
             }
         }
     }
@@ -803,13 +863,16 @@ Ability* AoEHitAbility::DeepCopy() const
 //----------------------------------------------------------------------------------------------------------------------
 void AoEHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
 {
-    if (m_targetingComp->m_minRange > 0.f)
+    if (m_targetingComp.has_value())
     {
-        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
-    }
-    if (m_targetingComp->m_maxRange > 0.f)
-    {
-        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
+        if (m_targetingComp->m_minRange > 0.f)
+        {
+            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
+        }
+        if (m_targetingComp->m_maxRange > 0.f)
+        {
+            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
+        }
     }
 }
 
@@ -818,7 +881,7 @@ void AoEHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) c
 //----------------------------------------------------------------------------------------------------------------------
 void AoEHitAbility::AppendDebugString(std::string& out_string) const
 {
-    out_string += StringUtils::StringF("Ability: %s\n", m_abilityDef->m_name.ToCStr());
+    Ability::AppendDebugString(out_string);
 
     if (m_cooldownComp.has_value())
     {
@@ -920,6 +983,8 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
     // Write Dependencies
 	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
 
+	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
+
     if (m_activeAoEEffect == EntityID::Invalid)
     {
         SpawnInfo aoeEffectSpawnInfo;
@@ -933,9 +998,10 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
         if (context.IsValid(m_activeAoEEffect))
         {
             // Pass along damage, color, to aoe effect
-            if (CCollisionEffect* aoeEffectComp = collisionEffectStorage.Get(m_activeAoEEffect))
+            if (context.HasComponents(m_activeAoEEffect, collisionEffectBit))
             {
-				aoeEffectComp->InitializeFromAoEEffect(m_aoeEffectComp.value());
+				CCollisionEffect& aoeEffectComp = collisionEffectStorage[m_activeAoEEffect];
+				aoeEffectComp.InitializeFromAoEEffect(m_aoeEffectComp.value());
             }
 		}
     }
@@ -956,13 +1022,16 @@ Ability* PassiveAoEAbility::DeepCopy() const
 //----------------------------------------------------------------------------------------------------------------------
 void PassiveAoEAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
 {
-    if (m_targetingComp->m_minRange > 0.f)
+    if (m_targetingComp.has_value())
     {
-        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
-    }
-    if (m_targetingComp->m_maxRange > 0.f)
-    {
-        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
+        if (m_targetingComp->m_minRange > 0.f)
+        {
+            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
+        }
+        if (m_targetingComp->m_maxRange > 0.f)
+        {
+            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
+        }
     }
 }
 
@@ -971,6 +1040,8 @@ void PassiveAoEAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& locatio
 //----------------------------------------------------------------------------------------------------------------------
 void PassiveAoEAbility::AppendDebugString(std::string& out_string) const
 {
+    Ability::AppendDebugString(out_string);
+
     if (m_aoeEffectComp.has_value())
     {
         m_aoeEffectComp->AppendDebugString(out_string);
@@ -984,4 +1055,158 @@ AbilityRenderComponent::AbilityRenderComponent(AbilityRenderComponentDef const& 
 {
     m_tint = def.m_tint;
 	m_depth = def.m_depth;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+LaserAbility::LaserAbility(LaserAbilityDef const& def) : Ability(def)
+{
+    if (def.m_targetingDef.has_value())
+    {
+        m_targetingComp.emplace(def.m_targetingDef.value());
+    }
+    if (def.m_onHitDef.has_value())
+    {
+        m_onHitComp.emplace(def.m_onHitDef.value());
+	}
+    if (def.m_renderDef.has_value())
+    {
+        m_renderComp.emplace(def.m_renderDef.value());
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void LaserAbility::Update(SystemContext const& context, Vec2 const& location)
+{
+	ASSERT_OR_DIE(m_abilityDef, "LaserAbility::Update - m_abilityDef is null.");
+	ASSERT_OR_DIE(m_targetingComp.has_value(), "LaserAbility::Update - m_targetingComp is null.");
+	ASSERT_OR_DIE(m_onHitComp.has_value(), "LaserAbility::Update - m_onHitComp is null.");
+
+    if (context.m_deltaSeconds == 0.f)
+    {
+        return;
+    }
+
+    BitMask healthBit = context.GetComponentBitMask<CHealth>();
+    BitMask timeBit = context.GetComponentBitMask<CTime>();
+
+    // Cache tiles in range as optimization, so we never search non path tiles that are out of range
+    m_targetingComp->UpdateCachedTiles(context, location);
+
+    m_targets.reserve(16);
+    m_targets.clear();
+
+    if (m_targetingComp->FindTargets(context, m_targets))
+    {
+		EntityID target = m_targets.front(); // todo: support multiple targets
+		HitPayload payload = m_onHitComp->GetDoTPayload(context.m_deltaSeconds);
+
+        if (payload.IsRelevantToHealth() && context.HasComponentsUnsafe(target.GetIndex(), healthBit))
+        {
+            CHealth& healthComp = context.GetArrayStorage<CHealth>()[target];
+            healthComp.TakePayload(payload);
+		}
+
+        if (payload.IsRelevantToTime() && context.HasComponentsUnsafe(target.GetIndex(), timeBit))
+        {
+            CTime& timeComp = context.GetArrayStorage<CTime>()[target];
+            timeComp.m_remainingSlowDuration += payload.m_slowDuration;
+		}
+
+        if (m_onHitComp->m_aoeEffectOnHit.has_value())
+        {
+			CTransform const& targetTransform = *context.GetComponentConst<CTransform>(target);
+
+            SpawnInfo aoeEffectSpawnInfo;
+            aoeEffectSpawnInfo.m_spawnPos = targetTransform.m_pos;
+            aoeEffectSpawnInfo.m_spawnLifetime = m_onHitComp->m_aoeEffectOnHit->m_durationSeconds;
+			aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_onHitComp->m_aoeEffectOnHit->m_aoeEffectDefName);
+            aoeEffectSpawnInfo.m_spawnScale = m_onHitComp->m_aoeEffectOnHit->m_radius;
+
+            EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
+            if (context.IsValid(aoeEffect))
+            {
+				CCollisionEffect& aoeEffectComp = *context.GetComponent<CCollisionEffect>(aoeEffect);
+				aoeEffectComp.InitializeFromAoEEffect(m_onHitComp->m_aoeEffectOnHit.value());
+            }
+		}
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void LaserAbility::Render(SystemContext const& context, Vec2 const& location) const
+{
+	ASSERT_OR_DIE(m_renderComp.has_value(), "LaserAbility::Render - m_renderComp is null.");
+
+	EntityID target = m_targets.empty() ? EntityID::Invalid : m_targets.front();
+
+    if (target == EntityID::Invalid)
+    {
+        return;
+	}
+
+	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+
+    VertexBuffer& vbo = *renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
+    vbo.ClearVerts();
+
+    if (CTransform const* transform = context.GetComponent<CTransform>(target))
+    {
+		VertexUtils::AddVertsForLine2D(vbo, location, transform->m_pos, 0.25f, m_renderComp->m_tint, m_renderComp->m_depth);
+	}
+
+    renderer.BindShader();
+    renderer.BindTexture();
+    renderer.DrawVertexBuffer(vbo);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Ability* LaserAbility::DeepCopy() const
+{
+    LaserAbility* copy = new LaserAbility(*reinterpret_cast<LaserAbilityDef const*>(m_abilityDef));
+    *copy = *this;
+	return copy;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void LaserAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
+{
+    if (m_targetingComp.has_value())
+    {
+        if (m_targetingComp->m_minRange > 0.f)
+        {
+            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
+        }
+        if (m_targetingComp->m_maxRange > 0.f)
+        {
+            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
+        }
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void LaserAbility::AppendDebugString(std::string& out_string) const
+{
+    Ability::AppendDebugString(out_string);
+
+    if (m_targetingComp.has_value())
+    {
+        m_targetingComp->AppendDebugString(out_string);
+	}
+    if (m_onHitComp.has_value())
+    {
+        m_onHitComp->AppendDebugString(out_string);
+    }
 }

@@ -105,6 +105,16 @@
     <Transform></Transform>
   </EntityDef>
 
+  <EntityDef name = "LaserAbility_TestTower">
+    <Ability name="LaserAbility_TestAttack"></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Collision radius="1" type="building"></Collision>
+    <Render scale="2" tint="255,0,255"></Render>
+    <Tags tower=""></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
   <!-- ==================================================================================================================== -->
   <!-- Towers -->
 

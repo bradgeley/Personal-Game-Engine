@@ -361,7 +361,7 @@ void AdminSystem::RemoveComponent(EntityID entityID, BitMask componentBit)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AdminSystem::DoesEntityHaveComponents(EntityID entityID, BitMask componentBitMask) const
+bool AdminSystem::HasComponents(EntityID entityID, BitMask componentBitMask) const
 {
 	if (!IsValid(entityID))
 	{
@@ -374,7 +374,7 @@ bool AdminSystem::DoesEntityHaveComponents(EntityID entityID, BitMask componentB
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AdminSystem::DoesEntityHaveComponentsUnsafe(int entityIndex, BitMask componentBitMask) const
+bool AdminSystem::HasComponentsUnsafe(int entityIndex, BitMask componentBitMask) const
 {
 	return componentBitMask == (m_entityComposition[entityIndex] & componentBitMask);
 }

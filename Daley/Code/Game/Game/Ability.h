@@ -4,6 +4,7 @@
 #include "Engine/Core/Name.h"
 #include "Engine/ECS/EntityID.h"
 #include "Engine/Math/IntVec2.h"
+#include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/Rgba8.h"
 #include <optional>
 #include <vector>
@@ -24,6 +25,7 @@ struct AbilitySlowComponentDef;
 struct AbilityTargetingComponentDef;
 struct AoEHitAbilityDef;
 struct EntityDef;
+struct LaserAbilityDef;
 struct PassiveAoEAbilityDef;
 struct ProjectileHitAbilityDef;
 struct SystemContext;
@@ -37,6 +39,7 @@ class VertexBuffer;
 enum class AbilityTargetingMode
 {
 	ClosestToGoal,
+	AllInRange,
 };
 
 
@@ -67,7 +70,10 @@ public:
 	AbilityTargetingComponent() = default;
 	AbilityTargetingComponent(AbilityTargetingComponentDef const& def);
 
-	bool HasRangeChanged() const;
+	bool NeedsCacheUpdate(Vec2 const& location) const;
+	bool UpdateCachedTiles(SystemContext const& context, Vec2 const& location);
+
+	bool FindTargets(SystemContext const& context, std::vector<EntityID>& out_targetIDs) const;
 
 	void AppendDebugString(std::string& out_string) const;
 
@@ -79,6 +85,7 @@ public:
 
 	float m_minRangeAtTimeOfCache = -1.f;
 	float m_maxRangeAtTimeOfCache = -1.f;
+	Vec2 m_locationAtTimeOfCache = Vec2::ZeroVector;
 	std::vector<IntVec2> m_cachedPathTilesInRange;
 };
 
@@ -253,6 +260,7 @@ public:
 	AbilityOnHitComponent(AbilityOnHitComponentDef const& def);
 
 	HitPayload GetPayload() const;
+	HitPayload GetDoTPayload(float deltaSeconds) const;
 
 	void AppendDebugString(std::string& out_string) const;
 
@@ -280,7 +288,7 @@ public:
 	virtual void Render([[maybe_unused]] SystemContext const& context, [[maybe_unused]] Vec2 const& location) const {};
 	virtual Ability* DeepCopy() const = 0;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
-	virtual void AppendDebugString(std::string& out_string) const = 0;
+	virtual void AppendDebugString(std::string& out_string) const;
 
 	virtual void RollDamageAndEffects(RandomNumberGenerator& rng);
 
@@ -363,4 +371,29 @@ public:
 	EntityID m_activeAoEEffect = EntityID::Invalid;
 	std::optional<AbilityTargetingComponent>	m_targetingComp;
 	std::optional<AbilityAoEEffectComponent>	m_aoeEffectComp;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+class LaserAbility : public Ability
+{
+public:
+
+	LaserAbility() = default;
+	explicit LaserAbility(LaserAbilityDef const& def);
+
+	virtual void Update(SystemContext const& context, Vec2 const& location) override;
+	virtual void Render(SystemContext const& context, Vec2 const& location) const override;
+	virtual Ability* DeepCopy() const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
+	virtual void AppendDebugString(std::string& out_string) const override;
+
+public:
+
+	std::vector<EntityID> m_targets;
+
+	std::optional<AbilityTargetingComponent>	m_targetingComp;
+	std::optional<AbilityOnHitComponent>		m_onHitComp;
+	std::optional<AbilityRenderComponent>		m_renderComp;
 };
