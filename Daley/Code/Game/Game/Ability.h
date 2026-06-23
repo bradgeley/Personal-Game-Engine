@@ -14,6 +14,7 @@
 struct AbilityAoEEffectComponentDef;
 struct AbilityAoEHitComponentDef;
 struct AbilityBurnComponentDef;
+struct AbilityChainComponentDef;
 struct AbilityCooldownComponentDef;
 struct AbilityCritComponentDef;
 struct AbilityDamageComponentDef;
@@ -73,7 +74,8 @@ public:
 	bool NeedsCacheUpdate(Vec2 const& location) const;
 	bool UpdateCachedTiles(SystemContext const& context, Vec2 const& location);
 
-	bool FindTargets(SystemContext const& context, std::vector<EntityID>& out_targetIDs) const;
+	bool FindTargets(SystemContext const& context, int maxTargets = -1); // Populates m_targets
+	EntityID FindChainTarget(SystemContext const& context, Vec2 const& pos, float maxDistance);
 
 	void AppendDebugString(std::string& out_string) const;
 
@@ -82,6 +84,8 @@ public:
 	float m_minRange = 0.f;
 	float m_maxRange = 0.f;
 	AbilityTargetingMode m_targetingMode = AbilityTargetingMode::ClosestToGoal;
+
+	std::vector<EntityID> m_targets;
 
 	float m_minRangeAtTimeOfCache = -1.f;
 	float m_maxRangeAtTimeOfCache = -1.f;
@@ -185,6 +189,44 @@ public:
 };
 
 
+//----------------------------------------------------------------------------------------------------------------------
+struct AbilityChainComponent
+{
+public:
+
+	AbilityChainComponent() = default;
+	AbilityChainComponent(AbilityChainComponentDef const& def);
+
+	void AppendDebugString(std::string& out_string) const;
+
+public:
+
+	float m_chainChance	= 0.f;
+	float m_chainDistance = 3.f;
+	float m_chainPayloadMulti = 1.f;
+	int	m_maxChains	= 0;
+	int	m_remainingChains = 0;
+}; 
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct AbilityRenderComponent
+{
+public:
+
+	AbilityRenderComponent() = default;
+	AbilityRenderComponent(AbilityRenderComponentDef const& def);
+
+	void AppendDebugString(std::string& out_string) const;
+
+public:
+
+	Rgba8 m_tint = Rgba8::White;
+	float m_depth = 0.f;
+};
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 struct AbilityAoEHitComponent
@@ -205,24 +247,6 @@ public:
 	std::optional<AbilityPoisonComponent>	m_poisonOnHit;
 	std::optional<AbilityBurnComponent>		m_burnOnHit;
 	std::optional<AbilitySlowComponent>		m_slowOnHit;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilityRenderComponent
-{
-public:
-
-	AbilityRenderComponent() = default;
-	AbilityRenderComponent(AbilityRenderComponentDef const& def);
-
-	void AppendDebugString(std::string& out_string) const;
-
-public:
-
-	Rgba8 m_tint = Rgba8::White;
-	float m_depth = 0.f;
 };
 
 
@@ -323,6 +347,7 @@ public:
 	std::optional<AbilityTargetingComponent>	m_targetingComp;
 	std::optional<AbilityCritComponent>			m_critComp;
 	std::optional<AbilityOnHitComponent>		m_onHitComp;
+	std::optional<AbilityChainComponent>		m_chainComp;
 };
 
 
@@ -391,9 +416,9 @@ public:
 
 public:
 
-	std::vector<EntityID> m_targets;
 
 	std::optional<AbilityTargetingComponent>	m_targetingComp;
 	std::optional<AbilityOnHitComponent>		m_onHitComp;
 	std::optional<AbilityRenderComponent>		m_renderComp;
+	std::optional<AbilityChainComponent>		m_chainComp;
 };

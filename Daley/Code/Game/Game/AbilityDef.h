@@ -85,15 +85,14 @@ struct AbilitySlowComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityAoEHitComponentDef
+struct AbilityChainComponentDef
 {
-	explicit AbilityAoEHitComponentDef(void const* xmlElement);
+	explicit AbilityChainComponentDef(void const* xmlElement);
 
-	float m_radius = 0.f;
-	std::optional<AbilityDamageComponentDef>	m_damageOnHit;
-	std::optional<AbilityPoisonComponentDef>	m_poisonOnHit;
-	std::optional<AbilityBurnComponentDef>		m_burnOnHit;
-	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
+	float	m_chainChance = 1.f;
+	float	m_chainDistance = 3.f;
+	float	m_chainPayloadMulti = 1.f;
+	int		m_maxChains = 0;
 };
 
 
@@ -103,8 +102,22 @@ struct AbilityRenderComponentDef
 {
 	explicit AbilityRenderComponentDef(void const* xmlElement);
 
-	Rgba8 m_tint	= Rgba8::White;
-	float m_depth	= 0.f;
+	Rgba8 m_tint = Rgba8::White;
+	float m_depth = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct AbilityAoEHitComponentDef
+{
+	explicit AbilityAoEHitComponentDef(void const* xmlElement);
+
+	float m_radius = 0.f;
+	std::optional<AbilityDamageComponentDef>	m_damageOnHit;
+	std::optional<AbilityPoisonComponentDef>	m_poisonOnHit;
+	std::optional<AbilityBurnComponentDef>		m_burnOnHit;
+	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
 };
 
 
@@ -189,6 +202,7 @@ public:
 	std::optional<AbilityTargetingComponentDef>		m_targetingDef;
 	std::optional<AbilityCritComponentDef>			m_critDef;
 	std::optional<AbilityOnHitComponentDef>			m_onHitDef;
+	std::optional<AbilityChainComponentDef>			m_chainDef;
 };
 
 
@@ -241,4 +255,5 @@ public:
 	std::optional<AbilityTargetingComponentDef> m_targetingDef;
 	std::optional<AbilityOnHitComponentDef>		m_onHitDef;
 	std::optional<AbilityRenderComponentDef>	m_renderDef;
+	std::optional<AbilityChainComponentDef>		m_chainDef;
 };

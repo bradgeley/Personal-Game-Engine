@@ -79,7 +79,7 @@ bool AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityTargetingComponent::FindTargets(SystemContext const& context, std::vector<EntityID>& out_targetIDs) const
+bool AbilityTargetingComponent::FindTargets(SystemContext const& context, int maxTargets /*= -1*/)
 {
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 	SCFlowField const& flowfield = context.GetSingletonConst<SCFlowField>();
@@ -89,14 +89,12 @@ bool AbilityTargetingComponent::FindTargets(SystemContext const& context, std::v
 
 	BitMask healthBit = context.GetComponentBitMask<CHealth>();
 
+    m_targets.clear();
+
     if (m_targetingMode == AbilityTargetingMode::ClosestToGoal)
     {
-        float closestToGoalDist = FLT_MAX;
-        int closestToGoalTileIndex = -1;
         for (IntVec2 const& cachedPathTile : m_cachedPathTilesInRange)
         {
-            // todo: sort by distance and search closest tiles first.
-
             int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
             CollisionBucket const& tileBucket = enemyLayer[tileIndex];
             if (tileBucket.empty())
@@ -104,48 +102,22 @@ bool AbilityTargetingComponent::FindTargets(SystemContext const& context, std::v
                 continue;
             }
 
-            float distance = flowfield.m_toGoalFlowField.m_distanceField.Get(tileIndex);
-            if (distance < closestToGoalDist)
-            {
-                bool tileHasValidTarget = false;
-
-                for (EntityID entityID : tileBucket)
-                {
-                    if (context.HasComponents(entityID, healthBit))
-                    {
-						CHealth const& healthComp = healthStorage[entityID];
-                        if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
-                        {
-                            tileHasValidTarget = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (tileHasValidTarget)
-                {
-                    closestToGoalTileIndex = tileIndex;
-                    closestToGoalDist = distance;
-                    break; // Tiles are sorted by distance, so break as soon as we find 1 tile with a valid target in it. Todo: support multiple targets
-                }
-            }
-        }
-
-        if (closestToGoalTileIndex != -1)
-        {
-            for (EntityID entityID : enemyLayer[closestToGoalTileIndex])
+            for (EntityID entityID : tileBucket)
             {
                 if (context.HasComponents(entityID, healthBit))
                 {
                     CHealth const& healthComp = healthStorage[entityID];
                     if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
                     {
-                        out_targetIDs.push_back(entityID);
+                        m_targets.push_back(entityID);
+
+                        if (m_targets.size() >= (size_t) maxTargets && maxTargets > 0)
+                        {
+                            return true;
+						}
                     }
                 }
-            }
-
-            ASSERT_OR_DIE(!out_targetIDs.empty(), "ProjectileHitAbility::Update - closest to goal tile has no valid targets. Should be impossible.");
+			}
         }
     }
 
@@ -163,14 +135,71 @@ bool AbilityTargetingComponent::FindTargets(SystemContext const& context, std::v
 					CHealth const& healthComp = healthStorage[entityID];
                     if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
                     {
-                        out_targetIDs.push_back(entityID);
-					}
+                        m_targets.push_back(entityID);
+
+                        // Ignore maxTargets for AllInRange mode
+                    }
                 }
             }
         }
 	}
 
-	return !out_targetIDs.empty();
+	return !m_targets.empty();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EntityID AbilityTargetingComponent::FindChainTarget(SystemContext const& context, Vec2 const& pos, float maxDistance)
+{
+	SCWorld const& world = context.GetSingletonConst<SCWorld>();
+	SCCollision const& collision = context.GetSingletonConst<SCCollision>();
+
+	CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
+
+	float maxDistanceSquared = maxDistance * maxDistance;
+
+    world.ForEachPathTileInRange(pos, 0.f, maxDistance, [&](IntVec2 const& worldCoords)
+    {
+        int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
+        CollisionBucket const& tileBucket = enemyLayer[tileIndex];
+
+        for (EntityID entityID : tileBucket)
+        {
+            bool sameEntity = false;
+            for (EntityID targetID : m_targets)
+            {
+                if (entityID == targetID)
+                {
+                    sameEntity = true;
+                    break;
+                }
+			}
+
+            if (sameEntity)
+            {
+                continue;
+			}
+
+			CTransform const& transformComp = *context.GetComponentConst<CTransform>(entityID);
+			float distSquared = MathUtils::GetDistanceSquared2D(pos, transformComp.m_pos);
+            if (distSquared > maxDistanceSquared)
+            {
+                continue;
+			}
+
+            CHealth const& healthComp = *context.GetComponentConst<CHealth>(entityID);
+            if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
+            {
+                m_targets.push_back(entityID);
+                return false;
+            }
+        }
+
+        return true;
+	});
+
+    return EntityID::Invalid;
 }
 
 
@@ -295,6 +324,26 @@ void AbilitySlowComponent::AppendDebugString(std::string& out_string) const
     out_string += StringUtils::StringF("Slow: %.1f\n", m_duration);
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityChainComponent::AbilityChainComponent(AbilityChainComponentDef const& def)
+{
+    m_chainChance = def.m_chainChance;
+    m_chainDistance = def.m_chainDistance;
+	m_chainPayloadMulti = def.m_chainPayloadMulti;
+    m_maxChains = def.m_maxChains;
+	m_remainingChains = def.m_maxChains;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityChainComponent::AppendDebugString(std::string& out_string) const
+{
+    out_string += StringUtils::StringF("Chain Chance: %.1f%%\n", m_chainChance * 100.f);
+    out_string += StringUtils::StringF("Max Chains: %d\n", m_maxChains);
+}
 
 
 
@@ -500,6 +549,10 @@ ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def) :
     {
         m_onHitComp.emplace(def.m_onHitDef.value());
     }
+    if (def.m_chainDef.has_value())
+    {
+        m_chainComp.emplace(def.m_chainDef.value());
+	}
 };
 
 
@@ -533,19 +586,14 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
     m_targetingComp->UpdateCachedTiles(context, location);
 
-    static std::vector<EntityID> validTargets;
-    validTargets.clear();
-
-	m_targetingComp->FindTargets(context, validTargets);
-
-    if (validTargets.empty())
+    if (!m_targetingComp->FindTargets(context, 1))
     {
         // No targets in range, clamp cooldown
         m_cooldownComp->m_accumulatedTime = MathUtils::Clamp(m_cooldownComp->m_accumulatedTime, 0.f, timeBetweenAttacks);
         return;
-	}
+    }
 
-	EntityID targetID = validTargets.front(); // todo: support multiple targets
+	EntityID targetID = m_targetingComp->m_targets.front(); // todo: support multiple targets
 
     // Shoot at targets
     while (m_cooldownComp->m_accumulatedTime > timeBetweenAttacks)
@@ -784,12 +832,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
 	m_targetingComp->UpdateCachedTiles(context, location);
 
-    static std::vector<EntityID> validTargets;
-    validTargets.clear();
-
-	m_targetingComp->FindTargets(context, validTargets);
-
-    if (validTargets.empty())
+	if (!m_targetingComp->FindTargets(context))
     {
         // No targets in range, clamp cooldown
         m_cooldownComp->m_accumulatedTime = MathUtils::Clamp(m_cooldownComp->m_accumulatedTime, 0.f, timeBetweenAttacks);
@@ -831,7 +874,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
             continue;
         }
 
-        for (EntityID entityID : validTargets)
+        for (EntityID entityID : m_targetingComp->m_targets)
         {
             if (payload.IsRelevantToHealth() && context.HasComponents(entityID, healthBit))
             {
@@ -1074,6 +1117,10 @@ LaserAbility::LaserAbility(LaserAbilityDef const& def) : Ability(def)
     {
         m_renderComp.emplace(def.m_renderDef.value());
 	}
+    if (def.m_chainDef.has_value())
+    {
+        m_chainComp.emplace(def.m_chainDef.value());
+    }
 }
 
 
@@ -1096,44 +1143,71 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location)
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
     m_targetingComp->UpdateCachedTiles(context, location);
 
-    m_targets.reserve(16);
-    m_targets.clear();
-
-    if (m_targetingComp->FindTargets(context, m_targets))
+    if (!m_targetingComp->FindTargets(context, 1))
     {
-		EntityID target = m_targets.front(); // todo: support multiple targets
-		HitPayload payload = m_onHitComp->GetDoTPayload(context.m_deltaSeconds);
+        return;
+    }
+
+    if (m_chainComp.has_value())
+    {
+		m_chainComp->m_remainingChains = m_chainComp->m_maxChains;
+
+        for (int i = 0; i < m_chainComp->m_maxChains; ++i)
+        {
+			EntityID currentTarget = m_targetingComp->m_targets.back();
+			CTransform const& currentTargetTransform = *context.GetComponentConst<CTransform>(currentTarget);
+
+            EntityID chainEntity = m_targetingComp->FindChainTarget(context, currentTargetTransform.m_pos, m_chainComp->m_chainDistance);
+            if (chainEntity == EntityID::Invalid)
+            {
+                break;
+			}
+        }
+    }
+
+	float chainPayloadMulti = 1.f;
+
+    for (EntityID target : m_targetingComp->m_targets)
+    {
+        HitPayload payload = m_onHitComp->GetDoTPayload(context.m_deltaSeconds);
+
+		payload *= chainPayloadMulti;
+
+        if (m_chainComp.has_value())
+        {
+            chainPayloadMulti *= m_chainComp->m_chainPayloadMulti;
+		}
 
         if (payload.IsRelevantToHealth() && context.HasComponentsUnsafe(target.GetIndex(), healthBit))
         {
             CHealth& healthComp = context.GetArrayStorage<CHealth>()[target];
             healthComp.TakePayload(payload);
-		}
+        }
 
         if (payload.IsRelevantToTime() && context.HasComponentsUnsafe(target.GetIndex(), timeBit))
         {
             CTime& timeComp = context.GetArrayStorage<CTime>()[target];
             timeComp.m_remainingSlowDuration += payload.m_slowDuration;
-		}
+        }
 
         if (m_onHitComp->m_aoeEffectOnHit.has_value())
         {
-			CTransform const& targetTransform = *context.GetComponentConst<CTransform>(target);
+            CTransform const& targetTransform = *context.GetComponentConst<CTransform>(target);
 
             SpawnInfo aoeEffectSpawnInfo;
             aoeEffectSpawnInfo.m_spawnPos = targetTransform.m_pos;
             aoeEffectSpawnInfo.m_spawnLifetime = m_onHitComp->m_aoeEffectOnHit->m_durationSeconds;
-			aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_onHitComp->m_aoeEffectOnHit->m_aoeEffectDefName);
+            aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_onHitComp->m_aoeEffectOnHit->m_aoeEffectDefName);
             aoeEffectSpawnInfo.m_spawnScale = m_onHitComp->m_aoeEffectOnHit->m_radius;
 
             EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
             if (context.IsValid(aoeEffect))
             {
-				CCollisionEffect& aoeEffectComp = *context.GetComponent<CCollisionEffect>(aoeEffect);
-				aoeEffectComp.InitializeFromAoEEffect(m_onHitComp->m_aoeEffectOnHit.value());
+                CCollisionEffect& aoeEffectComp = *context.GetComponent<CCollisionEffect>(aoeEffect);
+                aoeEffectComp.InitializeFromAoEEffect(m_onHitComp->m_aoeEffectOnHit.value());
             }
-		}
-    }
+        }
+	}
 }
 
 
@@ -1143,23 +1217,23 @@ void LaserAbility::Render(SystemContext const& context, Vec2 const& location) co
 {
 	ASSERT_OR_DIE(m_renderComp.has_value(), "LaserAbility::Render - m_renderComp is null.");
 
-	EntityID target = m_targets.empty() ? EntityID::Invalid : m_targets.front();
-
-    if (target == EntityID::Invalid)
-    {
-        return;
-	}
-
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
 	Renderer& renderer = *scRenderer.GetRenderer();
 
     VertexBuffer& vbo = *renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
     vbo.ClearVerts();
 
-    if (CTransform const* transform = context.GetComponent<CTransform>(target))
+    Vec2 currentChainStartLocation = location;
+
+    for (EntityID target : m_targetingComp->m_targets)
     {
-		VertexUtils::AddVertsForLine2D(vbo, location, transform->m_pos, 0.25f, m_renderComp->m_tint, m_renderComp->m_depth);
-	}
+        if (CTransform const* transform = context.GetComponent<CTransform>(target))
+        {
+            VertexUtils::AddVertsForLine2D(vbo, currentChainStartLocation, transform->m_pos, 0.25f, m_renderComp->m_tint, m_renderComp->m_depth);
+            currentChainStartLocation = transform->m_pos;
+        }
+    }
+
 
     renderer.BindShader();
     renderer.BindTexture();

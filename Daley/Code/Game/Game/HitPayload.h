@@ -22,4 +22,12 @@ struct HitPayload
 		m_poison += other.m_poison;
 		m_slowDuration += other.m_slowDuration;
 	}
+
+	void operator*=(float multiplier)
+	{
+		m_damage *= multiplier;
+		m_burn *= multiplier;
+		m_poison *= multiplier;
+		m_slowDuration *= multiplier;
+	}
 };

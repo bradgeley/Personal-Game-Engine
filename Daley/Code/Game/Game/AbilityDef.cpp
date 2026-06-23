@@ -225,6 +225,19 @@ AbilitySlowComponentDef::AbilitySlowComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AbilityChainComponentDef::AbilityChainComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_chainChance = XmlUtils::ParseXmlAttribute(elem, "chainChance", m_chainChance);
+	m_chainDistance = XmlUtils::ParseXmlAttribute(elem, "chainDistance", m_chainDistance);
+	m_chainPayloadMulti = XmlUtils::ParseXmlAttribute(elem, "chainPayloadMulti", m_chainPayloadMulti);
+	m_maxChains = XmlUtils::ParseXmlAttribute(elem, "maxChains", m_maxChains);
+}
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
@@ -335,6 +348,10 @@ ProjectileHitAbilityDef::ProjectileHitAbilityDef(void const* xmlElement) : Abili
     if (XmlElement const* onHitElem = elem.FirstChildElement("OnHit"))
     {
         m_onHitDef.emplace(onHitElem);
+    }
+    if (XmlElement const* chainElem = elem.FirstChildElement("Chain"))
+    {
+        m_chainDef.emplace(chainElem);
     }
 }
 
@@ -447,6 +464,10 @@ LaserAbilityDef::LaserAbilityDef(void const* xmlElement) : AbilityDef(xmlElement
     {
         m_renderDef.emplace(renderElem);
 	}
+    if (XmlElement const* chainElem = elem.FirstChildElement("Chain"))
+    {
+        m_chainDef.emplace(chainElem);
+    }
 }
 
 
