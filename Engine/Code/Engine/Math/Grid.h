@@ -50,6 +50,7 @@ public:
     int GetHeight() const;
     int Size() const;
     int Count() const;
+	bool Contains(T const& value) const;
 
     T* GetRawData();
     T const* GetRawData() const;
@@ -449,6 +450,22 @@ template <typename T>
 int Grid<T>::Count() const
 {
     return (int) m_data.size();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T>
+bool Grid<T>::Contains(T const& value) const
+{
+    for (int i = 0; i < m_data.size(); ++i)
+    {
+        if (m_data[i] == value)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 

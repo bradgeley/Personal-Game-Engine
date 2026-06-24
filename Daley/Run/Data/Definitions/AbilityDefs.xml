@@ -8,6 +8,7 @@
     <Targeting minRange="5" maxRange="15"></Targeting>
     <Crit critChance="0.5"></Crit>
     <Chain maxChains="3"></Chain>
+    <Multishot additionalTargets="3"></Multishot>
     <OnHit>
       <Damage minDamage="5" maxDamage="10"></Damage>
       <Burn burn="10"></Burn>
@@ -60,9 +61,10 @@
   </PassiveAoEAbilityDef>
 
   <LaserAbilityDef name="LaserAbility_TestAttack">
-    <Targeting minRange="5" maxRange="15"></Targeting>
+    <Targeting maxRange="15"></Targeting>
     <Render tint="255,0,255, 100" depth="0.05"></Render>
     <Chain maxChains="3" chainDistance="2" chainPayloadMulti="0.5"></Chain>
+    <Multishot additionalTargets="3"></Multishot>
     <OnHit> <!-- per second -->
       <Damage damage="100"></Damage>
       <Burn burn="100"></Burn>

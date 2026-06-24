@@ -23,6 +23,8 @@ CAbility::CAbility(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 
+	// Todo: allow multiple abilities in xml
+
 	Name abilityDefName = XmlUtils::ParseXmlAttribute(elem, "name", Name::Invalid);
 	AbilityDef const* abilityDef = AbilityDef::GetAbilityDef(abilityDefName);
 	if (abilityDef)

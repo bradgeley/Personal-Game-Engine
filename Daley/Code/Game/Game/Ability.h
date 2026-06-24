@@ -3,6 +3,7 @@
 #include "HitPayload.h"
 #include "Engine/Core/Name.h"
 #include "Engine/ECS/EntityID.h"
+#include "Engine/Math/Grid.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/Rgba8.h"
@@ -19,6 +20,7 @@ struct AbilityCooldownComponentDef;
 struct AbilityCritComponentDef;
 struct AbilityDamageComponentDef;
 struct AbilityDef;
+struct AbilityMultishotComponentDef;
 struct AbilityOnHitComponentDef;
 struct AbilityPoisonComponentDef;
 struct AbilityRenderComponentDef;
@@ -40,7 +42,6 @@ class VertexBuffer;
 enum class AbilityTargetingMode
 {
 	ClosestToGoal,
-	AllInRange,
 };
 
 
@@ -74,23 +75,52 @@ public:
 	bool NeedsCacheUpdate(Vec2 const& location) const;
 	bool UpdateCachedTiles(SystemContext const& context, Vec2 const& location);
 
-	bool FindTargets(SystemContext const& context, int maxTargets = -1); // Populates m_targets
-	EntityID FindChainTarget(SystemContext const& context, Vec2 const& pos, float maxDistance);
-
 	void AppendDebugString(std::string& out_string) const;
 
 public:
 
 	float m_minRange = 0.f;
 	float m_maxRange = 0.f;
-	AbilityTargetingMode m_targetingMode = AbilityTargetingMode::ClosestToGoal;
 
-	std::vector<EntityID> m_targets;
+	AbilityTargetingMode m_targetingMode = AbilityTargetingMode::ClosestToGoal;
 
 	float m_minRangeAtTimeOfCache = -1.f;
 	float m_maxRangeAtTimeOfCache = -1.f;
 	Vec2 m_locationAtTimeOfCache = Vec2::ZeroVector;
 	std::vector<IntVec2> m_cachedPathTilesInRange;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct AbilityAoETargetingComponent : public AbilityTargetingComponent
+{
+public:
+
+	AbilityAoETargetingComponent(AbilityTargetingComponentDef const& def);
+
+	bool FindTargets(SystemContext const& context, int maxTargets = -1);
+
+public:
+
+	std::vector<EntityID> m_targets;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct AbilityPrecisionTargetingComponent : public AbilityTargetingComponent
+{
+public:
+
+	AbilityPrecisionTargetingComponent(AbilityTargetingComponentDef const& def);
+
+	bool FindTargets(SystemContext const& context, int maxTargets = 1, int maxChains = 0, float maxChainDistance = 1.f);
+	EntityID FindChainTarget(SystemContext const& context, Vec2 const& pos, float maxDistance);
+
+public:
+
+	Grid<EntityID> m_targetChains;
 };
 
 
@@ -189,6 +219,7 @@ public:
 };
 
 
+
 //----------------------------------------------------------------------------------------------------------------------
 struct AbilityChainComponent
 {
@@ -206,7 +237,24 @@ public:
 	float m_chainPayloadMulti = 1.f;
 	int	m_maxChains	= 0;
 	int	m_remainingChains = 0;
-}; 
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct AbilityMultishotComponent
+{
+public:
+
+	AbilityMultishotComponent() = default;
+	AbilityMultishotComponent(AbilityMultishotComponentDef const& def);
+
+	void AppendDebugString(std::string& out_string) const;
+
+public:
+
+	int m_additionalTargets = 1;
+};
 
 
 
@@ -343,11 +391,12 @@ public:
 	Name m_projectileDefName = Name::Invalid;
 	float m_projSpeed = 1.f;
 
-	std::optional<AbilityCooldownComponent>		m_cooldownComp;
-	std::optional<AbilityTargetingComponent>	m_targetingComp;
-	std::optional<AbilityCritComponent>			m_critComp;
-	std::optional<AbilityOnHitComponent>		m_onHitComp;
-	std::optional<AbilityChainComponent>		m_chainComp;
+	std::optional<AbilityCooldownComponent>				m_cooldownComp;
+	std::optional<AbilityPrecisionTargetingComponent>	m_targetingComp;
+	std::optional<AbilityCritComponent>					m_critComp;
+	std::optional<AbilityOnHitComponent>				m_onHitComp;
+	std::optional<AbilityChainComponent>				m_chainComp;
+	std::optional<AbilityMultishotComponent>			m_multishotComp;
 };
 
 
@@ -370,7 +419,7 @@ public:
 public:
 
 	std::optional<AbilityCooldownComponent>		m_cooldownComp;
-	std::optional<AbilityTargetingComponent>	m_targetingComp;
+	std::optional<AbilityAoETargetingComponent>	m_targetingComp;
 	std::optional<AbilityCritComponent>			m_critComp;
 	std::optional<AbilityAoEHitComponent>		m_aoeHitComp;
 	std::optional<AbilityAoEEffectComponent>	m_aoeEffectComp;
@@ -394,7 +443,7 @@ public:
 public:
 
 	EntityID m_activeAoEEffect = EntityID::Invalid;
-	std::optional<AbilityTargetingComponent>	m_targetingComp;
+	std::optional<AbilityAoETargetingComponent>	m_targetingComp;
 	std::optional<AbilityAoEEffectComponent>	m_aoeEffectComp;
 };
 
@@ -417,8 +466,9 @@ public:
 public:
 
 
-	std::optional<AbilityTargetingComponent>	m_targetingComp;
-	std::optional<AbilityOnHitComponent>		m_onHitComp;
-	std::optional<AbilityRenderComponent>		m_renderComp;
-	std::optional<AbilityChainComponent>		m_chainComp;
+	std::optional<AbilityPrecisionTargetingComponent>	m_targetingComp;
+	std::optional<AbilityOnHitComponent>				m_onHitComp;
+	std::optional<AbilityRenderComponent>				m_renderComp;
+	std::optional<AbilityChainComponent>				m_chainComp;
+	std::optional<AbilityMultishotComponent>			m_multishotComp;
 };

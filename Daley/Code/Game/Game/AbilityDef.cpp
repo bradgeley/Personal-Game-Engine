@@ -236,6 +236,14 @@ AbilityChainComponentDef::AbilityChainComponentDef(void const* xmlElement)
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
+AbilityMultishotComponentDef::AbilityMultishotComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_additionalTargets = XmlUtils::ParseXmlAttribute(elem, "additionalTargets", m_additionalTargets);
+}
+
+
 
 //----------------------------------------------------------------------------------------------------------------------
 AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
@@ -353,6 +361,10 @@ ProjectileHitAbilityDef::ProjectileHitAbilityDef(void const* xmlElement) : Abili
     {
         m_chainDef.emplace(chainElem);
     }
+    if (XmlElement const* multishotElem = elem.FirstChildElement("Multishot"))
+    {
+        m_multishotDef.emplace(multishotElem);
+	}
 }
 
 
@@ -467,6 +479,10 @@ LaserAbilityDef::LaserAbilityDef(void const* xmlElement) : AbilityDef(xmlElement
     if (XmlElement const* chainElem = elem.FirstChildElement("Chain"))
     {
         m_chainDef.emplace(chainElem);
+    }
+    if (XmlElement const* multishotElem = elem.FirstChildElement("Multishot"))
+    {
+        m_multishotDef.emplace(multishotElem);
     }
 }
 

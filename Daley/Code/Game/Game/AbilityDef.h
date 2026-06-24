@@ -98,6 +98,16 @@ struct AbilityChainComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct AbilityMultishotComponentDef
+{
+	explicit AbilityMultishotComponentDef(void const* xmlElement);
+
+	int	m_additionalTargets = 1;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct AbilityRenderComponentDef
 {
 	explicit AbilityRenderComponentDef(void const* xmlElement);
@@ -196,13 +206,14 @@ public:
 public:
 
 	Name m_projectileDefName			= Name::Invalid;
-	float m_projSpeed	= 1.f;
+	float m_projSpeed					= 1.f;
 
 	std::optional<AbilityCooldownComponentDef>		m_cooldownDef;
 	std::optional<AbilityTargetingComponentDef>		m_targetingDef;
 	std::optional<AbilityCritComponentDef>			m_critDef;
 	std::optional<AbilityOnHitComponentDef>			m_onHitDef;
 	std::optional<AbilityChainComponentDef>			m_chainDef;
+	std::optional<AbilityMultishotComponentDef>		m_multishotDef;
 };
 
 
@@ -252,8 +263,9 @@ public:
 
 public:
 
-	std::optional<AbilityTargetingComponentDef> m_targetingDef;
-	std::optional<AbilityOnHitComponentDef>		m_onHitDef;
-	std::optional<AbilityRenderComponentDef>	m_renderDef;
-	std::optional<AbilityChainComponentDef>		m_chainDef;
+	std::optional<AbilityTargetingComponentDef>		m_targetingDef;
+	std::optional<AbilityOnHitComponentDef>			m_onHitDef;
+	std::optional<AbilityRenderComponentDef>		m_renderDef;
+	std::optional<AbilityChainComponentDef>			m_chainDef;
+	std::optional<AbilityMultishotComponentDef>		m_multishotDef;
 };
