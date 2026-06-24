@@ -23,19 +23,25 @@ CAbility::CAbility(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 
-	// Todo: allow multiple abilities in xml
+	XmlElement const* abilityElem = elem.FirstChildElement("Ability");
+	while (abilityElem != nullptr)
+	{
+		Name abilityDefName = XmlUtils::ParseXmlAttribute(*abilityElem, "name", Name::Invalid);
+		AbilityDef const* abilityDef = AbilityDef::GetAbilityDef(abilityDefName);
+		if (abilityDef)
+		{
+			Ability* ability = abilityDef->MakeAbilityInstance();
+			m_abilities.push_back(ability);
+		}
+		else
+		{
+			DevConsoleUtils::LogError("CAbility constructor - Invalid ability def name: %s", abilityDefName.ToCStr());
+		}
 
-	Name abilityDefName = XmlUtils::ParseXmlAttribute(elem, "name", Name::Invalid);
-	AbilityDef const* abilityDef = AbilityDef::GetAbilityDef(abilityDefName);
-	if (abilityDef)
-	{
-		Ability* ability = abilityDef->MakeAbilityInstance();
-		m_abilities.push_back(ability);
+		abilityElem = abilityElem->NextSiblingElement("Ability");
 	}
-	else 
-	{
-		DevConsoleUtils::LogError("CAbility constructor - Invalid ability def name: %s", abilityDefName.ToCStr());
-	}
+
+
 }
 
 

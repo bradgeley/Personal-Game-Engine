@@ -80,9 +80,26 @@
 
   <!-- ==================================================================================================================== -->
   <!-- Test Towers -->
+  
+  <EntityDef name = "Rainbow">
+    <Ability>
+      <Ability name="Rainbow_ProjHitAbility"></Ability>
+      <Ability name="Rainbow_AoEHitAbility"></Ability>
+      <Ability name="Rainbow_PassiveAoEAbility"></Ability>
+      <Ability name="Rainbow_LaserAbility"></Ability>
+    </Ability>
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Collision radius="1" type="building"></Collision>
+    <Render scale="2" tint="255,0,255"></Render>
+    <Tags tags="tower"></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
 
   <EntityDef name = "Rainbow_ProjHit">
-    <Ability name="Rainbow_ProjHitAbility"></Ability>
+    <Ability>
+      <Ability name="Rainbow_ProjHitAbility"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
@@ -101,7 +118,9 @@
   </EntityDef>
 
   <EntityDef name = "Rainbow_AoEHit">
-    <Ability name="Rainbow_AoEHitAbility"></Ability>
+    <Ability>
+      <Ability name="Rainbow_AoEHitAbility"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
@@ -111,7 +130,9 @@
   </EntityDef>
 
   <EntityDef name = "Rainbow_PassiveAoE">
-    <Ability name="Rainbow_PassiveAoEAbility"></Ability>
+    <Ability>
+      <Ability name="Rainbow_PassiveAoEAbility"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
@@ -121,7 +142,9 @@
   </EntityDef>
 
   <EntityDef name = "Rainbow_Laser">
-    <Ability name="Rainbow_LaserAbility"></Ability>
+    <Ability>
+      <Ability name="Rainbow_LaserAbility"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
@@ -134,7 +157,9 @@
   <!-- Towers -->
 
   <EntityDef name = "Vanilla">
-    <Ability name="VanillaAttack"></Ability>
+    <Ability>
+      <Ability name="VanillaAttack"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="243,229,171"></Render>
@@ -153,7 +178,9 @@
   </EntityDef>
 
   <EntityDef name = "Chocolate">
-    <Ability name="ChocolateAttack"></Ability>
+    <Ability>
+      <Ability name="ChocolateAttack"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="112,66,20"></Render>
@@ -172,7 +199,9 @@
   </EntityDef>
 
   <EntityDef name = "Strawberry">
-    <Ability name="StrawberryAttack"></Ability>
+    <Ability>
+      <Ability name="StrawberryAttack"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="250,80,83"></Render>
@@ -191,7 +220,9 @@
   </EntityDef>
 
   <EntityDef name = "Pistachio">
-    <Ability name="PistachioAttack"></Ability>
+    <Ability>
+      <Ability name="PistachioAttack"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="147,197,114"></Render>
@@ -210,7 +241,9 @@
   </EntityDef>
 
   <EntityDef name = "Mint">
-    <Ability name="MintAoEAttack"></Ability>
+    <Ability>
+      <Ability name="MintAoEAttack"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="173,235,179"></Render>
@@ -229,7 +262,9 @@
   </EntityDef>
 
   <EntityDef name = "Coffee">
-    <Ability name="CoffeeAttack"></Ability>
+    <Ability>
+      <Ability name="CoffeeAttack"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="111,78,55"></Render>
@@ -248,7 +283,9 @@
   </EntityDef>
 
   <EntityDef name = "OrangeSorbet">
-    <Ability name="OrangeSorbetAttack"></Ability>
+    <Ability>
+      <Ability name="OrangeSorbetAttack"></Ability>
+    </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,165,0"></Render>
@@ -261,7 +298,6 @@
   <!-- Effects -->
 
   <EntityDef name="AoEEffect">
-    <Ability></Ability>
     <CollisionEffect></CollisionEffect>
     <Collision radius="1" type="GroundEffect"></Collision>
     <Time></Time>
