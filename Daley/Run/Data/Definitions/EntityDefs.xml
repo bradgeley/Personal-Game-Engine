@@ -81,8 +81,8 @@
   <!-- ==================================================================================================================== -->
   <!-- Test Towers -->
 
-  <EntityDef name = "ProjectileHitAbility_TestTower">
-    <Ability name="ProjectileHitAbility_TestAttack"></Ability>
+  <EntityDef name = "Rainbow_ProjHit">
+    <Ability name="Rainbow_ProjHitAbility"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
@@ -91,7 +91,7 @@
     <Transform></Transform>
   </EntityDef>
 
-  <EntityDef name = "ProjectileHitAbility_TestProj">
+  <EntityDef name = "Rainbow_Proj">
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
     <Render scale="0.66" rotateSprite="true" tint="255,0,255"></Render>
@@ -100,8 +100,8 @@
     <Transform></Transform>
   </EntityDef>
 
-  <EntityDef name = "AoEHitAbility_TestTower">
-    <Ability name="AoEHitAbility_TestAttack"></Ability>
+  <EntityDef name = "Rainbow_AoEHit">
+    <Ability name="Rainbow_AoEHitAbility"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
@@ -110,8 +110,8 @@
     <Transform></Transform>
   </EntityDef>
 
-  <EntityDef name = "PassiveAoEAbility_TestTower">
-    <Ability name="PassiveAoEAbility_TestAttack"></Ability>
+  <EntityDef name = "Rainbow_PassiveAoE">
+    <Ability name="Rainbow_PassiveAoEAbility"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>
@@ -120,8 +120,8 @@
     <Transform></Transform>
   </EntityDef>
 
-  <EntityDef name = "LaserAbility_TestTower">
-    <Ability name="LaserAbility_TestAttack"></Ability>
+  <EntityDef name = "Rainbow_Laser">
+    <Ability name="Rainbow_LaserAbility"></Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Render scale="2" tint="255,0,255"></Render>

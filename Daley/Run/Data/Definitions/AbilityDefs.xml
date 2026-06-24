@@ -3,7 +3,7 @@
   <!-- ==================================================================================================================== -->
   <!-- Test Attacks -->
 
-  <ProjectileHitAbilityDef name="ProjectileHitAbility_TestAttack" projectileDef="ProjectileHitAbility_TestProj" projSpeed="100">
+  <ProjectileHitAbilityDef name="Rainbow_ProjHitAbility" projectileDef="Rainbow_Proj" projSpeed="100">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting minRange="5" maxRange="15"></Targeting>
     <Crit critChance="0.5"></Crit>
@@ -15,7 +15,7 @@
       <Poison poison="10"></Poison>
       <Slow duration="1"></Slow>
       <AoEHit radius="2">
-        <Damage damage="1"></Damage>
+        <Damage damage="1"></Damage>.
         <Burn burn="1"></Burn>
         <Poison poison="1"></Poison>
         <Slow duration="1"></Slow>
@@ -30,7 +30,7 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <AoEHitAbilityDef name="AoEHitAbility_TestAttack">
+  <AoEHitAbilityDef name="Rainbow_AoEHitAbility">
     <Cooldown cooldown="3"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <Crit critChance="0.5"></Crit>
@@ -49,7 +49,7 @@
     </AoEEffect> 
   </AoEHitAbilityDef>
 
-  <PassiveAoEAbilityDef name="PassiveAoEAbility_TestAttack">
+  <PassiveAoEAbilityDef name="Rainbow_PassiveAoEAbility">
     <Targeting maxRange="3"></Targeting>
     <AoEEffect>
       <Damage damage="10"></Damage>
@@ -60,7 +60,7 @@
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
-  <LaserAbilityDef name="LaserAbility_TestAttack">
+  <LaserAbilityDef name="Rainbow_LaserAbility">
     <Targeting maxRange="15"></Targeting>
     <Render tint="255,0,255, 100" depth="0.05"></Render>
     <Chain maxChains="3" chainDistance="2" chainPayloadMulti="0.5"></Chain>
