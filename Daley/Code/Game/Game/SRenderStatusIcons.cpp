@@ -95,7 +95,7 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 		}
 
 		SpriteInstance instance;
-		instance.m_position = Vec3(render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius) + Vec2(-0.75f, -0.0f), 0.f);
+		instance.m_position = Vec3(render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius) + Vec2(-0.75f * render.m_renderRadius, -0.0f), 0.f);
 		instance.m_orientation = 0.f;
 		instance.m_dims = Vec2(0.2f, 0.2f);
 		instance.m_rgba = Rgba8(80, 80, 80, 255);
