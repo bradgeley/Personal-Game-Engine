@@ -5,7 +5,7 @@
 
   <ProjectileHitAbilityDef name="Rainbow_ProjHitAbility" projectileDef="Rainbow_Proj" projSpeed="100">
     <Cooldown cooldown="2"></Cooldown>
-    <Targeting minRange="5" maxRange="15"></Targeting>
+    <Targeting maxRange="15"></Targeting>
     <Crit critChance="0.5"></Crit>
     <Chain maxChains="3"></Chain>
     <Multishot additionalTargets="3"></Multishot>

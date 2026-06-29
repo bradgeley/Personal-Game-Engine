@@ -141,6 +141,10 @@ void SDebugOverlay::Run(SystemContext const& context) const
 					for (auto& ability : abilityComp.m_abilities)
 					{
 						ability->AppendDebugString(debugString);
+						if (abilityComp.m_abilities.size() > 1)
+						{
+							debugString += "-----------------------------------\n";
+						}
 					}
 				}
 
@@ -166,22 +170,53 @@ void SDebugOverlay::Run(SystemContext const& context) const
 					proj.AppendDebugString(debugString);
 				}
 
-				Vec2 cardDims = Vec2(300.f, 300.f);
-				int numLines = StringUtils::CountStringsByDelimiter(debugString, '\n');
-				cardDims.y = 60.f + 30.f * (float) numLines;
+				if (debugString.empty())
+				{
+					debugString = "No Debug Info Available";
+				}
+
+				float titleLineHeight = 33.f;
+				float textLineHeight = 25.f;
+				float textLineSpacingRatio = 0.167f;
+				float infoCardEdgeWidth = 5.f;
+				float infoCardTitleSpacing = 20.f;
+				Vec2 minCardDims = Vec2(300.f, 300.f);
+				StringUtils::TrimTrailingWhitespace(debugString);
+				Strings lines = StringUtils::SplitStringOnDelimiter(debugString, '\n');
+				int numLines = (int) lines.size();
+				float textHeight = titleLineHeight + infoCardTitleSpacing + textLineHeight * (float) numLines + textLineSpacingRatio * textLineHeight* (float) (numLines - 1);
+				float totalHeight = textHeight + infoCardEdgeWidth * 2.f;
+				float cardHeight = MathUtils::Max(minCardDims.y, totalHeight);
+				float textStartHeightOffset = -infoCardEdgeWidth - titleLineHeight - infoCardTitleSpacing;
+
+				int longestLineIndex = 0;
+				float longestLineWidth = 0.f;
+
+				for (int lineIndex = 0; lineIndex < numLines; ++lineIndex)
+				{
+					float width = font->GetTextWidth(textLineHeight, lines[lineIndex]);
+					if (width > longestLineWidth)
+					{
+						longestLineWidth = width;
+						longestLineIndex = lineIndex;
+					}
+				}
+
+				float cardWidth = MathUtils::Max(minCardDims.x, longestLineWidth + infoCardEdgeWidth * 2.f);
+				Vec2 cardDims = Vec2(cardWidth, cardHeight);
 				AABB2 informationCardBounds = AABB2(cardMins, cardMins + cardDims);
 
 				// Background
 				VertexUtils::AddVertsForAABB2(untexVerts, informationCardBounds, Rgba8::DarkGray);
 
 				// Background Outline
-				VertexUtils::AddVertsForWireBox2D(untexVerts, informationCardBounds, 5.f, Rgba8::Black);
+				VertexUtils::AddVertsForWireBox2D(untexVerts, informationCardBounds, infoCardEdgeWidth, Rgba8::Black);
 
 				// Title
-				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(5.f, -5.f), Vec2(1.f, -1.f), 33.f, debug.m_defName.ToString(), Rgba8::White);
+				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(infoCardEdgeWidth, -infoCardEdgeWidth), Vec2(1.f, -1.f), titleLineHeight, debug.m_defName.ToString(), Rgba8::White);
 
 				// Debug Information
-				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(5.f, -50.f), Vec2(1.f, -1.f), 25.f, debugString, Rgba8::White, 0.33f);
+				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(infoCardEdgeWidth, textStartHeightOffset), Vec2(1.f, -1.f), textLineHeight, debugString, Rgba8::White, textLineSpacingRatio);
 				break;
 			}
 		}

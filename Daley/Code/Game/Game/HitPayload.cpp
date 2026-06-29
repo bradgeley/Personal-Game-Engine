@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void HitPayload::AppendDebugString(std::string& out_string) const
 {
-	if (m_isCrit)
+	if (m_didCrit)
 	{
 		out_string += "Critical Hit!\n";
 	}

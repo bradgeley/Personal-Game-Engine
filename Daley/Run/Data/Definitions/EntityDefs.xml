@@ -90,8 +90,8 @@
     </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
-    <Render scale="2" tint="255,0,255"></Render>
+    <Placeable dims="3,3"></Placeable>
+    <Render scale="3" tint="255,0,255"></Render>
     <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>

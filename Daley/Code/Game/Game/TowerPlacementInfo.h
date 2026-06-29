@@ -9,7 +9,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct TowerPlacementInfo
 {
-	Name m_towerName = "Rainbow_ProjHit";
+	Name m_towerName = "Rainbow";
 	Vec2 m_worldPos = Vec2::ZeroVector;
 	IntVec2 m_botLeftTileCoords = IntVec2::ZeroVector;
 	IntVec2 m_topRightTileCoords = IntVec2::ZeroVector;

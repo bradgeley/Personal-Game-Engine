@@ -16,7 +16,7 @@ struct HitPayload
 	float m_burn = 0.f;
 	float m_poison = 0.f;
 	float m_slowDuration = 0.f;
-	bool m_isCrit = false; // todo: make into a tag structure
+	bool m_didCrit = false;
 
 	void operator+=(HitPayload const& other)
 	{
@@ -24,7 +24,7 @@ struct HitPayload
 		m_burn += other.m_burn;
 		m_poison += other.m_poison;
 		m_slowDuration += other.m_slowDuration;
-		m_isCrit = m_isCrit || other.m_isCrit;
+		m_didCrit = m_didCrit || other.m_didCrit;
 	}
 
 	void operator*=(float multiplier)

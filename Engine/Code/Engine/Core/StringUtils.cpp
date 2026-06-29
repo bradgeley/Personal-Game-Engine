@@ -257,6 +257,24 @@ int StringUtils::CountStringsByDelimiter(std::string const& string, char delimet
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int StringUtils::GetLongestStringIndex(Strings const& strings)
+{
+    int longestIndex = 0;
+    int longestLength = 0;
+    for (int i = 0; i < (int) strings.size(); ++i)
+    {
+        if ((int) strings[i].size() > longestLength)
+        {
+            longestLength = (int) strings[i].size();
+            longestIndex = i;
+        }
+    }
+    return longestIndex;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool StringUtils::StringToBool(std::string const& boolAsString)
 {
     std::string lower = GetToLower(boolAsString);

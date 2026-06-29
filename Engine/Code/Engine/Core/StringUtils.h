@@ -33,6 +33,7 @@ namespace StringUtils
     bool IsLower(char c);
     bool DoesStringContain(std::string const& string, char c);
     int CountStringsByDelimiter(std::string const& string, char delimeter);
+	int GetLongestStringIndex(Strings const& strings);
 
 
 
