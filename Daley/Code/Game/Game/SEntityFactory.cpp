@@ -71,21 +71,22 @@ EntityID SEntityFactory::CreateEntityFromDef(SystemContext const& context, Entit
     }
 
     // Add components that exist in the def
-    if (def->m_transform.has_value())           context.AddComponent<CTransform>(id, *def->m_transform);
-    if (def->m_time.has_value())                context.AddComponent<CTime>(id, *def->m_time);
+    if (def->m_ability.has_value())             context.AddComponent<CAbility>(id, *def->m_ability);
     if (def->m_ai.has_value())                  context.AddComponent<CAIController>(id, *def->m_ai);
-	if (def->m_animation.has_value())           context.AddComponent<CAnimation>(id, *def->m_animation);
-	if (def->m_attachment.has_value())          context.AddComponent<CAttachment>(id, *def->m_attachment);
-	if (def->m_collisionEffect.has_value())     context.AddComponent<CCollisionEffect>(id, *def->m_collisionEffect);
-	if (def->m_collision.has_value())           context.AddComponent<CCollision>(id, *def->m_collision);
+    if (def->m_animation.has_value())           context.AddComponent<CAnimation>(id, *def->m_animation);
+    if (def->m_attachment.has_value())          context.AddComponent<CAttachment>(id, *def->m_attachment);
+    if (def->m_collision.has_value())           context.AddComponent<CCollision>(id, *def->m_collision);
+    if (def->m_collisionEffect.has_value())     context.AddComponent<CCollisionEffect>(id, *def->m_collisionEffect);
+    if (def->m_death.has_value())               context.AddComponent<CDeath>(id, *def->m_death);
+    if (def->m_health.has_value())              context.AddComponent<CHealth>(id, *def->m_health);
+    if (def->m_lifetime.has_value())            context.AddComponent<CLifetime>(id, *def->m_lifetime);
     if (def->m_movement.has_value())            context.AddComponent<CMovement>(id, *def->m_movement);
+    if (def->m_placeable.has_value())           context.AddComponent<CPlaceable>(id, *def->m_placeable);
+    if (def->m_proj.has_value())                context.AddComponent<CProjectile>(id, *def->m_proj);
     if (def->m_render.has_value())              context.AddComponent<CRender>(id, *def->m_render);
-	if (def->m_lifetime.has_value())            context.AddComponent<CLifetime>(id, *def->m_lifetime);
-	if (def->m_health.has_value())              context.AddComponent<CHealth>(id, *def->m_health);
-	if (def->m_death.has_value())               context.AddComponent<CDeath>(id, *def->m_death);
-	if (def->m_ability.has_value())             context.AddComponent<CAbility>(id, *def->m_ability);
-	if (def->m_proj.has_value())                context.AddComponent<CProjectile>(id, *def->m_proj);
-	if (def->m_tags.has_value())                context.AddComponent<CTags>(id, *def->m_tags);
+    if (def->m_tags.has_value())                context.AddComponent<CTags>(id, *def->m_tags);
+    if (def->m_time.has_value())                context.AddComponent<CTime>(id, *def->m_time);
+    if (def->m_transform.has_value())           context.AddComponent<CTransform>(id, *def->m_transform);
 
     // Todo: don't add this component, in release only?
     CEntityDebug* debugComponent = context.AddComponent<CEntityDebug>(id);

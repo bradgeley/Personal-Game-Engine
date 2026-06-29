@@ -12,17 +12,17 @@ bool TagQuery::Resolve(uint8_t tags) const
         {
             return (tags & m_tagsToQuery) != 0;
         }
+        case TagQueryOp::DoesNotHaveAny:
+        {
+            return (tags & m_tagsToQuery) == 0;
+        }
         case TagQueryOp::HasAll:
         {
             return (tags & m_tagsToQuery) == m_tagsToQuery;
         }
-        case TagQueryOp::DoesNotHaveAny:
-        {
-            return (tags & m_tagsToQuery) != m_tagsToQuery;
-        }
         case TagQueryOp::DoesNotHaveAll:
         {
-            return (tags & m_tagsToQuery) == 0;
+            return (tags & m_tagsToQuery) != m_tagsToQuery;
         }
     }
     return false;

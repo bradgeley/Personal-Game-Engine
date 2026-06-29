@@ -8,6 +8,7 @@
 #include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/Rgba8.h"
 #include <optional>
+#include <set>
 #include <vector>
 
 
@@ -103,7 +104,7 @@ public:
 
 public:
 
-	std::vector<EntityID> m_targets;
+	std::set<EntityID> m_targets;
 };
 
 
@@ -139,8 +140,6 @@ public:
 
 	float m_critChance = 0.f;
 	float m_critMulti = 0.f; // Additive with the base 2x crit multiplier
-
-	bool m_didCrit = false;
 };
 
 
@@ -159,8 +158,6 @@ public:
 
 	float m_minDamage = 0.f;
 	float m_maxDamage = 0.f;
-
-	float m_damageDone = 0.f;
 };
 
 
@@ -178,8 +175,6 @@ public:
 public:
 
 	float m_burn = 0.f;
-
-	float m_burnDone = 0.f;
 };
 
 
@@ -197,8 +192,6 @@ public:
 public:
 
 	float m_poison = 0.f;
-
-	float m_poisonDone = 0.f;
 };
 
 
@@ -284,8 +277,6 @@ public:
 	AbilityAoEHitComponent() = default;
 	AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def);
 
-	HitPayload GetPayload() const;
-
 	void AppendDebugString(std::string& out_string) const;
 
 public:
@@ -331,9 +322,6 @@ public:
 	AbilityOnHitComponent() = default;
 	AbilityOnHitComponent(AbilityOnHitComponentDef const& def);
 
-	HitPayload GetPayload() const;
-	HitPayload GetDoTPayload(float deltaSeconds) const;
-
 	void AppendDebugString(std::string& out_string) const;
 
 public:
@@ -344,6 +332,37 @@ public:
 	std::optional<AbilityAoEHitComponent>		m_aoeHitOnHit;
 	std::optional<AbilityAoEEffectComponent>	m_aoeEffectOnHit;
 	std::optional<AbilitySlowComponent>			m_slowOnHit;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct RolledAoEHitComponent
+{
+public:
+
+	void AppendDebugString(std::string& out_string) const;
+
+public:
+
+	float m_radius = 0.f;
+	HitPayload m_payload;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct RolledOnHitComponent
+{
+public:
+
+	void AppendDebugString(std::string& out_string) const;
+
+public:
+
+	HitPayload m_payload;
+	std::optional<RolledAoEHitComponent>		m_aoeHitOnHit;
+	std::optional<AbilityAoEEffectComponent>	m_aoeEffectOnHit;
 };
 
 
@@ -361,8 +380,6 @@ public:
 	virtual Ability* DeepCopy() const = 0;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(std::string& out_string) const;
-
-	virtual void RollDamageAndEffects(RandomNumberGenerator& rng);
 
 public:
 
@@ -384,7 +401,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;
 
-	virtual void RollDamageAndEffects(RandomNumberGenerator& rng) override;
+	RolledOnHitComponent RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
 public:
 
@@ -414,7 +431,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;
 
-	virtual void RollDamageAndEffects(RandomNumberGenerator& rng) override;
+	virtual HitPayload RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
 public:
 
@@ -463,8 +480,9 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(std::string& out_string) const override;
 
-public:
+	HitPayload RollDamageAndEffects(float deltaSeconds) const;
 
+public:
 
 	std::optional<AbilityPrecisionTargetingComponent>	m_targetingComp;
 	std::optional<AbilityOnHitComponent>				m_onHitComp;

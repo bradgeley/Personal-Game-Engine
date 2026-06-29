@@ -19,6 +19,8 @@ class Chunk;
 class Renderer;
 class RandomNumberGenerator;
 class VertexBuffer;
+struct SCEntityFactory;
+struct TowerPlacementInfo;
 
 
 
@@ -48,6 +50,10 @@ public:
 
     bool DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& tagQuery) const;
 
+	bool DoTilesInRegionMatchQuery(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, TagQuery const& tagQuery) const;
+
+    bool PlaceTower(TowerPlacementInfo const& placementInfo, SCEntityFactory& entityFactory);
+
     void CacheValidSpawnLocations();
     Vec2 GetRandomSpawnLocation(RandomNumberGenerator& rng) const;
 
@@ -65,6 +71,7 @@ public:
     void ForEachPathTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPathTileInRange(Vec2 const& pos, float minRadius, float maxRadius, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
+	void ForEachPlayableTileInRegion(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPlayableEdgeTile(const std::function<bool(IntVec2 const&)>& func) const;
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
@@ -80,6 +87,9 @@ public:
     static IntVec2 GetTileCoordsAtWorldPos(Vec2 const& worldPos);
     static IntVec2 GetTileCoordsAtWorldPosClamped(Vec2 const& worldPos);
     static IntVec2 GetTileCoordsAtPlayableWorldPosClamped(Vec2 const& worldPos); // Clamps world pos to playable world bounds, and returns tile coords
+
+    static IntVec2 GetTileIntersectionCoordsAtWorldPos(Vec2 const& worldPos);
+    static Vec2 GetWorldPosAtTileIntersectionCoords(IntVec2 const& intersectionCoords);
 
     static AABB2 GetTileBoundsAtWorldPos(Vec2 const& worldPos);
     static AABB2 GetTileBounds(IntVec2 const& tileCoords);

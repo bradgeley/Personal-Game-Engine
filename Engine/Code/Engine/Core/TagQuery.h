@@ -20,6 +20,6 @@ struct TagQuery
 {
 	bool Resolve(uint8_t tags) const;
 
-	uint8_t m_tagsToQuery;
-	TagQueryOp m_queryOp;
+	uint8_t m_tagsToQuery	= 0;
+	TagQueryOp m_queryOp	= TagQueryOp::DoesNotHaveAny;
 };

@@ -1,24 +1,21 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SDebugInput.h"
-#include "SCCamera.h"
 #include "SCDebug.h"
 #include "SCEntityFactory.h"
 #include "SCWorld.h"
 #include "SCInputSystem.h"
-#include "SCWindow.h"
 #include "TileDef.h"
 #include "EntityDef.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Input/InputSystem.h"
-#include "Engine/Window/Window.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SDebugInput::Startup()
 {
-	AddReadDependencies<SCCamera, SCInputSystem, SCWindow>();
+	AddReadDependencies<SCInputSystem>();
 	AddWriteDependencies<SCWorld, SCDebug, SCEntityFactory>();
 }
 
@@ -28,29 +25,19 @@ void SDebugInput::Startup()
 void SDebugInput::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
-	InputSystem const& input = *context.GetSingletonConst<SCInputSystem>().GetInputSystem();
-	Window const& window = *context.GetSingletonConst<SCWindow>().GetWindow();
+	SCInputSystem const& scInput = context.GetSingletonConst<SCInputSystem>();
+	InputSystem const& input = *scInput.GetInputSystem();
 
 	// Write Dependencies
 	SCWorld& world = context.GetSingleton<SCWorld>();
 	SCDebug& scDebug = context.GetSingleton<SCDebug>();
 	SCEntityFactory& entityFactory = context.GetSingleton<SCEntityFactory>();
 
-	// Debug mouse position
-	if (window.HasFocus())
-	{
-		Vec2 relMousePos = input.GetMouseViewportRelativePosition(StaticWorldSettings::s_visibleWorldAspect);
-		scDebug.m_debugMouseViewportRelativePos = relMousePos;
-		scDebug.m_debugMouseWorldLocation = camera.m_camera.ScreenToWorldOrtho(relMousePos);
-		scDebug.m_debugMouseTileCoords = world.GetTileCoordsAtWorldPosClamped(scDebug.m_debugMouseWorldLocation);
-	}
-
 	// Debug Tile Placement
 	if (input.IsKeyDown(KeyCode::Ctrl) && input.IsKeyDown('B'))
 	{
 		Tile newTile = TileDef::GetDefaultTile(scDebug.m_debugPlacementTileID);
-		world.SetTile(scDebug.m_debugMouseTileCoords, newTile);
+		world.SetTile(scInput.m_mouseTileCoords, newTile);
 	}
 
 	// Debug Tower Placement
@@ -65,7 +52,7 @@ void SDebugInput::Run(SystemContext const& context) const
 		{
 			SpawnInfo info;
 			info.m_def = def;
-			info.m_spawnPos = scDebug.m_debugMouseWorldLocation;
+			info.m_spawnPos = scInput.m_mouseWorldLocation;
 			entityFactory.m_entitiesToSpawn.push_back(info);
 		}
 	}

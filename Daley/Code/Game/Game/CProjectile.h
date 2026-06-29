@@ -28,6 +28,5 @@ public:
     float m_accumulatedTime = 0.f;
     float m_projSpeed = 1.f;
 
-    std::optional<AbilityCritComponent>	m_critComp;
-    std::optional<AbilityOnHitComponent> m_onHitComp;
+    std::optional<RolledOnHitComponent> m_onHitComp;
 };

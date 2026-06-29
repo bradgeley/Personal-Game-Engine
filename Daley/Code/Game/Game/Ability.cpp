@@ -121,12 +121,17 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, int
 
         for (EntityID entityID : tileBucket)
         {
+            if (m_targets.find(entityID) != m_targets.end())
+            {
+                continue;
+            }
+
             if (context.HasComponents(entityID, healthBit))
             {
                 CHealth const& healthComp = healthStorage[entityID];
                 if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
                 {
-                    m_targets.push_back(entityID);
+                    m_targets.insert(entityID);
 
                     if (maxTargets > 0 && m_targets.size() >= maxTargets)
                     {
@@ -302,6 +307,10 @@ AbilityCritComponent::AbilityCritComponent(AbilityCritComponentDef const& def)
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityCritComponent::AppendDebugString(std::string& out_string) const
 {
+    if (m_critChance <= 0.f)
+    {
+        return;
+	}
     out_string += StringUtils::StringF("Crit Chance: %.1f%%\n", m_critChance * 100.f);
     out_string += StringUtils::StringF("Crit Mult: %.1f\n", 2.f + m_critMulti);
 }
@@ -320,6 +329,11 @@ AbilityDamageComponent::AbilityDamageComponent(AbilityDamageComponentDef const& 
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityDamageComponent::AppendDebugString(std::string& out_string) const
 {
+    if (m_minDamage <= 0.f && m_maxDamage <= 0.f)
+    {
+        return;
+    }
+
     if (m_minDamage == m_maxDamage)
     {
         out_string += StringUtils::StringF("Damage: %.1f\n", m_minDamage);
@@ -343,6 +357,10 @@ AbilityBurnComponent::AbilityBurnComponent(AbilityBurnComponentDef const& def)
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityBurnComponent::AppendDebugString(std::string& out_string) const
 {
+    if (m_burn <= 0.f)
+    {
+        return;
+	}
     out_string += StringUtils::StringF("Burn: %.1f\n", m_burn);
 }
 
@@ -359,6 +377,10 @@ AbilityPoisonComponent::AbilityPoisonComponent(AbilityPoisonComponentDef const& 
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityPoisonComponent::AppendDebugString(std::string& out_string) const
 {
+    if (m_poison <= 0.f)
+    {
+        return;
+    }
     out_string += StringUtils::StringF("Poison: %.1f\n", m_poison);
 }
 
@@ -375,6 +397,10 @@ AbilitySlowComponent::AbilitySlowComponent(AbilitySlowComponentDef const& def)
 //----------------------------------------------------------------------------------------------------------------------
 void AbilitySlowComponent::AppendDebugString(std::string& out_string) const
 {
+    if (m_duration <= 0.f)
+    {
+        return;
+	}
     out_string += StringUtils::StringF("Slow: %.1f\n", m_duration);
 }
 
@@ -412,6 +438,11 @@ AbilityMultishotComponent::AbilityMultishotComponent(AbilityMultishotComponentDe
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityMultishotComponent::AppendDebugString(std::string& out_string) const
 {
+    if (m_additionalTargets <= 0)
+    {
+        return;
+    }
+
 	out_string += StringUtils::StringF("Additional Targets: %d\n", m_additionalTargets);
 }
 
@@ -426,32 +457,6 @@ AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def
 	m_aoeHitOnHit = def.m_aoeHitOnHit;
 	m_aoeEffectOnHit = def.m_aoeEffectOnHit;
 	m_slowOnHit = def.m_slowOnHit;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-HitPayload AbilityOnHitComponent::GetPayload() const
-{
-	HitPayload payload;
-	payload.m_damage = m_damageOnHit.has_value() ? m_damageOnHit->m_damageDone : 0.f;
-	payload.m_burn = m_burnOnHit.has_value() ? m_burnOnHit->m_burn : 0.f;
-	payload.m_poison = m_poisonOnHit.has_value() ? m_poisonOnHit->m_poison : 0.f;
-	payload.m_slowDuration = m_slowOnHit.has_value() ? m_slowOnHit->m_duration : 0.f;
-    return payload;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-HitPayload AbilityOnHitComponent::GetDoTPayload(float deltaSeconds) const
-{
-    HitPayload payload = GetPayload();
-	payload.m_burn *= deltaSeconds;
-	payload.m_poison *= deltaSeconds;
-	payload.m_damage *= deltaSeconds;
-	payload.m_slowDuration *= deltaSeconds;
-    return payload;
 }
 
 
@@ -488,14 +493,6 @@ void AbilityOnHitComponent::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Ability::RollDamageAndEffects(RandomNumberGenerator&)
-{
-    // Empty
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def)
 {
     m_radius = def.m_radius;
@@ -508,23 +505,13 @@ AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-HitPayload AbilityAoEHitComponent::GetPayload() const
-{
-    HitPayload payload;
-    payload.m_damage = m_damageOnHit.has_value() ? m_damageOnHit->m_damageDone : 0.f;
-    payload.m_burn = m_burnOnHit.has_value() ? m_burnOnHit->m_burn : 0.f;
-    payload.m_poison = m_poisonOnHit.has_value() ? m_poisonOnHit->m_poison : 0.f;
-    payload.m_slowDuration = m_slowOnHit.has_value() ? m_slowOnHit->m_duration : 0.f;
-    return payload;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void AbilityAoEHitComponent::AppendDebugString(std::string& out_string) const
 {
-    out_string += StringUtils::StringF("AOE Hit Radius: %.1f\n", m_radius);
-	out_string += "AoE Hit Components:\n";
+    out_string += StringUtils::StringF("AOE Hit\n", m_radius);
+    if (m_radius > 0.f)
+    {
+        out_string += StringUtils::StringF("Radius: %.1f\n", m_radius);
+    }
     if (m_damageOnHit.has_value())
     {
         m_damageOnHit->AppendDebugString(out_string);
@@ -563,9 +550,8 @@ AbilityAoEEffectComponent::AbilityAoEEffectComponent(AbilityAoEEffectComponentDe
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityAoEEffectComponent::AppendDebugString(std::string& out_string) const
 {
-    out_string += StringUtils::StringF("AOE Effect Radius: %.1f\n", m_radius);
-    out_string += StringUtils::StringF("AOE Effect Duration: %.1f\n", m_durationSeconds);
-    out_string += "AoE Effect Components:\n";
+    out_string += StringUtils::StringF("AOE Effect\nRadius: %.1f\n", m_radius);
+    out_string += StringUtils::StringF("Duration: %.1f\n", m_durationSeconds);
     if (m_damagePerSecond.has_value())
     {
         m_damagePerSecond->AppendDebugString(out_string);
@@ -672,8 +658,6 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
                 break;
             }
 
-            RollDamageAndEffects(rng);
-
             // Copy ability data to proj, snapshotted with damage and effects already rolled.
             ASSERT_OR_DIE(context.HasComponent<CProjectile>(projectileID), "ProjectileHitAbility::Update - spawned projectile is missing CProjectile component.");
             CProjectile& projComp = projectileStorage[projectileID];
@@ -682,10 +666,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
             projComp.m_targetPos = std::nullopt;
             projComp.m_accumulatedTime += m_cooldownComp->m_accumulatedTime;
             projComp.m_projSpeed = m_projSpeed;
-            projComp.m_critComp = m_critComp;
-            projComp.m_onHitComp = m_onHitComp;
-
-            // Todo: pass chain EID to projectile for proj chaining
+            projComp.m_onHitComp = RollDamageAndEffects(rng);
         }
     }
 }
@@ -748,86 +729,115 @@ void ProjectileHitAbility::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng)
+RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
 {
+	RolledOnHitComponent hitResult;
+
 	float critMultiplier = s_baseCritMultiplier;
     bool didCrit = false;
     if (m_critComp.has_value())
     {
-        AbilityCritComponent& critComp = m_critComp.value();
+        AbilityCritComponent const& critComp = m_critComp.value();
         float critRoll = rng.GetRandomFloatZeroToOne();
         critMultiplier += critComp.m_critMulti;
-        critComp.m_didCrit = critRoll < critComp.m_critChance;
-        didCrit = critComp.m_didCrit;
+        didCrit = critRoll < critComp.m_critChance;
     }
 
     if (m_onHitComp.has_value())
     {
-        AbilityOnHitComponent& onHitComp = m_onHitComp.value();
+        AbilityOnHitComponent const& onHitComp = m_onHitComp.value();
+        HitPayload& onHitPayload = hitResult.m_payload;
+        onHitPayload.m_isCrit = didCrit;
+
         if (onHitComp.m_damageOnHit.has_value())
         {
-            AbilityDamageComponent& damageComp = onHitComp.m_damageOnHit.value();
-            damageComp.m_damageDone = rng.GetRandomFloatInRange(damageComp.m_minDamage, damageComp.m_maxDamage);
+            AbilityDamageComponent const& damageComp = onHitComp.m_damageOnHit.value();
+            onHitPayload.m_damage = rng.GetRandomFloatInRange(damageComp.m_minDamage, damageComp.m_maxDamage);
             if (didCrit)
             {
-                damageComp.m_damageDone *= critMultiplier;
+                onHitPayload.m_damage *= critMultiplier;
             }
         }
 
         if (onHitComp.m_burnOnHit.has_value())
         {
-            AbilityBurnComponent& burnComp = onHitComp.m_burnOnHit.value();
-            burnComp.m_burnDone = burnComp.m_burn;
+            AbilityBurnComponent const& burnComp = onHitComp.m_burnOnHit.value();
+            onHitPayload.m_burn = burnComp.m_burn;
             if (didCrit)
             {
-                burnComp.m_burnDone *= critMultiplier;
+                onHitPayload.m_burn *= critMultiplier;
             }
         }
 
         if (onHitComp.m_poisonOnHit.has_value())
         {
-            AbilityPoisonComponent& poisonComp = onHitComp.m_poisonOnHit.value();
-            poisonComp.m_poisonDone = poisonComp.m_poison;
+            AbilityPoisonComponent const& poisonComp = onHitComp.m_poisonOnHit.value();
+            onHitPayload.m_poison = poisonComp.m_poison;
             if (didCrit)
             {
-                poisonComp.m_poisonDone *= critMultiplier;
+                onHitPayload.m_poison *= critMultiplier;
             }
         }
 
+        if (onHitComp.m_slowOnHit.has_value())
+        {
+            AbilitySlowComponent const& slowComp = onHitComp.m_slowOnHit.value();
+            onHitPayload.m_slowDuration = slowComp.m_duration;
+		}
+
         if (onHitComp.m_aoeHitOnHit.has_value())
         {
-            AbilityAoEHitComponent& aoeHitComp = onHitComp.m_aoeHitOnHit.value();
+            RolledAoEHitComponent aoeHitResult;
+			HitPayload& aoeHitPayload = aoeHitResult.m_payload;
+            aoeHitPayload.m_isCrit = didCrit;
+
+            AbilityAoEHitComponent const& aoeHitComp = onHitComp.m_aoeHitOnHit.value();
             if (aoeHitComp.m_damageOnHit.has_value())
             {
-                AbilityDamageComponent& aoeDamageComp = aoeHitComp.m_damageOnHit.value();
-                aoeDamageComp.m_damageDone = rng.GetRandomFloatInRange(aoeDamageComp.m_minDamage, aoeDamageComp.m_maxDamage);
+                AbilityDamageComponent const& aoeDamageComp = aoeHitComp.m_damageOnHit.value();
+                aoeHitPayload.m_damage = rng.GetRandomFloatInRange(aoeDamageComp.m_minDamage, aoeDamageComp.m_maxDamage);
                 if (didCrit)
                 {
-                    aoeDamageComp.m_damageDone *= critMultiplier;
+                    aoeHitPayload.m_damage *= critMultiplier;
                 }
             }
 
             if (aoeHitComp.m_burnOnHit.has_value())
             {
-                AbilityBurnComponent& aoeBurnComp = aoeHitComp.m_burnOnHit.value();
-                aoeBurnComp.m_burnDone = aoeBurnComp.m_burn;
+                AbilityBurnComponent const& aoeBurnComp = aoeHitComp.m_burnOnHit.value();
+                aoeHitPayload.m_burn = aoeBurnComp.m_burn;
                 if (didCrit)
                 {
-                    aoeBurnComp.m_burnDone *= critMultiplier;
+                    aoeHitPayload.m_burn *= critMultiplier;
                 }
             }
 
             if (aoeHitComp.m_poisonOnHit.has_value())
             {
-                AbilityPoisonComponent& aoePoisonComp = aoeHitComp.m_poisonOnHit.value();
-                aoePoisonComp.m_poisonDone = aoePoisonComp.m_poison;
+                AbilityPoisonComponent const& aoePoisonComp = aoeHitComp.m_poisonOnHit.value();
+                aoeHitPayload.m_poison = aoePoisonComp.m_poison;
                 if (didCrit)
                 {
-                    aoePoisonComp.m_poisonDone *= critMultiplier;
+                    aoeHitPayload.m_poison *= critMultiplier;
                 }
             }
+
+            if (aoeHitComp.m_slowOnHit.has_value())
+            {
+                AbilitySlowComponent const& aoeSlowComp = aoeHitComp.m_slowOnHit.value();
+                aoeHitPayload.m_slowDuration = aoeSlowComp.m_duration;
+			}
+
+			hitResult.m_aoeHitOnHit = aoeHitResult;
+        }
+
+        if (m_onHitComp->m_aoeEffectOnHit.has_value())
+        {
+			hitResult.m_aoeEffectOnHit = m_onHitComp->m_aoeEffectOnHit.value();
         }
     }
+
+	return hitResult;
 }
 
 
@@ -892,8 +902,6 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
     {
         m_cooldownComp->m_accumulatedTime -= timeBetweenAttacks;
 
-		RollDamageAndEffects(rng);
-
         if (m_aoeEffectComp.has_value())
         {
             SpawnInfo aoeEffectSpawnInfo;
@@ -912,12 +920,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
             }
 		}
 
-        HitPayload payload;
-		payload.m_burn = m_aoeHitComp->m_burnOnHit.has_value() ? m_aoeHitComp->m_burnOnHit->m_burn : 0.f;
-		payload.m_damage = m_aoeHitComp->m_damageOnHit.has_value() ? m_aoeHitComp->m_damageOnHit->m_damageDone : 0.f;
-		payload.m_poison = m_aoeHitComp->m_poisonOnHit.has_value() ? m_aoeHitComp->m_poisonOnHit->m_poison : 0.f;
-		payload.m_slowDuration = m_aoeHitComp->m_slowOnHit.has_value() ? m_aoeHitComp->m_slowOnHit->m_duration : 0.f;
-
+        HitPayload const& payload = RollDamageAndEffects(rng);
         if (!payload.HasValue())
         {
             continue;
@@ -1000,52 +1003,62 @@ void AoEHitAbility::AppendDebugString(std::string& out_string) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng)
+HitPayload AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
 {
+	HitPayload payload;
+
     float critMultiplier = s_baseCritMultiplier;
     bool didCrit = false;
     if (m_critComp.has_value())
     {
-        AbilityCritComponent& critComp = m_critComp.value();
+        AbilityCritComponent const& critComp = m_critComp.value();
         float critRoll = rng.GetRandomFloatZeroToOne();
         critMultiplier += critComp.m_critMulti;
-        critComp.m_didCrit = critRoll < critComp.m_critChance;
-        didCrit = critComp.m_didCrit;
+        didCrit = critRoll < critComp.m_critChance;
+		payload.m_isCrit = didCrit;
     }
 
     if (m_aoeHitComp.has_value())
     {
-        AbilityAoEHitComponent& aoeHitComp = m_aoeHitComp.value();
+        AbilityAoEHitComponent const& aoeHitComp = m_aoeHitComp.value();
         if (aoeHitComp.m_damageOnHit.has_value())
         {
-            AbilityDamageComponent& damageComp = aoeHitComp.m_damageOnHit.value();
-            damageComp.m_damageDone = rng.GetRandomFloatInRange(damageComp.m_minDamage, damageComp.m_maxDamage);
+            AbilityDamageComponent const& damageComp = aoeHitComp.m_damageOnHit.value();
+            payload.m_damage = rng.GetRandomFloatInRange(damageComp.m_minDamage, damageComp.m_maxDamage);
             if (didCrit)
             {
-                damageComp.m_damageDone *= critMultiplier;
+                payload.m_damage *= critMultiplier;
             }
         }
 
         if (aoeHitComp.m_burnOnHit.has_value())
         {
-            AbilityBurnComponent& burnComp = aoeHitComp.m_burnOnHit.value();
-            burnComp.m_burnDone = burnComp.m_burn;
+            AbilityBurnComponent const& burnComp = aoeHitComp.m_burnOnHit.value();
+            payload.m_burn = burnComp.m_burn;
             if (didCrit)
             {
-                burnComp.m_burnDone *= critMultiplier;
+                payload.m_burn *= critMultiplier;
             }
         }
 
         if (aoeHitComp.m_poisonOnHit.has_value())
         {
-            AbilityPoisonComponent& poisonComp = aoeHitComp.m_poisonOnHit.value();
-            poisonComp.m_poisonDone = poisonComp.m_poison;
+            AbilityPoisonComponent const& poisonComp = aoeHitComp.m_poisonOnHit.value();
+            payload.m_poison = poisonComp.m_poison;
             if (didCrit)
             {
-                poisonComp.m_poisonDone *= critMultiplier;
+                payload.m_poison *= critMultiplier;
             }
         }
+
+        if (aoeHitComp.m_slowOnHit.has_value())
+        {
+            AbilitySlowComponent const& slowComp = aoeHitComp.m_slowOnHit.value();
+            payload.m_slowDuration = slowComp.m_duration;
+		}
     }
+
+    return payload;
 }
 
 
@@ -1184,6 +1197,8 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location)
         return;
     }
 
+    HitPayload const payload = RollDamageAndEffects(context.m_deltaSeconds);
+
     for (int targetIndex = 0; targetIndex < m_targetingComp->m_targetChains.GetDimensions().x; ++targetIndex)
     {
         float chainPayloadMulti = 1.f;
@@ -1196,24 +1211,24 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location)
                 break;
             }
 
-            HitPayload payload = m_onHitComp->GetDoTPayload(context.m_deltaSeconds);
-            payload *= chainPayloadMulti;
+			HitPayload chainPayload = payload;
+            chainPayload *= chainPayloadMulti;
 
             if (m_chainComp.has_value())
             {
                 chainPayloadMulti *= m_chainComp->m_chainPayloadMulti;
             }
 
-            if (payload.IsRelevantToHealth() && context.HasComponentsUnsafe(target.GetIndex(), healthBit))
+            if (chainPayload.IsRelevantToHealth() && context.HasComponentsUnsafe(target.GetIndex(), healthBit))
             {
                 CHealth& healthComp = context.GetArrayStorage<CHealth>()[target];
-                healthComp.TakePayload(payload);
+                healthComp.TakePayload(chainPayload);
             }
 
-            if (payload.IsRelevantToTime() && context.HasComponentsUnsafe(target.GetIndex(), timeBit))
+            if (chainPayload.IsRelevantToTime() && context.HasComponentsUnsafe(target.GetIndex(), timeBit))
             {
                 CTime& timeComp = context.GetArrayStorage<CTime>()[target];
-                timeComp.m_remainingSlowDuration += payload.m_slowDuration;
+                timeComp.m_remainingSlowDuration += chainPayload.m_slowDuration;
             }
 
             if (m_onHitComp->m_aoeEffectOnHit.has_value())
@@ -1318,4 +1333,19 @@ void LaserAbility::AppendDebugString(std::string& out_string) const
     {
         m_onHitComp->AppendDebugString(out_string);
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+HitPayload LaserAbility::RollDamageAndEffects(float deltaSeconds) const
+{
+    HitPayload result;
+    result.m_isCrit = false;
+	result.m_damage = m_onHitComp.has_value() && m_onHitComp->m_damageOnHit.has_value() ? m_onHitComp->m_damageOnHit->m_maxDamage : 0.f;
+    result.m_burn = m_onHitComp.has_value() && m_onHitComp->m_burnOnHit.has_value() ? m_onHitComp->m_burnOnHit->m_burn : 0.f;
+    result.m_poison = m_onHitComp.has_value() && m_onHitComp->m_poisonOnHit.has_value() ? m_onHitComp->m_poisonOnHit->m_poison : 0.f;
+    result.m_slowDuration = m_onHitComp.has_value() && m_onHitComp->m_slowOnHit.has_value() ? m_onHitComp->m_slowOnHit->m_duration : 0.f;
+    result *= deltaSeconds;
+	return result;
 }

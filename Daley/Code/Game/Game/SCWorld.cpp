@@ -1,6 +1,11 @@
 // Bradley Christensen - 2022-2026
 #include "SCWorld.h"
+#include "EntityDef.h"
+#include "SCEntityFactory.h"
 #include "SCRenderer.h"
+#include "TileDef.h"
+#include "TowerPlacementInfo.h"
+#include "WorldShaderCPU.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Assets/Image.h"
@@ -14,8 +19,6 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
-#include "TileDef.h"
-#include "WorldShaderCPU.h"
 #include <queue>
 #include <unordered_set>
 
@@ -282,6 +285,53 @@ bool SCWorld::DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::DoTilesInRegionMatchQuery(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, TagQuery const& tagQuery) const
+{
+	ASSERT_OR_DIE(topRightTileCoords.x >= bottomLeftTileCoords.x && topRightTileCoords.y >= bottomLeftTileCoords.y, "SCWorld::DoTilesInRegionMatchQuery - Invalid region coordinates");
+
+	bool matches = true;
+
+	ForEachPlayableTileInRegion(bottomLeftTileCoords, topRightTileCoords, [&](IntVec2 const& worldCoords)
+	{
+		if (!DoesTileMatchTagQuery(worldCoords, tagQuery))
+		{
+			matches = false;
+			return false; // stop iterating
+		}
+		return true; // keep iterating
+	});
+
+	return matches;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::PlaceTower(TowerPlacementInfo const& placementInfo, SCEntityFactory& entityFactory)
+{
+	if (DoTilesInRegionMatchQuery(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, placementInfo.m_tileTagQuery))
+	{
+		SpawnInfo spawnInfo;
+		spawnInfo.m_def = EntityDef::GetEntityDef(placementInfo.m_towerName);
+		spawnInfo.m_spawnPos = placementInfo.m_worldPos;
+		entityFactory.m_entitiesToSpawn.push_back(spawnInfo);
+
+		ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
+		{
+			Tile& tile = m_tiles.GetRef(worldCoords);
+			tile.SetIsSolid(true);
+			return true; // keep iterating
+		});
+
+		return true;
+	}
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::CacheValidSpawnLocations()
 {
 	m_cachedSpawnLocations.clear();
@@ -525,6 +575,24 @@ void SCWorld::ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::f
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachPlayableTileInRegion(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, const std::function<bool(IntVec2 const&)>& func) const
+{
+	for (int x = bottomLeftTileCoords.x; x <= topRightTileCoords.x; ++x)
+	{
+		for (int y = bottomLeftTileCoords.y; y <= topRightTileCoords.y; ++y)
+		{
+			IntVec2 tileCoords = IntVec2(x, y);
+			if (!func(tileCoords))
+			{
+				return;
+			}
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::ForEachPlayableEdgeTile(const std::function<bool(IntVec2 const&)>& func) const
 {
 	// Bottom row first, left to right
@@ -691,6 +759,27 @@ IntVec2 SCWorld::GetTileCoordsAtPlayableWorldPosClamped(Vec2 const& worldPos)
 	globalTileCoords.x = MathUtils::Clamp(globalTileCoords.x, 0.f, static_cast<float>(StaticWorldSettings::s_numPlayableWorldTilesX - 1));
 	globalTileCoords.y = MathUtils::Clamp(globalTileCoords.y, 0.f, static_cast<float>(StaticWorldSettings::s_numPlayableWorldTilesY - 1));
 	return IntVec2(globalTileCoords.GetFloor());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+IntVec2 SCWorld::GetTileIntersectionCoordsAtWorldPos(Vec2 const& worldPos)
+{
+	Vec2 relativeLocation = worldPos - Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
+	Vec2 globalTileCoords = relativeLocation * StaticWorldSettings::s_oneOverTileWidth;
+	globalTileCoords += Vec2(StaticWorldSettings::s_tileHalfWidth, StaticWorldSettings::s_tileHalfWidth);
+	return IntVec2(globalTileCoords.GetFloor());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 SCWorld::GetWorldPosAtTileIntersectionCoords(IntVec2 const& intersectionCoords)
+{
+	Vec2 tileDims = Vec2(StaticWorldSettings::s_tileWidth, StaticWorldSettings::s_tileWidth);
+	Vec2 tileMins = Vec2(intersectionCoords) * StaticWorldSettings::s_tileWidth + Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY);
+	return tileMins;
 }
 
 

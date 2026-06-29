@@ -128,18 +128,11 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
     DevConsoleUtils::Log(Rgba8::LightBlue, "Entity def loading: %s", m_name.ToCStr());
 
-    // CTime
-    auto elem = xmlElement->FirstChildElement("Time");
+    // CAbility
+    auto elem = xmlElement->FirstChildElement("Ability");
     if (elem)
     {
-        m_time.emplace();
-    }
-
-    // CTransform
-    elem = xmlElement->FirstChildElement("Transform");
-    if (elem)
-    {
-        m_transform.emplace();
+        m_ability.emplace(elem);
     }
 
     // CAIController
@@ -177,25 +170,11 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_collisionEffect.emplace();
     }
 
-    // CMovement
-    elem = xmlElement->FirstChildElement("Movement");
+    // CDeath
+    elem = xmlElement->FirstChildElement("Death");
     if (elem)
     {
-        m_movement.emplace(elem);
-    }
-
-    // CRender
-    elem = xmlElement->FirstChildElement("Render");
-    if (elem)
-    {
-        m_render.emplace(elem);
-    }
-
-    // CLifetime
-    elem = xmlElement->FirstChildElement("Lifetime");
-    if (elem)
-    {
-        m_lifetime.emplace(elem);
+        m_death.emplace(elem);
     }
 
     // CHealth
@@ -205,18 +184,25 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_health.emplace(elem);
     }
 
-    // CDeath
-    elem = xmlElement->FirstChildElement("Death");
+    // CLifetime
+    elem = xmlElement->FirstChildElement("Lifetime");
     if (elem)
     {
-        m_death.emplace(elem);
+        m_lifetime.emplace(elem);
     }
 
-    // CAbility
-    elem = xmlElement->FirstChildElement("Ability");
+    // CMovement
+    elem = xmlElement->FirstChildElement("Movement");
     if (elem)
     {
-        m_ability.emplace(elem);
+        m_movement.emplace(elem);
+    }
+
+    // CPlaceable
+    elem = xmlElement->FirstChildElement("Placeable");
+    if (elem)
+    {
+        m_placeable.emplace(elem);
     }
 
     // CProjectile
@@ -226,10 +212,31 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_proj.emplace(elem);
     }
 
+    // CRender
+    elem = xmlElement->FirstChildElement("Render");
+    if (elem)
+    {
+        m_render.emplace(elem);
+    }
+
     // CTags
     elem = xmlElement->FirstChildElement("Tags");
     if (elem)
     {
         m_tags.emplace(elem);
+    }
+
+    // CTime
+    elem = xmlElement->FirstChildElement("Time");
+    if (elem)
+    {
+        m_time.emplace();
+    }
+
+    // CTransform
+    elem = xmlElement->FirstChildElement("Transform");
+    if (elem)
+    {
+        m_transform.emplace();
     }
 }

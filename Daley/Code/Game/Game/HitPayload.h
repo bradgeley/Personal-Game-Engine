@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include <string>
 
 
 
@@ -7,13 +8,15 @@
 struct HitPayload
 {
 	bool HasValue() const { return m_damage > 0.f || m_burn > 0.f || m_poison > 0.f || m_slowDuration > 0.f; }
-	bool IsRelevantToHealth() { return m_damage != 0.f || m_burn != 0.f || m_poison != 0.f; }
-	bool IsRelevantToTime() { return m_slowDuration != 0.f; }
+	bool IsRelevantToHealth() const { return m_damage != 0.f || m_burn != 0.f || m_poison != 0.f; }
+	bool IsRelevantToTime() const { return m_slowDuration != 0.f; }
+	void AppendDebugString(std::string& out_string) const;
 
 	float m_damage = 0.f;
 	float m_burn = 0.f;
 	float m_poison = 0.f;
 	float m_slowDuration = 0.f;
+	bool m_isCrit = false; // todo: make into a tag structure
 
 	void operator+=(HitPayload const& other)
 	{
@@ -21,6 +24,7 @@ struct HitPayload
 		m_burn += other.m_burn;
 		m_poison += other.m_poison;
 		m_slowDuration += other.m_slowDuration;
+		m_isCrit = m_isCrit || other.m_isCrit;
 	}
 
 	void operator*=(float multiplier)

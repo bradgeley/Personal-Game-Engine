@@ -19,6 +19,8 @@ public:
 	Renderer* GetRenderer()					{ return m_renderer; }
 	void SetRenderer(Renderer* renderer)	{ m_renderer = renderer; }
 
+public:
+
 	AssetID m_spriteShaderAsset						= AssetID::Invalid;				// Owned by SRenderEntities
 	AssetID m_worldShaderAsset						= AssetID::Invalid;				// Owned by SRenderWorld
 	AssetID m_healthBarShaderAsset					= AssetID::Invalid;				// Owned by SRenderUI

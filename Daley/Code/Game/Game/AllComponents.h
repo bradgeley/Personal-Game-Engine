@@ -28,6 +28,7 @@
 #include "CHealth.h"
 #include "CLifetime.h"
 #include "CMovement.h"
+#include "CPlaceable.h"
 #include "CProjectile.h"
 #include "CRender.h"
 #include "CTags.h"

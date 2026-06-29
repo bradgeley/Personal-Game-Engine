@@ -14,5 +14,9 @@ bool CTime::IsSlowed() const
 //----------------------------------------------------------------------------------------------------------------------
 void CTime::AppendDebugString(std::string& out_string) const
 {
+	if (!IsSlowed())
+	{
+		return;
+	}
 	out_string += StringUtils::StringF("Slow: %.1f\n", m_remainingSlowDuration);
 }

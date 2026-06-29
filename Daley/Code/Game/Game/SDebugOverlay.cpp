@@ -65,7 +65,8 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	auto& timeStorage = context.GetArrayStorageConst<CTime>();
 	auto& movementStorage = context.GetArrayStorageConst<CMovement>();
 	auto& projectileStorage = context.GetMapStorageConst<CProjectile>();
-	InputSystem const& input = *context.GetSingletonConst<SCInputSystem>().GetInputSystem();
+	SCInputSystem const& scInput = context.GetSingletonConst<SCInputSystem>();
+	InputSystem const& input = *scInput.GetInputSystem();
 	Window const& window = *context.GetSingletonConst<SCWindow>().GetWindow();
 
 	BitMask collisionBit = context.GetComponentBitMask<CCollision>();
@@ -126,7 +127,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 			CTransform const& transform = transStorage[it];
 			CCollision const* collision = context.HasComponents(it.GetEntityID(), collisionBit) ? &collisionStorage[it] : nullptr;
 			float radius = collision ? collision->m_radius : 2.f;
-			if (scDebug.m_debugMouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
+			if (scInput.m_mouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
 			{
 				CEntityDebug const& debug = debugStorage[it];
 				Vec2 screenPos = worldCamera.m_camera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();

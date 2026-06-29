@@ -213,7 +213,16 @@ void CHealth::SetIsTargetable(bool isTargetable)
 void CHealth::AppendDebugString(std::string& out_string) const
 {
 	out_string += StringUtils::StringF("Health: %.1f/%.1f\n", m_currentHealth, m_maxHealth);
-	out_string += StringUtils::StringF("Health Regen: %.1f\n", m_healthRegen);
-	out_string += StringUtils::StringF("Burn: %.1f\n", m_currentBurn);
-	out_string += StringUtils::StringF("Poison: %.1f\n", m_currentPoison);
+	if (m_healthRegen > 0.f)
+	{
+		out_string += StringUtils::StringF("Health Regen: %.1f\n", m_healthRegen);
+	}
+	if (m_currentBurn > 0.f)
+	{
+		out_string += StringUtils::StringF("Burn: %.1f\n", m_currentBurn);
+	}
+	if (m_currentPoison > 0.f)
+	{
+		out_string += StringUtils::StringF("Poison: %.1f\n", m_currentPoison);
+	}
 }

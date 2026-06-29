@@ -31,6 +31,7 @@ public:
     Name m_name = "Unnamed EntityDef";
 
     // Components
+    std::optional<CAbility>             m_ability;
     std::optional<CAIController>        m_ai;
 	std::optional<CAnimation>           m_animation;
 	std::optional<CAttachment>          m_attachment;
@@ -40,11 +41,11 @@ public:
     std::optional<CHealth>              m_health;
 	std::optional<CLifetime>			m_lifetime;
     std::optional<CMovement>            m_movement;
+	std::optional<CPlaceable>           m_placeable;
+    std::optional<CProjectile>          m_proj;
 	std::optional<CRender>              m_render;
     std::optional<CTime>                m_time;
     std::optional<CTransform>           m_transform;
-    std::optional<CAbility>             m_ability;
-    std::optional<CProjectile>          m_proj;
     std::optional<CTags>                m_tags;
 };
     

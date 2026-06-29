@@ -210,6 +210,15 @@
     <ClCompile Include="Game\SRenderCollisionEffects.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SRenderUI.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\CPlaceable.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\HitPayload.cpp">
+      <Filter>Game\Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -496,6 +505,15 @@
     </ClInclude>
     <ClInclude Include="Game\SRenderCollisionEffects.h">
       <Filter>ECS\Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderUI.h">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CPlaceable.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TowerPlacementInfo.h">
+      <Filter>Game\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

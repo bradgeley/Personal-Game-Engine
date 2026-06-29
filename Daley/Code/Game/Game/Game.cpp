@@ -225,6 +225,7 @@ void Game::ConfigureECS()
     // Map Components
     g_ecs->RegisterComponentMap<CAbility>();
     g_ecs->RegisterComponentMap<CProjectile>();
+    g_ecs->RegisterComponentMap<CPlaceable>();
 
     // Singleton components
     g_ecs->RegisterComponentSingleton<SCCamera>();
@@ -311,6 +312,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SRenderCollisionEffects>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderHealthBars>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderStatusIcons>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 	g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);
 
