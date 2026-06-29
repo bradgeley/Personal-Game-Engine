@@ -202,7 +202,9 @@ void SDebugOverlay::Run(SystemContext const& context) const
 					}
 				}
 
+				float titleWidth = font->GetTextWidth(titleLineHeight, debug.m_defName.ToString());
 				float cardWidth = MathUtils::Max(minCardDims.x, longestLineWidth + infoCardEdgeWidth * 2.f);
+				cardWidth = MathUtils::Max(cardWidth, titleWidth + infoCardEdgeWidth * 2.f);
 				Vec2 cardDims = Vec2(cardWidth, cardHeight);
 				AABB2 informationCardBounds = AABB2(cardMins, cardMins + cardDims);
 
