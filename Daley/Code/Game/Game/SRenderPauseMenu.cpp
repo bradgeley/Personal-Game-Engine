@@ -15,7 +15,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderPauseMenu::Startup()
 {
-	AddReadDependencies<SCCamera, SCGame>();
+	AddReadDependencies<SCGame>();
 	AddWriteDependencies<SCRenderer>();
 
 	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
@@ -59,7 +59,6 @@ void SRenderPauseMenu::Shutdown() const
 void SRenderPauseMenu::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
 	SCGame const& scGame = context.GetSingletonConst<SCGame>();
 	
 	// Write Dependencies
