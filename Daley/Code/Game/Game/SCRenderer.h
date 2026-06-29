@@ -36,6 +36,9 @@ public:
 
 	VertexBufferID m_immediateVBO					= RendererUtils::InvalidID;		// Owned by SRenderCollisionEffects
 
+	VertexBufferID m_pauseMenuBackgroundVBO			= RendererUtils::InvalidID;		// Owned by SRenderPauseMenu
+	VertexBufferID m_pauseMenuTextVBO				= RendererUtils::InvalidID;		// Owned by SRenderPauseMenu
+
 	std::unordered_map<AssetID, InstanceBufferID> m_instancesPerSpriteSheet;		// Owned by SRenderEntities
 
 private:

@@ -45,6 +45,7 @@
 #include "SRenderCollisionEffects.h"
 #include "SRenderEntities.h"
 #include "SRenderHealthBars.h"
+#include "SRenderPauseMenu.h"
 #include "SRenderStatusIcons.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"

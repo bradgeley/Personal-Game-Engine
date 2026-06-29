@@ -82,6 +82,20 @@ void SInput::Run(SystemContext const& context) const
 			scInput.m_isInTowerPlacementMode = false;
 		}
 	}
+	else
+	{
+		if (inputSystem.WasKeyJustPressed(KeyCode::Escape))
+		{
+			if (!game.m_game->IsPaused())
+			{
+				game.m_game->TogglePaused();
+			}
+			else
+			{
+				game.m_game->Quit();
+			}
+		}
+	}
 
 	// Pause
 	if (inputSystem.WasKeyJustPressed(KeyCode::Space))

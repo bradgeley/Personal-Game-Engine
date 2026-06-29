@@ -29,7 +29,9 @@ public:
     void ConfigureEngine(Engine* engine);
     void ConfigureECS();
 
+	bool IsPaused() const;
     bool TogglePaused();
+    bool Quit();
 
 protected:
 

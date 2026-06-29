@@ -92,11 +92,6 @@ void Game::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void Game::Update(float)
 {
-    if (g_input->WasKeyJustReleased(KeyCode::Escape))
-    {
-        g_app->Quit();
-    }
-
     g_ecs->RunFrame(m_gameClock->GetDeltaSecondsF());
 }
 
@@ -313,6 +308,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SRenderHealthBars>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderStatusIcons>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderPauseMenu>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 	g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);
 
@@ -325,10 +321,27 @@ void Game::ConfigureECS()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool Game::IsPaused() const
+{
+    return m_gameClock->IsPaused();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Game::TogglePaused()
 {
     m_gameClock->TogglePaused();
     return m_gameClock->IsPaused();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool Game::Quit()
+{
+    g_app->Quit();
+    return true;
 }
 
 

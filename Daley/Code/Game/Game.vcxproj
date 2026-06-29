@@ -341,6 +341,7 @@
     <ClCompile Include="Game\SProjectile.cpp" />
     <ClCompile Include="Game\SRenderAbilities.cpp" />
     <ClCompile Include="Game\SRenderCollisionEffects.cpp" />
+    <ClCompile Include="Game\SRenderPauseMenu.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
     <ClCompile Include="Game\SVisualEffects.cpp" />
     <ClCompile Include="Game\SRenderHealthBars.cpp" />
@@ -436,6 +437,7 @@
     <ClInclude Include="Game\SProjectile.h" />
     <ClInclude Include="Game\SRenderAbilities.h" />
     <ClInclude Include="Game\SRenderCollisionEffects.h" />
+    <ClInclude Include="Game\SRenderPauseMenu.h" />
     <ClInclude Include="Game\SRenderUI.h" />
     <ClInclude Include="Game\SVisualEffects.h" />
     <ClInclude Include="Game\SRenderHealthBars.h" />

@@ -219,6 +219,9 @@
     <ClCompile Include="Game\HitPayload.cpp">
       <Filter>Game\Gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SRenderPauseMenu.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -514,6 +517,9 @@
     </ClInclude>
     <ClInclude Include="Game\TowerPlacementInfo.h">
       <Filter>Game\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderPauseMenu.h">
+      <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
