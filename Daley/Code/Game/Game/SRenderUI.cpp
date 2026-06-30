@@ -17,7 +17,11 @@ void SRenderUI::Startup()
 {
 	AddReadDependencies<SCGame, SCInputSystem, SCWorld>();
 	AddWriteDependencies<SCRenderer>();
-	
+
+	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+
+	scRenderer.m_immediateVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
 }
 
 
@@ -25,7 +29,11 @@ void SRenderUI::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderUI::Shutdown() const
 {
-
+	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	if (scRenderer.m_immediateVBO != RendererUtils::InvalidID)
+	{
+		scRenderer.GetRenderer()->ReleaseVertexBuffer(scRenderer.m_immediateVBO);
+	}
 }
 
 

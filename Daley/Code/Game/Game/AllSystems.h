@@ -43,6 +43,7 @@
 #include "SProjectile.h"
 #include "SRenderAbilities.h"
 #include "SRenderCollisionEffects.h"
+#include "SRenderDiscs.h"
 #include "SRenderEntities.h"
 #include "SRenderHealthBars.h"
 #include "SRenderPauseMenu.h"

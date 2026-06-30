@@ -13,6 +13,9 @@ class System;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+// It is safer to access components through SystemContext, as it will do extra validation to ensure that the system has 
+// read/write access to the component types it is accessing.
+//
 struct SystemContext
 {
 public:
@@ -114,7 +117,6 @@ protected:
 
     SystemContext() = default;
     explicit SystemContext(System* system, float deltaSeconds = 0.f);
-
 
 public:
 	

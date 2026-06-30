@@ -341,6 +341,7 @@
     <ClCompile Include="Game\SProjectile.cpp" />
     <ClCompile Include="Game\SRenderAbilities.cpp" />
     <ClCompile Include="Game\SRenderCollisionEffects.cpp" />
+    <ClCompile Include="Game\SRenderDiscs.cpp" />
     <ClCompile Include="Game\SRenderPauseMenu.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
     <ClCompile Include="Game\SVisualEffects.cpp" />
@@ -387,6 +388,7 @@
     <ClInclude Include="Game\CPlaceable.h" />
     <ClInclude Include="Game\CProjectile.h" />
     <ClInclude Include="Game\CTags.h" />
+    <ClInclude Include="Game\DiscShaderCPU.h" />
     <ClInclude Include="Game\HealthBarShaderCPU.h" />
     <ClInclude Include="Game\HitPayload.h" />
     <ClInclude Include="Game\OverlapInfo.h" />
@@ -437,6 +439,7 @@
     <ClInclude Include="Game\SProjectile.h" />
     <ClInclude Include="Game\SRenderAbilities.h" />
     <ClInclude Include="Game\SRenderCollisionEffects.h" />
+    <ClInclude Include="Game\SRenderDiscs.h" />
     <ClInclude Include="Game\SRenderPauseMenu.h" />
     <ClInclude Include="Game\SRenderUI.h" />
     <ClInclude Include="Game\SVisualEffects.h" />
@@ -477,6 +480,7 @@
     <Xml Include="..\..\Run\Data\Definitions\AbilityDefs.xml" />
     <Xml Include="..\..\Run\Data\Shaders\DefaultFontShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\DefaultShader.xml" />
+    <Xml Include="..\..\Run\Data\Shaders\DiscShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\HealthBarShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
@@ -497,6 +501,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\..\Run\Data\Shaders\DefaultShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='FastBreak|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\..\Run\Data\Shaders\DiscShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='FastBreak|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

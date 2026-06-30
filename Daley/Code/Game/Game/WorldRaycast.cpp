@@ -24,7 +24,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
     }
 
     result.m_hitLocation = raycast.m_start + raycast.m_direction * raycast.m_maxDistance;
-    
+
     IntVec2 currentWorldCoords = world.GetTileCoordsAtWorldPos(raycast.m_start);
     if (!world.m_tiles.IsValidCoords(currentWorldCoords))
     {
@@ -66,6 +66,14 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
             currentWorldCoords = currentWorldCoords + IntVec2(static_cast<int>(stepX), 0);
             if (!world.m_tiles.IsValidCoords(currentWorldCoords))
             {
+                if (raycast.m_treatInvalidTilesAsSolid)
+                {
+                    result.m_blockingHit = true;
+                    result.m_hitNormal = Vec2(-stepX, 0.f);
+                    result.m_hitLocation = result.m_raycast.m_start + result.m_raycast.m_direction * totalRayLength;
+                    result.m_distance = totalRayLength;
+					result.m_t = totalRayLength / raycast.m_maxDistance;
+                }
                 return result; // Cannot continue, no-hit
             }
 
@@ -93,6 +101,14 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
             currentWorldCoords = currentWorldCoords + IntVec2(0, static_cast<int>(stepY));
             if (!world.m_tiles.IsValidCoords(currentWorldCoords))
             {
+                if (raycast.m_treatInvalidTilesAsSolid)
+                {
+                    result.m_blockingHit = true;
+                    result.m_hitNormal = Vec2(0.f, -stepY);
+                    result.m_hitLocation = result.m_raycast.m_start + result.m_raycast.m_direction * totalRayLength;
+                    result.m_distance = totalRayLength;
+					result.m_t = totalRayLength / raycast.m_maxDistance;
+                }
                 return result; // Cannot continue, no-hit
             }
 

@@ -18,6 +18,7 @@ struct WorldRaycast
     WorldRaycast(Vec2 const& start, Vec2 const& dir, float maxDist) : m_start(start), m_direction(dir), m_maxDistance(maxDist) {}
 
     bool m_queryWorldTiles = true;
+	bool m_treatInvalidTilesAsSolid = true;
     //bool m_queryActors = false; TODO
     TagQuery m_tileTagQuery;
     Vec2 m_start;

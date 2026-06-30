@@ -222,6 +222,9 @@
     <ClCompile Include="Game\SRenderPauseMenu.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SRenderDiscs.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -521,6 +524,12 @@
     <ClInclude Include="Game\SRenderPauseMenu.h">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Game\DiscShaderCPU.h">
+      <Filter>Data\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderDiscs.h">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -654,6 +663,9 @@
     <Xml Include="..\..\Run\Data\Shaders\DefaultShader.xml">
       <Filter>Data\Shaders</Filter>
     </Xml>
+    <Xml Include="..\..\Run\Data\Shaders\DiscShader.xml">
+      <Filter>Data\Shaders</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">
@@ -669,6 +681,9 @@
       <Filter>Data\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Run\Data\Shaders\DefaultFontShader.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Run\Data\Shaders\DiscShader.hlsl">
       <Filter>Data\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

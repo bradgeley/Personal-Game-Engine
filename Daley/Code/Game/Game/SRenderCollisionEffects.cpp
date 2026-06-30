@@ -2,12 +2,11 @@
 #include "SRenderCollisionEffects.h"
 #include "CCollision.h"
 #include "CCollisionEffect.h"
+#include "DiscShaderCPU.h"
 #include "CTransform.h"
 #include "SCRenderer.h"
 #include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Vertex_PCU.h"
-#include "Engine/Renderer/VertexBuffer.h"
-#include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/InstanceBuffer.h"
 
 
 
@@ -23,12 +22,7 @@ void SRenderCollisionEffects::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderCollisionEffects::Shutdown() const
 {
-    SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
 
-    if (scRenderer.m_immediateVBO != RendererUtils::InvalidID)
-    {
-	    scRenderer.GetRenderer()->ReleaseVertexBuffer(scRenderer.m_immediateVBO);
-    }
 }
 
 
@@ -38,20 +32,14 @@ void SRenderCollisionEffects::Run(SystemContext const& context) const
 {
 	// Write Dependencies
     SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
-    Renderer& renderer = *scRenderer.GetRenderer();
+	Renderer& renderer = *scRenderer.GetRenderer();
 
 	// Read Dependencies
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();
 	auto& collisionStorage = context.GetArrayStorageConst<CCollision>();
 	auto& collisionEffectStorage = context.GetArrayStorageConst<CCollisionEffect>();
 
-    if (scRenderer.m_immediateVBO == RendererUtils::InvalidID)
-    {
-        scRenderer.m_immediateVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
-    }
-
-    VertexBuffer* vbo = renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
-    vbo->ClearVerts();
+	InstanceBuffer& discIBO = *renderer.GetInstanceBuffer(scRenderer.m_discInstanceBuffer);
 
 	for (auto it = context.Iterate<CCollisionEffect, CCollision, CTransform>(); it.IsValid(); ++it)
 	{
@@ -67,10 +55,10 @@ void SRenderCollisionEffects::Run(SystemContext const& context) const
         Rgba8 tint = collisionEffect.m_tint;
         Vec2 collisionPos = transform.m_pos + collision.m_offset;
 
-        VertexUtils::AddVertsForDisc2D(*vbo, collisionPos, collision.m_radius, 32, tint, AABB2::ZeroToOne, collisionEffect.m_depth);
+		DiscRenderInstance discInstance;
+		discInstance.m_position = Vec3(collisionPos, collisionEffect.m_depth);
+		discInstance.m_radius = collision.m_radius;
+		discInstance.m_tint = collisionEffect.m_tint;
+		discIBO.AddInstance(discInstance);
 	}
-
-    renderer.BindShader();
-    renderer.BindTexture();
-    renderer.DrawVertexBuffer(scRenderer.m_immediateVBO);
 }

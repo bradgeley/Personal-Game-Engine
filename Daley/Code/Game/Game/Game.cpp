@@ -305,6 +305,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderAbilities>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderCollisionEffects>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderDiscs>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderHealthBars>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderStatusIcons>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);

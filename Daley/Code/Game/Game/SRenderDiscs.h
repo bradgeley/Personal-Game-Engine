@@ -1,0 +1,16 @@
+﻿// Bradley Christensen - 2022-2026
+#pragma once
+#include "Engine/ECS/System.h"
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+class SRenderDiscs : public System
+{
+public:
+
+    SRenderDiscs(Name name = "RenderDiscs", Rgba8 const& debugTint = Rgba8::Purple) : System(name, debugTint) {};
+    void Startup() override;
+    void Shutdown() const override;
+    void Run(SystemContext const& context) const override;
+};
