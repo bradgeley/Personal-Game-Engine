@@ -2,6 +2,7 @@
 #include "SFlowField.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
+#include "Tile.h"
 #include "TileDef.h"
 #include "WorldSettings.h"
 #include "Engine/Math/MathUtils.h"
@@ -24,6 +25,14 @@ void SFlowField::Startup()
 {
     AddReadDependencies<SCWorld>();
     AddWriteDependencies<SCFlowField>();
+
+    SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
+
+    TagQuery tileTagQuery;
+	tileTagQuery.m_hasAnyTags |= (uint8_t) TileTag::IsPath;
+	tileTagQuery.m_hasAnyTags |= (uint8_t) TileTag::IsGoal;
+	tileTagQuery.m_doesNotHaveAnyTags |= (uint8_t) TileTag::Solid;
+	scFlowField.m_toGoalFlowField = FlowField(tileTagQuery);
 }
 
 
@@ -126,7 +135,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& worl
         {
             continue;
         }
-        if (!world.IsTileOnPath(flowGenCoords.m_tileCoords))
+        if (!world.DoesTileMatchTagQuery(flowGenCoords.m_tileCoords, flowField.m_tileTagQuery))
         {
             continue;
         }
@@ -144,7 +153,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& worl
             {
                 continue;
             }
-            if (!world.IsTileOnPath(neighborTileCoords))
+            if (!world.DoesTileMatchTagQuery(neighborTileCoords, flowField.m_tileTagQuery))
             {
                 continue;
             }
@@ -162,7 +171,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& worl
                 {
                     continue;
                 }
-                if (!world.IsTileOnPath(nofnTileCoords))
+                if (!world.DoesTileMatchTagQuery(nofnTileCoords, flowField.m_tileTagQuery))
                 {
                     continue;
                 }
@@ -227,7 +236,7 @@ void SFlowField::GenerateGradient(FlowField& flowField, SCWorld const& world) co
         {
             continue;
         }
-        if (!world.IsTileOnPath(flowGenCoords.m_tileCoords))
+        if (!world.DoesTileMatchTagQuery(flowGenCoords.m_tileCoords, flowField.m_tileTagQuery))
         {
             continue;
         }
@@ -242,10 +251,10 @@ void SFlowField::GenerateGradient(FlowField& flowField, SCWorld const& world) co
 		IntVec2 eastTile = currentTileCoords + IntVec2(1, 0);
 		IntVec2 westTile = currentTileCoords + IntVec2(-1, 0);
 
-		bool isNorthValid = flowField.m_gradient.IsValidCoords(northTile) && world.IsTileOnPath(northTile);
-		bool isSouthValid = flowField.m_gradient.IsValidCoords(southTile) && world.IsTileOnPath(southTile);
-		bool isEastValid = flowField.m_gradient.IsValidCoords(eastTile) && world.IsTileOnPath(eastTile);
-		bool isWestValid = flowField.m_gradient.IsValidCoords(westTile) && world.IsTileOnPath(westTile);
+		bool isNorthValid = flowField.m_gradient.IsValidCoords(northTile) && world.DoesTileMatchTagQuery(northTile, flowField.m_tileTagQuery);
+		bool isSouthValid = flowField.m_gradient.IsValidCoords(southTile) && world.DoesTileMatchTagQuery(southTile, flowField.m_tileTagQuery);
+		bool isEastValid = flowField.m_gradient.IsValidCoords(eastTile) && world.DoesTileMatchTagQuery(eastTile, flowField.m_tileTagQuery);
+		bool isWestValid = flowField.m_gradient.IsValidCoords(westTile) && world.DoesTileMatchTagQuery(westTile, flowField.m_tileTagQuery);
 
 		float northDistance = isNorthValid ? flowField.m_distanceField.Get(northTile) : currentTileDistance;
 		float southDistance = isSouthValid ? flowField.m_distanceField.Get(southTile) : currentTileDistance;

@@ -14,13 +14,12 @@ CPlaceable::CPlaceable(void const* xmlElement)
 	bool canPlaceOnPathTiles = XmlUtils::ParseXmlAttribute(elem, "onPath", false);
 	bool canPlaceOnSolidTiles = XmlUtils::ParseXmlAttribute(elem, "onSolid", false);
 
-	m_tileTagQuery.m_queryOp = TagQueryOp::DoesNotHaveAny;
 	if (!canPlaceOnPathTiles)
 	{
-		m_tileTagQuery.m_tagsToQuery |= (uint8_t) TileTag::IsPath;
+		m_tileTagQuery.m_doesNotHaveAnyTags |= (uint8_t) TileTag::IsPath;
 	}
 	if (!canPlaceOnSolidTiles)
 	{
-		m_tileTagQuery.m_tagsToQuery |= (uint8_t) TileTag::Solid;
+		m_tileTagQuery.m_doesNotHaveAnyTags |= (uint8_t) TileTag::Solid;
 	}
 }

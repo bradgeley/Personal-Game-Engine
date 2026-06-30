@@ -67,8 +67,7 @@ void SPhysics::Run(SystemContext const& context) const
 		float distanceRemaining = frameMovement.GetLength();
 
         WorldRaycast raycast;
-        raycast.m_tileTagQuery.m_tagsToQuery = (uint8_t) TileTag::IsPath;
-        raycast.m_tileTagQuery.m_queryOp = TagQueryOp::DoesNotHaveAll;
+        raycast.m_tileTagQuery.m_doesNotHaveAnyTags = (uint8_t) TileTag::IsPath;
 
         constexpr int maxNumBounces = 1;
         int numBounces = 0;

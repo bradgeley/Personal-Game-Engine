@@ -7,7 +7,8 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-FlowField::FlowField() :
+FlowField::FlowField(TagQuery tileTagQuery) :
+	m_tileTagQuery(tileTagQuery),
 	m_costField(0),
 	m_distanceField(StaticWorldSettings::s_maximumFlowDistance),
 	m_gradient(Vec2::ZeroVector),

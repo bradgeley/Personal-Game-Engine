@@ -6,24 +6,10 @@
 //----------------------------------------------------------------------------------------------------------------------
 bool TagQuery::Resolve(uint8_t tags) const
 {
-    switch (m_queryOp)
-    {
-        case TagQueryOp::HasAny:
-        {
-            return (tags & m_tagsToQuery) != 0;
-        }
-        case TagQueryOp::DoesNotHaveAny:
-        {
-            return (tags & m_tagsToQuery) == 0;
-        }
-        case TagQueryOp::HasAll:
-        {
-            return (tags & m_tagsToQuery) == m_tagsToQuery;
-        }
-        case TagQueryOp::DoesNotHaveAll:
-        {
-            return (tags & m_tagsToQuery) != m_tagsToQuery;
-        }
-    }
-    return false;
+	bool hasAnyResult = m_hasAnyTags != 0 ? (tags & m_hasAnyTags) != 0 : true;
+	bool doesNotHaveAnyResult = m_doesNotHaveAnyTags != 0 ? (tags & m_doesNotHaveAnyTags) == 0 : true;
+	bool hasAllResult = m_hasAllTags != 0 ? (tags & m_hasAllTags) == m_hasAllTags : true;
+	bool doesNotHaveAllResult = m_doesNotHaveAllTags != 0 ? (tags & m_doesNotHaveAllTags) != m_doesNotHaveAllTags : true;
+
+    return hasAnyResult && doesNotHaveAnyResult && hasAllResult && doesNotHaveAllResult;
 }

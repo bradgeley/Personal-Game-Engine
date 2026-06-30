@@ -316,12 +316,20 @@ bool SCWorld::PlaceTower(TowerPlacementInfo const& placementInfo, SCEntityFactor
 		spawnInfo.m_spawnPos = placementInfo.m_worldPos;
 		entityFactory.m_entitiesToSpawn.push_back(spawnInfo);
 
+		bool solidnessOfPathTileChanged = false;
+
 		ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
 		{
 			Tile& tile = m_tiles.GetRef(worldCoords);
+			if (tile.IsPath() && !tile.IsSolid())
+			{
+				solidnessOfPathTileChanged = true;
+			}
 			tile.SetIsSolid(true);
 			return true; // keep iterating
 		});
+
+		m_solidnessChanged |= solidnessOfPathTileChanged;
 
 		return true;
 	}

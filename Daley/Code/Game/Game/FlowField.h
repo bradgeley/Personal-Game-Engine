@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "Engine/Core/TagQuery.h"
 #include "Engine/DataStructures/BitArray.h"
 #include "Engine/Math/FastGrid.h"
 #include "Engine/Math/IntVec2.h"
@@ -16,7 +17,7 @@ class FlowField
 {
 public:
 
-	FlowField();
+	FlowField(TagQuery tileTagQuery = TagQuery());
 
 	bool Seed(IntVec2 const& tileCoords);
 	bool SeedUnsafe(IntVec2 const& tileCoords); // Call if you've already validated the tile coords
@@ -33,6 +34,7 @@ public:
 
 	std::priority_queue<FlowGenerationCoords> m_openList;
 
+	TagQuery m_tileTagQuery; // Tiles that match this query will be considered for flow generation
 	bool m_hasGeneratedFlow = false;
 	std::vector<IntVec2> m_seeds;
 	FastGrid<uint8_t, StaticWorldSettings::s_worldSizePowerOfTwo> m_costField;
