@@ -41,7 +41,7 @@ cbuffer CameraConstants : register(b2)
 cbuffer DiscRenderConstants : register(b5)
 {
 	//------------------------------------------------------
-	uint numSides                : NUMSIDES;	// 4 bytes
+    uint numSides               : NUMSIDES; // 4 bytes // must be power of 2 between 4 and 64
 	//------------------------------------------------------
 };
 

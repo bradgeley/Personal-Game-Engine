@@ -31,7 +31,7 @@ struct alignas(16) DiscRenderConstants
 	static int GetSlot() { return 5; }
 
 	//------------------------------------------------------
-	uint32_t m_numSides;			// NUMSIDES		(4 bytes)
+	uint32_t m_numSides;			// NUMSIDES		(4 bytes) // must be power of 2 between 4 and 64
 
 	float padding[3];				// PADDING		(12 bytes)
 	//------------------------------------------------------
