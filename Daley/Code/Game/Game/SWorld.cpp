@@ -38,6 +38,15 @@ void SWorld::Shutdown() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SWorld::EndFrame() const
+{
+	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+	scWorld.m_solidnessChanged = false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool SWorld::GenerateMap(NamedProperties& params)
 {
 	int seed = params.Get<int>("seed", 0);

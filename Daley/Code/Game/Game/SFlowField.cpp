@@ -43,13 +43,15 @@ void SFlowField::Run(SystemContext const& context) const
     // Read Dependencies
     SCWorld const& world = context.GetSingletonConst<SCWorld>();
 
+    if (!world.m_solidnessChanged)
+    {
+        return;
+    }
+
 	// Write Dependencies
     SCFlowField& scFlowField = context.GetSingleton<SCFlowField>();
 
-    if (scFlowField.m_toGoalFlowField.m_hasGeneratedFlow)
-    {
-        return;
-	}
+    scFlowField.m_toGoalFlowField.Reset();
 
     SeedFlowField(scFlowField.m_toGoalFlowField, world);
     SetCostField(scFlowField.m_toGoalFlowField, world);

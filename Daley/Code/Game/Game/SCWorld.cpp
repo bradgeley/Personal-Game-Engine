@@ -404,7 +404,7 @@ bool SCWorld::SetTile(int tileIndex, Tile const& tile)
 		return true;
 	}
 
-	m_solidnessChanged = existingTile.IsSolid() != tile.IsSolid();
+	m_solidnessChanged |= (existingTile.IsSolid() != tile.IsSolid());
 	m_isLightingDirty = true;
 	m_isVBODirty = true;
 
