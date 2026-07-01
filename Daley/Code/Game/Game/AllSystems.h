@@ -50,6 +50,7 @@
 #include "SRenderStatusIcons.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"
+#include "STowerSpawner.h"
 #include "SVisualEffects.h"
 #include "SWaveSpawner.h"
 #include "SWorld.h"

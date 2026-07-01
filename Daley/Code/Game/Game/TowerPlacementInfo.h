@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Core/Name.h"
+#include "Engine/Core/TagQuery.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 

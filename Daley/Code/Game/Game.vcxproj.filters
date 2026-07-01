@@ -225,6 +225,12 @@
     <ClCompile Include="Game\SRenderDiscs.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Game\CBuff.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\STowerSpawner.cpp">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -529,6 +535,12 @@
     </ClInclude>
     <ClInclude Include="Game\SRenderDiscs.h">
       <Filter>ECS\Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\CBuff.h">
+      <Filter>ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\STowerSpawner.h">
+      <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

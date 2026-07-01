@@ -272,6 +272,7 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SAbility>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SEntityFactory>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SInput>((int) FramePhase::PrePhysics);
+    g_ecs->RegisterSystem<STowerSpawner>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SDebugInput>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SWorld>((int) FramePhase::PrePhysics);
     g_ecs->RegisterSystem<SBackgroundMusic>((int) FramePhase::PrePhysics);

@@ -1,10 +1,10 @@
 // Bradley Christensen - 2022-2026
 #include "SCWorld.h"
 #include "EntityDef.h"
+#include "SEntityFactory.h"
 #include "SCEntityFactory.h"
 #include "SCRenderer.h"
 #include "TileDef.h"
-#include "TowerPlacementInfo.h"
 #include "WorldShaderCPU.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
@@ -302,39 +302,6 @@ bool SCWorld::DoTilesInRegionMatchQuery(IntVec2 const& bottomLeftTileCoords, Int
 	});
 
 	return matches;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool SCWorld::PlaceTower(TowerPlacementInfo const& placementInfo, SCEntityFactory& entityFactory)
-{
-	if (DoTilesInRegionMatchQuery(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, placementInfo.m_tileTagQuery))
-	{
-		SpawnInfo spawnInfo;
-		spawnInfo.m_def = EntityDef::GetEntityDef(placementInfo.m_towerName);
-		spawnInfo.m_spawnPos = placementInfo.m_worldPos;
-		entityFactory.m_entitiesToSpawn.push_back(spawnInfo);
-
-		bool solidnessOfPathTileChanged = false;
-
-		ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
-		{
-			Tile& tile = m_tiles.GetRef(worldCoords);
-			if (tile.IsPath() && !tile.IsSolid())
-			{
-				solidnessOfPathTileChanged = true;
-			}
-			tile.SetIsSolid(true);
-			return true; // keep iterating
-		});
-
-		m_solidnessChanged |= solidnessOfPathTileChanged;
-
-		return true;
-	}
-
-	return false;
 }
 
 
@@ -652,6 +619,20 @@ void SCWorld::ForEachPlayableEdgeTile(const std::function<bool(IntVec2 const&)>&
 			{
 				return;
 			}
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachCachedEdgePathTile(const std::function<bool(IntVec2 const&)>& func) const
+{
+	for (IntVec2 const& tileCoords : m_cachedSpawnLocations)
+	{
+		if (!func(tileCoords))
+		{
+			return;
 		}
 	}
 }

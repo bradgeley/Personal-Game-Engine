@@ -70,14 +70,14 @@ void SFlowField::Run(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::SeedFlowField(FlowField& flowField, SCWorld const& world) const
+void SFlowField::SeedFlowField(FlowField& flowField, SCWorld const& world)
 {
     for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
     {
         for (int x = 0; x <= StaticWorldSettings::s_playableWorldEndIndexX; ++x)
         {
             IntVec2 currentCoords = IntVec2(x, y);
-            if (world.m_tiles.Get(currentCoords).IsGoal())
+            if (world.m_tiles.Get(currentCoords).IsGoal()) // todo: allow any tile tag query to be the seed tiles
             {
                 flowField.SeedUnsafe(currentCoords);
             }
@@ -88,7 +88,7 @@ void SFlowField::SeedFlowField(FlowField& flowField, SCWorld const& world) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::SetCostField(FlowField& flowField, SCWorld const& world) const
+void SFlowField::SetCostField(FlowField& flowField, SCWorld const& world)
 {
     int index = 0; // trick only works if iterating from 0,0
     for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
@@ -104,7 +104,7 @@ void SFlowField::SetCostField(FlowField& flowField, SCWorld const& world) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::GenerateFlow(FlowField& flowField, SCWorld const& world) const
+void SFlowField::GenerateFlow(FlowField& flowField, SCWorld const& world)
 {
     ScopedTimer timer("GenerateFlow");
 
@@ -116,7 +116,7 @@ void SFlowField::GenerateFlow(FlowField& flowField, SCWorld const& world) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& world) const
+void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& world)
 {
     ScopedTimer timer("- Generate Distance Field");
 
@@ -216,7 +216,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& worl
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::GenerateGradient(FlowField& flowField, SCWorld const& world) const
+void SFlowField::GenerateGradient(FlowField& flowField, SCWorld const& world)
 {
     ScopedTimer timer("- Generate Gradient");
 

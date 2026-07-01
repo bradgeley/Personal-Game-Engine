@@ -20,6 +20,7 @@ class Renderer;
 class RandomNumberGenerator;
 class VertexBuffer;
 struct SCEntityFactory;
+struct SystemContext;
 struct TowerPlacementInfo;
 
 
@@ -52,8 +53,6 @@ public:
 
 	bool DoTilesInRegionMatchQuery(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, TagQuery const& tagQuery) const;
 
-    bool PlaceTower(TowerPlacementInfo const& placementInfo, SCEntityFactory& entityFactory);
-
     void CacheValidSpawnLocations();
     Vec2 GetRandomSpawnLocation(RandomNumberGenerator& rng) const;
 
@@ -73,6 +72,7 @@ public:
     void ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
 	void ForEachPlayableTileInRegion(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, const std::function<bool(IntVec2 const&)>& func) const;
     void ForEachPlayableEdgeTile(const std::function<bool(IntVec2 const&)>& func) const;
+    void ForEachCachedEdgePathTile(const std::function<bool(IntVec2 const&)>& func) const;
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
     int GetTileIndexAtWorldPos(Vec2 const& worldPos) const;

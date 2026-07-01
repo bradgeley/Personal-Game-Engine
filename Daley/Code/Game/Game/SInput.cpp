@@ -4,8 +4,8 @@
 #include "EntityDef.h"
 #include "Game.h"
 #include "SCCamera.h"
-#include "SCEntityFactory.h"
 #include "SCInputSystem.h"
+#include "SCEntityFactory.h"
 #include "SCGame.h"
 #include "SCWindow.h"
 #include "SCWorld.h"
@@ -23,8 +23,8 @@ TowerPlacementInfo MakeTowerPlacementInfo(Name towerDefName, Vec2 const& worldPo
 //----------------------------------------------------------------------------------------------------------------------
 void SInput::Startup()
 {
-	AddReadDependencies<SCCamera, SCWindow>();
-    AddWriteDependencies<SCEntityFactory, SCGame, SCInputSystem, SCWorld>();
+	AddReadDependencies<SCCamera, SCWindow, SCWorld>();
+	AddWriteDependencies<SCEntityFactory, SCGame, SCInputSystem>();
 }
 
 
@@ -35,11 +35,11 @@ void SInput::Run(SystemContext const& context) const
 	// Read Dependencies
 	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
 	SCWindow const& scWindow = context.GetSingletonConst<SCWindow>();
+	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 
 	// Write Dependencies
-	SCEntityFactory& entityFactory = context.GetSingleton<SCEntityFactory>();
 	SCInputSystem& scInput = context.GetSingleton<SCInputSystem>();
-	SCWorld& world = context.GetSingleton<SCWorld>();
+	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
 	SCGame& game = context.GetSingleton<SCGame>();
 
 	Window const& window = *scWindow.GetWindow();
@@ -66,11 +66,13 @@ void SInput::Run(SystemContext const& context) const
 
 	if (scInput.m_isInTowerPlacementMode)
 	{
+		// Todo: maybe move even the creation of the tower placement info into STowerSpawner
+
 		scInput.m_towerPlacementInfo = MakeTowerPlacementInfo(scInput.m_towerPlacementInfo.m_towerName, scInput.m_mouseWorldLocation, world);
 
 		if (inputSystem.WasMouseButtonJustPressed(0))
 		{
-			world.PlaceTower(scInput.m_towerPlacementInfo, entityFactory);
+			factory.m_towerPlacements.push_back(scInput.m_towerPlacementInfo);
 			scInput.m_isInTowerPlacementMode = false; 
 		}
 		else if (inputSystem.WasMouseButtonJustPressed(1))

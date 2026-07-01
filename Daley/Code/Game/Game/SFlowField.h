@@ -23,11 +23,9 @@ public:
     void Shutdown() const override;
     void Run(SystemContext const& context) const override;
 
-private:
-
-    void SeedFlowField(FlowField& flowField, SCWorld const& world) const;
-    void SetCostField(FlowField& flowField, SCWorld const& world) const;
-    void GenerateFlow(FlowField& flowField, SCWorld const& world) const;
-    void GenerateDistanceField(FlowField& flowField, SCWorld const& world) const;
-    void GenerateGradient(FlowField& flowField, SCWorld const& world) const;
+    static void SeedFlowField(FlowField& flowField, SCWorld const& world);
+    static void SetCostField(FlowField& flowField, SCWorld const& world);
+    static void GenerateFlow(FlowField& flowField, SCWorld const& world);
+    static void GenerateDistanceField(FlowField& flowField, SCWorld const& world);
+    static void GenerateGradient(FlowField& flowField, SCWorld const& world);
 };
