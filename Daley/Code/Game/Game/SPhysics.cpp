@@ -33,6 +33,11 @@ void SPhysics::Run(SystemContext const& context) const
     auto& moveStorage = context.GetArrayStorage<CMovement>();
     auto& transStorage = context.GetArrayStorage<CTransform>();
 
+    TagQuery isWalkableTagQuery;
+	isWalkableTagQuery.m_doesNotHaveAnyTags |= (uint8_t) TileTag::Solid;
+	isWalkableTagQuery.m_hasAnyTags |= (uint8_t) TileTag::IsPath;
+	isWalkableTagQuery.m_hasAnyTags |= (uint8_t) TileTag::IsGoal;
+
     for (auto it = context.Iterate<CMovement, CTransform>(); it.IsValid(); ++it)
     {
         CMovement& move = moveStorage[it];
@@ -45,11 +50,11 @@ void SPhysics::Run(SystemContext const& context) const
             continue;
 		}
 
-        if (!world.IsLocationOnPath(transform.m_pos))
+        if (!world.DoesTileMatchTagQuery(transform.m_pos, isWalkableTagQuery))
         {
             float nearestPathTileDistanceSquared = FLT_MAX;
             Vec2 nearestPathTileCenter = transform.m_pos;
-            world.ForEachPathTileOverlappingCircle(transform.m_pos, StaticWorldSettings::s_pathTileSnapRadius, [&world, &transform, &nearestPathTileDistanceSquared, &nearestPathTileCenter](IntVec2 const& pathTileCoords)
+            world.ForEachPlayableTileOverlappingCircle(transform.m_pos, StaticWorldSettings::s_pathTileSnapRadius, isWalkableTagQuery, [&world, &transform, &nearestPathTileDistanceSquared, &nearestPathTileCenter](IntVec2 const& pathTileCoords)
             {
                 Vec2 pathTileCenter = world.GetTileCenter(pathTileCoords);
                 float distanceSquared = transform.m_pos.GetDistanceSquaredTo(pathTileCenter);
@@ -67,7 +72,7 @@ void SPhysics::Run(SystemContext const& context) const
 		float distanceRemaining = frameMovement.GetLength();
 
         WorldRaycast raycast;
-        raycast.m_tileTagQuery.m_doesNotHaveAnyTags = (uint8_t) TileTag::IsPath;
+        raycast.m_allowedTiles = isWalkableTagQuery;
 
         constexpr int maxNumBounces = 1;
         int numBounces = 0;
@@ -96,7 +101,7 @@ void SPhysics::Run(SystemContext const& context) const
             else
             {
                 Vec2 wouldBePosition = transform.m_pos + frameMovement;
-                if (!world.IsLocationOnPath(wouldBePosition))
+                if (!world.DoesTileMatchTagQuery(wouldBePosition, isWalkableTagQuery))
                 {
                     break;
                 }

@@ -167,7 +167,7 @@
     </Ability>
     <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
+    <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="243,229,171"></Render>
     <Tags tags="tower"></Tags>
     <Time></Time>

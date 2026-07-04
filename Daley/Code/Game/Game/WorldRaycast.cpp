@@ -31,7 +31,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
         return result;
 	}
 
-    if (world.DoesTileMatchTagQuery(currentWorldCoords, raycast.m_tileTagQuery))
+    if (!world.DoesTileMatchTagQuery(currentWorldCoords, raycast.m_allowedTiles))
     {
         // Somehow we got inside a block
         result.m_blockingHit = true;
@@ -84,7 +84,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 
             totalRayLength = totalRayLengthX;
 
-            if (world.DoesTileMatchTagQuery(currentWorldCoords, raycast.m_tileTagQuery))
+            if (!world.DoesTileMatchTagQuery(currentWorldCoords, raycast.m_allowedTiles))
             {
                 result.m_blockingHit = true;
                 result.m_hitNormal = Vec2(-stepX, 0.f);
@@ -119,7 +119,7 @@ WorldRaycastResult Raycast(SCWorld const& world, WorldRaycast const& raycast)
 
             totalRayLength = totalRayLengthY;
 
-            if (world.DoesTileMatchTagQuery(currentWorldCoords, raycast.m_tileTagQuery))
+            if (!world.DoesTileMatchTagQuery(currentWorldCoords, raycast.m_allowedTiles))
             {
                 result.m_blockingHit = true;
                 result.m_hitNormal = Vec2(0.f, -stepY);
@@ -158,7 +158,7 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
     float nearestDistSquared = FLT_MAX;
     world.ForEachPlayableTileOverlappingCapsule(discCast.m_start, discCast.m_start, discCast.m_discRadius, [&world, &discCast, &result, &nearestDistSquared](IntVec2 const& coords)
     {
-        if (!world.DoesTileMatchTagQuery(coords, discCast.m_tileTagQuery))
+        if (!world.DoesTileMatchTagQuery(coords, discCast.m_allowedTiles))
         {
             return true;
 		}
@@ -184,7 +184,7 @@ WorldDiscCastResult DiscCast(SCWorld const& world, WorldDiscCast const& discCast
     // Sweep against all the tiles in the path
     world.ForEachPlayableTileOverlappingCapsule(discCast.m_start, discCastEndPoint, discCast.m_discRadius, [&world, &discCast, &result, &discCastEndPoint](IntVec2 const& coords)
     {
-        if (!world.DoesTileMatchTagQuery(coords, discCast.m_tileTagQuery))
+        if (!world.DoesTileMatchTagQuery(coords, discCast.m_allowedTiles))
         {
             return true;
         }

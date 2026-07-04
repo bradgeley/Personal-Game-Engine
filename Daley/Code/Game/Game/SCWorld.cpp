@@ -285,6 +285,19 @@ bool SCWorld::DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::DoesTileMatchTagQuery(Vec2 const& worldPos, TagQuery const& tagQuery) const
+{
+	Tile const* tile = GetTileAtWorldPos(worldPos);
+	if (tile)
+	{
+		return tagQuery.Resolve(tile->m_tags);
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::DoTilesInRegionMatchQuery(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, TagQuery const& tagQuery) const
 {
 	ASSERT_OR_DIE(topRightTileCoords.x >= bottomLeftTileCoords.x && topRightTileCoords.y >= bottomLeftTileCoords.y, "SCWorld::DoTilesInRegionMatchQuery - Invalid region coordinates");
@@ -457,6 +470,31 @@ void SCWorld::ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius
 
 	ForEachPlayableTileOverlappingAABB(boundingBox, [&](IntVec2 const& worldCoords)
 	{
+		AABB2 tileBounds = GetTileBounds(worldCoords);
+		if (GeometryUtils::DoesDiscOverlapAABB(pos, radius, tileBounds))
+		{
+			if (!func(worldCoords))
+			{
+				return false;
+			}
+		}
+		return true;
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, TagQuery tileTagQuery, const std::function<bool(IntVec2 const&)>& func) const
+{
+	AABB2 boundingBox = GeometryUtils::GetDiscBounds(pos, radius);
+
+	ForEachPlayableTileOverlappingAABB(boundingBox, [&](IntVec2 const& worldCoords)
+	{
+		if (!DoesTileMatchTagQuery(worldCoords, tileTagQuery))
+		{
+			return true;
+		}
 		AABB2 tileBounds = GetTileBounds(worldCoords);
 		if (GeometryUtils::DoesDiscOverlapAABB(pos, radius, tileBounds))
 		{

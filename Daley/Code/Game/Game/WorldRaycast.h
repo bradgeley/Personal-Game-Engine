@@ -20,7 +20,7 @@ struct WorldRaycast
     bool m_queryWorldTiles = true;
 	bool m_treatInvalidTilesAsSolid = true;
     //bool m_queryActors = false; TODO
-    TagQuery m_tileTagQuery;
+    TagQuery m_allowedTiles;
     Vec2 m_start;
     Vec2 m_direction;
     float m_maxDistance = 0.f;

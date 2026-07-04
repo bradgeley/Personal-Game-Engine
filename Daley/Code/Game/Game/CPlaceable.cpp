@@ -22,4 +22,6 @@ CPlaceable::CPlaceable(void const* xmlElement)
 	{
 		m_tileTagQuery.m_doesNotHaveAnyTags |= (uint8_t) TileTag::Solid;
 	}
+
+	m_tileTagQuery.m_doesNotHaveAnyTags |= (uint8_t) TileTag::IsGoal; // No tower can be placed on a goal tile
 }
