@@ -12,6 +12,8 @@ void SGoal::Startup()
 {
 	AddReadDependencies<CTags, CTransform, SCWorld>();
 	AddWriteDependencies<SCEntityFactory>();
+
+	m_runWhilePaused = false;
 }
 
 

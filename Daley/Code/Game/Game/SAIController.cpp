@@ -15,8 +15,10 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SAIController::Startup()
 {
-    AddReadDependencies<CTransform, CTime, CAIController, SCFlowField>();
+    AddReadDependencies<CTransform, CAIController, SCFlowField>();
     AddWriteDependencies<CMovement>();
+
+	m_runWhilePaused = false;
 
     int numThreads = (int) std::thread::hardware_concurrency();
     if (numThreads > 1)
@@ -32,33 +34,41 @@ void SAIController::Run(SystemContext const& context) const
 {
 	// Read Dependencies
     auto& transStorage = context.GetArrayStorageConst<CTransform>();
-	auto& timeStorage = context.GetArrayStorageConst<CTime>();
 	auto& aiStorage = context.GetArrayStorageConst<CAIController>();
     SCFlowField const& scFlow = context.GetSingletonConst<SCFlowField>();
 
     // Write Dependencies
     auto& moveStorage = context.GetArrayStorage<CMovement>();
 
-    for (auto it = context.Iterate<CTransform, CMovement, CTime, CAIController>(); it.IsValid(); ++it)
+    for (auto it = context.Iterate<CTransform, CMovement, CAIController>(); it.IsValid(); ++it)
     {
         CTransform const& transform = transStorage[it];
 		CAIController const& ai = aiStorage[it];
         CMovement& movement = moveStorage[it];
 
+		Vec2 lastFrameMoveDir = movement.m_frameMoveDir;
         IntVec2 worldCoords = SCWorld::GetTileCoordsAtWorldPos(transform.m_pos);
-        movement.m_frameMoveDir = scFlow.m_toGoalFlowField.GetFlowAtTileCoords(worldCoords);
+		Vec2 flowDirection = scFlow.m_toGoalFlowField.GetFlowAtTileCoords(worldCoords);
+
+        float angleOffset = 0.f;
 
         if (ai.GetIsMovementWiggly())
         {
-			CTime const& time = timeStorage[it];
-
             constexpr float maxDegreesOffset = 25.f;
             constexpr float wigglinessScale = 15.f;
-            constexpr unsigned int wigglinessOctaves = 4;
-            float angleOffset = maxDegreesOffset * GetPerlinNoise1D(time.m_clock.GetCurrentTimeSecondsF(), wigglinessScale, wigglinessOctaves, 0.5f, 2.f, true, it.m_currentIndex);
+            constexpr unsigned int wigglinessOctaves = 3;
+            angleOffset = maxDegreesOffset * GetPerlinNoise1D(Time::GetCurrentTimeSecondsF(), wigglinessScale, wigglinessOctaves, 0.5f, 2.f, true, it.m_currentIndex);
 
-            Vec2 wigglyMoveDir = movement.m_frameMoveDir.GetRotated(angleOffset);
-            movement.m_frameMoveDir = wigglyMoveDir;
+            flowDirection.Rotate(angleOffset);
         }
+
+        if (lastFrameMoveDir.IsNearlyZero())
+        {
+			lastFrameMoveDir = flowDirection;
+        }
+		
+		float rotationSpeed = movement.m_rotationSpeedDegPerSec;
+        float movementSpeed = movement.m_movementSpeed * movement.m_movementSpeedMultiplier;
+		movement.m_frameMoveDir = lastFrameMoveDir.GetRotatedTowards(flowDirection, rotationSpeed * movementSpeed * context.m_deltaSeconds); // Apply movement speed multi to rotation speed
     }
 }

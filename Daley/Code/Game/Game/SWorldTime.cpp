@@ -8,6 +8,8 @@
 void SWorldTime::Startup()
 {
 	AddWriteDependencies<SCTime>(); // SCTime updates any CTime's that are children of SCTime's world clock
+
+	m_runWhilePaused = false;
 }
 
 

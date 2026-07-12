@@ -12,6 +12,8 @@ void SAbility::Startup()
 	AbilityDef::LoadFromXML();
 
 	AddWriteAllDependencies(); // Abilities spawn things
+
+	m_runWhilePaused = false;
 }
 
 

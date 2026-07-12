@@ -63,7 +63,10 @@ namespace MathUtils
 	float CrossProduct2D(Vec2 const& vecA, Vec2 const& vecB);
 	float GetDistance2D(Vec2 const& vecA, Vec2 const& vecB);
 	float GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB);
+	float GetAngularDisplacementDegrees(Vec2 const& from, Vec2 const& to);
+	float GetAngularDisplacementRadians(Vec2 const& from, Vec2 const& to);
 	void RotateVector2D(Vec2& vec, float radians);
+	void RotateVector2DTowards(Vec2& vec, Vec2 const& target, float maxRadiansDelta);
 	void Interpolate2D(Vec2 const& start, Vec2 const& end, float t, Vec2& out_result);
 	void BilinearInterpolate2D(Vec2 const& botLeft, Vec2 const& botRight, Vec2 const& topLeft, Vec2 const& topRight, float tX, float tY, Vec2& out_result);
 

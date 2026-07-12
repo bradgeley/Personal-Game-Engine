@@ -22,7 +22,7 @@ public:
     CMovement() = default;
     CMovement(void const* xmlElement);
 
-    void AppendDebugString(std::string& out_string) const;
+    void AppendDebugString(std::string& out_string, bool isSlowed) const;
 
 	bool GetIsConstrainedToPath() const;
 
@@ -38,4 +38,5 @@ public:
 
     // Definition Data
     float m_movementSpeed               = 0.f;
+    float m_rotationSpeedDegPerSec      = 90.f;
 };

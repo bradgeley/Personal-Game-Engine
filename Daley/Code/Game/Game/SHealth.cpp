@@ -12,6 +12,8 @@ void SHealth::Startup()
 {
 	AddWriteDependencies<CHealth>();
 
+	m_runWhilePaused = false;
+
 	int numThreads = (int) std::thread::hardware_concurrency();
 	if (numThreads > 1)
 	{

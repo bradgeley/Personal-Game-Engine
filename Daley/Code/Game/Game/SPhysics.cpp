@@ -14,6 +14,8 @@ void SPhysics::Startup()
     AddReadDependencies<SCWorld>();
     AddWriteDependencies<CMovement, CTransform>();
 
+    m_runWhilePaused = false;
+
 	int numThreads = (int) std::thread::hardware_concurrency();
     if (numThreads > 1)
     {

@@ -193,6 +193,26 @@ float MathUtils::GetDistanceSquared2D(Vec2 const& vecA, Vec2 const& vecB)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float MathUtils::GetAngularDisplacementDegrees(Vec2 const& from, Vec2 const& to)
+{
+	float crossProduct = CrossProduct2D(from, to);
+	float dotProduct = DotProduct2D(from, to);
+	return RadiansToDegrees(atan2f(crossProduct, dotProduct));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float MathUtils::GetAngularDisplacementRadians(Vec2 const& from, Vec2 const& to)
+{
+    float crossProduct = CrossProduct2D(from, to);
+    float dotProduct = DotProduct2D(from, to);
+    return atan2f(crossProduct, dotProduct);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void MathUtils::RotateVector2D(Vec2& vec, float radians)
 {
     float cos = CosRadians(radians);
@@ -202,6 +222,23 @@ void MathUtils::RotateVector2D(Vec2& vec, float radians)
     vec.x = x;
 	vec.y = y;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void MathUtils::RotateVector2DTowards(Vec2& vec, Vec2 const& target, float maxRadiansDelta)
+{
+	float angleBetween = GetAngularDisplacementRadians(vec, target);
+	if (Abs(angleBetween) < maxRadiansDelta)
+	{
+		RotateVector2D(vec, angleBetween);
+	}
+	else
+	{
+		RotateVector2D(vec, Sign(angleBetween) * maxRadiansDelta);
+	}
+}
+
 
 
 //----------------------------------------------------------------------------------------------------------------------

@@ -37,7 +37,7 @@ public:
 
 	bool IsActive() const											{ return m_isActive; }
 	void SetActive(bool isActive)									{ m_isActive = isActive; }
-	bool ShouldRun() const											{ return m_isActive && !m_ignoreRun; }
+	bool ShouldRun(float deltaSeconds) const						{ return m_isActive && !m_ignoreRun && (m_runWhilePaused || deltaSeconds > 0.f); }
 	void ToggleIsActive();
 	void SetLocalPriority(int localPriority)						{ m_localPriority = localPriority; }
 	void SetGlobalPriority(int globalPriority)						{ m_globalPriority = globalPriority; }
@@ -67,6 +67,7 @@ protected:
 	Rgba8				m_debugTint					= Rgba8::Magenta;
 	bool				m_isActive					= true;
 	bool				m_ignoreRun					= false;
+	bool				m_runWhilePaused			= true;
 	int					m_systemSplittingNumJobs	= 1; // 0-1 means do not split the system
 
 	int					m_localPriority				= -1;

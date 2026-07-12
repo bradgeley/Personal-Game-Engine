@@ -296,7 +296,7 @@ void SystemScheduler::RunSubgraph_Singlethreaded(SystemSubgraph const& subgraph,
 {
 	for (System* const& system : subgraph.m_systems)
 	{
-		if (!system->ShouldRun())
+		if (!system->ShouldRun(deltaSeconds))
 		{
 			continue;
 		}
@@ -319,7 +319,7 @@ void SystemScheduler::RunSubgraph_AutoMultithreaded(SystemSubgraph const& subgra
 	
 	for (System* const& system : subgraph.m_systems)
 	{
-		if (!system->ShouldRun())
+		if (!system->ShouldRun(deltaSeconds))
 		{
 			continue;
 		}

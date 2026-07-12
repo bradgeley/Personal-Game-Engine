@@ -14,6 +14,8 @@ void SCollisionEffect::Startup()
 {
     AddReadDependencies<SCCollision, CCollisionEffect>();
 	AddWriteDependencies<CHealth, CTime>();
+
+	m_runWhilePaused = false;
 }
 
 

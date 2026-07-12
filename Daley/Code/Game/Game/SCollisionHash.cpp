@@ -17,6 +17,8 @@ void SCollisionHash::Startup()
     AddReadDependencies<SCWorld, CCollision, CTransform>();
 	AddWriteDependencies<SCCollision>();
 
+    m_runWhilePaused = false;
+
     SCCollision& scCollision = g_ecs->GetSingleton<SCCollision>();
 
     // Each collision channel gets a layer for hashing

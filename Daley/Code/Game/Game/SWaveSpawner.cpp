@@ -19,6 +19,8 @@ void SWaveSpawner::Startup()
 	AddReadDependencies<SCWorld>();
 	AddWriteDependencies<SCWaves, SCEntityFactory, SCRandomNumberGenerator>();
 
+	m_runWhilePaused = false;
+
 	DevConsoleUtils::AddDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
 	DevConsoleUtils::AddDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves, "seed", DevConsoleArgType::Int, "numWaves", DevConsoleArgType::Int);
 }

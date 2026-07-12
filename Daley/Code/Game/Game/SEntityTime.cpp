@@ -13,6 +13,8 @@ void SEntityTime::Startup()
 	AddReadDependencies<SCTime>();
 	AddWriteDependencies<CTime>();
 
+	m_runWhilePaused = false;
+
 	int numThreads = std::thread::hardware_concurrency();
 	if (numThreads > 1)
 	{

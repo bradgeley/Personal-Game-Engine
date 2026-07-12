@@ -43,6 +43,7 @@ public:
     Vec2 GetRotated90() const;
     Vec2 GetRotatedMinus90() const;
     Vec2 GetRotated(float degrees) const;
+    Vec2 GetRotatedTowards(Vec2 const& target, float maxDegreesDelta) const;
     Vec2 GetProjectedOntoNormal(Vec2 const& normal) const;
     Vec2 GetProjectedOnto(Vec2 const& vector) const;
     Vec2 GetFloor() const;
@@ -57,6 +58,7 @@ public:
     void Rotate90();
     void RotateMinus90();
     void Rotate(float degrees);
+	void RotateTowards(Vec2 const& target, float maxDegreesDelta);
     void SetLength(float length);
     void ClampLength(float maxLength);
     void ClampLengthMin(float minLength);

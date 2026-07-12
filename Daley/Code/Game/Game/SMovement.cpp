@@ -14,6 +14,8 @@ void SMovement::Startup()
     AddReadDependencies<CTime, CDeath>();
     AddWriteDependencies<CMovement, CTransform>();
 
+    m_runWhilePaused = false;
+
     int numThreads = (int) std::thread::hardware_concurrency();
     if (numThreads > 1)
     {

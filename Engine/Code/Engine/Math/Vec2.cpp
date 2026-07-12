@@ -144,6 +144,16 @@ Vec2 Vec2::GetRotated(float degrees) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Vec2 Vec2::GetRotatedTowards(Vec2 const& target, float maxDegreesDelta) const
+{
+    Vec2 result = *this;
+    result.RotateTowards(target, maxDegreesDelta);
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 Vec2 Vec2::GetProjectedOntoNormal(Vec2 const& normal) const
 {
     return normal * MathUtils::DotProduct2D(*this, normal);
@@ -250,6 +260,14 @@ void Vec2::RotateMinus90()
 void Vec2::Rotate(float degrees)
 {
 	MathUtils::RotateVector2D(*this, MathUtils::DegreesToRadians(degrees));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Vec2::RotateTowards(Vec2 const& target, float maxDegreesDelta)
+{
+	MathUtils::RotateVector2DTowards(*this, target, MathUtils::DegreesToRadians(maxDegreesDelta));
 }
 
 

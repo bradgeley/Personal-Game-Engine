@@ -13,6 +13,8 @@ void SCollision::Startup()
 {
     AddReadDependencies<CCollision, CTransform>();
     AddWriteDependencies<SCCollision>();
+
+	m_runWhilePaused = false;
 }
 
 

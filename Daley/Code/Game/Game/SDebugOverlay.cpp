@@ -148,6 +148,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 					}
 				}
 
+				bool isSlowed = false;
 				if (context.HasComponent<CHealth>(it.GetEntityID()))
 				{
 					CHealth const& health = healthStorage[it];
@@ -157,11 +158,12 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				{
 					CTime const& time = timeStorage[it];
 					time.AppendDebugString(debugString);
+					isSlowed = time.IsSlowed();
 				}
 				if (context.HasComponent<CMovement>(it.GetEntityID()))
 				{
 					CMovement const& movement = movementStorage[it];
-					movement.AppendDebugString(debugString);
+					movement.AppendDebugString(debugString, isSlowed);
 				}
 
 				if (context.HasComponent<CProjectile>(it.GetEntityID()))

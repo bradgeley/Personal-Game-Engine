@@ -161,6 +161,26 @@
   <!-- ==================================================================================================================== -->
   <!-- Towers -->
 
+  <EntityDef name = "Wall1x1">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Collision radius="0.5" type="building"></Collision>
+    <Placeable dims="1,1" onPath="true"></Placeable>
+    <Render scale="1" tint="150,150,150"></Render>
+    <Tags tags="tower"></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "Wall2x2">
+    <Animation spriteSheet="Data/SpriteSheets/IceCream.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Collision radius="1" type="building"></Collision>
+    <Placeable dims="2,2" onPath="true"></Placeable>
+    <Render scale="2" tint="150,150,150"></Render>
+    <Tags tags="tower"></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
   <EntityDef name = "Vanilla">
     <Ability>
       <Ability name="VanillaAttack"></Ability>

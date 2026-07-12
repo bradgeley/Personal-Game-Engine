@@ -19,6 +19,8 @@
 void SProjectile::Startup()
 {
 	AddWriteAllDependencies();
+
+	m_runWhilePaused = false;
 }
 
 

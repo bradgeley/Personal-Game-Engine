@@ -11,6 +11,8 @@ void SLifetime::Startup()
 {
 	AddReadDependencies<CTime>();
 	AddWriteDependencies<CLifetime, SCEntityFactory>();
+
+	m_runWhilePaused = false;
 }
 
 

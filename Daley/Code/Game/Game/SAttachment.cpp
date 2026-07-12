@@ -11,6 +11,8 @@ void SAttachment::Startup()
 {
 	AddReadDependencies<CAttachment>();
 	AddWriteDependencies<CTransform, SCEntityFactory>();
+
+	m_runWhilePaused = false;
 }
 
 
