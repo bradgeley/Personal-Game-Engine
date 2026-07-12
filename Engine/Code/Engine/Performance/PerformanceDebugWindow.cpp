@@ -339,14 +339,15 @@ void PerformanceDebugWindow::EngineFrameCompleted()
         font->AddVertsForAlignedText2D(textVBO, graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, title, Rgba8::Black);
 
         // FPS Counter
-        float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);
-        std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%.2fms) Draw(%i)", m_perfFrameData.m_frameNumber, 1 / frameSeconds, frameSeconds * 1000.f, g_renderer->GetNumFrameDrawCalls());
+		std::string frameTimeString = Time::GetDisplayString(m_perfFrameData.m_actualDeltaSeconds);
+        std::string frameCounterText = StringUtils::StringF("Frame:(%i) FPS(%.2f) Time(%s) Draw(%i)", m_perfFrameData.m_frameNumber, 1.0 / m_perfFrameData.m_actualDeltaSeconds, frameTimeString.c_str(), g_renderer->GetNumFrameDrawCalls());
         font->AddVertsForAlignedText2D(textVBO, graphOutline.maxs, Vec2(-1.f, 1.f), FPS_COUNTER_FONT_SIZE, frameCounterText, Rgba8::Black);
 
         // X-Axis Frame Time
         Vec2 frameBounds = GetItemFrameBounds();
         font->AddVertsForAlignedText2D(textVBO, graphOutline.mins, Vec2(1.f, -1.f), FPS_COUNTER_FONT_SIZE, "0", Rgba8::Black);
-        font->AddVertsForAlignedText2D(textVBO, graphOutline.GetBottomRight(), Vec2(-1.f, -1.f), FPS_COUNTER_FONT_SIZE, StringUtils::StringF("%0.3fms", (frameBounds.y - frameBounds.x) * 1000.f), Rgba8::Black);
+		std::string totalFrameTimeString = Time::GetDisplayString(frameBounds.y - frameBounds.x);
+        font->AddVertsForAlignedText2D(textVBO, graphOutline.GetBottomRight(), Vec2(-1.f, -1.f), FPS_COUNTER_FONT_SIZE, totalFrameTimeString.c_str(), Rgba8::Black);
 
         for (PerfSection const& section : m_perfSections)
         {

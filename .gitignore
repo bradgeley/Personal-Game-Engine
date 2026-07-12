@@ -8,6 +8,18 @@
 */*/*/x86
 *.ipch
 
+.vs/
+bin/
+obj/
+x64/
+Debug/
+Release/
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+*.userosscache
+
 ProtoGame2D/.vs/ProtoGame2D/v16/.suo
 
 *.db
