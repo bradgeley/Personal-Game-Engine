@@ -34,19 +34,6 @@ void CCollisionEffect::InitializeFromAoEEffect(AbilityAoEEffectComponent const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-HitPayload CCollisionEffect::GetFirstOverlapPayload() const
-{
-	HitPayload payload;
-	payload.m_damage = m_firstOverlapDamage;
-	payload.m_burn = m_firstOverlapBurn;
-	payload.m_poison = m_firstOverlapPoison;
-	payload.m_slowDuration = m_firstOverlapSlow;
-	return payload;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 HitPayload CCollisionEffect::GetWhileOverlappingPayload(float deltaSeconds) const
 {
 	HitPayload payload;

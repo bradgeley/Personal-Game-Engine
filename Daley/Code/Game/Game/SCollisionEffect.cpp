@@ -43,17 +43,11 @@ void SCollisionEffect::Run(SystemContext const& context) const
 			continue;
 		}
 
-		bool isFirstTouch = scCollision.m_lastFrameOverlaps.find(overlap) == scCollision.m_lastFrameOverlaps.end();
-
 		if (context.HasComponentsUnsafe(entityA.GetIndex(), collisionBit))
 		{
 			CCollisionEffect const& aoeA = collisionEffectStorage[entityA];
 
 			HitPayload payload = aoeA.GetWhileOverlappingPayload(context.m_deltaSeconds);
-			if (isFirstTouch)
-			{
-				payload += aoeA.GetFirstOverlapPayload();
-			}
 
 			if (payload.IsRelevantToHealth())
 			{
@@ -79,10 +73,6 @@ void SCollisionEffect::Run(SystemContext const& context) const
 			CCollisionEffect const& aoeB = collisionEffectStorage[entityB];
 
 			HitPayload payload = aoeB.GetWhileOverlappingPayload(context.m_deltaSeconds);
-			if (isFirstTouch)
-			{
-				payload += aoeB.GetFirstOverlapPayload();
-			}
 
 			if (payload.IsRelevantToHealth())
 			{

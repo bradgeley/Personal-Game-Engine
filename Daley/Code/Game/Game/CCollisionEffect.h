@@ -18,16 +18,9 @@ public:
 
 	void InitializeFromAoEEffect(AbilityAoEEffectComponent const& aoeEffectComp);
 
-	HitPayload GetFirstOverlapPayload() const;
 	HitPayload GetWhileOverlappingPayload(float deltaSeconds) const;
 
 public:
-
-	// First overlap effects
-	float m_firstOverlapDamage	= 0.f;
-	float m_firstOverlapBurn	= 0.f;
-	float m_firstOverlapPoison	= 0.f;
-	float m_firstOverlapSlow	= 0.f;
 
 	// While overlapping effects
 	float m_damagePerSecond		= 0.f;

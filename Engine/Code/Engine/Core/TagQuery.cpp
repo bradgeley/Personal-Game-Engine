@@ -11,5 +11,12 @@ bool TagQuery::Resolve(uint8_t tags) const
 	bool hasAllResult			= (m_hasAllTags			!= 0) ? (tags & m_hasAllTags) == m_hasAllTags					: true;
 	bool doesNotHaveAllResult	= (m_doesNotHaveAllTags	!= 0) ? (tags & m_doesNotHaveAllTags) != m_doesNotHaveAllTags	: true;
 
-    return hasAnyResult && doesNotHaveAnyResult && hasAllResult && doesNotHaveAllResult;
+	if (m_queryOp == TagQueryOp::Any)
+	{
+		return hasAnyResult || doesNotHaveAnyResult || hasAllResult || doesNotHaveAllResult;
+	}
+	else // All
+	{
+		return hasAnyResult && doesNotHaveAnyResult && hasAllResult && doesNotHaveAllResult;
+	}
 }

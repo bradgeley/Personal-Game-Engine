@@ -325,11 +325,18 @@ void PerformanceDebugWindow::EngineFrameCompleted()
 
     g_renderer->DrawVertexBuffer(untexturedVBO);
 
+	#if defined(_DEBUG)
+	const std::string buildConfiguration = "Debug";
+	#else
+	const std::string buildConfiguration = "Release";
+    #endif
+
     // Title
     Font const* font = g_renderer->GetDefaultFont();
     if (font)
     {
-        font->AddVertsForAlignedText2D(textVBO, graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, "Job System Debug Graph", Rgba8::Black);
+		std::string title = StringUtils::StringF("%s Build", buildConfiguration.c_str());
+        font->AddVertsForAlignedText2D(textVBO, graphOutline.GetTopLeft(), Vec2(1.f, 1.f), TITLE_FONT_SIZE, title, Rgba8::Black);
 
         // FPS Counter
         float frameSeconds = static_cast<float>(m_perfFrameData.m_actualDeltaSeconds);

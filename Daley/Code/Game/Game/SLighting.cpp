@@ -69,7 +69,7 @@ void SLighting::Run(SystemContext const& context) const
 
 	scWorld.m_isLightingDirty = false;
 
-    static IntVec2 neighborOffsets[4] = { IntVec2(1, 0), IntVec2(-1, 0), IntVec2(0, 1), IntVec2(0, -1) };
+    static IntVec2 const neighborOffsets[4] = { IntVec2(1, 0), IntVec2(-1, 0), IntVec2(0, 1), IntVec2(0, -1) };
 
 	LightingConstants lightingConstants;
     Rgba8::White.GetAsFloats(lightingConstants.m_ambientLightTint);

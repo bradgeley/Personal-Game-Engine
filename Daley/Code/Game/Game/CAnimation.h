@@ -11,8 +11,8 @@ struct PlayAnimationRequest
 	Name	m_animGroupName			= Name::Invalid;
 	int		m_priority				= 0;
 	float	m_animSpeedMultiplier	= 1.f;
-	Vec2	m_direction				= Vec2::ZeroVector;
 	bool	m_clearWhenFinished		= false; // if true, clears the anim request after its finished
+	Vec2	m_direction				= Vec2::ZeroVector;
 };
 
 

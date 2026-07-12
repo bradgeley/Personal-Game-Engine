@@ -290,9 +290,9 @@ void DebugDrawRaycast(WorldRaycastResult const& result, Renderer& renderer)
 //----------------------------------------------------------------------------------------------------------------------
 void AddVertsForRaycast(VertexBuffer& vbo, WorldRaycastResult const& result, float scaleMultiplier /*= 1.f*/)
 {
-    static int numTrianglesPerDisc = 16;
-    static float pointRadius = 0.1f;
-    static float arrowThickness = 0.05f;
+    static int const numTrianglesPerDisc = 16;
+    static float const pointRadius = 0.1f;
+    static float const arrowThickness = 0.05f;
 
     VertexUtils::AddVertsForDisc2D(vbo, result.m_raycast.m_start, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
     VertexUtils::AddVertsForDisc2D(vbo, result.m_hitLocation, pointRadius * scaleMultiplier, numTrianglesPerDisc, Rgba8::Yellow);
@@ -318,9 +318,9 @@ void AddVertsForRaycast(VertexBuffer& vbo, WorldRaycastResult const& result, flo
 //----------------------------------------------------------------------------------------------------------------------
 void AddVertsForDiscCast(VertexBuffer& vbo, WorldDiscCastResult const& result, float scaleMultiplier)
 {
-    static int numTrianglesPerDisc = 16;
-    static float pointRadius = 0.1f;
-    static float arrowThickness = 0.05f;
+    static int const numTrianglesPerDisc = 16;
+    static float const pointRadius = 0.1f;
+    static float const arrowThickness = 0.05f;
 
     VertexUtils::AddVertsForCapsule2D(vbo, result.m_discCast.m_start, result.m_discCast.m_start + result.m_discCast.m_direction * result.m_discCast.m_maxDistance, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 25));
     VertexUtils::AddVertsForCapsule2D(vbo, result.m_discCast.m_start, result.m_discCast.m_start + result.m_discCast.m_direction * result.m_discCast.m_maxDistance * result.m_t, result.m_discCast.m_discRadius, Rgba8(0, 0, 0, 127));
