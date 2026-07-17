@@ -67,7 +67,7 @@ void SAIController::Run(SystemContext const& context) const
 			lastFrameMoveDir = flowDirection;
         }
 		
-		float rotationSpeed = movement.m_rotationSpeedDegPerSec;
+		float rotationSpeed = movement.m_rotationSpeedDegPerSec; // Rotation speed in degrees per second PER 1 unit/second of movement speed. This normalizes rotation speed where its higher the faster the entity is
         float movementSpeed = movement.m_movementSpeed * movement.m_movementSpeedMultiplier;
 		movement.m_frameMoveDir = lastFrameMoveDir.GetRotatedTowards(flowDirection, rotationSpeed * movementSpeed * context.m_deltaSeconds); // Apply movement speed multi to rotation speed
     }

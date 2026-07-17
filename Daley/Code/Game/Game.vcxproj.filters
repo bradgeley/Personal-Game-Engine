@@ -231,6 +231,9 @@
     <ClCompile Include="Game\STowerSpawner.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SFloatingText.cpp">
+      <Filter>ECS\Systems\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -542,6 +545,15 @@
     <ClInclude Include="Game\STowerSpawner.h">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="Game\SFloatingText.h">
+      <Filter>ECS\Systems\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCFloatingText.h">
+      <Filter>ECS\Singletons</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\FloatingTextInstance.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -621,6 +633,12 @@
     </Filter>
     <Filter Include="ECS\Singletons\EngineSingletonProxies">
       <UniqueIdentifier>{c3de465a-c418-465a-bce7-88d0413a5064}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ECS\Systems\UI">
+      <UniqueIdentifier>{bec61c20-07a0-442e-980d-65a898d03580}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UI">
+      <UniqueIdentifier>{9b602142-b952-4511-9ac3-f267d71a5bd7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

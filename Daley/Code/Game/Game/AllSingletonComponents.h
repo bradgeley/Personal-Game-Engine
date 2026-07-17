@@ -25,6 +25,7 @@
 #include "SCAssetManager.h"
 #include "SCAudioSystem.h"
 #include "SCEventSystem.h"
+#include "SCFloatingText.h"
 #include "SCInputSystem.h"
 #include "SCRandomNumberGenerator.h"
 #include "SCRenderer.h"

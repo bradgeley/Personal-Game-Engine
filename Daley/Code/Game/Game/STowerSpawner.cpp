@@ -2,6 +2,7 @@
 #include "STowerSpawner.h"
 #include "EntityDef.h"
 #include "SCEntityFactory.h"
+#include "SCFloatingText.h"
 #include "SCWorld.h"
 #include "SEntityFactory.h"
 #include "SFlowField.h"
@@ -30,6 +31,7 @@ void STowerSpawner::Run(SystemContext const& context) const
 	// Write Dependencies
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
     SCWorld& world = context.GetSingleton<SCWorld>();
+	SCFloatingText& scFloatingText = context.GetSingleton<SCFloatingText>();
 
     if (factory.m_towerPlacements.empty())
     {
@@ -48,6 +50,18 @@ void STowerSpawner::Run(SystemContext const& context) const
             SEntityFactory::SpawnEntity(context, spawnInfo);
         }
     }
+    else
+    {
+        FloatingTextInstance floatingText;
+		floatingText.m_pos = factory.m_towerPlacements[0].m_worldPos;
+        floatingText.m_lifetimeSeconds = 2.f;
+		floatingText.m_velocity = Vec2(0.f, 1.f);
+		floatingText.m_scale = 1.f;
+		floatingText.m_text = "Cannot block path!";
+		floatingText.m_tint = Rgba8::Red;
+		scFloatingText.m_floatingTextInstances.push_back(floatingText);
+    }
+
 	factory.m_towerPlacements.clear();
 }
 
