@@ -22,11 +22,11 @@ CMovement::CMovement(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 void CMovement::AppendDebugString(std::string& out_string, bool isSlowed) const
 {
-	float totalMovementSpeed = m_movementSpeed * m_movementSpeedMultiplier * (isSlowed ? StaticGameSettings::s_slowStatusTimeDilation : 1.f);
+	float totalMovementSpeed = m_movementSpeed * m_movementSpeedMultiplier * (isSlowed ? static_cast<float>(StaticGameSettings::s_slowStatusTimeDilation) : 1.f);
     out_string += StringUtils::StringF("Speed: %.1f (Base:%.1f)", totalMovementSpeed, m_movementSpeed);
     if (isSlowed)
     {
-		out_string += StringUtils::StringF(" (Slowed: %.1f)", StaticGameSettings::s_slowStatusTimeDilation);
+		out_string += StringUtils::StringF(" (Slowed: %.1f)", static_cast<float>(StaticGameSettings::s_slowStatusTimeDilation));
     }
 	out_string += "\n";
 }

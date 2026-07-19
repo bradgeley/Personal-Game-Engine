@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SWorld.h"
+#include "BiomeGeneratorDef.h"
+#include "MapGeneratorDef.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
 #include "TileDef.h"
@@ -14,6 +16,8 @@
 void SWorld::Startup()
 {
 	TileDef::LoadFromXML();
+	MapGeneratorDef::LoadFromXML();
+	BiomeGeneratorDef::LoadFromXML();
 
 	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "seed", DevConsoleArgType::Int);
 
@@ -28,10 +32,15 @@ void SWorld::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SWorld::Shutdown() const
 {
+	BiomeGeneratorDef::Shutdown();
+	MapGeneratorDef::Shutdown();
+	TileDef::Shutdown();
+
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
 	scWorld.Shutdown();
 
 	DevConsoleUtils::RemoveDevConsoleCommand("GenerateMap", &SWorld::GenerateMap);
+
 }
 
 
@@ -90,7 +99,6 @@ void SWorld::GenerateMap(SCWorld& world)
 		return true;
 	});
 
-
 	struct PerlinWorm
 	{
 		Vec2 m_pos;
@@ -132,11 +140,11 @@ void SWorld::GenerateMap(SCWorld& world)
 			Vec2 wormDir = worm.m_dir.GetRotated(noiseValue * 45.f);
 			Vec2 nextWormLocation = worm.m_pos + wormDir;
 
-			bool canSplit = numSplits < worldSettings.m_maxSplits;
+			bool canSplit = numSplits < worldSettings.m_maxPathSplits;
 			if (canSplit)
 			{
 				float splitNoise = GetNoiseZeroToOne1D(static_cast<int>(noiseLocation) + 1000, worldSettings.m_seed + iterationCount);
-				bool didSplit = splitNoise < worldSettings.m_splittiness;
+				bool didSplit = splitNoise < worldSettings.m_pathSplittiness;
 				if (didSplit)
 				{
 					numSplits++;

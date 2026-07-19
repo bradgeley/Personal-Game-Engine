@@ -234,6 +234,18 @@
     <ClCompile Include="Game\SFloatingText.cpp">
       <Filter>ECS\Systems\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Game\MapGeneratorDef.cpp">
+      <Filter>Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MapGeneratorComponentDef.cpp">
+      <Filter>Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\BiomeGeneratorDef.cpp">
+      <Filter>Definitions</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MapGenerator.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -554,6 +566,18 @@
     <ClInclude Include="Game\FloatingTextInstance.h">
       <Filter>Game\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Game\MapGeneratorDef.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MapGeneratorComponentDef.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\BiomeGeneratorDef.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MapGenerator.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -695,6 +719,12 @@
     </Xml>
     <Xml Include="..\..\Run\Data\Shaders\DiscShader.xml">
       <Filter>Data\Shaders</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\MapGeneratorDefs.xml">
+      <Filter>Data\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\BiomeGeneratorDefs.xml">
+      <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

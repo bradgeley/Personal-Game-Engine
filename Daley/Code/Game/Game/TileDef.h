@@ -18,6 +18,7 @@ public:
 	explicit TileDef(XmlElement const* tileDefXmlElement);
 
 	static void LoadFromXML();
+	static void Shutdown();
 	static TileDef const* GetTileDef(TileID id);
 	static TileDef const* GetTileDef(Name name);
 	static TileID GetTileDefID(Name name);

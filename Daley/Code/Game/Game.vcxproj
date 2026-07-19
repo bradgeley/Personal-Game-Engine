@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -295,10 +295,10 @@
     <ClCompile Include="Framework\Windows\Main_Windows.cpp" />
     <ClCompile Include="Game\Ability.cpp" />
     <ClCompile Include="Game\AbilityDef.cpp" />
+    <ClCompile Include="Game\BiomeGeneratorDef.cpp" />
     <ClCompile Include="Game\CAbility.cpp" />
     <ClCompile Include="Game\CAIController.cpp" />
     <ClCompile Include="Game\CAnimation.cpp" />
-    <ClCompile Include="Game\CBuff.cpp" />
     <ClCompile Include="Game\CCollision.cpp" />
     <ClCompile Include="Game\CCollisionEffect.cpp" />
     <ClCompile Include="Game\CDeath.cpp" />
@@ -318,6 +318,9 @@
     <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Game\GameCommon.cpp" />
     <ClCompile Include="Game\HitPayload.cpp" />
+    <ClCompile Include="Game\MapGenerator.cpp" />
+    <ClCompile Include="Game\MapGeneratorComponentDef.cpp" />
+    <ClCompile Include="Game\MapGeneratorDef.cpp" />
     <ClCompile Include="Game\SAbility.cpp" />
     <ClCompile Include="Game\SAIController.cpp" />
     <ClCompile Include="Game\SAnimation.cpp" />
@@ -378,11 +381,11 @@
     <ClInclude Include="Game\AllComponents.h" />
     <ClInclude Include="Game\AllSingletonComponents.h" />
     <ClInclude Include="Game\AllSystems.h" />
+    <ClInclude Include="Game\BiomeGeneratorDef.h" />
     <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
     <ClInclude Include="Game\CAttachment.h" />
-    <ClInclude Include="Game\CBuff.h" />
     <ClInclude Include="Game\CCollisionEffect.h" />
     <ClInclude Include="Game\CDeath.h" />
     <ClInclude Include="Game\CEntityDebug.h" />
@@ -396,6 +399,9 @@
     <ClInclude Include="Game\FloatingTextInstance.h" />
     <ClInclude Include="Game\HealthBarShaderCPU.h" />
     <ClInclude Include="Game\HitPayload.h" />
+    <ClInclude Include="Game\MapGenerator.h" />
+    <ClInclude Include="Game\MapGeneratorComponentDef.h" />
+    <ClInclude Include="Game\MapGeneratorDef.h" />
     <ClInclude Include="Game\OverlapInfo.h" />
     <ClInclude Include="Game\SAbility.h" />
     <ClInclude Include="Game\SAttachment.h" />
@@ -483,7 +489,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="..\..\Run\Data\Definitions\BiomeGeneratorDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\MapGeneratorDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\AbilityDefs.xml" />
     <Xml Include="..\..\Run\Data\Shaders\DefaultFontShader.xml" />

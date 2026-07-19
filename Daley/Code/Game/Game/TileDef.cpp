@@ -61,6 +61,14 @@ void TileDef::LoadFromXML()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void TileDef::Shutdown()
+{
+	s_tileDefs.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TileDef const* TileDef::GetTileDef(TileID tileID)
 {
 	size_t index = static_cast<size_t>(tileID);
