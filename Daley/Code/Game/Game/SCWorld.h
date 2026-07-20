@@ -99,9 +99,6 @@ public:
 
 public:
 
-    bool m_isWorldSeedDirty                     = true; // flag that is set when the world seed changes, so we can regenerate the world
-    CustomWorldSettings m_worldSettings;
-
     FastGrid<Tile, StaticWorldSettings::s_worldSizePowerOfTwo> m_tiles;
 
     bool m_isLightingDirty                      = true;

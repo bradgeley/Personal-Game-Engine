@@ -2,6 +2,7 @@
 #include "SWorld.h"
 #include "BiomeGeneratorDef.h"
 #include "MapGeneratorDef.h"
+#include "MapGenerator.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
 #include "TileDef.h"
@@ -19,7 +20,7 @@ void SWorld::Startup()
 	MapGeneratorDef::LoadFromXML();
 	BiomeGeneratorDef::LoadFromXML();
 
-	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "seed", DevConsoleArgType::Int);
+	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "mapGenName", DevConsoleArgType::String, "seed", DevConsoleArgType::Int);
 
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
 	GenerateMap(scWorld);
@@ -57,12 +58,20 @@ void SWorld::EndFrame() const
 //----------------------------------------------------------------------------------------------------------------------
 bool SWorld::GenerateMap(NamedProperties& params)
 {
+	std::string mapGenName = params.Get<std::string>("mapGenName", "");
 	int seed = params.Get<int>("seed", 0);
 
-	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
-	world.m_worldSettings.m_seed = seed;
+	MapGeneratorDef const* def = MapGeneratorDef::GetMapGeneratorDef(mapGenName);
+	if (def == nullptr)
+	{
+		return false;
+	}
 
-	GenerateMap(world);
+	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+
+	MapGenerator mapGenerator(*def, seed);
+
+	mapGenerator.GenerateMap(world);
 
 	SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
 	scFlowField.m_toGoalFlowField.Reset();
