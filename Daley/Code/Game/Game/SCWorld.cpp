@@ -425,7 +425,7 @@ void SCWorld::ForEachVisibleTile(const std::function<bool(IntVec2 const&, int)>&
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachPlayableTile(const std::function<bool(IntVec2 const&)>& func) const
+void SCWorld::ForEachPlayableTile(std::function<bool(IntVec2 const&)> const& func) const
 {
 	for (int y = 0; y <= StaticWorldSettings::s_playableWorldEndIndexY; ++y)
 	{
@@ -436,6 +436,27 @@ void SCWorld::ForEachPlayableTile(const std::function<bool(IntVec2 const&)>& fun
 			{
 				return;
 			}
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::ForEachPlayableNeighboringTile(IntVec2 const& tileCoords, std::function<bool(IntVec2 const&)> const& func) const
+{
+	for (IntVec2 const& neighborOffset : s_neighborOffsets)
+	{
+		IntVec2 neighborCoords = tileCoords + neighborOffset;
+		if (neighborCoords.x > StaticWorldSettings::s_playableWorldEndIndexX || neighborCoords.x < 0 ||
+			neighborCoords.y > StaticWorldSettings::s_playableWorldEndIndexY || neighborCoords.y < 0)
+		{
+			continue;
+		}
+
+		if (!func(neighborCoords))
+		{
+			return;
 		}
 	}
 }
@@ -464,7 +485,7 @@ void SCWorld::ForEachPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 cons
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SCWorld::ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const
+void SCWorld::ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, std::function<bool(IntVec2 const&)> const& func) const
 {
 	AABB2 boundingBox = GeometryUtils::GetDiscBounds(pos, radius);
 

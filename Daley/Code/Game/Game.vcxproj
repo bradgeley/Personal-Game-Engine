@@ -319,6 +319,7 @@
     <ClCompile Include="Game\GameCommon.cpp" />
     <ClCompile Include="Game\HitPayload.cpp" />
     <ClCompile Include="Game\MapGenerator.cpp" />
+    <ClCompile Include="Game\MapGeneratorComponent.cpp" />
     <ClCompile Include="Game\MapGeneratorComponentDef.cpp" />
     <ClCompile Include="Game\MapGeneratorDef.cpp" />
     <ClCompile Include="Game\SAbility.cpp" />
@@ -400,6 +401,7 @@
     <ClInclude Include="Game\HealthBarShaderCPU.h" />
     <ClInclude Include="Game\HitPayload.h" />
     <ClInclude Include="Game\MapGenerator.h" />
+    <ClInclude Include="Game\MapGeneratorComponent.h" />
     <ClInclude Include="Game\MapGeneratorComponentDef.h" />
     <ClInclude Include="Game\MapGeneratorDef.h" />
     <ClInclude Include="Game\OverlapInfo.h" />

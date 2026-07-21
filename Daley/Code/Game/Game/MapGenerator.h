@@ -4,8 +4,11 @@
 
 
 
+class MapGeneratorComponent;
 class SCWorld;
+class TileSelectorComponent;
 struct MapGeneratorDef;
+struct Name;
 
 
 
@@ -14,14 +17,21 @@ class MapGenerator
 {
 public:
 
-	MapGenerator(MapGeneratorDef const& mapGenDef, int seed, SCWorld& world);
+	MapGenerator() = default;
+	MapGenerator(MapGenerator const&) = delete;
+	MapGenerator& operator=(MapGenerator const&) = delete;
+	~MapGenerator();
 
-	bool GenerateMap() const;
+	void Initialize(MapGeneratorDef const& mapGenDef, int seed);
+	int GetSeed() const { return m_seed; }
+	TileSelectorComponent* GetTileSelectorComponentByName(Name const& name) const;
+
+	bool GenerateMap(SCWorld& world);
 
 private:
 
 	MapGeneratorDef const* m_def = nullptr;
 	int m_seed = 0;
-	SCWorld* m_world = nullptr;
+	std::vector<MapGeneratorComponent*> m_components;
 	//std::vector<MapGeneratorModifier> m_modifiers;
 };

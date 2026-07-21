@@ -113,29 +113,3 @@ namespace StaticWorldSettings
 }
 
 
-
-//----------------------------------------------------------------------------------------------------------------------
-struct CustomWorldSettings
-{
-    //----------------------------------------------------------------------------------------------------------------------
-    // Collision Settings
-
-
-    //----------------------------------------------------------------------------------------------------------------------
-    // Generation Settings
-    int     m_seed                          = 0;
-
-    Name    m_groundTileName = "Grass";                         // The name of the tile that is the ground, as defined in TileDefs.xml
-    Name    m_goalTileName = "IslandWater";                     // The name of the tile that is the goal, as defined in TileDefs.xml
-    Name    m_pathTileName = "ForestGrass";                     // The name of the tile that is the path, as defined in TileDefs.xml
-
-    int     m_goalTileDistance              = 5;                // How far away is the goal from the left side of the screen, in tiles
-	int     m_goalWidth                     = 4;                // How large is the goal? In world units
-
-    Name    m_biomeName                     = "Forest";
-
-    float   m_pathSplittiness               = 0.0075f;
-    int     m_maxPathSplits                 = 4;
-};
-
-

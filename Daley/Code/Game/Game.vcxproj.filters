@@ -178,7 +178,6 @@
     <ClCompile Include="Game\SAttachment.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="Game\CTime.cpp" />
     <ClCompile Include="Game\SCollisionEffect.cpp">
       <Filter>ECS\Systems\Collision</Filter>
     </ClCompile>
@@ -197,7 +196,6 @@
     <ClCompile Include="Game\SRenderStatusIcons.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SCWaves.cpp" />
     <ClCompile Include="Game\SWorldTime.cpp">
       <Filter>ECS\Systems\World</Filter>
     </ClCompile>
@@ -225,9 +223,6 @@
     <ClCompile Include="Game\SRenderDiscs.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Game\CBuff.cpp">
-      <Filter>ECS\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Game\STowerSpawner.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
@@ -244,6 +239,15 @@
       <Filter>Definitions</Filter>
     </ClCompile>
     <ClCompile Include="Game\MapGenerator.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\CTime.cpp">
+      <Filter>ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCWaves.cpp">
+      <Filter>ECS\Singletons</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MapGeneratorComponent.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>
@@ -551,9 +555,6 @@
     <ClInclude Include="Game\SRenderDiscs.h">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Game\CBuff.h">
-      <Filter>ECS\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Game\STowerSpawner.h">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
@@ -576,6 +577,9 @@
       <Filter>Definitions</Filter>
     </ClInclude>
     <ClInclude Include="Game\MapGenerator.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MapGeneratorComponent.h">
       <Filter>Game\World</Filter>
     </ClInclude>
   </ItemGroup>

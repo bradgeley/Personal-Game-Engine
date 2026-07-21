@@ -6,8 +6,8 @@
 
   <MapGeneratorDef name="forest">
     <BiomeGenerator biome="forest"></BiomeGenerator>
-    <RectGoal alignment="0.5,0.5" dims="4,4"></RectGoal >
-    <PerlinWormPath startDir="1,0" thicknessRange="2,5" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4"></PerlinWormPath>
+    <RectGoal tile="grass" alignment="0.5,0.5" dims="4,4"></RectGoal >
+    <PerlinWormPath tile="grass" startDir="1,0" thicknessRange="2,5" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4"></PerlinWormPath>
   </MapGeneratorDef>
   
 </MapGeneratorDefs>

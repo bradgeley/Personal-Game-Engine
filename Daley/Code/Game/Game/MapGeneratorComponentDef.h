@@ -30,6 +30,8 @@ struct MapGeneratorComponentDef
 	MapGeneratorComponentDef(XmlElement const* xmlElement);
 	virtual ~MapGeneratorComponentDef() = default;
 
+	virtual class MapGeneratorComponent* MakeComponentInstance() const = 0;
+
 	// Factory function to turn a generic componnet xml Element into an allocated def
 	static MapGeneratorComponentDef const* MakeFromXmlElement(XmlElement const* xmlElement);
 };
@@ -37,9 +39,9 @@ struct MapGeneratorComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct TileSelectorDef : public MapGeneratorComponentDef
+struct TileSelectorComponentDef : public MapGeneratorComponentDef
 {
-	TileSelectorDef(XmlElement const* xmlElement);
+	TileSelectorComponentDef(XmlElement const* xmlElement);
 
 	Name m_name = "Unnamed TileSelectorDef";
 };
@@ -47,7 +49,7 @@ struct TileSelectorDef : public MapGeneratorComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct NoiseSelectorDef : public TileSelectorDef
+struct NoiseSelectorDef : public TileSelectorComponentDef
 {
 	NoiseSelectorDef(XmlElement const* xmlElement);
 	~NoiseSelectorDef() = default;
@@ -60,10 +62,12 @@ struct NoiseSelectorDef : public TileSelectorDef
 //----------------------------------------------------------------------------------------------------------------------
 // Places tiles in a range of noise values
 //
-struct NoiseRangeSelectorDef : public NoiseSelectorDef
+struct NoiseRangeSelectorComponentDef : public NoiseSelectorDef
 {
-	NoiseRangeSelectorDef(XmlElement const* xmlElement);
-	~NoiseRangeSelectorDef() = default;
+	NoiseRangeSelectorComponentDef(XmlElement const* xmlElement);
+	~NoiseRangeSelectorComponentDef() = default;
+
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
 
 	Vec2 m_noiseRange = Vec2(0.f, 1.f);
 };
@@ -73,10 +77,12 @@ struct NoiseRangeSelectorDef : public NoiseSelectorDef
 //----------------------------------------------------------------------------------------------------------------------
 // Places tiles at local maxima of noise values
 //
-struct NoisePeakSelectorDef : public NoiseSelectorDef
+struct NoisePeakSelectorComponentDef : public NoiseSelectorDef
 {
-	NoisePeakSelectorDef(XmlElement const* xmlElement);
-	~NoisePeakSelectorDef() = default;
+	NoisePeakSelectorComponentDef(XmlElement const* xmlElement);
+	~NoisePeakSelectorComponentDef() = default;
+
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
 };
 
 
@@ -87,7 +93,9 @@ struct BiomeGeneratorComponentDef : public MapGeneratorComponentDef
 	BiomeGeneratorComponentDef(XmlElement const* xmlElement);
 	virtual ~BiomeGeneratorComponentDef() = default;
 
-	Name m_biomeName = "forest"; // Corresponds to a BiomeDef used to generate tiles for this map
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
+
+	Name m_biomeName = "forest";
 };
 
 
@@ -100,6 +108,8 @@ struct DiscreteGeneratorComponentDef : public MapGeneratorComponentDef
 	DiscreteGeneratorComponentDef(XmlElement const* xmlElement);
 	virtual ~DiscreteGeneratorComponentDef() = default;
 
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
+
 	Name m_tileSelectorName;
 };
 
@@ -110,6 +120,8 @@ struct TileGeneratorComponentDef : public DiscreteGeneratorComponentDef
 {
 	TileGeneratorComponentDef(XmlElement const* xmlElement);
 	virtual ~TileGeneratorComponentDef() = default;
+
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
 
 	Name m_tileName = "grass";
 };
@@ -122,26 +134,33 @@ struct EntityGeneratorComponentDef : public DiscreteGeneratorComponentDef
 	EntityGeneratorComponentDef(XmlElement const* xmlElement);
 	virtual ~EntityGeneratorComponentDef() = default;
 
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
+
 	Name m_entityName = "grass";
 };
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct GoalGeneratorDef : public MapGeneratorComponentDef
+struct GoalGeneratorComponentDef : public MapGeneratorComponentDef
 {
-	GoalGeneratorDef(XmlElement const* xmlElement);
-	virtual ~GoalGeneratorDef() = default;
+	GoalGeneratorComponentDef(XmlElement const* xmlElement);
+	virtual ~GoalGeneratorComponentDef() = default;
 
-	Vec2 m_mapAlignment = Vec2(0.5f, 0.5f); // 0 = left/bottom, 1 = right/top
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
+
+	Name m_tileName;
+	Vec2 m_mapAlignment = Vec2(0.5f, 0.5f);
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct DiscGoalGeneratorDef : public GoalGeneratorDef
+struct DiscGoalGeneratorComponentDef : public GoalGeneratorComponentDef
 {
-	DiscGoalGeneratorDef(XmlElement const* xmlElement);
-	virtual ~DiscGoalGeneratorDef() = default;
+	DiscGoalGeneratorComponentDef(XmlElement const* xmlElement);
+	virtual ~DiscGoalGeneratorComponentDef() = default;
+
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
 
 	float m_radius = 4.f;
 };
@@ -149,10 +168,12 @@ struct DiscGoalGeneratorDef : public GoalGeneratorDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct RectGoalGeneratorDef : public GoalGeneratorDef
+struct RectGoalGeneratorComponentDef : public GoalGeneratorComponentDef
 {
-	RectGoalGeneratorDef(XmlElement const* xmlElement);
-	virtual ~RectGoalGeneratorDef() = default;
+	RectGoalGeneratorComponentDef(XmlElement const* xmlElement);
+	virtual ~RectGoalGeneratorComponentDef() = default;
+
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
 
 	IntVec2 m_dims = IntVec2(4, 4);
 };
@@ -160,11 +181,14 @@ struct RectGoalGeneratorDef : public GoalGeneratorDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct PerlinWormPathGeneratorDef : public MapGeneratorComponentDef
+struct PerlinWormPathGeneratorComponentDef : public MapGeneratorComponentDef
 {
-	PerlinWormPathGeneratorDef(XmlElement const* xmlElement);
-	virtual ~PerlinWormPathGeneratorDef() = default;
+	PerlinWormPathGeneratorComponentDef(XmlElement const* xmlElement);
+	virtual ~PerlinWormPathGeneratorComponentDef() = default;
 
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
+
+	Name	m_tileName;
 	Vec2	m_startDir = Vec2(1.f, 0.f);
 	Vec2	m_thicknessRange = Vec2(2.f, 5.f);
 	float	m_thicknessVariance = 0.5f;

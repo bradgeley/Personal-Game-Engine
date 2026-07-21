@@ -59,8 +59,7 @@ void BiomeGeneratorDef::LoadFromXML()
 
 		while (biomeGeneratorDefElement)
 		{
-			BiomeGeneratorDef newBiomeGeneratorDef(biomeGeneratorDefElement);
-			s_biomeGeneratorDefs.push_back(newBiomeGeneratorDef);
+			s_biomeGeneratorDefs.emplace_back(biomeGeneratorDefElement);
 			biomeGeneratorDefElement = biomeGeneratorDefElement->NextSiblingElement();
 		}
 	}

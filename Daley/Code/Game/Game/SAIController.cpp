@@ -57,7 +57,7 @@ void SAIController::Run(SystemContext const& context) const
             constexpr float maxDegreesOffset = 25.f;
             constexpr float wigglinessScale = 15.f;
             constexpr unsigned int wigglinessOctaves = 3;
-            angleOffset = maxDegreesOffset * GetPerlinNoise1D(Time::GetCurrentTimeSecondsF(), wigglinessScale, wigglinessOctaves, 0.5f, 2.f, true, it.m_currentIndex);
+            angleOffset = maxDegreesOffset * Noise::GetPerlinNoise1D(Time::GetCurrentTimeSecondsF(), wigglinessScale, wigglinessOctaves, 0.5f, 2.f, true, it.m_currentIndex);
 
             flowDirection.Rotate(angleOffset);
         }

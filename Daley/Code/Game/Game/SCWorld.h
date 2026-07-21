@@ -66,15 +66,16 @@ public:
     void ForEachVisibleTile(const std::function<bool(IntVec2 const&, int)>& func) const;
 
     void ForEachPlayableTile(const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, TagQuery tileTagQuery, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachPathTileOverlappingCircle(Vec2 const& pos, float radius, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachPathTileInRange(Vec2 const& pos, float minRadius, float maxRadius, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::function<bool(IntVec2 const&)>& func) const;
-	void ForEachPlayableTileInRegion(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachPlayableEdgeTile(const std::function<bool(IntVec2 const&)>& func) const;
-    void ForEachCachedEdgePathTile(const std::function<bool(IntVec2 const&)>& func) const;
+	void ForEachPlayableNeighboringTile(IntVec2 const& tileCoords, std::function<bool(IntVec2 const&)> const& func) const;
+    void ForEachPlayableTileOverlappingCapsule(Vec2 const& start, Vec2 const& end, float radius, std::function<bool(IntVec2 const&)> const& func) const;
+    void ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, std::function<bool(IntVec2 const&)> const& func) const;
+    void ForEachPlayableTileOverlappingCircle(Vec2 const& pos, float radius, TagQuery tileTagQuery, std::function<bool(IntVec2 const&)> const& func) const;
+    void ForEachPathTileOverlappingCircle(Vec2 const& pos, float radius, std::function<bool(IntVec2 const&)> const& func) const;
+    void ForEachPathTileInRange(Vec2 const& pos, float minRadius, float maxRadius, std::function<bool(IntVec2 const&)> const& func) const;
+    void ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, std::function<bool(IntVec2 const&)> const& func) const;
+	void ForEachPlayableTileInRegion(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, std::function<bool(IntVec2 const&)> const& func) const;
+    void ForEachPlayableEdgeTile(std::function<bool(IntVec2 const&)> const& func) const;
+    void ForEachCachedEdgePathTile(std::function<bool(IntVec2 const&)> const& func) const;
 
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
     int GetTileIndexAtWorldPos(Vec2 const& worldPos) const;

@@ -58,8 +58,7 @@ void MapGeneratorDef::LoadFromXML()
 
 		while (mapGeneratorDefElement)
 		{
-			MapGeneratorDef newMapGeneratorDef(mapGeneratorDefElement);
-			s_mapGeneratorDefs.push_back(newMapGeneratorDef);
+			s_mapGeneratorDefs.emplace_back(mapGeneratorDefElement);
 			mapGeneratorDefElement = mapGeneratorDefElement->NextSiblingElement();
 		}
 	}

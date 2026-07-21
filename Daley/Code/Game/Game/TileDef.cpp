@@ -51,8 +51,7 @@ void TileDef::LoadFromXML()
 
 		while (tileDefElement)
 		{
-			TileDef newTileDef(tileDefElement);
-			s_tileDefs.push_back(newTileDef);
+			s_tileDefs.emplace_back(tileDefElement);
 			tileDefElement = tileDefElement->NextSiblingElement();
 		}
 	}
