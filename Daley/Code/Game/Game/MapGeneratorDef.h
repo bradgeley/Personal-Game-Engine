@@ -15,8 +15,16 @@ struct MapGeneratorDef
 {
 public:
 
-	explicit MapGeneratorDef(XmlElement const* mapGeneratorDefXmlElement);
-	~MapGeneratorDef();
+    MapGeneratorDef(XmlElement const* mapGeneratorDefXmlElement);
+    ~MapGeneratorDef();
+
+    // Delete copy operations
+    MapGeneratorDef(MapGeneratorDef const&) = delete;
+    MapGeneratorDef& operator=(MapGeneratorDef const&) = delete;
+
+    // Implement move operations
+    MapGeneratorDef(MapGeneratorDef&& other) noexcept;
+    MapGeneratorDef& operator=(MapGeneratorDef&& other) noexcept;
 
 	static void LoadFromXML();
 	static void Shutdown();
@@ -29,6 +37,7 @@ private:
 public:
 
 	Name m_name = "Unnamed MapGeneratorDef";
+	Name m_biome = "Unnamed Biome";
 	 
 	std::vector<MapGeneratorComponentDef*> m_mapGeneratorComponentDefs;
 }; 

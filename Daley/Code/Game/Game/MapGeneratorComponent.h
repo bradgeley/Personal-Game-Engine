@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "MapGeneratorComponentDef.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Core/Name.h"
@@ -10,7 +11,6 @@
 
 class MapGenerator;
 class SCWorld;
-struct MapGeneratorComponentDef;
 
 
 
@@ -19,12 +19,9 @@ class MapGeneratorComponent
 {
 public:
 
-	MapGeneratorComponent(MapGeneratorComponentDef const& def);
 	virtual ~MapGeneratorComponent() = default;
 
 	virtual bool Generate(MapGenerator& generator, SCWorld& world) = 0;
-
-	MapGeneratorComponentDef const* m_def = nullptr;
 };
 
 
@@ -34,141 +31,114 @@ class TileSelectorComponent : public MapGeneratorComponent
 {
 public:
 
-	TileSelectorComponent(MapGeneratorComponentDef const& def);
-
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
 	virtual bool SelectTiles(MapGenerator& generator, SCWorld& world) = 0;
+	virtual bool Generate(MapGenerator&, SCWorld&) override final { return true; }
 
 public:
 
+	Name m_name = "Unnamed TileSelectorDef";
 	std::vector<IntVec2> m_selectedTiles;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class NoiseSelectorComponent : public TileSelectorComponent
+class NoiseRangeSelectorComponent : public TileSelectorComponent
 {
 public:
 
-	NoiseSelectorComponent(MapGeneratorComponentDef const& def);
+	NoiseRangeSelectorComponent(NoiseRangeSelectorComponentDef const& def);
 
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
-	virtual bool SelectTiles(MapGenerator& generator, SCWorld& world) override = 0;
+	virtual bool SelectTiles(MapGenerator& generator, SCWorld& world) override final;
+
+public:
+
+	Vec2 m_noiseRange = Vec2::ZeroVector;
+	NoiseParams m_params;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class NoiseRangeSelectorComponent : public NoiseSelectorComponent
+class NoisePeakSelectorComponent : public TileSelectorComponent
 {
 public:
 
-	NoiseRangeSelectorComponent(MapGeneratorComponentDef const& def);
+	NoisePeakSelectorComponent(NoisePeakSelectorComponentDef const& def);
 
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
-	virtual bool SelectTiles(MapGenerator& generator, SCWorld& world) override;
+	virtual bool SelectTiles(MapGenerator& generator, SCWorld& world) override final;
+
+public:
+
+	NoiseParams m_params;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class NoisePeakSelectorComponent : public NoiseSelectorComponent
+class TileGeneratorComponent : public MapGeneratorComponent
 {
 public:
 
-	NoisePeakSelectorComponent(MapGeneratorComponentDef const& def);
+	TileGeneratorComponent(TileGeneratorComponentDef const& def);
 
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
-	virtual bool SelectTiles(MapGenerator& generator, SCWorld& world) override;
+	virtual bool Generate(MapGenerator& generator, SCWorld& world) override final;
+
+public:
+
+	Name m_tileSelectorName;
+	Name m_tileName = "grass";
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class BiomeGeneratorComponent : public MapGeneratorComponent
+class EntityGeneratorComponent : public MapGeneratorComponent
 {
 public:
 
-	BiomeGeneratorComponent(MapGeneratorComponentDef const& def);
-	~BiomeGeneratorComponent();
+	EntityGeneratorComponent(EntityGeneratorComponentDef const& def);
 
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
+	virtual bool Generate(MapGenerator& generator, SCWorld& world) override final;
 
 public:
 
-	std::vector<MapGeneratorComponent*> m_biomeComponents;
+	Name m_tileSelectorName;
+	Name m_entityName = "wall1x1";
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class DiscreteGeneratorComponent : public MapGeneratorComponent
+class DiscGoalGeneratorComponent : public MapGeneratorComponent
 {
 public:
 
-	DiscreteGeneratorComponent(MapGeneratorComponentDef const& def);
+	DiscGoalGeneratorComponent(DiscGoalGeneratorComponentDef const& def);
 
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
+	virtual bool Generate(MapGenerator& generator, SCWorld& world) override final;
+
+public:
+
+	Vec2 m_alignment = Vec2(0.5f, 0.5f);
+	float m_radius = 4.f;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class TileGeneratorComponent : public DiscreteGeneratorComponent
+class RectGoalGeneratorComponent : public MapGeneratorComponent
 {
 public:
 
-	TileGeneratorComponent(MapGeneratorComponentDef const& def);
+	RectGoalGeneratorComponent(RectGoalGeneratorComponentDef const& def);
 
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
-};
+	virtual bool Generate(MapGenerator& generator, SCWorld& world) override final;
 
-
-
-//----------------------------------------------------------------------------------------------------------------------
-class EntityGeneratorComponent : public DiscreteGeneratorComponent
-{
 public:
 
-	EntityGeneratorComponent(MapGeneratorComponentDef const& def);
-
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
-};
-
-
-//----------------------------------------------------------------------------------------------------------------------
-class GoalGeneratorComponent : public MapGeneratorComponent
-{
-public:
-
-	GoalGeneratorComponent(MapGeneratorComponentDef const& def);
-
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-class DiscGoalGeneratorComponent : public GoalGeneratorComponent
-{
-public:
-
-	DiscGoalGeneratorComponent(MapGeneratorComponentDef const& def);
-
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-class RectGoalGeneratorComponent : public GoalGeneratorComponent
-{
-public:
-
-	RectGoalGeneratorComponent(MapGeneratorComponentDef const& def);
-
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
+	Vec2 m_alignment = Vec2(0.5f, 0.5f);
+	IntVec2 m_dims = IntVec2(4, 4);
 };
 
 
@@ -178,7 +148,17 @@ class PerlinWormPathGeneratorComponent : public MapGeneratorComponent
 {
 public:
 
-	PerlinWormPathGeneratorComponent(MapGeneratorComponentDef const& def);
+	PerlinWormPathGeneratorComponent(PerlinWormPathGeneratorComponentDef const& def);
 
-	virtual bool Generate(MapGenerator& generator, SCWorld& world) override;
+	virtual bool Generate(MapGenerator& generator, SCWorld& world) override final;
+
+public:
+
+	Vec2	m_startDir			= Vec2(1.f, 0.f);
+	Vec2	m_thicknessRange	= Vec2(2.f, 5.f);
+	float	m_thicknessVariance = 0.5f;
+	float	m_splitChance		= 0.0075f;
+	float	m_splitAngleDeg		= 35.f;
+	int		m_maxSplits			= 4;
+	int		m_seedOffset		= 0;
 };

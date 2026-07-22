@@ -295,7 +295,7 @@
     <ClCompile Include="Framework\Windows\Main_Windows.cpp" />
     <ClCompile Include="Game\Ability.cpp" />
     <ClCompile Include="Game\AbilityDef.cpp" />
-    <ClCompile Include="Game\BiomeGeneratorDef.cpp" />
+    <ClCompile Include="Game\BiomeDef.cpp" />
     <ClCompile Include="Game\CAbility.cpp" />
     <ClCompile Include="Game\CAIController.cpp" />
     <ClCompile Include="Game\CAnimation.cpp" />
@@ -382,7 +382,7 @@
     <ClInclude Include="Game\AllComponents.h" />
     <ClInclude Include="Game\AllSingletonComponents.h" />
     <ClInclude Include="Game\AllSystems.h" />
-    <ClInclude Include="Game\BiomeGeneratorDef.h" />
+    <ClInclude Include="Game\BiomeDef.h" />
     <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
@@ -491,7 +491,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\..\Run\Data\Definitions\BiomeGeneratorDefs.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\BiomeDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\MapGeneratorDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />

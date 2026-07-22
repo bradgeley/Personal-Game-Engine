@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "MapGeneratorDef.h"
+#include "BiomeDef.h"
 #include "MapGeneratorComponentDef.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
@@ -16,6 +17,10 @@ std::vector<MapGeneratorDef> MapGeneratorDef::s_mapGeneratorDefs;
 MapGeneratorDef::MapGeneratorDef(XmlElement const* mapGeneratorDefXmlElement)
 {
 	m_name = XmlUtils::ParseXmlAttribute(*mapGeneratorDefXmlElement, "name", m_name);
+	m_biome = XmlUtils::ParseXmlAttribute(*mapGeneratorDefXmlElement, "biome", m_biome);
+
+	BiomeDef const* biomeDef = BiomeDef::GetBiomeDef(m_biome);
+	ASSERT_OR_DIE(biomeDef != nullptr, StringUtils::StringF("MapGeneratorDef '%s' has invalid biome '%s'", m_name.ToCStr(), m_biome.ToCStr()));
 
 	XmlElement const* mapGeneratorComponentDefElement = mapGeneratorDefXmlElement->FirstChildElement();
 	while (mapGeneratorComponentDefElement)
@@ -23,7 +28,7 @@ MapGeneratorDef::MapGeneratorDef(XmlElement const* mapGeneratorDefXmlElement)
 		MapGeneratorComponentDef const* mapGeneratorComponentDef = MapGeneratorComponentDef::MakeFromXmlElement(mapGeneratorComponentDefElement);
 		if (mapGeneratorComponentDef)
 		{
-			m_mapGeneratorComponentDefs.push_back(const_cast<MapGeneratorComponentDef*>(mapGeneratorComponentDef));
+			m_mapGeneratorComponentDefs.emplace_back(const_cast<MapGeneratorComponentDef*>(mapGeneratorComponentDef));
 		}
 		else
 		{
@@ -43,6 +48,30 @@ MapGeneratorDef::~MapGeneratorDef()
 		delete m_mapGeneratorComponentDefs[i];
 	}
 	m_mapGeneratorComponentDefs.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+MapGeneratorDef::MapGeneratorDef(MapGeneratorDef&& other) noexcept :
+	m_name(other.m_name),
+	m_mapGeneratorComponentDefs(std::move(other.m_mapGeneratorComponentDefs))
+{
+	other.m_mapGeneratorComponentDefs.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+MapGeneratorDef& MapGeneratorDef::operator=(MapGeneratorDef&& other) noexcept
+{
+	if (this != &other)
+	{
+		m_name = other.m_name;
+		m_mapGeneratorComponentDefs = std::move(other.m_mapGeneratorComponentDefs);
+		other.m_mapGeneratorComponentDefs.clear();
+	}
+	return *this;
 }
 
 

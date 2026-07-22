@@ -1,6 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "MapGeneratorComponent.h"
-#include "BiomeGeneratorDef.h"
+#include "BiomeDef.h"
 #include "MapGenerator.h"
 #include "MapGeneratorComponentDef.h"
 #include "SCWorld.h"
@@ -14,65 +14,9 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-MapGeneratorComponent::MapGeneratorComponent(MapGeneratorComponentDef const& def) : m_def(&def)
+NoiseRangeSelectorComponent::NoiseRangeSelectorComponent(NoiseRangeSelectorComponentDef const& def) : m_noiseRange(def.m_noiseRange), m_params(def.m_noiseParams)
 {
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-TileSelectorComponent::TileSelectorComponent(MapGeneratorComponentDef const& def) : MapGeneratorComponent(def)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool TileSelectorComponent::Generate(MapGenerator& generator, SCWorld& world)
-{
-	return true;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-NoiseSelectorComponent::NoiseSelectorComponent(MapGeneratorComponentDef const& def) : TileSelectorComponent(def)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool NoiseSelectorComponent::Generate(MapGenerator& generator, SCWorld& world)
-{
-	if (!TileSelectorComponent::Generate(generator, world))
-	{
-		return false;
-	}
-	return true;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-NoiseRangeSelectorComponent::NoiseRangeSelectorComponent(MapGeneratorComponentDef const& def) : NoiseSelectorComponent(def)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool NoiseRangeSelectorComponent::Generate(MapGenerator& generator, SCWorld& world)
-{
-	if (!NoiseSelectorComponent::Generate(generator, world))
-	{
-		return false;
-	}
-	return true;
+	m_name = def.m_name;
 }
 
 
@@ -80,22 +24,14 @@ bool NoiseRangeSelectorComponent::Generate(MapGenerator& generator, SCWorld& wor
 //----------------------------------------------------------------------------------------------------------------------
 bool NoiseRangeSelectorComponent::SelectTiles(MapGenerator& generator, SCWorld& world)
 {
-	NoiseRangeSelectorComponentDef const* def = dynamic_cast<NoiseRangeSelectorComponentDef const*>(m_def);
-	if (!def)
-	{
-		ERROR_AND_DIE("MapGeneratorComponentDef is not a NoiseRangeSelectorComponentDef");
-	}
-
-	NoiseParams const& params = def->m_noiseParams;
-	Vec2 const& noiseRange = def->m_noiseRange;
-	int seed = generator.GetSeed() + params.m_seedOffset;
+	int seed = generator.GetSeed() + m_params.m_seedOffset;
 
 	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
 	{
-		float noiseValue = Noise::GetPerlinNoise2D((float) tileCoords.x, (float) tileCoords.y, params.m_scale, params.m_numOctaves, params.m_octavePersistence, params.m_octaveScale, params.m_renormalize, seed);
-		float rangeMappedNoise = MathUtils::RangeMapClamped(noiseValue, -1.f, 1.f, params.m_outputRange.x, params.m_outputRange.y);
+		float noiseValue = Noise::GetPerlinNoise2D((float) tileCoords.x, (float) tileCoords.y, m_params.m_scale, m_params.m_numOctaves, m_params.m_octavePersistence, m_params.m_octaveScale, m_params.m_renormalize, seed);
+		float rangeMappedNoise = MathUtils::RangeMapClamped(noiseValue, -1.f, 1.f, m_params.m_outputRange.x, m_params.m_outputRange.y);
 
-		if (rangeMappedNoise >= noiseRange.x && rangeMappedNoise <= noiseRange.y)
+		if (rangeMappedNoise >= m_noiseRange.x && rangeMappedNoise <= m_noiseRange.y)
 		{
 			m_selectedTiles.push_back(tileCoords);
 		}
@@ -108,21 +44,9 @@ bool NoiseRangeSelectorComponent::SelectTiles(MapGenerator& generator, SCWorld& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-NoisePeakSelectorComponent::NoisePeakSelectorComponent(MapGeneratorComponentDef const& def) : NoiseSelectorComponent(def)
+NoisePeakSelectorComponent::NoisePeakSelectorComponent(NoisePeakSelectorComponentDef const& def) : m_params(def.m_noiseParams)
 {
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool NoisePeakSelectorComponent::Generate(MapGenerator& generator, SCWorld& world)
-{
-	if (!NoiseSelectorComponent::Generate(generator, world))
-	{
-		return false;
-	}
-	return true;
+	m_name = def.m_name;
 }
 
 
@@ -130,25 +54,18 @@ bool NoisePeakSelectorComponent::Generate(MapGenerator& generator, SCWorld& worl
 //----------------------------------------------------------------------------------------------------------------------
 bool NoisePeakSelectorComponent::SelectTiles(MapGenerator& generator, SCWorld& world)
 {
-	NoisePeakSelectorComponentDef const* def = dynamic_cast<NoisePeakSelectorComponentDef const*>(m_def);
-	if (!def)
-	{
-		ERROR_AND_DIE("MapGeneratorComponentDef is not a NoisePeakSelectorComponentDef");
-	}
-
-	NoiseParams const& params = def->m_noiseParams;
-	int seed = generator.GetSeed() + params.m_seedOffset;
+	int seed = generator.GetSeed() + m_params.m_seedOffset;
 
 	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
 	{
-		float noiseValue = Noise::GetPerlinNoise2D((float) tileCoords.x, (float) tileCoords.y, params.m_scale, params.m_numOctaves, params.m_octavePersistence, params.m_octaveScale, params.m_renormalize, seed);
-		float rangeMappedNoise = MathUtils::RangeMapClamped(noiseValue, -1.f, 1.f, params.m_outputRange.x, params.m_outputRange.y);
+		float noiseValue = Noise::GetPerlinNoise2D((float) tileCoords.x, (float) tileCoords.y, m_params.m_scale, m_params.m_numOctaves, m_params.m_octavePersistence, m_params.m_octaveScale, m_params.m_renormalize, seed);
+		float rangeMappedNoise = MathUtils::RangeMapClamped(noiseValue, -1.f, 1.f, m_params.m_outputRange.x, m_params.m_outputRange.y);
 
 		bool isNoiseValuePeak = true;
 		world.ForEachPlayableNeighboringTile(tileCoords, [&](IntVec2 const& neighborCoords)
 		{
-			float neighborNoiseValue = Noise::GetPerlinNoise2D((float) neighborCoords.x, (float) neighborCoords.y, params.m_scale, params.m_numOctaves, params.m_octavePersistence, params.m_octaveScale, params.m_renormalize, seed);
-			float rangeMappedNeighborNoise = MathUtils::RangeMapClamped(neighborNoiseValue, -1.f, 1.f, params.m_outputRange.x, params.m_outputRange.y);
+			float neighborNoiseValue = Noise::GetPerlinNoise2D((float) neighborCoords.x, (float) neighborCoords.y, m_params.m_scale, m_params.m_numOctaves, m_params.m_octavePersistence, m_params.m_octaveScale, m_params.m_renormalize, seed);
+			float rangeMappedNeighborNoise = MathUtils::RangeMapClamped(neighborNoiseValue, -1.f, 1.f, m_params.m_outputRange.x, m_params.m_outputRange.y);
 			if (rangeMappedNoise <= rangeMappedNeighborNoise)
 			{
 				// One neighbor is larger, so this is not a peak
@@ -171,126 +88,29 @@ bool NoisePeakSelectorComponent::SelectTiles(MapGenerator& generator, SCWorld& w
 
 
 //----------------------------------------------------------------------------------------------------------------------
-BiomeGeneratorComponent::BiomeGeneratorComponent(MapGeneratorComponentDef const& def) : MapGeneratorComponent(def)
-{
-	BiomeGeneratorComponentDef const* biomeDef = dynamic_cast<BiomeGeneratorComponentDef const*>(m_def);
-	if (!biomeDef)
-	{
-		ERROR_AND_DIE("MapGeneratorComponentDef is not a BiomeGeneratorComponentDef");
-	}
-
-	BiomeGeneratorDef const* biomeGenDef = BiomeGeneratorDef::GetBiomeGeneratorDef(biomeDef->m_biomeName);
-	if (!biomeGenDef)
-	{
-		ERROR_AND_DIE(StringUtils::StringF("BiomeGeneratorDef not found for biome: %s", biomeDef->m_biomeName.ToCStr()));
-	}
-
-	for (MapGeneratorComponentDef const* componentDef : biomeGenDef->m_generatorComponentDefs)
-	{
-		MapGeneratorComponent* component = componentDef->MakeComponentInstance();
-		if (!component)
-		{
-			ERROR_AND_DIE(StringUtils::StringF("Failed to create MapGeneratorComponent for biome: %s", biomeDef->m_biomeName.ToCStr()));
-		}
-		m_biomeComponents.push_back(component);
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-BiomeGeneratorComponent::~BiomeGeneratorComponent()
-{
-	for (MapGeneratorComponent* component : m_biomeComponents)
-	{
-		delete component;
-	}
-	m_biomeComponents.clear();
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool BiomeGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
-{
-	BiomeGeneratorComponentDef const* biomeDef = dynamic_cast<BiomeGeneratorComponentDef const*>(m_def);
-	if (!biomeDef)
-	{
-		ERROR_AND_DIE("MapGeneratorComponentDef is not a BiomeGeneratorComponentDef");
-	}
-
-	BiomeGeneratorDef const* biomeGenDef = BiomeGeneratorDef::GetBiomeGeneratorDef(biomeDef->m_biomeName);
-	if (!biomeGenDef)
-	{
-		ERROR_AND_DIE(StringUtils::StringF("BiomeGeneratorDef not found for biome: %s", biomeDef->m_biomeName.ToCStr()));
-	}
-
-	Tile backgroundTile = TileDef::GetDefaultTile(biomeGenDef->m_baseTile);
-	world.m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), backgroundTile);
-
-	for (MapGeneratorComponent* component : m_biomeComponents)
-	{
-		if (!component->Generate(generator, world))
-		{
-			return false; // If any component fails, the generation fails
-		}
-	}
-
-	return true;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-DiscreteGeneratorComponent::DiscreteGeneratorComponent(MapGeneratorComponentDef const& def) : MapGeneratorComponent(def)
+TileGeneratorComponent::TileGeneratorComponent(TileGeneratorComponentDef const& def) : m_tileSelectorName(def.m_tileSelectorName), m_tileName(def.m_tileName)
 {
 
 }
 
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool DiscreteGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
-{
-	return true;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-TileGeneratorComponent::TileGeneratorComponent(MapGeneratorComponentDef const& def) : DiscreteGeneratorComponent(def)
-{
-
-}
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 bool TileGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 {
-	if (!DiscreteGeneratorComponent::Generate(generator, world))
-	{
-		return false;
-	}
-
-	TileGeneratorComponentDef const* def = dynamic_cast<TileGeneratorComponentDef const*>(m_def);
-	if (!def)
-	{
-		ERROR_AND_DIE("MapGeneratorComponentDef is not a TileGeneratorComponentDef");
-	}
-
-	TileDef const* tileDef = TileDef::GetTileDef(def->m_tileName);
+	TileDef const* tileDef = TileDef::GetTileDef(m_tileName);
 	if (!tileDef)
 	{
-		ERROR_AND_DIE(StringUtils::StringF("TileDef not found for tile: %s", def->m_tileName.ToCStr()));
+		ERROR_AND_DIE(StringUtils::StringF("TileDef not found for tile: %s", m_tileName.ToCStr()));
 	}
 
-	Tile defaultTile = tileDef->GetDefaultTile(def->m_tileName);
+	Tile defaultTile = tileDef->GetDefaultTile(m_tileName);
 
-	TileSelectorComponent* selector = generator.GetTileSelectorComponentByName(def->m_tileSelectorName);
+	TileSelectorComponent* selector = generator.GetTileSelectorComponentByName(m_tileSelectorName);
 	if (!selector)
 	{
-		ERROR_AND_DIE(StringUtils::StringF("TileSelectorComponent not found: %s", def->m_tileSelectorName.ToCStr()));
+		ERROR_AND_DIE(StringUtils::StringF("TileSelectorComponent not found: %s", m_tileSelectorName.ToCStr()));
 	}
 
 	selector->SelectTiles(generator, world);
@@ -306,7 +126,7 @@ bool TileGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-EntityGeneratorComponent::EntityGeneratorComponent(MapGeneratorComponentDef const& def) : DiscreteGeneratorComponent(def)
+EntityGeneratorComponent::EntityGeneratorComponent(EntityGeneratorComponentDef const& def) : m_tileSelectorName(def.m_tileSelectorName), m_entityName(def.m_entityName)
 {
 
 }
@@ -323,23 +143,7 @@ bool EntityGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-GoalGeneratorComponent::GoalGeneratorComponent(MapGeneratorComponentDef const& def) : MapGeneratorComponent(def)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool GoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
-{
-	return true;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-DiscGoalGeneratorComponent::DiscGoalGeneratorComponent(MapGeneratorComponentDef const& def) : GoalGeneratorComponent(def)
+DiscGoalGeneratorComponent::DiscGoalGeneratorComponent(DiscGoalGeneratorComponentDef const& def) : m_alignment(def.m_alignment), m_radius(def.m_radius)
 {
 
 }
@@ -349,27 +153,16 @@ DiscGoalGeneratorComponent::DiscGoalGeneratorComponent(MapGeneratorComponentDef 
 //----------------------------------------------------------------------------------------------------------------------
 bool DiscGoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 {
-	if (!GoalGeneratorComponent::Generate(generator, world))
-	{
-		return false;
-	}
+	float goalCenterX = StaticWorldSettings::s_visibleWorldMinsX + (StaticWorldSettings::s_visibleWorldWidth * m_alignment.x);
+	float goalCenterY = StaticWorldSettings::s_visibleWorldMinsY + (StaticWorldSettings::s_visibleWorldHeight * m_alignment.y);
 
-	DiscGoalGeneratorComponentDef const* discDef = dynamic_cast<DiscGoalGeneratorComponentDef const*>(m_def);
-	if (!discDef)
-	{
-		ERROR_AND_DIE("MapGeneratorComponentDef is not a DiscGoalGeneratorComponentDef");
-	}
-
-	Vec2 alignment = discDef->m_mapAlignment;
-	float goalCenterX = StaticWorldSettings::s_visibleWorldMinsX + (StaticWorldSettings::s_visibleWorldWidth * alignment.x);
-	float goalCenterY = StaticWorldSettings::s_visibleWorldMinsY + (StaticWorldSettings::s_visibleWorldHeight * alignment.y);
-
-	float goalRadius = discDef->m_radius;
+	float goalRadius = m_radius;
 	goalRadius *= 0.99f;
 
 	Vec2 goalCenter = Vec2(goalCenterX, goalCenterY);
 
-	Name tileName = discDef->m_tileName;
+	BiomeDef const* biomeDef = generator.GetBiomeDef();
+	Name tileName = biomeDef->m_goalTile;
 
 	// Set goal tiles after path tiles, so they take precedence if they overlap
 	Tile goalTile = TileDef::GetDefaultTile(tileName);
@@ -388,7 +181,7 @@ bool DiscGoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& worl
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RectGoalGeneratorComponent::RectGoalGeneratorComponent(MapGeneratorComponentDef const& def) : GoalGeneratorComponent(def)
+RectGoalGeneratorComponent::RectGoalGeneratorComponent(RectGoalGeneratorComponentDef const& def) : m_alignment(def.m_alignment), m_dims(def.m_dims)
 {
 
 }
@@ -398,28 +191,15 @@ RectGoalGeneratorComponent::RectGoalGeneratorComponent(MapGeneratorComponentDef 
 //----------------------------------------------------------------------------------------------------------------------
 bool RectGoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 {
-	if (!GoalGeneratorComponent::Generate(generator, world))
-	{
-		return false;
-	}
-
-	RectGoalGeneratorComponentDef const* rectDef = dynamic_cast<RectGoalGeneratorComponentDef const*>(m_def);
-	if (!rectDef)
-	{
-		ERROR_AND_DIE("MapGeneratorComponentDef is not a RectGoalGeneratorComponentDef");
-	}
-
-	Vec2 alignment = rectDef->m_mapAlignment;
-	float goalCenterX = StaticWorldSettings::s_visibleWorldMinsX + (StaticWorldSettings::s_visibleWorldWidth * alignment.x);
-	float goalCenterY = StaticWorldSettings::s_visibleWorldMinsY + (StaticWorldSettings::s_visibleWorldHeight * alignment.y);
-
-	IntVec2 goalDims = rectDef->m_dims;
+	float goalCenterX = StaticWorldSettings::s_visibleWorldMinsX + (StaticWorldSettings::s_visibleWorldWidth * m_alignment.x);
+	float goalCenterY = StaticWorldSettings::s_visibleWorldMinsY + (StaticWorldSettings::s_visibleWorldHeight * m_alignment.y);
 
 	Vec2 goalCenter = Vec2(goalCenterX, goalCenterY);
-	AABB2 goalBounds = AABB2(goalCenter, (float) goalDims.x * 0.5f, (float) goalDims.y * 0.5f);
+	AABB2 goalBounds = AABB2(goalCenter, (float) m_dims.x * 0.5f, (float) m_dims.y * 0.5f);
 	goalBounds.Squeeze(0.01f); // Make sure we don't count tiles past the end of the AABB if it lines up perfectly with tile edges
 
-	Name tileName = rectDef->m_tileName;
+	BiomeDef const* biomeDef = generator.GetBiomeDef();
+	Name tileName = biomeDef->m_goalTile;
 
 	// Set goal tiles after path tiles, so they take precedence if they overlap
 	Tile goalTile = TileDef::GetDefaultTile(tileName);
@@ -438,9 +218,15 @@ bool RectGoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& worl
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerlinWormPathGeneratorComponent::PerlinWormPathGeneratorComponent(MapGeneratorComponentDef const& def) : MapGeneratorComponent(def)
+PerlinWormPathGeneratorComponent::PerlinWormPathGeneratorComponent(PerlinWormPathGeneratorComponentDef const& def)
 {
-
+	m_startDir = def.m_startDir;
+	m_thicknessRange = def.m_thicknessRange;
+	m_thicknessVariance = def.m_thicknessVariance;
+	m_splitChance = def.m_splitChance;
+	m_splitAngleDeg = def.m_splitAngleDeg;
+	m_maxSplits = def.m_maxSplits;
+	m_seedOffset = def.m_seedOffset;
 }
 
 
@@ -455,13 +241,7 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 		IntVec2 m_tileCoords;
 	};
 
-	PerlinWormPathGeneratorComponentDef const* perlinWormDef = dynamic_cast<PerlinWormPathGeneratorComponentDef const*>(m_def);
-	if (!perlinWormDef)
-	{
-		ERROR_AND_DIE("MapGeneratorComponentDef is not a PerlinWormPathGeneratorComponentDef");
-	}
-
-	int seed = generator.GetSeed();
+	int seed = generator.GetSeed() + m_seedOffset;
 
 	Vec2 goalLocation = Vec2::ZeroVector;	
 	world.ForEachVisibleTile([&world, &goalLocation](IntVec2 const& tileCoords, int)
@@ -475,11 +255,12 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 		return true;
 	});
 
-	Tile pathTile = TileDef::GetDefaultTile(perlinWormDef->m_tileName);
+	BiomeDef const* biomeDef = generator.GetBiomeDef();
+	Tile pathTile = TileDef::GetDefaultTile(biomeDef->m_pathTile);
 	pathTile.SetIsPath(true);
 
 	std::vector<PerlinWorm> worms;
-	worms.emplace_back(PerlinWorm{ goalLocation, perlinWormDef->m_startDir, world.GetTileCoordsAtWorldPos(goalLocation) });
+	worms.emplace_back(PerlinWorm{ goalLocation, m_startDir, world.GetTileCoordsAtWorldPos(goalLocation) });
 
 	float numWormsProcessed = 0.f;
 	int numSplits = 0;
@@ -509,23 +290,23 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 			Vec2 wormDir = worm.m_dir.GetRotated(noiseValue * 45.f); // todo: parameterize
 			Vec2 nextWormLocation = worm.m_pos + wormDir;
 
-			bool canSplit = numSplits < perlinWormDef->m_maxSplits;
+			bool canSplit = numSplits < m_maxSplits;
 			if (canSplit)
 			{
 				float splitNoise = Noise::GetNoiseZeroToOne1D(static_cast<int>(noiseLocation) + 1000, seed + iterationCount);
-				bool didSplit = splitNoise < perlinWormDef->m_splitChance;
+				bool didSplit = splitNoise < m_splitChance;
 				if (didSplit)
 				{
 					numSplits++;
 					PerlinWorm splitWorm = worm;
-					float splitRotation = iterationCount % 2 == 0 ? perlinWormDef->m_splitAngleDeg : -perlinWormDef->m_splitAngleDeg;
+					float splitRotation = iterationCount % 2 == 0 ? m_splitAngleDeg : -m_splitAngleDeg;
 					splitWorm.m_dir = worm.m_dir.GetRotated(splitRotation);
 					worms.push_back(splitWorm);
 				}
 			}
 
-			float capsuleRadius = perlinWormDef->m_thicknessRange.x;
-			float capsuleVariance = perlinWormDef->m_thicknessRange.y - perlinWormDef->m_thicknessRange.x;
+			float capsuleRadius = m_thicknessRange.x * 0.5f;
+			float capsuleVariance = m_thicknessRange.y - m_thicknessRange.x;
 			float capsuleRadiusNoise = capsuleVariance * Noise::GetPerlinNoise2D_01(noiseLocation + 500.f, 25.f, 2);
 			capsuleRadius += capsuleRadiusNoise;
 			capsuleRadius = MathUtils::Max(capsuleRadius, 1.f); // minimum radius of 1

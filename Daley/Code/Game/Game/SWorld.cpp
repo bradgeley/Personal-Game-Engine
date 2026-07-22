@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SWorld.h"
-#include "BiomeGeneratorDef.h"
+#include "BiomeDef.h"
 #include "MapGeneratorDef.h"
 #include "MapGenerator.h"
 #include "SCWorld.h"
@@ -17,13 +17,13 @@
 void SWorld::Startup()
 {
 	TileDef::LoadFromXML();
+	BiomeDef::LoadFromXML();
 	MapGeneratorDef::LoadFromXML();
-	BiomeGeneratorDef::LoadFromXML();
 
 	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "mapGenName", DevConsoleArgType::String, "seed", DevConsoleArgType::Int);
 
 	NamedProperties props;
-	props.Set<std::string>("mapGenName", "forest");
+	props.Set<std::string>("mapGenName", "forestCross");
 	props.Set<int>("seed", 0);
 	GenerateMap(props);
 
@@ -35,8 +35,8 @@ void SWorld::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SWorld::Shutdown() const
 {
-	BiomeGeneratorDef::Shutdown();
 	MapGeneratorDef::Shutdown();
+	BiomeDef::Shutdown();
 	TileDef::Shutdown();
 
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();

@@ -4,10 +4,19 @@
 
 <MapGeneratorDefs>
 
-  <MapGeneratorDef name="forest">
-    <BiomeGenerator biome="forest"></BiomeGenerator>
-    <RectGoal tile="grass" alignment="0.5,0.5" dims="4,4"></RectGoal >
-    <PerlinWormPath tile="grass" startDir="1,0" thicknessRange="2,5" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4"></PerlinWormPath>
+  <MapGeneratorDef name="forest" biome="forest">
+    <RectGoal alignment="0.15,0.5" dims="4,4"></RectGoal>
+    <PerlinWormPath startDir="1,0" thicknessRange="2,2" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
+    <PerlinWormPath startDir="0,1" thicknessRange="2,2" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="2"></PerlinWormPath>
+    <PerlinWormPath startDir="0,-1" thicknessRange="2,2" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="3"></PerlinWormPath>
+  </MapGeneratorDef>
+
+  <MapGeneratorDef name="forestCross" biome="forest">
+    <RectGoal alignment="0.5,0.5" dims="6,6"></RectGoal>
+    <PerlinWormPath startDir="1,0" thicknessRange="2,2" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
+    <PerlinWormPath startDir="0,1" thicknessRange="2,2" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="2"></PerlinWormPath>
+    <PerlinWormPath startDir="0,-1" thicknessRange="2,2" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="3"></PerlinWormPath>
+    <PerlinWormPath startDir="-1,0" thicknessRange="2,2" thicknessVariance="0.5" splittiness="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="4"></PerlinWormPath>
   </MapGeneratorDef>
   
 </MapGeneratorDefs>

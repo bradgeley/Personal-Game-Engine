@@ -235,7 +235,7 @@
     <ClCompile Include="Game\MapGeneratorComponentDef.cpp">
       <Filter>Definitions</Filter>
     </ClCompile>
-    <ClCompile Include="Game\BiomeGeneratorDef.cpp">
+    <ClCompile Include="Game\BiomeDef.cpp">
       <Filter>Definitions</Filter>
     </ClCompile>
     <ClCompile Include="Game\MapGenerator.cpp">
@@ -573,7 +573,7 @@
     <ClInclude Include="Game\MapGeneratorComponentDef.h">
       <Filter>Definitions</Filter>
     </ClInclude>
-    <ClInclude Include="Game\BiomeGeneratorDef.h">
+    <ClInclude Include="Game\BiomeDef.h">
       <Filter>Definitions</Filter>
     </ClInclude>
     <ClInclude Include="Game\MapGenerator.h">
@@ -727,7 +727,7 @@
     <Xml Include="..\..\Run\Data\Definitions\MapGeneratorDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
-    <Xml Include="..\..\Run\Data\Definitions\BiomeGeneratorDefs.xml">
+    <Xml Include="..\..\Run\Data\Definitions\BiomeDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>

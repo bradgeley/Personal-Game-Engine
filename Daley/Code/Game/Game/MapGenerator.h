@@ -7,6 +7,7 @@
 class MapGeneratorComponent;
 class SCWorld;
 class TileSelectorComponent;
+struct BiomeDef;
 struct MapGeneratorDef;
 struct Name;
 
@@ -24,6 +25,7 @@ public:
 
 	void Initialize(MapGeneratorDef const& mapGenDef, int seed);
 	int GetSeed() const { return m_seed; }
+	BiomeDef const* GetBiomeDef() const;
 	TileSelectorComponent* GetTileSelectorComponentByName(Name const& name) const;
 
 	bool GenerateMap(SCWorld& world);

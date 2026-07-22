@@ -1,0 +1,34 @@
+<!--Bradley Christensen - 2022-2026-->
+
+
+<BiomeDefs>
+  <BiomeDef name="forest" baseTile="forestGrass" goalTile="islandWater" pathTile="snow">
+
+    <NoiseRangeSelector name="deepForest" range="0.5,1">
+      <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
+    </NoiseRangeSelector>
+      
+    <NoiseRangeSelector name="mountain" range="0.75,1">
+      <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="2"></NoiseParams>
+    </NoiseRangeSelector>
+      
+    <NoisePeakSelector name="glowstone">
+      <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="3"></NoiseParams>
+    </NoisePeakSelector>
+      
+    <NoiseRangeSelector name="walls" range="0.75,1">
+      <NoiseParams outputRange="0,1" scale="10" numOctaves="4" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="4"></NoiseParams>
+    </NoiseRangeSelector>
+      
+    <NoisePeakSelector name="trees">
+      <NoiseParams outputRange="0,1" scale="10" numOctaves="4" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
+    </NoisePeakSelector>
+
+    <TileGenerator tile="deepForestGrass" selector="deepForest"></TileGenerator>
+    <TileGenerator tile="stone" selector="mountain"></TileGenerator>
+    <TileGenerator tile="glowstone" selector="glowstone"></TileGenerator>
+    <EntityGenerator entity="wall1x1" selector="walls"></EntityGenerator>
+    <EntityGenerator entity="tree" selector="trees"></EntityGenerator>
+    
+  </BiomeDef>
+</BiomeDefs>

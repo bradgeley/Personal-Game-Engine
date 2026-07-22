@@ -20,25 +20,11 @@ NoiseParams::NoiseParams(XmlElement const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-MapGeneratorComponentDef::MapGeneratorComponentDef(XmlElement const*)
-{
-	// Empty
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 MapGeneratorComponentDef const* MapGeneratorComponentDef::MakeFromXmlElement(XmlElement const* xmlElement)
 {	
 	MapGeneratorComponentDef const* result = nullptr;
 
 	Name xmlElementName = xmlElement->Name();
-	
-	// Biome Generator (unique per map, if present)
-	if (xmlElementName == "BiomeGenerator")
-	{
-		result = new BiomeGeneratorComponentDef(xmlElement);
-	}
 
 	// Selectors
 	if (xmlElementName == "NoiseRangeSelector")
@@ -85,34 +71,20 @@ MapGeneratorComponentDef const* MapGeneratorComponentDef::MakeFromXmlElement(Xml
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TileSelectorComponentDef::TileSelectorComponentDef(XmlElement const* xmlElement) : MapGeneratorComponentDef(xmlElement)
+NoiseRangeSelectorComponentDef::NoiseRangeSelectorComponentDef(XmlElement const* xmlElement)
 {
 	m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
-}
+	m_noiseRange = XmlUtils::ParseXmlAttribute(*xmlElement, "range", m_noiseRange);
 
-
-
-//----------------------------------------------------------------------------------------------------------------------
-NoiseSelectorDef::NoiseSelectorDef(XmlElement const* xmlElement) : TileSelectorComponentDef(xmlElement)
-{
 	XmlElement const* noiseParamsElem = xmlElement->FirstChildElement("NoiseParams");
 	if (noiseParamsElem)
 	{
 		m_noiseParams = NoiseParams(noiseParamsElem);
-
 	}
 	else
 	{
 		ERROR_AND_DIE("NoiseSelectorDef requires a NoiseParams child element");
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-NoiseRangeSelectorComponentDef::NoiseRangeSelectorComponentDef(XmlElement const* xmlElement) : NoiseSelectorDef(xmlElement)
-{
-	m_noiseRange = XmlUtils::ParseXmlAttribute(*xmlElement, "range", m_noiseRange);
 }
 
 
@@ -126,9 +98,19 @@ MapGeneratorComponent* NoiseRangeSelectorComponentDef::MakeComponentInstance() c
 
 
 //----------------------------------------------------------------------------------------------------------------------
-NoisePeakSelectorComponentDef::NoisePeakSelectorComponentDef(XmlElement const* xmlElement) : NoiseSelectorDef(xmlElement)
+NoisePeakSelectorComponentDef::NoisePeakSelectorComponentDef(XmlElement const* xmlElement)
 {
-	// Empty
+	m_name = XmlUtils::ParseXmlAttribute(*xmlElement, "name", m_name);
+
+	XmlElement const* noiseParamsElem = xmlElement->FirstChildElement("NoiseParams");
+	if (noiseParamsElem)
+	{
+		m_noiseParams = NoiseParams(noiseParamsElem);
+	}
+	else
+	{
+		ERROR_AND_DIE("NoiseSelectorDef requires a NoiseParams child element");
+	}
 }
 
 
@@ -142,40 +124,9 @@ MapGeneratorComponent* NoisePeakSelectorComponentDef::MakeComponentInstance() co
 
 
 //----------------------------------------------------------------------------------------------------------------------
-BiomeGeneratorComponentDef::BiomeGeneratorComponentDef(XmlElement const* xmlElement) : MapGeneratorComponentDef(xmlElement)
-{
-	m_biomeName = XmlUtils::ParseXmlAttribute(*xmlElement, "biome", m_biomeName);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-MapGeneratorComponent* BiomeGeneratorComponentDef::MakeComponentInstance() const
-{
-	return new BiomeGeneratorComponent(*this);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-DiscreteGeneratorComponentDef::DiscreteGeneratorComponentDef(XmlElement const* xmlElement) : MapGeneratorComponentDef(xmlElement)
+TileGeneratorComponentDef::TileGeneratorComponentDef(XmlElement const* xmlElement)
 {
 	m_tileSelectorName = XmlUtils::ParseXmlAttribute(*xmlElement, "selector", m_tileSelectorName);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-MapGeneratorComponent* DiscreteGeneratorComponentDef::MakeComponentInstance() const
-{
-	return new DiscreteGeneratorComponent(*this);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-TileGeneratorComponentDef::TileGeneratorComponentDef(XmlElement const* xmlElement) : DiscreteGeneratorComponentDef(xmlElement)
-{
 	m_tileName = XmlUtils::ParseXmlAttribute(*xmlElement, "tile", m_tileName);
 }
 
@@ -190,8 +141,9 @@ MapGeneratorComponent* TileGeneratorComponentDef::MakeComponentInstance() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-EntityGeneratorComponentDef::EntityGeneratorComponentDef(XmlElement const* xmlElement) : DiscreteGeneratorComponentDef(xmlElement)
+EntityGeneratorComponentDef::EntityGeneratorComponentDef(XmlElement const* xmlElement) 
 {
+	m_tileSelectorName = XmlUtils::ParseXmlAttribute(*xmlElement, "selector", m_tileSelectorName);
 	m_entityName = XmlUtils::ParseXmlAttribute(*xmlElement, "entity", m_entityName);
 }
 
@@ -206,25 +158,9 @@ MapGeneratorComponent* EntityGeneratorComponentDef::MakeComponentInstance() cons
 
 
 //----------------------------------------------------------------------------------------------------------------------
-GoalGeneratorComponentDef::GoalGeneratorComponentDef(XmlElement const* xmlElement) : MapGeneratorComponentDef(xmlElement)
+DiscGoalGeneratorComponentDef::DiscGoalGeneratorComponentDef(XmlElement const* xmlElement)
 {
-	m_mapAlignment = XmlUtils::ParseXmlAttribute(*xmlElement, "mapAlignment", m_mapAlignment);
-	m_tileName = XmlUtils::ParseXmlAttribute(*xmlElement, "tile", m_tileName);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-MapGeneratorComponent* GoalGeneratorComponentDef::MakeComponentInstance() const
-{
-	return new GoalGeneratorComponent(*this);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-DiscGoalGeneratorComponentDef::DiscGoalGeneratorComponentDef(XmlElement const* xmlElement) : GoalGeneratorComponentDef(xmlElement)
-{
+	m_alignment = XmlUtils::ParseXmlAttribute(*xmlElement, "alignment", m_alignment);
 	m_radius = XmlUtils::ParseXmlAttribute(*xmlElement, "radius", m_radius);
 }
 
@@ -239,8 +175,9 @@ MapGeneratorComponent* DiscGoalGeneratorComponentDef::MakeComponentInstance() co
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RectGoalGeneratorComponentDef::RectGoalGeneratorComponentDef(XmlElement const* xmlElement) : GoalGeneratorComponentDef(xmlElement)
+RectGoalGeneratorComponentDef::RectGoalGeneratorComponentDef(XmlElement const* xmlElement)
 {
+	m_alignment = XmlUtils::ParseXmlAttribute(*xmlElement, "alignment", m_alignment);
 	m_dims = XmlUtils::ParseXmlAttribute(*xmlElement, "dims", m_dims);
 }
 
@@ -255,15 +192,15 @@ MapGeneratorComponent* RectGoalGeneratorComponentDef::MakeComponentInstance() co
 
 
 //----------------------------------------------------------------------------------------------------------------------
-PerlinWormPathGeneratorComponentDef::PerlinWormPathGeneratorComponentDef(XmlElement const* xmlElement) : MapGeneratorComponentDef(xmlElement)
+PerlinWormPathGeneratorComponentDef::PerlinWormPathGeneratorComponentDef(XmlElement const* xmlElement)
 {
-	m_tileName = XmlUtils::ParseXmlAttribute(*xmlElement, "tile", m_tileName);
 	m_startDir = XmlUtils::ParseXmlAttribute(*xmlElement, "startDir", m_startDir);
 	m_thicknessRange = XmlUtils::ParseXmlAttribute(*xmlElement, "thicknessRange", m_thicknessRange);
 	m_thicknessVariance = XmlUtils::ParseXmlAttribute(*xmlElement, "thicknessVariance", m_thicknessVariance);
 	m_splitChance = XmlUtils::ParseXmlAttribute(*xmlElement, "splitChance", m_splitChance);
 	m_splitAngleDeg = XmlUtils::ParseXmlAttribute(*xmlElement, "splitAngleDeg", m_splitAngleDeg);
 	m_maxSplits = XmlUtils::ParseXmlAttribute(*xmlElement, "maxSplits", m_maxSplits);
+	m_seedOffset = XmlUtils::ParseXmlAttribute(*xmlElement, "seedOffset", m_seedOffset);
 }
 
 
