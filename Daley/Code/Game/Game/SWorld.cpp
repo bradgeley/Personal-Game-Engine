@@ -3,8 +3,9 @@
 #include "BiomeDef.h"
 #include "MapGeneratorDef.h"
 #include "MapGenerator.h"
-#include "SCWorld.h"
+#include "SCEntityFactory.h"
 #include "SCFlowField.h"
+#include "SCWorld.h"
 #include "TileDef.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
@@ -75,6 +76,9 @@ bool SWorld::GenerateMap(NamedProperties& params)
 	mapGenerator.Initialize(*def, seed);
 
 	mapGenerator.GenerateMap(world);
+
+	SCEntityFactory& scEntityFactory = g_ecs->GetSingleton<SCEntityFactory>();
+	scEntityFactory.m_towerPlacements.insert(scEntityFactory.m_towerPlacements.end(), world.m_generatedTowers.begin(), world.m_generatedTowers.end());
 
 	SCFlowField& scFlowField = g_ecs->GetSingleton<SCFlowField>();
 	scFlowField.m_toGoalFlowField.Reset();

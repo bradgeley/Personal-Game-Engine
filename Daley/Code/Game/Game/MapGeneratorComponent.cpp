@@ -1,15 +1,18 @@
 // Bradley Christensen - 2022-2026
 #include "MapGeneratorComponent.h"
 #include "BiomeDef.h"
+#include "EntityDef.h"
 #include "MapGenerator.h"
 #include "MapGeneratorComponentDef.h"
 #include "SCWorld.h"
+#include "SInput.h" // todo: Weird include for function, move it later
 #include "TileDef.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Math/Noise.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Performance/ScopedTimer.h"
 
 
 
@@ -17,28 +20,37 @@
 NoiseRangeSelectorComponent::NoiseRangeSelectorComponent(NoiseRangeSelectorComponentDef const& def) : m_noiseRange(def.m_noiseRange), m_params(def.m_noiseParams)
 {
 	m_name = def.m_name;
+	m_tagQuery = def.m_tagQuery;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool NoiseRangeSelectorComponent::SelectTiles(MapGenerator& generator, SCWorld& world)
+void NoiseRangeSelectorComponent::ForEachSelectedTile(MapGenerator& generator, SCWorld& world, std::function<bool(IntVec2 const&)> const& func)
 {
+	ScopedTimer timer(StringUtils::StringF("NoiseRangeSelectorComponent::ForEachSelectedTile - %s", m_name.ToCStr()));
+
 	int seed = generator.GetSeed() + m_params.m_seedOffset;
 
 	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
 	{
+		if (!world.DoesTileMatchTagQuery(tileCoords, m_tagQuery))
+		{
+			return true;
+		}
+
 		float noiseValue = Noise::GetPerlinNoise2D((float) tileCoords.x, (float) tileCoords.y, m_params.m_scale, m_params.m_numOctaves, m_params.m_octavePersistence, m_params.m_octaveScale, m_params.m_renormalize, seed);
 		float rangeMappedNoise = MathUtils::RangeMapClamped(noiseValue, -1.f, 1.f, m_params.m_outputRange.x, m_params.m_outputRange.y);
 
 		if (rangeMappedNoise >= m_noiseRange.x && rangeMappedNoise <= m_noiseRange.y)
 		{
-			m_selectedTiles.push_back(tileCoords);
+			if (!func(tileCoords))
+			{
+				return false;
+			}
 		}
 		return true; // Continue iterating
 	});
-
-	return true;
 }
 
 
@@ -47,26 +59,45 @@ bool NoiseRangeSelectorComponent::SelectTiles(MapGenerator& generator, SCWorld& 
 NoisePeakSelectorComponent::NoisePeakSelectorComponent(NoisePeakSelectorComponentDef const& def) : m_params(def.m_noiseParams)
 {
 	m_name = def.m_name;
+	m_tagQuery = def.m_tagQuery;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool NoisePeakSelectorComponent::SelectTiles(MapGenerator& generator, SCWorld& world)
+void NoisePeakSelectorComponent::ForEachSelectedTile(MapGenerator& generator, SCWorld& world, std::function<bool(IntVec2 const&)> const& func)
 {
+	ScopedTimer timer(StringUtils::StringF("NoisePeakSelectorComponent::ForEachSelectedTile - %s", m_name.ToCStr()));
+
 	int seed = generator.GetSeed() + m_params.m_seedOffset;
+
+	m_cachedNoiseValues.resize(world.m_tiles.GetSize(), 0.f);
 
 	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
 	{
+		int tileIndex = world.m_tiles.GetIndexForCoords(tileCoords);
 		float noiseValue = Noise::GetPerlinNoise2D((float) tileCoords.x, (float) tileCoords.y, m_params.m_scale, m_params.m_numOctaves, m_params.m_octavePersistence, m_params.m_octaveScale, m_params.m_renormalize, seed);
 		float rangeMappedNoise = MathUtils::RangeMapClamped(noiseValue, -1.f, 1.f, m_params.m_outputRange.x, m_params.m_outputRange.y);
+		m_cachedNoiseValues[tileIndex] = rangeMappedNoise;
+		return true; // Continue iterating
+	});
+
+	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
+	{
+		if (!world.DoesTileMatchTagQuery(tileCoords, m_tagQuery))
+		{
+			return true;
+		}
+
+		int tileIndex = world.m_tiles.GetIndexForCoords(tileCoords);
+		float const& noiseValue = m_cachedNoiseValues[tileIndex];
 
 		bool isNoiseValuePeak = true;
 		world.ForEachPlayableNeighboringTile(tileCoords, [&](IntVec2 const& neighborCoords)
 		{
-			float neighborNoiseValue = Noise::GetPerlinNoise2D((float) neighborCoords.x, (float) neighborCoords.y, m_params.m_scale, m_params.m_numOctaves, m_params.m_octavePersistence, m_params.m_octaveScale, m_params.m_renormalize, seed);
-			float rangeMappedNeighborNoise = MathUtils::RangeMapClamped(neighborNoiseValue, -1.f, 1.f, m_params.m_outputRange.x, m_params.m_outputRange.y);
-			if (rangeMappedNoise <= rangeMappedNeighborNoise)
+			int neighborIndex = world.m_tiles.GetIndexForCoords(neighborCoords);
+			float const& neighborNoiseValue = m_cachedNoiseValues[neighborIndex];
+			if (noiseValue <= neighborNoiseValue)
 			{
 				// One neighbor is larger, so this is not a peak
 				isNoiseValuePeak = false;
@@ -77,12 +108,15 @@ bool NoisePeakSelectorComponent::SelectTiles(MapGenerator& generator, SCWorld& w
 
 		if (isNoiseValuePeak)
 		{
-			m_selectedTiles.push_back(tileCoords);
+			if (!func(tileCoords))
+			{
+				return false; // Stop iterating
+			}
 		}
 		return true; // Continue iterating
 	});
 
-	return true;
+	m_cachedNoiseValues.clear();
 }
 
 
@@ -99,6 +133,8 @@ TileGeneratorComponent::TileGeneratorComponent(TileGeneratorComponentDef const& 
 //----------------------------------------------------------------------------------------------------------------------
 bool TileGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 {
+	ScopedTimer timer("TileGeneratorComponent::Generate");
+
 	TileDef const* tileDef = TileDef::GetTileDef(m_tileName);
 	if (!tileDef)
 	{
@@ -113,12 +149,11 @@ bool TileGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 		ERROR_AND_DIE(StringUtils::StringF("TileSelectorComponent not found: %s", m_tileSelectorName.ToCStr()));
 	}
 
-	selector->SelectTiles(generator, world);
-
-	for (IntVec2 const& tileCoords : selector->m_selectedTiles)
+	selector->ForEachSelectedTile(generator, world, [&](IntVec2 const& tileCoords)
 	{
 		world.SetTile(tileCoords, defaultTile);
-	}
+		return true; // Continue iterating
+	});
 
 	return true;
 }
@@ -136,7 +171,29 @@ EntityGeneratorComponent::EntityGeneratorComponent(EntityGeneratorComponentDef c
 //----------------------------------------------------------------------------------------------------------------------
 bool EntityGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 {
-	// TODO:
+	ScopedTimer timer("EntityGeneratorComponent::Generate");
+
+	EntityDef const* entityDef = EntityDef::GetEntityDef(m_entityName);
+	if (!entityDef)
+	{
+		ERROR_AND_DIE(StringUtils::StringF("EntityDef not found for entity: %s", m_entityName.ToCStr()));
+	}
+
+	TileSelectorComponent* selector = generator.GetTileSelectorComponentByName(m_tileSelectorName);
+	if (!selector)
+	{
+		ERROR_AND_DIE(StringUtils::StringF("TileSelectorComponent not found: %s", m_tileSelectorName.ToCStr()));
+	}
+
+
+	selector->ForEachSelectedTile(generator, world, [&](IntVec2 const& tileCoords)
+	{
+		TowerPlacementInfo placementInfo = SInput::MakeTowerPlacementInfo(m_entityName, world.GetTileCenter(tileCoords), world);
+
+		world.m_generatedTowers.push_back(placementInfo);
+		return true; // Continue iterating
+	});
+
 	return true;
 }
 
@@ -153,6 +210,8 @@ DiscGoalGeneratorComponent::DiscGoalGeneratorComponent(DiscGoalGeneratorComponen
 //----------------------------------------------------------------------------------------------------------------------
 bool DiscGoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 {
+	ScopedTimer timer("DiscGoalGeneratorComponent::Generate");
+
 	float goalCenterX = StaticWorldSettings::s_visibleWorldMinsX + (StaticWorldSettings::s_visibleWorldWidth * m_alignment.x);
 	float goalCenterY = StaticWorldSettings::s_visibleWorldMinsY + (StaticWorldSettings::s_visibleWorldHeight * m_alignment.y);
 
@@ -191,6 +250,8 @@ RectGoalGeneratorComponent::RectGoalGeneratorComponent(RectGoalGeneratorComponen
 //----------------------------------------------------------------------------------------------------------------------
 bool RectGoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 {
+	ScopedTimer timer("RectGoalGeneratorComponent::Generate");
+
 	float goalCenterX = StaticWorldSettings::s_visibleWorldMinsX + (StaticWorldSettings::s_visibleWorldWidth * m_alignment.x);
 	float goalCenterY = StaticWorldSettings::s_visibleWorldMinsY + (StaticWorldSettings::s_visibleWorldHeight * m_alignment.y);
 
@@ -220,6 +281,7 @@ bool RectGoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& worl
 //----------------------------------------------------------------------------------------------------------------------
 PerlinWormPathGeneratorComponent::PerlinWormPathGeneratorComponent(PerlinWormPathGeneratorComponentDef const& def)
 {
+	m_startPos = def.m_startPos;
 	m_startDir = def.m_startDir;
 	m_thicknessRange = def.m_thicknessRange;
 	m_thicknessVariance = def.m_thicknessVariance;
@@ -234,6 +296,8 @@ PerlinWormPathGeneratorComponent::PerlinWormPathGeneratorComponent(PerlinWormPat
 //----------------------------------------------------------------------------------------------------------------------
 bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 {
+	ScopedTimer timer("PerlinWormPathGeneratorComponent::Generate");
+
 	struct PerlinWorm
 	{
 		Vec2 m_pos;
@@ -243,24 +307,16 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 
 	int seed = generator.GetSeed() + m_seedOffset;
 
-	Vec2 goalLocation = Vec2::ZeroVector;	
-	world.ForEachVisibleTile([&world, &goalLocation](IntVec2 const& tileCoords, int)
-	{
-		Tile const& tile = world.m_tiles.GetRef(tileCoords);
-		if (tile.IsGoal())
-		{
-			goalLocation = world.GetTileBounds(tileCoords).GetCenter();
-			return false; // Stop iterating once we find a goal tile
-		}
-		return true;
-	});
+	float startX = StaticWorldSettings::s_visibleWorldMinsX + (StaticWorldSettings::s_visibleWorldWidth * m_startPos.x);
+	float startY = StaticWorldSettings::s_visibleWorldMinsY + (StaticWorldSettings::s_visibleWorldHeight * m_startPos.y);
+	Vec2 startPos = Vec2(startX, startY);
 
 	BiomeDef const* biomeDef = generator.GetBiomeDef();
 	Tile pathTile = TileDef::GetDefaultTile(biomeDef->m_pathTile);
 	pathTile.SetIsPath(true);
 
 	std::vector<PerlinWorm> worms;
-	worms.emplace_back(PerlinWorm{ goalLocation, m_startDir, world.GetTileCoordsAtWorldPos(goalLocation) });
+	worms.emplace_back(PerlinWorm{ startPos, m_startDir, world.GetTileCoordsAtWorldPos(startPos) });
 
 	float numWormsProcessed = 0.f;
 	int numSplits = 0;

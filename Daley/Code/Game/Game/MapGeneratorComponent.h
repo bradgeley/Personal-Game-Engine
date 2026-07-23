@@ -4,6 +4,7 @@
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Core/Name.h"
+#include "Engine/Core/TagQuery.h"
 #include "Engine/Core/XmlUtils.h"
 #include <vector>
 
@@ -31,13 +32,12 @@ class TileSelectorComponent : public MapGeneratorComponent
 {
 public:
 
-	virtual bool SelectTiles(MapGenerator& generator, SCWorld& world) = 0;
-	virtual bool Generate(MapGenerator&, SCWorld&) override final { return true; }
+	virtual void ForEachSelectedTile(MapGenerator& generator, SCWorld& world, std::function<bool(IntVec2 const&)> const& func) = 0;
+	virtual bool Generate(MapGenerator&, SCWorld&) override final { return true; } // todo: separate out Selectors from Generators, so this func override goes away
 
 public:
 
 	Name m_name = "Unnamed TileSelectorDef";
-	std::vector<IntVec2> m_selectedTiles;
 };
 
 
@@ -49,12 +49,13 @@ public:
 
 	NoiseRangeSelectorComponent(NoiseRangeSelectorComponentDef const& def);
 
-	virtual bool SelectTiles(MapGenerator& generator, SCWorld& world) override final;
+	virtual void ForEachSelectedTile(MapGenerator& generator, SCWorld& world, std::function<bool(IntVec2 const&)> const& func) override final;
 
 public:
 
 	Vec2 m_noiseRange = Vec2::ZeroVector;
 	NoiseParams m_params;
+	TagQuery m_tagQuery;
 };
 
 
@@ -66,11 +67,13 @@ public:
 
 	NoisePeakSelectorComponent(NoisePeakSelectorComponentDef const& def);
 
-	virtual bool SelectTiles(MapGenerator& generator, SCWorld& world) override final;
+	virtual void ForEachSelectedTile(MapGenerator& generator, SCWorld& world, std::function<bool(IntVec2 const&)> const& func) override final;
 
 public:
 
 	NoiseParams m_params;
+	TagQuery m_tagQuery;
+	std::vector<float> m_cachedNoiseValues;
 };
 
 
@@ -154,6 +157,7 @@ public:
 
 public:
 
+	Vec2	m_startPos			= Vec2(0.f, 0.f); // 0-1 alignment of the start pos on the map
 	Vec2	m_startDir			= Vec2(1.f, 0.f);
 	Vec2	m_thicknessRange	= Vec2(2.f, 5.f);
 	float	m_thicknessVariance = 0.5f;

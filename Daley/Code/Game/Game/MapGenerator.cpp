@@ -84,6 +84,8 @@ bool MapGenerator::GenerateMap(SCWorld& world)
 {
 	ScopedTimer timer("Generate Map");
 
+	world.m_generatedTowers.clear();
+
 	ASSERT_OR_DIE(m_def != nullptr, "MapGenerator::GenerateMap() - m_def is null. Did you call Initialize()?");
 	BiomeDef const* biomeDef = BiomeDef::GetBiomeDef(m_def->m_biome);
 	ASSERT_OR_DIE(biomeDef, StringUtils::StringF("Failed to find biome def for biome: %s", m_def->m_biome.ToCStr()));

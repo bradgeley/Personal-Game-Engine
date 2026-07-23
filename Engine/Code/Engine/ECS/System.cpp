@@ -49,3 +49,11 @@ void System::AddWriteAllDependencies()
 {
 	m_writeDependenciesBitMask = SIZE_MAX;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+BitMask System::GetComponentBitInternal(std::type_index type) const
+{
+	return g_ecs->GetComponentBit(type);
+}

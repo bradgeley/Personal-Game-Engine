@@ -11,6 +11,16 @@ class SCWorld;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class TowerPlacementResult
+{
+    Success,
+    Blocked,
+    BlocksPath,
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 class STowerSpawner : public System
 {
 public:
@@ -20,6 +30,6 @@ public:
     void Shutdown() const override;
     void Run(SystemContext const& context) const override;
 
-    bool CanPlaceTowers(SCEntityFactory& factory, SCWorld const& world) const;
+    TowerPlacementResult CanPlaceTower(TowerPlacementInfo const& info, SCEntityFactory& factory, SCWorld const& world) const;
     bool PlaceTowerInWorld(TowerPlacementInfo const& placementInfo, SCWorld& world) const;
 };

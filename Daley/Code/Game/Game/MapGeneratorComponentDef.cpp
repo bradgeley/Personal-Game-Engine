@@ -1,7 +1,10 @@
 // Bradley Christensen - 2022-2026
 #include "MapGeneratorComponentDef.h"
 #include "MapGeneratorComponent.h"
+#include "Tile.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
+#include "Engine/Core/TagQuery.h"
 
 
 
@@ -85,6 +88,56 @@ NoiseRangeSelectorComponentDef::NoiseRangeSelectorComponentDef(XmlElement const*
 	{
 		ERROR_AND_DIE("NoiseSelectorDef requires a NoiseParams child element");
 	}
+
+	XmlElement const* tagQueryElem = xmlElement->FirstChildElement("TagQuery");
+	if (tagQueryElem)
+	{
+		Name queryOpName = XmlUtils::ParseXmlAttribute(*tagQueryElem, "queryOp", Name("all"));
+		if (queryOpName == "all")
+		{
+			m_tagQuery.m_queryOp = TagQueryOp::All;
+		}
+		else if (queryOpName == "any")
+		{
+			m_tagQuery.m_queryOp = TagQueryOp::Any;
+		}
+		else
+		{
+			ERROR_AND_DIE("Invalid queryOp attribute on TagQuery element");
+		}
+
+		const char* dataNames[4] = { "hasAll", "hasAny", "doesNotHaveAll", "doesNotHaveAny" };
+		uint8_t* tagQueryData[4] = { &m_tagQuery.m_hasAllTags, &m_tagQuery.m_hasAnyTags, &m_tagQuery.m_doesNotHaveAllTags, &m_tagQuery.m_doesNotHaveAnyTags };
+
+		for (int i = 0; i < 4; ++i)
+		{
+			const char* dataName = dataNames[i];
+			uint8_t* tagQueryDataPtr = tagQueryData[i];
+			std::string tagsStr = XmlUtils::ParseXmlAttribute(*tagQueryElem, dataName, "");
+			if (tagsStr.empty())
+			{
+				continue;
+			}
+
+			Strings tags = StringUtils::SplitStringOnDelimiter(tagsStr, ',');
+
+			for (std::string const& tagName : tags)
+			{
+				if (Name(tagName) == "path")
+				{
+					*tagQueryDataPtr |= (uint8_t) TileTag::IsPath;
+				}
+				else if (Name(tagName) == "goal")
+				{
+					*tagQueryDataPtr |= (uint8_t) TileTag::IsGoal;
+				}
+				else
+				{
+					ERROR_AND_DIE("Invalid tag name in doesNotHaveAny attribute on TagQuery element");
+				}
+			}
+		}
+	}
 }
 
 
@@ -110,6 +163,56 @@ NoisePeakSelectorComponentDef::NoisePeakSelectorComponentDef(XmlElement const* x
 	else
 	{
 		ERROR_AND_DIE("NoiseSelectorDef requires a NoiseParams child element");
+	}
+
+	XmlElement const* tagQueryElem = xmlElement->FirstChildElement("TagQuery");
+	if (tagQueryElem)
+	{
+		Name queryOpName = XmlUtils::ParseXmlAttribute(*tagQueryElem, "queryOp", Name("all"));
+		if (queryOpName == "all")
+		{
+			m_tagQuery.m_queryOp = TagQueryOp::All;
+		}
+		else if (queryOpName == "any")
+		{
+			m_tagQuery.m_queryOp = TagQueryOp::Any;
+		}
+		else
+		{
+			ERROR_AND_DIE("Invalid queryOp attribute on TagQuery element");
+		}
+
+		const char* dataNames[4] = { "hasAll", "hasAny", "doesNotHaveAll", "doesNotHaveAny" };
+		uint8_t* tagQueryData[4] = { &m_tagQuery.m_hasAllTags, &m_tagQuery.m_hasAnyTags, &m_tagQuery.m_doesNotHaveAllTags, &m_tagQuery.m_doesNotHaveAnyTags };
+
+		for (int i = 0; i < 4; ++i)
+		{
+			const char* dataName = dataNames[i];
+			uint8_t* tagQueryDataPtr = tagQueryData[i];
+			std::string tagsStr = XmlUtils::ParseXmlAttribute(*tagQueryElem, dataName, "");
+			if (tagsStr.empty())
+			{
+				continue;
+			}
+
+			Strings tags = StringUtils::SplitStringOnDelimiter(tagsStr, ',');
+
+			for (std::string const& tagName : tags)
+			{
+				if (Name(tagName) == "path")
+				{
+					*tagQueryDataPtr |= (uint8_t) TileTag::IsPath;
+				}
+				else if (Name(tagName) == "goal")
+				{
+					*tagQueryDataPtr |= (uint8_t) TileTag::IsGoal;
+				}
+				else
+				{
+					ERROR_AND_DIE("Invalid tag name in doesNotHaveAny attribute on TagQuery element");
+				}
+			}
+		}
 	}
 }
 
@@ -194,6 +297,7 @@ MapGeneratorComponent* RectGoalGeneratorComponentDef::MakeComponentInstance() co
 //----------------------------------------------------------------------------------------------------------------------
 PerlinWormPathGeneratorComponentDef::PerlinWormPathGeneratorComponentDef(XmlElement const* xmlElement)
 {
+	m_startPos = XmlUtils::ParseXmlAttribute(*xmlElement, "startPos", m_startPos);
 	m_startDir = XmlUtils::ParseXmlAttribute(*xmlElement, "startDir", m_startDir);
 	m_thicknessRange = XmlUtils::ParseXmlAttribute(*xmlElement, "thicknessRange", m_thicknessRange);
 	m_thicknessVariance = XmlUtils::ParseXmlAttribute(*xmlElement, "thicknessVariance", m_thicknessVariance);

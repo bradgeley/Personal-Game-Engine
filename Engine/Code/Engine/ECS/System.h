@@ -1,10 +1,10 @@
 // Bradley Christensen - 2022-2026
 #pragma once
-#include "AdminSystem.h"
 #include "SystemContext.h"
 #include "Engine/Renderer/Rgba8.h"
 #include "Engine/Core/Name.h"
 #include "Config.h"
+#include <typeindex>
 
 
 
@@ -61,6 +61,10 @@ protected:
 
 	void AddWriteAllDependencies();
 
+private:
+
+	BitMask GetComponentBitInternal(std::type_index type) const;
+
 protected:
 
 	Name				m_name						= "Unnamed System";
@@ -82,7 +86,7 @@ protected:
 template<typename...CTypes>
 void System::AddWriteDependencies()
 {
-	m_writeDependenciesBitMask |= g_ecs->GetComponentBitMask<CTypes...>();
+	(m_writeDependenciesBitMask |= ... |= GetComponentBitInternal(std::type_index(typeid(CTypes))));
 }
 
 
@@ -91,5 +95,5 @@ void System::AddWriteDependencies()
 template<typename...CTypes>
 void System::AddReadDependencies()
 {
-	m_readDependenciesBitMask |= g_ecs->GetComponentBitMask<CTypes...>();
+	(m_readDependenciesBitMask |= ... |= GetComponentBitInternal(std::type_index(typeid(CTypes))));
 }

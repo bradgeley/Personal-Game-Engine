@@ -38,9 +38,10 @@ void STowerSpawner::Run(SystemContext const& context) const
         return;
 	}
 
-    if (CanPlaceTowers(factory, world))
+    for (TowerPlacementInfo const& placementInfo : factory.m_towerPlacements)
     {
-        for (TowerPlacementInfo const& placementInfo : factory.m_towerPlacements)
+        TowerPlacementResult result = CanPlaceTower(placementInfo, factory, world);
+        if (result == TowerPlacementResult::Success)
         {
             PlaceTowerInWorld(placementInfo, world);
 
@@ -49,17 +50,17 @@ void STowerSpawner::Run(SystemContext const& context) const
             spawnInfo.m_def = EntityDef::GetEntityDef(placementInfo.m_towerName);
             SEntityFactory::SpawnEntity(context, spawnInfo);
         }
-    }
-    else
-    {
-        FloatingTextInstance floatingText;
-		floatingText.m_pos = factory.m_towerPlacements[0].m_worldPos;
-        floatingText.m_lifetimeSeconds = 2.f;
-		floatingText.m_velocity = Vec2(0.f, 1.f);
-		floatingText.m_scale = 1.f;
-		floatingText.m_text = "Cannot block path!";
-		floatingText.m_tint = Rgba8::Red;
-		scFloatingText.m_floatingTextInstances.push_back(floatingText);
+        else if (result == TowerPlacementResult::BlocksPath)
+        {
+            FloatingTextInstance floatingText;
+            floatingText.m_pos = factory.m_towerPlacements[0].m_worldPos;
+            floatingText.m_lifetimeSeconds = 2.f;
+            floatingText.m_velocity = Vec2(0.f, 1.f);
+            floatingText.m_scale = 1.f;
+            floatingText.m_text = "Cannot block path!";
+            floatingText.m_tint = Rgba8::Red;
+            scFloatingText.m_floatingTextInstances.push_back(floatingText);
+        }
     }
 
 	factory.m_towerPlacements.clear();
@@ -68,16 +69,20 @@ void STowerSpawner::Run(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool STowerSpawner::CanPlaceTowers(SCEntityFactory& factory, SCWorld const& world) const
+TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementInfo const& info, SCEntityFactory& factory, SCWorld const& world) const
 {
     SCWorld copy = world;
 
-    for (auto& placementInfo : factory.m_towerPlacements)
+    copy.m_solidnessOfPathTileChanged = false;
+
+    if (!PlaceTowerInWorld(info, copy))
     {
-        if (!PlaceTowerInWorld(placementInfo, copy))
-        {
-            return false;
-        }
+        return TowerPlacementResult::Blocked;
+    }
+
+    if (!copy.m_solidnessOfPathTileChanged)
+    {
+        return TowerPlacementResult::Success;
     }
 
     TagQuery tileTagQuery;
@@ -88,8 +93,8 @@ bool STowerSpawner::CanPlaceTowers(SCEntityFactory& factory, SCWorld const& worl
     FlowField proxyWorldFlowField(tileTagQuery);
 
     SFlowField::SeedFlowField(proxyWorldFlowField, world);
-	SFlowField::SetCostField(proxyWorldFlowField, copy);
-	SFlowField::GenerateDistanceField(proxyWorldFlowField, copy);
+    SFlowField::SetCostField(proxyWorldFlowField, copy);
+    SFlowField::GenerateDistanceField(proxyWorldFlowField, copy);
     proxyWorldFlowField.m_hasGeneratedFlow = true;
 
     bool isFlowfieldValid = true;
@@ -98,17 +103,17 @@ bool STowerSpawner::CanPlaceTowers(SCEntityFactory& factory, SCWorld const& worl
         Tile const& tile = copy.m_tiles.Get(tileCoords);
         if (tile.IsPath())
         {
-			float distanceOnEdgePath = proxyWorldFlowField.GetDistanceAtTileCoords(tileCoords);
+            float distanceOnEdgePath = proxyWorldFlowField.GetDistanceAtTileCoords(tileCoords);
             if (distanceOnEdgePath == StaticWorldSettings::s_maximumFlowDistance)
             {
                 isFlowfieldValid = false;
                 return false; // stop iterating
-			}
+            }
         }
         return true; // keep iterating
-	});
+    });
 
-    return isFlowfieldValid;
+    return isFlowfieldValid ? TowerPlacementResult::Success : TowerPlacementResult::BlocksPath;
 }
 
 
@@ -118,20 +123,26 @@ bool STowerSpawner::PlaceTowerInWorld(TowerPlacementInfo const& placementInfo, S
 {
     if (world.DoTilesInRegionMatchQuery(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, placementInfo.m_tileTagQuery))
     {
+        bool solidnessChanged = false;
         bool solidnessOfPathTileChanged = false;
 
         world.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
         {
             Tile& tile = world.m_tiles.GetRef(worldCoords);
-            if (tile.IsPath() && !tile.IsSolid())
+            if (!tile.IsSolid())
             {
-                solidnessOfPathTileChanged = true;
+                solidnessChanged = true;
+                if (tile.IsPath())
+                {
+                    solidnessOfPathTileChanged = true;
+                }
             }
             tile.SetIsSolid(true);
             return true; // keep iterating
         });
 
         world.m_solidnessChanged |= solidnessOfPathTileChanged;
+        world.m_solidnessOfPathTileChanged |= solidnessOfPathTileChanged;
 
         return true;
     }

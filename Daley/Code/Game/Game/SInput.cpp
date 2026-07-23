@@ -10,13 +10,9 @@
 #include "SCWindow.h"
 #include "SCWorld.h"
 #include "WorldSettings.h"
+#include "Engine/Math/Vec2.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Window/Window.h"
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-TowerPlacementInfo MakeTowerPlacementInfo(Name towerDefName, Vec2 const& worldPos, SCWorld const& world);
 
 
 
@@ -68,7 +64,7 @@ void SInput::Run(SystemContext const& context) const
 	{
 		// Todo: maybe move even the creation of the tower placement info into STowerSpawner
 
-		scInput.m_towerPlacementInfo = MakeTowerPlacementInfo(scInput.m_towerPlacementInfo.m_towerName, scInput.m_mouseWorldLocation, world);
+		scInput.m_towerPlacementInfo = SInput::MakeTowerPlacementInfo(scInput.m_towerPlacementInfo.m_towerName, scInput.m_mouseWorldLocation, world);
 
 		if (inputSystem.WasMouseButtonJustPressed(0))
 		{
@@ -109,7 +105,7 @@ void SInput::Run(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPlacementInfo MakeTowerPlacementInfo(Name towerDefName, Vec2 const& worldPos, SCWorld const& world)
+TowerPlacementInfo SInput::MakeTowerPlacementInfo(Name towerDefName, Vec2 const& worldPos, SCWorld const& world)
 {
 	TowerPlacementInfo info;
 	info.m_towerName = towerDefName;

@@ -611,9 +611,14 @@ void SCWorld::ForEachPlayableTileOverlappingAABB(AABB2 const& aabb, const std::f
 //----------------------------------------------------------------------------------------------------------------------
 void SCWorld::ForEachPlayableTileInRegion(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, const std::function<bool(IntVec2 const&)>& func) const
 {
-	for (int x = bottomLeftTileCoords.x; x <= topRightTileCoords.x; ++x)
+	int minX = MathUtils::Max(0, bottomLeftTileCoords.x);
+	int maxX = MathUtils::Min(StaticWorldSettings::s_playableWorldEndIndexX, topRightTileCoords.x);
+	int minY = MathUtils::Max(0, bottomLeftTileCoords.y);
+	int maxY = MathUtils::Min(StaticWorldSettings::s_playableWorldEndIndexY, topRightTileCoords.y);
+
+	for (int x = minX; x <= maxX; ++x)
 	{
-		for (int y = bottomLeftTileCoords.y; y <= topRightTileCoords.y; ++y)
+		for (int y = minY; y <= maxY; ++y)
 		{
 			IntVec2 tileCoords = IntVec2(x, y);
 			if (!func(tileCoords))

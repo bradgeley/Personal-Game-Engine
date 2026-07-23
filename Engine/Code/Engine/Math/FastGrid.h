@@ -48,6 +48,7 @@ public:
     int GetIndexNorthOf(int index, bool wrap = false) const; // +y
     int GetIndexSouthOf(int index, bool wrap = false) const; // -y
     int GetLastIndex() const;
+    int GetSize() const;
 
     bool IsValidIndex(int index) const;
     bool IsValidCoords(IntVec2 const& coords) const;
@@ -406,6 +407,15 @@ template <typename T, uint8_t Pow2>
 int FastGrid<T, Pow2>::GetLastIndex() const
 {
     return (int) m_data.size() - 1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename T, uint8_t Pow2>
+int FastGrid<T, Pow2>::GetSize() const
+{
+    return (int) m_data.size();
 }
 
 

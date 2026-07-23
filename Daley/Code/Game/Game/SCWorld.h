@@ -3,6 +3,7 @@
 #include "SpawnInfo.h"
 #include "WorldSettings.h"
 #include "Tile.h"
+#include "TowerPlacementInfo.h"
 #include "Engine/Assets/AssetID.h"
 #include "Engine/Core/TagQuery.h"
 #include "Engine/Math/AABB2.h"
@@ -105,6 +106,7 @@ public:
     bool m_isLightingDirty                      = true;
     bool m_isVBODirty                           = true;
     bool m_solidnessChanged                     = true;
+    bool m_solidnessOfPathTileChanged           = false;
     VertexBufferID m_vbo                        = RendererUtils::InvalidID;
     TextureID m_lightmap                        = RendererUtils::InvalidID; // R8G8
     VertexBufferID m_debugVBO                   = RendererUtils::InvalidID;
@@ -114,6 +116,8 @@ public:
     // Tracks if the player has moved. todo: move to maybe movement component?
     bool m_playerChangedWorldCoordsThisFrame    = true;
     IntVec2 m_lastKnownPlayerWorldCoords;
+
+    std::vector<TowerPlacementInfo> m_generatedTowers;
 
 	std::vector<IntVec2> m_cachedSpawnLocations;
 };

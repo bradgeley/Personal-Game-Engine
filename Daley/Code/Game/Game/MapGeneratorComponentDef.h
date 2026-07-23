@@ -3,6 +3,7 @@
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Core/Name.h"
+#include "Engine/Core/TagQuery.h"
 #include "Engine/Core/XmlUtils.h"
 
 
@@ -55,6 +56,7 @@ struct NoiseRangeSelectorComponentDef : public MapGeneratorComponentDef
 	Name m_name = "Unnamed SelectorDef";
 	Vec2 m_noiseRange = Vec2(0.f, 1.f);
 	NoiseParams m_noiseParams;
+	TagQuery m_tagQuery;
 };
 
 
@@ -71,6 +73,7 @@ struct NoisePeakSelectorComponentDef : public MapGeneratorComponentDef
 
 	Name m_name = "Unnamed SelectorDef";
 	NoiseParams m_noiseParams;
+	TagQuery m_tagQuery;
 };
 
 
@@ -139,6 +142,7 @@ struct PerlinWormPathGeneratorComponentDef : public MapGeneratorComponentDef
 
 	virtual MapGeneratorComponent* MakeComponentInstance() const override;
 
+	Vec2	m_startPos = Vec2(0.f, 0.f); // 0-1 alignment of the start pos on the map
 	Vec2	m_startDir = Vec2(1.f, 0.f);
 	Vec2	m_thicknessRange = Vec2(2.f, 5.f);
 	float	m_thicknessVariance = 0.5f;
