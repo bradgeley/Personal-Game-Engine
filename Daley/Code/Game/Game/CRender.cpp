@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CRender.h"
 #include "Engine/Core/XmlUtils.h"
-#include "Engine/Renderer/Renderer.h"
 
 
 

@@ -1,8 +1,5 @@
 // Bradley Christensen - 2022-2026
 #pragma once
-#include "Engine/Core/Name.h"
-#include "Engine/Renderer/Rgba8.h"
-#include <cstddef>
 #include <cstdint>
 
 

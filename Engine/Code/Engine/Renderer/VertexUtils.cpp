@@ -1,10 +1,10 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/IntVec2.h"
-#include "Engine\Core\ErrorUtils.h"
-#include "Engine\Core\StringUtils.h"
 #include "Engine/Math/MathUtils.h"
 
 

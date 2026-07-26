@@ -2,7 +2,6 @@
 #include "SAIController.h"
 #include "CAIController.h"
 #include "CMovement.h"
-#include "CTime.h"
 #include "CTransform.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"

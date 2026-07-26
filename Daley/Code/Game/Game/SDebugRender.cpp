@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SDebugRender.h"
+#include "Ability.h"
 #include "CCollision.h"
 #include "CRender.h"
 #include "CTransform.h"

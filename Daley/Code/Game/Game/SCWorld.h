@@ -1,6 +1,5 @@
 // Bradley Christensen - 2022-2026
 #pragma once
-#include "SpawnInfo.h"
 #include "WorldSettings.h"
 #include "Tile.h"
 #include "TowerPlacementInfo.h"
@@ -10,7 +9,6 @@
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/FastGrid.h"
 #include "Engine/Renderer/RendererUtils.h"
-#include <map>
 #include <vector>
 
 

@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "Engine/Core/TagQuery.h"
 #include "Engine/Core/Name.h"
 #include <array>
 

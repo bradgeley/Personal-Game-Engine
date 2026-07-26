@@ -1,8 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "Engine/Renderer/EngineConstantBuffers.h"
 #include "Engine/Renderer/Rgba8.h"
-#include "Engine/Renderer/RendererUtils.h"
 #include "Engine/Math/Vec2.h"
 
 

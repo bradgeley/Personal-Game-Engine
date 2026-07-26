@@ -3,10 +3,6 @@
 #include "InputLayout.h"
 #include "Engine/Core/Name.h"
 #include <string>
-#include <vector>
-
-
-struct InputLayout;
 
 
 //----------------------------------------------------------------------------------------------------------------------

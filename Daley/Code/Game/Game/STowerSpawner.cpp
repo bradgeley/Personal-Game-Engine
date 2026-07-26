@@ -41,7 +41,7 @@ void STowerSpawner::Run(SystemContext const& context) const
 
     for (TowerPlacementInfo const& placementInfo : factory.m_towerPlacements)
     {
-        TowerPlacementResult result = CanPlaceTower(placementInfo, factory, world);
+        TowerPlacementResult result = CanPlaceTower(placementInfo, world);
         if (result == TowerPlacementResult::Success)
         {
             PlaceTowerInWorld(placementInfo, world);
@@ -70,7 +70,7 @@ void STowerSpawner::Run(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementInfo const& info, SCEntityFactory& factory, SCWorld const& world) const
+TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementInfo const& info, SCWorld const& world) const
 {
     SCWorld copy = world;
 

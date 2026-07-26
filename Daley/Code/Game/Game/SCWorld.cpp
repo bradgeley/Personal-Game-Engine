@@ -1,8 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "SCWorld.h"
 #include "EntityDef.h"
-#include "SEntityFactory.h"
-#include "SCEntityFactory.h"
 #include "SCRenderer.h"
 #include "TileDef.h"
 #include "WorldShaderCPU.h"
@@ -14,13 +12,10 @@
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
-#include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
-#include <queue>
-#include <unordered_set>
 
 
 

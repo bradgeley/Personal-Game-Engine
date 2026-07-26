@@ -3,17 +3,15 @@
 #include "AssetManager.h"
 #include "ShaderAsset.h"
 #include "TextureAsset.h"
-#include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Texture.h"
-#include "Engine/Renderer/VertexUtils.h"
-#include "Engine/Renderer/Vertex_PCU.h"
-#include "Engine/Renderer/Shader.h"
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Shader.h"
+#include "Engine/Renderer/Texture.h"
+#include "Engine/Renderer/VertexUtils.h"
 
 
 

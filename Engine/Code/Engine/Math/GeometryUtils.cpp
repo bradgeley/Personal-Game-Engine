@@ -1,9 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "GeometryUtils.h"
-#include "MathUtils.h"
-#include "Constants.h"
 #include "AABB2.h"
-#include "Plane2.h"
+#include "MathUtils.h"
 #include "Engine/Core/ErrorUtils.h"
 #include <cfloat>
 

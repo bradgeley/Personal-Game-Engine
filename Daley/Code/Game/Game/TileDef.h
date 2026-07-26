@@ -1,7 +1,5 @@
 // Bradley Christensen - 2022-2026
 #pragma once
-#include "Engine/Math/IntVec2.h"
-#include "Engine/Math/AABB2.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Renderer/Rgba8.h"
 #include "Engine/Core/Name.h"

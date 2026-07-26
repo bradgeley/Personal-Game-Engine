@@ -1,12 +1,12 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "Engine/Core/TagQuery.h"
 #include <cstdint>
 #include <string>
 
 
 
 struct HitPayload;
+struct TagQuery;
 
 
 
@@ -43,7 +43,7 @@ public:
     float GetBurnSaturation() const;
 	float GetPoisonSaturation() const;
 
-    bool MatchesTagQuery(TagQuery query) const;
+    bool MatchesTagQuery(TagQuery const& query) const;
     bool GetHealthReachedZero() const;
     bool GetIsInvincible() const;
     bool GetNeverShowHealthBar() const;

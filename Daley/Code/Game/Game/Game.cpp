@@ -1,16 +1,12 @@
 // Bradley Christensen - 2022-2026
 #include "Game.h"
-
+#include "AllComponents.h"
+#include "AllSystems.h"
+#include "GameCommon.h"
+#include "Engine/Assets/AssetManager.h"
 #include "Engine/Audio/AudioSystem.h"
 #include "Engine/Audio/AudioUtils.h"
-#include "Engine/Assets/AssetManager.h"
-#include "Engine/Assets/Image.h"
-#include "Engine/Assets/GridSpriteSheet.h"
-#include "Engine/Assets/Font.h"
-#include "Engine/Assets/TextureAsset.h"
-#include "Engine/Time/Clock.h"
 #include "Engine/Core/Engine.h"
-#include "Engine/Core/EngineCommon.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsole.h"
@@ -21,17 +17,11 @@
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Time/Clock.h"
 #include "Engine/Window/Window.h"
 #include "Engine/Window/WindowUtils.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Camera.h"
-
 #include "Game/Framework/Application.h"
-#include "AllComponents.h"
-#include "AllSystems.h"
-#include "EntityDef.h"
-#include "GameCommon.h"
-#include "TileDef.h"
 
 
 

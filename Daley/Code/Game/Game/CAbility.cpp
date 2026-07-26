@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CAbility.h"
+#include "Ability.h"
 #include "AbilityDef.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"

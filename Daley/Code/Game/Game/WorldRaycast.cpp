@@ -1,12 +1,11 @@
 // Bradley Christensen - 2022-2026
 #include "WorldRaycast.h"
 #include "SCWorld.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/VertexUtils.h"
-#include "Engine/Renderer/VertexBuffer.h"
-#include "Engine/Math/MathUtils.h"
 #include "Engine/Math/GeometryUtils.h"
-#include "Engine/Performance/ScopedTimer.h"
+#include "Engine/Math/MathUtils.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Renderer/VertexUtils.h"
 #include <cfloat>
 
 

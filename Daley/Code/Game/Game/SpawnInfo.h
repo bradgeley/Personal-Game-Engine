@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Math/Vec2.h"
-#include "Engine/Renderer/Rgba8.h"
 
 
 

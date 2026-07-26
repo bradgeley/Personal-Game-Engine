@@ -1,7 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "Engine/Renderer/Texture.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/Image.h"
 
 

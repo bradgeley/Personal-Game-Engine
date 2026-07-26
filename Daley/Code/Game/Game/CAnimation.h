@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Assets/SpriteAnimation.h"
-#include <vector>
 
 
 

@@ -1,8 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "FlowField.h"
 #include "SCWorld.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/VertexBuffer.h"
 
 
 

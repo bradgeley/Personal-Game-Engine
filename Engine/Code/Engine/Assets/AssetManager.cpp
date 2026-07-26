@@ -1,17 +1,15 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "AssetManager.h"
 #include "AsyncLoadAssetJob.h"
-#include "Engine/Core/EngineCommon.h"
-#include "Engine/Core/ErrorUtils.h"
-#include "Engine/Core/NamedProperties.h"
+#include "Image.h"
+#include "ShaderAsset.h"
+#include "TextureAsset.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Assets/GridSpriteSheet.h"
-#include "Engine/Assets/SpriteAnimation.h"
+#include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Multithreading/Jobsystem.h"
-#include "Image.h"
-#include "TextureAsset.h"
-#include "ShaderAsset.h"
 
 
 

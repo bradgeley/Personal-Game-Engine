@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SRenderAbilities.h"
+#include "Ability.h"
 #include "CTransform.h"
 #include "CAbility.h"
 #include "Engine/ECS/SystemContext.h"

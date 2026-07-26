@@ -1,8 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "EntityDef.h"
-#include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
-#include "Engine/Renderer/Texture.h"
 
 
 

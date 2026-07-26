@@ -30,6 +30,6 @@ public:
     void Shutdown() const override;
     void Run(SystemContext const& context) const override;
 
-    TowerPlacementResult CanPlaceTower(TowerPlacementInfo const& info, SCEntityFactory& factory, SCWorld const& world) const;
+    TowerPlacementResult CanPlaceTower(TowerPlacementInfo const& info, SCWorld const& world) const;
     bool PlaceTowerInWorld(TowerPlacementInfo const& placementInfo, SCWorld& world) const;
 };

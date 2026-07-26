@@ -3,6 +3,7 @@
 #include "HitPayload.h"
 #include "GameCommon.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Core/TagQuery.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Math/MathUtils.h"
 
@@ -87,7 +88,7 @@ float CHealth::GetPoisonSaturation() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CHealth::MatchesTagQuery(TagQuery query) const
+bool CHealth::MatchesTagQuery(TagQuery const& query) const
 {
 	return query.Resolve(m_healthFlags);
 }
