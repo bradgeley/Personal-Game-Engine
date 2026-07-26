@@ -3,7 +3,6 @@
 #include "Engine/Core/Name.h"
 #include <atomic>
 #include <condition_variable>
-#include <string>
 #include <thread>
 
 

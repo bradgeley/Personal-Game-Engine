@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "RendererUtils.h"
-#include "Engine/Core/EngineCommon.h"
 
 #include "Game/Framework/EngineBuildPreferences.h"
 

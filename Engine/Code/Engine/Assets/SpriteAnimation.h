@@ -1,6 +1,5 @@
 // Bradley Christensen - 2022-2026
 #pragma once
-#include "Engine/Assets/Asset.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Math/Vec2.h"
 #include <vector>

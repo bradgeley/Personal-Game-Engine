@@ -1,7 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "GridSpriteSheet.h"
 #include "Engine/Assets/AssetManager.h"
-#include "Engine/Assets/Image.h"
 #include "Engine/Assets/TextureAsset.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"

@@ -16,6 +16,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/Vertex_PCU.h"
 
 
 

@@ -9,6 +9,7 @@
 #include "Texture.h"
 #include "VertexBuffer.h"
 #include "VertexUtils.h"
+#include "Vertex_PCU.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Assets/ShaderAsset.h"

@@ -5,20 +5,17 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
-#include "Engine/DataStructures/BitArray.h"
 #include "Engine/Core/NamedProperties.h"
-#include "Engine/ECS/AdminSystem.h"
-#include "Engine/ECS/System.h"
 #include "Engine/Input/InputSystem.h"
+#include "Engine/Math/MathUtils.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/Vertex_PCU.h"
 #include "Engine/Time/Time.h"
 #include "Engine/Window/Window.h"
 #include "Engine/Window/WindowUtils.h"
-#include "Engine/Math/MathUtils.h"
-#include "Engine/Performance/ScopedTimer.h"
 #include <cfloat>
 
 

@@ -136,12 +136,6 @@
     <ClCompile Include="Math\GeometryUtils.cpp">
       <Filter>Math</Filter>
     </ClCompile>
-    <ClCompile Include="ECS\Config.cpp">
-      <Filter>ECS</Filter>
-    </ClCompile>
-    <ClCompile Include="ECS\Component.cpp">
-      <Filter>ECS</Filter>
-    </ClCompile>
     <ClCompile Include="ECS\ComponentStorage.cpp">
       <Filter>ECS</Filter>
     </ClCompile>
@@ -215,9 +209,6 @@
       <Filter>Renderer\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\RenderTarget.cpp">
-      <Filter>Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\Swapchain.cpp">
       <Filter>Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\D3D11\D3D11Swapchain.cpp">
@@ -310,7 +301,9 @@
     <ClCompile Include="Core\NamedProperties.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\Font.cpp" />
+    <ClCompile Include="Assets\Font.cpp">
+      <Filter>Assets\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -664,7 +657,9 @@
     <ClInclude Include="Core\NamedProperties.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\Font.h" />
+    <ClInclude Include="Assets\Font.h">
+      <Filter>Assets\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">

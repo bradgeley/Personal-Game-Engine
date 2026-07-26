@@ -281,9 +281,7 @@
     <ClCompile Include="Debug\DevConsoleUtils.cpp" />
     <ClCompile Include="Debug\SSystemDebug.cpp" />
     <ClCompile Include="ECS\AdminSystem.cpp" />
-    <ClCompile Include="ECS\Component.cpp" />
     <ClCompile Include="ECS\ComponentStorage.cpp" />
-    <ClCompile Include="ECS\Config.cpp" />
     <ClCompile Include="ECS\EntityID.cpp" />
     <ClCompile Include="ECS\GroupIter.cpp" />
     <ClCompile Include="ECS\System.cpp" />
@@ -336,7 +334,6 @@
     <ClCompile Include="Renderer\RenderTarget.cpp" />
     <ClCompile Include="Renderer\Rgba8.cpp" />
     <ClCompile Include="Renderer\Shader.cpp" />
-    <ClCompile Include="Renderer\Swapchain.cpp" />
     <ClCompile Include="Renderer\Texture.cpp" />
     <ClCompile Include="Renderer\VertexBuffer.cpp" />
     <ClCompile Include="Renderer\VertexUtils.cpp" />

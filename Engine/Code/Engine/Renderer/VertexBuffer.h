@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "Vertex_PCU.h"
 #include <vector>
 
 

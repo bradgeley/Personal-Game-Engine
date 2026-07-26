@@ -6,6 +6,7 @@
 #include "Engine/Math/AABB2.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Renderer/Vertex_PCU.h"
 
 
 

@@ -1,8 +1,9 @@
 ﻿// Bradley Christensen - 2022-2026
+#define _CRT_SECURE_NO_WARNINGS
 #include "FileUtils.h"
 #include "StringUtils.h"
 #include "ErrorUtils.h"
-#include <fstream>
+#include <cstdio>
 #include <filesystem>
 
 
@@ -19,13 +20,12 @@ int FileUtils::FileWriteFromBuffer(const std::string& filepath, const uint8_t* b
         FileMakeDirsInPath(filepath);
     }
 
-    int fileMode = std::ios::out | std::ios::binary;
-    std::fstream filestream(filepath.data(), fileMode);
-    if (filestream.is_open())
+    FILE* file = fopen(filepath.c_str(), "wb");
+    if (file)
     {
-        filestream.write(reinterpret_cast<const char*>(bufferData), static_cast<int>(bufferSize));
-        filestream.close();
-        return static_cast<int>(bufferSize);
+        size_t bytesWritten = fwrite(bufferData, 1, bufferSize, file);
+        fclose(file);
+        return static_cast<int>(bytesWritten);
     }
     // Error
     return 0;
@@ -52,16 +52,16 @@ int FileUtils::FileWriteFromString(const std::string& filepath, const std::strin
 //----------------------------------------------------------------------------------------------------------------------
 int FileUtils::FileReadToBuffer(const std::string& filepath, uint8_t* bufferData, size_t bufferSize)
 {
-    int fileMode = std::ios::in | std::ios::ate | std::ios::binary;
-    std::fstream filestream(filepath.data(), fileMode);
-    if (filestream.is_open())
+    FILE* file = fopen(filepath.c_str(), "rb");
+    if (file)
     {
-        size_t fileSizeBytes = static_cast<size_t>(filestream.tellg()); // already at the end from std::ios::ate
+        fseek(file, 0, SEEK_END);
+        size_t fileSizeBytes = static_cast<size_t>(ftell(file));
         fileSizeBytes = std::min(fileSizeBytes, bufferSize); // don't let it write more than the buffer can take
-        filestream.seekg(std::ios::beg);
-        filestream.read((char*)bufferData, static_cast<int>(fileSizeBytes));
-        filestream.close();
-        return static_cast<int>(fileSizeBytes);
+        fseek(file, 0, SEEK_SET);
+        size_t bytesRead = fread(bufferData, 1, fileSizeBytes, file);
+        fclose(file);
+        return static_cast<int>(bytesRead);
     }
     // Error
     return 0;
@@ -103,11 +103,13 @@ int FileUtils::FileReadToString(const std::string& filepath, std::string& string
 //----------------------------------------------------------------------------------------------------------------------
 int FileUtils::GetFileSize(const std::string& filepath)
 {
-    int fileMode = std::ios::in | std::ios::ate | std::ios::binary;
-    std::fstream filestream(filepath.data(), fileMode);
-    if (filestream.is_open())
+    FILE* file = fopen(filepath.c_str(), "rb");
+    if (file)
     {
-        return static_cast<int>(filestream.tellg());
+        fseek(file, 0, SEEK_END);
+        int fileSize = static_cast<int>(ftell(file));
+        fclose(file);
+        return fileSize;
     }
     return 0;
 }

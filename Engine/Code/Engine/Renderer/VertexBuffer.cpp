@@ -1,6 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "VertexBuffer.h"
-#include "Renderer.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "GPUBuffer.h"
 

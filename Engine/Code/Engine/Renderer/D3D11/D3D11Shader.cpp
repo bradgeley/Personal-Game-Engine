@@ -9,7 +9,6 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Renderer/InputLayout.h"
-#include "Engine/Renderer/Vertex_PCU.h"
 
 
 

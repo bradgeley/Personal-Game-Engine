@@ -1,13 +1,11 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "Game/Framework/EngineBuildPreferences.h"
 #include "Engine/Core/EngineSubsystem.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Multithreading/Job.h"
 #include "Asset.h"
 #include "AssetKey.h"
-#include "AssetLoaderFunction.h"
 #include <typeindex>
 #include <mutex>
 #include <unordered_map>

@@ -15,7 +15,6 @@
 #include "D3D11Swapchain.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
-#include "Engine/Assets/Font.h"
 #include "Engine/Renderer/RenderTarget.h"
 
 #if defined(_DEBUG)

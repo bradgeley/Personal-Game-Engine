@@ -7,6 +7,7 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/Vertex_PCU.h"
 #include "Engine/Window/Window.h"
 #include "Engine/Debug/DevConsole.h"
 #include "Engine/Core/NamedProperties.h"
