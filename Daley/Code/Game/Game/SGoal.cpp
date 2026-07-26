@@ -4,6 +4,7 @@
 #include "CTransform.h"
 #include "SCEntityFactory.h"
 #include "SCWorld.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

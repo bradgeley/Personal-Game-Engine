@@ -4,6 +4,7 @@
 #include "SCEntityFactory.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/ECS/AdminSystem.h"
 #include "Engine/Math/MathUtils.h"
 
 

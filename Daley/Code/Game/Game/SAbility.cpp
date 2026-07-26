@@ -1,8 +1,9 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SAbility.h"
+#include "AbilityDef.h"
 #include "CTransform.h"
 #include "CAbility.h"
-#include "AbilityDef.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

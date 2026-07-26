@@ -6,6 +6,7 @@
 #include "HitPayload.h"
 #include "SCCollision.h"
 #include "SCWorld.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

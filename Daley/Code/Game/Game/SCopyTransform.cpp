@@ -2,6 +2,7 @@
 #include "SCopyTransform.h"
 #include "CRender.h"
 #include "CTransform.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

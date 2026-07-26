@@ -1,11 +1,12 @@
 ﻿// Bradley Christensen - 2023
 #include "SRenderDebug.h"
 #include "Game/SCDebug.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/Camera.h"
-#include "Engine/Renderer/Window.h"
-#include "Engine/Renderer/Font.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/ECS/SystemContext.h"
+#include "Engine/Renderer/Camera.h"
+#include "Engine/Renderer/Font.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Window.h"
 
 
 

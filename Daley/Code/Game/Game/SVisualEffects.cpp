@@ -8,9 +8,8 @@
 #include "SEntityFactory.h"
 #include "SCEntityFactory.h"
 #include "SpawnInfo.h"
-#include "Engine/Assets/GridSpriteSheet.h"
-#include "Engine/Renderer/Vertex_PCU.h"
-#include "Engine/Renderer/VertexUtils.h"
+#include "Engine/ECS/AdminSystem.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

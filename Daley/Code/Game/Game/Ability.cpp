@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "Ability.h"
+#include "AbilityDef.h"
 #include "CProjectile.h"
 #include "CTime.h"
 #include "EntityDef.h"
@@ -7,19 +8,15 @@
 #include "SCFlowField.h"
 #include "SCWorld.h"
 #include "SEntityFactory.h"
-#include "AbilityDef.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
-#include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/ECS/SystemContext.h"
 #include "Engine/Math/Grid.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
-#include "Engine/Performance/ScopedTimer.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
-#include "Engine/Renderer/Vertex_PCU.h"
-#include <set>
 
 
 

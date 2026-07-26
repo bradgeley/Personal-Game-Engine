@@ -3,6 +3,7 @@
 #include "CAnimation.h"
 #include "CMovement.h"
 #include "CRender.h"
+#include "Engine/ECS/SystemContext.h"
 #include <thread>
 
 

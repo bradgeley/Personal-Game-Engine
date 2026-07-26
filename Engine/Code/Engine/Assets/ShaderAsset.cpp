@@ -1,7 +1,5 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "ShaderAsset.h"
-#include "Engine/Assets/Image.h"
-#include "Engine/Assets/AssetManager.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/Shader.h"

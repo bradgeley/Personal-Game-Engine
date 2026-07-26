@@ -4,6 +4,7 @@
 #include "CTransform.h"
 #include "SCWorld.h"
 #include "WorldRaycast.h"
+#include "Engine/ECS/SystemContext.h"
 #include <thread>
 
 

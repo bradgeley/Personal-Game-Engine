@@ -5,6 +5,7 @@
 #include "SCRenderer.h"
 #include "SCWindow.h"
 #include "WorldSettings.h"
+#include "Engine/ECS/SystemContext.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Window/Window.h"

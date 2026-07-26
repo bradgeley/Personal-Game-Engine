@@ -1,15 +1,16 @@
 ﻿// Bradley Christensen - 2023
 #include "SRender.h"
-#include "Engine/Renderer/Renderer.h"
-#include "Engine/Renderer/VertexUtils.h"
-#include "Engine/Renderer/Window.h"
-#include "Engine/Renderer/VertexBuffer.h"
-#include "Engine/Renderer/Texture.h"
-#include "Engine/Core/StringUtils.h"
 #include "Game/CRender.h"
 #include "Game/CCamera.h"
 #include "Game/CTransform.h"
 #include "Game/SCRenderer.h"
+#include "Engine/Core/StringUtils.h"
+#include "Engine/ECS/SystemContext.h"
+#include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/Texture.h"
+#include "Engine/Renderer/VertexBuffer.h"
+#include "Engine/Renderer/VertexUtils.h"
+#include "Engine/Renderer/Window.h"
 
 
 

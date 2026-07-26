@@ -5,6 +5,7 @@
 #include "DiscShaderCPU.h"
 #include "CTransform.h"
 #include "SCRenderer.h"
+#include "Engine/ECS/SystemContext.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/InstanceBuffer.h"
 

@@ -6,6 +6,7 @@
 #include "CLifetime.h"
 #include "SCEntityFactory.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/ECS/SystemContext.h"
 #include <thread>
 
 

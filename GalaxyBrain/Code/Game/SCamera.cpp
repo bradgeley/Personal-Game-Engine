@@ -3,6 +3,7 @@
 #include "Game/CCamera.h"
 #include "Game/CTransform.h"
 #include "Game/CPhysics.h"
+#include "Engine/ECS/SystemContext.h"
 #include "Engine/Input/InputSystem.h"
 
 

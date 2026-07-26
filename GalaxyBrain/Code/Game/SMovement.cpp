@@ -3,6 +3,7 @@
 #include "Game/CMovement.h"
 #include "Game/CPhysics.h"
 #include "Game/CTransform.h"
+#include "Engine/ECS/SystemContext.h"
 #include "Engine/Math/MathUtils.h"
 
 

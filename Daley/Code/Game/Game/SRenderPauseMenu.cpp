@@ -5,6 +5,8 @@
 #include "SCCamera.h"
 #include "SCRenderer.h"
 #include "Engine/Assets/Font.h"
+#include "Engine/ECS/AdminSystem.h"
+#include "Engine/ECS/SystemContext.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"

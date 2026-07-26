@@ -5,6 +5,7 @@
 #include "CAIController.h"
 #include "SCWorld.h"
 #include "SCFlowField.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

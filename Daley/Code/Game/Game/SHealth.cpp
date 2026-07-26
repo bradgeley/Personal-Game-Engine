@@ -3,6 +3,7 @@
 #include "CHealth.h"
 #include "GameCommon.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/ECS/SystemContext.h"
 #include <thread>
 
 

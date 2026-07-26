@@ -6,6 +6,7 @@
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/ECS/SystemContext.h"
 #include <thread>
 
 

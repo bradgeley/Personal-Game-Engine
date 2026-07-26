@@ -8,6 +8,8 @@
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/ECS/AdminSystem.h"
+#include "Engine/ECS/SystemContext.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 

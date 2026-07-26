@@ -1,6 +1,5 @@
 // Bradley Christensen - 2022-2026
 #pragma once
-#include "SystemContext.h"
 #include "Engine/Renderer/Rgba8.h"
 #include "Engine/Core/Name.h"
 #include "Config.h"
@@ -9,6 +8,7 @@
 
 
 class AdminSystem;
+struct SystemContext;
 
 
 

@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "SystemScheduler.h"
 #include "System.h"
+#include "SystemContext.h"
 #include "Engine/Multithreading/JobSystem.h"
 #include "Engine/Performance/PerformanceDebugWindow.h"
 #include "Engine/Multithreading/JobGraph.h"

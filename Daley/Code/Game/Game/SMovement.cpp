@@ -4,6 +4,7 @@
 #include "CTransform.h"
 #include "CDeath.h"
 #include "CTime.h"
+#include "Engine/ECS/SystemContext.h"
 #include <thread>
 
 

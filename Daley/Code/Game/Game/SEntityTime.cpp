@@ -3,6 +3,7 @@
 #include "SCTime.h"
 #include "CTime.h"
 #include "GameCommon.h"
+#include "Engine/ECS/SystemContext.h"
 #include <thread>
 
 

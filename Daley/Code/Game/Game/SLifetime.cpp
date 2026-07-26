@@ -3,6 +3,7 @@
 #include "CLifetime.h"
 #include "CTime.h"
 #include "SCEntityFactory.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

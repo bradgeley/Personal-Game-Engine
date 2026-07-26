@@ -3,6 +3,7 @@
 #include "CAttachment.h"
 #include "CTransform.h"
 #include "SCEntityFactory.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

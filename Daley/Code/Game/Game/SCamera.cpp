@@ -2,8 +2,7 @@
 #include "SCamera.h"
 #include "SCCamera.h"
 #include "SCWorld.h"
-#include "WorldSettings.h"
-#include "Engine/Window/Window.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

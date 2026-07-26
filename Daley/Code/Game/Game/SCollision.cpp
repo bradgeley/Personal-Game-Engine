@@ -2,9 +2,9 @@
 #include "SCollision.h"
 #include "CCollision.h"
 #include "SCCollision.h"
-#include "SCWorld.h"
 #include "CTransform.h"
 #include "Engine/Math/GeometryUtils.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 

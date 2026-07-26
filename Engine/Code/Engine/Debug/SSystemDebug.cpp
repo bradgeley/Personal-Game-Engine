@@ -1,8 +1,8 @@
 // Bradley Christensen - 2022-2026
 #include "SSystemDebug.h"
+#include "Engine/ECS/AdminSystem.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Core/EngineCommon.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Core/NamedProperties.h"
 

@@ -1,10 +1,11 @@
 ﻿// Bradley Christensen - 2023
 #include "SEntityFactory.h"
-#include "Engine/Core/XmlUtils.h"
-#include "Engine/Debug/DevConsole.h"
 #include "Game/EntityDef.h"
 #include "Game/CTransform.h"
 #include "Game/SCEntityFactory.h"
+#include "Engine/Core/XmlUtils.h"
+#include "Engine/Debug/DevConsole.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 
