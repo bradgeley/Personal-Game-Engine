@@ -176,7 +176,7 @@ void SCWorld::Shutdown()
 //----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsTileSolid(int tileIndex) const
 {
-	Tile const& tile = m_tiles.Get(tileIndex);
+	Tile const& tile = m_tiles.GetRef(tileIndex);
 	return tile.IsSolid();
 }
 
@@ -185,7 +185,7 @@ bool SCWorld::IsTileSolid(int tileIndex) const
 //----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsTileSolid(IntVec2 const& worldCoords) const
 {
-	Tile const& tile = m_tiles.Get(worldCoords);
+	Tile const& tile = m_tiles.GetRef(worldCoords);
 	return tile.IsSolid();
 }
 
@@ -212,7 +212,7 @@ bool SCWorld::IsTileVisible(IntVec2 const& worldCoords) const
 //----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsTileOnPath(int tileIndex) const
 {
-	Tile const& tile = m_tiles.Get(tileIndex);
+	Tile const& tile = m_tiles.GetRef(tileIndex);
 	return tile.IsPath();
 }
 
@@ -221,7 +221,7 @@ bool SCWorld::IsTileOnPath(int tileIndex) const
 //----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsTileOnPath(IntVec2 const& worldCoords) const
 {
-	Tile const& tile = m_tiles.Get(worldCoords);
+	Tile const& tile = m_tiles.GetRef(worldCoords);
 	return tile.IsPath();
 }
 
@@ -243,7 +243,7 @@ bool SCWorld::IsLocationOnPath(Vec2 const& worldPos) const
 //----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsTileInGoal(int tileIndex) const
 {
-	Tile const& tile = m_tiles.Get(tileIndex);
+	Tile const& tile = m_tiles.GetRef(tileIndex);
 	return tile.IsGoal();
 }
 
@@ -252,7 +252,7 @@ bool SCWorld::IsTileInGoal(int tileIndex) const
 //----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::IsTileInGoal(IntVec2 const& worldCoords) const
 {
-	Tile const& tile = m_tiles.Get(worldCoords);
+	Tile const& tile = m_tiles.GetRef(worldCoords);
 	return tile.IsGoal();
 }
 
@@ -274,7 +274,7 @@ bool SCWorld::IsLocationInGoal(Vec2 const& worldPos) const
 //----------------------------------------------------------------------------------------------------------------------
 bool SCWorld::DoesTileMatchTagQuery(IntVec2 const& worldCoords, TagQuery const& tagQuery) const
 {
-	Tile const& tile = m_tiles.Get(worldCoords);
+	Tile const& tile = m_tiles.GetRef(worldCoords);
 	return tagQuery.Resolve(tile.m_tags);
 }
 

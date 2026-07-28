@@ -300,7 +300,7 @@ PerlinWormPathGeneratorComponentDef::PerlinWormPathGeneratorComponentDef(XmlElem
 	m_startPos = XmlUtils::ParseXmlAttribute(*xmlElement, "startPos", m_startPos);
 	m_startDir = XmlUtils::ParseXmlAttribute(*xmlElement, "startDir", m_startDir);
 	m_thicknessRange = XmlUtils::ParseXmlAttribute(*xmlElement, "thicknessRange", m_thicknessRange);
-	m_thicknessVariance = XmlUtils::ParseXmlAttribute(*xmlElement, "thicknessVariance", m_thicknessVariance);
+	m_thicknessNoiseScale = XmlUtils::ParseXmlAttribute(*xmlElement, "thicknessNoiseScale", m_thicknessNoiseScale);
 	m_splitChance = XmlUtils::ParseXmlAttribute(*xmlElement, "splitChance", m_splitChance);
 	m_splitAngleDeg = XmlUtils::ParseXmlAttribute(*xmlElement, "splitAngleDeg", m_splitAngleDeg);
 	m_maxSplits = XmlUtils::ParseXmlAttribute(*xmlElement, "maxSplits", m_maxSplits);

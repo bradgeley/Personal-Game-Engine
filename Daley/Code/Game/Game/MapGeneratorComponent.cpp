@@ -284,7 +284,7 @@ PerlinWormPathGeneratorComponent::PerlinWormPathGeneratorComponent(PerlinWormPat
 	m_startPos = def.m_startPos;
 	m_startDir = def.m_startDir;
 	m_thicknessRange = def.m_thicknessRange;
-	m_thicknessVariance = def.m_thicknessVariance;
+	m_thicknessNoiseScale = def.m_thicknessNoiseScale;
 	m_splitChance = def.m_splitChance;
 	m_splitAngleDeg = def.m_splitAngleDeg;
 	m_maxSplits = def.m_maxSplits;
@@ -341,8 +341,8 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 				break;
 			}
 
-			noiseLocation += 0.01f;
-			float noiseValue = Noise::GetPerlinNoise1D(noiseLocation, 0.5f, 5);
+			noiseLocation += 0.04f;
+			float noiseValue = Noise::GetPerlinNoise1D(noiseLocation, 1.f, 5);
 			Vec2 wormDir = worm.m_dir.GetRotated(noiseValue * 45.f); // todo: parameterize
 			Vec2 nextWormLocation = worm.m_pos + wormDir;
 
@@ -361,20 +361,20 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 				}
 			}
 
-			float capsuleRadius = m_thicknessRange.x * 0.5f;
+			float capsuleRadius = m_thicknessRange.x;
 			float capsuleVariance = m_thicknessRange.y - m_thicknessRange.x;
-			float capsuleRadiusNoise = capsuleVariance * Noise::GetPerlinNoise2D_01(noiseLocation + 500.f, 25.f, 2);
-			capsuleRadius += capsuleRadiusNoise;
+			float capsuleRadiusNoise = Noise::GetPerlinNoise1D_01(static_cast<int>(noiseLocation) + 1500.f, m_thicknessNoiseScale, 5, true, seed + iterationCount);
+			capsuleRadius += capsuleVariance * capsuleRadiusNoise;
+			capsuleRadius *= 0.5f;
 			capsuleRadius = MathUtils::Max(capsuleRadius, 1.f); // minimum radius of 1
 
 			world.ForEachPlayableTileOverlappingCapsule(worm.m_pos, nextWormLocation, capsuleRadius, [&world, &pathTile](IntVec2 const& tileCoords)
 			{
-				Tile& tile = world.m_tiles.GetRef(tileCoords);
-				if (tile.IsGoal())
+				if (world.IsTileInGoal(tileCoords))
 				{
-					return true;
+					return true; // Don't overwrite goal tiles
 				}
-				tile = pathTile;
+				world.SetTile(tileCoords, pathTile);
 				return true;
 			});
 

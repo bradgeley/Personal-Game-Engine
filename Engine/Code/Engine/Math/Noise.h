@@ -42,6 +42,7 @@ namespace Noise
 	// Returns float between -1 and 1, smoother than fractal noise
 	//
 	float GetPerlinNoise1D(float position, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
+	float GetPerlinNoise1D_01(float position, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
 	float GetPerlinNoise2D(float x, float y, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
 	float GetPerlinNoise2D_01(float x, float y, float scale = 1.f, unsigned int numOctaves = 1, float octavePersistence = 0.5f, float octaveScale = 2.f, bool renormalize = true, unsigned int seed = 0);
 }

@@ -266,6 +266,16 @@ float Noise::GetPerlinNoise1D(float position, float scale, unsigned int numOctav
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float Noise::GetPerlinNoise1D_01(float position, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed)
+{
+	float noiseNegOneToOne = GetPerlinNoise1D(position, scale, numOctaves, octavePersistence, octaveScale, renormalize, seed);
+	float result = (noiseNegOneToOne * 0.5f) + 0.5f; // Map to 0,1
+	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float Noise::GetPerlinNoise2D(float x, float y, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed)
 {
 	static Vec2 OCTAVE_OFFSET = Vec2(0.636764989593174f, 0.636764989593174f); // Translation/bias to add to each octave

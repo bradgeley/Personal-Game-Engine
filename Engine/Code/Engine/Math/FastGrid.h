@@ -433,10 +433,10 @@ bool FastGrid<T, Pow2>::IsValidIndex(int index) const
 template <typename T, uint8_t Pow2>
 bool FastGrid<T, Pow2>::IsValidCoords(IntVec2 const& coords) const
 {
-    return  coords.x < m_dimensions.x&&
-        coords.y < m_dimensions.y&&
-        coords.x >= 0 &&
-        coords.y >= 0;
+    return coords.x < m_dimensions.x &&
+           coords.y < m_dimensions.y &&
+           coords.x >= 0 &&
+           coords.y >= 0;
 }
 
 
