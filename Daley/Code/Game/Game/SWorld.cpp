@@ -52,7 +52,7 @@ void SWorld::Shutdown() const
 void SWorld::EndFrame() const
 {
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
-	scWorld.m_solidnessChanged = false;
+	scWorld.m_solidnessOfPathTileChanged = false;
 }
 
 

@@ -51,7 +51,7 @@ void SFlowField::Run(SystemContext const& context) const
     // Read Dependencies
     SCWorld const& world = context.GetSingletonConst<SCWorld>();
 
-    if (!world.m_solidnessChanged)
+    if (!world.m_solidnessOfPathTileChanged)
     {
         return;
     }
@@ -115,7 +115,92 @@ void SFlowField::GenerateFlow(FlowField& flowField, SCWorld const& world)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& world)
+float CalculateNeighborDistance_Dijkstra(IntVec2 const& neighborTileCoords, FlowField& flowField, SCWorld const& world)
+{
+    int neighborCost = (int) flowField.m_costField.Get(neighborTileCoords);
+    float minNofnDistance = StaticWorldSettings::s_maximumFlowDistance;
+
+    for (IntVec2 const& nofnOffset : neighborOffsets)
+    {
+        IntVec2 nofnTileCoords = neighborTileCoords + nofnOffset;
+        if (!flowField.m_distanceField.IsValidCoords(nofnTileCoords))
+        {
+            continue;
+        }
+        if (!world.DoesTileMatchTagQuery(nofnTileCoords, flowField.m_tileTagQuery))
+        {
+            continue;
+        }
+        float nofnDistance = flowField.m_distanceField.Get(nofnTileCoords);
+        if (nofnDistance < minNofnDistance)
+        {
+            minNofnDistance = nofnDistance;
+        }
+    }
+
+    float result = minNofnDistance + (float) neighborCost;
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float CalculateNeighborDistance_FMM(IntVec2 const& neighborTileCoords, FlowField& flowField, SCWorld const& world)
+{
+    int neighborCost = (int) flowField.m_costField.Get(neighborTileCoords);
+
+    float dx = FLT_MAX; // dx = min( neighborWestDistance, neighborEastDistance );
+    float dy = FLT_MAX; // dy = min( neighborNorthDistance, neighborSouthDistance );
+
+    // nofn = neighbor of neighbor
+    for (IntVec2 const& nofnOffset : neighborOffsets)
+    {
+        IntVec2 nofnTileCoords = neighborTileCoords + nofnOffset;
+        if (!flowField.m_distanceField.IsValidCoords(nofnTileCoords))
+        {
+            continue;
+        }
+        if (!world.DoesTileMatchTagQuery(nofnTileCoords, flowField.m_tileTagQuery))
+        {
+            continue;
+        }
+        float nofnDistance = flowField.m_distanceField.Get(nofnTileCoords);
+        if (nofnOffset.x != 0 && dx > nofnDistance)
+        {
+            dx = nofnDistance; // get the minimum of east/west distances
+        }
+        else if (nofnOffset.y != 0 && dy > nofnDistance)
+        {
+            dy = nofnDistance; // get the minimum of north/south distances
+        }
+    }
+
+    // Delta = 2 * neighborCost - (dx-dy)^2;
+    // if Delta >= 0
+    //     D(j) = (dx + dy + sqrt(Delta)) / 2;
+    // else
+    //     D(j) = min(dx + W(j), dy + W(j));
+    // end
+
+    float delta = 2 * neighborCost - MathUtils::PowF(dx - dy, 2);
+
+    float result;
+    if (delta >= 0)
+    {
+        result = (dx + dy + MathUtils::SqrtF(delta)) / 2.f;
+    }
+    else
+    {
+        result = MathUtils::Min(dx + neighborCost, dy + neighborCost);
+    }
+
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& world, bool useDijkstra /*= false*/)
 {
     ScopedTimer timer("- Generate Distance Field");
 
@@ -157,50 +242,14 @@ void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& worl
                 continue;
             }
 
-            int neighborCost = (int) flowField.m_costField.Get(neighborTileCoords);
-
-            float dx = FLT_MAX; // dx = min( neighborWestDistance, neighborEastDistance );
-            float dy = FLT_MAX; // dy = min( neighborNorthDistance, neighborSouthDistance );
-
-            // nofn = neighbor of neighbor
-            for (IntVec2 const& nofnOffset : neighborOffsets)
-            {
-                IntVec2 nofnTileCoords = neighborTileCoords + nofnOffset;
-                if (!flowField.m_distanceField.IsValidCoords(nofnTileCoords))
-                {
-                    continue;
-                }
-                if (!world.DoesTileMatchTagQuery(nofnTileCoords, flowField.m_tileTagQuery))
-                {
-                    continue;
-                }
-                float nofnDistance = flowField.m_distanceField.Get(nofnTileCoords);
-                if (nofnOffset.x != 0 && dx > nofnDistance)
-                {
-                    dx = nofnDistance; // get the minimum of east/west distances
-                }
-                else if (nofnOffset.y != 0 && dy > nofnDistance)
-                {
-                    dy = nofnDistance; // get the minimum of north/south distances
-                }
-            }
-
-            // Delta = 2 * neighborCost - (dx-dy)^2;
-            // if Delta >= 0
-            //     D(j) = (dx + dy + sqrt(Delta)) / 2;
-            // else
-            //     D(j) = min(dx + W(j), dy + W(j));
-            // end
-
-            float delta = 2 * neighborCost - MathUtils::PowF(dx - dy, 2);
             float calculatedNeighborDistance;
-            if (delta >= 0)
+            if (useDijkstra)
             {
-                calculatedNeighborDistance = (dx + dy + MathUtils::SqrtF(delta)) / 2.f;
+				calculatedNeighborDistance = CalculateNeighborDistance_Dijkstra(neighborTileCoords, flowField, world);
             }
             else
             {
-                calculatedNeighborDistance = MathUtils::Min(dx + neighborCost, dy + neighborCost);
+				calculatedNeighborDistance = CalculateNeighborDistance_FMM(neighborTileCoords, flowField, world);
             }
 
             if (calculatedNeighborDistance < flowField.m_distanceField.Get(neighborTileCoords))

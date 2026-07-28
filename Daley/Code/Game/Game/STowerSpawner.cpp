@@ -95,7 +95,7 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementInfo const& info
 
     SFlowField::SeedFlowField(proxyWorldFlowField, world);
     SFlowField::SetCostField(proxyWorldFlowField, copy);
-    SFlowField::GenerateDistanceField(proxyWorldFlowField, copy);
+    SFlowField::GenerateDistanceField(proxyWorldFlowField, copy, true);
     proxyWorldFlowField.m_hasGeneratedFlow = true;
 
     bool isFlowfieldValid = true;
@@ -107,6 +107,7 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementInfo const& info
             float distanceOnEdgePath = proxyWorldFlowField.GetDistanceAtTileCoords(tileCoords);
             if (distanceOnEdgePath == StaticWorldSettings::s_maximumFlowDistance)
             {
+				// If a path edge tile is blocked, then the flowfield is invalid and the tower placement is invalid
                 isFlowfieldValid = false;
                 return false; // stop iterating
             }
@@ -124,26 +125,14 @@ bool STowerSpawner::PlaceTowerInWorld(TowerPlacementInfo const& placementInfo, S
 {
     if (world.DoTilesInRegionMatchQuery(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, placementInfo.m_tileTagQuery))
     {
-        bool solidnessChanged = false;
-        bool solidnessOfPathTileChanged = false;
 
         world.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
         {
-            Tile& tile = world.m_tiles.GetRef(worldCoords);
-            if (!tile.IsSolid())
-            {
-                solidnessChanged = true;
-                if (tile.IsPath())
-                {
-                    solidnessOfPathTileChanged = true;
-                }
-            }
-            tile.SetIsSolid(true);
+            Tile tile = world.m_tiles.Get(worldCoords);
+			tile.SetIsSolid(true);
+			world.SetTile(worldCoords, tile);
             return true; // keep iterating
         });
-
-        world.m_solidnessChanged |= solidnessOfPathTileChanged;
-        world.m_solidnessOfPathTileChanged |= solidnessOfPathTileChanged;
 
         return true;
     }

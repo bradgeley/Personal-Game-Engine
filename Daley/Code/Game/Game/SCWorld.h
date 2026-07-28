@@ -103,7 +103,6 @@ public:
 
     bool m_isLightingDirty                      = true;
     bool m_isVBODirty                           = true;
-    bool m_solidnessChanged                     = true;
     bool m_solidnessOfPathTileChanged           = false;
     VertexBufferID m_vbo                        = RendererUtils::InvalidID;
     TextureID m_lightmap                        = RendererUtils::InvalidID; // R8G8

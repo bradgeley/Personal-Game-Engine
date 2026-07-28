@@ -98,7 +98,25 @@ void GPUBuffer::AddToCPUBuffer(void const* data, size_t size)
 	{
 		return;
 	}
+	
+	size_t oldSize = m_cpuBuffer.size();
+	size_t newSize = oldSize + size;
+	
+	// Preserve vector's exponential growth strategy
+	if (newSize > m_cpuBuffer.capacity())
+	{
+		size_t newCapacity = m_cpuBuffer.capacity() * 2; // 2x growth factor
+		if (newCapacity < newSize)
+		{
+			newCapacity = newSize;
+		}
+		m_cpuBuffer.reserve(newCapacity);
+	}
+	
+	// Now resize and copy (won't reallocate since we reserved)
+	m_cpuBuffer.resize(newSize);
 	uint8_t const* byteData = static_cast<uint8_t const*>(data);
-	m_cpuBuffer.insert(m_cpuBuffer.end(), byteData, byteData + size);
-	m_isDirty = true;
+	memcpy(&m_cpuBuffer[oldSize], byteData, size);
+	
+	m_isDirty = true;	
 }

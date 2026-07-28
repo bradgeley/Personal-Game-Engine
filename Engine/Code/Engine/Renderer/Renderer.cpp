@@ -19,6 +19,10 @@
 #include "Engine/Window/Window.h"
 #include <thread>
 
+#if not defined(_DEBUG)
+#include "Engine/Debug/DevConsoleUtils.h"
+#endif
+
 
 
 //----------------------------------------------------------------------------------------------------------------------

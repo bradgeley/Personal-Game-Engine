@@ -26,6 +26,6 @@ public:
     static void SeedFlowField(FlowField& flowField, SCWorld const& world);
     static void SetCostField(FlowField& flowField, SCWorld const& world);
     static void GenerateFlow(FlowField& flowField, SCWorld const& world);
-    static void GenerateDistanceField(FlowField& flowField, SCWorld const& world);
+    static void GenerateDistanceField(FlowField& flowField, SCWorld const& world, bool useDijkstra = false);
     static void GenerateGradient(FlowField& flowField, SCWorld const& world);
 };

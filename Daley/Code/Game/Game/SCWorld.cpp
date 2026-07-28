@@ -388,10 +388,10 @@ bool SCWorld::SetTile(int tileIndex, Tile const& tile)
 		return true;
 	}
 
-	m_solidnessChanged |= (existingTile.IsSolid() != tile.IsSolid());
+	m_solidnessOfPathTileChanged |= (tile.IsPath() != existingTile.IsPath()) || (tile.IsPath() && tile.IsSolid() != existingTile.IsSolid());
 	m_isLightingDirty = true;
 	m_isVBODirty = true;
-
+		
 	existingTile = tile;
 	existingTile.SetLightingDirty(true);
 	existingTile.SetVertsDirty(true);
