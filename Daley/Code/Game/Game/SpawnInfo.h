@@ -17,6 +17,7 @@ struct SpawnInfo
 	float m_spawnLifetime			= -1.f; // < 0 means infinite
 	float m_spawnHealthMultiplier	= 1.f;
 	float m_spawnSpeedMultiplier	= 1.f;
+	Rgba8 m_outlineTint				= Rgba8::TransparentWhite;
 
     EntityDef const* m_def = nullptr;
 };

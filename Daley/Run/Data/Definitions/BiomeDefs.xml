@@ -28,7 +28,7 @@
     <TileGenerator tile="stone" selector="mountain"></TileGenerator>
     <TileGenerator tile="glowstone" selector="glowstone"></TileGenerator>
     <EntityGenerator entity="wall1x1" selector="walls"></EntityGenerator>
-    <EntityGenerator entity="rainbow" selector="trees"></EntityGenerator>
+    <EntityGenerator entity="wall2x2" selector="trees"></EntityGenerator>
     
   </BiomeDef>
 </BiomeDefs>

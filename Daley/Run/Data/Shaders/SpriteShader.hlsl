@@ -11,7 +11,8 @@ struct VSInput
 	float3	instancePosition	: INSTANCEPOSITION;	// 12 bytes
     float   instanceRotation    : INSTANCEROTATION; // 4 bytes
 	//------------------------------------------------------
-    float4	instanceTint		: INSTANCETINT;		// 16 bytes
+    float4	instanceTint		: INSTANCETINT;		    // 16 bytes
+    float4	instanceOutlineTint	: INSTANCEOUTLINETINT;	// 16 bytes
 	//------------------------------------------------------
 	float2	instanceDims		: INSTANCEDIMS;	    // 8 bytes
     uint    spriteIndex         : INDEX;            // 4 bytes
@@ -26,11 +27,12 @@ struct VSInput
 //----------------------------------------------------------------------------------------------------------------------
 struct VSOutput
 {
-    float4 position : SV_Position;
-    float4 tint : TINT;
-    float2 uvs : UVS;
-    float indoorLight : INDOORLIGHT;
-    float outdoorLight : OUTDOORLIGHT;
+    float4  position            : SV_Position;
+    float4  tint                : TINT;
+    float4  outlineTint         : OUTLINETINT;
+    float2  uvs                 : UVS;
+    float   indoorLight         : INDOORLIGHT;
+    float   outdoorLight        : OUTDOORLIGHT;
 };
 
 
@@ -181,6 +183,7 @@ VSOutput VertexMain(VSInput vin, uint vertexID : SV_VertexID, uint instanceID : 
     output.position = mul(cameraToClip, output.position);
 	
     output.tint = vin.instanceTint;
+    output.outlineTint = vin.instanceOutlineTint;
     output.indoorLight = vin.indoorLight;
     output.outdoorLight = vin.outdoorLight;
 	
@@ -233,6 +236,22 @@ float4 PixelMain(VSOutput input) : SV_Target0
     
     if (finalColor.a <= 0.001f)
     {
+        if (input.outlineTint.a > 0.001f)
+        {
+            float dx = 1.f / textureDims.x;
+            float dy = 1.f / textureDims.y;
+        
+            // Check left/right/up/down pixels. If at least one is opaque, then this pixel is on the edge of the sprite and should be drawn as outline tint
+            if (SurfaceColorTexture.Sample(SurfaceSampler, texCoord + float2(-dx, 0)).a > 0.001f ||
+                SurfaceColorTexture.Sample(SurfaceSampler, texCoord + float2(dx, 0)).a > 0.001f ||
+                SurfaceColorTexture.Sample(SurfaceSampler, texCoord + float2(0, -dy)).a > 0.001f ||
+                SurfaceColorTexture.Sample(SurfaceSampler, texCoord + float2(0, dy)).a > 0.001f)
+            {
+                finalColor = input.outlineTint;
+                return finalColor;
+            }
+        }
+        
         discard;
     }
     

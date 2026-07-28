@@ -55,6 +55,7 @@ public:
 
     void CacheValidSpawnLocations();
     Vec2 GetRandomSpawnLocation(RandomNumberGenerator& rng) const;
+    Vec2 GetRandomSpawnLocation_SeededNoise(int pos, int seed, RandomNumberGenerator& rng) const;
 
     uint8_t GetTileCost(int tileIndex) const;
 

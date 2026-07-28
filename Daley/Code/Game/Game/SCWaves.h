@@ -15,12 +15,15 @@ public:
 
 public:
 
+	int m_id					= -1; // id of the wave stream, unique for each in an entire set of generated waves.
 	Name m_entityName			= Name::Invalid;
 	int m_numEntities			= 0;
 	float m_overTimeSeconds		= 0.f;
 
 	float m_healthMultiplier	= 1.f;
 	float m_speedMultiplier		= 1.f;
+	float m_magicEnemyChance	= 0.f;
+	float m_rareEnemyChance		= 0.f;
 };
 
 
@@ -93,6 +96,13 @@ struct LevelWaveGenModifiers
 	float m_healthMultiplierIncreasePerWave = 0.f;			// Increase health multiplier by this amount per wave
 	float m_healthExponentialScalingPerWave = 1.01f;		// Multaplicative scaling per wave
 	float m_speedMultiplierIncreasePerWave = 0.f;			// Increase speed multiplier by this amount per wave
+
+	// Rarity Settings
+	float m_magicEnemyChance = 0.1f;						// Chance for each enemy in the wave to be magic rarity
+	float m_magicEnemyChanceIncreasePerWave = 0.0025f;		// Increase magic enemy chance by this amount per wave
+	float m_rareEnemyChance = 0.01f;						// Chance for each enemy in the wave to be rare rarity
+	float m_rareEnemyChanceIncreasePerWave = 0.001f;		// Increase rare enemy chance by this amount per wave
+	bool m_canBossesHaveRarity = false;
 };
 
 
@@ -113,10 +123,13 @@ struct LevelWaveGenModifiers
 // All monsters spawned increased by 50%
 // All waves spawn 10% faster 
 // Every wave, increase the number of monsters spawned by 1%
+//
 struct LevelWaveGenDef
 {
 	float GetHealthScaling(int waveIndex) const;
 	float GetSpeedScaling(int waveIndex) const;
+	float GetMagicEnemyChance(int waveIndex) const;
+	float GetRareEnemyChance(int waveIndex) const;
 
 	int m_seed = 0;
 	int m_numWaves = 5;

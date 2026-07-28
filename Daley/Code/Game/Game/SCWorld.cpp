@@ -11,6 +11,7 @@
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/Math/GeometryUtils.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Math/Noise.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Renderer/Texture.h"
 #include "Engine/Renderer/Renderer.h"
@@ -346,6 +347,25 @@ Vec2 SCWorld::GetRandomSpawnLocation(RandomNumberGenerator& rng) const
 	IntVec2 tileCoords = m_cachedSpawnLocations[randomIndex];
 	AABB2 tileBounds = GetTileBounds(tileCoords);
 	Vec2 randomLocationInBounds = rng.GetRandomVecInRange2D(tileBounds.mins, tileBounds.maxs);
+	return randomLocationInBounds;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 SCWorld::GetRandomSpawnLocation_SeededNoise(int pos, int seed, RandomNumberGenerator& rng) const
+{
+	if (m_cachedSpawnLocations.empty())
+	{
+		return Vec2();
+	}
+
+	float noiseValue = Noise::GetNoiseZeroToOne1D(pos, seed);
+	int numOptions = static_cast<int>(m_cachedSpawnLocations.size());
+	int randomIndex = static_cast<int>(noiseValue * static_cast<float>(numOptions)) % numOptions;
+	IntVec2 tileCoords = m_cachedSpawnLocations[randomIndex];
+	AABB2 tileBounds = GetTileBounds(tileCoords);
+	Vec2 randomLocationInBounds = rng.GetRandomVecInRange2D(tileBounds.mins, tileBounds.maxs); // Location within tile is negligible, so its ok if its different from run to run (probably)
 	return randomLocationInBounds;
 }
 

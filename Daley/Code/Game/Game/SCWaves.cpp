@@ -23,3 +23,23 @@ float LevelWaveGenDef::GetSpeedScaling(int waveIndex) const
 	float multiplyAdditiveSpeedScaling = 1.f + (waveIndexForScaling * m_waveGenModifiers.m_speedMultiplierIncreasePerWave);
     return multiplyAdditiveSpeedScaling;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float LevelWaveGenDef::GetMagicEnemyChance(int waveIndex) const
+{
+	float waveIndexForScaling = static_cast<float>(waveIndex);
+	float multiplyAdditiveMagicEnemyChance = (waveIndexForScaling * m_waveGenModifiers.m_magicEnemyChanceIncreasePerWave);
+	return m_waveGenModifiers.m_magicEnemyChance * (1.f + multiplyAdditiveMagicEnemyChance);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float LevelWaveGenDef::GetRareEnemyChance(int waveIndex) const
+{
+	float waveIndexForScaling = static_cast<float>(waveIndex);
+	float multiplyAdditiveRareEnemyChance = (waveIndexForScaling * m_waveGenModifiers.m_rareEnemyChanceIncreasePerWave);
+	return m_waveGenModifiers.m_rareEnemyChance * (1.f + multiplyAdditiveRareEnemyChance);
+}

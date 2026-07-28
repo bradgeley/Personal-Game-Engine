@@ -57,5 +57,6 @@ public:
     float m_orientation             = 0.f;
     float m_renderRadius            = 0.5f;
     Rgba8 m_tint                    = Rgba8::White;
+    Rgba8 m_outlineTint             = Rgba8::TransparentWhite;
     Rgba8 m_baseTint                = Rgba8::White;
 };

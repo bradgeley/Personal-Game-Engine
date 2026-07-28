@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "SWaveSpawner.h"
 #include "EntityDef.h"
+#include "GameCommon.h"
 #include "SCEntityFactory.h"
 #include "SCWaves.h"
 #include "SCWorld.h"
@@ -11,6 +12,7 @@
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Math/Noise.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 
 
@@ -87,14 +89,39 @@ void SWaveSpawner::Run(SystemContext const& context) const
 		int numSpawns = stream.m_spawnTimer.UpdateAndCount(context.m_deltaSeconds);
 		numSpawns = MathUtils::Min(numSpawns, remainingSpawns);
 
+		float streamHealthMultiplier = stream.m_entityStream.m_healthMultiplier;
+		float streamSpeedMultiplier = stream.m_entityStream.m_speedMultiplier;
+
 		SpawnInfo spawnInfo;
 		spawnInfo.m_def = EntityDef::GetEntityDef(stream.m_entityStream.m_entityName);
-		spawnInfo.m_spawnHealthMultiplier = stream.m_entityStream.m_healthMultiplier;
-		spawnInfo.m_spawnSpeedMultiplier = stream.m_entityStream.m_speedMultiplier;
+		spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier;
+		spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier;
+
+		CTags tags = spawnInfo.m_def->m_tags.has_value() ? *spawnInfo.m_def->m_tags : CTags();
+		bool isBoss = tags.HasTag("boss");
+		bool canHaveRarity = (waves.m_waveGenDef.m_waveGenModifiers.m_canBossesHaveRarity) ? true : !isBoss;
 
 		for (int spawnIndex = 0; spawnIndex < (int) numSpawns; ++spawnIndex)
 		{
-			spawnInfo.m_spawnPos = world.GetRandomSpawnLocation(rng);
+			if (canHaveRarity)
+			{
+				int entityPos = stream.m_numSpawned;
+				float rarityRoll = Noise::GetNoiseZeroToOne1D(entityPos, stream.m_entityStream.m_id);
+				if (rarityRoll < stream.m_entityStream.m_rareEnemyChance)
+				{
+					spawnInfo.m_outlineTint = StaticGameSettings::s_rareEnemyOutlineTint;
+					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_rareEnemyHealthMultiplier;
+					spawnInfo.m_spawnScale = StaticGameSettings::s_rareEnemySizeMultiplier;
+				}
+				else if (rarityRoll < stream.m_entityStream.m_magicEnemyChance)
+				{
+					spawnInfo.m_outlineTint = StaticGameSettings::s_magicEnemyOutlineTint;
+					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_magicEnemyHealthMultiplier;
+					spawnInfo.m_spawnScale = StaticGameSettings::s_magicEnemySizeMultiplier;
+				}
+			}
+
+			spawnInfo.m_spawnPos = world.GetRandomSpawnLocation_SeededNoise(stream.m_numSpawned, stream.m_entityStream.m_id, rng);
 			factory.m_entitiesToSpawn.push_back(spawnInfo);
 			stream.m_numSpawned++;
 		}
@@ -206,6 +233,8 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "largeAnt", 1, true });
 	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "ant", 20, true });
 
+	//waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "boss", "ant" }, 1.f });
+
 	// Modifiers
 	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier = 1.5f;
 	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave = 0.1f;
@@ -222,6 +251,8 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 
 	// Entity count multiplier
 	float numEntitiesMultiplier = waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier;
+
+	int waveStreamsPushed = 0;
 
 	// Waves
 	for (int waveIndex = 0; waveIndex < numWaves; ++waveIndex)
@@ -240,6 +271,7 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 			if (isMatchingWave || isRecurringWave || isGuaranteedLastWave)
 			{
 				WaveStream stream;
+				stream.m_id = waveStreamsPushed++;
 				stream.m_entityName = fixedDef.m_entityName;
 				ASSERT_OR_DIE(EntityDef::GetEntityDef(stream.m_entityName) != nullptr, StringUtils::StringF("Invalid entity name in fixed wave def: %s", stream.m_entityName.ToCStr()).c_str());
 				stream.m_numEntities = static_cast<int>(static_cast<float>(fixedDef.m_numEntities) * numEntitiesMultiplier);
@@ -248,6 +280,8 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 				stream.m_overTimeSeconds = MathUtils::Max(0.f, stream.m_overTimeSeconds);
 				stream.m_healthMultiplier = waves.m_waveGenDef.GetHealthScaling(waveIndex);
 				stream.m_speedMultiplier = waves.m_waveGenDef.GetSpeedScaling(waveIndex);
+				stream.m_magicEnemyChance = waves.m_waveGenDef.GetMagicEnemyChance(waveIndex);
+				stream.m_rareEnemyChance = waves.m_waveGenDef.GetRareEnemyChance(waveIndex);
 				wave.m_waveStreams.push_back(stream);
 			}
 		}
@@ -288,6 +322,7 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 
 		RandomWaveStreamDef const& randomDef = waves.m_waveGenDef.m_randomWaves[chosenRandomDefIndex];
 		WaveStream stream;
+		stream.m_id = waveStreamsPushed++;
 		stream.m_entityName = GetRandomEnemyWithTags(randomDef.m_enemyTags, rng);
 		ASSERT_OR_DIE(EntityDef::GetEntityDef(stream.m_entityName) != nullptr, StringUtils::StringF("Invalid entity name in fixed wave def: %s", stream.m_entityName.ToCStr()).c_str());
 		stream.m_numEntities = static_cast<int>(static_cast<float>(rng.GetRandomIntInRange(randomDef.m_minNumEntities, randomDef.m_maxNumEntities)) * numEntitiesMultiplier);
@@ -296,6 +331,8 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 		stream.m_overTimeSeconds = MathUtils::Max(0.f, stream.m_overTimeSeconds);
 		stream.m_healthMultiplier = waves.m_waveGenDef.GetHealthScaling(waveIndex);
 		stream.m_speedMultiplier = waves.m_waveGenDef.GetSpeedScaling(waveIndex);
+		stream.m_magicEnemyChance = waves.m_waveGenDef.GetMagicEnemyChance(waveIndex);
+		stream.m_rareEnemyChance = waves.m_waveGenDef.GetRareEnemyChance(waveIndex);
 		wave.m_waveStreams.push_back(stream);
 		waves.m_waves.push_back(wave);
 

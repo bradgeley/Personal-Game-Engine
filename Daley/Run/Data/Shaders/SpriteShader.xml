@@ -8,6 +8,7 @@
     <InputLayoutAttribute semantic="INSTANCEROTATION" semanticIndex="0" format="float1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
     
     <InputLayoutAttribute semantic="INSTANCETINT" semanticIndex="0" format="Rgba8" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INSTANCEOUTLINETINT" semanticIndex="0" format="Rgba8" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
     
     <InputLayoutAttribute semantic="INSTANCEDIMS" semanticIndex="0" format="float2" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
     <InputLayoutAttribute semantic="INDEX" semanticIndex="0" format="uint1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>

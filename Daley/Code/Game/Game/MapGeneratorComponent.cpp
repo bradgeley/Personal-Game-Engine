@@ -363,7 +363,7 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 
 			float capsuleRadius = m_thicknessRange.x;
 			float capsuleVariance = m_thicknessRange.y - m_thicknessRange.x;
-			float capsuleRadiusNoise = Noise::GetPerlinNoise1D_01(static_cast<int>(noiseLocation) + 1500.f, m_thicknessNoiseScale, 5, true, seed + iterationCount);
+			float capsuleRadiusNoise = Noise::GetPerlinNoise1D_01(noiseLocation + 1500.f, m_thicknessNoiseScale, 5, 0.5f, true, seed + iterationCount);
 			capsuleRadius += capsuleVariance * capsuleRadiusNoise;
 			capsuleRadius *= 0.5f;
 			capsuleRadius = MathUtils::Max(capsuleRadius, 1.f); // minimum radius of 1

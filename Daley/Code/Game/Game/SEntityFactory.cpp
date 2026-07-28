@@ -126,6 +126,7 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
     if (CRender* render = context.GetComponent<CRender>(id))
     {
         render->m_renderRadius *= spawnInfo.m_spawnScale;
+		render->m_outlineTint = spawnInfo.m_outlineTint;
     }
 
     if (CHealth* health = context.GetComponent<CHealth>(id))

@@ -141,6 +141,7 @@ void SRenderEntities::Run(SystemContext const& context) const
         instance.m_position = Vec3(render.GetRenderPosition(), renderDepth);
         instance.m_orientation = render.GetRenderOrientation();
         instance.m_rgba = render.m_tint;
+		instance.m_outlineRgba = render.m_outlineTint;
         instance.m_dims = spriteSheet->GetSpriteDimensions() * render.m_renderRadius * 2.f;
 		instance.m_indoorLight = 255; // todo:
 		instance.m_outdoorLight = 255; // todo:

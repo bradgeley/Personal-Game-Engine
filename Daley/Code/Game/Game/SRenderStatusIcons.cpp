@@ -99,6 +99,7 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 		instance.m_orientation = 0.f;
 		instance.m_dims = Vec2(0.2f, 0.2f);
 		instance.m_rgba = Rgba8(80, 80, 80, 255);
+		instance.m_outlineRgba = render.m_outlineTint;
 		instance.m_spriteIndex = slowAnim.GetCurrentFrameIndex();
 		instance.m_outdoorLight = 255;
 		instance.m_indoorLight = 255;
