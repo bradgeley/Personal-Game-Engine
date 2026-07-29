@@ -36,8 +36,10 @@ namespace StaticGameSettings
 	static Rgba8 s_rareEnemyOutlineTint = Rgba8(255, 255, 0, 255);
 	static float s_magicEnemyHealthMultiplier = 1.5f;
 	static float s_magicEnemySizeMultiplier = 1.25f;
+	static float s_magicEnemySpeedMultiplier = 0.9f;
 	static float s_rareEnemyHealthMultiplier = 5.f;
 	static float s_rareEnemySizeMultiplier = 1.75f;
+	static float s_rareEnemySpeedMultiplier = 0.75f;
 
     // Derived
     extern float s_burnDecayK;

@@ -89,13 +89,11 @@ void SWaveSpawner::Run(SystemContext const& context) const
 		int numSpawns = stream.m_spawnTimer.UpdateAndCount(context.m_deltaSeconds);
 		numSpawns = MathUtils::Min(numSpawns, remainingSpawns);
 
-		float streamHealthMultiplier = stream.m_entityStream.m_healthMultiplier;
-		float streamSpeedMultiplier = stream.m_entityStream.m_speedMultiplier;
+		float const& streamHealthMultiplier = stream.m_entityStream.m_healthMultiplier;
+		float const& streamSpeedMultiplier = stream.m_entityStream.m_speedMultiplier;
 
 		SpawnInfo spawnInfo;
 		spawnInfo.m_def = EntityDef::GetEntityDef(stream.m_entityStream.m_entityName);
-		spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier;
-		spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier;
 
 		CTags tags = spawnInfo.m_def->m_tags.has_value() ? *spawnInfo.m_def->m_tags : CTags();
 		bool isBoss = tags.HasTag("boss");
@@ -107,17 +105,27 @@ void SWaveSpawner::Run(SystemContext const& context) const
 			{
 				int entityPos = stream.m_numSpawned;
 				float rarityRoll = Noise::GetNoiseZeroToOne1D(entityPos, stream.m_entityStream.m_id);
+
 				if (rarityRoll < stream.m_entityStream.m_rareEnemyChance)
 				{
 					spawnInfo.m_outlineTint = StaticGameSettings::s_rareEnemyOutlineTint;
 					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_rareEnemyHealthMultiplier;
+					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier * StaticGameSettings::s_rareEnemySpeedMultiplier;
 					spawnInfo.m_spawnScale = StaticGameSettings::s_rareEnemySizeMultiplier;
 				}
 				else if (rarityRoll < stream.m_entityStream.m_magicEnemyChance)
 				{
 					spawnInfo.m_outlineTint = StaticGameSettings::s_magicEnemyOutlineTint;
 					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_magicEnemyHealthMultiplier;
+					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier * StaticGameSettings::s_magicEnemySpeedMultiplier;
 					spawnInfo.m_spawnScale = StaticGameSettings::s_magicEnemySizeMultiplier;
+				}
+				else // Normal
+				{
+					spawnInfo.m_outlineTint = Rgba8::TransparentWhite;
+					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier;
+					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier;
+					spawnInfo.m_spawnScale = 1.f;
 				}
 			}
 
