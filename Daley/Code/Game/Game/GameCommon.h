@@ -32,14 +32,16 @@ namespace StaticGameSettings
 	static constexpr double s_slowStatusTimeDilation = 0.5;
     static constexpr float s_defaultCollisionEffectDepth = 0.95f;
 
-	static Rgba8 s_magicEnemyOutlineTint = Rgba8(0, 0, 255, 255);
-	static Rgba8 s_rareEnemyOutlineTint = Rgba8(255, 255, 0, 255);
-	static float s_magicEnemyHealthMultiplier = 1.5f;
-	static float s_magicEnemySizeMultiplier = 1.25f;
-	static float s_magicEnemySpeedMultiplier = 0.9f;
-	static float s_rareEnemyHealthMultiplier = 5.f;
-	static float s_rareEnemySizeMultiplier = 1.75f;
-	static float s_rareEnemySpeedMultiplier = 0.75f;
+	static float s_baseMagicEnemyChance         = 0.05f;
+	static float s_baseRareEnemyChance          = 0.01f;
+	static Rgba8 s_magicEnemyOutlineTint        = Rgba8(0, 0, 255, 255);
+	static Rgba8 s_rareEnemyOutlineTint         = Rgba8(255, 255, 0, 255);
+	static float s_magicEnemyHealthMultiplier   = 1.5f;
+	static float s_magicEnemySizeMultiplier     = 1.25f;
+	static float s_magicEnemySpeedMultiplier    = 0.9f;
+	static float s_rareEnemyHealthMultiplier    = 5.f;
+	static float s_rareEnemySizeMultiplier      = 1.75f;
+	static float s_rareEnemySpeedMultiplier     = 0.75f;
 
     // Derived
     extern float s_burnDecayK;

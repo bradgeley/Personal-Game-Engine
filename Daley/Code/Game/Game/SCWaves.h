@@ -77,11 +77,11 @@ struct RandomWaveStreamDef : public WaveStreamDef
 // or Guaranteed "AntQueen" every 10 waves, starting on wave 30
 struct FixedWaveStreamDef : public WaveStreamDef
 {
-	int m_waveIndex = 0;						// if -1, this will be ignored unless m_isGuaranteedLastWave is true, in which case this will only be the last wave.
-	int m_recurAfterNumWaves = -1;				// -1, not recurring. Otherwise, recur every this many waves.
-	Name m_entityName;
-	int m_numEntities = 0;
-	bool m_isGuaranteedLastWave = false;		// If true, this will also be placed into the last wave slot guaranteed
+	int		m_waveIndex					= 0;		// if -1, this will be ignored unless m_isGuaranteedLastWave is true, in which case this will only be the last wave.
+	int		m_recurAfterNumWaves		= -1;		// -1, not recurring. Otherwise, recur every this many waves.
+	Name	m_entityName;
+	int		m_numEntities				= 0;
+	bool	m_isGuaranteedLastWave		= false;	// If true, this will also be placed into the last wave slot guaranteed
 };
 
 

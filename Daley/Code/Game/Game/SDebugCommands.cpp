@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SDebugCommands.h"
 #include "EntityDef.h"
+#include "GameCommon.h"
 #include "SCEntityFactory.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
@@ -54,6 +55,32 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 		SpawnInfo spawnInfo;
 		spawnInfo.m_def = def;
 		spawnInfo.m_spawnPos = world.GetRandomSpawnLocation(rng);
+
+		CTags tags = spawnInfo.m_def->m_tags.has_value() ? *spawnInfo.m_def->m_tags : CTags();
+		bool isBoss = tags.HasTag("boss");
+
+		if (!isBoss)
+		{
+			float rarityRoll = g_rng->GetRandomFloatZeroToOne();
+
+			if (rarityRoll < StaticGameSettings::s_baseRareEnemyChance)
+			{
+				spawnInfo.m_outlineTint = StaticGameSettings::s_rareEnemyOutlineTint;
+				spawnInfo.m_spawnHealthMultiplier = StaticGameSettings::s_rareEnemyHealthMultiplier;
+				spawnInfo.m_spawnSpeedMultiplier = StaticGameSettings::s_rareEnemySpeedMultiplier;
+				spawnInfo.m_spawnScale = StaticGameSettings::s_rareEnemySizeMultiplier;
+				spawnInfo.m_spawnTags[0] = "rare";
+			}
+			else if (rarityRoll < StaticGameSettings::s_baseMagicEnemyChance)
+			{
+				spawnInfo.m_outlineTint = StaticGameSettings::s_magicEnemyOutlineTint;
+				spawnInfo.m_spawnHealthMultiplier = StaticGameSettings::s_magicEnemyHealthMultiplier;
+				spawnInfo.m_spawnSpeedMultiplier = StaticGameSettings::s_magicEnemySpeedMultiplier;
+				spawnInfo.m_spawnScale = StaticGameSettings::s_magicEnemySizeMultiplier;
+				spawnInfo.m_spawnTags[0] = "magic";
+			}
+		}
+
 		factory.m_entitiesToSpawn.push_back(spawnInfo);
 	}
 	return true;

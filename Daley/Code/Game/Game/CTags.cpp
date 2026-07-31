@@ -27,36 +27,38 @@ CTags::CTags(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CTags::AddTag(Name const& tag)
+bool CTags::AddTag(Name const& tag)
 {
 	if (HasTag(tag))
 	{
-		return;
+		return true;
 	}
 
 	int emptyIndex = FindTag(Name::Invalid);
 	if (emptyIndex == -1)
 	{
 		DevConsoleUtils::LogError("Cannot add tag '%s': no available slot for new tag", tag.ToCStr());
-		return;
+		return false;
 	}
 
 	m_tags[emptyIndex] = tag;
+	return true;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CTags::RemoveTag(Name const& tag)
+bool CTags::RemoveTag(Name const& tag)
 {
 	for (int i = 0; i < MAX_TAGS; ++i)
 	{
 		if (m_tags[i] == tag)
 		{
 			m_tags[i] = Name::Invalid;
-			return;
+			return true;
 		}
 	}
+	return false;
 }
 
 
@@ -87,4 +89,29 @@ int CTags::FindTag(Name const& tag) const
 		}
 	}
 	return -1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CTags::AppendDebugString(std::string& out) const
+{
+	bool hasTag = false;
+	for (int i = 0; i < MAX_TAGS; ++i)
+	{
+		if (m_tags[i] != Name::Invalid)
+		{
+			if (!hasTag)
+			{
+				out += "Tags:\n";
+				hasTag = true;
+			}
+			out += m_tags[i].ToCStr();
+			out += " ";
+		}
+	}
+	if (hasTag)
+	{
+		out += "\n";
+	}
 }

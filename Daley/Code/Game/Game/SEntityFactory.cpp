@@ -141,12 +141,40 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
 	}
 
     CLifetime* lifetime = context.GetComponent<CLifetime>(id);
-    if (!lifetime && spawnInfo.m_spawnLifetime >= 0.f)
+    if (spawnInfo.m_spawnLifetime >= 0.f)
     {
-        lifetime = context.AddComponent<CLifetime>(id);
+        if (!lifetime)
+        {
+			lifetime = context.AddComponent<CLifetime>(id);
+        }
+
         lifetime->m_lifetime = spawnInfo.m_spawnLifetime;
         lifetime->m_lifetimeRemaining = spawnInfo.m_spawnLifetime;
     }
+
+	CTags* tags = context.GetComponent<CTags>(id);
+
+    bool hasValidTag = false;
+	for (int i = 0; i < (int) spawnInfo.m_spawnTags.size(); ++i)
+	{
+        if (spawnInfo.m_spawnTags[i] != Name::Invalid)
+        {
+            hasValidTag = true;
+            break;
+        }
+	}
+
+	if (hasValidTag)
+	{
+		if (!tags)
+		{
+			tags = context.AddComponent<CTags>(id);
+		}
+        for (int i = 0; i < (int) spawnInfo.m_spawnTags.size(); ++i)
+        {
+            tags->AddTag(spawnInfo.m_spawnTags[i]);
+        }
+	}
 
     return id;
 }

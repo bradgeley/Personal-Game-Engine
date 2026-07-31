@@ -99,6 +99,9 @@ void SWaveSpawner::Run(SystemContext const& context) const
 		bool isBoss = tags.HasTag("boss");
 		bool canHaveRarity = (waves.m_waveGenDef.m_waveGenModifiers.m_canBossesHaveRarity) ? true : !isBoss;
 
+		float magicEnemyChance = stream.m_entityStream.m_magicEnemyChance + StaticGameSettings::s_baseMagicEnemyChance;
+		float rareEnemyChance = stream.m_entityStream.m_rareEnemyChance + StaticGameSettings::s_baseRareEnemyChance;
+
 		for (int spawnIndex = 0; spawnIndex < (int) numSpawns; ++spawnIndex)
 		{
 			if (canHaveRarity)
@@ -106,19 +109,21 @@ void SWaveSpawner::Run(SystemContext const& context) const
 				int entityPos = stream.m_numSpawned;
 				float rarityRoll = Noise::GetNoiseZeroToOne1D(entityPos, stream.m_entityStream.m_id);
 
-				if (rarityRoll < stream.m_entityStream.m_rareEnemyChance)
+				if (rarityRoll < rareEnemyChance)
 				{
 					spawnInfo.m_outlineTint = StaticGameSettings::s_rareEnemyOutlineTint;
 					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_rareEnemyHealthMultiplier;
 					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier * StaticGameSettings::s_rareEnemySpeedMultiplier;
 					spawnInfo.m_spawnScale = StaticGameSettings::s_rareEnemySizeMultiplier;
+					spawnInfo.m_spawnTags[0] = "rare";
 				}
-				else if (rarityRoll < stream.m_entityStream.m_magicEnemyChance)
+				else if (rarityRoll < magicEnemyChance)
 				{
 					spawnInfo.m_outlineTint = StaticGameSettings::s_magicEnemyOutlineTint;
 					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_magicEnemyHealthMultiplier;
 					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier * StaticGameSettings::s_magicEnemySpeedMultiplier;
 					spawnInfo.m_spawnScale = StaticGameSettings::s_magicEnemySizeMultiplier;
+					spawnInfo.m_spawnTags[0] = "magic";
 				}
 				else // Normal
 				{

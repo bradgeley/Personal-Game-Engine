@@ -173,6 +173,12 @@ void SDebugOverlay::Run(SystemContext const& context) const
 					proj.AppendDebugString(debugString);
 				}
 
+				if (context.HasComponent<CTags>(it.GetEntityID()))
+				{
+					CTags const& tags = tagsStorage[it];
+					tags.AppendDebugString(debugString);
+				}
+
 				if (debugString.empty())
 				{
 					debugString = "No Debug Info Available";
@@ -210,6 +216,28 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				cardWidth = MathUtils::Max(cardWidth, titleWidth + infoCardEdgeWidth * 2.f);
 				Vec2 cardDims = Vec2(cardWidth, cardHeight);
 				AABB2 informationCardBounds = AABB2(cardMins, cardMins + cardDims);
+
+				// Clamp card to screen
+				if (informationCardBounds.maxs.x > screenBounds.maxs.x)
+				{
+					float offset = informationCardBounds.maxs.x - screenBounds.maxs.x;
+					informationCardBounds.Translate(Vec2(-offset, 0.f));
+				}
+				else if (informationCardBounds.mins.x < screenBounds.mins.x)
+				{
+					float offset = screenBounds.mins.x - informationCardBounds.mins.x;
+					informationCardBounds.Translate(Vec2(offset, 0.f));
+				}
+				if (informationCardBounds.maxs.y > screenBounds.maxs.y)
+				{
+					float offset = informationCardBounds.maxs.y - screenBounds.maxs.y;
+					informationCardBounds.Translate(Vec2(0.f, -offset));
+				}
+				else if (informationCardBounds.mins.y < screenBounds.mins.y)
+				{
+					float offset = screenBounds.mins.y - informationCardBounds.mins.y;
+					informationCardBounds.Translate(Vec2(0.f, offset));
+				}
 
 				// Background
 				VertexUtils::AddVertsForAABB2(untexVerts, informationCardBounds, Rgba8::DarkGray);

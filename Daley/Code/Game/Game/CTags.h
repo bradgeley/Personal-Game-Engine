@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Core/Name.h"
+#include <string>
 #include <array>
 
 
@@ -18,10 +19,12 @@ public:
     CTags() = default;
     CTags(void const* xmlElement);
 
-	void AddTag(Name const& tag);
-	void RemoveTag(Name const& tag);
+	bool AddTag(Name const& tag);
+	bool RemoveTag(Name const& tag);
 	bool HasTag(Name const& tag) const;
 	int FindTag(Name const& tag) const; // returns the index of the tag
+
+	void AppendDebugString(std::string& out) const;
 
 private:
     
