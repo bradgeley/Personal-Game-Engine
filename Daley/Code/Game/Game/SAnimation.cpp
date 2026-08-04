@@ -86,6 +86,7 @@ void SAnimation::Run(SystemContext const& context) const
         GridSpriteSheet const* spriteSheet = assetManager.Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
         if (!spriteSheet)
         {
+            anim.m_animInstance = SpriteAnimation(); // invalidate stale data
 			continue; // Wait until the sprite sheet is loaded before proceeding
         }
 
