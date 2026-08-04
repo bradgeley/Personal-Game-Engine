@@ -115,7 +115,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 		font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 90.f + 30.f * (float) streamIndex), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Active Stream: %s (%d/%d)", activeStream.m_entityStream.m_entityName.ToCStr(), activeStream.m_numSpawned, activeStream.m_entityStream.m_numEntities), Rgba8::White);
 	}
 
-	// Show tower ability information for hovered tower
+	// Show ability information for hovered entity
 	for (auto it = context.Iterate<CTags, CTransform, CEntityDebug>(); it.IsValid(); ++it)
 	{
 		CTags const& tags = tagsStorage[it];

@@ -55,6 +55,7 @@ MapGeneratorDef::~MapGeneratorDef()
 //----------------------------------------------------------------------------------------------------------------------
 MapGeneratorDef::MapGeneratorDef(MapGeneratorDef&& other) noexcept :
 	m_name(other.m_name),
+	m_biome(other.m_biome),
 	m_mapGeneratorComponentDefs(std::move(other.m_mapGeneratorComponentDefs))
 {
 	other.m_mapGeneratorComponentDefs.clear();

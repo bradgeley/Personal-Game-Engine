@@ -4,7 +4,11 @@
 <BiomeDefs>
   <BiomeDef name="forest" baseTile="forestGrass" goalTile="islandWater" pathTile="snow">
 
-    <NoiseRangeSelector name="deepForest" range="0.5,1">
+    <NoiseRangeSelector name="forest" range="0.5,1">
+      <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
+    </NoiseRangeSelector>
+
+    <NoiseRangeSelector name="deepForest" range="0.75,1">
       <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
     </NoiseRangeSelector>
       
@@ -16,19 +20,19 @@
       <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="3"></NoiseParams>
     </NoisePeakSelector>
       
-    <NoiseRangeSelector name="walls" range="0.8,1">
+    <NoiseRangeSelector name="smallTrees" range="0.8,1">
       <NoiseParams outputRange="0,1" scale="10" numOctaves="3" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="4"></NoiseParams>
     </NoiseRangeSelector>
       
-    <NoisePeakSelector name="trees">
+    <NoisePeakSelector name="bigTrees">
       <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
     </NoisePeakSelector>
 
-    <TileGenerator tile="deepForestGrass" selector="deepForest"></TileGenerator>
+    <TileGenerator tile="deepForestGrass" selector="forest"></TileGenerator>
     <TileGenerator tile="stone" selector="mountain"></TileGenerator>
     <TileGenerator tile="glowstone" selector="glowstone"></TileGenerator>
-    <EntityGenerator entity="wall1x1" selector="walls"></EntityGenerator>
-    <EntityGenerator entity="wall2x2" selector="trees"></EntityGenerator>
+    <EntityGenerator entity="tree1x1" selector="deepForest"></EntityGenerator>
+    <EntityGenerator entity="tree2x2" selector="bigTrees"></EntityGenerator>
     
   </BiomeDef>
 </BiomeDefs>

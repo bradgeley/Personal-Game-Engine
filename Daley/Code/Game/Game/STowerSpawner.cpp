@@ -130,6 +130,7 @@ bool STowerSpawner::PlaceTowerInWorld(TowerPlacementInfo const& placementInfo, S
         {
             Tile tile = world.m_tiles.Get(worldCoords);
 			tile.SetIsSolid(true);
+            tile.SetIsOpaque(true);
 			world.SetTile(worldCoords, tile);
             return true; // keep iterating
         });

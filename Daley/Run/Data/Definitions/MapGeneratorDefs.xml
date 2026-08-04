@@ -6,9 +6,7 @@
 
   <MapGeneratorDef name="forest" biome="forest">
     <RectGoal alignment="0.15,0.5" dims="4,4"></RectGoal>
-    <PerlinWormPath startDir="1,0" thicknessRange="2,2" thicknessNoiseScale="0.5" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
-    <PerlinWormPath startDir="0,1" thicknessRange="2,2" thicknessNoiseScale="0.5" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="2"></PerlinWormPath>
-    <PerlinWormPath startDir="0,-1" thicknessRange="2,2" thicknessNoiseScale="0.5" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="3"></PerlinWormPath>
+    <PerlinWormPath startPos="0.15,0.5" startDir="1,0" thicknessRange="2,5" thicknessNoiseScale="1" splitChance="0.0175" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
   </MapGeneratorDef>
 
   <MapGeneratorDef name="forestCross" biome="forest">

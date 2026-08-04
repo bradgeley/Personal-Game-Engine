@@ -691,7 +691,7 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\DarkAnt.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
-    <Xml Include="..\..\Run\Data\SpriteSheets\IceCream.xml">
+    <Xml Include="..\..\Run\Data\SpriteSheets\Towers.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml">

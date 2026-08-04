@@ -71,6 +71,8 @@ bool SWorld::GenerateMap(NamedProperties& params)
 
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 
+	g_ecs->DestroyAllEntities();
+
 	MapGenerator mapGenerator;
 	mapGenerator.Initialize(*def, seed);
 
