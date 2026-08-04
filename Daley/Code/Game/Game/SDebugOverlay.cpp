@@ -173,11 +173,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 					proj.AppendDebugString(debugString);
 				}
 
-				if (context.HasComponent<CTags>(it.GetEntityID()))
-				{
-					CTags const& tags = tagsStorage[it];
-					tags.AppendDebugString(debugString);
-				}
+				tags.AppendDebugString(debugString);
 
 				if (debugString.empty())
 				{

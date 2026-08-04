@@ -88,8 +88,11 @@ void SRenderPauseMenu::Run(SystemContext const& context) const
 		renderer.DrawVertexBuffer(scRenderer.m_pauseMenuBackgroundVBO);
 
 		Font const* font = renderer.GetDefaultFont();
-		font->SetRendererState(renderer);
-		renderer.DrawVertexBuffer(scRenderer.m_pauseMenuTextVBO);
+		if (font)
+		{
+			font->SetRendererState(renderer);
+			renderer.DrawVertexBuffer(scRenderer.m_pauseMenuTextVBO);
+		}
 	}
 
 }
