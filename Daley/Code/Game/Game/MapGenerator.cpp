@@ -81,6 +81,9 @@ bool MapGenerator::GenerateMap(SCWorld& world)
 {
 	ScopedTimer timer("Generate Map");
 
+	world.m_seed = m_seed;
+	world.m_mapDefName = m_def->m_name;
+
 	world.m_generatedTowers.clear();
 
 	ASSERT_OR_DIE(m_def != nullptr, "MapGenerator::GenerateMap() - m_def is null. Did you call Initialize()?");

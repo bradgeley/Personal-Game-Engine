@@ -306,6 +306,9 @@ void Game::ConfigureECS()
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
 	g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);
 
+    // Random
+	g_ecs->RegisterSystem<SSaveLoad>((int) FramePhase::PostRender);
+
     // Debug
     g_ecs->RegisterSystem<SDebugCommands>((int) FramePhase::PostRender);
     g_ecs->RegisterSystem<SSystemDebug>((int) FramePhase::PostRender);

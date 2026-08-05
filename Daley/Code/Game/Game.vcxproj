@@ -350,6 +350,7 @@
     <ClCompile Include="Game\SRenderDiscs.cpp" />
     <ClCompile Include="Game\SRenderPauseMenu.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
+    <ClCompile Include="Game\SSaveLoad.cpp" />
     <ClCompile Include="Game\STowerSpawner.cpp" />
     <ClCompile Include="Game\SVisualEffects.cpp" />
     <ClCompile Include="Game\SRenderHealthBars.cpp" />
@@ -457,6 +458,7 @@
     <ClInclude Include="Game\SRenderDiscs.h" />
     <ClInclude Include="Game\SRenderPauseMenu.h" />
     <ClInclude Include="Game\SRenderUI.h" />
+    <ClInclude Include="Game\SSaveLoad.h" />
     <ClInclude Include="Game\STowerSpawner.h" />
     <ClInclude Include="Game\SVisualEffects.h" />
     <ClInclude Include="Game\SRenderHealthBars.h" />

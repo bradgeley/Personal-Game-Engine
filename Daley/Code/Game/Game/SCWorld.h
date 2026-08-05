@@ -118,5 +118,14 @@ public:
     std::vector<TowerPlacementInfo> m_generatedTowers;
 
 	std::vector<IntVec2> m_cachedSpawnLocations;
+
+protected:
+
+    friend class MapGenerator;
+    friend class SSaveLoad;
+
+    // Generation info
+	Name m_mapDefName = "Invalid MapDef";
+    int m_seed = -1;
 };
 

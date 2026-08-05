@@ -250,6 +250,9 @@
     <ClCompile Include="Game\MapGeneratorComponent.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SSaveLoad.cpp">
+      <Filter>ECS\Systems\SaveLoad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -582,6 +585,9 @@
     <ClInclude Include="Game\MapGeneratorComponent.h">
       <Filter>Game\World</Filter>
     </ClInclude>
+    <ClInclude Include="Game\SSaveLoad.h">
+      <Filter>ECS\Systems\SaveLoad</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -667,6 +673,9 @@
     </Filter>
     <Filter Include="Game\UI">
       <UniqueIdentifier>{9b602142-b952-4511-9ac3-f267d71a5bd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ECS\Systems\SaveLoad">
+      <UniqueIdentifier>{9f74240e-1e6c-4a5c-bba6-ae03bbc557f0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
