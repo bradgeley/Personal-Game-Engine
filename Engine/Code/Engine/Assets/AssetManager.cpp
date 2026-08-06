@@ -165,6 +165,7 @@ void AssetManager::Release(AssetID assetID)
     if (GetRefCount(assetID) <= 0 && IsFuture(assetID))
     {
         TryCancelOrCompleteFuture(assetID);
+        DeleteAssetID(assetID);
     }
 
     if (!IsLoaded(assetID))
@@ -471,17 +472,7 @@ bool AssetManager::UnloadAsset(AssetID assetID, bool isReloading /*= false*/)
     // Delete asset ID from table, unless doing a reload in which case we want to keep the asset ID and ref count
     if (!isReloading)
     {
-        for (auto idIt = m_assetIDs.begin(); idIt != m_assetIDs.end(); ++idIt)
-        {
-            if (idIt->second == assetID)
-            {
-                m_assetIDs.erase(idIt);
-                break;
-            }
-        }
-
-        // Delete ref count entry
-        m_refCounts.erase(assetID);
+		DeleteAssetID(assetID);
     }
 
     return true;
@@ -523,6 +514,24 @@ bool AssetManager::TryCancelOrCompleteFuture(AssetID assetID)
         }
     }
     return completed;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AssetManager::DeleteAssetID(AssetID assetID)
+{
+    for (auto idIt = m_assetIDs.begin(); idIt != m_assetIDs.end(); ++idIt)
+    {
+        if (idIt->second == assetID)
+        {
+            m_assetIDs.erase(idIt);
+            break;
+        }
+    }
+
+    // Delete ref count entry
+    m_refCounts.erase(assetID);
 }
 
 

@@ -132,6 +132,7 @@ protected:
     bool UnloadAsset(AssetID assetID, bool isReloading = false);
     bool TryCompleteFuture(AssetID assetID, bool blocking);
     bool TryCancelOrCompleteFuture(AssetID assetID);
+	void DeleteAssetID(AssetID assetID);
 
 	AssetLoaderFunction GetLoaderFunction(std::type_index typeIndex) const;
 
