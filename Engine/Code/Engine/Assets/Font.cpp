@@ -37,7 +37,7 @@ Asset* Font::Load(Name assetName)
 	XmlError error = resourcesXMLDoc.LoadFile(assetName.ToCStr());
 	if (error != XmlError::XML_SUCCESS)
 	{
-		ERROR_AND_DIE(StringUtils::StringF("Font: %s::Load - Failed to open Xml doc.", assetName.ToCStr()))
+		return nullptr;
 	}
 
 	XmlElement const* fontElem = resourcesXMLDoc.RootElement();

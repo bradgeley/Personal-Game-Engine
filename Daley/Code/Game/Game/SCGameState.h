@@ -3,14 +3,14 @@
 
 
 
-class Game;
+class GameState;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SCGame
+class SCGameState
 {
 public:
 
-	Game* m_game = nullptr;
+	GameState* m_gameState = nullptr;
 };

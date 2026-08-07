@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SRenderPauseMenu.h"
-#include "Game.h"
-#include "SCGame.h"
+#include "GameState.h"
+#include "SCGameState.h"
 #include "SCCamera.h"
 #include "SCRenderer.h"
 #include "Engine/Assets/Font.h"
@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderPauseMenu::Startup()
 {
-	AddReadDependencies<SCGame>();
+	AddReadDependencies<SCGameState>();
 	AddWriteDependencies<SCRenderer>();
 
 	SCCamera const& scCamera = g_ecs->GetSingleton<SCCamera>();
@@ -33,15 +33,6 @@ void SRenderPauseMenu::Startup()
 	AABB2 cameraBounds = scCamera.m_camera.GetOrthoBounds2D();
 
 	VertexUtils::AddVertsForAABB2(untexturedVerts, cameraBounds, Rgba8(0, 0, 0, 27));
-
-	Font const* font = renderer.GetDefaultFont();
-	if (font)
-	{
-		scRenderer.m_pauseMenuTextVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
-		VertexBuffer& textVerts = *renderer.GetVertexBuffer(scRenderer.m_pauseMenuTextVBO);
-		std::string pauseText = "Paused";
-		font->AddVertsForAlignedText2D(textVerts, cameraBounds.GetCenter(), Vec2::ZeroVector, 50.f, pauseText, Rgba8(255, 255, 255, 255));
-	}
 }
 
 
@@ -62,7 +53,7 @@ void SRenderPauseMenu::Shutdown() const
 void SRenderPauseMenu::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	SCGame const& scGame = context.GetSingletonConst<SCGame>();
+	SCGameState const& scGameState = context.GetSingletonConst<SCGameState>();
 	
 	// Write Dependencies
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
@@ -81,7 +72,7 @@ void SRenderPauseMenu::Run(SystemContext const& context) const
 		}
 	}
 
-	if (scGame.m_game->IsPaused())
+	if (scGameState.m_gameState->IsPaused())
 	{
 		renderer.BindTexture();
 		renderer.BindShader();

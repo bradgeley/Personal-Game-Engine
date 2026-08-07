@@ -17,7 +17,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderUI::Startup()
 {
-	AddReadDependencies<SCGame, SCInputSystem, SCWorld>();
+	AddReadDependencies<SCInputSystem, SCWorld>();
 	AddWriteDependencies<SCRenderer>();
 
 	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();

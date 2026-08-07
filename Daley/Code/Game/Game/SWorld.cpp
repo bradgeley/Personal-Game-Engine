@@ -22,9 +22,11 @@ void SWorld::Startup()
 
 	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "mapGenName", DevConsoleArgType::String, "seed", DevConsoleArgType::Int);
 
+	static int seed = 0;
+
 	NamedProperties props;
 	props.Set<std::string>("mapGenName", "forestCross");
-	props.Set<int>("seed", 0);
+	props.Set<int>("seed", seed++);
 	GenerateMap(props);
 
 	m_ignoreRun = true;

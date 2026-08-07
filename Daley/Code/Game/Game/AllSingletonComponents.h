@@ -11,7 +11,7 @@
 #include "SCDebug.h"
 #include "SCEntityFactory.h"
 #include "SCFlowField.h"
-#include "SCGame.h"
+#include "SCGameState.h"
 #include "SCLighting.h"
 #include "SCTime.h"
 #include "SCWaves.h"

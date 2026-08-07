@@ -25,7 +25,7 @@ void Application::Startup()
 
     g_engine->RegisterSubsystem(m_game); // Add the game itself as the final subsystem
 
-    g_engine->Startup(); // Start up the configured Engine with the game registered as the final subsystem
+    g_engine->Startup();
 
     g_window->m_quit.SubscribeMethod(this, &Application::HandleQuit);
 }

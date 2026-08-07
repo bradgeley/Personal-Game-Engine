@@ -2,6 +2,7 @@
 #include "AsyncLoadAssetJob.h"
 #include "AssetManager.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
 
 
 
@@ -49,7 +50,7 @@ bool AsyncLoadAssetJob::Complete()
     }
 
 	ASSERT_OR_DIE(g_assetManager != nullptr, "AsyncLoadAssetJob::Complete - AssetManager is null");
-	ASSERT_OR_DIE(m_loadedAsset != nullptr, "AsyncLoadAssetJob::Complete - Loaded asset is null");
+	ASSERT_OR_DIE(m_loadedAsset != nullptr, StringUtils::StringF("Asset %s failed to load.", m_assetKey.m_name.ToCStr()));
     bool completed = m_loadedAsset->CompleteAsyncLoad();
     if (completed)
     {

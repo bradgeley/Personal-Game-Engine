@@ -13,5 +13,5 @@ public:
 
 public:
 
-	Name m_defName;
+	Name m_defName = Name::Invalid;
 };

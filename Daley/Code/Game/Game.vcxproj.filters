@@ -253,6 +253,18 @@
     <ClCompile Include="Game\SSaveLoad.cpp">
       <Filter>ECS\Systems\SaveLoad</Filter>
     </ClCompile>
+    <ClCompile Include="Game\MainMenu.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameFlow.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameState.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\TowerDefense.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -531,7 +543,7 @@
     <ClInclude Include="Game\SCRandomNumberGenerator.h">
       <Filter>ECS\Singletons\EngineSingletonProxies</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SCGame.h">
+    <ClInclude Include="Game\SCGameState.h">
       <Filter>ECS\Singletons</Filter>
     </ClInclude>
     <ClInclude Include="Game\SRenderAbilities.h">
@@ -587,6 +599,18 @@
     </ClInclude>
     <ClInclude Include="Game\SSaveLoad.h">
       <Filter>ECS\Systems\SaveLoad</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MainMenu.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameState.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameFlow.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TowerDefense.h">
+      <Filter>Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

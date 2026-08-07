@@ -16,6 +16,19 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+int MyAllocHook(int allocType, void* userData, size_t size, int blockType, long requestNumber, const unsigned char* filename, int lineNumber)
+{
+	if (size == 5104) // insert size
+	{
+		__debugbreak();
+		return TRUE;
+	}
+	return TRUE;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 // WinMain
 //
 // Simply creates the Application and runs it until it decides to quit
@@ -24,7 +37,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 {
 	#if defined(DEBUG_MEMORY_LEAKS)
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-		//_CrtSetBreakAlloc(52569); // Specific memory leak
+		//_CrtSetAllocHook(MyAllocHook);	// break on memory alloc size
+		//_CrtSetBreakAlloc(143171);		// Specific memory leak id
 	#endif 
 
 	g_app = new Application();

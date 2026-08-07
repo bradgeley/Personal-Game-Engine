@@ -6,6 +6,7 @@
 
 class Clock;
 class Engine;
+class GameFlow;
 class Window;
 struct NamedProperties;
 
@@ -20,25 +21,21 @@ public:
     ~Game();
 
     void Startup() override;
+    void Shutdown() override;
     void BeginFrame() override;
     void Update(float deltaSeconds) override;
     void EndFrame() override;
     void Render() const override;
-    void Shutdown() override;
 
     void ConfigureEngine(Engine* engine);
-    void ConfigureECS();
 
-	bool IsPaused() const;
-    bool TogglePaused();
     bool Quit();
 
 protected:
 
-    bool TimeDilation(NamedProperties& args);
-    bool TogglePausedEvent(NamedProperties& args);
+    bool QuitEvent(NamedProperties& args);
 
 protected:
 
-    Clock* m_gameClock = nullptr;
+    GameFlow* m_gameFlow = nullptr;
 };

@@ -2,11 +2,11 @@
 #include "SInput.h"
 #include "CPlaceable.h"
 #include "EntityDef.h"
-#include "Game.h"
+#include "GameState.h"
 #include "SCCamera.h"
 #include "SCInputSystem.h"
 #include "SCEntityFactory.h"
-#include "SCGame.h"
+#include "SCGameState.h"
 #include "SCWindow.h"
 #include "SCWorld.h"
 #include "WorldSettings.h"
@@ -21,7 +21,7 @@
 void SInput::Startup()
 {
 	AddReadDependencies<SCCamera, SCWindow, SCWorld>();
-	AddWriteDependencies<SCEntityFactory, SCGame, SCInputSystem>();
+	AddWriteDependencies<SCEntityFactory, SCGameState, SCInputSystem>();
 }
 
 
@@ -37,11 +37,11 @@ void SInput::Run(SystemContext const& context) const
 	// Write Dependencies
 	SCInputSystem& scInput = context.GetSingleton<SCInputSystem>();
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
-	SCGame& game = context.GetSingleton<SCGame>();
+	SCGameState& game = context.GetSingleton<SCGameState>();
 
 	Window const& window = *scWindow.GetWindow();
 	InputSystem const& inputSystem = *scInput.GetInputSystem();
-	Game& gameInstance = *game.m_game;
+	GameState& gameState = *game.m_gameState;
 
 	if (!window.HasFocus())
 	{
@@ -85,13 +85,13 @@ void SInput::Run(SystemContext const& context) const
 	{
 		if (inputSystem.WasKeyJustPressed(KeyCode::Escape))
 		{
-			if (!game.m_game->IsPaused())
+			if (!gameState.IsPaused())
 			{
-				game.m_game->TogglePaused();
+				gameState.TogglePaused();
 			}
 			else
 			{
-				game.m_game->Quit();
+				gameState.RequestStateChange("MainMenu");
 			}
 		}
 	}
@@ -99,7 +99,7 @@ void SInput::Run(SystemContext const& context) const
 	// Pause
 	if (inputSystem.WasKeyJustPressed(KeyCode::Space))
 	{
-		gameInstance.TogglePaused();
+		gameState.TogglePaused();
 	}
 }
 
