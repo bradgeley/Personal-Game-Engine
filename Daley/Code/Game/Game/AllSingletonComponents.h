@@ -13,6 +13,7 @@
 #include "SCFlowField.h"
 #include "SCGameState.h"
 #include "SCLighting.h"
+#include "SCRunData.h"
 #include "SCTime.h"
 #include "SCWaves.h"
 #include "SCWorld.h"

@@ -82,7 +82,7 @@ void SLighting::Run(SystemContext const& context) const
     ConstantBuffer* lightingCbo = renderer.GetConstantBuffer(scRenderer.m_lightingConstantsBuffer);
     lightingCbo->Update(lightingConstants);
 
-	AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
+	AABB2 cameraBounds = scCamera.m_worldCamera.GetTranslatedOrthoBounds2D();
 
     for (int y = StaticWorldSettings::s_visibleWorldBeginIndexY; y <= StaticWorldSettings::s_visibleWorldEndIndexY; ++y)
     {

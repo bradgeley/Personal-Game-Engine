@@ -51,7 +51,7 @@ void SInput::Run(SystemContext const& context) const
 	// Update mouse position
 	Vec2 relMousePos = inputSystem.GetMouseViewportRelativePosition(StaticWorldSettings::s_visibleWorldAspect);
 	scInput.m_mouseViewportRelativePos = relMousePos;
-	scInput.m_mouseWorldLocation = camera.m_camera.ScreenToWorldOrtho(relMousePos);
+	scInput.m_mouseWorldLocation = camera.m_worldCamera.ScreenToWorldOrtho(relMousePos);
 	scInput.m_mouseTileCoords = world.GetTileCoordsAtWorldPosClamped(scInput.m_mouseWorldLocation);
 	scInput.m_mouseIntersectionCoords = world.GetTileIntersectionCoordsAtWorldPos(scInput.m_mouseWorldLocation);
 

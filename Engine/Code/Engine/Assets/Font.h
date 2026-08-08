@@ -78,7 +78,10 @@ public:
 	// Line Spacing = percentage of cell height between lines
     void AddVertsForAlignedText2D(VertexBuffer& out_verts, Vec2 const& pivot, Vec2 const& alignment, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, float lineSpacing = 0.5f) const;
     //void AddVertsForTextInBox2D(VertexBuffer& out_verts, Vec2 const& textMins, Vec2 const& textMaxs, float cellHeight, std::string const& text, Rgba8 const& tint = Rgba8::Black, Vec2 const& alignment = AlignCentered) const;
+    float GetLineWidth(float cellHeight, std::string const& line) const;
     float GetTextWidth(float cellHeight, std::string const& text) const;
+    float GetTextHeight(float cellHeight, float lineSpacing, std::string const& text) const;
+    Vec2 GetTextDims(float cellHeight, float lineSpacing, std::string const& text) const;
     GlyphData const& GetGlyphData(uint8_t glyph) const;
     float GetKerning(uint8_t lhs, uint8_t rhs) const;
     float GetOffsetXOfCharIndex(std::string const& line, int index, float cellHeight, float aspectMultiplier = 1.f) const;

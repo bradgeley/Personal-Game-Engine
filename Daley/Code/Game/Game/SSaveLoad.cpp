@@ -31,7 +31,7 @@ void SSaveLoad::Shutdown() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SSaveLoad::Run(SystemContext const& context) const
+void SSaveLoad::Run(SystemContext const&) const
 {
 
 }

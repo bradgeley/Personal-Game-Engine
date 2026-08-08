@@ -55,6 +55,13 @@ namespace StaticGameSettings
 	static float s_rareEnemySizeMultiplier      = 1.75f;
 	static float s_rareEnemySpeedMultiplier     = 0.75f;
 
+	static float s_basePlayerHealth				= 100.f;
+	static float s_basePlayerHealthRegen		= 0.1f;
+	static float s_baseGold						= 100.f;
+	static float s_baseSavingsInterestRate      = 0.01f;
+	static float s_baseDebtInterestRate         = 0.02f;
+	static float s_baseInterestTimerSeconds     = 30.f;
+
     // Derived
     extern float s_burnDecayK;
 	extern float s_oneOverBurnDecayK;

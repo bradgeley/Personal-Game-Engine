@@ -307,7 +307,7 @@ void Font::AddVertsForAlignedText2D(VertexBuffer& out_verts, Vec2 const& pivot, 
 	for (int i = 0; i < (int) lines.size(); ++i)
 	{
 		std::string const& line = lines[i];
-		float lineWidth = GetTextWidth(cellHeight, line);
+		float lineWidth = GetLineWidth(cellHeight, line);
 		paragraphWidth = MathUtils::Max(paragraphWidth, lineWidth);
 	}
 
@@ -340,12 +340,12 @@ void Font::AddVertsForAlignedText2D(VertexBuffer& out_verts, Vec2 const& pivot, 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float Font::GetTextWidth(float cellHeight, std::string const& text) const
+float Font::GetLineWidth(float cellHeight, std::string const& line) const
 {
 	float penPosition = 0.f;
-	for (int glyphIndex = 0; glyphIndex < (int) text.size(); ++glyphIndex)
+	for (int glyphIndex = 0; glyphIndex < (int) line.size(); ++glyphIndex)
 	{
-		uint8_t const& currentChar = text[glyphIndex];
+		uint8_t const& currentChar = line[glyphIndex];
 		GlyphData const& charData = m_glyphData[currentChar];
 
 		float a = charData.a * cellHeight;
@@ -356,16 +356,52 @@ float Font::GetTextWidth(float cellHeight, std::string const& text) const
 		penPosition += glyphWidth;
 		penPosition += c; // todo: don't add c for final character? seems right... maybe
 
-		if (glyphIndex < (int) text.size() - 1)
+		if (glyphIndex < (int) line.size() - 1)
 		{
 
-			uint8_t nextChar = text[glyphIndex + 1];
+			uint8_t nextChar = line[glyphIndex + 1];
 			float kerning = GetKerning(currentChar, nextChar);
 			float scaledKerning = kerning * cellHeight;
 			penPosition += scaledKerning;
 		}
 	}
 	return penPosition;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float Font::GetTextWidth(float cellHeight, std::string const& text) const
+{
+	Strings lines = StringUtils::SplitStringOnDelimiter(text, '\n');
+	float maxWidth = 0.f;
+	for (auto& line : lines)
+	{
+		float width = GetLineWidth(cellHeight, line);
+		if (width > maxWidth)
+		{
+			maxWidth = width;
+		}
+	}
+	return maxWidth;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float Font::GetTextHeight(float cellHeight, float lineSpacing, std::string const& text) const
+{
+	int numLines = StringUtils::CountStringsByDelimiter(text, '\n');
+	float height = static_cast<float>(numLines) * cellHeight + static_cast<float>(numLines - 1) * lineSpacing * cellHeight;
+	return height;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Vec2 Font::GetTextDims(float cellHeight, float lineSpacing, std::string const& text) const
+{
+	return Vec2(GetTextWidth(cellHeight, text), GetTextHeight(cellHeight, lineSpacing, text));
 }
 
 

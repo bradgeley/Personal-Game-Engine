@@ -131,7 +131,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 			if (scInput.m_mouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
 			{
 				CEntityDebug const& debug = debugStorage[it];
-				Vec2 screenPos = worldCamera.m_camera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();
+				Vec2 screenPos = worldCamera.m_worldCamera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();
 				Vec2 cardMins = screenPos;
 
 				std::string debugString;
@@ -199,7 +199,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 
 				for (int lineIndex = 0; lineIndex < numLines; ++lineIndex)
 				{
-					float width = font->GetTextWidth(textLineHeight, lines[lineIndex]);
+					float width = font->GetLineWidth(textLineHeight, lines[lineIndex]);
 					if (width > longestLineWidth)
 					{
 						longestLineWidth = width;
@@ -207,7 +207,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 					}
 				}
 
-				float titleWidth = font->GetTextWidth(titleLineHeight, debug.m_defName.ToString());
+				float titleWidth = font->GetLineWidth(titleLineHeight, debug.m_defName.ToString());
 				float cardWidth = MathUtils::Max(minCardDims.x, longestLineWidth + infoCardEdgeWidth * 2.f);
 				cardWidth = MathUtils::Max(cardWidth, titleWidth + infoCardEdgeWidth * 2.f);
 				Vec2 cardDims = Vec2(cardWidth, cardHeight);

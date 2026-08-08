@@ -5,11 +5,12 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SCamera : public System
+class SRenderHUD : public System
 {
 public:
 
-    SCamera(Name name = "Camera", Rgba8 const& debugTint = Rgba8::SkyBlue) : System(name, debugTint) {};
+    SRenderHUD(Name name = "RenderHUD", Rgba8 const& debugTint = Rgba8::Blue) : System(name, debugTint) {};
     void Startup() override;
-	void Run(SystemContext const& context) const override;
+    void Shutdown() const override;
+    void Run(SystemContext const& context) const override;
 };

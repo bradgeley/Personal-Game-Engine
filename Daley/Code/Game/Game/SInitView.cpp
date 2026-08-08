@@ -32,10 +32,10 @@ void SInitView::Run(SystemContext const& context) const
 	Renderer& renderer = *context.GetSingleton<SCRenderer>().GetRenderer();
 	Window* window = context.GetSingleton<SCWindow>().GetWindow();
 
-    AABB2 cameraBounds = camera.m_camera.GetTranslatedOrthoBounds2D();
+    AABB2 cameraBounds = camera.m_worldCamera.GetTranslatedOrthoBounds2D();
 
 	renderer.BeginWindowLetterboxed(window, StaticWorldSettings::s_visibleWorldAspect);
-    renderer.BeginCamera(&camera.m_camera);
+    renderer.BeginCamera(&camera.m_worldCamera);
     renderer.ClearScreen(Rgba8::LightGray);
 
     for (auto it = context.Iterate<CRender>(); it.IsValid(); ++it)

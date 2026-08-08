@@ -105,11 +105,11 @@ void SDebugRender::Run(SystemContext const& context) const
 
     if (scDebug.m_debugRenderEdges)
     {
-        scCamera.m_camera.SetOrthoBounds2D(world.GetPlayableWorldBounds());
+        scCamera.m_worldCamera.SetOrthoBounds2D(world.GetPlayableWorldBounds());
     }
     else
     {
-        scCamera.m_camera.SetOrthoBounds2D(world.GetVisibleWorldBounds());
+        scCamera.m_worldCamera.SetOrthoBounds2D(world.GetVisibleWorldBounds());
     }
 
     // Tile tags

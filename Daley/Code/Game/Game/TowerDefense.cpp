@@ -124,6 +124,7 @@ void TowerDefense::ConfigureECS()
     g_ecs->RegisterComponentSingleton<SCFloatingText>();
     g_ecs->RegisterComponentSingleton<SCFlowField>();
     g_ecs->RegisterComponentSingleton<SCGameState>();
+    g_ecs->RegisterComponentSingleton<SCRunData>();
     g_ecs->RegisterComponentSingleton<SCLighting>();
     g_ecs->RegisterComponentSingleton<SCTime>();
     g_ecs->RegisterComponentSingleton<SCWorld>();
@@ -206,6 +207,7 @@ void TowerDefense::ConfigureECS()
     g_ecs->RegisterSystem<SRenderStatusIcons>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SFloatingText>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderHUD>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderPauseMenu>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);

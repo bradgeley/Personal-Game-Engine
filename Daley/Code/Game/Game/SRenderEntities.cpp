@@ -83,7 +83,7 @@ void SRenderEntities::Run(SystemContext const& context) const
     }
 
     ShaderID spriteShaderID = spriteShaderAsset->GetShaderID();
-    AABB2 cameraBounds = scCamera.m_camera.GetTranslatedOrthoBounds2D();
+    AABB2 cameraBounds = scCamera.m_worldCamera.GetTranslatedOrthoBounds2D();
 
     // Clear last frame's instances
     for (auto it : scRenderer.m_instancesPerSpriteSheet)

@@ -16,15 +16,15 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int MyAllocHook(int allocType, void* userData, size_t size, int blockType, long requestNumber, const unsigned char* filename, int lineNumber)
-{
-	if (size == 5104) // insert size
-	{
-		__debugbreak();
-		return TRUE;
-	}
-	return TRUE;
-}
+//int MyAllocHook(int allocType, void* userData, size_t size, int blockType, long requestNumber, const unsigned char* filename, int lineNumber)
+//{
+//	if (size == 5104) // insert size
+//	{
+//		__debugbreak();
+//		return TRUE;
+//	}
+//	return TRUE;
+//}
 
 
 

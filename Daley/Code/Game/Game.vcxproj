@@ -335,6 +335,7 @@
     <ClCompile Include="Game\SCollision.cpp" />
     <ClCompile Include="Game\SCollisionEffect.cpp" />
     <ClCompile Include="Game\SCollisionHash.cpp" />
+    <ClCompile Include="Game\SCRunData.cpp" />
     <ClCompile Include="Game\SCWaves.cpp" />
     <ClCompile Include="Game\SCWorld.cpp" />
     <ClCompile Include="Game\SDeath.cpp" />
@@ -351,6 +352,7 @@
     <ClCompile Include="Game\SRenderAbilities.cpp" />
     <ClCompile Include="Game\SRenderCollisionEffects.cpp" />
     <ClCompile Include="Game\SRenderDiscs.cpp" />
+    <ClCompile Include="Game\SRenderHUD.cpp" />
     <ClCompile Include="Game\SRenderPauseMenu.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
     <ClCompile Include="Game\SSaveLoad.cpp" />
@@ -441,6 +443,7 @@
     <ClInclude Include="Game\SCollisionEffect.h" />
     <ClInclude Include="Game\SCRandomNumberGenerator.h" />
     <ClInclude Include="Game\SCRenderer.h" />
+    <ClInclude Include="Game\SCRunData.h" />
     <ClInclude Include="Game\SCTime.h" />
     <ClInclude Include="Game\SCDebug.h" />
     <ClInclude Include="Game\SCEntityFactory.h" />
@@ -463,6 +466,7 @@
     <ClInclude Include="Game\SRenderAbilities.h" />
     <ClInclude Include="Game\SRenderCollisionEffects.h" />
     <ClInclude Include="Game\SRenderDiscs.h" />
+    <ClInclude Include="Game\SRenderHUD.h" />
     <ClInclude Include="Game\SRenderPauseMenu.h" />
     <ClInclude Include="Game\SRenderUI.h" />
     <ClInclude Include="Game\SSaveLoad.h" />
