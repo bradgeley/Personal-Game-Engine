@@ -253,7 +253,7 @@
     <ClCompile Include="Game\SSaveLoad.cpp">
       <Filter>ECS\Systems\SaveLoad</Filter>
     </ClCompile>
-    <ClCompile Include="Game\MainMenu.cpp">
+    <ClCompile Include="Game\MainMenuState.cpp">
       <Filter>Game\UI</Filter>
     </ClCompile>
     <ClCompile Include="Game\GameFlow.cpp">
@@ -262,7 +262,7 @@
     <ClCompile Include="Game\GameState.cpp">
       <Filter>Game\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\TowerDefense.cpp">
+    <ClCompile Include="Game\TowerDefenseState.cpp">
       <Filter>Game\UI</Filter>
     </ClCompile>
     <ClCompile Include="Game\SCRunData.cpp">
@@ -270,6 +270,12 @@
     </ClCompile>
     <ClCompile Include="Game\SRenderHUD.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SCurrency.cpp">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameOverState.cpp">
+      <Filter>Game\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -606,7 +612,7 @@
     <ClInclude Include="Game\SSaveLoad.h">
       <Filter>ECS\Systems\SaveLoad</Filter>
     </ClInclude>
-    <ClInclude Include="Game\MainMenu.h">
+    <ClInclude Include="Game\MainMenuState.h">
       <Filter>Game\UI</Filter>
     </ClInclude>
     <ClInclude Include="Game\GameState.h">
@@ -615,7 +621,7 @@
     <ClInclude Include="Game\GameFlow.h">
       <Filter>Game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Game\TowerDefense.h">
+    <ClInclude Include="Game\TowerDefenseState.h">
       <Filter>Game\UI</Filter>
     </ClInclude>
     <ClInclude Include="Game\SCRunData.h">
@@ -623,6 +629,12 @@
     </ClInclude>
     <ClInclude Include="Game\SRenderHUD.h">
       <Filter>ECS\Systems\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SCurrency.h">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\GameOverState.h">
+      <Filter>Game\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

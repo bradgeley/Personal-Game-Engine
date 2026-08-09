@@ -11,7 +11,7 @@
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Attachment></Attachment>
     <Collision radius="0.5" singleHash="true" type="enemy" ></Collision>
-    <Death></Death>
+    <Death baseGoldReward="1"></Death>
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="3" pathOnly="true"></Movement>
@@ -26,7 +26,7 @@
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Attachment></Attachment>
     <Collision radius="1" singleHash="false" type="enemy"></Collision>
-    <Death></Death>
+    <Death baseGoldReward="10"></Death>
     <Health maxHealth="1000" healthRegen="10" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1.5" pathOnly="true"></Movement>
@@ -41,7 +41,7 @@
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Attachment></Attachment>
     <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
-    <Death></Death>
+    <Death baseGoldReward="25"></Death>
     <Health maxHealth="2000" healthRegen="20" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1" pathOnly="true"></Movement>
@@ -56,7 +56,7 @@
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Attachment></Attachment>
     <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
-    <Death></Death>
+    <Death baseGoldReward="100"></Death>
     <Health maxHealth="200000" healthRegen="500" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.75" pathOnly="true"></Movement>
@@ -71,7 +71,7 @@
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
     <Attachment></Attachment>
     <Collision radius="1" type="enemy"></Collision>
-    <Death></Death>
+    <Death baseGoldReward="2"></Death>
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1" pathOnly="true"></Movement>

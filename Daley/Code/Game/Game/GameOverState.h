@@ -8,11 +8,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class MainMenu : public GameState
+class GameOverState : public GameState
 {
 public:
 
-	MainMenu();
+	GameOverState();
 
 	virtual void Enter() override;
 	virtual void Exit() override;

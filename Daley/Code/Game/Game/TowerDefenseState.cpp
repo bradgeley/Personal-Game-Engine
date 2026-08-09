@@ -1,10 +1,12 @@
 // Bradley Christensen - 2022-2026
-#include "TowerDefense.h"
+#include "TowerDefenseState.h"
 #include "AllComponents.h"
 #include "AllSystems.h"
 #include "GameCommon.h"
+#include "SCRunData.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Audio/AudioSystem.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/Events/EventSystem.h"
@@ -17,7 +19,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerDefense::TowerDefense()
+TowerDefenseState::TowerDefenseState()
 {
 	m_name = "TowerDefense";
 }
@@ -25,7 +27,7 @@ TowerDefense::TowerDefense()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefense::Enter()
+void TowerDefenseState::Enter()
 {
     GameState::Enter();
 
@@ -35,7 +37,7 @@ void TowerDefense::Enter()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefense::Exit()
+void TowerDefenseState::Exit()
 {
     GameState::Exit();
 
@@ -45,16 +47,32 @@ void TowerDefense::Exit()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefense::Update(float)
+void TowerDefenseState::Update(float)
 {
-	float deltaSeconds = m_clock->GetDeltaSecondsF();
+    if (m_isGameOver)
+    {
+        return;
+    }
+
+	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
+	if (runData.m_currentHealth <= 0.f)
+	{
+		m_isGameOver = true;
+        NamedProperties props;
+		props.Set("runData", &runData);
+        props.Set<Name>("state", "GameOver");
+		g_eventSystem->FireEvent("PushState", props);
+		return;
+	}
+
+    float deltaSeconds = m_clock->GetDeltaSecondsF();
     g_ecs->RunFrame(deltaSeconds);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefense::Render() const
+void TowerDefenseState::Render() const
 {
     // Empty
 }
@@ -62,7 +80,7 @@ void TowerDefense::Render() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefense::StartGame()
+void TowerDefenseState::StartGame()
 {
     ConfigureECS();
     g_ecs->Startup();
@@ -71,7 +89,7 @@ void TowerDefense::StartGame()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefense::ShutdownGame()
+void TowerDefenseState::ShutdownGame()
 {
     g_ecs->Shutdown();
 
@@ -82,7 +100,7 @@ void TowerDefense::ShutdownGame()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefense::ConfigureECS()
+void TowerDefenseState::ConfigureECS()
 {
     AdminSystemConfig ecsConfig;
     ecsConfig.m_maxDeltaSeconds = 1.f;
@@ -189,6 +207,7 @@ void TowerDefense::ConfigureECS()
     g_ecs->RegisterSystem<SProjectile>((int) FramePhase::PostPhysics);
     g_ecs->RegisterSystem<SHealth>((int) FramePhase::PostPhysics);
     g_ecs->RegisterSystem<SGoal>((int) FramePhase::PostPhysics);
+    g_ecs->RegisterSystem<SCurrency>((int) FramePhase::PostPhysics);
 
     // Render
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);

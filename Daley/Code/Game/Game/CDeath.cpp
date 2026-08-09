@@ -11,6 +11,7 @@ CDeath::CDeath(void const* xmlElement)
 
 	m_deathAnimationName	= XmlUtils::ParseXmlAttribute(elem, "deathAnimation", m_deathAnimationName);
 	m_corpseDurationSeconds = XmlUtils::ParseXmlAttribute(elem, "corpseDurationSeconds", 1.f);
+	m_goldReward			= XmlUtils::ParseXmlAttribute(elem, "baseGoldReward", 0.f);
 }
 
 

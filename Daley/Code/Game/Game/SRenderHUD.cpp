@@ -75,7 +75,7 @@ void SRenderHUD::Run(SystemContext const& context) const
 	constexpr float hudTextSize = 30.f; // TOOD: make configurable
 	constexpr float hudPadding = 20.f; // TOOD: make configurable
 	constexpr float hudLineSpacing = 0.25f; // TOOD: make configurable
-	std::string hudText = StringUtils::StringF("Gold: %.2f\nHealth: %.2f/%.2f (+%.2f/s)", runData.m_gold, runData.m_currentHealth, runData.m_maxHealth, runData.m_healthRegen);
+	std::string hudText = StringUtils::StringF("Gold: %.2f\nHealth: %.2f/%.2f (+%.2f/s)\nInterest Timer (%.2f)", runData.m_gold, runData.m_currentHealth, runData.m_maxHealth, runData.m_healthRegen, runData.m_interestTimerSecondsRemaining);
 	Vec2 hudTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, hudText);
 	hudTextDims += Vec2(hudPadding * 2.f, hudPadding * 2.f);
 

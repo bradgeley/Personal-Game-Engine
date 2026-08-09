@@ -3,6 +3,7 @@
 #include "CTags.h"
 #include "CTransform.h"
 #include "SCEntityFactory.h"
+#include "SCRunData.h"
 #include "SCWorld.h"
 #include "Engine/ECS/SystemContext.h"
 
@@ -12,7 +13,7 @@
 void SGoal::Startup()
 {
 	AddReadDependencies<CTags, CTransform, SCWorld>();
-	AddWriteDependencies<SCEntityFactory>();
+	AddWriteDependencies<SCEntityFactory, SCRunData>();
 
 	m_runWhilePaused = false;
 }
@@ -29,6 +30,7 @@ void SGoal::Run(SystemContext const& context) const
 
 	// Write Dependencies
 	auto& entityFactory = context.GetSingleton<SCEntityFactory>();
+	auto& runData = context.GetSingleton<SCRunData>();
 
 	Name enemyTag = "Enemy";
 
@@ -46,6 +48,7 @@ void SGoal::Run(SystemContext const& context) const
 		if (world.IsLocationInGoal(transform.m_pos))
 		{
 			entityFactory.m_entitiesToDestroy.push_back(it.GetEntityID());
+			runData.m_currentHealth -= 1.f;
 		}
 	}
 }

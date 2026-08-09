@@ -10,11 +10,11 @@ struct NamedProperties;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class TowerDefense : public GameState
+class TowerDefenseState : public GameState
 {
 public:
 
-	TowerDefense();
+	TowerDefenseState();
 
 	virtual void Enter() override;
 	virtual void Exit() override;
@@ -26,4 +26,8 @@ protected:
 	void StartGame();
 	void ShutdownGame();
 	void ConfigureECS();
+
+private:
+
+	bool m_isGameOver = false;
 };

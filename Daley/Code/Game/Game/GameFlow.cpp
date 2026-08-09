@@ -1,7 +1,8 @@
 // Bradley Christensen - 2022-2026
 #include "GameFlow.h"
-#include "MainMenu.h"
-#include "TowerDefense.h"
+#include "GameOverState.h"
+#include "MainMenuState.h"
+#include "TowerDefenseState.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
@@ -81,11 +82,15 @@ void GameFlow::PushState(Name state)
 
 	if (state == "MainMenu")
 	{
-		m_states.push_back(new MainMenu());
+		m_states.push_back(new MainMenuState());
 	}
 	else if (state == "TowerDefense")
 	{
-		m_states.push_back(new TowerDefense());
+		m_states.push_back(new TowerDefenseState());
+	}
+	else if (state == "GameOver")
+	{
+		m_states.push_back(new GameOverState());
 	}
 
 	m_states.back()->Enter();
@@ -155,6 +160,15 @@ void GameFlow::HandlePendingTransition()
 			PushState(m_pendingTransition.m_toState);
 			break;
 		}
+		case StateTransitionType::Wipe:
+		{
+			while (m_states.empty() == false)
+			{
+				PopState();
+			}
+			PushState(m_pendingTransition.m_toState);
+			break;
+		}
 		default:
 		{
 			break;
@@ -192,7 +206,15 @@ bool GameFlow::PopStateEvent(NamedProperties& props)
 bool GameFlow::ChangeStateEvent(NamedProperties& props)
 {
 	ASSERT_OR_DIE(m_pendingTransition.m_type == StateTransitionType::None, "GameFlow::ChangeState: There is already a pending state transition.");
-	m_pendingTransition.m_type = StateTransitionType::Change;
+	bool wipe = props.Get<bool>("wipe", false);
+	if (wipe)
+	{
+		m_pendingTransition.m_type = StateTransitionType::Wipe;
+	}
+	else
+	{
+		m_pendingTransition.m_type = StateTransitionType::Change;
+	}
 	m_pendingTransition.m_toState = props.Get<Name>("state", "");
 	return false;
 }

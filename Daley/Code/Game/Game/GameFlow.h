@@ -17,6 +17,7 @@ enum class StateTransitionType : uint8_t
 	Change,
 	Push,
 	Pop,
+	Wipe,
 };
 
 

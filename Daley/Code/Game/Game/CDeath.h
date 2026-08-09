@@ -33,4 +33,5 @@ public:
 	uint8_t m_deathFlags			= 0;
 	Name m_deathAnimationName		= "Death";
 	float m_corpseDurationSeconds	= 1.f; // -1 is infinite, 0 is no corpse
+	float m_goldReward				= 0.f;
 };

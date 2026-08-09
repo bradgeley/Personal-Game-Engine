@@ -23,6 +23,7 @@
 #include "SCollisionEffect.h"
 #include "SCollisionHash.h"
 #include "SCopyTransform.h" 
+#include "SCurrency.h" 
 #include "SDeath.h" 
 #include "SDebugCommands.h"
 #include "SDebugInput.h"

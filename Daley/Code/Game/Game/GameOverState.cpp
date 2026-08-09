@@ -1,5 +1,5 @@
 // Bradley Christensen - 2022-2026
-#include "MainMenu.h"
+#include "GameOverState.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Core/ErrorUtils.h"
@@ -20,15 +20,15 @@ static constexpr char const* MAIN_MENU_FONT_NAME = "Data/Fonts/Gypsy.fnt";
 
 
 //----------------------------------------------------------------------------------------------------------------------
-MainMenu::MainMenu()
+GameOverState::GameOverState()
 {
-	m_name = "MainMenu";
+	m_name = "GameOver";
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenu::Enter()
+void GameOverState::Enter()
 {
 	GameState::Enter();
 
@@ -41,7 +41,7 @@ void MainMenu::Enter()
 	VertexBuffer& textVBO = *g_renderer->GetVertexBuffer(m_textVerts);
 	VertexBuffer& untexturedVBO = *g_renderer->GetVertexBuffer(m_untexturedVerts);
 
-	VertexUtils::AddVertsForAABB2(untexturedVBO, m_camera.GetOrthoBounds2D(), Rgba8::Gray);
+	VertexUtils::AddVertsForAABB2(untexturedVBO, m_camera.GetOrthoBounds2D(), Rgba8::DarkRed);
 
 	m_fontID = g_assetManager->LoadSynchronous<Font>(MAIN_MENU_FONT_NAME);
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
@@ -49,15 +49,15 @@ void MainMenu::Enter()
 
 	if (font)
 	{
-		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Main Menu", Rgba8::AliceBlue);
-		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, "Press Space to Start", Rgba8::Yellow);
+		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Game Over!", Rgba8::AliceBlue);
+		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, "Press ESC to go to Main Menu", Rgba8::Yellow);
 	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenu::Exit()
+void GameOverState::Exit()
 {
 	GameState::Exit();
 
@@ -68,16 +68,13 @@ void MainMenu::Exit()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenu::Update(float)
+void GameOverState::Update(float)
 {
 	if (g_input->WasKeyJustPressed(KeyCode::Escape))
 	{
-		g_eventSystem->FireEvent("Quit");
-	}
-	else if (g_input->WasKeyJustPressed(KeyCode::Space))
-	{
 		NamedProperties props;
-		props.Set<Name>("state", "TowerDefense");
+		props.Set<Name>("state", "MainMenu");
+		props.Set<bool>("wipe", true);
 		g_eventSystem->FireEvent("ChangeState", props);
 	}
 }
@@ -85,7 +82,7 @@ void MainMenu::Update(float)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenu::Render() const
+void GameOverState::Render() const
 {
 	g_renderer->BeginCameraAndWindow(&m_camera, g_window);
 
