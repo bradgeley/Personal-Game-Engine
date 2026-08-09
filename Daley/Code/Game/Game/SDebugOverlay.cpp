@@ -16,6 +16,7 @@
 #include "SCRenderer.h"
 #include "SCWaves.h"
 #include "SCWindow.h"
+#include "SGoal.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
@@ -172,6 +173,9 @@ void SDebugOverlay::Run(SystemContext const& context) const
 					CProjectile const& proj = projectileStorage[it];
 					proj.AppendDebugString(debugString);
 				}
+
+				float damage = SGoal::GetDamageToPlayerByTags(tags);
+				debugString += StringUtils::StringF("Damage: %.1f\n", damage);
 
 				tags.AppendDebugString(debugString);
 

@@ -766,6 +766,7 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGene
         if (onHitComp.m_aoeHitOnHit.has_value())
         {
             RolledAoEHitComponent aoeHitResult;
+            aoeHitResult.m_radius = onHitComp.m_aoeHitOnHit->m_radius;
 			HitPayload& aoeHitPayload = aoeHitResult.m_payload;
             aoeHitPayload.m_didCrit = didCrit;
 
