@@ -55,6 +55,7 @@ public:
 	bool PushStateEvent(NamedProperties& props);
 	bool PopStateEvent(NamedProperties& props);
 	bool ChangeStateEvent(NamedProperties& props);
+	bool GameFlowDump(NamedProperties& props);
 
 public:
 

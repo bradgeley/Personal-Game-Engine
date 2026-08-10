@@ -21,7 +21,6 @@ void SSystemDebug::Startup()
 	ASSERT_OR_DIE(g_eventSystem, "Event System doesn't exist.")
 
 	DevConsoleUtils::AddCommandInfo("ToggleSystem", "name", DevConsoleArgType::String);
-
 	g_eventSystem->SubscribeMethod("ToggleSystem", this, &SSystemDebug::ToggleSystem);
 	g_eventSystem->SubscribeMethod("PrintAllSystems", this, &SSystemDebug::PrintAllSystems);
 
@@ -37,6 +36,7 @@ void SSystemDebug::Shutdown() const
 
 	DevConsoleUtils::RemoveCommandInfo("ToggleSystem");
 	g_eventSystem->UnsubscribeMethod("ToggleSystem", this, &SSystemDebug::ToggleSystem);
+	g_eventSystem->UnsubscribeMethod("PrintAllSystems", this, &SSystemDebug::PrintAllSystems);
 }
 
 

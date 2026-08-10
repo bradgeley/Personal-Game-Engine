@@ -1,5 +1,5 @@
 // Bradley Christensen - 2022-2026
-#include "MainMenuState.h"
+#include "RunState.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Core/ErrorUtils.h"
@@ -20,17 +20,19 @@ static constexpr char const* MAIN_MENU_FONT_NAME = "Data/Fonts/Gypsy.fnt";
 
 
 //----------------------------------------------------------------------------------------------------------------------
-MainMenuState::MainMenuState()
+RunState::RunState()
 {
-	m_name = "MainMenu";
+	m_name = "RunState";
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenuState::Enter()
+void RunState::Enter()
 {
 	GameState::Enter();
+
+	g_eventSystem->SubscribeMethod("MissionOver", this, &RunState::MissionOver);
 
 	m_untexturedVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 	m_textVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -41,25 +43,27 @@ void MainMenuState::Enter()
 	VertexBuffer& textVBO = *g_renderer->GetVertexBuffer(m_textVerts);
 	VertexBuffer& untexturedVBO = *g_renderer->GetVertexBuffer(m_untexturedVerts);
 
-	VertexUtils::AddVertsForAABB2(untexturedVBO, m_camera.GetOrthoBounds2D(), Rgba8::Gray);
+	VertexUtils::AddVertsForAABB2(untexturedVBO, m_camera.GetOrthoBounds2D(), Rgba8::DarkGray);
 
 	m_fontID = g_assetManager->LoadSynchronous<Font>(MAIN_MENU_FONT_NAME);
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
-	ASSERT_OR_DIE(font != nullptr, StringUtils::StringF("Failed to load %s for MainMenu!", MAIN_MENU_FONT_NAME));
+	ASSERT_OR_DIE(font != nullptr, StringUtils::StringF("Failed to load %s for RunState!", MAIN_MENU_FONT_NAME));
 
 	if (font)
 	{
-		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Main Menu", Rgba8::AliceBlue);
-		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, "Press Space to Start Run\nPress ESC to quit", Rgba8::Yellow);
+		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Run State", Rgba8::AliceBlue);
+		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, "Press Space to Start Mission\nPress ESC to return to Main Menu", Rgba8::Yellow);
 	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenuState::Exit()
+void RunState::Exit()
 {
 	GameState::Exit();
+
+	g_eventSystem->UnsubscribeMethod("MissionOver", this, &RunState::MissionOver);
 
 	g_renderer->ReleaseVertexBuffer(m_untexturedVerts);
 	g_renderer->ReleaseVertexBuffer(m_textVerts);
@@ -68,16 +72,18 @@ void MainMenuState::Exit()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenuState::Update(float)
+void RunState::Update(float)
 {
-	if (g_input->WasKeyJustPressed(KeyCode::Escape))
-	{
-		g_eventSystem->FireEvent("Quit");
-	}
-	else if (g_input->WasKeyJustPressed(KeyCode::Space))
+	if (g_input->WasKeyJustPressed(KeyCode::Space))
 	{
 		NamedProperties props;
-		props.Set<Name>("state", "Run");
+		props.Set<Name>("state", "TowerDefense");
+		g_eventSystem->FireEvent("PushState", props);
+	}
+	else if (g_input->WasKeyJustPressed(KeyCode::Escape))
+	{
+		NamedProperties props;
+		props.Set<Name>("state", "MainMenu");
 		g_eventSystem->FireEvent("ChangeState", props);
 	}
 }
@@ -85,7 +91,7 @@ void MainMenuState::Update(float)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenuState::Render() const
+void RunState::Render() const
 {
 	g_renderer->BeginCameraAndWindow(&m_camera, g_window);
 
@@ -96,4 +102,27 @@ void MainMenuState::Render() const
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
 	font->SetRendererState(*g_renderer);
 	g_renderer->DrawVertexBuffer(m_textVerts);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool RunState::MissionOver(NamedProperties& props)
+{
+	SCRunData runData = props.Get<SCRunData>("runData", SCRunData());
+
+	if (runData.m_currentHealth <= 0.f)
+	{
+		NamedProperties changeStateProps;
+		changeStateProps.Set<Name>("state", "GameOver");
+		g_eventSystem->FireEvent("ChangeState", changeStateProps);
+	}
+	else
+	{
+		NamedProperties popStateProps;
+		popStateProps.Set<Name>("state", "RunState");
+		g_eventSystem->FireEvent("PopState", popStateProps);
+	}
+
+	return false;
 }

@@ -23,6 +23,7 @@ int EventDelegate::Broadcast(NamedProperties& args) const
 	bool consumed = false;
     for (EventSubscriber* const& sub : m_subs)
     {
+		ASSERT_OR_DIE(sub != nullptr, "EventDelegate::Broadcast() - EventSubscriber is null");
         consumed = sub->Execute(args);
 		numExecuted++;
     	if (consumed)
@@ -46,16 +47,32 @@ void EventDelegate::SubscribeFunction(EventCallbackFunction callbackFunc)
 //----------------------------------------------------------------------------------------------------------------------
 void EventDelegate::UnsubscribeFunction(EventCallbackFunction callbackFunc)
 {
-	for (auto it = m_subs.begin(); it != m_subs.end();)
+	for (auto it = m_subs.begin(); it != m_subs.end(); it++)
 	{
 		EventSubscriber*& sub = *it;
-		if (sub && sub->DoesObjectMatch(nullptr) && sub->DoesFunctionMatch((void const*)callbackFunc))
+		ASSERT_OR_DIE(sub != nullptr, "EventDelegate::UnsubscribeFunction() - EventSubscriber is null");
+		if (sub->DoesObjectMatch(nullptr) && sub->DoesFunctionMatch((void const*)callbackFunc))
 		{
+			delete sub;
+			sub = nullptr;
 			it = m_subs.erase(it);
-		}
-		else
-		{
-			it++;
+			return;
 		}
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool EventDelegate::IsFunctionBound(EventCallbackFunction callbackFunc) const
+{
+	for (EventSubscriber* const& sub : m_subs)
+	{
+		ASSERT_OR_DIE(sub != nullptr, "EventDelegate::IsFunctionBound() - EventSubscriber is null");
+		if (sub->DoesObjectMatch(nullptr) && sub->DoesFunctionMatch((void const*) callbackFunc))
+		{
+			return true;
+		}
+	}
+	return false;
 }

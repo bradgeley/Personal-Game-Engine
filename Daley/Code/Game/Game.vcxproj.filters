@@ -277,6 +277,9 @@
     <ClCompile Include="Game\GameOverState.cpp">
       <Filter>Game\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Game\RunState.cpp">
+      <Filter>Game\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -634,6 +637,9 @@
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="Game\GameOverState.h">
+      <Filter>Game\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\RunState.h">
       <Filter>Game\UI</Filter>
     </ClInclude>
   </ItemGroup>

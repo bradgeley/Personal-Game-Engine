@@ -55,6 +55,9 @@ void SGoal::Run(SystemContext const& context) const
 	}
 }
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float SGoal::GetDamageToPlayerByTags(CTags const& tags)
 {
 	float damage = 0.f;

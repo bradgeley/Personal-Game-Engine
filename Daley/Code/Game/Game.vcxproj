@@ -326,6 +326,7 @@
     <ClCompile Include="Game\MapGeneratorComponent.cpp" />
     <ClCompile Include="Game\MapGeneratorComponentDef.cpp" />
     <ClCompile Include="Game\MapGeneratorDef.cpp" />
+    <ClCompile Include="Game\RunState.cpp" />
     <ClCompile Include="Game\SAbility.cpp" />
     <ClCompile Include="Game\SAIController.cpp" />
     <ClCompile Include="Game\SAnimation.cpp" />
@@ -418,6 +419,7 @@
     <ClInclude Include="Game\MapGeneratorComponentDef.h" />
     <ClInclude Include="Game\MapGeneratorDef.h" />
     <ClInclude Include="Game\OverlapInfo.h" />
+    <ClInclude Include="Game\RunState.h" />
     <ClInclude Include="Game\SAbility.h" />
     <ClInclude Include="Game\SAttachment.h" />
     <ClInclude Include="Game\SCAssetManager.h" />

@@ -33,6 +33,7 @@ void EventSystem::Shutdown()
         std::vector<EventSubscriber*>& subs = pair.second;
         for (EventSubscriber*& sub : subs)
         {
+            ASSERT_OR_DIE(sub != nullptr, "EventSystem::Shutdown() - EventSubscriber is null");
             delete sub;
         }
         subs.clear();
@@ -43,44 +44,75 @@ void EventSystem::Shutdown()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int EventSystem::FireEvent(Name name) const
+int EventSystem::FireEvent(Name eventName) const
 {
     NamedProperties emptyArgs;
-    return FireEvent(name, emptyArgs);
+    return FireEvent(eventName, emptyArgs);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-int EventSystem::FireEvent(Name name, NamedProperties& args) const
+int EventSystem::FireEvent(Name eventName, NamedProperties& args) const
 {
-    auto it = m_events.find(name);
-    if (it != m_events.end())
+    auto it = m_events.find(eventName);
+    if (it == m_events.end())
     {
-        int numExecuted = 0;
-        std::vector<EventSubscriber*> const& subList = it->second;
-        for (EventSubscriber* const& sub : subList)
-        {
-            bool consumed = sub->Execute(args);
-            numExecuted++;
-            if (consumed) 
-            {
-                break;
-            }
-        }
-
-        return numExecuted;
+        return 0;
     }
 
-    return 0;
+    int numExecuted = 0;
+    std::vector<EventSubscriber*> const& subList = it->second;
+    for (EventSubscriber* const& sub : subList)
+    {
+        ASSERT_OR_DIE(sub != nullptr, "EventSystem::FireEvent() - EventSubscriber is null");
+        bool consumed = sub->Execute(args);
+        numExecuted++;
+        if (consumed) 
+        {
+            break;
+        }
+    }
+
+    return numExecuted;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool EventSystem::IsEventBound(Name name) const
+bool EventSystem::IsEventBound(Name eventName) const
 {
-    return (m_events.find(name) != m_events.end());
+    auto it = m_events.find(eventName);
+    if (it == m_events.end())
+    {
+        return false;
+    }
+
+    std::vector<EventSubscriber*> const& subList = it->second;
+    return !subList.empty();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool EventSystem::IsFunctionBound(Name eventName, EventCallbackFunction callbackFunc) const
+{
+	auto it = m_events.find(eventName);
+	if (it == m_events.end())
+	{
+		return false;
+	}
+
+	std::vector<EventSubscriber*> const& subList = it->second;
+	for (EventSubscriber* const& sub : subList)
+	{
+        ASSERT_OR_DIE(sub != nullptr, "EventSystem::IsFunctionBound() - EventSubscriber is null");
+		if (sub->DoesFunctionMatch((void const*)callbackFunc))
+		{
+			return true;
+		}
+	}
+    return false;
 }
 
 
@@ -88,7 +120,13 @@ bool EventSystem::IsEventBound(Name name) const
 //----------------------------------------------------------------------------------------------------------------------
 void EventSystem::SubscribeFunction(Name eventName, EventCallbackFunction callbackFunc)
 {
-    auto& subList = m_events[eventName];
+	if (IsFunctionBound(eventName, callbackFunc))
+	{
+		ERROR_AND_DIE(StringUtils::StringF("EventSystem::SubscribeFunction() - Double binding to event '%s'", eventName.ToCStr()));
+		return;
+	}
+
+    std::vector<EventSubscriber*>& subList = m_events[eventName];
     subList.emplace_back(new EventSubscriberFunction(callbackFunc));
 }
 
@@ -97,19 +135,30 @@ void EventSystem::SubscribeFunction(Name eventName, EventCallbackFunction callba
 //----------------------------------------------------------------------------------------------------------------------
 void EventSystem::UnsubscribeFunction(Name eventName, EventCallbackFunction callbackFunc)
 {
-    auto& subList = m_events[eventName];
-    for (auto it = subList.begin(); it != subList.end();)
+    auto eventIt = m_events.find(eventName);
+    if (eventIt == m_events.end())
     {
-        auto& sub = *it;
+        return;
+    }
+
+    std::vector<EventSubscriber*>& subList = eventIt->second;
+    for (auto subIt = subList.begin(); subIt != subList.end();)
+    {
+        auto& sub = *subIt;
+        ASSERT_OR_DIE(sub != nullptr, "EventSystem::UnsubscribeFunction() - EventSubscriber is null");
         if (sub->DoesFunctionMatch((void const*) callbackFunc))
         {
             delete sub;
-            it = subList.erase(it);
+            subIt = subList.erase(subIt);
         }
         else
         {
-            ++it;
+            ++subIt;
         }
+    }
+    if (subList.empty())
+    {
+		m_events.erase(eventName);
     }
 }
 

@@ -27,6 +27,9 @@ protected:
 	void ShutdownGame();
 	void ConfigureECS();
 
+	static bool Win(NamedProperties& props);
+	static bool Lose(NamedProperties& props);
+
 private:
 
 	bool m_isGameOver = false;

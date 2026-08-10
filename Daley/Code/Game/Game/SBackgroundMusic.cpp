@@ -22,8 +22,8 @@ void SBackgroundMusic::Startup()
 	PlayBGM();
 
 	g_eventSystem->SubscribeMethod("ToggleBGM", this, &SBackgroundMusic::ToggleBGM);
-
 	g_eventSystem->SubscribeMethod("SetVolume_BGM", this, &SBackgroundMusic::SetVolume_BGM);
+
 	g_devConsole->AddDevConsoleCommandInfo("SetVolume_BGM", "volume", DevConsoleArgType::Float);
 
 	m_ignoreRun = true;
@@ -35,6 +35,8 @@ void SBackgroundMusic::Startup()
 void SBackgroundMusic::Shutdown() const
 {
 	g_eventSystem->UnsubscribeMethod("ToggleBGM", this, &SBackgroundMusic::ToggleBGM);
+	g_eventSystem->UnsubscribeMethod("SetVolume_BGM", this, &SBackgroundMusic::SetVolume_BGM);
+
 	g_devConsole->RemoveDevConsoleCommandInfo("SetVolume_BGM");
 
 	SCAudioSystem& audio = g_ecs->GetSingleton<SCAudioSystem>();

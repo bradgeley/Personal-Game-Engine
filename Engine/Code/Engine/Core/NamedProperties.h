@@ -12,7 +12,6 @@ struct PropertyBase
 {
     virtual ~PropertyBase() = default;
     virtual PropertyBase* Clone() const = 0;
-    virtual bool IsEqual(PropertyBase const* other) const = 0;
     virtual size_t GetType() const = 0;
 };
 
@@ -23,7 +22,6 @@ template<typename T>
 struct TypedPropertyBase : public PropertyBase
 {
     virtual PropertyBase* Clone() const override;
-    virtual bool IsEqual(PropertyBase const* other) const override;
     virtual size_t GetType() const override;
     void Set(T const& value);
 
@@ -43,19 +41,6 @@ PropertyBase* TypedPropertyBase<T>::Clone() const
     TypedPropertyBase<T>* clone = new TypedPropertyBase<T>();
     clone->m_property = m_property;
     return clone;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-template <typename T>
-bool TypedPropertyBase<T>::IsEqual(PropertyBase const* other) const
-{
-    if (auto const& asThisType = TypedPropertyBase<T>::GetAsThisType(other))
-    {
-        return asThisType->m_property == m_property;
-    }
-    return false;
 }
 
 

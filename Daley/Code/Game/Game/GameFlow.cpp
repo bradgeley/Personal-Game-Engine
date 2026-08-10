@@ -2,6 +2,7 @@
 #include "GameFlow.h"
 #include "GameOverState.h"
 #include "MainMenuState.h"
+#include "RunState.h"
 #include "TowerDefenseState.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/NamedProperties.h"
@@ -16,6 +17,7 @@ void GameFlow::Startup()
 	g_eventSystem->SubscribeMethod("PushState", this, &GameFlow::PushStateEvent);
 	g_eventSystem->SubscribeMethod("PopState", this, &GameFlow::PopStateEvent);
 	g_eventSystem->SubscribeMethod("ChangeState", this, &GameFlow::ChangeStateEvent);
+	g_eventSystem->SubscribeMethod("GameFlowDump", this, &GameFlow::GameFlowDump);
 
 	PushState("MainMenu");
 }
@@ -28,6 +30,7 @@ void GameFlow::Shutdown()
 	g_eventSystem->UnsubscribeMethod("PushState", this, &GameFlow::PushStateEvent);
 	g_eventSystem->UnsubscribeMethod("PopState", this, &GameFlow::PopStateEvent);
 	g_eventSystem->UnsubscribeMethod("ChangeState", this, &GameFlow::ChangeStateEvent);
+	g_eventSystem->UnsubscribeMethod("GameFlowDump", this, &GameFlow::GameFlowDump);
 
 	while (m_states.empty() == false)
 	{
@@ -48,10 +51,12 @@ void GameFlow::BeginFrame()
 //----------------------------------------------------------------------------------------------------------------------
 void GameFlow::Update(float deltaSeconds)
 {
-	for (auto& state : m_states)
+	if (m_states.empty())
 	{
-		state->Update(deltaSeconds);
+		return;
 	}
+
+	m_states[m_states.size() - 1]->Update(deltaSeconds);
 }
 
 
@@ -59,10 +64,12 @@ void GameFlow::Update(float deltaSeconds)
 //----------------------------------------------------------------------------------------------------------------------
 void GameFlow::Render() const
 {
-	for (auto& state : m_states)
+	if (m_states.empty())
 	{
-		state->Render();
+		return;
 	}
+
+	m_states[m_states.size() - 1]->Render();
 }
 
 
@@ -91,6 +98,14 @@ void GameFlow::PushState(Name state)
 	else if (state == "GameOver")
 	{
 		m_states.push_back(new GameOverState());
+	}
+	else if (state == "Run")
+	{
+		m_states.push_back(new RunState());
+	}
+	else
+	{
+		ERROR_AND_DIE("GameFlow::PushState: Unknown state");
 	}
 
 	m_states.back()->Enter();
@@ -128,6 +143,11 @@ void GameFlow::PopToState(Name state)
 	}
 
 	ASSERT_OR_DIE(found, StringUtils::StringF("Pop to state: %s not found.", state.ToCStr()));
+
+	while (m_states[m_states.size() - 1]->m_name != state)
+	{
+		PopState();
+	}
 }
 
 
@@ -216,5 +236,18 @@ bool GameFlow::ChangeStateEvent(NamedProperties& props)
 		m_pendingTransition.m_type = StateTransitionType::Change;
 	}
 	m_pendingTransition.m_toState = props.Get<Name>("state", "");
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool GameFlow::GameFlowDump(NamedProperties&)
+{
+	for (auto& state : m_states)
+	{
+		DevConsoleUtils::Log(Rgba8::Yellow, "State: %s", state->m_name.ToCStr());
+	}
+
 	return false;
 }
