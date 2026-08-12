@@ -14,8 +14,8 @@ public:
 
 	GameOverState();
 
-	virtual void Enter() override;
-	virtual void Exit() override;
+	virtual void Enter(NamedProperties const& props) override;
+	virtual void Exit(NamedProperties const& props) override;
 	virtual void Update(float deltaSeconds) override;
 	virtual void Render() const override;
 

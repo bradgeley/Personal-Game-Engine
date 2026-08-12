@@ -19,7 +19,8 @@ void GameFlow::Startup()
 	g_eventSystem->SubscribeMethod("ChangeState", this, &GameFlow::ChangeStateEvent);
 	g_eventSystem->SubscribeMethod("GameFlowDump", this, &GameFlow::GameFlowDump);
 
-	PushState("MainMenu");
+	NamedProperties props;
+	PushState("MainMenu", props);
 }
 
 
@@ -34,7 +35,8 @@ void GameFlow::Shutdown()
 
 	while (m_states.empty() == false)
 	{
-		PopState();
+		NamedProperties props;
+		PopState(props);
 	}
 }
 
@@ -83,7 +85,7 @@ void GameFlow::EndFrame()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void GameFlow::PushState(Name state)
+void GameFlow::PushState(Name state, NamedProperties const& props)
 {
 	DevConsoleUtils::Log(Rgba8::Yellow, "Entering state: %s", state.ToCStr());
 
@@ -108,13 +110,13 @@ void GameFlow::PushState(Name state)
 		ERROR_AND_DIE("GameFlow::PushState: Unknown state");
 	}
 
-	m_states.back()->Enter();
+	m_states.back()->Enter(props);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void GameFlow::PopState()
+void GameFlow::PopState(NamedProperties const& props)
 {
 	ASSERT_OR_DIE(m_states.empty() == false, "Cannot pop state when no states are present.");
 
@@ -123,14 +125,14 @@ void GameFlow::PopState()
 
 	DevConsoleUtils::Log(Rgba8::Yellow, "Exiting state: %s", top->m_name.ToCStr());
 
-	top->Exit();
+	top->Exit(props);
 	delete top;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void GameFlow::PopToState(Name state)
+void GameFlow::PopToState(Name state, NamedProperties const& props)
 {
 	bool found = false;
 	for (auto& gameState : m_states)
@@ -146,7 +148,7 @@ void GameFlow::PopToState(Name state)
 
 	while (m_states[m_states.size() - 1]->m_name != state)
 	{
-		PopState();
+		PopState(props);
 	}
 }
 
@@ -155,38 +157,40 @@ void GameFlow::PopToState(Name state)
 //----------------------------------------------------------------------------------------------------------------------
 void GameFlow::HandlePendingTransition()
 {
+	Name toState = m_pendingTransition.m_props.Get<Name>("state", Name::Invalid);
+
 	switch (m_pendingTransition.m_type)
-	{
+	{	
 		case StateTransitionType::Push:
 		{
-			PushState(m_pendingTransition.m_toState);
+			PushState(toState, m_pendingTransition.m_props);
 			break;
 		}
 		case StateTransitionType::Pop:
 		{
-			if (m_pendingTransition.m_toState == Name::Invalid)
+			if (toState == Name::Invalid)
 			{
-				PopState();
+				PopState(m_pendingTransition.m_props);
 			}
 			else
 			{
-				PopToState(m_pendingTransition.m_toState);
+				PopToState(toState, m_pendingTransition.m_props);
 			}
 			break;
 		}
 		case StateTransitionType::Change:
 		{
-			PopState();
-			PushState(m_pendingTransition.m_toState);
+			PopState(m_pendingTransition.m_props);
+			PushState(toState, m_pendingTransition.m_props);
 			break;
 		}
 		case StateTransitionType::Wipe:
 		{
 			while (m_states.empty() == false)
 			{
-				PopState();
+				PopState(m_pendingTransition.m_props);
 			}
-			PushState(m_pendingTransition.m_toState);
+			PushState(toState, m_pendingTransition.m_props);
 			break;
 		}
 		default:
@@ -205,7 +209,7 @@ bool GameFlow::PushStateEvent(NamedProperties& props)
 {
 	ASSERT_OR_DIE(m_pendingTransition.m_type == StateTransitionType::None, "GameFlow::ChangeState: There is already a pending state transition.");
 	m_pendingTransition.m_type = StateTransitionType::Push;
-	m_pendingTransition.m_toState = props.Get<Name>("state", "");
+	m_pendingTransition.m_props = props;
 	return false;
 }
 
@@ -216,7 +220,7 @@ bool GameFlow::PopStateEvent(NamedProperties& props)
 {
 	ASSERT_OR_DIE(m_pendingTransition.m_type == StateTransitionType::None, "GameFlow::ChangeState: There is already a pending state transition.");
 	m_pendingTransition.m_type = StateTransitionType::Pop;
-	m_pendingTransition.m_toState = props.Get<Name>("state", Name::Invalid);
+	m_pendingTransition.m_props = props;
 	return false;
 }
 
@@ -235,7 +239,7 @@ bool GameFlow::ChangeStateEvent(NamedProperties& props)
 	{
 		m_pendingTransition.m_type = StateTransitionType::Change;
 	}
-	m_pendingTransition.m_toState = props.Get<Name>("state", "");
+	m_pendingTransition.m_props = props;
 	return false;
 }
 

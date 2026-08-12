@@ -114,6 +114,8 @@ TypedPropertyBase<T>* TypedPropertyBase<T>::GetAsThisType(PropertyBase* prop)
 struct NamedProperties
 {
     ~NamedProperties();
+	NamedProperties() = default;
+    NamedProperties(NamedProperties const& other) = delete;
     
     template<typename T>
     void Set(Name name, T const& value);
@@ -126,6 +128,8 @@ struct NamedProperties
     void Clear();
     int Size() const;
     bool Contains(Name name) const;
+
+	void operator=(NamedProperties const& other);
 
 private:
 

@@ -49,7 +49,7 @@
 #include "SRenderEntities.h"
 #include "SRenderHealthBars.h"
 #include "SRenderHUD.h"
-#include "SRenderPauseMenu.h"
+#include "SRenderPopupOverlay.h"
 #include "SRenderStatusIcons.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"

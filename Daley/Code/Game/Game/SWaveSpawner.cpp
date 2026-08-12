@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "SWaveSpawner.h"
+#include "CTags.h"
 #include "EntityDef.h"
 #include "GameCommon.h"
 #include "SCEntityFactory.h"
@@ -20,7 +21,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SWaveSpawner::Startup()
 {
-	AddReadDependencies<SCWorld>();
+	AddReadDependencies<CTags, SCWorld>();
 	AddWriteDependencies<SCWaves, SCEntityFactory, SCRandomNumberGenerator>();
 
 	m_runWhilePaused = false;
@@ -45,16 +46,12 @@ void SWaveSpawner::Run(SystemContext const& context) const
 {
 	// Read Dependencies
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
+	auto const& tagStorage = context.GetArrayStorageConst<CTags>();
 
 	// Write Dependencies
 	SCWaves& waves = context.GetSingleton<SCWaves>();
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
 	RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
-
-	if (waves.m_waves.size() == 0)
-	{
-		GenerateWaves(waves, 0, 5);
-	}
 
 	if (waves.m_wavesFinished || !waves.m_wavesStarted)
 	{
@@ -146,7 +143,17 @@ void SWaveSpawner::Run(SystemContext const& context) const
 		}
 	}
 
-	if (waves.m_activeStreams.size() == 0 && waves.m_currentWaveIndex == waves.m_waves.size())
+	waves.m_remainingEnemies = 0;
+	for (auto it = context.Iterate<CTags>(); it.IsValid(); ++it)
+	{
+		CTags const& tags = tagStorage[it];
+		if (tags.HasTag("enemy"))
+		{
+			waves.m_remainingEnemies++;
+		}
+	}
+
+	if (waves.m_activeStreams.size() == 0 && waves.m_currentWaveIndex == waves.m_waves.size() && waves.m_remainingEnemies == 0)
 	{
 		// Waves are complete, including all active streams
 		waves.m_wavesFinished = true;

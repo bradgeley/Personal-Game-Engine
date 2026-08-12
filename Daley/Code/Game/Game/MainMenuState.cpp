@@ -28,9 +28,9 @@ MainMenuState::MainMenuState()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenuState::Enter()
+void MainMenuState::Enter(NamedProperties const& props)
 {
-	GameState::Enter();
+	GameState::Enter(props);
 
 	m_untexturedVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 	m_textVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -57,9 +57,9 @@ void MainMenuState::Enter()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MainMenuState::Exit()
+void MainMenuState::Exit(NamedProperties const& props)
 {
-	GameState::Exit();
+	GameState::Exit(props);
 
 	g_renderer->ReleaseVertexBuffer(m_untexturedVerts);
 	g_renderer->ReleaseVertexBuffer(m_textVerts);

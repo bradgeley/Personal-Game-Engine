@@ -4,13 +4,18 @@
 #include "EntityDef.h"
 #include "GameState.h"
 #include "SCCamera.h"
-#include "SCInputSystem.h"
 #include "SCEntityFactory.h"
+#include "SCEventSystem.h"
 #include "SCGameState.h"
+#include "SCInputSystem.h"
+#include "SCRunData.h"
+#include "SCWaves.h"
 #include "SCWindow.h"
 #include "SCWorld.h"
 #include "WorldSettings.h"
+#include "Engine/Core/NamedProperties.h"
 #include "Engine/ECS/SystemContext.h"
+#include "Engine/Events/EventSystem.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Window/Window.h"
@@ -20,8 +25,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SInput::Startup()
 {
-	AddReadDependencies<SCCamera, SCWindow, SCWorld>();
-	AddWriteDependencies<SCEntityFactory, SCGameState, SCInputSystem>();
+	AddWriteAllDependencies();
 }
 
 
@@ -33,13 +37,17 @@ void SInput::Run(SystemContext const& context) const
 	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
 	SCWindow const& scWindow = context.GetSingletonConst<SCWindow>();
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
+	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
+	SCRunData const& runData = context.GetSingletonConst<SCRunData>();
 
 	// Write Dependencies
+	SCEventSystem& scEventSystem = context.GetSingleton<SCEventSystem>();
 	SCInputSystem& scInput = context.GetSingleton<SCInputSystem>();
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
 	SCGameState& game = context.GetSingleton<SCGameState>();
 
 	Window const& window = *scWindow.GetWindow();
+	EventSystem& eventSystem = *scEventSystem.GetEventSystem();
 	InputSystem const& inputSystem = *scInput.GetInputSystem();
 	GameState& gameState = *game.m_gameState;
 
@@ -54,6 +62,21 @@ void SInput::Run(SystemContext const& context) const
 	scInput.m_mouseWorldLocation = camera.m_worldCamera.ScreenToWorldOrtho(relMousePos);
 	scInput.m_mouseTileCoords = world.GetTileCoordsAtWorldPosClamped(scInput.m_mouseWorldLocation);
 	scInput.m_mouseIntersectionCoords = world.GetTileIntersectionCoordsAtWorldPos(scInput.m_mouseWorldLocation);
+
+	// Game Over?
+	bool isVictory = waves.m_wavesFinished;
+	bool isDefeat = runData.m_currentHealth <= 0.f;
+	bool gameOver = isVictory || isDefeat;
+	if (gameOver)
+	{
+		if (inputSystem.WasKeyJustPressed(KeyCode::Space))
+		{
+			NamedProperties changeStateProps;
+			changeStateProps.Set<SCRunData>("RunData", runData);
+			eventSystem.FireEvent("MissionOver", changeStateProps);
+		}
+		return;
+	}
 
 	// Tower Placement
 	if (inputSystem.WasKeyJustPressed('T') && !scInput.m_isInTowerPlacementMode)

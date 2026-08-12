@@ -44,3 +44,18 @@ bool NamedProperties::Contains(Name name) const
 {
     return m_properties.find(name) != m_properties.end();
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void NamedProperties::operator=(NamedProperties const& other)
+{
+    Clear();
+
+	for (auto& prop : other.m_properties)
+	{
+		Name name = prop.first;
+		PropertyBase* property = prop.second;
+		m_properties[name] = property->Clone();
+	}
+}

@@ -149,6 +149,7 @@ public:
 	bool m_wavesFinished = false;
 	Timer m_waveTimer;
 	int m_currentWaveIndex = 0;
+	int m_remainingEnemies = 0;
 	std::vector<ActiveWaveStream> m_activeStreams;
 	LevelWaveGenDef m_waveGenDef;
 

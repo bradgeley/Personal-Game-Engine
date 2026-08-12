@@ -27,22 +27,22 @@ TowerDefenseState::TowerDefenseState()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefenseState::Enter()
+void TowerDefenseState::Enter(NamedProperties const& props)
 {
-    GameState::Enter();
+    GameState::Enter(props);
 
 	DevConsoleUtils::AddDevConsoleCommand("Win", &TowerDefenseState::Win);
 	DevConsoleUtils::AddDevConsoleCommand("Lose", &TowerDefenseState::Lose);
 
-    StartGame();
+    StartGame(props);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefenseState::Exit()
+void TowerDefenseState::Exit(NamedProperties const& props)
 {
-    GameState::Exit();
+    GameState::Exit(props);
 
 	DevConsoleUtils::RemoveDevConsoleCommand("Win", &TowerDefenseState::Win);
 	DevConsoleUtils::RemoveDevConsoleCommand("Lose", &TowerDefenseState::Lose);
@@ -55,16 +55,14 @@ void TowerDefenseState::Exit()
 //----------------------------------------------------------------------------------------------------------------------
 void TowerDefenseState::Update(float)
 {
+    float deltaSeconds = m_clock->GetDeltaSecondsF();
+
 	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
 	if (runData.m_currentHealth <= 0.f)
 	{
-        NamedProperties props;
-		props.Set<SCRunData>("runData", runData);
-		g_eventSystem->FireEvent("MissionOver", props);
-		return;
+        deltaSeconds = 0.f; // run paused if game is over due to loss
 	}
 
-    float deltaSeconds = m_clock->GetDeltaSecondsF();
     g_ecs->RunFrame(deltaSeconds);
 }
 
@@ -79,15 +77,26 @@ void TowerDefenseState::Render() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerDefenseState::StartGame()
+void TowerDefenseState::StartGame(NamedProperties const& inProps)
 {
     ConfigureECS();
 
     // Seed the run
 	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
-    runData.m_seed = 0;
+	runData = inProps.Get<SCRunData>("runData", SCRunData());
+
+    int seed = runData.m_seed + runData.m_missionIndex;
 
     g_ecs->Startup();
+
+    NamedProperties props;
+    props.Set<int>("seed", seed);
+	props.Set<int>("numWaves", (runData.m_missionIndex + 1) * 5);
+	g_eventSystem->FireEvent("GenerateWaves", props);
+
+	g_eventSystem->FireEvent("StartWaves", props);
+
+	g_eventSystem->FireEvent("TogglePaused", props);
 }
 
 
@@ -231,7 +240,7 @@ void TowerDefenseState::ConfigureECS()
     g_ecs->RegisterSystem<SFloatingText>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderHUD>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SRenderPauseMenu>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderPopupOverlay>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);
 
@@ -247,18 +256,28 @@ void TowerDefenseState::ConfigureECS()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool TowerDefenseState::Win(NamedProperties& props)
+bool TowerDefenseState::Win(NamedProperties&)
 {
-    SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
+	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
+    waves.m_wavesFinished = true;
+	waves.m_activeStreams.clear();
 
+    for (auto it = g_ecs->IterateAll<CTags>(); it.IsValid(); ++it)
+    {
+		CTags const* tags = g_ecs->GetComponent<CTags>(it);
+		if (tags && tags->HasTag("enemy"))
+		{
+			g_ecs->DestroyEntity(it.GetEntityID());
+		}
+    }
+
+    waves.m_remainingEnemies = 0;
+
+    SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
     if (runData.m_currentHealth < 0.f)
     {
         runData.m_currentHealth = 1.f;
     }
-
-    props.Set<SCRunData>("RunData", runData);
-
-	g_eventSystem->FireEvent("MissionOver", props);
 
     return false;
 }
@@ -266,14 +285,11 @@ bool TowerDefenseState::Win(NamedProperties& props)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool TowerDefenseState::Lose(NamedProperties& props)
+bool TowerDefenseState::Lose(NamedProperties&)
 {
     SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
 
     runData.m_currentHealth = 0.f;
-	props.Set<SCRunData>("RunData", runData);
-
-    g_eventSystem->FireEvent("MissionOver", props);
 
     return false;
 }

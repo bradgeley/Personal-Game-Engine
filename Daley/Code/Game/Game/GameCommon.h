@@ -63,6 +63,8 @@ namespace StaticGameSettings
 	static float s_baseDebtInterestRate         = 0.02f;
 	static float s_baseInterestTimerSeconds     = 30.f;
 
+	static int   s_numMissionsForVictory		= 3;
+
     // Derived
     extern float s_burnDecayK;
 	extern float s_oneOverBurnDecayK;

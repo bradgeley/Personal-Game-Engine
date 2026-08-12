@@ -16,8 +16,8 @@ public:
 
 	virtual ~GameState() = default;
 
-	virtual void Enter();
-	virtual void Exit();
+	virtual void Enter(NamedProperties const& props);
+	virtual void Exit(NamedProperties const& props);
 	virtual void Update(float deltaSeconds) = 0;
 	virtual void Render() const = 0;
 

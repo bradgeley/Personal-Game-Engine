@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Core/Name.h"
+#include "Engine/Core/NamedProperties.h"
 #include <vector>
 
 
@@ -26,7 +27,7 @@ enum class StateTransitionType : uint8_t
 struct StateTransition
 {
 	StateTransitionType m_type = StateTransitionType::None;
-	Name m_toState = Name::Invalid;
+	NamedProperties m_props;
 };
 
 
@@ -45,9 +46,9 @@ public:
 
 protected:
 
-	void PushState(Name state);
-	void PopState();
-	void PopToState(Name state);
+	void PushState(Name state, NamedProperties const& props);
+	void PopState(NamedProperties const& props);
+	void PopToState(Name state, NamedProperties const& props);
 	void HandlePendingTransition();
 
 public:

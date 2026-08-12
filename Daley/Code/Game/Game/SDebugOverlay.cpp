@@ -105,6 +105,9 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	int totalEntities = context.NumEntities();
 	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -40.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Total Entities: %d", totalEntities), Rgba8::White);
 
+	int numEnemies = waves.m_remainingEnemies;
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -70.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Remaining Enemies: %d", numEnemies), Rgba8::White);
+
 	// Wave spawner info
 	Vec2 wavesTopLeft = screenBounds.maxs - Vec2(350.f, 10.f);
 	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft, Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Waves: %s", waves.m_wavesStarted ? (waves.m_wavesFinished ? "Finished" : "In Progress") : "Not Started"), Rgba8::White);

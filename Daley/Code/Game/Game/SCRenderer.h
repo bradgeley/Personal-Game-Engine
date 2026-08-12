@@ -39,8 +39,8 @@ public:
 
 	VertexBufferID m_immediateVBO					= RendererUtils::InvalidID;		// Owned by SRenderUI
 
-	VertexBufferID m_pauseMenuBackgroundVBO			= RendererUtils::InvalidID;		// Owned by SRenderPauseMenu
-	VertexBufferID m_pauseMenuTextVBO				= RendererUtils::InvalidID;		// Owned by SRenderPauseMenu
+	VertexBufferID m_popupOverlayBackgroundVBO		= RendererUtils::InvalidID;		// Owned by SRenderPopupOverlay
+	VertexBufferID m_popupOverlayTextVBO			= RendererUtils::InvalidID;		// Owned by SRenderPopupOverlay
 
 	VertexBufferID m_hudUntexturedVBO				= RendererUtils::InvalidID;		// Owned by SRenderHUD
 	VertexBufferID m_hudTextVBO						= RendererUtils::InvalidID;		// Owned by SRenderHUD

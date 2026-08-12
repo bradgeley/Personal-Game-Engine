@@ -10,7 +10,9 @@ struct SCRunData
 public:
 
 	// Data that carries over from mission to mission
-	int	  m_seed					= 0;
+	int	  m_seed					= 0; // Mission seed = seed + missionIndex
+	int   m_missionIndex			= 0;
+	int   m_totalMissions			= StaticGameSettings::s_numMissionsForVictory;
 	float m_startingGold			= StaticGameSettings::s_baseGold;
 	float m_creditLimit				= StaticGameSettings::s_baseCreditLimit;
 	float m_savingsInterestRate		= StaticGameSettings::s_baseSavingsInterestRate;

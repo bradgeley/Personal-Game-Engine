@@ -28,9 +28,9 @@ GameOverState::GameOverState()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void GameOverState::Enter()
+void GameOverState::Enter(NamedProperties const& props)
 {
-	GameState::Enter();
+	GameState::Enter(props);
 
 	m_untexturedVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 	m_textVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -41,7 +41,7 @@ void GameOverState::Enter()
 	VertexBuffer& textVBO = *g_renderer->GetVertexBuffer(m_textVerts);
 	VertexBuffer& untexturedVBO = *g_renderer->GetVertexBuffer(m_untexturedVerts);
 
-	VertexUtils::AddVertsForAABB2(untexturedVBO, m_camera.GetOrthoBounds2D(), Rgba8::DarkRed);
+	VertexUtils::AddVertsForAABB2(untexturedVBO, m_camera.GetOrthoBounds2D(), Rgba8::DarkGreen);
 
 	m_fontID = g_assetManager->LoadSynchronous<Font>(MAIN_MENU_FONT_NAME);
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
@@ -49,17 +49,17 @@ void GameOverState::Enter()
 
 	if (font)
 	{
-		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Game Over!", Rgba8::AliceBlue);
-		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, "Press ESC to go to Main Menu", Rgba8::Yellow);
+		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Congratulations!", Rgba8::AliceBlue);
+		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, "Press ESC to return to Main Menu", Rgba8::Yellow);
 	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void GameOverState::Exit()
+void GameOverState::Exit(NamedProperties const& props)
 {
-	GameState::Exit();
+	GameState::Exit(props);
 
 	g_renderer->ReleaseVertexBuffer(m_untexturedVerts);
 	g_renderer->ReleaseVertexBuffer(m_textVerts);
@@ -70,6 +70,8 @@ void GameOverState::Exit()
 //----------------------------------------------------------------------------------------------------------------------
 void GameOverState::Update(float)
 {
+	
+
 	if (g_input->WasKeyJustPressed(KeyCode::Escape))
 	{
 		NamedProperties props;

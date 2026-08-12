@@ -28,9 +28,9 @@ RunState::RunState()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RunState::Enter()
+void RunState::Enter(NamedProperties const& props)
 {
-	GameState::Enter();
+	GameState::Enter(props);
 
 	g_eventSystem->SubscribeMethod("MissionOver", this, &RunState::MissionOver);
 
@@ -48,20 +48,14 @@ void RunState::Enter()
 	m_fontID = g_assetManager->LoadSynchronous<Font>(MAIN_MENU_FONT_NAME);
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
 	ASSERT_OR_DIE(font != nullptr, StringUtils::StringF("Failed to load %s for RunState!", MAIN_MENU_FONT_NAME));
-
-	if (font)
-	{
-		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Run State", Rgba8::AliceBlue);
-		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, "Press Space to Start Mission\nPress ESC to return to Main Menu", Rgba8::Yellow);
-	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RunState::Exit()
+void RunState::Exit(NamedProperties const& props)
 {
-	GameState::Exit();
+	GameState::Exit(props);
 
 	g_eventSystem->UnsubscribeMethod("MissionOver", this, &RunState::MissionOver);
 
@@ -78,6 +72,7 @@ void RunState::Update(float)
 	{
 		NamedProperties props;
 		props.Set<Name>("state", "TowerDefense");
+		props.Set<SCRunData>("runData", m_runData);
 		g_eventSystem->FireEvent("PushState", props);
 	}
 	else if (g_input->WasKeyJustPressed(KeyCode::Escape))
@@ -93,15 +88,28 @@ void RunState::Update(float)
 //----------------------------------------------------------------------------------------------------------------------
 void RunState::Render() const
 {
+	VertexBuffer& textVBO = *g_renderer->GetVertexBuffer(m_textVerts);
+	textVBO.ClearVerts();
+
+	Font const* font = g_assetManager->Get<Font>(m_fontID);
+	if (font)
+	{
+		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Run State", Rgba8::AliceBlue);
+		std::string instructionText = StringUtils::StringF("Press Space to Start Mission %i\nPress ESC to return to Main Menu", m_runData.m_missionIndex + 1);
+		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, instructionText, Rgba8::Yellow);
+	}
+
 	g_renderer->BeginCameraAndWindow(&m_camera, g_window);
 
 	g_renderer->BindTexture();
 	g_renderer->BindShader();
 	g_renderer->DrawVertexBuffer(m_untexturedVerts);
 
-	Font const* font = g_assetManager->Get<Font>(m_fontID);
-	font->SetRendererState(*g_renderer);
-	g_renderer->DrawVertexBuffer(m_textVerts);
+	if (font)
+	{
+		font->SetRendererState(*g_renderer);
+		g_renderer->DrawVertexBuffer(m_textVerts);
+	}
 }
 
 
@@ -109,19 +117,30 @@ void RunState::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 bool RunState::MissionOver(NamedProperties& props)
 {
-	SCRunData runData = props.Get<SCRunData>("runData", SCRunData());
+	m_runData = props.Get<SCRunData>("runData", SCRunData());
 
-	if (runData.m_currentHealth <= 0.f)
+	if (m_runData.m_currentHealth <= 0.f)
 	{
-		NamedProperties changeStateProps;
-		changeStateProps.Set<Name>("state", "GameOver");
-		g_eventSystem->FireEvent("ChangeState", changeStateProps);
+		NamedProperties popStateProps;
+		popStateProps.Set<Name>("state", "MainMenu");
+		popStateProps.Set<bool>("wipe", true);
+		g_eventSystem->FireEvent("ChangeState", popStateProps);
 	}
 	else
 	{
-		NamedProperties popStateProps;
-		popStateProps.Set<Name>("state", "RunState");
-		g_eventSystem->FireEvent("PopState", popStateProps);
+		m_runData.m_missionIndex++;
+		if (m_runData.m_missionIndex == m_runData.m_totalMissions)
+		{
+			NamedProperties changeStateProps;
+			changeStateProps.Set<Name>("state", "GameOver");
+			g_eventSystem->FireEvent("ChangeState", changeStateProps);
+		}
+		else
+		{
+			NamedProperties popStateProps;
+			popStateProps.Set<Name>("state", "RunState");
+			g_eventSystem->FireEvent("PopState", popStateProps);
+		}
 	}
 
 	return false;
