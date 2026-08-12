@@ -82,7 +82,7 @@ void SRenderPopupOverlay::Run(SystemContext const& context) const
 	{
 		overlayType = PopupOverlayType::Defeat;
 	}
-	else if (scWaves.m_currentWaveIndex >= scWaves.m_waves.size())
+	else if (scWaves.m_wavesFinished)
 	{
 		overlayType = PopupOverlayType::Victory;
 	}
@@ -104,19 +104,19 @@ void SRenderPopupOverlay::Run(SystemContext const& context) const
 		if (overlayType == PopupOverlayType::PauseMenu)
 		{
 			text = "PAUSED";
-			footerText = "Press ESC to resume";
+			footerText = "Press space to resume";
 			textColor = Rgba8(255, 255, 255, 255);
 		}
 		else if (overlayType == PopupOverlayType::Defeat)
 		{
 			text = "DEFEAT";
-			footerText = "Press ESC to return to main menu";
+			footerText = "Press space to return to main menu";
 			textColor = Rgba8(255, 0, 0, 255);
 		}
 		else // if (overlayType == PopupOverlayType::Victory)
 		{
 			text = "VICTORY";
-			footerText = "Press ESC to return to main menu";
+			footerText = "Press space to continue";
 			textColor = Rgba8(0, 255, 0, 255);
 		}
 
