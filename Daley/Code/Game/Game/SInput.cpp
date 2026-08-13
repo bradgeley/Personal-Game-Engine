@@ -91,7 +91,7 @@ void SInput::Run(SystemContext const& context) const
 
 		if (inputSystem.WasKeyJustPressed(towerInfo.m_hotkey))
 		{
-			if (scInput.m_towerPlacementIndex == -1)
+			if (scInput.m_towerPlacementIndex != towerIndex)
 			{
 				scInput.m_towerPlacementIndex = towerIndex;
 			}
