@@ -101,6 +101,7 @@ public:
 public:
 
     FastGrid<Tile, StaticWorldSettings::s_worldSizePowerOfTwo> m_tiles;
+	FastGrid<int, StaticWorldSettings::s_worldSizePowerOfTwo> m_numEnemiesInTile;
 
     bool m_isLightingDirty                      = true;
     bool m_isVBODirty                           = true;

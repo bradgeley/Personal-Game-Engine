@@ -13,8 +13,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SCollisionHash::Startup()
 {
-    AddReadDependencies<SCWorld, CCollision, CTransform>();
-	AddWriteDependencies<SCCollision>();
+    AddReadDependencies<CCollision, CTransform>();
+	AddWriteDependencies<SCCollision, SCWorld>();
 
     m_runWhilePaused = false;
 
@@ -35,12 +35,14 @@ void SCollisionHash::Startup()
 void SCollisionHash::Run(SystemContext const& context) const
 {
     // Read dependencies
-    SCWorld const& world = context.GetSingletonConst<SCWorld>();
+    SCWorld& world = context.GetSingleton<SCWorld>();
     auto& transStorage = context.GetArrayStorageConst<CTransform>();
     auto& collStorage = context.GetArrayStorageConst<CCollision>();
 
     // Write Dependencies
     SCCollision& scCollision = context.GetSingleton<SCCollision>();
+
+    world.m_numEnemiesInTile.SetAll(0);
 
     // Clear out old data
     for (int dirtyBucket : scCollision.m_dirtyBuckets)
@@ -68,9 +70,15 @@ void SCollisionHash::Run(SystemContext const& context) const
 		CollisionChannel channel = coll.m_collisionProfile.m_objectChannel;
 		CollisionLayer& layer = scCollision.GetCollisionLayer(channel);
 
+		if (channel == CollisionChannel::Enemy)
+		{
+            IntVec2 worldCoords = world.GetTileCoordsAtWorldPosClamped(pos);
+            world.m_numEnemiesInTile.GetRef(worldCoords)++;
+		}
+
         if (coll.GetIsSingleHash())
         {
-			IntVec2 worldCoords = world.GetTileCoordsAtWorldPosClamped(pos);
+            IntVec2 worldCoords = world.GetTileCoordsAtWorldPosClamped(pos);
             int index = world.m_tiles.GetIndexForCoords(worldCoords);
             layer[index].push_back(it.GetEntityID());
 			scCollision.m_dirtyBuckets.insert(index);

@@ -139,6 +139,29 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& i
         return true; // keep iterating
     });
 
+	copy.ForEachPlayableTile([&](IntVec2 const& tileCoords)
+	{
+		// Check if there is an enemy in this tile, and if so, we cannot place a tower here
+		// Also, if this tower would block pathing to a tile with an enemy in it, we cannot place a tower here
+        if (!copy.IsTileOnPath(tileCoords))
+        {
+            return true;
+        }
+
+        int numEnemies = copy.m_numEnemiesInTile.Get(tileCoords);
+        if (numEnemies > 0)
+        {
+		    float distanceToTileWithEnemy = proxyWorldFlowField.GetDistanceAtTileCoords(tileCoords);
+			if (distanceToTileWithEnemy == StaticWorldSettings::s_maximumFlowDistance)
+			{
+				isFlowfieldValid = false;
+				return false; // stop iterating
+			}
+        }
+
+        return true;
+	});
+
     return isFlowfieldValid ? TowerPlacementResult::Success : TowerPlacementResult::BlocksPath;
 }
 
