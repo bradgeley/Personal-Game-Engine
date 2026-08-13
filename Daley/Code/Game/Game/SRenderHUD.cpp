@@ -4,6 +4,7 @@
 #include "SCCamera.h"
 #include "SCRenderer.h"
 #include "SCRunData.h"
+#include "SCWaves.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/ECS/AdminSystem.h"
@@ -18,7 +19,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderHUD::Startup()
 {
-	AddReadDependencies<SCCamera, SCRunData>();
+	AddReadDependencies<SCCamera, SCRunData, SCWaves>();
 	AddWriteDependencies<SCRenderer>();
 
 	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
@@ -54,6 +55,7 @@ void SRenderHUD::Run(SystemContext const& context) const
 	// Read Dependencies
 	SCRunData const& runData = context.GetSingletonConst<SCRunData>();
 	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
+	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
 	
 	// Write Dependencies
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
@@ -76,7 +78,7 @@ void SRenderHUD::Run(SystemContext const& context) const
 	constexpr float hudTextSize = 30.f; // TOOD: make configurable
 	constexpr float hudPadding = 20.f; // TOOD: make configurable
 	constexpr float hudLineSpacing = 0.25f; // TOOD: make configurable
-	std::string hudText = StringUtils::StringF("Gold: %.2f\nHealth: %.2f/%.2f (+%.2f/s)\nInterest Timer (%.2f)", runData.m_gold, runData.m_health, runData.m_maxHealth, runData.m_healthRegen, runData.m_interestTimerSecondsRemaining);
+	std::string hudText = StringUtils::StringF("Gold: %.2f\nHealth: %.2f/%.2f (+%.2f/s)\nInterest Timer (%.2f)\nWave %i/%i (%.2f)", runData.m_gold, runData.m_health, runData.m_maxHealth, runData.m_healthRegen, runData.m_interestTimerSecondsRemaining, waves.m_currentWaveIndex, waves.m_waves.size(), waves.m_waveTimer.GetRemainingSeconds());
 	Vec2 hudTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, hudText);
 	hudTextDims += Vec2(hudPadding * 2.f, hudPadding * 2.f);
 
