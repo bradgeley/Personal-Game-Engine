@@ -11,6 +11,8 @@
 #include "SCEntityFactory.h"
 #include "SCWorld.h"
 #include "SEntityFactory.h"
+#include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/ECS/SystemContext.h"
 
 
@@ -143,6 +145,7 @@ void SProjectile::Run(SystemContext const& context) const
 				{
 					SpawnInfo aoeEffectSpawnInfo;
 					aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(proj.m_onHitComp->m_aoeEffectOnHit->m_aoeEffectDefName);
+					ASSERT_OR_DIE(aoeEffectSpawnInfo.m_def != nullptr, StringUtils::StringF("EntityDef not found for name: %s", proj.m_onHitComp->m_aoeEffectOnHit->m_aoeEffectDefName.ToCStr()));
 					aoeEffectSpawnInfo.m_spawnPos = proj.m_targetPos.value();
 					aoeEffectSpawnInfo.m_spawnOrientation = 0.f;
 					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp->m_aoeEffectOnHit->m_durationSeconds;
