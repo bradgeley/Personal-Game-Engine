@@ -55,28 +55,32 @@ void STowerSpawner::Run(SystemContext const& context) const
 
 			runData.m_gold -= placementInfo.m_cost;
         }
-        else if (result == TowerPlacementResult::BlocksPath)
+        else if (!placementInfo.m_isGenerated)
         {
             FloatingTextInstance floatingText;
             floatingText.m_pos = placementInfo.m_worldPos;
             floatingText.m_lifetimeSeconds = 2.f;
             floatingText.m_velocity = Vec2(0.f, 1.f);
             floatingText.m_scale = 1.f;
-            floatingText.m_text = "Cannot block path!";
-            floatingText.m_tint = Rgba8::Red;
+
+			if (result == TowerPlacementResult::Blocked)
+			{
+				floatingText.m_text = "Blocked!";
+				floatingText.m_tint = Rgba8::Red;
+			}
+			else if (result == TowerPlacementResult::BlocksPath)
+			{
+				floatingText.m_text = "Cannot block path!";
+				floatingText.m_tint = Rgba8::Red;
+			}
+			else if (result == TowerPlacementResult::CannotAfford)
+			{
+				floatingText.m_text = "Cannot Afford!";
+				floatingText.m_tint = Rgba8::Red;
+			}
+
             scFloatingText.m_floatingTextInstances.push_back(floatingText);
         }
-		else if (result == TowerPlacementResult::CannotAfford)
-		{
-			FloatingTextInstance floatingText;
-			floatingText.m_pos = placementInfo.m_worldPos;
-			floatingText.m_lifetimeSeconds = 2.f;
-			floatingText.m_velocity = Vec2(0.f, 1.f);
-			floatingText.m_scale = 1.f;
-			floatingText.m_text = "Not enough gold!";
-			floatingText.m_tint = Rgba8::Red;
-			scFloatingText.m_floatingTextInstances.push_back(floatingText);
-		}
     }
 
 	factory.m_towerPlacements.clear();

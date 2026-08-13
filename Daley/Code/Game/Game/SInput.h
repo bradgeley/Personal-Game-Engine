@@ -22,5 +22,5 @@ public:
     void Run(SystemContext const& context) const override;
 
 	static bool CanAffordTower(PlaceableTower const& tower, SCRunData const& runData);
-    static TowerPlacementRequest MakeTowerPlacementRequest(Name towerDefName, Vec2 const& worldPos, SCWorld const& world, float cost = 0.f, bool canAfford = true);
+    static TowerPlacementRequest MakeTowerPlacementRequest(Name towerDefName, Vec2 const& worldPos, SCWorld const& world, bool isGenerated = false, float cost = 0.f, bool canAfford = true);
 };

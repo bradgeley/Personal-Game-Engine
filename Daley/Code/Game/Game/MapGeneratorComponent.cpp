@@ -188,7 +188,7 @@ bool EntityGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 
 	selector->ForEachSelectedTile(generator, world, [&](IntVec2 const& tileCoords)
 	{
-		TowerPlacementRequest placementInfo = SInput::MakeTowerPlacementRequest(m_entityName, world.GetTileCenter(tileCoords), world);
+		TowerPlacementRequest placementInfo = SInput::MakeTowerPlacementRequest(m_entityName, world.GetTileCenter(tileCoords), world, true);
 
 		world.m_generatedTowers.push_back(placementInfo);
 		return true; // Continue iterating

@@ -107,7 +107,7 @@ void SInput::Run(SystemContext const& context) const
 	{
 		PlaceableTower const& placeableTower = runData.m_placeableTowers[scInput.m_towerPlacementIndex];
 		bool canAfford = SInput::CanAffordTower(placeableTower, runData);
-		scInput.m_towerPlacementRequest = SInput::MakeTowerPlacementRequest(placeableTower.m_towerName, scInput.m_mouseWorldLocation, world, placeableTower.m_cost, canAfford);
+		scInput.m_towerPlacementRequest = SInput::MakeTowerPlacementRequest(placeableTower.m_towerName, scInput.m_mouseWorldLocation, world, false, placeableTower.m_cost, canAfford);
 	}
 	else
 	{
@@ -163,10 +163,11 @@ bool SInput::CanAffordTower(PlaceableTower const& tower, SCRunData const& runDat
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPlacementRequest SInput::MakeTowerPlacementRequest(Name towerDefName, Vec2 const& worldPos, SCWorld const& world, float cost /*= 0.f*/, bool canAfford /*= true*/)
+TowerPlacementRequest SInput::MakeTowerPlacementRequest(Name towerDefName, Vec2 const& worldPos, SCWorld const& world, bool isGenerated /*= false*/, float cost /*= 0.f*/, bool canAfford /*= true*/)
 {
 	TowerPlacementRequest info;
 	info.m_towerName = towerDefName;
+	info.m_isGenerated = isGenerated;
 	info.m_cost = cost;
 	info.m_canAfford = canAfford;
 

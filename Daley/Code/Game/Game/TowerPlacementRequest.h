@@ -11,6 +11,7 @@
 struct TowerPlacementRequest
 {
 	Name m_towerName = "Chocolate";
+	bool m_isGenerated = false;
 
 	// Placement Info
 	Vec2 m_worldPos = Vec2::ZeroVector;
