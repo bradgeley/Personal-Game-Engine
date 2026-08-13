@@ -50,10 +50,10 @@ void RunState::Enter(NamedProperties const& props)
 
 	// Todo: get initial placeable tower data from somewhere in xml
 	m_runData = SCRunData();
-	m_runData.m_placeableTowers[0] = PlaceableTower{ "Vanilla", '1', 20.f };
-	m_runData.m_placeableTowers[1] = PlaceableTower{ "Chocolate", '2', 30.f };
-	m_runData.m_placeableTowers[2] = PlaceableTower{ "Strawberry", '3', 40.f };
-	m_runData.m_placeableTowers[3] = PlaceableTower{ "Mint", '4', 40.f };
+	m_runData.m_placeableTowers[0] = PlaceableTower{ "Vanilla", '1', 30.f };
+	m_runData.m_placeableTowers[1] = PlaceableTower{ "Chocolate", '2', 40.f };
+	m_runData.m_placeableTowers[2] = PlaceableTower{ "Strawberry", '3', 50.f };
+	m_runData.m_placeableTowers[3] = PlaceableTower{ "Mint", '4', 60.f };
 	m_runData.m_placeableTowers[4] = PlaceableTower{ "Wall1x1", 'W', 5.f };
 }
 

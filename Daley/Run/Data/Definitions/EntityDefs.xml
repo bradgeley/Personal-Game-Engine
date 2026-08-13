@@ -55,9 +55,9 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Attachment></Attachment>
-    <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
+    <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
     <Death baseGoldReward="100"></Death>
-    <Health maxHealth="200000" healthRegen="500" isTargetable="true"></Health>
+    <Health maxHealth="100000" healthRegen="100" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.75" pathOnly="true"></Movement>
     <Render scale="7.5" rotateSprite="true"></Render>

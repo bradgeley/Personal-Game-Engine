@@ -99,9 +99,9 @@ struct LevelWaveGenModifiers
 
 	// Rarity Settings
 	float m_magicEnemyChance = 0.1f;						// Chance for each enemy in the wave to be magic rarity
-	float m_magicEnemyChanceIncreasePerWave = 0.0025f;		// Increase magic enemy chance by this amount per wave
+	float m_magicEnemyChanceIncreasePerWave = 0.005f;		// Increase magic enemy chance by this amount per wave
 	float m_rareEnemyChance = 0.01f;						// Chance for each enemy in the wave to be rare rarity
-	float m_rareEnemyChanceIncreasePerWave = 0.001f;		// Increase rare enemy chance by this amount per wave
+	float m_rareEnemyChanceIncreasePerWave = 0.002f;		// Increase rare enemy chance by this amount per wave
 	bool m_canBossesHaveRarity = false;
 };
 

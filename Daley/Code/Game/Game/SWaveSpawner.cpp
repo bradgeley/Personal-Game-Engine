@@ -252,15 +252,16 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 5, 10, { "ant", "medium" },  0.5f });
 	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "largeAnt", 1, true });
 	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "ant", 20, true });
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 14, -1, "bossAnt", 1, true });
 
 	//waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "boss", "ant" }, 1.f });
 
 	// Modifiers
-	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier = 1.5f;
-	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave = 0.1f;
+	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier = 1.f;
+	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave = 0.5f;
 	waves.m_waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier = 1.f;
-	waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave = 0.05f;
-	waves.m_waveGenDef.m_waveGenModifiers.m_speedMultiplierIncreasePerWave = 0.01f;
+	waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave = 0.15f;
+	waves.m_waveGenDef.m_waveGenModifiers.m_speedMultiplierIncreasePerWave = 0.02f;
 
 	waves.m_waves.clear();
 
