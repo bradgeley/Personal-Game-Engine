@@ -59,6 +59,15 @@ void SRenderUI::Run(SystemContext const& context) const
 		EntityDef const* def = EntityDef::GetEntityDef(placementInfo.m_towerName);
 		CPlaceable const& placeable = def->m_placeable.value();
 
+		if (def->m_ability.has_value())
+		{
+			for (auto& ability : def->m_ability->m_abilities)
+			{
+				// Render range indicators for abilities when in placement mode
+				ability->AddDebugVerts(untexturedVerts, placementInfo.m_worldPos);
+			}
+		}
+
 		scWorld.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& tileCoords)
 		{
 			bool isTileValid = scWorld.DoesTileMatchTagQuery(tileCoords, placeable.m_tileTagQuery);
