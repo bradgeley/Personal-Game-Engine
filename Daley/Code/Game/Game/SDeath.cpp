@@ -15,8 +15,6 @@ void SDeath::Startup()
 	AddReadDependencies<CHealth>();
 	AddWriteDependencies<CAnimation, CDeath, CLifetime>();
 
-	m_runWhilePaused = false;
-
 	int numThreads = (int) std::thread::hardware_concurrency();
 	if (numThreads > 1)
 	{
