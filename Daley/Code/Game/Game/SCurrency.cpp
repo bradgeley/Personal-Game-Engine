@@ -35,10 +35,10 @@ void SCurrency::Run(SystemContext const& context) const
 	}
 
 	// Tick player health regen (maybe move to separate system later?)
-	runData.m_currentHealth += runData.m_healthRegen * context.m_deltaSeconds;
-	if (runData.m_currentHealth > runData.m_maxHealth)
+	runData.m_health += runData.m_healthRegen * context.m_deltaSeconds;
+	if (runData.m_health > runData.m_maxHealth)
 	{
-		runData.m_currentHealth = runData.m_maxHealth;
+		runData.m_health = runData.m_maxHealth;
 	}
 
 	// Tick interest timer

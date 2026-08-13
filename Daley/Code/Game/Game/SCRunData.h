@@ -40,7 +40,7 @@ public:
 	// Data that resets each mission
 	float m_gold							= StaticGameSettings::s_baseGold;
 	float m_interestTimerSecondsRemaining	= StaticGameSettings::s_baseInterestTimerSeconds;
-	float m_currentHealth					= StaticGameSettings::s_basePlayerHealth;
+	float m_health					= StaticGameSettings::s_basePlayerHealth;
 
 	std::array<PlaceableTower, MAX_PURCHASEABLE_TOWERS> m_placeableTowers;
 };

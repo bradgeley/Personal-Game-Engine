@@ -65,7 +65,7 @@ void SInput::Run(SystemContext const& context) const
 
 	// Game Over?
 	bool isVictory = waves.m_wavesFinished;
-	bool isDefeat = runData.m_currentHealth <= 0.f;
+	bool isDefeat = runData.m_health <= 0.f;
 	bool gameOver = isVictory || isDefeat;
 	if (gameOver)
 	{

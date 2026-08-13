@@ -126,7 +126,7 @@ bool RunState::MissionOver(NamedProperties& props)
 {
 	m_runData = props.Get<SCRunData>("runData", SCRunData());
 
-	if (m_runData.m_currentHealth <= 0.f)
+	if (m_runData.m_health <= 0.f)
 	{
 		NamedProperties popStateProps;
 		popStateProps.Set<Name>("state", "MainMenu");

@@ -50,7 +50,7 @@ void SGoal::Run(SystemContext const& context) const
 			entityFactory.m_entitiesToDestroy.push_back(it.GetEntityID());
 
 			float damage = GetDamageToPlayerByTags(tags);
-			runData.m_currentHealth -= damage;
+			runData.m_health -= damage;
 		}
 	}
 }

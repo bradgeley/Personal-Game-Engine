@@ -59,7 +59,7 @@ void TowerDefenseState::Update(float)
 
 	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
-	if (runData.m_currentHealth <= 0.f || waves.m_wavesFinished)
+	if (runData.m_health <= 0.f || waves.m_wavesFinished)
 	{
         deltaSeconds = 0.f; // run paused if game is over due to loss
 	}
@@ -90,6 +90,9 @@ void TowerDefenseState::StartGame(NamedProperties const& inProps)
     // Seed the run
 	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
 	runData = inProps.Get<SCRunData>("runData", SCRunData());
+	runData.m_gold = StaticGameSettings::s_baseGold;
+	runData.m_health = StaticGameSettings::s_basePlayerHealth;
+	runData.m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
 
     int seed = runData.m_seed + runData.m_missionIndex;
 
@@ -280,9 +283,9 @@ bool TowerDefenseState::Win(NamedProperties&)
     waves.m_remainingEnemies = 0;
 
     SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
-    if (runData.m_currentHealth < 0.f)
+    if (runData.m_health < 0.f)
     {
-        runData.m_currentHealth = 1.f;
+        runData.m_health = 1.f;
     }
 
     return false;
@@ -295,7 +298,7 @@ bool TowerDefenseState::Lose(NamedProperties&)
 {
     SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
 
-    runData.m_currentHealth = 0.f;
+    runData.m_health = 0.f;
 
     return false;
 }
