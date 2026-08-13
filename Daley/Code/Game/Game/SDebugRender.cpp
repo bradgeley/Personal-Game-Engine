@@ -229,12 +229,14 @@ void SDebugRender::Run(SystemContext const& context) const
         }
 	}
 
+    renderer.BeginCamera(&scCamera.m_worldCamera);
+
     renderer.BindTexture();
     renderer.BindShader();
-    renderer.DrawVertexBuffer(scDebug.m_frameUntexVerts);
+    renderer.DrawVertexBuffer(untexturedVerts);
 
     font->SetRendererState(*g_renderer);
-    renderer.DrawVertexBuffer(scDebug.m_frameDefaultFontVerts);
+    renderer.DrawVertexBuffer(defaultFontVerts);
 
 	untexturedVerts.ClearVerts();
 	defaultFontVerts.ClearVerts();
