@@ -58,7 +58,8 @@ void TowerDefenseState::Update(float)
     float deltaSeconds = m_clock->GetDeltaSecondsF();
 
 	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
-	if (runData.m_currentHealth <= 0.f)
+	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
+	if (runData.m_currentHealth <= 0.f || waves.m_wavesFinished)
 	{
         deltaSeconds = 0.f; // run paused if game is over due to loss
 	}
