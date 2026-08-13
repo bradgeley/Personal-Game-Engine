@@ -104,7 +104,7 @@ void SRenderPopupOverlay::Run(SystemContext const& context) const
 		if (overlayType == PopupOverlayType::PauseMenu)
 		{
 			text = "Paused";
-			footerText = "Press space to resume";
+			footerText = "Press space to resume\nPress enter to advance frame";
 			textColor = Rgba8(255, 255, 255, 255);
 		}
 		else if (overlayType == PopupOverlayType::Defeat)
@@ -127,7 +127,7 @@ void SRenderPopupOverlay::Run(SystemContext const& context) const
 			VertexBuffer& textVerts = *renderer.GetVertexBuffer(scRenderer.m_popupOverlayTextVBO);
 			textVerts.ClearVerts();
 			font->AddVertsForAlignedText2D(textVerts, cameraBounds.GetCenter(), Vec2::ZeroVector, 75.f, text, textColor);
-			font->AddVertsForAlignedText2D(textVerts, cameraBounds.GetCenter() - Vec2(0.f, 50.f), Vec2::ZeroVector, 35.f, footerText, textColor);
+			font->AddVertsForAlignedText2D(textVerts, cameraBounds.GetCenter() - Vec2(0.f, 100.f), Vec2::ZeroVector, 35.f, footerText, textColor, 0.25f);
 
 			font->SetRendererState(renderer);
 			renderer.DrawVertexBuffer(scRenderer.m_popupOverlayTextVBO);

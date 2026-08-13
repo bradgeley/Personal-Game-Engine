@@ -64,6 +64,11 @@ void TowerDefenseState::Update(float)
         deltaSeconds = 0.f; // run paused if game is over due to loss
 	}
 
+    if (deltaSeconds == 0.f && g_input->WasKeyJustPressed(KeyCode::Enter))
+    {
+		deltaSeconds = 0.0166f; // force a single frame update while paused
+    }
+
     g_ecs->RunFrame(deltaSeconds);
 }
 
