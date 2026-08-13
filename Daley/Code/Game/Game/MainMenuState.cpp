@@ -37,11 +37,12 @@ void MainMenuState::Enter(NamedProperties const& props)
 
 	IntVec2 windowDims = g_window->GetActualWindowResolution();
 	m_camera.SetOrthoDims2D(Vec2(windowDims));
+	AABB2 cameraBounds = m_camera.GetOrthoBounds2D();
 
 	VertexBuffer& textVBO = *g_renderer->GetVertexBuffer(m_textVerts);
 	VertexBuffer& untexturedVBO = *g_renderer->GetVertexBuffer(m_untexturedVerts);
 
-	VertexUtils::AddVertsForAABB2(untexturedVBO, m_camera.GetOrthoBounds2D(), Rgba8::Gray);
+	VertexUtils::AddVertsForAABB2(untexturedVBO, cameraBounds, Rgba8::Gray);
 
 	m_fontID = g_assetManager->LoadSynchronous<Font>(MAIN_MENU_FONT_NAME);
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
@@ -49,8 +50,9 @@ void MainMenuState::Enter(NamedProperties const& props)
 
 	if (font)
 	{
-		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Main Menu", Rgba8::AliceBlue);
-		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, "Press Space to Start Run\nPress ESC to quit", Rgba8::Yellow);
+		constexpr float bottomTextPadding = 50.f;
+		font->AddVertsForAlignedText2D(textVBO, cameraBounds.GetCenter(), Vec2::ZeroVector, 100.f, "Main Menu", Rgba8::AliceBlue);
+		font->AddVertsForAlignedText2D(textVBO, cameraBounds.GetBottomCenter() + Vec2(0.f, bottomTextPadding), Vec2(0.f, 1.f), 50.f, "Press Space to Start Run\nPress ESC to quit", Rgba8::Yellow);
 	}
 }
 
