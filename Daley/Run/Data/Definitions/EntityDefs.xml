@@ -232,7 +232,7 @@
     </Ability>
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
+    <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="112,66,20"></Render>
     <Tags tags="tower"></Tags>
     <Time></Time>
@@ -254,7 +254,7 @@
     </Ability>
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
+    <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="250,80,83"></Render>
     <Tags tags="tower"></Tags>
     <Time></Time>
@@ -276,7 +276,7 @@
     </Ability>
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
+    <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="147,197,114"></Render>
     <Tags tags="tower"></Tags>
     <Time></Time>
@@ -320,7 +320,7 @@
     </Ability>
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
+    <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="111,78,55"></Render>
     <Tags tags="tower"></Tags>
     <Time></Time>
@@ -342,7 +342,7 @@
     </Ability>
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
+    <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="255,165,0"></Render>
     <Tags tags="tower"></Tags>
     <Time></Time>
