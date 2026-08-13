@@ -53,15 +53,17 @@ void SRenderUI::Run(SystemContext const& context) const
 	VertexBuffer& untexturedVerts = *renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
 	untexturedVerts.ClearVerts();
 
-	if (scInput.m_isInTowerPlacementMode)
+	if (scInput.m_towerPlacementIndex != -1)
 	{
-		TowerPlacementInfo const& placementInfo = scInput.m_towerPlacementInfo;
+		TowerPlacementRequest const& placementInfo = scInput.m_towerPlacementRequest;
 		EntityDef const* def = EntityDef::GetEntityDef(placementInfo.m_towerName);
 		CPlaceable const& placeable = def->m_placeable.value();
 
 		scWorld.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& tileCoords)
 		{
-			Rgba8 tileTint = scWorld.DoesTileMatchTagQuery(tileCoords, placeable.m_tileTagQuery) ? Rgba8(0, 255, 0, 127) : Rgba8(255, 0, 0, 127);
+			bool isTileValid = scWorld.DoesTileMatchTagQuery(tileCoords, placeable.m_tileTagQuery);
+			Rgba8 tileTint = isTileValid ? Rgba8(0, 255, 0, 127) : Rgba8(255, 0, 0, 127);
+			tileTint = placementInfo.m_canAfford ? tileTint : Rgba8(255, 255, 0, 127); // Orange if can't afford
 			VertexUtils::AddVertsForAABB2(untexturedVerts, scWorld.GetTileBounds(tileCoords), tileTint);
 			return true;
 		});

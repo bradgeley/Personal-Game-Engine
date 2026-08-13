@@ -3,6 +3,7 @@
 #include "EntityDef.h"
 #include "SCEntityFactory.h"
 #include "SCFloatingText.h"
+#include "SCRunData.h"
 #include "SCWorld.h"
 #include "SEntityFactory.h"
 #include "SFlowField.h"
@@ -33,13 +34,14 @@ void STowerSpawner::Run(SystemContext const& context) const
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
     SCWorld& world = context.GetSingleton<SCWorld>();
 	SCFloatingText& scFloatingText = context.GetSingleton<SCFloatingText>();
+	SCRunData& runData = context.GetSingleton<SCRunData>();
 
     if (factory.m_towerPlacements.empty())
     {
         return;
 	}
 
-    for (TowerPlacementInfo const& placementInfo : factory.m_towerPlacements)
+    for (TowerPlacementRequest const& placementInfo : factory.m_towerPlacements)
     {
         TowerPlacementResult result = CanPlaceTower(placementInfo, world);
         if (result == TowerPlacementResult::Success)
@@ -50,11 +52,13 @@ void STowerSpawner::Run(SystemContext const& context) const
             spawnInfo.m_spawnPos = placementInfo.m_worldPos;
             spawnInfo.m_def = EntityDef::GetEntityDef(placementInfo.m_towerName);
             SEntityFactory::SpawnEntity(context, spawnInfo);
+
+			runData.m_gold -= placementInfo.m_cost;
         }
         else if (result == TowerPlacementResult::BlocksPath)
         {
             FloatingTextInstance floatingText;
-            floatingText.m_pos = factory.m_towerPlacements[0].m_worldPos;
+            floatingText.m_pos = placementInfo.m_worldPos;
             floatingText.m_lifetimeSeconds = 2.f;
             floatingText.m_velocity = Vec2(0.f, 1.f);
             floatingText.m_scale = 1.f;
@@ -62,6 +66,17 @@ void STowerSpawner::Run(SystemContext const& context) const
             floatingText.m_tint = Rgba8::Red;
             scFloatingText.m_floatingTextInstances.push_back(floatingText);
         }
+		else if (result == TowerPlacementResult::CannotAfford)
+		{
+			FloatingTextInstance floatingText;
+			floatingText.m_pos = placementInfo.m_worldPos;
+			floatingText.m_lifetimeSeconds = 2.f;
+			floatingText.m_velocity = Vec2(0.f, 1.f);
+			floatingText.m_scale = 1.f;
+			floatingText.m_text = "Not enough gold!";
+			floatingText.m_tint = Rgba8::Red;
+			scFloatingText.m_floatingTextInstances.push_back(floatingText);
+		}
     }
 
 	factory.m_towerPlacements.clear();
@@ -70,8 +85,13 @@ void STowerSpawner::Run(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementInfo const& info, SCWorld const& world) const
+TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& info, SCWorld const& world) const
 {
+	if (info.m_canAfford == false)
+	{
+		return TowerPlacementResult::CannotAfford;
+	}
+
     SCWorld copy = world;
 
     copy.m_solidnessOfPathTileChanged = false;
@@ -121,11 +141,10 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementInfo const& info
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool STowerSpawner::PlaceTowerInWorld(TowerPlacementInfo const& placementInfo, SCWorld& world) const
+bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& placementInfo, SCWorld& world) const
 {
     if (world.DoTilesInRegionMatchQuery(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, placementInfo.m_tileTagQuery))
     {
-
         world.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
         {
             Tile tile = world.m_tiles.Get(worldCoords);

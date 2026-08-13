@@ -2,7 +2,7 @@
 #pragma once
 #include "Engine/ECS/EntityID.h"
 #include "SpawnInfo.h"
-#include "TowerPlacementInfo.h"
+#include "TowerPlacementRequest.h"
 #include <vector>
 
 
@@ -15,5 +15,5 @@ public:
     std::vector<SpawnInfo> m_entitiesToSpawn;
     std::vector<EntityID> m_entitiesToDestroy;
 
-	std::vector<TowerPlacementInfo> m_towerPlacements; // Managed by STowerSpawner
+	std::vector<TowerPlacementRequest> m_towerPlacements; // Managed by STowerSpawner
 };

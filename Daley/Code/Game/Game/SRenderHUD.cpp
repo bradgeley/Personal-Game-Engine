@@ -4,7 +4,6 @@
 #include "SCCamera.h"
 #include "SCRenderer.h"
 #include "SCRunData.h"
-#include "SCWindow.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/ECS/AdminSystem.h"
@@ -13,14 +12,13 @@
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 #include "Engine/Renderer/Vertex_PCU.h"
-#include "Engine/Window/Window.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderHUD::Startup()
 {
-	AddReadDependencies<SCCamera, SCRunData, SCWindow>();
+	AddReadDependencies<SCCamera, SCRunData>();
 	AddWriteDependencies<SCRenderer>();
 
 	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
@@ -55,7 +53,6 @@ void SRenderHUD::Run(SystemContext const& context) const
 {
 	// Read Dependencies
 	SCRunData const& runData = context.GetSingletonConst<SCRunData>();
-	SCWindow const& window = context.GetSingletonConst<SCWindow>();
 	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
 	
 	// Write Dependencies
@@ -72,6 +69,10 @@ void SRenderHUD::Run(SystemContext const& context) const
 		return;
 	}
 
+	AABB2 cameraBounds = camera.m_uiCamera.GetOrthoBounds2D();
+	
+	//------------------------------------------------------
+	// Bottom left corner HUD
 	constexpr float hudTextSize = 30.f; // TOOD: make configurable
 	constexpr float hudPadding = 20.f; // TOOD: make configurable
 	constexpr float hudLineSpacing = 0.25f; // TOOD: make configurable
@@ -79,10 +80,29 @@ void SRenderHUD::Run(SystemContext const& context) const
 	Vec2 hudTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, hudText);
 	hudTextDims += Vec2(hudPadding * 2.f, hudPadding * 2.f);
 
-	IntVec2 windowResolution = window.GetWindow()->GetActualWindowResolution();
-
 	AABB2 hudBounds = AABB2(Vec2(0.f, 0.f), hudTextDims);
 	VertexUtils::AddVertsForAABB2(untexturedVerts, hudBounds, Rgba8(0, 0, 0, 128));
+	font->AddVertsForAlignedText2D(textVerts, Vec2(hudPadding, hudPadding), Vec2(1.f, 1.f), hudTextSize, hudText, Rgba8::White, hudLineSpacing);
+	//------------------------------------------------------
+
+	//------------------------------------------------------
+	// Top Left corner HUD
+	std::string placeableTowerText = "Placeable Towers";
+	for (auto& placeTower : runData.m_placeableTowers)
+	{
+		if (placeTower.m_towerName != Name::Invalid)
+		{
+			placeableTowerText += StringUtils::StringF("\n(%c) - %s : %.0f gold", placeTower.m_hotkey, placeTower.m_towerName.ToCStr(), placeTower.m_cost);
+		}
+	}
+	Vec2 topLeftHUDTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, placeableTowerText);
+
+	AABB2 topLeftHUDBounds = AABB2(Vec2(0.f, cameraBounds.maxs.y - topLeftHUDTextDims.y), Vec2(topLeftHUDTextDims.x, cameraBounds.maxs.y));
+	topLeftHUDBounds.mins.y -= hudPadding * 2.f;
+	topLeftHUDBounds.maxs.x += hudPadding * 2.f;
+	VertexUtils::AddVertsForAABB2(untexturedVerts, topLeftHUDBounds, Rgba8(0, 0, 0, 128));
+	font->AddVertsForAlignedText2D(textVerts, topLeftHUDBounds.GetTopLeft() + Vec2(hudPadding, -hudPadding), Vec2(1.f, -1.f), hudTextSize, placeableTowerText, Rgba8::White, hudLineSpacing);
+	//------------------------------------------------------
 
 	renderer.BeginCamera(&camera.m_uiCamera);
 
@@ -91,6 +111,5 @@ void SRenderHUD::Run(SystemContext const& context) const
 	renderer.DrawVertexBuffer(scRenderer.m_hudUntexturedVBO);
 
 	font->SetRendererState(renderer);
-	font->AddVertsForAlignedText2D(textVerts, Vec2(hudPadding, hudPadding), Vec2(1.f, 1.f), hudTextSize, hudText, Rgba8::White, hudLineSpacing);
 	renderer.DrawVertexBuffer(scRenderer.m_hudTextVBO);
 }

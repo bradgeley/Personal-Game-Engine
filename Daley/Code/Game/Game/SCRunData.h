@@ -1,6 +1,22 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "GameCommon.h"
+#include "Engine/Core/Name.h"
+#include <array>
+
+
+
+constexpr int MAX_PURCHASEABLE_TOWERS = 10;
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct PlaceableTower
+{
+	Name  m_towerName = Name::Invalid;
+	char  m_hotkey = '0';
+	float m_cost = 0.f;
+};
 
 
 
@@ -25,4 +41,6 @@ public:
 	float m_gold							= StaticGameSettings::s_baseGold;
 	float m_interestTimerSecondsRemaining	= StaticGameSettings::s_baseInterestTimerSeconds;
 	float m_currentHealth					= StaticGameSettings::s_basePlayerHealth;
+
+	std::array<PlaceableTower, MAX_PURCHASEABLE_TOWERS> m_placeableTowers;
 };

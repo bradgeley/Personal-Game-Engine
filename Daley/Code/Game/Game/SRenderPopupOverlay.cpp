@@ -103,19 +103,19 @@ void SRenderPopupOverlay::Run(SystemContext const& context) const
 		Rgba8 textColor;
 		if (overlayType == PopupOverlayType::PauseMenu)
 		{
-			text = "PAUSED";
+			text = "Paused";
 			footerText = "Press space to resume";
 			textColor = Rgba8(255, 255, 255, 255);
 		}
 		else if (overlayType == PopupOverlayType::Defeat)
 		{
-			text = "DEFEAT";
+			text = "Defeat";
 			footerText = "Press space to return to main menu";
 			textColor = Rgba8(255, 0, 0, 255);
 		}
 		else // if (overlayType == PopupOverlayType::Victory)
 		{
-			text = "VICTORY";
+			text = "Victory";
 			footerText = "Press space to continue";
 			textColor = Rgba8(0, 255, 0, 255);
 		}

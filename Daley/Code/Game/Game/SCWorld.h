@@ -2,7 +2,7 @@
 #pragma once
 #include "WorldSettings.h"
 #include "Tile.h"
-#include "TowerPlacementInfo.h"
+#include "TowerPlacementRequest.h"
 #include "Engine/Assets/AssetID.h"
 #include "Engine/Core/TagQuery.h"
 #include "Engine/Math/AABB2.h"
@@ -20,7 +20,7 @@ class RandomNumberGenerator;
 class VertexBuffer;
 struct SCEntityFactory;
 struct SystemContext;
-struct TowerPlacementInfo;
+struct TowerPlacementRequest;
 
 
 
@@ -115,7 +115,7 @@ public:
     bool m_playerChangedWorldCoordsThisFrame    = true;
     IntVec2 m_lastKnownPlayerWorldCoords;
 
-    std::vector<TowerPlacementInfo> m_generatedTowers;
+    std::vector<TowerPlacementRequest> m_generatedTowers;
 
 	std::vector<IntVec2> m_cachedSpawnLocations;
 

@@ -69,6 +69,8 @@ void SInput::Run(SystemContext const& context) const
 	bool gameOver = isVictory || isDefeat;
 	if (gameOver)
 	{
+		scInput.m_towerPlacementIndex = -1;
+
 		if (inputSystem.WasKeyJustPressed(KeyCode::Space))
 		{
 			NamedProperties changeStateProps;
@@ -79,29 +81,53 @@ void SInput::Run(SystemContext const& context) const
 	}
 
 	// Tower Placement
-	if (inputSystem.WasKeyJustPressed('T') && !scInput.m_isInTowerPlacementMode)
+	for (int towerIndex = 0; towerIndex < static_cast<int>(runData.m_placeableTowers.size()); ++towerIndex)
 	{
-		scInput.m_isInTowerPlacementMode = true;
+		PlaceableTower const& towerInfo = runData.m_placeableTowers[towerIndex];
+		if (towerInfo.m_towerName == Name::Invalid)
+		{
+			continue;
+		}
+
+		if (inputSystem.WasKeyJustPressed(towerInfo.m_hotkey))
+		{
+			if (scInput.m_towerPlacementIndex == -1)
+			{
+				scInput.m_towerPlacementIndex = towerIndex;
+			}
+			else
+			{
+				scInput.m_towerPlacementIndex = -1;
+			}
+			break;
+		}
 	}
 
-	if (scInput.m_isInTowerPlacementMode)
+	if (scInput.m_towerPlacementIndex != -1)
 	{
-		// Todo: maybe move even the creation of the tower placement info into STowerSpawner
+		PlaceableTower const& placeableTower = runData.m_placeableTowers[scInput.m_towerPlacementIndex];
+		bool canAfford = SInput::CanAffordTower(placeableTower, runData);
+		scInput.m_towerPlacementRequest = SInput::MakeTowerPlacementRequest(placeableTower.m_towerName, scInput.m_mouseWorldLocation, world, placeableTower.m_cost, canAfford);
+	}
+	else
+	{
+		scInput.m_towerPlacementRequest = TowerPlacementRequest();
+	}
 
-		scInput.m_towerPlacementInfo = SInput::MakeTowerPlacementInfo(scInput.m_towerPlacementInfo.m_towerName, scInput.m_mouseWorldLocation, world);
-
+	if (scInput.m_towerPlacementIndex != -1)
+	{
 		if (inputSystem.WasMouseButtonJustPressed(0))
 		{
-			factory.m_towerPlacements.push_back(scInput.m_towerPlacementInfo);
-			scInput.m_isInTowerPlacementMode = false; 
+			factory.m_towerPlacements.push_back(scInput.m_towerPlacementRequest);
+			scInput.m_towerPlacementIndex = -1; 
 		}
 		else if (inputSystem.WasMouseButtonJustPressed(1))
 		{
-			scInput.m_isInTowerPlacementMode = false;
+			scInput.m_towerPlacementIndex = -1;
 		}
 		else if (inputSystem.WasKeyJustPressed(KeyCode::Escape))
 		{
-			scInput.m_isInTowerPlacementMode = false;
+			scInput.m_towerPlacementIndex = -1;
 		}
 	}
 	else
@@ -129,17 +155,27 @@ void SInput::Run(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPlacementInfo SInput::MakeTowerPlacementInfo(Name towerDefName, Vec2 const& worldPos, SCWorld const& world)
+bool SInput::CanAffordTower(PlaceableTower const& tower, SCRunData const& runData)
 {
-	TowerPlacementInfo info;
+	return runData.m_gold + runData.m_creditLimit >= tower.m_cost;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+TowerPlacementRequest SInput::MakeTowerPlacementRequest(Name towerDefName, Vec2 const& worldPos, SCWorld const& world, float cost /*= 0.f*/, bool canAfford /*= true*/)
+{
+	TowerPlacementRequest info;
 	info.m_towerName = towerDefName;
+	info.m_cost = cost;
+	info.m_canAfford = canAfford;
 
 	EntityDef const* def = EntityDef::GetEntityDef(towerDefName);
-	ASSERT_OR_DIE(def != nullptr, "MakeTowerPlacementInfo: Invalid tower name for placement");
-	ASSERT_OR_DIE(def->m_placeable.has_value(), "MakeTowerPlacementInfo: Tower entity def does not have a CPlaceable component");
+	ASSERT_OR_DIE(def != nullptr, "MakeTowerPlacementRequest: Invalid tower name for placement");
+	ASSERT_OR_DIE(def->m_placeable.has_value(), "MakeTowerPlacementRequest: Tower entity def does not have a CPlaceable component");
 
 	CPlaceable const& placeable = def->m_placeable.value();
-	ASSERT_OR_DIE(placeable.m_dims.x > 0 && placeable.m_dims.y > 0, "MakeTowerPlacementInfo: Tower entity def has invalid dimensions");
+	ASSERT_OR_DIE(placeable.m_dims.x > 0 && placeable.m_dims.y > 0, "MakeTowerPlacementRequest: Tower entity def has invalid dimensions");
 
 	Vec2 halfDims = Vec2(static_cast<float>(placeable.m_dims.x) * 0.5f, static_cast<float>(placeable.m_dims.y) * 0.5f);
 	Vec2 botLeft = worldPos - halfDims;

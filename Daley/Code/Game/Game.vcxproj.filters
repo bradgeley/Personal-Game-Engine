@@ -564,7 +564,7 @@
     <ClInclude Include="Game\CPlaceable.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Game\TowerPlacementInfo.h">
+    <ClInclude Include="Game\TowerPlacementRequest.h">
       <Filter>Game\Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="Game\DiscShaderCPU.h">

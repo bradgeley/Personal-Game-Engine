@@ -8,12 +8,18 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct TowerPlacementInfo
+struct TowerPlacementRequest
 {
 	Name m_towerName = "Chocolate";
+
+	// Placement Info
 	Vec2 m_worldPos = Vec2::ZeroVector;
 	IntVec2 m_botLeftTileCoords = IntVec2::ZeroVector;
 	IntVec2 m_topRightTileCoords = IntVec2::ZeroVector;
 	IntVec2 m_dims = IntVec2::OneVector;
 	TagQuery m_tileTagQuery;
+
+	// Cost info
+	float m_cost = 0.f;
+	bool m_canAfford = true;
 };

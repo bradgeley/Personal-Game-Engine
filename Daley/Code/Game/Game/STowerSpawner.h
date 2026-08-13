@@ -5,7 +5,7 @@
 
 
 struct SCEntityFactory;
-struct TowerPlacementInfo;
+struct TowerPlacementRequest;
 class SCWorld;
 
 
@@ -16,6 +16,7 @@ enum class TowerPlacementResult
     Success,
     Blocked,
     BlocksPath,
+    CannotAfford,
 };
 
 
@@ -30,6 +31,6 @@ public:
     void Shutdown() const override;
     void Run(SystemContext const& context) const override;
 
-    TowerPlacementResult CanPlaceTower(TowerPlacementInfo const& info, SCWorld const& world) const;
-    bool PlaceTowerInWorld(TowerPlacementInfo const& placementInfo, SCWorld& world) const;
+    TowerPlacementResult CanPlaceTower(TowerPlacementRequest const& info, SCWorld const& world) const;
+    bool PlaceTowerInWorld(TowerPlacementRequest const& placementInfo, SCWorld& world) const;
 };

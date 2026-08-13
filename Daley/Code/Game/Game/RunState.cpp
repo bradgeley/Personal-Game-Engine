@@ -40,7 +40,6 @@ void RunState::Enter(NamedProperties const& props)
 	IntVec2 windowDims = g_window->GetActualWindowResolution();
 	m_camera.SetOrthoDims2D(Vec2(windowDims));
 
-	VertexBuffer& textVBO = *g_renderer->GetVertexBuffer(m_textVerts);
 	VertexBuffer& untexturedVBO = *g_renderer->GetVertexBuffer(m_untexturedVerts);
 
 	VertexUtils::AddVertsForAABB2(untexturedVBO, m_camera.GetOrthoBounds2D(), Rgba8::DarkGray);
@@ -48,6 +47,14 @@ void RunState::Enter(NamedProperties const& props)
 	m_fontID = g_assetManager->LoadSynchronous<Font>(MAIN_MENU_FONT_NAME);
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
 	ASSERT_OR_DIE(font != nullptr, StringUtils::StringF("Failed to load %s for RunState!", MAIN_MENU_FONT_NAME));
+
+	// Todo: get initial placeable tower data from somewhere in xml
+	m_runData = SCRunData();
+	m_runData.m_placeableTowers[0] = PlaceableTower{ "Vanilla", '1', 20.f };
+	m_runData.m_placeableTowers[1] = PlaceableTower{ "Chocolate", '2', 30.f };
+	m_runData.m_placeableTowers[2] = PlaceableTower{ "Strawberry", '3', 40.f };
+	m_runData.m_placeableTowers[3] = PlaceableTower{ "Mint", '4', 40.f };
+	m_runData.m_placeableTowers[4] = PlaceableTower{ "Wall1x1", 'W', 5.f };
 }
 
 

@@ -1,11 +1,13 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "TowerPlacementInfo.h"
+#include "TowerPlacementRequest.h"
 #include "Engine/ECS/System.h"
 
 
 
 class SCWorld;
+struct PlaceableTower;
+struct SCRunData;
 struct Vec2;
 
 
@@ -19,5 +21,6 @@ public:
     void Startup() override;
     void Run(SystemContext const& context) const override;
 
-    static TowerPlacementInfo MakeTowerPlacementInfo(Name towerDefName, Vec2 const& worldPos, SCWorld const& world);
+	static bool CanAffordTower(PlaceableTower const& tower, SCRunData const& runData);
+    static TowerPlacementRequest MakeTowerPlacementRequest(Name towerDefName, Vec2 const& worldPos, SCWorld const& world, float cost = 0.f, bool canAfford = true);
 };

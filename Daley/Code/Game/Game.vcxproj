@@ -500,7 +500,7 @@
     <ClInclude Include="Game\TileDef.h" />
     <ClInclude Include="Game\SCWorld.h" />
     <ClInclude Include="Game\TowerDefenseState.h" />
-    <ClInclude Include="Game\TowerPlacementInfo.h" />
+    <ClInclude Include="Game\TowerPlacementRequest.h" />
     <ClInclude Include="Game\WorldRaycast.h" />
     <ClInclude Include="Game\WorldSettings.h" />
     <ClInclude Include="Game\WorldShaderCPU.h" />
