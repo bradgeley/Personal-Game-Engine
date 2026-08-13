@@ -111,6 +111,11 @@ public:
     bool IsComponentAccessValid(BitMask componentBitMask, bool isWriteAccess) const;
     bool HasFullECSAccess() const;
 
+    //----------------------------------------------------------------------------------------------------------------------
+    // MISC
+    //
+    float GetRealTimeDeltaSeconds() const;
+
 protected:
 
     friend class SystemScheduler;

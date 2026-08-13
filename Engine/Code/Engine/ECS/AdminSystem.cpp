@@ -3,6 +3,7 @@
 #include "System.h"
 #include "SystemScheduler.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Time/Time.h"
 
 
 
@@ -38,6 +39,8 @@ void AdminSystem::Startup()
 	{
 		subgraph.Startup();
 	}
+
+	m_runFrameTimeStamp = Time::GetCurrentTimeSecondsF();
 }
 
 
@@ -76,6 +79,10 @@ void AdminSystem::RunFrame(float deltaSeconds)
 	{
 		deltaSeconds = m_config.m_maxDeltaSeconds;
 	}
+
+	float realTime = Time::GetCurrentTimeSecondsF();
+	m_realTimeDeltaSeconds = realTime - m_runFrameTimeStamp;
+	m_runFrameTimeStamp = realTime;
 
 	m_systemScheduler->ScheduleFrame(m_systemSubgraphs);
 	m_systemScheduler->RunFrame(deltaSeconds);
@@ -252,6 +259,14 @@ bool AdminSystem::IsAutoMultithreadingActive() const
 void AdminSystem::SetAutoMultithreadingThreshold(int newThreshold)
 {
 	m_config.m_autoMultithreadingEntityThreshold = newThreshold;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float AdminSystem::GetRealTimeDeltaSeconds() const
+{
+	return m_realTimeDeltaSeconds;
 }
 
 

@@ -31,12 +31,14 @@ void SFloatingText::Run(SystemContext const& context) const
 
 	// Update
 
+	float realTimeDeltaSeconds = context.GetRealTimeDeltaSeconds();
+
 	for (int i = (int) floatingText.m_floatingTextInstances.size() - 1; i >= 0; --i)
 	{
 		FloatingTextInstance& instance = floatingText.m_floatingTextInstances[i];
 
-		instance.m_pos += instance.m_velocity * context.m_deltaSeconds;
-		instance.m_elapsedSeconds += context.m_deltaSeconds;
+		instance.m_pos += instance.m_velocity * realTimeDeltaSeconds;
+		instance.m_elapsedSeconds += realTimeDeltaSeconds;
 
 		if (instance.m_elapsedSeconds >= instance.m_lifetimeSeconds)
 		{

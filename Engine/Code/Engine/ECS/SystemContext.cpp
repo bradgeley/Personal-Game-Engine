@@ -48,6 +48,14 @@ bool SystemContext::HasFullECSAccess() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float SystemContext::GetRealTimeDeltaSeconds() const
+{
+	return g_ecs->GetRealTimeDeltaSeconds();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 EntityID SystemContext::CreateEntity(int searchBeginEntityID /*= 0*/) const
 {
 	ASSERT_OR_DIE(HasFullECSAccess(), "SystemContext::CreateEntity - System does not have full ECS access, cannot create entity.");

@@ -218,6 +218,8 @@ public:
 	bool IsAutoMultithreadingActive() const;
 	void SetAutoMultithreadingThreshold(int newThreshold);
 
+	float GetRealTimeDeltaSeconds() const;
+
 private:
 
 	void RecalculateGlobalPriorities();
@@ -231,6 +233,9 @@ protected:
 
 	std::vector<SystemSubgraph>		m_systemSubgraphs;
 	SystemScheduler*				m_systemScheduler = nullptr;
+
+	float m_runFrameTimeStamp = 0.f;
+	float m_realTimeDeltaSeconds = 0.f;
 
 	BitArray<MAX_ENTITIES>			m_entities;
 	BitMask							m_entityComposition[MAX_ENTITIES] = { 0 }; // Todo: if user needs more than 32 or 64 components, allow them to use a fixed size BitArray for entity composition, so the max component count would be uncapped
