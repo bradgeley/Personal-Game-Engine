@@ -25,7 +25,7 @@ void SWorld::Startup()
 	static int seed = 0;
 
 	NamedProperties props;
-	props.Set<std::string>("mapGenName", "forestCross");
+	props.Set<std::string>("mapGenName", "forest");
 	props.Set<int>("seed", seed++);
 	GenerateMap(props);
 

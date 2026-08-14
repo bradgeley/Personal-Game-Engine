@@ -10,7 +10,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void GameState::Enter(NamedProperties const& props)
+void GameState::Enter(NamedProperties const&)
 {
     m_clock = new Clock(g_engine->GetEngineClock());
 
@@ -22,7 +22,7 @@ void GameState::Enter(NamedProperties const& props)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void GameState::Exit(NamedProperties const& props)
+void GameState::Exit(NamedProperties const&)
 {
     g_devConsole->RemoveDevConsoleCommandInfo("TimeDilation");
     g_eventSystem->UnsubscribeMethod("TimeDilation", this, &GameState::TimeDilation);

@@ -250,9 +250,10 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 	waves.m_waveGenDef.m_seed = seed;
 	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "ant", "small" }, 1.f });
 	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 5, 10, { "ant", "medium" },  0.5f });
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "largeAnt", 1, true });
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "ant", 20, true });
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "largeAnt", 1, false });
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "ant", 20, false });
 	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 14, -1, "bossAnt", 1, true });
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 30.f, 7, 7, "ant", 100, false});
 
 	//waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "boss", "ant" }, 1.f });
 
@@ -286,7 +287,7 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 			FixedWaveStreamDef const& fixedDef = waves.m_waveGenDef.m_fixedWaves[fixedWaveIndex];
 
 			bool isMatchingWave = fixedDef.m_waveIndex == waveIndex;
-			bool isRecurringWave = fixedDef.m_recurAfterNumWaves > 0 && (waveIndex - fixedDef.m_waveIndex) % fixedDef.m_recurAfterNumWaves == 0;
+			bool isRecurringWave = fixedDef.m_recurAfterNumWaves > 0 && waveIndex >= fixedDef.m_waveIndex && (waveIndex - fixedDef.m_waveIndex) % fixedDef.m_recurAfterNumWaves == 0;
 			bool isGuaranteedLastWave = fixedDef.m_isGuaranteedLastWave && waveIndex == numWaves - 1;
 
 			if (isMatchingWave || isRecurringWave || isGuaranteedLastWave)
