@@ -119,7 +119,10 @@ void SInput::Run(SystemContext const& context) const
 		if (inputSystem.WasMouseButtonJustPressed(0))
 		{
 			factory.m_towerPlacements.push_back(scInput.m_towerPlacementRequest);
-			scInput.m_towerPlacementIndex = -1; 
+			if (!inputSystem.IsKeyDown(KeyCode::Shift))
+			{
+				scInput.m_towerPlacementIndex = -1;
+			}
 		}
 		else if (inputSystem.WasMouseButtonJustPressed(1))
 		{
