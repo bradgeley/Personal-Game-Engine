@@ -101,9 +101,10 @@ void RunState::Render() const
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
 	if (font)
 	{
-		font->AddVertsForAlignedText2D(textVBO, Vec2::ZeroVector, Vec2::ZeroVector, 100.f, "Run State", Rgba8::AliceBlue);
+		AABB2 cameraBounds = m_camera.GetOrthoBounds2D();
+		font->AddVertsForAlignedText2D(textVBO, cameraBounds.GetCenter(), Vec2::ZeroVector, 100.f, "Run State", Rgba8::AliceBlue);
 		std::string instructionText = StringUtils::StringF("Press Space to Start Mission %i\nPress ESC to return to Main Menu", m_runData.m_missionIndex + 1);
-		font->AddVertsForAlignedText2D(textVBO, Vec2(0.f, -500.f), Vec2::ZeroVector, 50.f, instructionText, Rgba8::Yellow);
+		font->AddVertsForAlignedText2D(textVBO, cameraBounds.GetBottomCenter() + Vec2(0.f, 50.f), Vec2(0.f, 1.f), 50.f, instructionText, Rgba8::Yellow);
 	}
 
 	g_renderer->BeginCameraAndWindow(&m_camera, g_window);

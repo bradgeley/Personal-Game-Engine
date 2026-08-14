@@ -302,28 +302,16 @@ void Font::AddVertsForAlignedText2D(VertexBuffer& out_verts, Vec2 const& pivot, 
 	}
 
 	float paragraphHeight = cellHeight * (float) lines.size() + (lineSpacing * cellHeight) * ((float) lines.size() - 1);
-	float paragraphWidth = 0.f;
-
-	for (int i = 0; i < (int) lines.size(); ++i)
-	{
-		std::string const& line = lines[i];
-		float lineWidth = GetLineWidth(cellHeight, line);
-		paragraphWidth = MathUtils::Max(paragraphWidth, lineWidth);
-	}
-
-	Vec2 topLeft;
-	topLeft.x = pivot.x - (paragraphWidth * 0.5f);
-	topLeft.x += alignment.x * paragraphWidth * 0.5f;
-	topLeft.y = pivot.y + (paragraphHeight * 0.5f);
-	topLeft.y += alignment.y * paragraphHeight * 0.5f;
 
 	float lineSpacingHeight = lineSpacing * cellHeight;
 
 	for (int i = 0; i < (int) lines.size(); ++i)
 	{
 		std::string const& line = lines[i];
-		float yOffset = -1.f * ((float)(i + 1) * cellHeight + ((float)(i * lineSpacingHeight)));
-		Vec2 textMins = topLeft + Vec2(0.f, yOffset);
+		float lineWidth = GetLineWidth(cellHeight, line);
+		float yOffset = paragraphHeight * 0.5f - ((float)(i + 1) * cellHeight + ((float)(i * lineSpacingHeight))) + alignment.y * paragraphHeight * 0.5f;
+		float xOffset = lineWidth * -0.5f + alignment.x * lineWidth * 0.5f;
+		Vec2 textMins = pivot + Vec2(xOffset, yOffset);
 		AddVertsForText2D(out_verts, textMins, cellHeight, line, tint);
 	}
 }
