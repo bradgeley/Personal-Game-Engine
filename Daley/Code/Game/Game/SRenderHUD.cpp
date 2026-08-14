@@ -84,7 +84,7 @@ void SRenderHUD::Run(SystemContext const& context) const
 
 	AABB2 hudBounds = AABB2(Vec2(0.f, 0.f), hudTextDims);
 	VertexUtils::AddVertsForAABB2(untexturedVerts, hudBounds, Rgba8(0, 0, 0, 128));
-	font->AddVertsForAlignedText2D(textVerts, Vec2(hudPadding, hudPadding), Vec2(1.f, 1.f), hudTextSize, hudText, Rgba8::White, hudLineSpacing);
+	font->AddVertsForAlignedText2D(textVerts, hudBounds.GetBottomRight() + Vec2(-hudPadding, hudPadding), Vec2(-1.f, 1.f), hudTextSize, hudText, Rgba8::White, hudLineSpacing);
 	//------------------------------------------------------
 
 	//------------------------------------------------------
@@ -103,7 +103,7 @@ void SRenderHUD::Run(SystemContext const& context) const
 	topLeftHUDBounds.mins.y -= hudPadding * 2.f;
 	topLeftHUDBounds.maxs.x += hudPadding * 2.f;
 	VertexUtils::AddVertsForAABB2(untexturedVerts, topLeftHUDBounds, Rgba8(0, 0, 0, 128));
-	font->AddVertsForAlignedText2D(textVerts, topLeftHUDBounds.GetTopLeft() + Vec2(hudPadding, -hudPadding), Vec2(1.f, -1.f), hudTextSize, placeableTowerText, Rgba8::White, hudLineSpacing);
+	font->AddVertsForAlignedText2D(textVerts, topLeftHUDBounds.GetBottomRight() + Vec2(-hudPadding, hudPadding), Vec2(-1.f, 1.f), hudTextSize, placeableTowerText, Rgba8::White, hudLineSpacing);
 	//------------------------------------------------------
 
 	renderer.BeginCamera(&camera.m_uiCamera);
