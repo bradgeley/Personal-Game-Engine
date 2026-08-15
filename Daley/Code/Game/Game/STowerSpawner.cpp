@@ -7,7 +7,6 @@
 #include "SCWorld.h"
 #include "SEntityFactory.h"
 #include "SFlowField.h"
-#include "TileDef.h"
 #include "WorldSettings.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/ECS/SystemContext.h"

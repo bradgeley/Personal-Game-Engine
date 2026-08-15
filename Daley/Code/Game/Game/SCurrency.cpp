@@ -3,6 +3,8 @@
 #include "CDeath.h"
 #include "SCRunData.h"
 #include "Engine/ECS/SystemContext.h"
+#include "Engine/Core/NamedProperties.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 
 
 
@@ -11,6 +13,9 @@ void SCurrency::Startup()
 {
 	AddReadDependencies<CDeath>();
 	AddWriteDependencies<SCRunData>();
+
+	DevConsoleUtils::AddDevConsoleCommand("GrantGold", &SCurrency::GrantGold, "gold", DevConsoleArgType::Float);
+	DevConsoleUtils::AddDevConsoleCommand("GrantSells", &SCurrency::GrantSells, "sells", DevConsoleArgType::Int);
 }
 
 
@@ -57,4 +62,26 @@ void SCurrency::Run(SystemContext const& context) const
 		}
 		runData.m_interestTimerSecondsRemaining += runData.m_interestTimerSeconds;
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SCurrency::GrantGold(NamedProperties& params)
+{
+	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
+	float gold = params.Get<float>("gold", 0.f);
+	runData.m_gold += gold;
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SCurrency::GrantSells(NamedProperties& params)
+{
+	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
+	int sells = params.Get<int>("sells", 0);
+	runData.m_numSoldTowers -= sells;
+	return false;
 }
