@@ -252,7 +252,11 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(infoCardEdgeWidth, -infoCardEdgeWidth), Vec2(1.f, -1.f), titleLineHeight, debug.m_defName.ToString(), Rgba8::White);
 
 				// Debug Information
-				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(infoCardEdgeWidth, textStartHeightOffset), Vec2(1.f, -1.f), textLineHeight, debugString, Rgba8::White, textLineSpacingRatio);
+				Vec2 debugInfoTextDims = font->GetTextDims(textLineHeight, textLineSpacingRatio, debugString);
+				Vec2 offset = Vec2::ZeroVector;
+				offset.x = -(informationCardBounds.GetWidth() - debugInfoTextDims.x) + infoCardEdgeWidth;
+				offset.y = (informationCardBounds.GetHeight() - debugInfoTextDims.y) + textStartHeightOffset;
+				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetBottomRight() + offset, Vec2(-1.f, 1.f), textLineHeight, debugString, Rgba8::White, textLineSpacingRatio);
 				break;
 			}
 		}
