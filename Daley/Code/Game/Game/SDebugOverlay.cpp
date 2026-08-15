@@ -2,7 +2,7 @@
 #include "SDebugOverlay.h"
 #include "CAbility.h"
 #include "CCollision.h"
-#include "CEntityDebug.h"
+#include "CEntityName.h"
 #include "CHealth.h"
 #include "CMovement.h"
 #include "CProjectile.h"
@@ -61,7 +61,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	auto& collisionStorage = context.GetArrayStorageConst<CCollision>();
 	auto& tagsStorage = context.GetArrayStorageConst<CTags>();
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();
-	auto& debugStorage = context.GetArrayStorageConst<CEntityDebug>();
+	auto& debugStorage = context.GetArrayStorageConst<CEntityName>();
 	auto& abilityStorage = context.GetMapStorageConst<CAbility>();
 	auto& healthStorage = context.GetArrayStorageConst<CHealth>();
 	auto& timeStorage = context.GetArrayStorageConst<CTime>();
@@ -120,7 +120,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	}
 
 	// Show ability information for hovered entity
-	for (auto it = context.Iterate<CTags, CTransform, CEntityDebug>(); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CTags, CTransform, CEntityName>(); it.IsValid(); ++it)
 	{
 		CTags const& tags = tagsStorage[it];
 		bool isTower = tags.HasTag("Tower");
@@ -134,7 +134,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 			float radius = collision ? collision->m_radius : 2.f;
 			if (scInput.m_mouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
 			{
-				CEntityDebug const& debug = debugStorage[it];
+				CEntityName const& debug = debugStorage[it];
 				Vec2 screenPos = worldCamera.m_worldCamera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();
 				Vec2 cardMins = screenPos;
 

@@ -6,6 +6,7 @@
 #include "SCCamera.h"
 #include "SCEntityFactory.h"
 #include "SCEventSystem.h"
+#include "SCFloatingText.h"
 #include "SCGameState.h"
 #include "SCInputSystem.h"
 #include "SCRunData.h"
@@ -38,12 +39,15 @@ void SInput::Run(SystemContext const& context) const
 	SCWindow const& scWindow = context.GetSingletonConst<SCWindow>();
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
-	SCRunData const& runData = context.GetSingletonConst<SCRunData>();
+	auto& placeableStorage = context.GetMapStorageConst<CPlaceable>();
+	auto& transformStorage = context.GetArrayStorageConst<CTransform>();
 
 	// Write Dependencies
 	SCEventSystem& scEventSystem = context.GetSingleton<SCEventSystem>();
 	SCInputSystem& scInput = context.GetSingleton<SCInputSystem>();
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
+	SCRunData& runData = context.GetSingleton<SCRunData>();
+	SCFloatingText& floatingText = context.GetSingleton<SCFloatingText>();
 	SCGameState& game = context.GetSingleton<SCGameState>();
 
 	Window const& window = *scWindow.GetWindow();
@@ -132,6 +136,10 @@ void SInput::Run(SystemContext const& context) const
 		{
 			scInput.m_towerPlacementIndex = -1;
 		}
+		else if (inputSystem.WasKeyJustReleased(KeyCode::Shift))
+		{
+			scInput.m_towerPlacementIndex = -1;
+		}
 	}
 	else
 	{
@@ -152,6 +160,40 @@ void SInput::Run(SystemContext const& context) const
 	if (inputSystem.WasKeyJustPressed(KeyCode::Space))
 	{
 		gameState.TogglePaused();
+	}
+
+	// Update tower under cursor
+	scInput.m_towerUnderCursor = EntityID::Invalid;
+	for (auto it = context.Iterate<CPlaceable, CTransform>(); it.IsValid(); ++it)
+	{
+		CPlaceable const& placeable = placeableStorage[it];
+		CTransform const& transform = transformStorage[it];
+		AABB2 towerBounds = AABB2(transform.m_pos,static_cast<float>(placeable.m_dims.x) * 0.5f, static_cast<float>(placeable.m_dims.y) * 0.5f);
+		if (towerBounds.IsPointInside(scInput.m_mouseWorldLocation))
+		{
+			scInput.m_towerUnderCursor = it.GetEntityID();
+			break;
+		}
+	}
+
+	// Sell
+	if (inputSystem.WasKeyJustPressed('S') && scInput.m_towerUnderCursor != EntityID::Invalid)
+	{
+		if (runData.m_numSoldTowers < StaticGameSettings::s_baseSellMaximum)
+		{
+			factory.m_towerRemovals.push_back(TowerRemovalRequest{ scInput.m_towerUnderCursor, true });
+			runData.m_numSoldTowers++;
+		}
+		else
+		{
+			FloatingTextInstance floatingTextInstance;
+			floatingTextInstance.m_lifetimeSeconds = 2.f;
+			floatingTextInstance.m_pos = scInput.m_mouseWorldLocation;
+			floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+			floatingTextInstance.m_text = "Sell limit reached!";
+			floatingTextInstance.m_tint = Rgba8::Red;
+			floatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+		}
 	}
 }
 

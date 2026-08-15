@@ -7,7 +7,9 @@
 #include "SCWorld.h"
 #include "SEntityFactory.h"
 #include "SFlowField.h"
+#include "TileDef.h"
 #include "WorldSettings.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/ECS/SystemContext.h"
 
 
@@ -30,16 +32,60 @@ void STowerSpawner::Shutdown() const
 //----------------------------------------------------------------------------------------------------------------------
 void STowerSpawner::Run(SystemContext const& context) const
 {
+	// Read Dependencies
+	auto const& placeableStorage = context.GetMapStorageConst<CPlaceable>();
+	auto const& transformStorage = context.GetArrayStorageConst<CTransform>();
+	auto const& nameStorage = context.GetArrayStorageConst<CEntityName>();
+
 	// Write Dependencies
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
     SCWorld& world = context.GetSingleton<SCWorld>();
 	SCFloatingText& scFloatingText = context.GetSingleton<SCFloatingText>();
 	SCRunData& runData = context.GetSingleton<SCRunData>();
 
-    if (factory.m_towerPlacements.empty())
+    for (TowerRemovalRequest const& removalRequest : factory.m_towerRemovals)
     {
-        return;
-	}
+		CTransform const& transform = transformStorage[removalRequest.m_towerEntityID];
+		CPlaceable const& placeable = placeableStorage[removalRequest.m_towerEntityID];
+		CEntityName const& entityName = nameStorage[removalRequest.m_towerEntityID];
+
+		AABB2 towerBounds = AABB2(transform.m_pos, static_cast<float>(placeable.m_dims.x) * 0.5f, static_cast<float>(placeable.m_dims.y) * 0.5f);
+		towerBounds.Squeeze(0.1f);
+
+		world.ForEachPlayableTileOverlappingAABB(towerBounds, [&](IntVec2 const& worldCoords)
+		{
+			Tile tile = world.m_tiles.Get(worldCoords);
+			tile.SetIsSolid(false);
+			world.SetTile(worldCoords, tile);
+            return true;
+		});
+
+        if (removalRequest.m_isSell)
+        {
+            for (auto const& placeableTower : runData.m_placeableTowers)
+            {
+                if (placeableTower.m_towerName == entityName.m_defName)
+                {
+                    runData.m_gold += placeableTower.m_cost * StaticGameSettings::s_baseSellRefundRate;
+
+                    FloatingTextInstance floatingTextInstance;
+                    floatingTextInstance.m_lifetimeSeconds = 2.f;
+                    floatingTextInstance.m_pos = transform.m_pos;
+                    floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+                    floatingTextInstance.m_text = StringUtils::StringF("+$%.1f (%i remaining)", placeableTower.m_cost * StaticGameSettings::s_baseSellRefundRate, StaticGameSettings::s_baseSellMaximum - runData.m_numSoldTowers);
+                    floatingTextInstance.m_tint = Rgba8::Green;
+                    floatingTextInstance.m_scale = 1.5f;
+                    scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+
+                    break;
+                }
+            }
+        }
+
+		context.DestroyEntity(removalRequest.m_towerEntityID);
+    }
+
+	factory.m_towerRemovals.clear();
 
     for (TowerPlacementRequest const& placementInfo : factory.m_towerPlacements)
     {
@@ -57,29 +103,29 @@ void STowerSpawner::Run(SystemContext const& context) const
         }
         else if (!placementInfo.m_isGenerated)
         {
-            FloatingTextInstance floatingText;
-            floatingText.m_pos = placementInfo.m_worldPos;
-            floatingText.m_lifetimeSeconds = 2.f;
-            floatingText.m_velocity = Vec2(0.f, 1.f);
-            floatingText.m_scale = 1.f;
+            FloatingTextInstance floatingTextInstance;
+            floatingTextInstance.m_pos = placementInfo.m_worldPos;
+            floatingTextInstance.m_lifetimeSeconds = 2.f;
+            floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+            floatingTextInstance.m_scale = 1.f;
 
 			if (result == TowerPlacementResult::Blocked)
 			{
-				floatingText.m_text = "Blocked!";
-				floatingText.m_tint = Rgba8::Red;
+				floatingTextInstance.m_text = "Blocked!";
+				floatingTextInstance.m_tint = Rgba8::Red;
 			}
 			else if (result == TowerPlacementResult::BlocksPath)
 			{
-				floatingText.m_text = "Cannot block path!";
-				floatingText.m_tint = Rgba8::Red;
+				floatingTextInstance.m_text = "Cannot block path!";
+				floatingTextInstance.m_tint = Rgba8::Red;
 			}
 			else if (result == TowerPlacementResult::CannotAfford)
 			{
-				floatingText.m_text = "Cannot Afford!";
-				floatingText.m_tint = Rgba8::Red;
+				floatingTextInstance.m_text = "Cannot Afford!";
+				floatingTextInstance.m_tint = Rgba8::Red;
 			}
 
-            scFloatingText.m_floatingTextInstances.push_back(floatingText);
+            scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
         }
     }
 
@@ -176,7 +222,6 @@ bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& placementInfo
         {
             Tile tile = world.m_tiles.Get(worldCoords);
 			tile.SetIsSolid(true);
-            tile.SetIsOpaque(true);
 			world.SetTile(worldCoords, tile);
             return true; // keep iterating
         });

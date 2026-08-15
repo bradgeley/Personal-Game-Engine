@@ -91,10 +91,10 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 //----------------------------------------------------------------------------------------------------------------------
 bool SDebugCommands::DumpEntityDebug(NamedProperties&)
 {
-	auto& debugStorage = g_ecs->GetArrayStorage<CEntityDebug>();
-	for (auto it = g_ecs->IterateAll<CEntityDebug>(); it.IsValid(); ++it)
+	auto& debugStorage = g_ecs->GetArrayStorage<CEntityName>();
+	for (auto it = g_ecs->IterateAll<CEntityName>(); it.IsValid(); ++it)
 	{
-		CEntityDebug const& debugComp = debugStorage[it];
+		CEntityName const& debugComp = debugStorage[it];
 		EntityID entityID = it.GetEntityID();
 		DevConsoleUtils::Log(Rgba8::Coral, "Entity %i, gen %i: %s", entityID.GetIndex(), entityID.GetGeneration(), debugComp.m_defName.ToCStr());
 	}

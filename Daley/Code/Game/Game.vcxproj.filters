@@ -145,7 +145,7 @@
     <ClCompile Include="Game\SProjectile.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="Game\CEntityDebug.cpp">
+    <ClCompile Include="Game\CEntityName.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
     <ClCompile Include="Game\SGoal.cpp">
@@ -471,7 +471,7 @@
     <ClInclude Include="Game\SProjectile.h">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="Game\CEntityDebug.h">
+    <ClInclude Include="Game\CEntityName.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="Game\SGoal.h">

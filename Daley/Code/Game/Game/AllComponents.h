@@ -24,7 +24,7 @@
 #include "CAttachment.h"
 #include "CCollision.h"
 #include "CDeath.h"
-#include "CEntityDebug.h"
+#include "CEntityName.h"
 #include "CHealth.h"
 #include "CLifetime.h"
 #include "CMovement.h"

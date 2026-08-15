@@ -26,6 +26,8 @@ public:
 	IntVec2 m_mouseTileCoords = IntVec2::ZeroVector;			// Updated by SInput
 	IntVec2 m_mouseIntersectionCoords = IntVec2::ZeroVector;	// Updated by SInput
 
+	EntityID m_towerUnderCursor = EntityID::Invalid;			// Updated by SInput
+
 	int m_towerPlacementIndex = -1;	// Index into SCEntityFactory::m_towerPlacements
 	TowerPlacementRequest m_towerPlacementRequest;
 

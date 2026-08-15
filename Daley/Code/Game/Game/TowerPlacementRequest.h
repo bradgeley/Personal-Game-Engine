@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "Engine/ECS/EntityID.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Core/TagQuery.h"
 #include "Engine/Math/IntVec2.h"
@@ -23,4 +24,13 @@ struct TowerPlacementRequest
 	// Cost info
 	float m_cost = 0.f;
 	bool m_canAfford = true;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct TowerRemovalRequest
+{
+	EntityID m_towerEntityID = EntityID::Invalid;
+	bool m_isSell = false;
 };

@@ -5,11 +5,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct CEntityDebug
+struct CEntityName
 {
 public:
 
-	CEntityDebug() = default;
+	CEntityName() = default;
 
 public:
 

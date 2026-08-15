@@ -93,6 +93,7 @@ void TowerDefenseState::StartGame(NamedProperties const& inProps)
 	runData.m_gold = StaticGameSettings::s_baseGold;
 	runData.m_health = StaticGameSettings::s_basePlayerHealth;
 	runData.m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
+	runData.m_numSoldTowers = 0;
 
     int seed = runData.m_seed + runData.m_missionIndex;
 
@@ -149,7 +150,7 @@ void TowerDefenseState::ConfigureECS()
     g_ecs->RegisterComponentArray<CTags>();
     g_ecs->RegisterComponentArray<CTime>();
     g_ecs->RegisterComponentArray<CTransform>();
-    g_ecs->RegisterComponentArray<CEntityDebug>();
+    g_ecs->RegisterComponentArray<CEntityName>();
 
     // Map Components
     g_ecs->RegisterComponentMap<CAbility>();

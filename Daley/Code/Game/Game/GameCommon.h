@@ -57,11 +57,13 @@ namespace StaticGameSettings
 
 	static float s_basePlayerHealth				= 100.f;
 	static float s_basePlayerHealthRegen		= 0.1f;
-	static float s_baseGold						= 100.f;
-	static float s_baseCreditLimit				= 20.f;
-	static float s_baseSavingsInterestRate      = 0.01f;
-	static float s_baseDebtInterestRate         = 0.02f;
+	static float s_baseGold						= 0.f;
+	static float s_baseCreditLimit				= 500.f;
+	static float s_baseSavingsInterestRate      = 0.08f;
+	static float s_baseDebtInterestRate         = 0.5f;
 	static float s_baseInterestTimerSeconds     = 30.f;
+	static float s_baseSellRefundRate			= 0.5f;
+	static int   s_baseSellMaximum				= 5;
 
 	static int   s_numMissionsForVictory		= 3;
 

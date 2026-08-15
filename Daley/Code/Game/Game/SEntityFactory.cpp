@@ -88,9 +88,8 @@ EntityID SEntityFactory::CreateEntityFromDef(SystemContext const& context, Entit
     if (def->m_time.has_value())                context.AddComponent<CTime>(id, *def->m_time);
     if (def->m_transform.has_value())           context.AddComponent<CTransform>(id, *def->m_transform);
 
-    // Todo: don't add this component, in release only?
-    CEntityDebug* debugComponent = context.AddComponent<CEntityDebug>(id);
-    debugComponent->m_defName = def->m_name;
+    CEntityName* nameComponent = context.AddComponent<CEntityName>(id);
+    nameComponent->m_defName = def->m_name;
 
     return id;
 }
