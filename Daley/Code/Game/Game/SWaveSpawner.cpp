@@ -248,12 +248,13 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
 	// Static wave gen def for now, later get from a file
 	waves.m_waveGenDef.m_numWaves = numWaves;
 	waves.m_waveGenDef.m_seed = seed;
-	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "ant", "small" }, 1.f });
-	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 5, 10, { "ant", "medium" },  0.5f });
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 1, -1, "ant", 100, false });
+	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 40, 50, { "ant", "small" }, 1.f });
+	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 10, 20, { "ant", "medium" },  0.5f });
 	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "largeAnt", 1, false });
 	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "ant", 20, false });
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 14, -1, "bossAnt", 1, true });
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 30.f, 7, 7, "ant", 100, false});
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 14, -1, "bossAnt", 1, false });
+	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 30.f, 7, 7, "ant", 200, false});
 
 	//waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "boss", "ant" }, 1.f });
 

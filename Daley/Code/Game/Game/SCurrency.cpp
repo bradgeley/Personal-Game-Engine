@@ -21,6 +21,15 @@ void SCurrency::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SCurrency::Shutdown() const
+{
+	DevConsoleUtils::RemoveDevConsoleCommand("GrantGold", &SCurrency::GrantGold);
+	DevConsoleUtils::RemoveDevConsoleCommand("GrantSells", &SCurrency::GrantSells);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCurrency::Run(SystemContext const& context) const
 {
 	// Read Dependencies
