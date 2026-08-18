@@ -23,6 +23,8 @@ public:
 	virtual ~MapGeneratorComponent() = default;
 
 	virtual bool Generate(MapGenerator& generator, SCWorld& world) = 0;
+
+	int m_runOrder = 0;
 };
 
 
@@ -74,6 +76,24 @@ public:
 	NoiseParams m_params;
 	TagQuery m_tagQuery;
 	std::vector<float> m_cachedNoiseValues;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+class DistanceFieldSelectorComponent : public TileSelectorComponent
+{
+public:
+
+	DistanceFieldSelectorComponent(DistanceFieldSelectorComponentDef const& def);
+
+	virtual void ForEachSelectedTile(MapGenerator& generator, SCWorld& world, std::function<bool(IntVec2 const&)> const& func) override final;
+
+public:
+
+	IntVec2 m_distanceRange = IntVec2(0, 999);
+	TagQuery m_tagQuery;
+	std::vector<int> m_distanceFieldValues;
 };
 
 

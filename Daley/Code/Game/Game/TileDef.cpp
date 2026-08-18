@@ -19,22 +19,17 @@ TileDef::TileDef(XmlElement const* tileDefXmlElement)
 	bool isVisible = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "visible", true);
 	bool isSolid = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "solid", true);
 	bool isOpaque = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "opaque", true);
-	SetTags(isVisible, isSolid, isOpaque);
+	bool blocksTowers = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "blocksTowers", false);
+
+	m_tags |= isVisible		? (uint8_t) TileTag::Visible		: 0;
+	m_tags |= isSolid		? (uint8_t) TileTag::Solid			: 0;
+	m_tags |= isOpaque		? (uint8_t) TileTag::Opaque			: 0;
+	m_tags |= blocksTowers	? (uint8_t) TileTag::BlocksTowers	: 0;
 
 	m_tint = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "tint", m_tint);
 	m_cost = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "cost", m_cost);
 	m_spriteIndex = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "spriteIndex", m_spriteIndex);
 	m_indoorLight = XmlUtils::ParseXmlAttribute(*tileDefXmlElement, "indoorLight", m_indoorLight);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void TileDef::SetTags(bool isVisible, bool isSolid, bool isOpaque)
-{
-	m_tags |= isVisible ? (uint8_t) TileTag::Visible	: 0;
-	m_tags |= isSolid	? (uint8_t) TileTag::Solid		: 0;
-	m_tags |= isOpaque	? (uint8_t) TileTag::Opaque		: 0;
 }
 
 

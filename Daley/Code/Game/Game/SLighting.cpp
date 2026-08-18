@@ -74,9 +74,9 @@ void SLighting::Run(SystemContext const& context) const
 
 	LightingConstants lightingConstants;
     Rgba8::White.GetAsFloats(lightingConstants.m_ambientLightTint);
-    Rgba8::LightGray.GetAsFloats(lightingConstants.m_outdoorLightTint);
+    Rgba8::Gainsboro.GetAsFloats(lightingConstants.m_outdoorLightTint);
 	Rgba8::LightOrange.GetAsFloats(lightingConstants.m_indoorLightTint);
-    lightingConstants.m_ambientLightIntensity = 0.01f; // 0 = pitch black, 1 = full brightness
+    lightingConstants.m_ambientLightIntensity = 1.0f; // 0 = pitch black, 1 = full brightness
 	lightingConstants.m_isLightingEnabled = scLighting.m_isLightingEnabled ? 1 : 0;
 
     ConstantBuffer* lightingCbo = renderer.GetConstantBuffer(scRenderer.m_lightingConstantsBuffer);

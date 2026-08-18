@@ -32,13 +32,15 @@ struct NoiseParams
 //----------------------------------------------------------------------------------------------------------------------
 struct MapGeneratorComponentDef
 {
-	MapGeneratorComponentDef() = default;
+	MapGeneratorComponentDef(XmlElement const* xmlElement);
 	virtual ~MapGeneratorComponentDef() = default;
 
 	virtual class MapGeneratorComponent* MakeComponentInstance() const = 0;
 
 	// Factory function to turn a generic componnet xml Element into an allocated def
 	static MapGeneratorComponentDef const* MakeFromXmlElement(XmlElement const* xmlElement);
+
+	int m_runOrder = 0; // Lower numbers run first
 };
 
 
@@ -73,6 +75,23 @@ struct NoisePeakSelectorComponentDef : public MapGeneratorComponentDef
 
 	Name m_name = "Unnamed SelectorDef";
 	NoiseParams m_noiseParams;
+	TagQuery m_tagQuery;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Places tiles in a range of distance field values based on a tile tag query
+//
+struct DistanceFieldSelectorComponentDef : public MapGeneratorComponentDef
+{
+	DistanceFieldSelectorComponentDef(XmlElement const* xmlElement);
+	~DistanceFieldSelectorComponentDef() = default;
+
+	virtual MapGeneratorComponent* MakeComponentInstance() const override;
+
+	Name m_name = "Unnamed SelectorDef";
+	IntVec2 m_distanceRange = IntVec2(0, 999);
 	TagQuery m_tagQuery;
 };
 

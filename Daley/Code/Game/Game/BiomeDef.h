@@ -16,15 +16,19 @@ struct BiomeDef
 public:
 
 	explicit BiomeDef(XmlElement const* biomeDefXmlElement);
-	~BiomeDef();
+	explicit BiomeDef(BiomeDef const& other) = delete;
+
+	void Release();
 
 	static void LoadFromXML();
 	static void Shutdown();
 	static BiomeDef const* GetBiomeDef(Name name);
 
+	void operator=(BiomeDef const& other) = delete;
+
 private:
 
-	static std::vector<BiomeDef> s_biomeDefs;
+	static std::vector<BiomeDef*> s_biomeDefs;
 
 public:
 

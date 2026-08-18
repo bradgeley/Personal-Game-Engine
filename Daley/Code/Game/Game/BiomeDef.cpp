@@ -8,7 +8,7 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 static const char* s_biomeDefsFilePath = "Data/Definitions/BiomeDefs.xml";
-std::vector<BiomeDef> BiomeDef::s_biomeDefs;
+std::vector<BiomeDef*> BiomeDef::s_biomeDefs;
 
 
 
@@ -39,7 +39,7 @@ BiomeDef::BiomeDef(XmlElement const* biomeDefXmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-BiomeDef::~BiomeDef()
+void BiomeDef::Release()
 {
 	for (size_t i = 0; i < m_generatorComponentDefs.size(); ++i)
 	{
@@ -61,7 +61,8 @@ void BiomeDef::LoadFromXML()
 
 		while (biomeDefElement)
 		{
-			s_biomeDefs.emplace_back(biomeDefElement);
+			BiomeDef* biomeDef = new BiomeDef(biomeDefElement);
+			s_biomeDefs.push_back(biomeDef);
 			biomeDefElement = biomeDefElement->NextSiblingElement();
 		}
 	}
@@ -72,6 +73,11 @@ void BiomeDef::LoadFromXML()
 //----------------------------------------------------------------------------------------------------------------------
 void BiomeDef::Shutdown()
 {
+	for (size_t i = 0; i < s_biomeDefs.size(); ++i)
+	{
+		s_biomeDefs[i]->Release();
+		delete s_biomeDefs[i];
+	}
 	s_biomeDefs.clear();
 }
 
@@ -82,7 +88,7 @@ BiomeDef const* BiomeDef::GetBiomeDef(Name name)
 {
 	for (size_t i = 0; i < s_biomeDefs.size(); i++)
 	{
-		BiomeDef const* def = &s_biomeDefs[i];
+		BiomeDef const* def = s_biomeDefs[i];
 		if (def->m_name == name)
 		{
 			return def;

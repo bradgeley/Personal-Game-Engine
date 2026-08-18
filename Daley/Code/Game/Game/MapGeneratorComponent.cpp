@@ -21,6 +21,7 @@ NoiseRangeSelectorComponent::NoiseRangeSelectorComponent(NoiseRangeSelectorCompo
 {
 	m_name = def.m_name;
 	m_tagQuery = def.m_tagQuery;
+	m_runOrder = def.m_runOrder;
 }
 
 
@@ -60,6 +61,7 @@ NoisePeakSelectorComponent::NoisePeakSelectorComponent(NoisePeakSelectorComponen
 {
 	m_name = def.m_name;
 	m_tagQuery = def.m_tagQuery;
+	m_runOrder = def.m_runOrder;
 }
 
 
@@ -122,9 +124,87 @@ void NoisePeakSelectorComponent::ForEachSelectedTile(MapGenerator& generator, SC
 
 
 //----------------------------------------------------------------------------------------------------------------------
+DistanceFieldSelectorComponent::DistanceFieldSelectorComponent(DistanceFieldSelectorComponentDef const& def)
+{
+	m_name = def.m_name;
+	m_tagQuery = def.m_tagQuery;
+	m_runOrder = def.m_runOrder;
+	m_distanceRange = def.m_distanceRange;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void DistanceFieldSelectorComponent::ForEachSelectedTile(MapGenerator&, SCWorld& world, std::function<bool(IntVec2 const&)> const& func)
+{
+	m_distanceFieldValues.clear();
+
+	m_distanceFieldValues.resize(world.m_tiles.GetSize(), 9999);
+
+	std::priority_queue<IntVec2> openList;
+
+	// Seed tiles
+	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
+	{
+		if (!world.DoesTileMatchTagQuery(tileCoords, m_tagQuery))
+		{
+			return true;
+		}
+		int tileIndex = world.m_tiles.GetIndexForCoords(tileCoords);
+		m_distanceFieldValues[tileIndex] = 0;
+		openList.emplace(IntVec2(0, tileIndex));
+		return true; // Continue iterating
+	});
+
+	// Run Dijkstra's algorithm to compute distance field
+	while (openList.empty() == false)
+	{
+		IntVec2 pair = openList.top();
+		openList.pop();
+		int const& currentDistance = pair.x;
+		int const& currentIndex = pair.y;
+
+		if (currentDistance > m_distanceFieldValues[currentIndex])
+		{
+			continue; // Already found a shorter path to this tile
+		}
+
+		IntVec2 currentCoords = world.m_tiles.GetCoordsForIndex(currentIndex);
+		world.ForEachPlayableNeighboringTile(currentCoords, [&](IntVec2 const& neighborCoords)
+		{
+			int neighborIndex = world.m_tiles.GetIndexForCoords(neighborCoords);
+			int newDistance = currentDistance + 1; // Assuming uniform cost for each step
+			if (newDistance < m_distanceFieldValues[neighborIndex])
+			{
+				m_distanceFieldValues[neighborIndex] = newDistance;
+				openList.emplace(IntVec2(newDistance, neighborIndex));
+			}
+			return true; // Continue checking neighbors
+		});
+	}
+
+	// Run selector logic
+	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
+	{
+		int tileIndex = world.m_tiles.GetIndexForCoords(tileCoords);
+		int distanceValue = m_distanceFieldValues[tileIndex];
+		if (distanceValue >= m_distanceRange.x && distanceValue <= m_distanceRange.y)
+		{
+			if (!func(tileCoords))
+			{
+				return false; // Stop iterating
+			}
+		}
+		return true; // Continue iterating
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TileGeneratorComponent::TileGeneratorComponent(TileGeneratorComponentDef const& def) : m_tileSelectorName(def.m_tileSelectorName), m_tileName(def.m_tileName)
 {
-
+	m_runOrder = def.m_runOrder;
 }
 
 
@@ -163,7 +243,7 @@ bool TileGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 //----------------------------------------------------------------------------------------------------------------------
 EntityGeneratorComponent::EntityGeneratorComponent(EntityGeneratorComponentDef const& def) : m_tileSelectorName(def.m_tileSelectorName), m_entityName(def.m_entityName)
 {
-
+	m_runOrder = def.m_runOrder;
 }
 
 
@@ -202,7 +282,7 @@ bool EntityGeneratorComponent::Generate(MapGenerator& generator, SCWorld& world)
 //----------------------------------------------------------------------------------------------------------------------
 DiscGoalGeneratorComponent::DiscGoalGeneratorComponent(DiscGoalGeneratorComponentDef const& def) : m_alignment(def.m_alignment), m_radius(def.m_radius)
 {
-
+	m_runOrder = def.m_runOrder;
 }
 
 
@@ -242,7 +322,7 @@ bool DiscGoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& worl
 //----------------------------------------------------------------------------------------------------------------------
 RectGoalGeneratorComponent::RectGoalGeneratorComponent(RectGoalGeneratorComponentDef const& def) : m_alignment(def.m_alignment), m_dims(def.m_dims)
 {
-
+	m_runOrder = def.m_runOrder;
 }
 
 
@@ -282,13 +362,14 @@ bool RectGoalGeneratorComponent::Generate(MapGenerator& generator, SCWorld& worl
 PerlinWormPathGeneratorComponent::PerlinWormPathGeneratorComponent(PerlinWormPathGeneratorComponentDef const& def)
 {
 	m_startPos = def.m_startPos;
-	m_startDir = def.m_startDir;
+	m_startDir = def.m_startDir.GetNormalized();
 	m_thicknessRange = def.m_thicknessRange;
 	m_thicknessNoiseScale = def.m_thicknessNoiseScale;
 	m_splitChance = def.m_splitChance;
 	m_splitAngleDeg = def.m_splitAngleDeg;
 	m_maxSplits = def.m_maxSplits;
 	m_seedOffset = def.m_seedOffset;
+	m_runOrder = def.m_runOrder;
 }
 
 

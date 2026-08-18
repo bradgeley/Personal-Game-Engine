@@ -18,8 +18,9 @@ enum class TileTag : uint8_t
 	Opaque			= 1 << 2,
 	IsGoal			= 1 << 3,
 	IsPath			= 1 << 4,
-	Lighting_Dirty	= 1 << 5, // Means the lighting for this tile changed and its verts need to be recalculated
-	Verts_Dirty		= 1 << 6, // Means the verts are dirty and need to be recalculated (e.g., because the tile ID changed, or lighting changed)
+	BlocksTowers	= 1 << 5,
+	Lighting_Dirty	= 1 << 6, // Means the lighting for this tile changed and its verts need to be recalculated
+	Verts_Dirty		= 1 << 7, // Means the verts are dirty and need to be recalculated (e.g., because the tile ID changed, or lighting changed)
 };
 
 
@@ -39,6 +40,7 @@ public:
 	inline bool IsPath()			const { return m_tags & static_cast<uint8_t>(TileTag::IsPath); }
 	inline bool IsLightingDirty()   const { return m_tags & static_cast<uint8_t>(TileTag::Lighting_Dirty); }
 	inline bool IsVertsDirty()		const { return m_tags & static_cast<uint8_t>(TileTag::Verts_Dirty); }
+	inline bool BlocksTowers()		const { return m_tags & static_cast<uint8_t>(TileTag::BlocksTowers); }
 
 	inline uint8_t GetOutdoorLighting() 	const { return m_lightingValues & 0x0F; }
 	inline float   GetOutdoorLighting01()	const { return static_cast<float>(GetOutdoorLighting()) / 15.f; }
@@ -57,6 +59,7 @@ public:
 	void SetIsPath(bool isPath);
 	void SetLightingDirty(bool dirty);
 	void SetVertsDirty(bool dirty);
+	void SetBlocksTowers(bool blocksTowers);
 
 	bool operator==(Tile const& other) const;
 

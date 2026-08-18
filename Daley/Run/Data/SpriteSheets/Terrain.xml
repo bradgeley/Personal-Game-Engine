@@ -1,7 +1,7 @@
 
 
 
-<GridSpriteSheet name="Terrain" texture="Data/SpriteSheets/Terrain.png" layout="13,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Terrain" texture="Data/SpriteSheets/Terrain.png" layout="14,1" edgePadding="0,0" innerPadding="0,0">
   
   <!-- Tiles -->
   <SpriteAnimation name="grass"           frames="0"></SpriteAnimation>
@@ -10,12 +10,13 @@
   <SpriteAnimation name="islandWater"     frames="3"></SpriteAnimation>
   <SpriteAnimation name="oceanWater"      frames="4"></SpriteAnimation>
   <SpriteAnimation name="sand"            frames="5"></SpriteAnimation>
-  <SpriteAnimation name="forestGrass"     frames="6"></SpriteAnimation>
-  <SpriteAnimation name="deepForestGrass" frames="7"></SpriteAnimation>
-  <SpriteAnimation name="snow"            frames="8"></SpriteAnimation>
-  <SpriteAnimation name="ice"             frames="9"></SpriteAnimation>
-  <SpriteAnimation name="clay"            frames="10"></SpriteAnimation>
-  <SpriteAnimation name="obsidian"        frames="11"></SpriteAnimation>
-  <SpriteAnimation name="glowstone"       frames="12"></SpriteAnimation>
+  <SpriteAnimation name="sandstone"       frames="6"></SpriteAnimation>
+  <SpriteAnimation name="forestGrass"     frames="7"></SpriteAnimation>
+  <SpriteAnimation name="deepForestGrass" frames="8"></SpriteAnimation>
+  <SpriteAnimation name="snow"            frames="9"></SpriteAnimation>
+  <SpriteAnimation name="ice"             frames="10"></SpriteAnimation>
+  <SpriteAnimation name="clay"            frames="11"></SpriteAnimation>
+  <SpriteAnimation name="obsidian"        frames="12"></SpriteAnimation>
+  <SpriteAnimation name="glowstone"       frames="13"></SpriteAnimation>
   
 </GridSpriteSheet>

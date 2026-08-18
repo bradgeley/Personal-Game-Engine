@@ -120,6 +120,21 @@ void Tile::SetVertsDirty(bool dirty)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Tile::SetBlocksTowers(bool blocksTowers)
+{
+	if (blocksTowers)
+	{
+		m_tags |= static_cast<uint8_t>(TileTag::BlocksTowers);
+	}
+    else
+    {
+        m_tags &= ~static_cast<uint8_t>(TileTag::BlocksTowers);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool Tile::operator==(Tile const& other) const
 {
     return m_id == other.m_id

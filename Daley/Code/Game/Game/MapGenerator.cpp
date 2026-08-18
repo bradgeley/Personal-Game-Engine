@@ -12,6 +12,7 @@
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Performance/ScopedTimer.h"
+#include <algorithm>
 
 
 
@@ -48,6 +49,8 @@ void MapGenerator::Initialize(MapGeneratorDef const& mapGenDef, int seed)
 		MapGeneratorComponent* component = componentDef->MakeComponentInstance();
 		m_components.push_back(component);
 	}
+
+	std::sort(m_components.begin(), m_components.end(), [](MapGeneratorComponent* a, MapGeneratorComponent* b) { return a->m_runOrder < b->m_runOrder; });
 }
 
 
