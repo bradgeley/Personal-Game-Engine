@@ -61,7 +61,7 @@
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.75" pathOnly="true"></Movement>
     <Render scale="7.5" rotateSprite="true"></Render>
-    <Tags tags="large,boss,enemy,ant"></Tags>
+    <Tags tags="boss,enemy,ant"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

@@ -1,8 +1,10 @@
 // Bradley Christensen - 2022-2026
 #include "SWaveSpawner.h"
+#include "BiomeDef.h"
 #include "CTags.h"
 #include "EntityDef.h"
 #include "GameCommon.h"
+#include "MapGeneratorDef.h"
 #include "SCEntityFactory.h"
 #include "SCWaves.h"
 #include "SCWorld.h"
@@ -15,6 +17,7 @@
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/Noise.h"
 #include "Engine/Math/RandomNumberGenerator.h"
+#include "Engine/Performance/ScopedTimer.h"
 
 
 
@@ -194,8 +197,9 @@ bool SWaveSpawner::GenerateWaves(NamedProperties& args)
 	int numWaves = args.Get("numWaves", 0);
 
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
+	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
 
-	GenerateWaves(waves, seed, numWaves);
+	GenerateWaves(waves, runData, seed, numWaves);
 
 	return false;
 }
@@ -241,31 +245,25 @@ static Name GetRandomEnemyWithTags(std::vector<Name> const& tags, RandomNumberGe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWaveSpawner::GenerateWaves(SCWaves& waves, int seed, int numWaves)
+void SWaveSpawner::GenerateWaves(SCWaves& waves, SCRunData const& runData, int seed, int numWaves)
 {
+	ScopedTimer t("GenerateWaves");
+
 	RandomNumberGenerator rng(static_cast<size_t>(seed));
 
-	// Static wave gen def for now, later get from a file
-	waves.m_waveGenDef.m_numWaves = numWaves;
-	waves.m_waveGenDef.m_seed = seed;
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 1, -1, "ant", 100, false });
-	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 40, 50, { "ant", "small" }, 1.f });
-	waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 10, 20, { "ant", "medium" },  0.5f });
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "largeAnt", 1, false });
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 4, 5, "ant", 20, false });
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 10.f, 14, -1, "bossAnt", 1, false });
-	waves.m_waveGenDef.m_fixedWaves.push_back(FixedWaveStreamDef{ 30.f, 7, 7, "ant", 200, false});
+	MissionGenData const& missionGenData = runData.m_missionGenData[runData.m_missionIndex];
 
-	//waves.m_waveGenDef.m_randomWaves.push_back(RandomWaveStreamDef{ 10.f, 20, 25, { "boss", "ant" }, 1.f });
+	MapGeneratorDef const* mapGenDef = MapGeneratorDef::GetMapGeneratorDef(missionGenData.m_mapName);
+	ASSERT_OR_DIE(mapGenDef != nullptr, StringUtils::StringF("GenerateWaves: Invalid map generator name: %s", missionGenData.m_mapName.ToCStr()).c_str());
 
-	// Modifiers
-	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplier = 1.f;
-	waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave = 0.5f;
-	waves.m_waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier = 1.f;
-	waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplierIncreasePerWave = 0.15f;
-	waves.m_waveGenDef.m_waveGenModifiers.m_speedMultiplierIncreasePerWave = 0.02f;
+	BiomeDef const* biomeDef = BiomeDef::GetBiomeDef(mapGenDef->m_biome);
+	ASSERT_OR_DIE(biomeDef != nullptr, StringUtils::StringF("GenerateWaves: Invalid biome name: %s", mapGenDef->m_biome.ToCStr()).c_str());
 
+	waves.m_waveGenDef = biomeDef->m_waveGenDef;
 	waves.m_waves.clear();
+
+	// Apply modifiers
+	waves.m_waveGenDef.m_waveGenModifiers.m_healthMultiplier = 1.f + (StaticGameSettings::s_enemyHealthIncreasePerMission * static_cast<float>(runData.m_missionIndex));
 
 	// Seconds Between Waves
 	float spawnRateMultiplier = MathUtils::Clamp(waves.m_waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier, 0.01f, 100.f);

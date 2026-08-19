@@ -5,6 +5,7 @@
 #include "MapGenerator.h"
 #include "SCEntityFactory.h"
 #include "SCFlowField.h"
+#include "SCRunData.h"
 #include "SCWorld.h"
 #include "TileDef.h"
 #include "Engine/Core/NamedProperties.h"
@@ -22,11 +23,13 @@ void SWorld::Startup()
 
 	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "mapGenName", DevConsoleArgType::String, "seed", DevConsoleArgType::Int);
 
-	static int seed = 0;
+
+	SCRunData const& runData = g_ecs->GetSingleton<SCRunData>();
+	MissionGenData const& missionGenData = runData.m_missionGenData[runData.m_missionIndex];
 
 	NamedProperties props;
-	props.Set<std::string>("mapGenName", "river");
-	props.Set<int>("seed", seed++);
+	props.Set<Name>("mapGenName", missionGenData.m_mapName);
+	props.Set<int>("seed", runData.m_seed + runData.m_missionIndex);
 	GenerateMap(props);
 
 	m_ignoreRun = true;
@@ -62,7 +65,7 @@ void SWorld::EndFrame() const
 //----------------------------------------------------------------------------------------------------------------------
 bool SWorld::GenerateMap(NamedProperties& params)
 {
-	std::string mapGenName = params.Get<std::string>("mapGenName", "");
+	Name mapGenName = params.Get<Name>("mapGenName", Name(""));
 	int seed = params.Get<int>("seed", 0);
 
 	MapGeneratorDef const* def = MapGeneratorDef::GetMapGeneratorDef(mapGenName);

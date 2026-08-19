@@ -33,4 +33,5 @@ public:
 
     TowerPlacementResult CanPlaceTower(TowerPlacementRequest const& info, SCWorld const& world) const;
     bool PlaceTowerInWorld(TowerPlacementRequest const& placementInfo, SCWorld& world) const;
+	bool WillChangePathSolidness(TowerPlacementRequest const& placementInfo, SCWorld const& world) const;
 };

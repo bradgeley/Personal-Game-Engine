@@ -71,7 +71,7 @@ bool SSaveLoad::LoadGame(NamedProperties& args)
 	Name mapDefName = Name(lines[1]);
 
 	NamedProperties mapGenParams;
-	mapGenParams.Set<std::string>("mapGenName", mapDefName.ToString());
+	mapGenParams.Set<Name>("mapGenName", mapDefName);
 	mapGenParams.Set<int>("seed", seed);
 	g_eventSystem->FireEvent("GenerateMap", mapGenParams);
 

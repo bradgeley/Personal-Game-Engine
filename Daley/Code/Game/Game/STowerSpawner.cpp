@@ -141,7 +141,12 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& i
 		return TowerPlacementResult::CannotAfford;
 	}
 
-    SCWorld copy = world;
+    SCWorld copy;
+	copy.m_tiles = world.m_tiles;
+    if (!info.m_isGenerated)
+    {
+        copy.m_numEnemiesInTile = world.m_numEnemiesInTile;
+    }
 
     copy.m_solidnessOfPathTileChanged = false;
 
@@ -193,7 +198,7 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& i
             return true;
         }
 
-        int numEnemies = copy.m_numEnemiesInTile.Get(tileCoords);
+        int numEnemies = info.m_isGenerated ? 0 : copy.m_numEnemiesInTile.Get(tileCoords);
         if (numEnemies > 0)
         {
 		    float distanceToTileWithEnemy = proxyWorldFlowField.GetDistanceAtTileCoords(tileCoords);
@@ -229,4 +234,31 @@ bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& placementInfo
     }
 
     return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool STowerSpawner::WillChangePathSolidness(TowerPlacementRequest const& placementInfo, SCWorld const& world) const
+{
+	bool isValidPlacement = world.DoTilesInRegionMatchQuery(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, placementInfo.m_tileTagQuery);
+	if (!isValidPlacement)
+    {
+        return false;
+    }
+
+	bool willChangePathSolidness = false;
+    world.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
+    {
+        // m_solidnessOfPathTileChanged |= (tile.IsPath() != existingTile.IsPath()) || (tile.IsPath() && tile.IsSolid() != existingTile.IsSolid());
+        Tile const& tile = world.m_tiles.Get(worldCoords);
+		if (tile.IsPath() && !tile.IsSolid())
+        {
+            willChangePathSolidness = true;
+            return false; // stop iterating
+        }
+        return true; // keep iterating
+    });
+
+    return willChangePathSolidness;
 }

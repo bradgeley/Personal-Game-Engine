@@ -7,6 +7,7 @@
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Input/InputSystem.h"
+#include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
@@ -50,11 +51,27 @@ void RunState::Enter(NamedProperties const& props)
 
 	// Todo: get initial placeable tower data from somewhere in xml
 	m_runData = SCRunData();
+	m_runData.m_seed = g_rng->GetRandomIntInRange(0, 1'000'000);
 	m_runData.m_placeableTowers[0] = PlaceableTower{ "Vanilla", '1', 30.f };
 	m_runData.m_placeableTowers[1] = PlaceableTower{ "Chocolate", '2', 40.f };
 	m_runData.m_placeableTowers[2] = PlaceableTower{ "Strawberry", '3', 50.f };
 	m_runData.m_placeableTowers[3] = PlaceableTower{ "Mint", '4', 60.f };
 	m_runData.m_placeableTowers[4] = PlaceableTower{ "Wall1x1", 'W', 5.f };
+
+	// Forest Biome first
+	m_runData.m_missionGenData[0] = { "forest" };
+	m_runData.m_missionGenData[1] = { "forest" };
+	m_runData.m_missionGenData[2] = { "forestCross" };
+
+	// Then Desert
+	m_runData.m_missionGenData[3] = { "desert" };
+	m_runData.m_missionGenData[4] = { "desert" };
+	m_runData.m_missionGenData[5] = { "desertCross" };
+
+	// Then River
+	m_runData.m_missionGenData[6] = { "river" };
+	m_runData.m_missionGenData[7] = { "river" };
+	m_runData.m_missionGenData[8] = { "riverCross" };
 }
 
 
@@ -137,7 +154,7 @@ bool RunState::MissionOver(NamedProperties& props)
 	else
 	{
 		m_runData.m_missionIndex++;
-		if (m_runData.m_missionIndex == m_runData.m_totalMissions)
+		if (m_runData.m_missionIndex == StaticGameSettings::s_numMissionsForVictory)
 		{
 			NamedProperties changeStateProps;
 			changeStateProps.Set<Name>("state", "GameOver");

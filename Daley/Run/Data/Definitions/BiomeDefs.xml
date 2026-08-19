@@ -7,28 +7,43 @@
   <!-- Forest -->
   <BiomeDef name="forest" baseTile="forestGrass" goalTile="islandWater" pathTile="snow">
 
-    <NoiseRangeSelector name="forest" range="0.5,1">
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
-    </NoiseRangeSelector>
+    <MapGeneratorComponents>
+      <NoiseRangeSelector name="forest" range="0.5,1">
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
+      </NoiseRangeSelector>
       
-    <NoiseRangeSelector name="mountain" range="0.75,1">
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="2"></NoiseParams>
-    </NoiseRangeSelector>
+      <NoiseRangeSelector name="mountain" range="0.75,1">
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="2"></NoiseParams>
+      </NoiseRangeSelector>
       
-    <NoiseRangeSelector name="smallTrees" range="0.75,1">
-      <TagQuery doesNotHaveAny="path"></TagQuery>
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="3" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="4"></NoiseParams>
-    </NoiseRangeSelector>
+      <NoiseRangeSelector name="smallTrees" range="0.75,1">
+        <TagQuery doesNotHaveAny="path"></TagQuery>
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="3" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="4"></NoiseParams>
+      </NoiseRangeSelector>
       
-    <NoisePeakSelector name="bigTrees">
-      <TagQuery doesNotHaveAny="path"></TagQuery>
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
-    </NoisePeakSelector>
+      <NoisePeakSelector name="bigTrees">
+        <TagQuery doesNotHaveAny="path"></TagQuery>
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
+      </NoisePeakSelector>
 
-    <TileGenerator runOrder="0" tile="deepForestGrass" selector="forest"></TileGenerator>
-    <TileGenerator runOrder="1" tile="stone" selector="mountain"></TileGenerator>
-    <EntityGenerator runOrder="98" entity="tree1x1" selector="smallTrees"></EntityGenerator>
-    <EntityGenerator runOrder="99" entity="tree2x2" selector="bigTrees"></EntityGenerator>
+      <DistanceFieldSelector name="treesDistanceField" range="12,30">
+        <TagQuery hasAny="path,goal"></TagQuery>
+      </DistanceFieldSelector>
+
+      <TileGenerator runOrder="0" tile="deepForestGrass" selector="forest"></TileGenerator>
+      <TileGenerator runOrder="1" tile="stone" selector="mountain"></TileGenerator>
+      <EntityGenerator runOrder="98" entity="tree1x1" selector="smallTrees"></EntityGenerator>
+      <EntityGenerator runOrder="99" entity="tree2x2" selector="bigTrees"></EntityGenerator>
+      <EntityGenerator runOrder="100" entity="tree2x2" selector="treesDistanceField"></EntityGenerator>
+    </MapGeneratorComponents>
+
+    <WaveGenerator>
+      <RandomWaveStream time="30" min="32" max="40" tags="ant,small"  weight="1"></RandomWaveStream>
+      <RandomWaveStream time="24" min="16" max="20" tags="ant,medium" weight="0.5"></RandomWaveStream>
+      <RandomWaveStream time="16" min="8"  max="10" tags="ant,large"  weight="0.25"></RandomWaveStream>
+      <RandomWaveStream time="16" min="100"  max="120" tags="ant,small"  weight="0.1"></RandomWaveStream>
+      <FixedWaveStream time="1" num="1" entity="bossAnt" waveIndex="-1" guaranteedLastWave="true"></FixedWaveStream>
+    </WaveGenerator>
     
   </BiomeDef>
 
@@ -36,26 +51,37 @@
   <!-- Desert -->
   <BiomeDef name="desert" baseTile="sand" goalTile="islandWater" pathTile="snow">
 
-    <NoiseRangeSelector name="sand" range="0.5,1">
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
-    </NoiseRangeSelector>
+    <MapGeneratorComponents>
+      <NoiseRangeSelector name="sand" range="0.5,1">
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
+      </NoiseRangeSelector>
 
-    <NoiseRangeSelector name="sandstone" range="0.75,1">
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
-    </NoiseRangeSelector>
+      <NoiseRangeSelector name="sandstone" range="0.75,1">
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
+      </NoiseRangeSelector>
 
-    <NoiseRangeSelector name="mountain" range="0.75,1">
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="2"></NoiseParams>
-    </NoiseRangeSelector>
+      <NoiseRangeSelector name="mountain" range="0.75,1">
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="2"></NoiseParams>
+      </NoiseRangeSelector>
 
-    <NoisePeakSelector name="cacti">
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
-    </NoisePeakSelector>
+      <NoisePeakSelector name="cacti">
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
+      </NoisePeakSelector>
 
-    <TileGenerator runOrder="0" tile="sand" selector="sand"></TileGenerator>
-    <TileGenerator runOrder="1" tile="sandstone" selector="sandstone"></TileGenerator>
-    <TileGenerator runOrder="2" tile="stone" selector="mountain"></TileGenerator>
-    <EntityGenerator runOrder="99" entity="cactus2x2" selector="cacti"></EntityGenerator>
+      <TileGenerator runOrder="0" tile="sand" selector="sand"></TileGenerator>
+      <TileGenerator runOrder="1" tile="sandstone" selector="sandstone"></TileGenerator>
+      <TileGenerator runOrder="2" tile="stone" selector="mountain"></TileGenerator>
+      <EntityGenerator runOrder="99" entity="cactus2x2" selector="cacti"></EntityGenerator>
+    </MapGeneratorComponents>
+
+    <!-- TODO: Scorpions? -->
+    <WaveGenerator>
+      <RandomWaveStream time="30" min="32" max="40" tags="ant,small"  weight="1"></RandomWaveStream>
+      <RandomWaveStream time="24" min="16" max="20" tags="ant,medium" weight="0.5"></RandomWaveStream>
+      <RandomWaveStream time="16" min="8"  max="10" tags="ant,large"  weight="0.25"></RandomWaveStream>
+      <RandomWaveStream time="16" min="100"  max="120" tags="ant,small"  weight="0.1"></RandomWaveStream>
+      <FixedWaveStream time="1" num="1" entity="bossAnt" waveIndex="-1" guaranteedLastWave="true"></FixedWaveStream>
+    </WaveGenerator>
 
   </BiomeDef>
 
@@ -63,21 +89,37 @@
   <!-- River -->
   <BiomeDef name="river" baseTile="grass" goalTile="riverWater" pathTile="islandWater">
 
-    <NoiseRangeSelector name="forest" range="0.5,1">
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
-    </NoiseRangeSelector>
+    <MapGeneratorComponents>
+      <NoiseRangeSelector name="forest" range="0.5,1">
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="1"></NoiseParams>
+      </NoiseRangeSelector>
 
-    <NoisePeakSelector name="bigTrees">
-      <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
-    </NoisePeakSelector>
+      <NoisePeakSelector name="bigTrees">
+        <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
+      </NoisePeakSelector>
 
-    <DistanceFieldSelector name="shore" range="1,1">
-      <TagQuery hasAny="path,goal"></TagQuery>
-    </DistanceFieldSelector>
+      <DistanceFieldSelector name="shore" range="1,1">
+        <TagQuery hasAny="path,goal"></TagQuery>
+      </DistanceFieldSelector>
 
-    <TileGenerator runOrder="0" tile="forestGrass" selector="forest"></TileGenerator>
-    <TileGenerator runOrder="98" tile="sand" selector="shore"></TileGenerator>
-    <EntityGenerator runOrder="99" entity="tree2x2" selector="bigTrees"></EntityGenerator>
+      <DistanceFieldSelector name="trees" range="12,30">
+        <TagQuery hasAny="path,goal"></TagQuery>
+      </DistanceFieldSelector>
+
+      <TileGenerator runOrder="0" tile="forestGrass" selector="forest"></TileGenerator>
+      <TileGenerator runOrder="97" tile="sand" selector="shore"></TileGenerator>
+      <EntityGenerator runOrder="98" entity="tree2x2" selector="bigTrees"></EntityGenerator>
+      <EntityGenerator runOrder="99" entity="tree2x2" selector="trees"></EntityGenerator>
+    </MapGeneratorComponents>
+
+    <!-- TODO: Water themed enemy type -->
+    <WaveGenerator>
+      <RandomWaveStream time="30" min="32" max="40" tags="ant,small"  weight="1"></RandomWaveStream>
+      <RandomWaveStream time="24" min="16" max="20" tags="ant,medium" weight="0.5"></RandomWaveStream>
+      <RandomWaveStream time="16" min="8"  max="10" tags="ant,large"  weight="0.25"></RandomWaveStream>
+      <RandomWaveStream time="16" min="100"  max="120" tags="ant,small"  weight="0.1"></RandomWaveStream>
+      <FixedWaveStream time="1" num="1" entity="bossAnt" waveIndex="-1" guaranteedLastWave="true"></FixedWaveStream>
+    </WaveGenerator>
 
   </BiomeDef>
   

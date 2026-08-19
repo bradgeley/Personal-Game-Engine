@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "SCWaves.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Core/Name.h"
 #include <vector>
@@ -37,4 +38,5 @@ public:
 	Name		m_goalTile		= "islandWater";
 	Name 		m_pathTile		= "snow";
 	std::vector<MapGeneratorComponentDef const*> m_generatorComponentDefs;
+	LevelWaveGenDef m_waveGenDef;
 };

@@ -95,13 +95,14 @@ void TowerDefenseState::StartGame(NamedProperties const& inProps)
 	runData.m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
 	runData.m_numSoldTowers = 0;
 
+	int numWaves = StaticGameSettings::s_numWavesInFirstMission + runData.m_missionIndex * StaticGameSettings::s_numWavesIncreasePerMission;
     int seed = runData.m_seed + runData.m_missionIndex;
 
     g_ecs->Startup();
 
     NamedProperties props;
     props.Set<int>("seed", seed);
-	props.Set<int>("numWaves", (runData.m_missionIndex + 1) * 5);
+	props.Set<int>("numWaves", numWaves);
 	g_eventSystem->FireEvent("GenerateWaves", props);
 
 	g_eventSystem->FireEvent("StartWaves", props);

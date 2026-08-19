@@ -20,7 +20,10 @@ BiomeDef::BiomeDef(XmlElement const* biomeDefXmlElement)
 	m_goalTile = XmlUtils::ParseXmlAttribute(*biomeDefXmlElement, "goalTile", m_goalTile);
 	m_pathTile = XmlUtils::ParseXmlAttribute(*biomeDefXmlElement, "pathTile", m_pathTile);
 
-	XmlElement const* mapGeneratorComponentDefElement = biomeDefXmlElement->FirstChildElement();
+	XmlElement const* mapGeneratorComponentsElement = biomeDefXmlElement->FirstChildElement("MapGeneratorComponents");
+	ASSERT_OR_DIE(mapGeneratorComponentsElement != nullptr, StringUtils::StringF("BiomeDef %s is missing MapGeneratorComponents element", m_name.ToCStr()));
+
+	XmlElement const* mapGeneratorComponentDefElement = mapGeneratorComponentsElement->FirstChildElement();
 	while (mapGeneratorComponentDefElement)
 	{
 		MapGeneratorComponentDef const* mapGeneratorComponentDef = MapGeneratorComponentDef::MakeFromXmlElement(mapGeneratorComponentDefElement);
@@ -34,6 +37,11 @@ BiomeDef::BiomeDef(XmlElement const* biomeDefXmlElement)
 		}
 		mapGeneratorComponentDefElement = mapGeneratorComponentDefElement->NextSiblingElement();
 	}
+
+	XmlElement const* waveGeneratorElement = biomeDefXmlElement->FirstChildElement("WaveGenerator");
+	ASSERT_OR_DIE(waveGeneratorElement != nullptr, StringUtils::StringF("BiomeDef %s is missing WaveGenerator element", m_name.ToCStr()));
+
+	m_waveGenDef.LoadFromXml(waveGeneratorElement);
 }
 
 

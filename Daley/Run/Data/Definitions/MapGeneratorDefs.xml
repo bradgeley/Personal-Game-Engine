@@ -4,34 +4,49 @@
 
 <MapGeneratorDefs>
 
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!-- Forest -->
   <MapGeneratorDef name="forest" biome="forest">
-    <RectGoal runOrder="50" alignment="0.15,0.5" dims="4,4"></RectGoal>
+    <RectGoal runOrder="50" alignment="0.15,0.5" dims="2,2"></RectGoal>
     <PerlinWormPath runOrder="51" startPos="0.15,0.5" startDir="1,0" thicknessRange="2,5" thicknessNoiseScale="1" splitChance="0.0175" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
   </MapGeneratorDef>
 
   <MapGeneratorDef name="forestCross" biome="forest">
-    <DiscGoal runOrder="50" alignment="0.5,0.5" radius="8"></DiscGoal>
+    <DiscGoal runOrder="50" alignment="0.5,0.5" radius="1"></DiscGoal>
     <PerlinWormPath runOrder="51" startPos="0.5,0.5" startDir="1,0" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
     <PerlinWormPath runOrder="52" startPos="0.5,0.5" startDir="0,1" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="2"></PerlinWormPath>
     <PerlinWormPath runOrder="53" startPos="0.5,0.5" startDir="0,-1" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="3"></PerlinWormPath>
     <PerlinWormPath runOrder="54" startPos="0.5,0.5" startDir="-1,0" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="4"></PerlinWormPath>
   </MapGeneratorDef>
 
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!-- Desert -->
   <MapGeneratorDef name="desert" biome="desert">
     <RectGoal alignment="0.15,0.5" dims="4,4"></RectGoal>
-    <PerlinWormPath startPos="0.15,0.5" startDir="1,0" thicknessRange="2,5" thicknessNoiseScale="1" splitChance="0.0175" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
+    <PerlinWormPath runOrder="51" startPos="0.15,0.5" startDir="1,0" thicknessRange="2,5" thicknessNoiseScale="1" splitChance="0.0175" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
   </MapGeneratorDef>
 
   <MapGeneratorDef name="desertCross" biome="desert">
-    <DiscGoal runOrder="50" alignment="0.5,0.5" radius="3"></DiscGoal>
+    <DiscGoal runOrder="50" alignment="0.5,0.5" radius="1"></DiscGoal>
     <PerlinWormPath runOrder="51" startPos="0.5,0.5" startDir="1,1" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
     <PerlinWormPath runOrder="52" startPos="0.5,0.5" startDir="-1,1" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="2"></PerlinWormPath>
     <PerlinWormPath runOrder="53" startPos="0.5,0.5" startDir="-1,-1" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="3"></PerlinWormPath>
+    <PerlinWormPath runOrder="54" startPos="0.5,0.5" startDir="-1,0" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="4"></PerlinWormPath>
   </MapGeneratorDef>
 
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <!-- River -->
   <MapGeneratorDef name="river" biome="river">
     <RectGoal runOrder ="50" alignment="0.15,0.5" dims="1,1"></RectGoal>
     <PerlinWormPath runOrder="51" startPos="0.15,0.5" startDir="1,0" thicknessRange="2,5" thicknessNoiseScale="1" splitChance="0.0175" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
+  </MapGeneratorDef>
+
+  <MapGeneratorDef name="riverCross" biome="river">
+    <DiscGoal runOrder="50" alignment="0.5,0.5" radius="1"></DiscGoal>
+    <PerlinWormPath runOrder="51" startPos="0.5,0.5" startDir="1,1" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
+    <PerlinWormPath runOrder="52" startPos="0.5,0.5" startDir="-1,1" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="2"></PerlinWormPath>
+    <PerlinWormPath runOrder="53" startPos="0.5,0.5" startDir="-1,-1" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="3"></PerlinWormPath>
+    <PerlinWormPath runOrder="54" startPos="0.5,0.5" startDir="-1,0" thicknessRange="1,5" thicknessNoiseScale="1" splitChance="0.0075" splitAngleDeg="35" maxSplits="4" seedOffset="4"></PerlinWormPath>
   </MapGeneratorDef>
   
 </MapGeneratorDefs>

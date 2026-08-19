@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Core/Name.h"
+#include "Engine/Core/XmlUtils.h"
 #include "Engine/Time/Timer.h"
 #include <vector>
 
@@ -91,11 +92,12 @@ struct FixedWaveStreamDef : public WaveStreamDef
 struct LevelWaveGenModifiers
 {
 	float m_numEntitiesMultiplier = 1.f;					// Multiplies the number of entities spawned in the wave by this amount.
-	float m_numEntitiesMultiplierIncreasePerWave = 0.01f;	// Increase numEntitiesMultiplier by this amount per wave
+	float m_numEntitiesMultiplierIncreasePerWave = 0.2f;	// Increase numEntitiesMultiplier by this amount per wave
 	float m_waveSpawnRateMultiplier = 1.f;					// Multiplies the spawn rate (both time between waves and stream spawn rate) of waves by this amount (2.0 means twice as fast)
-	float m_healthMultiplierIncreasePerWave = 0.f;			// Increase health multiplier by this amount per wave
+	float m_healthMultiplier = 1.f;							// Multiplies the health of all enemies spawned
+	float m_healthMultiplierIncreasePerWave = 0.15f;		// Increase health multiplier by this amount per wave
 	float m_healthExponentialScalingPerWave = 1.01f;		// Multaplicative scaling per wave
-	float m_speedMultiplierIncreasePerWave = 0.f;			// Increase speed multiplier by this amount per wave
+	float m_speedMultiplierIncreasePerWave = 0.02f;			// Increase speed multiplier by this amount per wave
 
 	// Rarity Settings
 	float m_magicEnemyChance = 0.1f;						// Chance for each enemy in the wave to be magic rarity
@@ -126,13 +128,13 @@ struct LevelWaveGenModifiers
 //
 struct LevelWaveGenDef
 {
+	void LoadFromXml(XmlElement const* xmlElement);
+
 	float GetHealthScaling(int waveIndex) const;
 	float GetSpeedScaling(int waveIndex) const;
 	float GetMagicEnemyChance(int waveIndex) const;
 	float GetRareEnemyChance(int waveIndex) const;
 
-	int m_seed = 0;
-	int m_numWaves = 5;
 	std::vector<RandomWaveStreamDef> m_randomWaves;
 	std::vector<FixedWaveStreamDef> m_fixedWaves;
 	LevelWaveGenModifiers m_waveGenModifiers;
@@ -151,6 +153,7 @@ public:
 	int m_currentWaveIndex = 0;
 	int m_remainingEnemies = 0;
 	std::vector<ActiveWaveStream> m_activeStreams;
+	
 	LevelWaveGenDef m_waveGenDef;
 
 	// Generated Data

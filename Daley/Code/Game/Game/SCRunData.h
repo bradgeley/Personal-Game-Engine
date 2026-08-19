@@ -21,6 +21,14 @@ struct PlaceableTower
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct MissionGenData
+{
+	Name m_mapName = Name::Invalid;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct SCRunData
 {
 public:
@@ -28,7 +36,6 @@ public:
 	// Data that carries over from mission to mission
 	int	  m_seed					= 0; // Mission seed = seed + missionIndex
 	int   m_missionIndex			= 0;
-	int   m_totalMissions			= StaticGameSettings::s_numMissionsForVictory;
 	float m_startingGold			= StaticGameSettings::s_baseGold;
 	float m_creditLimit				= StaticGameSettings::s_baseCreditLimit;
 	float m_savingsInterestRate		= StaticGameSettings::s_baseSavingsInterestRate;
@@ -43,4 +50,5 @@ public:
 	int   m_numSoldTowers					= 0;
 
 	std::array<PlaceableTower, MAX_PURCHASEABLE_TOWERS> m_placeableTowers;
+	std::array<MissionGenData, StaticGameSettings::s_numMissionsForVictory> m_missionGenData;
 };

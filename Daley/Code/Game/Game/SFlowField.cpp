@@ -255,7 +255,7 @@ void SFlowField::GenerateDistanceField(FlowField& flowField, SCWorld const& worl
             if (calculatedNeighborDistance < flowField.m_distanceField.Get(neighborTileCoords))
             {
                 flowField.m_distanceField.Set(neighborTileCoords, calculatedNeighborDistance);
-                flowField.m_openList.push({ neighborTileCoords, calculatedNeighborDistance });
+                flowField.m_openList.emplace(neighborTileCoords, calculatedNeighborDistance);
             }
         }
     }
