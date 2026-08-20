@@ -1,0 +1,10 @@
+
+
+
+<GridSpriteSheet name="WaterBug" texture="Data/SpriteSheets/WaterBug.png" layout="6,1" edgePadding="0,0" innerPadding="0,0">
+  
+  <SpriteAnimation name="walk" frames="0-3" type="loop" secondsPerFrame="0.05"></SpriteAnimation>
+  <SpriteAnimation name="idle" frames="0"></SpriteAnimation>
+  <SpriteAnimation name="death" frames="4-5" type="once" secondsPerFrame="0.33"></SpriteAnimation>
+
+</GridSpriteSheet>

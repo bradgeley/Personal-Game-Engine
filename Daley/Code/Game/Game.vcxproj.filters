@@ -793,6 +793,12 @@
     <Xml Include="..\..\Run\Data\Definitions\BiomeDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\Scorpion.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\WaterBug.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">
