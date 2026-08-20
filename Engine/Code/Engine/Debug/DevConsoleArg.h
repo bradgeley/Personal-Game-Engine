@@ -8,8 +8,10 @@ enum class DevConsoleArgType
 {
 	None,
 	Int,
+	UInt,
 	Float,
 	Bool,
 	String,
+	Name,
 	Vec2,
 };

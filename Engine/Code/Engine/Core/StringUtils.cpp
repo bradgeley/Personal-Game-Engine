@@ -301,6 +301,14 @@ int StringUtils::StringToInt(std::string const& intAsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+uint32_t StringUtils::StringToUInt(std::string const& uintAsString)
+{
+	return static_cast<uint32_t>(atoi(uintAsString.c_str()));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 float StringUtils::StringToFloat(std::string const& floatAsString)
 {
     return (float) atof(floatAsString.c_str());

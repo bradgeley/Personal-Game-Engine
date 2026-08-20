@@ -77,6 +77,8 @@ std::string DevConsoleCommandInfo::ArgTypeToString(DevConsoleArgType argType)
 			return "Bool";
 		case DevConsoleArgType::String:
 			return "String";
+		case DevConsoleArgType::Name:
+			return "Name";
 		case DevConsoleArgType::Vec2:
 			return "Vec2";
 		default:

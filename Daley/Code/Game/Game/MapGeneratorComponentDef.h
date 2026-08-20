@@ -18,13 +18,13 @@ struct NoiseParams
 	NoiseParams() = default;
 	NoiseParams(XmlElement const* xmlElement);
 
-	Vec2	m_outputRange = Vec2(0.f, 1.f); // Result will be range mapped to this range after renormalization
-	float	m_scale = 1.f;
-	int		m_numOctaves = 1;
-	float	m_octavePersistence = 0.5f;
-	float	m_octaveScale = 2.f;
-	bool	m_renormalize = true;
-	int		m_seedOffset = 0;
+	Vec2	 m_outputRange = Vec2(0.f, 1.f); // Result will be range mapped to this range after renormalization
+	float	 m_scale = 1.f;
+	int		 m_numOctaves = 1;
+	float	 m_octavePersistence = 0.5f;
+	float	 m_octaveScale = 2.f;
+	bool	 m_renormalize = true;
+	int		 m_seedOffset = 0;
 };
 
 
@@ -161,12 +161,12 @@ struct PerlinWormPathGeneratorComponentDef : public MapGeneratorComponentDef
 
 	virtual MapGeneratorComponent* MakeComponentInstance() const override;
 
-	Vec2	m_startPos				= Vec2(0.f, 0.f); // 0-1 alignment of the start pos on the map
-	Vec2	m_startDir				= Vec2(1.f, 0.f);
-	Vec2	m_thicknessRange		= Vec2(2.f, 5.f);
-	float	m_thicknessNoiseScale	= 0.5f;
-	float	m_splitChance			= 0.0075f;
-	float	m_splitAngleDeg			= 35.f;
-	int		m_maxSplits				= 4;
-	int		m_seedOffset			= 0;
+	Vec2	 m_startPos				= Vec2(0.f, 0.f); // 0-1 alignment of the start pos on the map
+	Vec2	 m_startDir				= Vec2(1.f, 0.f);
+	Vec2	 m_thicknessRange		= Vec2(2.f, 5.f);
+	float	 m_thicknessNoiseScale	= 0.5f;
+	float	 m_splitChance			= 0.0075f;
+	float	 m_splitAngleDeg		= 35.f;
+	int		 m_maxSplits			= 4;
+	uint32_t m_seedOffset			= 0;
 };

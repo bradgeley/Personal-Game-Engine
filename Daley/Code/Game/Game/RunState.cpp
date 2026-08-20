@@ -51,7 +51,7 @@ void RunState::Enter(NamedProperties const& props)
 
 	// Todo: get initial placeable tower data from somewhere in xml
 	m_runData = SCRunData();
-	m_runData.m_seed = g_rng->GetRandomIntInRange(0, 1'000'000);
+	m_runData.m_seed = g_rng->Rand();
 	m_runData.m_placeableTowers[0] = PlaceableTower{ "Vanilla", '1', 30.f };
 	m_runData.m_placeableTowers[1] = PlaceableTower{ "Chocolate", '2', 40.f };
 	m_runData.m_placeableTowers[2] = PlaceableTower{ "Strawberry", '3', 50.f };

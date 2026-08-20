@@ -14,6 +14,7 @@
 #include "SCFlowField.h"
 #include "SCInputSystem.h"
 #include "SCRenderer.h"
+#include "SCRunData.h"
 #include "SCWaves.h"
 #include "SCWindow.h"
 #include "SGoal.h"
@@ -58,6 +59,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	// Read Dependencies
 	SCCamera const& worldCamera = context.GetSingletonConst<SCCamera>();
 	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
+	SCRunData const& runData = context.GetSingletonConst<SCRunData>();
 	auto& collisionStorage = context.GetArrayStorageConst<CCollision>();
 	auto& tagsStorage = context.GetArrayStorageConst<CTags>();
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();
@@ -99,24 +101,38 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	// Add transparent black background
 	VertexUtils::AddVertsForAABB2(untexVerts, screenBounds, Rgba8(0, 0, 0, 120), AABB2::ZeroToOne);
 
+	float currentHeightOffset = -10.f;
+	float overlayTextHeight = 25.f;
+	float spacing = 5.f;
+	float leftSidePadding = 10.f;
+	float spaceBetweenLines = overlayTextHeight + spacing;
+
 	Vec2 topLeft = screenBounds.GetTopLeft();
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -10.f), Vec2(1.f, -1.f), 25.f, "Debug Overlay Enabled", Rgba8::White);
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, "Debug Overlay Enabled", Rgba8::White);
 
+	currentHeightOffset -= spaceBetweenLines;
 	int totalEntities = context.NumEntities();
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -40.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Total Entities: %d", totalEntities), Rgba8::White);
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Total Entities: %d", totalEntities), Rgba8::White);
 
+	currentHeightOffset -= spaceBetweenLines;
 	int numEnemies = waves.m_remainingEnemies;
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(10.f, -70.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Remaining Enemies: %d", numEnemies), Rgba8::White);
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Remaining Enemies: %d", numEnemies), Rgba8::White);
+
+	currentHeightOffset -= spaceBetweenLines;
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Run Seed: %d", runData.m_seed), Rgba8::White);
+
+	currentHeightOffset -= spaceBetweenLines;
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Mission Seed: %d", runData.m_seed + runData.m_missionIndex), Rgba8::White);
 
 	// Wave spawner info
 	Vec2 wavesTopLeft = screenBounds.maxs - Vec2(350.f, 10.f);
-	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft, Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Waves: %s", waves.m_wavesStarted ? (waves.m_wavesFinished ? "Finished" : "In Progress") : "Not Started"), Rgba8::White);
-	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 30.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Current Wave: %d/%d", waves.m_currentWaveIndex, waves.m_waves.size()), Rgba8::White);
-	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 60.f), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Time Until Next Wave: %.1f", waves.m_waveTimer.GetRemainingSeconds()), Rgba8::Yellow);
+	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft, Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Waves: %s", waves.m_wavesStarted ? (waves.m_wavesFinished ? "Finished" : "In Progress") : "Not Started"), Rgba8::White);
+	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 30.f), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Current Wave: %d/%d", waves.m_currentWaveIndex, waves.m_waves.size()), Rgba8::White);
+	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 60.f), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Time Until Next Wave: %.1f", waves.m_waveTimer.GetRemainingSeconds()), Rgba8::Yellow);
 	for (int streamIndex = 0; streamIndex < (int) waves.m_activeStreams.size(); ++streamIndex)
 	{
 		ActiveWaveStream const& activeStream = waves.m_activeStreams[streamIndex];
-		font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 90.f + 30.f * (float) streamIndex), Vec2(1.f, -1.f), 25.f, StringUtils::StringF("Active Stream: %s (%d/%d)", activeStream.m_entityStream.m_entityName.ToCStr(), activeStream.m_numSpawned, activeStream.m_entityStream.m_numEntities), Rgba8::White);
+		font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 90.f + 30.f * (float) streamIndex), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Active Stream: %s (%d/%d)", activeStream.m_entityStream.m_entityName.ToCStr(), activeStream.m_numSpawned, activeStream.m_entityStream.m_numEntities), Rgba8::White);
 	}
 
 	// Show ability information for hovered entity

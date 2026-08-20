@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SSaveLoad.h"
+#include "SCRunData.h"
 #include "SCWorld.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Core/FileUtils.h"
@@ -43,9 +44,11 @@ bool SSaveLoad::SaveGame(NamedProperties& args)
 {
 	std::string filepath = args.Get<std::string>("filepath", std::string("Save/save.txt"));
 
+	SCRunData const& runData = g_ecs->GetSingleton<SCRunData>();
+
 	std::string saveString;
 	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();
-	saveString += StringUtils::StringF("%i\n", world.m_seed);
+	saveString += StringUtils::StringF("%i\n", runData.m_seed);
 	saveString += StringUtils::StringF("%s\n", world.m_mapDefName.ToCStr());
 
 	// Todo:

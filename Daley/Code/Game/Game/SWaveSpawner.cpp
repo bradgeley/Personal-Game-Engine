@@ -193,8 +193,8 @@ bool SWaveSpawner::StartWaves(NamedProperties&)
 //----------------------------------------------------------------------------------------------------------------------
 bool SWaveSpawner::GenerateWaves(NamedProperties& args)
 {
-	int seed = args.Get("seed", 0);
-	int numWaves = args.Get("numWaves", 0);
+	uint32_t seed = args.Get<uint32_t>("seed", 0);
+	int numWaves = args.Get<int>("numWaves", 0);
 
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
 	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();

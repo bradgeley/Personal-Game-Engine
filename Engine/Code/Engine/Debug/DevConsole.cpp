@@ -712,25 +712,31 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
                 switch (type)
                 {
                     case DevConsoleArgType::Float:
-                        eventProperties.Set(argName, StringUtils::StringToFloat(argValue));
+                        eventProperties.Set<float>(argName, StringUtils::StringToFloat(argValue));
+                        break;
+                    case DevConsoleArgType::UInt:
+                        eventProperties.Set<uint32_t>(argName, StringUtils::StringToUInt(argValue));
                         break;
                     case DevConsoleArgType::Int:
-                        eventProperties.Set(argName, StringUtils::StringToInt(argValue));
+                        eventProperties.Set<int>(argName, StringUtils::StringToInt(argValue));
                         break;
                     case DevConsoleArgType::Bool:
-                        eventProperties.Set(argName, StringUtils::StringToBool(argValue));
+                        eventProperties.Set<bool>(argName, StringUtils::StringToBool(argValue));
                         break;
                     case DevConsoleArgType::Vec2:
-                        eventProperties.Set(argName, StringUtils::StringToVec2(argValue));
+                        eventProperties.Set<Vec2>(argName, StringUtils::StringToVec2(argValue));
+                        break;
+                    case DevConsoleArgType::Name:
+                        eventProperties.Set<Name>(argName, argValue);
                         break;
                     default:
-                        eventProperties.Set(argName, argValue);
+                        eventProperties.Set<std::string>(argName, argValue);
                         break;
                 }
             }
             else
             {
-                eventProperties.Set(argName, argValue);
+                eventProperties.Set<std::string>(argName, argValue);
             }
         }
         else

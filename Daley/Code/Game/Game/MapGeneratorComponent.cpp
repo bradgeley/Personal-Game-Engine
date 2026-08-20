@@ -31,7 +31,7 @@ void NoiseRangeSelectorComponent::ForEachSelectedTile(MapGenerator& generator, S
 {
 	ScopedTimer timer(StringUtils::StringF("NoiseRangeSelectorComponent::ForEachSelectedTile - %s", m_name.ToCStr()));
 
-	int seed = generator.GetSeed() + m_params.m_seedOffset;
+	uint32_t seed = generator.GetSeed() + static_cast<uint32_t>(m_params.m_seedOffset);
 
 	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
 	{
@@ -71,7 +71,7 @@ void NoisePeakSelectorComponent::ForEachSelectedTile(MapGenerator& generator, SC
 {
 	ScopedTimer timer(StringUtils::StringF("NoisePeakSelectorComponent::ForEachSelectedTile - %s", m_name.ToCStr()));
 
-	int seed = generator.GetSeed() + m_params.m_seedOffset;
+	uint32_t seed = generator.GetSeed() + static_cast<uint32_t>(m_params.m_seedOffset);
 
 	m_cachedNoiseValues.resize(world.m_tiles.GetSize(), 0.f);
 
@@ -386,7 +386,7 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 		IntVec2 m_tileCoords;
 	};
 
-	int seed = generator.GetSeed() + m_seedOffset;
+	uint32_t seed = generator.GetSeed() + m_seedOffset;
 
 	float startX = StaticWorldSettings::s_visibleWorldMinsX + (StaticWorldSettings::s_visibleWorldWidth * m_startPos.x);
 	float startY = StaticWorldSettings::s_visibleWorldMinsY + (StaticWorldSettings::s_visibleWorldHeight * m_startPos.y);
@@ -402,16 +402,19 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 	float numWormsProcessed = 0.f;
 	int numSplits = 0;
 
+	int splitNoiseLocation = 0;
+
 	while (!worms.empty())
 	{
 		PerlinWorm worm = worms.front();
 		worms.erase(worms.begin());
 
 		numWormsProcessed += 1.f;
+		uint32_t wormSeed = seed + static_cast<uint32_t>(numWormsProcessed);
 
 		int maxIterations = 100'000;
 		int iterationCount = 0;
-		float noiseLocation = static_cast<float>(seed + (999.f * numWormsProcessed));
+		float noiseLocation = 0.f;
 
 		while (world.m_tiles.IsValidCoords(worm.m_tileCoords))
 		{
@@ -423,14 +426,16 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 			}
 
 			noiseLocation += 0.04f;
-			float noiseValue = Noise::GetPerlinNoise1D(noiseLocation, 1.f, 5);
+			float noiseValue = Noise::GetPerlinNoise1D(noiseLocation, 1.f, 5, 0.5f, 2.f, true, wormSeed);
 			Vec2 wormDir = worm.m_dir.GetRotated(noiseValue * 45.f); // todo: parameterize
 			Vec2 nextWormLocation = worm.m_pos + wormDir;
 
 			bool canSplit = numSplits < m_maxSplits;
 			if (canSplit)
 			{
-				float splitNoise = Noise::GetNoiseZeroToOne1D(static_cast<int>(noiseLocation) + 1000, seed + iterationCount);
+				float splitNoise = Noise::GetNoiseZeroToOne1D(splitNoiseLocation, seed + iterationCount);
+				splitNoiseLocation++;
+
 				bool didSplit = splitNoise < m_splitChance;
 				if (didSplit)
 				{
@@ -444,7 +449,7 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 
 			float capsuleRadius = m_thicknessRange.x;
 			float capsuleVariance = m_thicknessRange.y - m_thicknessRange.x;
-			float capsuleRadiusNoise = Noise::GetPerlinNoise1D_01(noiseLocation + 1500.f, m_thicknessNoiseScale, 5, 0.5f, true, seed + iterationCount);
+			float capsuleRadiusNoise = Noise::GetPerlinNoise1D_01(noiseLocation, m_thicknessNoiseScale, 2, 0.5f, true, wormSeed);
 			capsuleRadius += capsuleVariance * capsuleRadiusNoise;
 			capsuleRadius *= 0.5f;
 			capsuleRadius = MathUtils::Max(capsuleRadius, 1.f); // minimum radius of 1

@@ -327,7 +327,9 @@ PerlinWormPathGeneratorComponentDef::PerlinWormPathGeneratorComponentDef(XmlElem
 	m_splitChance = XmlUtils::ParseXmlAttribute(*xmlElement, "splitChance", m_splitChance);
 	m_splitAngleDeg = XmlUtils::ParseXmlAttribute(*xmlElement, "splitAngleDeg", m_splitAngleDeg);
 	m_maxSplits = XmlUtils::ParseXmlAttribute(*xmlElement, "maxSplits", m_maxSplits);
-	m_seedOffset = XmlUtils::ParseXmlAttribute(*xmlElement, "seedOffset", m_seedOffset);
+	int seedOffsetAsInt = XmlUtils::ParseXmlAttribute(*xmlElement, "seedOffset", 0);
+	ASSERT_OR_DIE(seedOffsetAsInt >= 0, "seedOffset must be non-negative");
+	m_seedOffset = static_cast<uint32_t>(seedOffsetAsInt);
 }
 
 

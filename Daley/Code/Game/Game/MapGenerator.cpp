@@ -29,7 +29,7 @@ MapGenerator::~MapGenerator()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void MapGenerator::Initialize(MapGeneratorDef const& mapGenDef, int seed)
+void MapGenerator::Initialize(MapGeneratorDef const& mapGenDef, uint32_t seed)
 {
 	m_def = &mapGenDef;
 	m_seed = seed;
@@ -84,7 +84,6 @@ bool MapGenerator::GenerateMap(SCWorld& world)
 {
 	ScopedTimer timer("Generate Map");
 
-	world.m_seed = m_seed;
 	world.m_mapDefName = m_def->m_name;
 
 	world.m_generatedTowers.clear();

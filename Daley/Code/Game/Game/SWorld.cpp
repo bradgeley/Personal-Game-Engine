@@ -21,7 +21,7 @@ void SWorld::Startup()
 	BiomeDef::LoadFromXML();
 	MapGeneratorDef::LoadFromXML();
 
-	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "mapGenName", DevConsoleArgType::String, "seed", DevConsoleArgType::Int);
+	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "mapGenName", DevConsoleArgType::Name, "seed", DevConsoleArgType::UInt);
 
 
 	SCRunData const& runData = g_ecs->GetSingleton<SCRunData>();
@@ -29,7 +29,7 @@ void SWorld::Startup()
 
 	NamedProperties props;
 	props.Set<Name>("mapGenName", missionGenData.m_mapName);
-	props.Set<int>("seed", runData.m_seed + runData.m_missionIndex);
+	props.Set<uint32_t>("seed", runData.m_seed + static_cast<uint32_t>(runData.m_missionIndex));
 	GenerateMap(props);
 
 	m_ignoreRun = true;
@@ -66,7 +66,7 @@ void SWorld::EndFrame() const
 bool SWorld::GenerateMap(NamedProperties& params)
 {
 	Name mapGenName = params.Get<Name>("mapGenName", Name(""));
-	int seed = params.Get<int>("seed", 0);
+	uint32_t seed = params.Get<uint32_t>("seed", 0);
 
 	MapGeneratorDef const* def = MapGeneratorDef::GetMapGeneratorDef(mapGenName);
 	if (def == nullptr)

@@ -42,6 +42,7 @@ namespace StringUtils
     //
     bool StringToBool(std::string const& boolAsString);
     int StringToInt(std::string const& intAsString);
+    uint32_t StringToUInt(std::string const& uintAsString);
     float StringToFloat(std::string const& floatAsString);
     Rgba8 StringToRgba8(std::string const& rgba8AsString);
     Vec2 StringToVec2(std::string const& vec2AsString);

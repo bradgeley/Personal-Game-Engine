@@ -127,6 +127,5 @@ protected:
 
     // Generation info
 	Name m_mapDefName = "Invalid MapDef";
-    int m_seed = -1;
 };
 
