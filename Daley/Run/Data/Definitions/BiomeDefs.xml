@@ -5,7 +5,7 @@
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <!-- Forest -->
-  <BiomeDef name="forest" baseTile="forestGrass" goalTile="islandWater" pathTile="snow">
+  <BiomeDef name="forest" baseTile="forestGrass" goalTile="islandWater" pathTile="grass">
 
     <MapGeneratorComponents>
       <NoiseRangeSelector name="forest" range="0.5,1">

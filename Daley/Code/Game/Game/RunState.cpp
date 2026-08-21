@@ -60,7 +60,7 @@ void RunState::Enter(NamedProperties const& props)
 
 	// Forest Biome first
 	m_runData.m_missionGenData[0] = { "forest" };
-	m_runData.m_missionGenData[1] = { "forest" };
+	m_runData.m_missionGenData[1] = { "forestOpen" };
 	m_runData.m_missionGenData[2] = { "forestCross" };
 
 	// Then Desert
