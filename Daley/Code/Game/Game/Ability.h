@@ -375,6 +375,8 @@ public:
 	Ability(AbilityDef const& def);
 	virtual ~Ability() = default;
 
+	virtual void Shutdown(SystemContext const& context);
+
 	virtual void Update(SystemContext const& context, Vec2 const& location) = 0;
 	virtual void Render([[maybe_unused]] SystemContext const& context, [[maybe_unused]] Vec2 const& location) const {};
 	virtual Ability* DeepCopy() const = 0;
@@ -451,6 +453,8 @@ public:
 
 	PassiveAoEAbility() = default;
 	explicit PassiveAoEAbility(PassiveAoEAbilityDef const& def);
+
+	virtual void Shutdown(SystemContext const& context) override;
 
 	virtual void Update(SystemContext const& context, Vec2 const& location) override;
 	virtual Ability* DeepCopy() const override;

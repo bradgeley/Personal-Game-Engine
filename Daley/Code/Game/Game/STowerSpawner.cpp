@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "STowerSpawner.h"
+#include "CAbility.h"
 #include "EntityDef.h"
 #include "SCEntityFactory.h"
 #include "SCFloatingText.h"
@@ -78,6 +79,15 @@ void STowerSpawner::Run(SystemContext const& context) const
 
                     break;
                 }
+            }
+        }
+
+		CAbility const* abilityComp = context.GetComponentConst<CAbility>(removalRequest.m_towerEntityID);
+        if (abilityComp)
+        {
+            for (Ability* ability : abilityComp->m_abilities)
+            {
+				ability->Shutdown(context);
             }
         }
 

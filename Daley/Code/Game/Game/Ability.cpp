@@ -554,6 +554,14 @@ Ability::Ability(AbilityDef const& def) : m_abilityDef(&def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Ability::Shutdown(SystemContext const&)
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Ability::AppendDebugString(std::string& out_string) const
 {
     out_string += StringUtils::StringF("Ability: %s\n", m_abilityDef ? m_abilityDef->m_name.ToCStr() : "Invalid");
@@ -1047,6 +1055,18 @@ PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def) : Ability(
 {
 	m_targetingComp = def.m_targetingDef;
 	m_aoeEffectComp = def.m_aoeEffectDef;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PassiveAoEAbility::Shutdown(SystemContext const& context)
+{
+	if (m_activeAoEEffect != EntityID::Invalid)
+	{
+		context.DestroyEntity(m_activeAoEEffect);
+		m_activeAoEEffect = EntityID::Invalid;
+	}
 }
 
 
