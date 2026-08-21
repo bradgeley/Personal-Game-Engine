@@ -142,6 +142,7 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& i
 	}
 
     SCWorld copy;
+	copy.m_cachedSpawnLocations = world.m_cachedSpawnLocations;
 	copy.m_tiles = world.m_tiles;
     if (!info.m_isGenerated)
     {
