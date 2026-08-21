@@ -9,7 +9,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 enum class MovementFlags : uint8_t
 {
-	ConstrainedToPath   = 1 << 0
+	ConstrainedToPath   = 1 << 0,
+	MovedThisFrame      = 1 << 1
 };
 
 
@@ -25,8 +26,10 @@ public:
     void AppendDebugString(std::string& out_string, bool isSlowed) const;
 
 	bool GetIsConstrainedToPath() const;
+    bool GetMovedThisFrame() const;
 
 	void SetIsConstrainedToPath(bool isConstrainedToPath);
+    void SetMovedThisFrame(bool movedThisFrame);
 
 public:
     

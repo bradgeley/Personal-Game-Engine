@@ -31,6 +31,14 @@ bool CCollision::GetIsSingleHash() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool CCollision::GetHasBeenHashed() const
+{
+	return (m_collisionFlags & (uint8_t) CollisionFlags::HasBeenHashed) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool CCollision::IsCollisionEnabled() const
 {
 	return ((m_collisionFlags & (uint8_t) CollisionFlags::Enabled) != 0) || (m_collisionProfile.m_objectChannel == CollisionChannel::NoCollision);
@@ -64,4 +72,19 @@ void CCollision::SetIsSingleHash(bool singleHash)
     {
         m_collisionFlags &= ~((uint8_t) CollisionFlags::SingleHash);
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CCollision::SetHasBeenHashed(bool hasBeenHashed)
+{
+	if (hasBeenHashed)
+	{
+		m_collisionFlags |= (uint8_t) CollisionFlags::HasBeenHashed;
+	}
+	else
+	{
+		m_collisionFlags &= ~((uint8_t) CollisionFlags::HasBeenHashed);
+	}
 }

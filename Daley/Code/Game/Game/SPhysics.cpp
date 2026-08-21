@@ -49,9 +49,12 @@ void SPhysics::Run(SystemContext const& context) const
         if (!move.GetIsConstrainedToPath())
         {
             transform.m_pos += move.m_frameMovement;
+			move.SetMovedThisFrame(!move.m_frameMovement.IsNearlyZero());
             move.m_frameMovement = Vec2::ZeroVector;
             continue;
 		}
+
+        Vec2 previousPosition = transform.m_pos;
 
         if (!world.DoesTileMatchTagQuery(transform.m_pos, isWalkableTagQuery))
         {
@@ -112,7 +115,9 @@ void SPhysics::Run(SystemContext const& context) const
                 break;
             }
         }
-		
+
+		Vec2 actualMovement = transform.m_pos - previousPosition;
+		move.SetMovedThisFrame(!actualMovement.IsNearlyZero());
         move.m_frameMovement = Vec2::ZeroVector;
     }
 }

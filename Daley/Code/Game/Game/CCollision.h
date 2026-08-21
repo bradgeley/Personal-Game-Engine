@@ -11,6 +11,7 @@ enum class CollisionFlags : uint8_t
 {
 	Enabled         = 1 << 0,
 	SingleHash      = 1 << 1, // single tile spatial hash, for small entities
+	HasBeenHashed   = 1 << 2
 };
 
 
@@ -25,9 +26,11 @@ public:
 
 	bool IsCollisionEnabled() const;
     bool GetIsSingleHash() const;
+	bool GetHasBeenHashed() const;
 
 	void SetCollisionEnabled(bool enabled);
 	void SetIsSingleHash(bool singleHash);
+	void SetHasBeenHashed(bool hasBeenHashed);
     
 public:
 

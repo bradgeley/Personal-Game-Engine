@@ -6,10 +6,11 @@
 #include "CTransform.h"
 #include "CAbility.h"
 #include "SCCamera.h"
+#include "SCCollision.h"
 #include "SCDebug.h"
-#include "SCWorld.h"
 #include "SCFlowField.h"
 #include "SCRenderer.h"
+#include "SCWorld.h"
 #include "FlowField.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Core/NamedProperties.h"
@@ -42,6 +43,7 @@ void SDebugRender::Startup()
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
+    DevConsoleUtils::AddDevConsoleCommand("DebugRenderCollisionHash", &SDebugRender::DebugRenderCollisionHash);
     DevConsoleUtils::AddDevConsoleCommand("DebugRenderAbilities", &SDebugRender::DebugRenderAbilities);
 }
 
@@ -64,6 +66,7 @@ void SDebugRender::Shutdown() const
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderDistanceField", &SDebugRender::DebugRenderDistanceField);
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderFlowField", &SDebugRender::DebugRenderFlowField);
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCollision", &SDebugRender::DebugRenderCollision);
+    DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderCollisionHash", &SDebugRender::DebugRenderCollisionHash);
     DevConsoleUtils::RemoveDevConsoleCommand("DebugRenderAbilities", &SDebugRender::DebugRenderAbilities);
 }
 
@@ -81,6 +84,7 @@ void SDebugRender::Run(SystemContext const& context) const
     // Read Dependencies
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
     SCFlowField const& scFlowfield = context.GetSingletonConst<SCFlowField>();
+    SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
     auto& abilityStorage = context.GetMapStorageConst<CAbility>();
     auto& collStorage = context.GetArrayStorageConst<CCollision>();
     auto& renderStorage = context.GetArrayStorageConst<CRender>();
@@ -195,7 +199,7 @@ void SDebugRender::Run(SystemContext const& context) const
         }
     }
 
-    // Render Flow Field
+    // Render Collision Components
     if (scDebug.m_debugRenderCollision)
     {
         for (auto it = context.Iterate<CCollision, CTransform, CRender>(); it.IsValid(); ++it)
@@ -209,6 +213,26 @@ void SDebugRender::Run(SystemContext const& context) const
             VertexUtils::AddVertsForWireDisc2D(untexturedVerts, collisionPos, collision.m_radius, 0.05f, 8, Rgba8::Magenta);
             VertexUtils::AddVertsForWireDisc2D(untexturedVerts, render.GetRenderPosition(), render.m_renderRadius, 0.05f, 8, Rgba8::Cyan);
         }
+    }
+
+    // Render Collision Hash Data
+    if (scDebug.m_debugRenderCollisionHash)
+    {
+		for (int const& dirtyBucketIndex : scCollision.m_dirtyBuckets)
+		{
+            int numEntitiesInBucket = 0;
+			for (CollisionLayer const& layer : scCollision.m_collisionLayers)
+			{
+				CollisionBucket const& bucket = layer[dirtyBucketIndex];
+				numEntitiesInBucket += static_cast<int>(bucket.size());
+			}
+			IntVec2 tileCoords = world.m_tiles.GetCoordsForIndex(dirtyBucketIndex);
+			AABB2 tileBounds = world.GetTileBounds(tileCoords);
+			Rgba8 bucketTint = Rgba8::Lerp(Rgba8::Green, Rgba8::Red, MathUtils::RangeMapClamped((float) numEntitiesInBucket, 0.f, 10.f, 0.f, 1.f));
+			VertexUtils::AddVertsForAABB2(untexturedVerts, tileBounds, bucketTint);
+			std::string numEntitiesText = StringUtils::StringF("%i", numEntitiesInBucket);
+			font->AddVertsForAlignedText2D(defaultFontVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, numEntitiesText, Rgba8::White);
+		}
     }
 
 	// Abilities
@@ -343,6 +367,16 @@ bool SDebugRender::DebugRenderCollision(NamedProperties&)
 {
     SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
     scDebug.m_debugRenderCollision = !scDebug.m_debugRenderCollision;
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugRender::DebugRenderCollisionHash(NamedProperties&)
+{
+    SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+    scDebug.m_debugRenderCollisionHash = !scDebug.m_debugRenderCollisionHash;
     return false;
 }
 

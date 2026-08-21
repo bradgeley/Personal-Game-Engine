@@ -42,6 +42,14 @@ bool CMovement::GetIsConstrainedToPath() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool CMovement::GetMovedThisFrame() const
+{
+	return (m_movementFlags & static_cast<uint8_t>(MovementFlags::MovedThisFrame)) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void CMovement::SetIsConstrainedToPath(bool isConstrainedToPath)
 {
     if (isConstrainedToPath)
@@ -52,4 +60,19 @@ void CMovement::SetIsConstrainedToPath(bool isConstrainedToPath)
     {
         m_movementFlags &= ~static_cast<uint8_t>(MovementFlags::ConstrainedToPath);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CMovement::SetMovedThisFrame(bool movedThisFrame)
+{
+    if (movedThisFrame)
+    {
+        m_movementFlags |= static_cast<uint8_t>(MovementFlags::MovedThisFrame);
+    }
+    else
+    {
+        m_movementFlags &= ~static_cast<uint8_t>(MovementFlags::MovedThisFrame);
+    }
 }
