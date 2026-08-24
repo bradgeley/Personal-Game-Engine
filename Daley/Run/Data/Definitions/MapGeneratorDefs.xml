@@ -28,7 +28,7 @@
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <!-- Desert -->
   <MapGeneratorDef name="desert" biome="desert">
-    <RectGoal alignment="0.15,0.5" dims="4,4"></RectGoal>
+    <RectGoal runOrder="50" alignment="0.15,0.5" dims="4,4"></RectGoal>
     <PerlinWormPath runOrder="51" startPos="0.15,0.5" startDir="1,0" thicknessRange="2,5" thicknessNoiseScale="1" splitChance="0.0175" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
   </MapGeneratorDef>
 
