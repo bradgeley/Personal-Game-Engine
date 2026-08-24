@@ -18,6 +18,9 @@ CollisionProfile CollisionProfile::GetDefaultProfile(CollisionChannel objectChan
 			break;
 		case CollisionChannel::Building:
 			break;
+		case CollisionChannel::PlayerBuff:
+			result.m_responseChannels |= GetChannelBit(CollisionChannel::Building);
+			break;
 		case CollisionChannel::GroundEffect:
 			result.m_responseChannels |= GetChannelBit(CollisionChannel::Enemy);
 			break;
@@ -46,6 +49,10 @@ CollisionProfile CollisionProfile::GetDefaultProfileByName(Name const& name)
 	else if (name == "groundeffect")
 	{
 		return GetDefaultProfile(CollisionChannel::GroundEffect);
+	}
+	else if (name == "playerbuff")
+	{
+		return GetDefaultProfile(CollisionChannel::PlayerBuff);
 	}
 	else
 	{

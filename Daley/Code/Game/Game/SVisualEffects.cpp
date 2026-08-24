@@ -1,22 +1,46 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SVisualEffects.h"
-#include "CAttachment.h"
+#include "CAnimation.h"
 #include "CHealth.h"
 #include "CRender.h"
-#include "CTransform.h"
-#include "EntityDef.h"
-#include "SEntityFactory.h"
-#include "SCEntityFactory.h"
-#include "SpawnInfo.h"
+#include "CTime.h"
+#include "SCAssetManager.h"
+#include "SCRenderer.h"
+#include "SpriteShaderCPU.h"
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/SystemContext.h"
+#include "Engine/Renderer/InstanceBuffer.h"
+#include "Engine/Renderer/Renderer.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SVisualEffects::Startup()
 {
-    AddWriteAllDependencies(); // Spawns entities
+	AddReadDependencies<CHealth, CTime, SCAssetManager>();
+	AddWriteDependencies<CAnimation, CRender, SCRenderer>();
+
+	SCAssetManager& scAssetManager = g_ecs->GetSingleton<SCAssetManager>();
+	AssetManager& assetManager = *scAssetManager.GetAssetManager();
+
+	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+	scRenderer.m_statusEffectsSpriteSheet = assetManager.AsyncLoad<GridSpriteSheet>("Data/SpriteSheets/StatusEffects.xml");
+	scRenderer.m_instancesPerSpriteSheet[scRenderer.m_statusEffectsSpriteSheet] = renderer.MakeInstanceBuffer<SpriteInstance>();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SVisualEffects::Shutdown() const
+{
+    SCAssetManager& scAssetManager = g_ecs->GetSingleton<SCAssetManager>();
+    AssetManager& assetManager = *scAssetManager.GetAssetManager();
+
+    SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	assetManager.Release(scRenderer.m_statusEffectsSpriteSheet);
 }
 
 
@@ -26,15 +50,26 @@ void SVisualEffects::Run(SystemContext const& context) const
 {
     // Read Dependencies
     auto const& healthStorage = context.GetArrayStorageConst<CHealth>();
-    auto const& transStorage = context.GetArrayStorageConst<CTransform>();
+    auto const& timeStorage = context.GetArrayStorageConst<CTime>();
+    SCAssetManager const& scAssetManager = context.GetSingletonConst<SCAssetManager>();
+    AssetManager const& assetManager = *scAssetManager.GetAssetManager();
 
 	// Write Dependencies
     auto& renderStorage = context.GetArrayStorage<CRender>();
-	auto& attachStorage = context.GetArrayStorage<CAttachment>();
-	auto& factory = context.GetSingleton<SCEntityFactory>();
+    auto& animStorage = context.GetArrayStorage<CAnimation>();
+    SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
 
-    // Push back an instance for every entity in camera view this frame
-    for (auto it = context.Iterate<CHealth, CRender, CAttachment, CTransform>(); it.IsValid(); ++it)
+    GridSpriteSheet const* statusEffectsSpriteSheet = assetManager.Get<GridSpriteSheet>(scRenderer.m_statusEffectsSpriteSheet);
+	SpriteAnimationDef const* burnAnimDef = statusEffectsSpriteSheet ? statusEffectsSpriteSheet->GetAnimationDef("burn") : nullptr;
+	SpriteAnimationDef const* hasteAnimDef = statusEffectsSpriteSheet ? statusEffectsSpriteSheet->GetAnimationDef("haste") : nullptr;
+	SpriteAnimationDef const* slowAnimDef = statusEffectsSpriteSheet ? statusEffectsSpriteSheet->GetAnimationDef("slow") : nullptr;
+
+    InstanceBufferID iboID = scRenderer.m_instancesPerSpriteSheet[scRenderer.m_statusEffectsSpriteSheet];
+    InstanceBuffer* ibo = renderer.GetInstanceBuffer(iboID);
+    ASSERT_OR_DIE(ibo != nullptr, "SRenderEntities::Run - Invalid instance buffer.");
+
+    for (auto it = context.Iterate<CHealth, CRender, CAnimation>(); it.IsValid(); ++it)
     {
         CRender& render = renderStorage[it];
         if (!render.GetIsInCameraView())
@@ -42,47 +77,115 @@ void SVisualEffects::Run(SystemContext const& context) const
             continue;
         }
 
-        CAttachment& attachment = attachStorage[it];
         CHealth const& health = healthStorage[it];
 
-		float poisonSaturation = health.GetPoisonSaturation();
+        // Tint the entity green based on poison
+        float poisonSaturation = health.GetPoisonSaturation();
         render.m_tint = Rgba8::Lerp(render.m_baseTint, Rgba8::Green, poisonSaturation);
 
-		float burnSaturation = health.GetBurnSaturation();
+        // Render a sprite underlay for burning entities
+        float burnSaturation = health.GetBurnSaturation();
+		if (burnSaturation > 0.f)
+		{
+            CAnimation& anim = animStorage[it];
 
-        if (burnSaturation > 0.f)
-        {
-            if (!context.IsValid(attachment.m_attachedBurnVFX))
+            if (!anim.m_burnInstance.IsValid() && burnAnimDef != nullptr)
             {
-                CTransform const& transform = transStorage[it];
-                // Spawn and attach the vfx on the entity side
-                SpawnInfo spawnInfo;
-                spawnInfo.m_def = EntityDef::GetEntityDef("BurnUnderlay");
-                spawnInfo.m_spawnPos = transform.m_pos;
-                spawnInfo.m_spawnOrientation = transform.m_orientation;
-                attachment.m_attachedBurnVFX = SEntityFactory::SpawnEntity(context, spawnInfo);
+                anim.m_burnInstance.ChangeDef(*burnAnimDef, true);
             }
 
-            if (context.IsValid(attachment.m_attachedBurnVFX))
+            if (anim.m_burnInstance.IsValid() && burnAnimDef != nullptr)
             {
-                // Attach the vfx on the vfx side
-				CAttachment& burnVFXAttachment = attachStorage[attachment.m_attachedBurnVFX];
-                burnVFXAttachment.m_attachedTo = it.GetEntityID();
-                burnVFXAttachment.m_destroyIfAttachedToEntityDestroyed = true;
+                anim.m_burnInstance.Update(context.m_deltaSeconds);
 
-                // Update burn effect position and scale
-				CRender& burnEffectRender = renderStorage[attachment.m_attachedBurnVFX];
-                burnEffectRender.m_renderRadius = render.m_renderRadius * burnSaturation;
+                SpriteInstance burnInstance;
+                burnInstance.m_dims = Vec2(render.m_renderRadius * 2.f, render.m_renderRadius * 2.f) * burnSaturation;
+                burnInstance.m_position = Vec3(render.GetRenderPosition(), RenderConstants::s_burnSpriteRenderDepth);
+                burnInstance.m_spriteIndex = anim.m_burnInstance.GetCurrentSpriteIndex();
+                burnInstance.m_outlineRgba = Rgba8::TransparentBlack;
+                burnInstance.m_indoorLight = 255;
+                burnInstance.m_outdoorLight = 255;
+                burnInstance.m_orientation = 17.f * static_cast<float>(it.m_currentIndex);
+
+                ibo->AddInstance(burnInstance);
+            }
+		}
+    }
+
+    for (auto it = context.Iterate<CTime, CRender, CAnimation>(); it.IsValid(); ++it)
+    {
+        CRender& render = renderStorage[it];
+        if (!render.GetIsInCameraView())
+        {
+            continue;
+        }
+
+		CTime const& time = timeStorage[it];
+        if (time.IsHasted())
+        {
+            CAnimation& anim = animStorage[it];
+
+            if (!anim.m_hasteInstance.IsValid() && hasteAnimDef != nullptr)
+            {
+                anim.m_hasteInstance.ChangeDef(*hasteAnimDef, true);
+            }
+
+            if (anim.m_hasteInstance.IsValid() && hasteAnimDef != nullptr)
+            {
+                anim.m_hasteInstance.Update(context.m_deltaSeconds);
+
+                SpriteInstance hasteInstance;
+                hasteInstance.m_dims = Vec2(render.m_renderRadius * 2.f, render.m_renderRadius * 2.f);
+                hasteInstance.m_position = Vec3(render.GetRenderPosition(), RenderConstants::s_hasteSpriteRenderDepth);
+                hasteInstance.m_spriteIndex = anim.m_hasteInstance.GetCurrentSpriteIndex();
+                hasteInstance.m_outlineRgba = Rgba8::TransparentBlack;
+                hasteInstance.m_indoorLight = 255;
+                hasteInstance.m_outdoorLight = 255;
+                hasteInstance.m_orientation = 0.f;
+
+                ibo->AddInstance(hasteInstance);
             }
         }
-        else
+
+        if (time.IsSlowed())
         {
-            if (context.IsValid(attachment.m_attachedBurnVFX))
+			CAnimation& anim = animStorage[it];
+			if (!anim.m_slowInstance.IsValid() && slowAnimDef != nullptr)
+			{
+				anim.m_slowInstance.ChangeDef(*slowAnimDef, true);
+			}
+            if (anim.m_slowInstance.IsValid() && slowAnimDef != nullptr)
             {
-                // Destroy the entity, and sever the attachment on the entity side
-				factory.m_entitiesToDestroy.push_back(attachment.m_attachedBurnVFX);
-				attachment.m_attachedBurnVFX = EntityID::Invalid;
+                anim.m_slowInstance.Update(context.m_deltaSeconds);
+
+                SpriteInstance slowInstance;
+                slowInstance.m_dims = Vec2(render.m_renderRadius * 2.f, render.m_renderRadius * 2.f);
+                slowInstance.m_position = Vec3(render.GetRenderPosition(), RenderConstants::s_slowSpriteRenderDepth);
+                slowInstance.m_spriteIndex = anim.m_slowInstance.GetCurrentSpriteIndex();
+                slowInstance.m_outlineRgba = Rgba8::TransparentBlack;
+                slowInstance.m_indoorLight = 255;
+                slowInstance.m_outdoorLight = 255;
+                slowInstance.m_orientation = 0.f;
+
+                ibo->AddInstance(slowInstance);
             }
         }
     }
 }
+
+
+// Update Status Effect animations
+// GridSpriteSheet const* statusEffectsSpriteSheet = assetManager.Get<GridSpriteSheet>(anim.m_statusEffectsSpriteSheet);
+// if (statusEffectsSpriteSheet)
+// {
+//     if (SpriteAnimationDef const* burnAnimDef = statusEffectsSpriteSheet->GetAnimationDef("burn"))
+//     {
+//         anim.m_burnInstance.ChangeDef(*burnAnimDef);
+//         anim.m_burnInstance.Update(context.m_deltaSeconds);
+//     }
+//     if (SpriteAnimationDef const* hasteAnimDef = statusEffectsSpriteSheet->GetAnimationDef("haste"))
+//     {
+//         anim.m_hasteInstance.ChangeDef(*hasteAnimDef);
+//         anim.m_hasteInstance.Update(context.m_deltaSeconds);
+//     }
+// }

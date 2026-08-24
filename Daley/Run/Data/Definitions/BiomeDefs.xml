@@ -38,6 +38,7 @@
     </MapGeneratorComponents>
 
     <WaveGenerator>
+      <FixedWaveStream time="30" num="30" entity="ant" waveIndex="0"></FixedWaveStream>
       <RandomWaveStream time="30" min="32" max="40" tags="ant,small"  weight="1"></RandomWaveStream>
       <RandomWaveStream time="24" min="16" max="20" tags="ant,medium" weight="0.5"></RandomWaveStream>
       <RandomWaveStream time="16" min="8"  max="10" tags="ant,large"  weight="0.25"></RandomWaveStream>
@@ -75,10 +76,11 @@
     </MapGeneratorComponents>
 
     <WaveGenerator>
-      <RandomWaveStream time="30" min="32" max="40" tags="scorpion,small"  weight="1"></RandomWaveStream>
-      <RandomWaveStream time="24" min="16" max="20" tags="scorpion,medium" weight="0.5"></RandomWaveStream>
-      <RandomWaveStream time="16" min="8"  max="10" tags="scorpion,large"  weight="0.25"></RandomWaveStream>
-      <RandomWaveStream time="16" min="100"  max="120" tags="scorpion,small"  weight="0.1"></RandomWaveStream>
+      <FixedWaveStream time="30" num="40" entity="scorpion" waveIndex="0"></FixedWaveStream>
+      <RandomWaveStream time="30" min="64" max="80" tags="scorpion,small"  weight="1"></RandomWaveStream>
+      <RandomWaveStream time="24" min="32" max="64" tags="scorpion,medium" weight="0.5"></RandomWaveStream>
+      <RandomWaveStream time="16" min="16"  max="20" tags="scorpion,large"  weight="0.25"></RandomWaveStream>
+      <RandomWaveStream time="16" min="200"  max="240" tags="scorpion,small"  weight="0.1"></RandomWaveStream>
       <FixedWaveStream time="1" num="1" entity="bossScorpion" waveIndex="-1" guaranteedLastWave="true"></FixedWaveStream>
     </WaveGenerator>
 
@@ -111,12 +113,12 @@
       <EntityGenerator runOrder="99" entity="tree2x2" selector="trees"></EntityGenerator>
     </MapGeneratorComponents>
 
-    <!-- TODO: Water themed enemy type -->
     <WaveGenerator>
-      <RandomWaveStream time="30" min="32" max="40" tags="waterBug,small"  weight="1"></RandomWaveStream>
-      <RandomWaveStream time="24" min="16" max="20" tags="waterBug,medium" weight="0.5"></RandomWaveStream>
-      <RandomWaveStream time="16" min="8"  max="10" tags="waterBug,large"  weight="0.25"></RandomWaveStream>
-      <RandomWaveStream time="16" min="100"  max="120" tags="waterBug,small"  weight="0.1"></RandomWaveStream>
+      <FixedWaveStream time="30" num="50" entity="waterBug" waveIndex="0"></FixedWaveStream>
+      <RandomWaveStream time="30" min="64" max="80" tags="waterBug,small"  weight="1"></RandomWaveStream>
+      <RandomWaveStream time="24" min="32" max="64" tags="waterBug,medium" weight="0.5"></RandomWaveStream>
+      <RandomWaveStream time="16" min="16"  max="20" tags="waterBug,large"  weight="0.25"></RandomWaveStream>
+      <RandomWaveStream time="16" min="200"  max="240" tags="waterBug,small"  weight="0.1"></RandomWaveStream>
       <FixedWaveStream time="1" num="1" entity="bossWaterBug" waveIndex="-1" guaranteedLastWave="true"></FixedWaveStream>
     </WaveGenerator>
 

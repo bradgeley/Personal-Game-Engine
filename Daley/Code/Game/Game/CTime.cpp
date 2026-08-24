@@ -11,12 +11,23 @@ bool CTime::IsSlowed() const
 }
 
 
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CTime::IsHasted() const
+{
+	return m_remainingHasteDuration > 0.f;
+}
+
+
 //----------------------------------------------------------------------------------------------------------------------
 void CTime::AppendDebugString(std::string& out_string) const
 {
-	if (!IsSlowed())
+	if (IsSlowed())
 	{
-		return;
+		out_string += StringUtils::StringF("Slow: %.1f\n", m_remainingSlowDuration);
 	}
-	out_string += StringUtils::StringF("Slow: %.1f\n", m_remainingSlowDuration);
+	if (IsHasted())
+	{
+		out_string += StringUtils::StringF("Haste: %.1f\n", m_remainingHasteDuration);
+	}
 }

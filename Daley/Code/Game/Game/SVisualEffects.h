@@ -11,5 +11,6 @@ public:
 
     SVisualEffects(Name name = "VisualEffects", Rgba8 const& debugTint = Rgba8::Purple) : System(name, debugTint) {};
     void Startup() override;
+    void Shutdown() const override;
     void Run(SystemContext const& context) const override;
 };

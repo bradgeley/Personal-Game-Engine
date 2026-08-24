@@ -12,11 +12,9 @@
   </MapGeneratorDef>
   
   <MapGeneratorDef name="forestOpen" biome="forest">
-    <RectGoal runOrder="50" alignment="0.55,0.6" dims="4,4"></RectGoal>
-    <RectGoal runOrder="50" alignment="0.45,0.6" dims="4,4"></RectGoal>
-    <RectGoal runOrder="50" alignment="0.55,0.4" dims="4,4"></RectGoal>
-    <RectGoal runOrder="50" alignment="0.45,0.4" dims="4,4"></RectGoal>
-    <PerlinWormPath runOrder="51" startPos="0.15,0.5" startDir="1,0" thicknessRange="99,99" thicknessNoiseScale="1" splitChance="0.0175" splitAngleDeg="35" maxSplits="4" seedOffset="1"></PerlinWormPath>
+    <RectGoal runOrder="50" alignment="0.5,0.5" dims="4,4"></RectGoal>
+    <PerlinWormPath runOrder="51" startPos="0.15,0.5" startDir="1,0" thicknessRange="25,30" thicknessNoiseScale="1" maxSplits="0" seedOffset="1"></PerlinWormPath>
+    <PerlinWormPath runOrder="51" startPos="0.15,0.5" startDir="-1,0" thicknessRange="25,30" thicknessNoiseScale="1" maxSplits="0" seedOffset="2"></PerlinWormPath>
   </MapGeneratorDef>
 
   <MapGeneratorDef name="forestCross" biome="forest">

@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CProjectile.h"
+#include "EntityDebugContext.h"
 #include "Engine/Core/StringUtils.h"
 
 
@@ -29,23 +30,23 @@ HitPayload CProjectile::GetAoeTargetPayload() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CProjectile::AppendDebugString(std::string& out_string) const
+void CProjectile::AppendDebugString(EntityDebugContext& debugContext) const
 {
-	out_string += StringUtils::StringF("Proj Speed: %.1f\n", m_projSpeed);
+	debugContext.m_debugString += StringUtils::StringF("Proj Speed: %.1f\n", m_projSpeed);
 	if (m_onHitComp.has_value())
 	{
-		out_string += StringUtils::StringF("Main Target Payload:\n");
-		m_onHitComp->m_payload.AppendDebugString(out_string);
+		debugContext.m_debugString += StringUtils::StringF("Main Target Payload:\n");
+		m_onHitComp->m_payload.AppendDebugString(debugContext);
 
 		if (m_onHitComp->m_aoeHitOnHit.has_value())
 		{
-			out_string += StringUtils::StringF("AoE Target Payload:\n");
-			m_onHitComp->m_aoeHitOnHit->m_payload.AppendDebugString(out_string);
+			debugContext.m_debugString += StringUtils::StringF("AoE Target Payload:\n");
+			m_onHitComp->m_aoeHitOnHit->m_payload.AppendDebugString(debugContext);
 		}
 
 		if (m_onHitComp->m_aoeEffectOnHit.has_value())
 		{
-			m_onHitComp->m_aoeEffectOnHit->AppendDebugString(out_string);
+			m_onHitComp->m_aoeEffectOnHit->AppendDebugString(debugContext);
 		}
 	}
 }

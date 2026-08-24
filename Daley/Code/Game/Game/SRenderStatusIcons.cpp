@@ -81,6 +81,7 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 
 	SpriteAnimation slowAnim = slowAnimDef->MakeAnimInstance();
 
+	// Render slow icons
 	for (auto it = context.Iterate<CRender, CTime>(); it.IsValid(); ++it)
 	{
 		CTime const& time = timeStorage[it];
@@ -88,6 +89,7 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 		{
 			continue;
 		}
+
 		CRender const& render = renderStorage[it];
 		if (!render.GetIsInCameraView())
 		{
@@ -95,12 +97,12 @@ void SRenderStatusIcons::Run(SystemContext const& context) const
 		}
 
 		SpriteInstance instance;
-		instance.m_position = Vec3(render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius) + Vec2(-0.75f * render.m_renderRadius, -0.0f), 0.f);
+		instance.m_position = Vec3(render.GetRenderPosition() + Vec2(0.f, 0.55f * render.m_renderRadius) + Vec2(-0.75f * render.m_renderRadius, 0.f), 0.f);
 		instance.m_orientation = 0.f;
 		instance.m_dims = Vec2(0.2f, 0.2f);
 		instance.m_rgba = Rgba8(80, 80, 80, 255);
 		instance.m_outlineRgba = render.m_outlineTint;
-		instance.m_spriteIndex = slowAnim.GetCurrentFrameIndex();
+		instance.m_spriteIndex = slowAnim.GetCurrentSpriteIndex();
 		instance.m_outdoorLight = 255;
 		instance.m_indoorLight = 255;
 		iconsIBO.AddInstance(instance);

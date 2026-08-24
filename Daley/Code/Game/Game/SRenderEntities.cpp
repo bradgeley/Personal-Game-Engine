@@ -85,17 +85,6 @@ void SRenderEntities::Run(SystemContext const& context) const
     ShaderID spriteShaderID = spriteShaderAsset->GetShaderID();
     AABB2 cameraBounds = scCamera.m_worldCamera.GetTranslatedOrthoBounds2D();
 
-    // Clear last frame's instances
-    for (auto it : scRenderer.m_instancesPerSpriteSheet)
-    {
-        InstanceBufferID iboID = it.second;
-        InstanceBuffer* ibo = renderer.GetInstanceBuffer(iboID);
-        if (ibo)
-        {
-            ibo->ClearInstances();
-        }
-    }
-
     // Push back an instance for every entity in camera view this frame
     for (auto it = context.Iterate<CRender, CAnimation>(); it.IsValid(); ++it)
     {
@@ -179,10 +168,20 @@ void SRenderEntities::Run(SystemContext const& context) const
         spriteSheetConstants.m_textureDims = spriteSheet->GetTextureDimensions();
         spriteCbo->Update(spriteSheetConstants);
 
-        renderer.SetModelConstants(ModelConstants());
         renderer.BindConstantBuffer(scRenderer.m_spriteSheetConstantsBuffer, SpriteSheetConstants::GetSlot());
         spriteSheet->SetRendererState();
         renderer.BindShader(spriteShaderID);
         renderer.DrawInstanced(6, *ibo);
+    }
+
+    // Clear out instances we rendererd
+    for (auto it : scRenderer.m_instancesPerSpriteSheet)
+    {
+        InstanceBufferID iboID = it.second;
+        InstanceBuffer* ibo = renderer.GetInstanceBuffer(iboID);
+        if (ibo)
+        {
+            ibo->ClearInstances();
+        }
     }
 }

@@ -1,0 +1,10 @@
+
+
+
+<GridSpriteSheet name="StatusEffects" texture="Data/SpriteSheets/StatusEffects.png" layout="9,1" edgePadding="0,0" innerPadding="0,0">
+  
+    <SpriteAnimation name="burn" frames="0-2" type="loop" secondsPerFrame="0.15"></SpriteAnimation>
+    <SpriteAnimation name="haste" frames="3-5" type="loop" secondsPerFrame="0.25"></SpriteAnimation>
+    <SpriteAnimation name="slow" frames="6-8" type="loop" secondsPerFrame="0.25"></SpriteAnimation>
+  
+</GridSpriteSheet>

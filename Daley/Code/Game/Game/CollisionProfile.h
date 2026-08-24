@@ -18,8 +18,9 @@ enum class CollisionChannel : uint32_t
 	Enemy				= 2,
 	Building			= 3,
 	GroundEffect		= 4,
+	PlayerBuff			= 5,
 
-	Count				= 5,
+	Count				= 6,
 };
 
 

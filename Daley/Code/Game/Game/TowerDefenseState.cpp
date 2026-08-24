@@ -247,7 +247,7 @@ void TowerDefenseState::ConfigureECS()
     g_ecs->RegisterSystem<SRenderCollisionEffects>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderDiscs>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderHealthBars>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SRenderStatusIcons>((int) FramePhase::Render);
+    //g_ecs->RegisterSystem<SRenderStatusIcons>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SFloatingText>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderHUD>((int) FramePhase::Render);

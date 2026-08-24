@@ -39,15 +39,22 @@ void SEntityTime::Run(SystemContext const& context) const
 		CTime& cTime = timeStorage[it];
 
 		cTime.m_remainingSlowDuration = std::max(0.f, cTime.m_remainingSlowDuration - context.m_deltaSeconds);
+		cTime.m_remainingHasteDuration = std::max(0.f, cTime.m_remainingHasteDuration - context.m_deltaSeconds);
 
-		if (cTime.m_remainingSlowDuration > 0.f)
+		bool isSlowed = cTime.IsSlowed();
+		bool isHasted = cTime.IsHasted();
+
+		double timeDilation = 1.0;
+		if (isSlowed)
 		{
-			cTime.m_clock.SetTimeDilation(StaticGameSettings::s_slowStatusTimeDilation);
+			timeDilation *= StaticGameSettings::s_slowStatusTimeDilation;
 		}
-		else
+		if (isHasted)
 		{
-			cTime.m_clock.SetTimeDilation(1.0);
+			timeDilation *= StaticGameSettings::s_hasteStatusTimeDilation;
 		}
+
+		cTime.m_clock.SetTimeDilation(timeDilation);
 
 		cTime.m_clock.Update(context.m_deltaSeconds * scTime.m_entityTimeDilation);
 	}

@@ -48,8 +48,10 @@ void SCollisionEffect::Run(SystemContext const& context) const
 		if (context.HasComponentsUnsafe(entityA.GetIndex(), collisionBit))
 		{
 			CCollisionEffect const& aoeA = collisionEffectStorage[entityA];
+			CTime const& timeA = timeStorage[entityA];
 
-			HitPayload payload = aoeA.GetWhileOverlappingPayload(context.m_deltaSeconds);
+			float deltaSeconds = context.m_deltaSeconds * timeA.m_clock.GetTimeDilationF();
+			HitPayload payload = aoeA.GetWhileOverlappingPayload(deltaSeconds);
 
 			if (payload.IsRelevantToHealth())
 			{
@@ -66,6 +68,7 @@ void SCollisionEffect::Run(SystemContext const& context) const
 				{
 					CTime& timeB = timeStorage[entityB];
 					timeB.m_remainingSlowDuration += payload.m_slowDuration;
+					timeB.m_remainingHasteDuration += payload.m_hasteDuration;
 				}
 			}
 		}
@@ -73,8 +76,10 @@ void SCollisionEffect::Run(SystemContext const& context) const
 		if (context.HasComponentsUnsafe(entityB.GetIndex(), collisionBit))
 		{
 			CCollisionEffect const& aoeB = collisionEffectStorage[entityB];
+			CTime const& timeB = timeStorage[entityB];
 
-			HitPayload payload = aoeB.GetWhileOverlappingPayload(context.m_deltaSeconds);
+			float deltaSeconds = context.m_deltaSeconds * timeB.m_clock.GetTimeDilationF();
+			HitPayload payload = aoeB.GetWhileOverlappingPayload(deltaSeconds);
 
 			if (payload.IsRelevantToHealth())
 			{
@@ -91,6 +96,7 @@ void SCollisionEffect::Run(SystemContext const& context) const
 				{
 					CTime& timeA = timeStorage[entityA];
 					timeA.m_remainingSlowDuration += payload.m_slowDuration;
+					timeA.m_remainingHasteDuration += payload.m_hasteDuration;
 				}
 			}
 		}

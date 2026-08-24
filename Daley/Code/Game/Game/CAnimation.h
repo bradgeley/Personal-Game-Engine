@@ -34,6 +34,14 @@ public:
 
 	Name m_spriteSheetName;								// Name of the sprite sheet used for this entity
 	Name m_defaultAnimationName;						// Name of the default animation to play. Defaults to s_defaultAnimName.
+
 	AssetID m_gridSpriteSheet = AssetID::Invalid;		// Asset ID of the grid sprite sheet used for this animation
 	SpriteAnimation m_animInstance;						// currently playing animation
+
+	// Status effect animations
+	AssetID m_statusEffectsSpriteSheet = AssetID::Invalid;	// Asset ID of the grid sprite sheet used for status effects
+
+	SpriteAnimation m_burnInstance;						// currently playing burn animation
+	SpriteAnimation m_hasteInstance;					// currently playing haste animation
+	SpriteAnimation m_slowInstance;						// currently playing slow animation
 };

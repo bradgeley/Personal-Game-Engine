@@ -6,6 +6,10 @@
 
 
 
+struct EntityDebugContext;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 enum class MovementFlags : uint8_t
 {
@@ -23,7 +27,7 @@ public:
     CMovement() = default;
     CMovement(void const* xmlElement);
 
-    void AppendDebugString(std::string& out_string, bool isSlowed) const;
+    void AppendDebugString(EntityDebugContext& context) const;
 
 	bool GetIsConstrainedToPath() const;
     bool GetMovedThisFrame() const;

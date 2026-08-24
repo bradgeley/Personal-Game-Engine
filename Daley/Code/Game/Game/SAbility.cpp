@@ -2,8 +2,9 @@
 #include "SAbility.h"
 #include "Ability.h"
 #include "AbilityDef.h"
-#include "CTransform.h"
 #include "CAbility.h"
+#include "CTime.h"
+#include "CTransform.h"
 #include "Engine/ECS/SystemContext.h"
 
 
@@ -33,19 +34,23 @@ void SAbility::Run(SystemContext const& context) const
 {
 	// Read Dependencies
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();
+	auto& timeStorage = context.GetArrayStorageConst<CTime>();
 
 	// Write Dependencies
 	auto& abilityStorage = context.GetMapStorage<CAbility>();
 	// Spawning, anything else that abilities use
 
-	for (auto it = context.Iterate<CAbility, CTransform>(); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CAbility, CTime, CTransform>(); it.IsValid(); ++it)
 	{
 		CAbility& ability = abilityStorage[it];
 		CTransform const& transform = transStorage[it];
+		CTime const& time = timeStorage[it];
+
+		float timeDilation = time.m_clock.GetTimeDilationF();
 
 		for (Ability* abilityInstance : ability.m_abilities)
 		{
-			abilityInstance->Update(context, transform.m_pos);
+			abilityInstance->Update(context, transform.m_pos, timeDilation);
 		}
 	}
 }

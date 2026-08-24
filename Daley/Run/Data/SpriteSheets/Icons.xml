@@ -1,9 +1,10 @@
 
 
 
-<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="2,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="3,1" edgePadding="0,0" innerPadding="0,0">
   
     <SpriteAnimation name="Slow" frames="0"></SpriteAnimation>
     <SpriteAnimation name="Void" frames="1"></SpriteAnimation> <!-- unused -->
+    <SpriteAnimation name="Haste" frames="2"></SpriteAnimation> <!-- unused -->
   
 </GridSpriteSheet>

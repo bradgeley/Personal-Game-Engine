@@ -8,6 +8,10 @@
 
 
 
+struct EntityDebugContext;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 struct CProjectile
 {
@@ -19,7 +23,7 @@ public:
 	HitPayload GetMainTargetPayload() const;
     HitPayload GetAoeTargetPayload() const;
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 

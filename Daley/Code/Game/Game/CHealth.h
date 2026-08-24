@@ -5,6 +5,7 @@
 
 
 
+struct EntityDebugContext;
 struct HitPayload;
 struct TagQuery;
 
@@ -56,7 +57,7 @@ public:
 	void SetRegenSuppressed(bool regenSuppressed); // maybe replace with a int counter for multiple sources of suppress regen
 	void SetIsTargetable(bool isTargetable);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& context) const;
 
 public:
     

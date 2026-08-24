@@ -10,9 +10,12 @@ namespace RenderConstants
 {
     // Higher depth = deeper into screen = background
 	// Lower depth = closer to camera = foreground
+    constexpr float s_hasteSpriteRenderDepth    = 0.06f;
+    constexpr float s_slowSpriteRenderDepth     = 0.06f;
     constexpr float s_minSpriteRenderDepth      = 0.1f;
     constexpr float s_defaultSpriteRenderDepth  = 0.5f;
     constexpr float s_maxSpriteRenderDepth      = 0.9f;
+    constexpr float s_burnSpriteRenderDepth     = 0.95f;
 	constexpr float s_invalidSpriteRenderDepth  = -1.f;
 	constexpr float s_maxExpectedSpriteHeight   = 10.f;
 }

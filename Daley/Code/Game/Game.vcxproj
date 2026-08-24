@@ -312,6 +312,7 @@
     <ClCompile Include="Game\CRender.cpp" />
     <ClCompile Include="Game\CTags.cpp" />
     <ClCompile Include="Game\CTime.cpp" />
+    <ClCompile Include="Game\EntityDebugContext.cpp" />
     <ClCompile Include="Game\EntityDef.cpp" />
     <ClCompile Include="Game\FlowGenerationCoords.cpp" />
     <ClCompile Include="Game\FlowField.cpp" />
@@ -407,6 +408,7 @@
     <ClInclude Include="Game\CProjectile.h" />
     <ClInclude Include="Game\CTags.h" />
     <ClInclude Include="Game\DiscShaderCPU.h" />
+    <ClInclude Include="Game\EntityDebugContext.h" />
     <ClInclude Include="Game\FloatingTextInstance.h" />
     <ClInclude Include="Game\GameFlow.h" />
     <ClInclude Include="Game\GameOverState.h" />
@@ -525,8 +527,8 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\AoEEffect.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\DarkAnt.xml" />
-    <Xml Include="..\..\Run\Data\SpriteSheets\FireUnderlay.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Scorpion.xml" />
+    <Xml Include="..\..\Run\Data\SpriteSheets\StatusEffects.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Towers.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Icons.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Pig.xml" />

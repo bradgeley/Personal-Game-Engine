@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "EntityDebugContext.h"
 #include "HitPayload.h"
 #include "Engine/Core/Name.h"
 #include "Engine/ECS/EntityID.h"
@@ -21,6 +22,7 @@ struct AbilityCooldownComponentDef;
 struct AbilityCritComponentDef;
 struct AbilityDamageComponentDef;
 struct AbilityDef;
+struct AbilityHasteComponentDef;
 struct AbilityMultishotComponentDef;
 struct AbilityOnHitComponentDef;
 struct AbilityPoisonComponentDef;
@@ -55,7 +57,7 @@ public:
 	AbilityCooldownComponent() = default;
 	AbilityCooldownComponent(AbilityCooldownComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -76,19 +78,20 @@ public:
 	bool NeedsCacheUpdate(Vec2 const& location) const;
 	bool UpdateCachedTiles(SystemContext const& context, Vec2 const& location);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_minRange = 0.f;
 	float m_maxRange = 0.f;
 
+	uint8_t m_abilityTargetFlags = 0;
 	AbilityTargetingMode m_targetingMode = AbilityTargetingMode::ClosestToGoal;
 
 	float m_minRangeAtTimeOfCache = -1.f;
 	float m_maxRangeAtTimeOfCache = -1.f;
 	Vec2 m_locationAtTimeOfCache = Vec2::ZeroVector;
-	std::vector<IntVec2> m_cachedPathTilesInRange;
+	std::vector<IntVec2> m_cachedTilesInRange;
 };
 
 
@@ -134,7 +137,7 @@ public:
 	AbilityCritComponent() = default;
 	AbilityCritComponent(AbilityCritComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -152,7 +155,7 @@ public:
 	AbilityDamageComponent() = default;
 	AbilityDamageComponent(AbilityDamageComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -170,7 +173,7 @@ public:
 	AbilityBurnComponent() = default;
 	AbilityBurnComponent(AbilityBurnComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -187,7 +190,7 @@ public:
 	AbilityPoisonComponent() = default;
 	AbilityPoisonComponent(AbilityPoisonComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -204,7 +207,24 @@ public:
 	AbilitySlowComponent() = default;
 	AbilitySlowComponent(AbilitySlowComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
+
+public:
+
+	float m_duration = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct AbilityHasteComponent
+{
+public:
+
+	AbilityHasteComponent() = default;
+	AbilityHasteComponent(AbilityHasteComponentDef const& def);
+
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -221,7 +241,7 @@ public:
 	AbilityChainComponent() = default;
 	AbilityChainComponent(AbilityChainComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -242,7 +262,7 @@ public:
 	AbilityMultishotComponent() = default;
 	AbilityMultishotComponent(AbilityMultishotComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -259,7 +279,7 @@ public:
 	AbilityRenderComponent() = default;
 	AbilityRenderComponent(AbilityRenderComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -277,7 +297,7 @@ public:
 	AbilityAoEHitComponent() = default;
 	AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -286,6 +306,7 @@ public:
 	std::optional<AbilityPoisonComponent>	m_poisonOnHit;
 	std::optional<AbilityBurnComponent>		m_burnOnHit;
 	std::optional<AbilitySlowComponent>		m_slowOnHit;
+	std::optional<AbilityHasteComponent>	m_hasteOnHit;
 };
 
 
@@ -298,7 +319,7 @@ public:
 	AbilityAoEEffectComponent() = default;
 	AbilityAoEEffectComponent(AbilityAoEEffectComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -309,6 +330,7 @@ public:
 	std::optional<AbilityPoisonComponent>	m_poisonPerSecond;
 	std::optional<AbilityBurnComponent>		m_burnPerSecond;
 	std::optional<AbilitySlowComponent>		m_slowPerSecond;
+	std::optional<AbilityHasteComponent>	m_hastePerSecond;	
 	std::optional<AbilityRenderComponent>	m_renderComp;
 };
 
@@ -322,7 +344,7 @@ public:
 	AbilityOnHitComponent() = default;
 	AbilityOnHitComponent(AbilityOnHitComponentDef const& def);
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -341,7 +363,7 @@ struct RolledAoEHitComponent
 {
 public:
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -356,7 +378,7 @@ struct RolledOnHitComponent
 {
 public:
 
-	void AppendDebugString(std::string& out_string) const;
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -377,11 +399,11 @@ public:
 
 	virtual void Shutdown(SystemContext const& context);
 
-	virtual void Update(SystemContext const& context, Vec2 const& location) = 0;
+	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation = 1.f) = 0;
 	virtual void Render([[maybe_unused]] SystemContext const& context, [[maybe_unused]] Vec2 const& location) const {};
 	virtual Ability* DeepCopy() const = 0;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
-	virtual void AppendDebugString(std::string& out_string) const;
+	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
@@ -398,10 +420,10 @@ public:
 	ProjectileHitAbility() = default;
 	explicit ProjectileHitAbility(ProjectileHitAbilityDef const& def);
 
-	virtual void Update(SystemContext const& context, Vec2 const& location) override;
+	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
-	virtual void AppendDebugString(std::string& out_string) const override;
+	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	RolledOnHitComponent RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
@@ -428,10 +450,10 @@ public:
 	AoEHitAbility() = default;
 	explicit AoEHitAbility(AoEHitAbilityDef const& def);
 
-	virtual void Update(SystemContext const& context, Vec2 const& location) override;
+	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
-	virtual void AppendDebugString(std::string& out_string) const override;
+	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	virtual HitPayload RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
@@ -456,10 +478,10 @@ public:
 
 	virtual void Shutdown(SystemContext const& context) override;
 
-	virtual void Update(SystemContext const& context, Vec2 const& location) override;
+	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
-	virtual void AppendDebugString(std::string& out_string) const override;
+	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 public:
 
@@ -478,11 +500,11 @@ public:
 	LaserAbility() = default;
 	explicit LaserAbility(LaserAbilityDef const& def);
 
-	virtual void Update(SystemContext const& context, Vec2 const& location) override;
+	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual void Render(SystemContext const& context, Vec2 const& location) const override;
 	virtual Ability* DeepCopy() const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
-	virtual void AppendDebugString(std::string& out_string) const override;
+	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	HitPayload RollDamageAndEffects(float deltaSeconds) const;
 

@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CHealth.h"
+#include "EntityDebugContext.h"
 #include "HitPayload.h"
 #include "GameCommon.h"
 #include "Engine/Core/StringUtils.h"
@@ -211,19 +212,19 @@ void CHealth::SetIsTargetable(bool isTargetable)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CHealth::AppendDebugString(std::string& out_string) const
+void CHealth::AppendDebugString(EntityDebugContext& context) const
 {
-	out_string += StringUtils::StringF("Health: %.1f/%.1f\n", m_currentHealth, m_maxHealth);
+	context.m_debugString += StringUtils::StringF("Health: %.1f/%.1f\n", m_currentHealth, m_maxHealth);
 	if (m_healthRegen > 0.f)
 	{
-		out_string += StringUtils::StringF("Health Regen: %.1f\n", m_healthRegen);
+		context.m_debugString += StringUtils::StringF("Health Regen: %.1f\n", m_healthRegen);
 	}
 	if (m_currentBurn > 0.f)
 	{
-		out_string += StringUtils::StringF("Burn: %.1f\n", m_currentBurn);
+		context.m_debugString += StringUtils::StringF("Burn: %.1f\n", m_currentBurn);
 	}
 	if (m_currentPoison > 0.f)
 	{
-		out_string += StringUtils::StringF("Poison: %.1f\n", m_currentPoison);
+		context.m_debugString += StringUtils::StringF("Poison: %.1f\n", m_currentPoison);
 	}
 }

@@ -22,10 +22,21 @@ struct AbilityCooldownComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class AbilityTargetFlags : uint8_t
+{
+	None,
+	Enemy	= 1 << 0,
+	Tower	= 1 << 1,
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct AbilityTargetingComponentDef
 {
 	explicit AbilityTargetingComponentDef(void const* xmlElement);
 
+	uint8_t m_abilityTargetFlags = 0; // Targets enemies, towers, or both
 	float m_minRange = 0.f;
 	float m_maxRange = 0.f;
 };
@@ -85,6 +96,16 @@ struct AbilitySlowComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct AbilityHasteComponentDef
+{
+	explicit AbilityHasteComponentDef(void const* xmlElement);
+
+	float m_duration = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct AbilityChainComponentDef
 {
 	explicit AbilityChainComponentDef(void const* xmlElement);
@@ -128,6 +149,7 @@ struct AbilityAoEHitComponentDef
 	std::optional<AbilityPoisonComponentDef>	m_poisonOnHit;
 	std::optional<AbilityBurnComponentDef>		m_burnOnHit;
 	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
+	std::optional<AbilityHasteComponentDef>		m_hasteOnHit;
 };
 
 
@@ -145,6 +167,7 @@ struct AbilityAoEEffectComponentDef
 	std::optional<AbilityPoisonComponentDef>	m_poisonPerSecond;
 	std::optional<AbilityBurnComponentDef>		m_burnPerSecond;
 	std::optional<AbilitySlowComponentDef>		m_slowPerSecond;
+	std::optional<AbilityHasteComponentDef>		m_hastePerSecond;
 
 	// Rendering
 	std::optional<AbilityRenderComponentDef>	m_renderDef;

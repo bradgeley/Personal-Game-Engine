@@ -23,6 +23,10 @@ void CCollisionEffect::InitializeFromAoEEffect(AbilityAoEEffectComponent const& 
     {
         m_slowPerSecond = aoeEffectComp.m_slowPerSecond->m_duration;
     }
+	if (aoeEffectComp.m_hastePerSecond.has_value())
+	{
+		m_hastePerSecond = aoeEffectComp.m_hastePerSecond->m_duration;
+	}
     m_shouldRender = aoeEffectComp.m_renderComp.has_value();
     if (aoeEffectComp.m_renderComp.has_value())
     {
@@ -41,5 +45,6 @@ HitPayload CCollisionEffect::GetWhileOverlappingPayload(float deltaSeconds) cons
 	payload.m_burn = m_burnPerSecond * deltaSeconds;
 	payload.m_poison = m_poisonPerSecond * deltaSeconds;
 	payload.m_slowDuration = m_slowPerSecond * deltaSeconds;
+	payload.m_hasteDuration = m_hastePerSecond * deltaSeconds;
 	return payload;
 }

@@ -280,6 +280,9 @@
     <ClCompile Include="Game\SRenderUI.cpp">
       <Filter>ECS\Systems\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Game\EntityDebugContext.cpp">
+      <Filter>Game\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -642,6 +645,9 @@
     <ClInclude Include="Game\SRenderUI.h">
       <Filter>ECS\Systems\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Game\EntityDebugContext.h">
+      <Filter>Game\Debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -731,6 +737,9 @@
     <Filter Include="ECS\Systems\SaveLoad">
       <UniqueIdentifier>{9f74240e-1e6c-4a5c-bba6-ae03bbc557f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Debug">
+      <UniqueIdentifier>{0a9dcb0c-f0aa-4344-92ea-676251422fcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml">
@@ -766,9 +775,6 @@
     <Xml Include="..\..\Run\Data\Definitions\AbilityDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
-    <Xml Include="..\..\Run\Data\SpriteSheets\FireUnderlay.xml">
-      <Filter>Data\SpriteSheets</Filter>
-    </Xml>
     <Xml Include="..\..\Run\Data\SpriteSheets\AoEEffect.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
@@ -797,6 +803,9 @@
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
     <Xml Include="..\..\Run\Data\SpriteSheets\WaterBug.xml">
+      <Filter>Data\SpriteSheets</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\SpriteSheets\StatusEffects.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
   </ItemGroup>

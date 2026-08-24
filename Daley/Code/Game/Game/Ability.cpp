@@ -30,6 +30,7 @@ AbilityTargetingComponent::AbilityTargetingComponent(AbilityTargetingComponentDe
 {
     m_minRange = def.m_minRange;
 	m_maxRange = def.m_maxRange;
+	m_abilityTargetFlags = def.m_abilityTargetFlags;
 }
 
 
@@ -50,11 +51,25 @@ bool AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
     {
         SCWorld const& world = context.GetSingletonConst<SCWorld>();
 
-        world.ForEachPathTileInRange(location, m_minRange, m_maxRange, [&](IntVec2 const& worldCoords)
+        m_cachedTilesInRange.clear();
+
+        // Note: Tower case covers Tower+Enemy case, but Enemy case does not. So we check tower first.
+        if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Tower)
         {
-            m_cachedPathTilesInRange.push_back(worldCoords);
-            return true;
-        });
+            world.ForEachPlayableTileOverlappingCircle(location, m_maxRange, [&](IntVec2 const& worldCoords)
+            {
+                m_cachedTilesInRange.push_back(worldCoords);
+                return true;
+            });
+        }
+        else if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Enemy)
+        {
+            world.ForEachPathTileInRange(location, m_minRange, m_maxRange, [&](IntVec2 const& worldCoords)
+            {
+                m_cachedTilesInRange.push_back(worldCoords);
+                return true;
+            });
+        }
 
         m_minRangeAtTimeOfCache = m_minRange;
         m_maxRangeAtTimeOfCache = m_maxRange;
@@ -64,7 +79,7 @@ bool AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
         {
             // Sort by distance so that when we go to find targets, the best target is first in the list.
             SCFlowField const& flowfield = context.GetSingletonConst<SCFlowField>();
-            std::sort(m_cachedPathTilesInRange.begin(), m_cachedPathTilesInRange.end(), [&](IntVec2 const& a, IntVec2 const& b)
+            std::sort(m_cachedTilesInRange.begin(), m_cachedTilesInRange.end(), [&](IntVec2 const& a, IntVec2 const& b)
             {
                 int aTileIndex = world.m_tiles.GetIndexForCoords(a);
                 int bTileIndex = world.m_tiles.GetIndexForCoords(b);
@@ -78,15 +93,15 @@ bool AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityTargetingComponent::AppendDebugString(std::string& out_string) const
+void AbilityTargetingComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (m_minRange > 0.f)
     {
-        out_string += StringUtils::StringF("Range: %.1f - %.1f\n", m_minRange, m_maxRange);
+        debugContext.m_debugString += StringUtils::StringF("Range: %.1f - %.1f\n", m_minRange, m_maxRange);
     }
     else
     {
-        out_string += StringUtils::StringF("Range: %.1f\n", m_maxRange);
+        debugContext.m_debugString += StringUtils::StringF("Range: %.1f\n", m_maxRange);
     }
 }
 
@@ -106,37 +121,69 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, int
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 	SCCollision const& collision = context.GetSingletonConst<SCCollision>();
 	CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
+	CollisionLayer const& buildingLayer = collision.GetCollisionLayer(CollisionChannel::Building);
 	auto& healthStorage = context.GetArrayStorageConst<CHealth>();
+	auto& transformStorage = context.GetArrayStorageConst<CTransform>();
 	BitMask healthBit = context.GetComponentBitMask<CHealth>();
 
     m_targets.clear();
 
-    for (IntVec2 const& cachedPathTile : m_cachedPathTilesInRange)
+    for (IntVec2 const& cachedPathTile : m_cachedTilesInRange)
     {
         int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
-        CollisionBucket const& tileBucket = enemyLayer[tileIndex];
 
-        for (EntityID entityID : tileBucket)
+        if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Enemy)
         {
-            if (m_targets.find(entityID) != m_targets.end())
-            {
-                continue;
-            }
+            CollisionBucket const& tileBucket = enemyLayer[tileIndex];
 
-            if (context.HasComponents(entityID, healthBit))
+            for (EntityID entityID : tileBucket)
             {
-                CHealth const& healthComp = healthStorage[entityID];
-                if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
+                if (m_targets.find(entityID) != m_targets.end())
                 {
-                    m_targets.insert(entityID);
+                    continue;
+                }
 
-                    if (maxTargets > 0 && m_targets.size() >= maxTargets)
+                if (context.HasComponents(entityID, healthBit))
+                {
+                    CHealth const& healthComp = healthStorage[entityID];
+                    if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
                     {
-                        return true;
+                        m_targets.insert(entityID);
+
+                        if (maxTargets > 0 && m_targets.size() >= maxTargets)
+                        {
+                            return true;
+                        }
                     }
                 }
             }
         }
+
+		if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Tower)
+		{
+			CollisionBucket const& tileBucket = buildingLayer[tileIndex];
+
+			for (EntityID entityID : tileBucket)
+			{
+				if (m_targets.find(entityID) != m_targets.end())
+				{
+					continue;
+				}
+
+				CTransform const& pos = transformStorage[entityID];
+				float distSquared = MathUtils::GetDistanceSquared2D(pos.m_pos, m_locationAtTimeOfCache);
+				if (distSquared > m_maxRange * m_maxRange || distSquared < m_minRange * m_minRange)
+				{
+					continue;
+				}
+
+				m_targets.insert(entityID);
+				if (maxTargets > 0 && m_targets.size() >= maxTargets)
+				{
+					return true;
+				}
+			}
+		}
     }
 
 	return !m_targets.empty();
@@ -174,7 +221,7 @@ bool AbilityPrecisionTargetingComponent::FindTargets(SystemContext const& contex
 
     if (m_targetingMode == AbilityTargetingMode::ClosestToGoal)
     {
-        for (IntVec2 const& cachedPathTile : m_cachedPathTilesInRange)
+        for (IntVec2 const& cachedPathTile : m_cachedTilesInRange)
         {
             int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
             CollisionBucket const& tileBucket = enemyLayer[tileIndex];
@@ -241,9 +288,9 @@ EntityID AbilityPrecisionTargetingComponent::FindChainTarget(SystemContext const
 
     EntityID result = EntityID::Invalid;
 
-    world.ForEachPathTileInRange(pos, 0.f, maxDistance, [&](IntVec2 const& worldCoords)
+    for (auto& tile : m_cachedTilesInRange)
     {
-        int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
+        int tileIndex = world.m_tiles.GetIndexForCoords(tile);
         CollisionBucket const& tileBucket = enemyLayer[tileIndex];
 
         for (EntityID entityID : tileBucket)
@@ -264,12 +311,10 @@ EntityID AbilityPrecisionTargetingComponent::FindChainTarget(SystemContext const
             if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
             {
                 result = entityID;
-                return false;
+                break;
             }
         }
-
-        return true;
-    });
+    }
 
     return result;
 }
@@ -285,9 +330,10 @@ AbilityCooldownComponent::AbilityCooldownComponent(AbilityCooldownComponentDef c
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityCooldownComponent::AppendDebugString(std::string& out_string) const
+void AbilityCooldownComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    out_string += StringUtils::StringF("Cooldown: %.1f\n", m_cooldownSeconds);
+	float cooldown = m_cooldownSeconds / debugContext.m_timeDilation;
+    debugContext.m_debugString += StringUtils::StringF("Cooldown: %.3f\n", cooldown);
 }
 
 
@@ -302,14 +348,14 @@ AbilityCritComponent::AbilityCritComponent(AbilityCritComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityCritComponent::AppendDebugString(std::string& out_string) const
+void AbilityCritComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (m_critChance <= 0.f)
     {
         return;
 	}
-    out_string += StringUtils::StringF("Crit Chance: %.1f%%\n", m_critChance * 100.f);
-    out_string += StringUtils::StringF("Crit Mult: %.1f\n", 2.f + m_critMulti);
+    debugContext.m_debugString += StringUtils::StringF("Crit Chance: %.1f%%\n", m_critChance * 100.f);
+    debugContext.m_debugString += StringUtils::StringF("Crit Mult: %.1f\n", 2.f + m_critMulti);
 }
 
 
@@ -324,7 +370,7 @@ AbilityDamageComponent::AbilityDamageComponent(AbilityDamageComponentDef const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityDamageComponent::AppendDebugString(std::string& out_string) const
+void AbilityDamageComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (m_minDamage <= 0.f && m_maxDamage <= 0.f)
     {
@@ -333,11 +379,11 @@ void AbilityDamageComponent::AppendDebugString(std::string& out_string) const
 
     if (m_minDamage == m_maxDamage)
     {
-        out_string += StringUtils::StringF("Damage: %.1f\n", m_minDamage);
+        debugContext.m_debugString += StringUtils::StringF("Damage: %.1f\n", m_minDamage);
     }
     else
     {
-        out_string += StringUtils::StringF("Damage: %.1f - %.1f\n", m_minDamage, m_maxDamage);
+        debugContext.m_debugString += StringUtils::StringF("Damage: %.1f - %.1f\n", m_minDamage, m_maxDamage);
     }
 }
 
@@ -352,13 +398,13 @@ AbilityBurnComponent::AbilityBurnComponent(AbilityBurnComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityBurnComponent::AppendDebugString(std::string& out_string) const
+void AbilityBurnComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (m_burn <= 0.f)
     {
         return;
 	}
-    out_string += StringUtils::StringF("Burn: %.1f\n", m_burn);
+    debugContext.m_debugString += StringUtils::StringF("Burn: %.1f\n", m_burn);
 }
 
 
@@ -372,13 +418,13 @@ AbilityPoisonComponent::AbilityPoisonComponent(AbilityPoisonComponentDef const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityPoisonComponent::AppendDebugString(std::string& out_string) const
+void AbilityPoisonComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (m_poison <= 0.f)
     {
         return;
     }
-    out_string += StringUtils::StringF("Poison: %.1f\n", m_poison);
+    debugContext.m_debugString += StringUtils::StringF("Poison: %.1f\n", m_poison);
 }
 
 
@@ -392,13 +438,33 @@ AbilitySlowComponent::AbilitySlowComponent(AbilitySlowComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilitySlowComponent::AppendDebugString(std::string& out_string) const
+void AbilitySlowComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (m_duration <= 0.f)
     {
         return;
 	}
-    out_string += StringUtils::StringF("Slow: %.1f\n", m_duration);
+    debugContext.m_debugString += StringUtils::StringF("Slow: %.1f\n", m_duration);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityHasteComponent::AbilityHasteComponent(AbilityHasteComponentDef const& def)
+{
+	m_duration = def.m_duration;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityHasteComponent::AppendDebugString(EntityDebugContext& debugContext) const
+{
+    if (m_duration <= 0.f)
+    {
+        return;
+    }
+    debugContext.m_debugString += StringUtils::StringF("Haste: %.1f\n", m_duration);
 }
 
 
@@ -416,10 +482,10 @@ AbilityChainComponent::AbilityChainComponent(AbilityChainComponentDef const& def
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityChainComponent::AppendDebugString(std::string& out_string) const
+void AbilityChainComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    out_string += StringUtils::StringF("Chain Chance: %.2f\n", m_chainChance * 100.f);
-    out_string += StringUtils::StringF("Max Chains: %d\n", m_maxChains);
+    debugContext.m_debugString += StringUtils::StringF("Chain Chance: %.2f\n", m_chainChance * 100.f);
+    debugContext.m_debugString += StringUtils::StringF("Max Chains: %d\n", m_maxChains);
 }
 
 
@@ -433,14 +499,14 @@ AbilityMultishotComponent::AbilityMultishotComponent(AbilityMultishotComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityMultishotComponent::AppendDebugString(std::string& out_string) const
+void AbilityMultishotComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (m_additionalTargets <= 0)
     {
         return;
     }
 
-	out_string += StringUtils::StringF("Additional Targets: %d\n", m_additionalTargets);
+	debugContext.m_debugString += StringUtils::StringF("Additional Targets: %d\n", m_additionalTargets);
 }
 
 
@@ -459,24 +525,24 @@ AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityOnHitComponent::AppendDebugString(std::string& out_string) const
+void AbilityOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    out_string += StringUtils::StringF("---Hit---\n");
+    debugContext.m_debugString += StringUtils::StringF("---Hit---\n");
 
 	float minDamage = m_damageOnHit.has_value() ? m_damageOnHit->m_minDamage : 0.f;
 	float maxDamage = m_damageOnHit.has_value() ? m_damageOnHit->m_maxDamage : 0.f;
 	float burn = m_burnOnHit.has_value() ? m_burnOnHit->m_burn : 0.f;
 	float poison = m_poisonOnHit.has_value() ? m_poisonOnHit->m_poison : 0.f;
 	float slow = m_slowOnHit.has_value() ? m_slowOnHit->m_duration : 0.f;
-	out_string += StringUtils::StringF("D(%.1f-%.1f) P(%.1f) B(%.1f) S(%.1f)\n", minDamage, maxDamage, poison, burn, slow);
+	debugContext.m_debugString += StringUtils::StringF("D(%.1f-%.1f) P(%.1f) B(%.1f) S(%.1f)\n", minDamage, maxDamage, poison, burn, slow);
 
     if (m_aoeHitOnHit.has_value())
     {
-        m_aoeHitOnHit->AppendDebugString(out_string);
+        m_aoeHitOnHit->AppendDebugString(debugContext);
     }
     if (m_aoeEffectOnHit.has_value())
     {
-        m_aoeEffectOnHit->AppendDebugString(out_string);
+        m_aoeEffectOnHit->AppendDebugString(debugContext);
 	}
 }
 
@@ -490,24 +556,52 @@ AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& 
     m_poisonOnHit = def.m_poisonOnHit;
 	m_burnOnHit = def.m_burnOnHit;
 	m_slowOnHit = def.m_slowOnHit;
+	m_hasteOnHit = def.m_hasteOnHit;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityAoEHitComponent::AppendDebugString(std::string& out_string) const
+void AbilityAoEHitComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    out_string += StringUtils::StringF("---AOE Hit---\n");
+    debugContext.m_debugString += StringUtils::StringF("---AOE Hit---\n");
     if (m_radius > 0.f)
     {
-        out_string += StringUtils::StringF("Radius: %.1f\n", m_radius);
-    }	
-    float minDamage = m_damageOnHit.has_value() ? m_damageOnHit->m_minDamage : 0.f;
-    float maxDamage = m_damageOnHit.has_value() ? m_damageOnHit->m_maxDamage : 0.f;
-    float burn = m_burnOnHit.has_value() ? m_burnOnHit->m_burn : 0.f;
-    float poison = m_poisonOnHit.has_value() ? m_poisonOnHit->m_poison : 0.f;
-    float slow = m_slowOnHit.has_value() ? m_slowOnHit->m_duration : 0.f;
-    out_string += StringUtils::StringF("D(%.1f-%.1f) P(%.1f) B(%.1f) S(%.1f)\n", minDamage, maxDamage, poison, burn, slow);
+        debugContext.m_debugString += StringUtils::StringF("Radius: %.1f\n", m_radius);
+    }
+
+    if (m_damageOnHit.has_value())
+    {
+		float minDamage = m_damageOnHit->m_minDamage;
+		float maxDamage = m_damageOnHit->m_maxDamage;
+		debugContext.m_debugString += StringUtils::StringF("D(%.1f-%.1f) ", minDamage, maxDamage);
+    }
+
+	if (m_poisonOnHit.has_value())
+	{
+		float poison = m_poisonOnHit->m_poison;
+		debugContext.m_debugString += StringUtils::StringF("P(%.1f) ", poison);
+	}
+
+	if (m_burnOnHit.has_value())
+	{
+		float burn = m_burnOnHit->m_burn;
+		debugContext.m_debugString += StringUtils::StringF("B(%.1f) ", burn);
+	}
+
+	if (m_slowOnHit.has_value())
+	{
+		float slow = m_slowOnHit->m_duration;
+		debugContext.m_debugString += StringUtils::StringF("S(%.1f) ", slow);
+	}
+
+	if (m_hasteOnHit.has_value())
+	{
+		float haste = m_hasteOnHit->m_duration;
+		debugContext.m_debugString += StringUtils::StringF("H(%.1f)", haste);
+	}
+
+	debugContext.m_debugString += '\n';
 }
 
 
@@ -528,20 +622,20 @@ AbilityAoEEffectComponent::AbilityAoEEffectComponent(AbilityAoEEffectComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityAoEEffectComponent::AppendDebugString(std::string& out_string) const
+void AbilityAoEEffectComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    out_string += StringUtils::StringF("---AOE Effect---\n", m_radius);
+    debugContext.m_debugString += StringUtils::StringF("---AOE Effect---\n", m_radius);
     if (m_radius > 0.f)
     {
-        out_string += StringUtils::StringF("Radius: %.1f\n", m_radius);
+        debugContext.m_debugString += StringUtils::StringF("Radius: %.1f\n", m_radius);
 	}
-    out_string += StringUtils::StringF("Duration: %.1f\n", m_durationSeconds);	
+    debugContext.m_debugString += StringUtils::StringF("Duration: %.1f\n", m_durationSeconds);	
 
-    float damage = m_damagePerSecond.has_value() ? m_damagePerSecond->m_maxDamage : 0.f;
-    float burn = m_burnPerSecond.has_value() ? m_burnPerSecond->m_burn : 0.f;
-    float poison = m_poisonPerSecond.has_value() ? m_poisonPerSecond->m_poison : 0.f;
-    float slow = m_slowPerSecond.has_value() ? m_slowPerSecond->m_duration : 0.f;
-    out_string += StringUtils::StringF("DPS(%.1f) PPS(%.1f) BPS(%.1f) SPS(%.1f)\n", damage, poison, burn, slow);
+    float damage = m_damagePerSecond.has_value() ? m_damagePerSecond->m_maxDamage * debugContext.m_timeDilation : 0.f;
+    float burn = m_burnPerSecond.has_value() ? m_burnPerSecond->m_burn * debugContext.m_timeDilation : 0.f;
+    float poison = m_poisonPerSecond.has_value() ? m_poisonPerSecond->m_poison * debugContext.m_timeDilation : 0.f;
+    float slow = m_slowPerSecond.has_value() ? m_slowPerSecond->m_duration * debugContext.m_timeDilation : 0.f;
+    debugContext.m_debugString += StringUtils::StringF("DPS(%.1f) PPS(%.1f) BPS(%.1f) SPS(%.1f)\n", damage, poison, burn, slow);
 }
 
 
@@ -562,9 +656,9 @@ void Ability::Shutdown(SystemContext const&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Ability::AppendDebugString(std::string& out_string) const
+void Ability::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    out_string += StringUtils::StringF("Ability: %s\n", m_abilityDef ? m_abilityDef->m_name.ToCStr() : "Invalid");
+    debugContext.m_debugString += StringUtils::StringF("Ability: %s\n", m_abilityDef ? m_abilityDef->m_name.ToCStr() : "Invalid");
 }
 
 
@@ -586,14 +680,14 @@ ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def) :
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& location)
+void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& location, float timeDilation)
 {
     ASSERT_OR_DIE(m_abilityDef, "ProjectileHitAbility::Update - m_abilityDef is null.");
     ASSERT_OR_DIE(m_cooldownComp.has_value(), "ProjectileHitAbility::Update - m_cooldownComp is null.");
     ASSERT_OR_DIE(m_targetingComp.has_value(), "ProjectileHitAbility::Update - m_targetingComp is null.");
     ASSERT_OR_DIE(m_onHitComp.has_value(), "ProjectileHitAbility::Update - m_onHitComp is null.");
 
-    float deltaSeconds = context.m_deltaSeconds;
+    float deltaSeconds = context.m_deltaSeconds * timeDilation;
     m_cooldownComp->m_accumulatedTime += deltaSeconds;
 
     constexpr float maxAttacksPerSecond = 1000.f;
@@ -651,7 +745,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
             projComp.m_targetID = targetID;
             projComp.m_targetPos = std::nullopt;
             projComp.m_accumulatedTime += m_cooldownComp->m_accumulatedTime;
-            projComp.m_projSpeed = m_projSpeed;
+            projComp.m_projSpeed = m_projSpeed * timeDilation;
             projComp.m_onHitComp = RollDamageAndEffects(rng);
         }
     }
@@ -688,27 +782,27 @@ void ProjectileHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& loca
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::AppendDebugString(std::string& out_string) const
+void ProjectileHitAbility::AppendDebugString(EntityDebugContext& debugContext) const
 {
-	Ability::AppendDebugString(out_string);
-    out_string += StringUtils::StringF("Proj Def: %s\n", m_projectileDefName.ToCStr());
-    out_string += StringUtils::StringF("Proj Speed: %.1f\n", m_projSpeed);
+	Ability::AppendDebugString(debugContext);
+    debugContext.m_debugString += StringUtils::StringF("Proj Def: %s\n", m_projectileDefName.ToCStr());
+    debugContext.m_debugString += StringUtils::StringF("Proj Speed: %.1f\n", m_projSpeed * debugContext.m_timeDilation);
 
-    if (m_cooldownComp.has_value())
+    if (m_cooldownComp.has_value())     
     {
-        m_cooldownComp->AppendDebugString(out_string);
+        m_cooldownComp->AppendDebugString(debugContext);
     }
     if (m_targetingComp.has_value())
     {
-        m_targetingComp->AppendDebugString(out_string);
+        m_targetingComp->AppendDebugString(debugContext);
     }
     if (m_critComp.has_value())
     {
-        m_critComp->AppendDebugString(out_string);
+        m_critComp->AppendDebugString(debugContext);
     }
     if (m_onHitComp.has_value())
     {
-        m_onHitComp->AppendDebugString(out_string);
+        m_onHitComp->AppendDebugString(debugContext);
     }
 }
 
@@ -842,14 +936,14 @@ AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def) : Ability(def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
+void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location, float timeDilation /*= 1.f*/)
 {
     ASSERT_OR_DIE(m_abilityDef, "ProjectileHitAbility::Update - m_abilityDef is null.");
     ASSERT_OR_DIE(m_cooldownComp.has_value(), "ProjectileHitAbility::Update - m_cooldownComp is null.");
     ASSERT_OR_DIE(m_targetingComp.has_value(), "ProjectileHitAbility::Update - m_targetingComp is null.");
     ASSERT_OR_DIE(m_aoeHitComp.has_value(), "ProjectileHitAbility::Update - m_aoeHitComp is null.");
 
-	float deltaSeconds = context.m_deltaSeconds;
+	float deltaSeconds = context.m_deltaSeconds * timeDilation;
     m_cooldownComp->m_accumulatedTime += deltaSeconds;
 
     constexpr float maxAttacksPerSecond = 1000.f;
@@ -925,6 +1019,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location)
             {
 				CTime& timeComp = timeStorage[entityID];
                 timeComp.m_remainingSlowDuration += payload.m_slowDuration;
+                timeComp.m_remainingHasteDuration += payload.m_hasteDuration;
             }
         }
     }
@@ -961,29 +1056,29 @@ void AoEHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) c
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AoEHitAbility::AppendDebugString(std::string& out_string) const
+void AoEHitAbility::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    Ability::AppendDebugString(out_string);
-
+    Ability::AppendDebugString(debugContext);
+        
     if (m_cooldownComp.has_value())
     {
-        m_cooldownComp->AppendDebugString(out_string);
+        m_cooldownComp->AppendDebugString(debugContext);
     }
     if (m_targetingComp.has_value())
     {
-        m_targetingComp->AppendDebugString(out_string);
+        m_targetingComp->AppendDebugString(debugContext);
     }
     if (m_critComp.has_value())
     {
-        m_critComp->AppendDebugString(out_string);
+        m_critComp->AppendDebugString(debugContext);
     }
     if (m_aoeHitComp.has_value())
     {
-        m_aoeHitComp->AppendDebugString(out_string);
+        m_aoeHitComp->AppendDebugString(debugContext);
     }
     if (m_aoeEffectComp.has_value())
     {
-        m_aoeEffectComp->AppendDebugString(out_string);
+        m_aoeEffectComp->AppendDebugString(debugContext);
 	}
 }
 
@@ -1043,6 +1138,12 @@ HitPayload AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
             AbilitySlowComponent const& slowComp = aoeHitComp.m_slowOnHit.value();
             payload.m_slowDuration = slowComp.m_duration;
 		}
+
+        if (aoeHitComp.m_hasteOnHit.has_value())
+        {
+			AbilityHasteComponent const& hasteComp = aoeHitComp.m_hasteOnHit.value();
+			payload.m_hasteDuration = hasteComp.m_duration;
+        }
     }
 
     return payload;
@@ -1072,7 +1173,7 @@ void PassiveAoEAbility::Shutdown(SystemContext const& context)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& location)
+void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& location, float timeDilation)
 {
     ASSERT_OR_DIE(m_abilityDef, "PassiveAoEAbility::Update - m_abilityDef is null.");
     ASSERT_OR_DIE(m_targetingComp.has_value(), "PassiveAoEAbility::Update - m_targetingComp is null.");
@@ -1102,6 +1203,14 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
 				aoeEffectComp.InitializeFromAoEEffect(m_aoeEffectComp.value());
             }
 		}
+    }
+    else
+    {
+		CTime* aoeEffectTimeComp = context.GetComponent<CTime>(m_activeAoEEffect);
+        if (aoeEffectTimeComp)
+        {
+			aoeEffectTimeComp->m_clock.SetTimeDilation(timeDilation);
+        }
     }
 }
 
@@ -1136,13 +1245,13 @@ void PassiveAoEAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& locatio
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::AppendDebugString(std::string& out_string) const
+void PassiveAoEAbility::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    Ability::AppendDebugString(out_string);
+    Ability::AppendDebugString(debugContext);
 
     if (m_aoeEffectComp.has_value())
     {
-        m_aoeEffectComp->AppendDebugString(out_string);
+        m_aoeEffectComp->AppendDebugString(debugContext);
 	}
 }
 
@@ -1170,13 +1279,14 @@ LaserAbility::LaserAbility(LaserAbilityDef const& def) : Ability(def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void LaserAbility::Update(SystemContext const& context, Vec2 const& location)
+void LaserAbility::Update(SystemContext const& context, Vec2 const& location, float timeDilation)
 {
 	ASSERT_OR_DIE(m_abilityDef, "LaserAbility::Update - m_abilityDef is null.");
 	ASSERT_OR_DIE(m_targetingComp.has_value(), "LaserAbility::Update - m_targetingComp is null.");
 	ASSERT_OR_DIE(m_onHitComp.has_value(), "LaserAbility::Update - m_onHitComp is null.");
 
-    if (context.m_deltaSeconds == 0.f)
+	float deltaSeconds = context.m_deltaSeconds * timeDilation;
+    if (deltaSeconds == 0.f)
     {
         return;
     }
@@ -1196,7 +1306,7 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location)
         return;
     }
 
-    HitPayload const payload = RollDamageAndEffects(context.m_deltaSeconds);
+    HitPayload const payload = RollDamageAndEffects(deltaSeconds);
 
     for (int targetIndex = 0; targetIndex < m_targetingComp->m_targetChains.GetDimensions().x; ++targetIndex)
     {
@@ -1320,17 +1430,17 @@ void LaserAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) co
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void LaserAbility::AppendDebugString(std::string& out_string) const
+void LaserAbility::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    Ability::AppendDebugString(out_string);
+    Ability::AppendDebugString(debugContext);
 
     if (m_targetingComp.has_value())
     {
-        m_targetingComp->AppendDebugString(out_string);
+        m_targetingComp->AppendDebugString(debugContext);
 	}
     if (m_onHitComp.has_value())
     {
-        m_onHitComp->AppendDebugString(out_string);
+        m_onHitComp->AppendDebugString(debugContext);
     }
 }
 

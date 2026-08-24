@@ -86,11 +86,12 @@ void SProjectile::Run(SystemContext const& context) const
 					}
 					if (mainTargetPayload.IsRelevantToTime())
 					{
-						// Add slow effect to target
+						// Add slow/haste effect to target
 						if (context.HasComponent<CTime>(proj.m_targetID))
 						{
 							CTime& targetTime = timeStorage[proj.m_targetID];
 							targetTime.m_remainingSlowDuration += mainTargetPayload.m_slowDuration;
+							targetTime.m_remainingHasteDuration += mainTargetPayload.m_hasteDuration;
 						}
 					}
 				}
@@ -133,6 +134,7 @@ void SProjectile::Run(SystemContext const& context) const
 									{
 										CTime& targetTime = timeStorage[entityID];
 										targetTime.m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
+										targetTime.m_remainingHasteDuration += aoeTargetPayload.m_hasteDuration;
 									}
 								}
 							}

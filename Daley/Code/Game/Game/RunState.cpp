@@ -56,7 +56,8 @@ void RunState::Enter(NamedProperties const& props)
 	m_runData.m_placeableTowers[1] = PlaceableTower{ "Chocolate", '2', 40.f };
 	m_runData.m_placeableTowers[2] = PlaceableTower{ "Strawberry", '3', 50.f };
 	m_runData.m_placeableTowers[3] = PlaceableTower{ "Mint", '4', 60.f };
-	m_runData.m_placeableTowers[4] = PlaceableTower{ "Wall1x1", 'W', 5.f };
+	m_runData.m_placeableTowers[4] = PlaceableTower{ "Coffee", '5', 50.f };
+	m_runData.m_placeableTowers[5] = PlaceableTower{ "Wall1x1", 'W', 5.f };
 
 	// Forest Biome first
 	m_runData.m_missionGenData[0] = { "forest" };

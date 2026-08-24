@@ -154,53 +154,50 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				Vec2 screenPos = worldCamera.m_worldCamera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();
 				Vec2 cardMins = screenPos;
 
-				std::string debugString;
+				EntityDebugContext debugContext(it.GetEntityID(), context);
 
 				if (context.HasComponent<CAbility>(it.GetEntityID()))
 				{
 					CAbility const& abilityComp = abilityStorage[it];
 					for (auto& ability : abilityComp.m_abilities)
 					{
-						ability->AppendDebugString(debugString);
+						ability->AppendDebugString(debugContext);
 						if (abilityComp.m_abilities.size() > 1)
 						{
-							debugString += "-----------------------------------\n";
+							debugContext.m_debugString += "-----------------------------------\n";
 						}
 					}
 				}
 
-				bool isSlowed = false;
 				if (context.HasComponent<CHealth>(it.GetEntityID()))
 				{
 					CHealth const& health = healthStorage[it];
-					health.AppendDebugString(debugString);
-				}
-				if (context.HasComponent<CTime>(it.GetEntityID()))
-				{
-					CTime const& time = timeStorage[it];
-					time.AppendDebugString(debugString);
-					isSlowed = time.IsSlowed();
+					health.AppendDebugString(debugContext);
 				}
 				if (context.HasComponent<CMovement>(it.GetEntityID()))
 				{
 					CMovement const& movement = movementStorage[it];
-					movement.AppendDebugString(debugString, isSlowed);
+					movement.AppendDebugString(debugContext);
 				}
-
+				if (context.HasComponent<CTime>(it.GetEntityID()))
+				{
+					CTime const& time = timeStorage[it];
+					time.AppendDebugString(debugContext.m_debugString);
+				}
 				if (context.HasComponent<CProjectile>(it.GetEntityID()))
 				{
 					CProjectile const& proj = projectileStorage[it];
-					proj.AppendDebugString(debugString);
+					proj.AppendDebugString(debugContext);
 				}
 
 				float damage = SGoal::GetDamageToPlayerByTags(tags);
-				debugString += StringUtils::StringF("Damage: %.1f\n", damage);
+				debugContext.m_debugString += StringUtils::StringF("Damage: %.1f\n", damage);
 
-				tags.AppendDebugString(debugString);
+				tags.AppendDebugString(debugContext.m_debugString);
 
-				if (debugString.empty())
+				if (debugContext.m_debugString.empty())
 				{
-					debugString = "No Debug Info Available";
+					debugContext.m_debugString = "No Debug Info Available";
 				}
 
 				float titleLineHeight = 33.f;
@@ -209,8 +206,8 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				float infoCardEdgeWidth = 5.f;
 				float infoCardTitleSpacing = 20.f;
 				Vec2 minCardDims = Vec2(300.f, 300.f);
-				StringUtils::TrimTrailingWhitespace(debugString);
-				Strings lines = StringUtils::SplitStringOnDelimiter(debugString, '\n');
+				StringUtils::TrimTrailingWhitespace(debugContext.m_debugString);
+				Strings lines = StringUtils::SplitStringOnDelimiter(debugContext.m_debugString, '\n');
 				int numLines = (int) lines.size();
 				float textHeight = titleLineHeight + infoCardTitleSpacing + textLineHeight * (float) numLines + textLineSpacingRatio * textLineHeight* (float) (numLines - 1);
 				float totalHeight = textHeight + infoCardEdgeWidth * 2.f;
@@ -268,11 +265,11 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(infoCardEdgeWidth, -infoCardEdgeWidth), Vec2(1.f, -1.f), titleLineHeight, debug.m_defName.ToString(), Rgba8::White);
 
 				// Debug Information
-				Vec2 debugInfoTextDims = font->GetTextDims(textLineHeight, textLineSpacingRatio, debugString);
+				Vec2 debugInfoTextDims = font->GetTextDims(textLineHeight, textLineSpacingRatio, debugContext.m_debugString);
 				Vec2 offset = Vec2::ZeroVector;
 				offset.x = -(informationCardBounds.GetWidth() - debugInfoTextDims.x) + infoCardEdgeWidth;
 				offset.y = (informationCardBounds.GetHeight() - debugInfoTextDims.y) + textStartHeightOffset;
-				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetBottomRight() + offset, Vec2(-1.f, 1.f), textLineHeight, debugString, Rgba8::White, textLineSpacingRatio);
+				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetBottomRight() + offset, Vec2(-1.f, 1.f), textLineHeight, debugContext.m_debugString, Rgba8::White, textLineSpacingRatio);
 				break;
 			}
 		}

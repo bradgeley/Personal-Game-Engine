@@ -3,6 +3,7 @@
 #include "Ability.h"
 #include "EntityDef.h"
 #include "GameCommon.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 
@@ -163,6 +164,26 @@ AbilityTargetingComponentDef::AbilityTargetingComponentDef(void const* xmlElemen
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_minRange = XmlUtils::ParseXmlAttribute(elem, "minRange", m_minRange);
 	m_maxRange = XmlUtils::ParseXmlAttribute(elem, "maxRange", m_maxRange);
+	std::string targets = XmlUtils::ParseXmlAttribute(elem, "targets", "Enemies");
+
+	Strings targetTokens = StringUtils::SplitStringOnDelimiter(targets, ',');
+
+	for (std::string const& targetString : targetTokens)
+	{
+        Name targetName = Name(targetString);
+		if (targetName == "Enemies")
+		{
+            m_abilityTargetFlags |= (uint8_t) AbilityTargetFlags::Enemy;
+		}
+		else if (targetName == "Towers")
+		{
+			m_abilityTargetFlags |= (uint8_t) AbilityTargetFlags::Tower;
+		}
+		else
+		{
+			m_abilityTargetFlags = 0;
+		}
+	}
 }
 
 
@@ -225,6 +246,15 @@ AbilitySlowComponentDef::AbilitySlowComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AbilityHasteComponentDef::AbilityHasteComponentDef(void const* xmlElement)
+{
+    XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+    m_duration = XmlUtils::ParseXmlAttribute(elem, "duration", m_duration);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityChainComponentDef::AbilityChainComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
@@ -266,6 +296,10 @@ AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
     {
         m_slowOnHit.emplace(slowElem);
 	}
+	if (XmlElement const* hasteElem = elem.FirstChildElement("Haste"))
+	{
+		m_hasteOnHit.emplace(hasteElem);
+	}
 }
 
 
@@ -293,6 +327,10 @@ AbilityAoEEffectComponentDef::AbilityAoEEffectComponentDef(void const* xmlElemen
     if (XmlElement const* slowElem = elem.FirstChildElement("Slow"))
     {
         m_slowPerSecond.emplace(slowElem);
+	}
+	if (XmlElement const* hasteElem = elem.FirstChildElement("Haste"))
+	{
+		m_hastePerSecond.emplace(hasteElem);
 	}
     if (XmlElement const* renderElem = elem.FirstChildElement("Render"))
     {
