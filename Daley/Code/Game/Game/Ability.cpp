@@ -529,12 +529,26 @@ void AbilityOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) 
 {
     debugContext.m_debugString += StringUtils::StringF("---Hit---\n");
 
-	float minDamage = m_damageOnHit.has_value() ? m_damageOnHit->m_minDamage : 0.f;
-	float maxDamage = m_damageOnHit.has_value() ? m_damageOnHit->m_maxDamage : 0.f;
-	float burn = m_burnOnHit.has_value() ? m_burnOnHit->m_burn : 0.f;
-	float poison = m_poisonOnHit.has_value() ? m_poisonOnHit->m_poison : 0.f;
-	float slow = m_slowOnHit.has_value() ? m_slowOnHit->m_duration : 0.f;
-	debugContext.m_debugString += StringUtils::StringF("D(%.1f-%.1f) P(%.1f) B(%.1f) S(%.1f)\n", minDamage, maxDamage, poison, burn, slow);
+	if (m_damageOnHit.has_value())
+	{
+		debugContext.m_debugString += StringUtils::StringF("D(%.1f-%.1f)", m_damageOnHit->m_minDamage, m_damageOnHit->m_maxDamage);
+	}
+
+	if (m_burnOnHit.has_value())
+	{
+		debugContext.m_debugString += StringUtils::StringF(" B(%.1f)", m_burnOnHit->m_burn);
+	}
+
+	if (m_poisonOnHit.has_value())
+	{
+		debugContext.m_debugString += StringUtils::StringF(" P(%.1f)", m_poisonOnHit->m_poison);
+	}
+
+	if (m_slowOnHit.has_value())
+	{
+		debugContext.m_debugString += StringUtils::StringF(" S(%.1f)", m_slowOnHit->m_duration);
+	}
+	debugContext.m_debugString += '\n';
 
     if (m_aoeHitOnHit.has_value())
     {
@@ -631,11 +645,27 @@ void AbilityAoEEffectComponent::AppendDebugString(EntityDebugContext& debugConte
 	}
     debugContext.m_debugString += StringUtils::StringF("Duration: %.1f\n", m_durationSeconds);	
 
-    float damage = m_damagePerSecond.has_value() ? m_damagePerSecond->m_maxDamage * debugContext.m_timeDilation : 0.f;
-    float burn = m_burnPerSecond.has_value() ? m_burnPerSecond->m_burn * debugContext.m_timeDilation : 0.f;
-    float poison = m_poisonPerSecond.has_value() ? m_poisonPerSecond->m_poison * debugContext.m_timeDilation : 0.f;
-    float slow = m_slowPerSecond.has_value() ? m_slowPerSecond->m_duration * debugContext.m_timeDilation : 0.f;
-    debugContext.m_debugString += StringUtils::StringF("DPS(%.1f) PPS(%.1f) BPS(%.1f) SPS(%.1f)\n", damage, poison, burn, slow);
+	if (m_damagePerSecond.has_value())
+	{
+		debugContext.m_debugString += StringUtils::StringF("DPS(%.1f)", m_damagePerSecond->m_maxDamage * debugContext.m_timeDilation);
+	}
+	if (m_burnPerSecond.has_value())
+	{
+		debugContext.m_debugString += StringUtils::StringF(" BPS(%.1f)", m_burnPerSecond->m_burn * debugContext.m_timeDilation);
+	}
+	if (m_poisonPerSecond.has_value())
+	{
+		debugContext.m_debugString += StringUtils::StringF(" PPS(%.1f)", m_poisonPerSecond->m_poison * debugContext.m_timeDilation);
+	}
+	if (m_slowPerSecond.has_value())
+	{
+		debugContext.m_debugString += StringUtils::StringF(" SPS(%.1f)", m_slowPerSecond->m_duration * debugContext.m_timeDilation);
+	}
+	if (m_hastePerSecond.has_value())
+	{
+		debugContext.m_debugString += StringUtils::StringF(" HPS(%.1f)", m_hastePerSecond->m_duration * debugContext.m_timeDilation);
+	}
+	debugContext.m_debugString += '\n';
 }
 
 

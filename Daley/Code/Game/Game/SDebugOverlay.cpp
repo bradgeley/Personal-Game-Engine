@@ -6,6 +6,7 @@
 #include "CHealth.h"
 #include "CMovement.h"
 #include "CProjectile.h"
+#include "CPlaceable.h"
 #include "CTags.h"
 #include "CTime.h"
 #include "CTransform.h"
@@ -147,7 +148,20 @@ void SDebugOverlay::Run(SystemContext const& context) const
 		{
 			CTransform const& transform = transStorage[it];
 			CCollision const* collision = context.HasComponents(it.GetEntityID(), collisionBit) ? &collisionStorage[it] : nullptr;
-			float radius = collision ? collision->m_radius : 2.f;
+			float radius = 1.f;
+			if (collision)
+			{
+				radius = collision->m_radius;
+			}
+			else
+			{
+				CPlaceable const* placeable = context.GetComponent<CPlaceable>(it.GetEntityID());
+				if (placeable)
+				{
+					radius = static_cast<float>(placeable->m_dims.x) * 0.5f;
+				}
+			}
+
 			if (scInput.m_mouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
 			{
 				CEntityName const& debug = debugStorage[it];
@@ -191,7 +205,10 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				}
 
 				float damage = SGoal::GetDamageToPlayerByTags(tags);
-				debugContext.m_debugString += StringUtils::StringF("Damage: %.1f\n", damage);
+				if (damage > 0.f)
+				{
+					debugContext.m_debugString += StringUtils::StringF("Player Damage: %.1f\n", damage);
+				}
 
 				tags.AppendDebugString(debugContext.m_debugString);
 

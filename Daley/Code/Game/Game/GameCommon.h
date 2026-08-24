@@ -58,8 +58,8 @@ namespace StaticGameSettings
 
 	static constexpr float s_basePlayerHealth				= 100.f;
 	static constexpr float s_basePlayerHealthRegen			= 0.1f;
-	static constexpr float s_baseGold						= 50.f;
-	static constexpr float s_baseCreditLimit				= 500.f;
+	static constexpr float s_baseGold						= 100.f;
+	static constexpr float s_baseCreditLimit				= 0.f;
 	static constexpr float s_baseSavingsInterestRate		= 0.08f;
 	static constexpr float s_baseDebtInterestRate			= 0.5f;
 	static constexpr float s_baseInterestTimerSeconds		= 30.f;
@@ -70,6 +70,9 @@ namespace StaticGameSettings
 	static constexpr int   s_numWavesInFirstMission			= 10;
 	static constexpr int   s_numWavesIncreasePerMission		= 2;
 	static constexpr float s_enemyHealthIncreasePerMission	= 0.1f;
+
+	static constexpr float s_minTimeDilation				= 0.25f;
+	static constexpr float s_maxTimeDilation				= 4.f;
 
     // Derived
     extern float s_burnDecayK;

@@ -103,7 +103,7 @@ void CTags::AppendDebugString(std::string& out) const
 		{
 			if (!hasTag)
 			{
-				out += "Tags:\n";
+				out += "Tags: ";
 				hasTag = true;
 			}
 			out += m_tags[i].ToCStr();

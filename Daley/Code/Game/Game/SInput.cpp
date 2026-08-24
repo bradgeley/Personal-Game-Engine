@@ -2,6 +2,7 @@
 #include "SInput.h"
 #include "CPlaceable.h"
 #include "EntityDef.h"
+#include "GameCommon.h"
 #include "GameState.h"
 #include "SCCamera.h"
 #include "SCEntityFactory.h"
@@ -19,6 +20,7 @@
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Input/InputSystem.h"
 #include "Engine/Math/Vec2.h"
+#include "Engine/Time/Clock.h"
 #include "Engine/Window/Window.h"
 
 
@@ -82,6 +84,32 @@ void SInput::Run(SystemContext const& context) const
 			eventSystem.FireEvent("MissionOver", changeStateProps);
 		}
 		return;
+	}
+	
+	bool isPaused = gameState.IsPaused();
+	if (!isPaused)
+	{
+		// Game speed up/slow down
+		if (inputSystem.WasKeyJustPressed(KeyCode::Plus))
+		{
+			float timeDilation = gameState.m_clock->GetLocalTimeDilationF();
+			timeDilation *= 2.f;
+			if (timeDilation > StaticGameSettings::s_maxTimeDilation)
+			{
+				timeDilation = StaticGameSettings::s_maxTimeDilation;
+			}
+			gameState.m_clock->SetLocalTimeDilation(timeDilation);
+		}
+		else if (inputSystem.WasKeyJustPressed(KeyCode::Minus))
+		{
+			float timeDilation = gameState.m_clock->GetLocalTimeDilationF();
+			timeDilation *= 0.5f;
+			if (timeDilation < StaticGameSettings::s_minTimeDilation)
+			{
+				timeDilation = StaticGameSettings::s_minTimeDilation;
+			}
+			gameState.m_clock->SetLocalTimeDilation(timeDilation);
+		}
 	}
 
 	// Tower Placement
