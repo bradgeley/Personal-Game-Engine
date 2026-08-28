@@ -48,7 +48,8 @@ void SInput::Run(SystemContext const& context) const
 	SCEventSystem& scEventSystem = context.GetSingleton<SCEventSystem>();
 	SCInputSystem& scInput = context.GetSingleton<SCInputSystem>();
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
-	SCRunData& runData = context.GetSingleton<SCRunData>();
+	SCRunData& scRunData = context.GetSingleton<SCRunData>();
+	RunData& runData = *scRunData.m_data;
 	SCFloatingText& floatingText = context.GetSingleton<SCFloatingText>();
 	SCGameState& game = context.GetSingleton<SCGameState>();
 
@@ -80,7 +81,6 @@ void SInput::Run(SystemContext const& context) const
 		if (inputSystem.WasKeyJustPressed(KeyCode::Space))
 		{
 			NamedProperties changeStateProps;
-			changeStateProps.Set<SCRunData>("RunData", runData);
 			eventSystem.FireEvent("MissionOver", changeStateProps);
 		}
 		return;
@@ -228,7 +228,7 @@ void SInput::Run(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SInput::CanAffordTower(PlaceableTower const& tower, SCRunData const& runData)
+bool SInput::CanAffordTower(PlaceableTower const& tower, RunData const& runData)
 {
 	return runData.m_gold + runData.m_creditLimit >= tower.m_cost;
 }

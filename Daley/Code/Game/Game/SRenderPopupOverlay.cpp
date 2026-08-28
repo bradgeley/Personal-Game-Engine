@@ -70,6 +70,7 @@ void SRenderPopupOverlay::Run(SystemContext const& context) const
 	SCGameState const& scGameState = context.GetSingletonConst<SCGameState>();
 	SCCamera const& scCamera = context.GetSingletonConst<SCCamera>();
 	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
+	RunData const& runData = *scRunData.m_data;
 	SCWaves const& scWaves = context.GetSingletonConst<SCWaves>();
 	
 	// Write Dependencies
@@ -78,7 +79,7 @@ void SRenderPopupOverlay::Run(SystemContext const& context) const
 
 	PopupOverlayType overlayType = PopupOverlayType::None;
 
-	if (scRunData.m_health <= 0.f)
+	if (runData.m_health <= 0.f)
 	{
 		overlayType = PopupOverlayType::Defeat;
 	}

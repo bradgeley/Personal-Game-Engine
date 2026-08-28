@@ -197,7 +197,8 @@ bool SWaveSpawner::GenerateWaves(NamedProperties& args)
 	int numWaves = args.Get<int>("numWaves", 0);
 
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
-	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
+	SCRunData const& scRunData = g_ecs->GetSingleton<SCRunData>();
+	RunData const& runData = *scRunData.m_data;
 
 	GenerateWaves(waves, runData, seed, numWaves);
 
@@ -245,7 +246,7 @@ static Name GetRandomEnemyWithTags(std::vector<Name> const& tags, RandomNumberGe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWaveSpawner::GenerateWaves(SCWaves& waves, SCRunData const& runData, int seed, int numWaves)
+void SWaveSpawner::GenerateWaves(SCWaves& waves, RunData const& runData, int seed, int numWaves)
 {
 	ScopedTimer t("GenerateWaves");
 

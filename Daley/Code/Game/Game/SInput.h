@@ -7,7 +7,7 @@
 
 class SCWorld;
 struct PlaceableTower;
-struct SCRunData;
+struct RunData;
 struct Vec2;
 
 
@@ -21,6 +21,6 @@ public:
     void Startup() override;
     void Run(SystemContext const& context) const override;
 
-	static bool CanAffordTower(PlaceableTower const& tower, SCRunData const& runData);
+	static bool CanAffordTower(PlaceableTower const& tower, RunData const& runData);
     static TowerPlacementRequest MakeTowerPlacementRequest(Name towerDefName, Vec2 const& worldPos, SCWorld const& world, bool isGenerated = false, float cost = 0.f, bool canAfford = true);
 };

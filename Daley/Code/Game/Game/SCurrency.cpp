@@ -36,7 +36,8 @@ void SCurrency::Run(SystemContext const& context) const
 	auto const& deathComponents = context.GetArrayStorageConst<CDeath>();
 
 	// Write Dependencies
-	auto& runData = context.GetSingleton<SCRunData>();
+	auto& scRunData = context.GetSingleton<SCRunData>();
+	RunData& runData = *scRunData.m_data;
 
 	// Go through all entities who died this frame and add their gold to player gold
 	for (GroupIter it = context.Iterate<CDeath>(); it.IsValid(); ++it)
@@ -78,7 +79,8 @@ void SCurrency::Run(SystemContext const& context) const
 //----------------------------------------------------------------------------------------------------------------------
 bool SCurrency::GrantGold(NamedProperties& params)
 {
-	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
+	SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
+	RunData& runData = *scRunData.m_data;
 	float gold = params.Get<float>("gold", 0.f);
 	runData.m_gold += gold;
 	return false;
@@ -89,7 +91,8 @@ bool SCurrency::GrantGold(NamedProperties& params)
 //----------------------------------------------------------------------------------------------------------------------
 bool SCurrency::GrantSells(NamedProperties& params)
 {
-	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
+	SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
+	RunData& runData = *scRunData.m_data;
 	int sells = params.Get<int>("sells", 0);
 	runData.m_numSoldTowers -= sells;
 	return false;

@@ -41,7 +41,8 @@ void STowerSpawner::Run(SystemContext const& context) const
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
     SCWorld& world = context.GetSingleton<SCWorld>();
 	SCFloatingText& scFloatingText = context.GetSingleton<SCFloatingText>();
-	SCRunData& runData = context.GetSingleton<SCRunData>();
+	SCRunData& scRunData = context.GetSingleton<SCRunData>();
+	RunData& runData = *scRunData.m_data;
 
     for (TowerRemovalRequest const& removalRequest : factory.m_towerRemovals)
     {

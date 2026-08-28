@@ -78,6 +78,28 @@ int XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribute
 
 
 //----------------------------------------------------------------------------------------------------------------------
+char XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, char defaultValue)
+{
+    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    {
+        std::string value = attrib->Value();
+        if (value.length() == 0)
+        {
+			DevConsoleUtils::LogError("char ParseXmlAttribute Error: %s - value is empty - (e.g. 'a')", attributeName);
+			return defaultValue;
+        }
+        if (value.length() > 1)
+        {
+			DevConsoleUtils::LogError("char ParseXmlAttribute Error: %s - value is too long, using first character: %s - (e.g. 'a')", attributeName, attrib->Value());
+        }
+        return value[0];
+    }
+    return defaultValue;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 uint8_t XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, uint8_t defaultValue)
 {
     if (XmlAttribute const* attrib = element.FindAttribute(attributeName))

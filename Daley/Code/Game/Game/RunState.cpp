@@ -49,9 +49,12 @@ void RunState::Enter(NamedProperties const& props)
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
 	ASSERT_OR_DIE(font != nullptr, StringUtils::StringF("Failed to load %s for RunState!", MAIN_MENU_FONT_NAME));
 
-	// Todo: get initial placeable tower data from somewhere in xml
-	m_runData = SCRunData();
+	m_runData.Shutdown();
+	m_runData = RunData();
+
 	m_runData.m_seed = g_rng->Rand();
+
+	// Todo: get initial placeable tower data from somewhere in xml
 	m_runData.m_placeableTowers[0] = PlaceableTower{ "Vanilla", '1', 30.f };
 	m_runData.m_placeableTowers[1] = PlaceableTower{ "Chocolate", '2', 40.f };
 	m_runData.m_placeableTowers[2] = PlaceableTower{ "Strawberry", '3', 50.f };
@@ -97,7 +100,7 @@ void RunState::Update(float)
 	{
 		NamedProperties props;
 		props.Set<Name>("state", "TowerDefense");
-		props.Set<SCRunData>("runData", m_runData);
+		props.Set<RunData*>("runData", &m_runData);
 		g_eventSystem->FireEvent("PushState", props);
 	}
 	else if (g_input->WasKeyJustPressed(KeyCode::Escape))
@@ -141,10 +144,8 @@ void RunState::Render() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool RunState::MissionOver(NamedProperties& props)
+bool RunState::MissionOver(NamedProperties&)
 {
-	m_runData = props.Get<SCRunData>("runData", SCRunData());
-
 	if (m_runData.m_health <= 0.f)
 	{
 		NamedProperties popStateProps;

@@ -60,7 +60,8 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	// Read Dependencies
 	SCCamera const& worldCamera = context.GetSingletonConst<SCCamera>();
 	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
-	SCRunData const& runData = context.GetSingletonConst<SCRunData>();
+	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
+	RunData const& runData = *scRunData.m_data;
 	auto& collisionStorage = context.GetArrayStorageConst<CCollision>();
 	auto& tagsStorage = context.GetArrayStorageConst<CTags>();
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();

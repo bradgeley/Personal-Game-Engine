@@ -30,6 +30,7 @@ namespace XmlUtils
 	float ParseXmlAttribute(XmlElement const& element, char const* attributeName, float defaultValue);
 	bool ParseXmlAttribute(XmlElement const& element, char const* attributeName, bool defaultValue);
 	int ParseXmlAttribute(XmlElement const& element, char const* attributeName, int defaultValue);
+	char ParseXmlAttribute(XmlElement const& element, char const* attributeName, char defaultValue);
 	uint8_t ParseXmlAttribute(XmlElement const& element, char const* attributeName, uint8_t defaultValue);
 	Vec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec2 const& defaultValue);
 	IntVec2 ParseXmlAttribute(XmlElement const& element, char const* attributeName, IntVec2 const& defaultValue);

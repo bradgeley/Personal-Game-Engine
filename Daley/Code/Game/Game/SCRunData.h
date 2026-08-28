@@ -29,9 +29,11 @@ struct MissionGenData
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct SCRunData
+struct RunData
 {
 public:
+
+	void Shutdown();
 
 	// Data that carries over from mission to mission
 	uint32_t	m_seed					= 0; // Mission seed = seed + missionIndex
@@ -51,4 +53,12 @@ public:
 
 	std::array<PlaceableTower, MAX_PURCHASEABLE_TOWERS> m_placeableTowers;
 	std::array<MissionGenData, StaticGameSettings::s_numMissionsForVictory> m_missionGenData;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct SCRunData
+{
+	RunData* m_data = nullptr;
 };

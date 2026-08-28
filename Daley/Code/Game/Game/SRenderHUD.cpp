@@ -53,7 +53,8 @@ void SRenderHUD::Shutdown() const
 void SRenderHUD::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	SCRunData const& runData = context.GetSingletonConst<SCRunData>();
+	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
+	RunData const& runData = *scRunData.m_data;
 	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
 	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
 	

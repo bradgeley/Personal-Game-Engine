@@ -24,7 +24,8 @@ void SWorld::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "mapGenName", DevConsoleArgType::Name, "seed", DevConsoleArgType::UInt);
 
 
-	SCRunData const& runData = g_ecs->GetSingleton<SCRunData>();
+	SCRunData const& scRunData = g_ecs->GetSingleton<SCRunData>();
+	RunData const& runData = *scRunData.m_data;
 	MissionGenData const& missionGenData = runData.m_missionGenData[runData.m_missionIndex];
 
 	NamedProperties props;

@@ -29,8 +29,9 @@ void SGoal::Run(SystemContext const& context) const
 	auto const& world = context.GetSingletonConst<SCWorld>();
 
 	// Write Dependencies
-	auto& entityFactory = context.GetSingleton<SCEntityFactory>();
-	auto& runData = context.GetSingleton<SCRunData>();
+	SCEntityFactory& entityFactory = context.GetSingleton<SCEntityFactory>();
+	SCRunData& scRunData = context.GetSingleton<SCRunData>();
+	RunData& runData = *scRunData.m_data;
 
 	Name enemyTag = "Enemy";
 

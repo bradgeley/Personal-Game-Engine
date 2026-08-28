@@ -44,7 +44,8 @@ bool SSaveLoad::SaveGame(NamedProperties& args)
 {
 	std::string filepath = args.Get<std::string>("filepath", std::string("Save/save.txt"));
 
-	SCRunData const& runData = g_ecs->GetSingleton<SCRunData>();
+	SCRunData const& scRunData = g_ecs->GetSingleton<SCRunData>();
+	RunData const& runData = *scRunData.m_data;
 
 	std::string saveString;
 	SCWorld const& world = g_ecs->GetSingleton<SCWorld>();

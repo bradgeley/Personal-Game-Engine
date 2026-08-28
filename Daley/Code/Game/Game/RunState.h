@@ -32,5 +32,5 @@ public:
 	VertexBufferID m_untexturedVerts = RendererUtils::InvalidID;
 	VertexBufferID m_textVerts = RendererUtils::InvalidID;
 	AssetID m_fontID = AssetID::Invalid;
-	SCRunData m_runData;
+	RunData m_runData;
 };

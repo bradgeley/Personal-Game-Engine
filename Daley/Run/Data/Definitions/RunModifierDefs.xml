@@ -1,0 +1,14 @@
+<!--Bradley Christensen - 2022-2026-->
+
+
+
+<RunModifierDefs>
+
+  <TowerRunModifier name="Vanilla" defaultKey="1" baseCost="30"></TowerRunModifier>
+  <TowerRunModifier name="Chocolate" defaultKey="2" baseCost="40"></TowerRunModifier>
+  <TowerRunModifier name="Strawberry" defaultKey="3" baseCost="50"></TowerRunModifier>
+  <TowerRunModifier name="Mint" defaultKey="4" baseCost="60"></TowerRunModifier>
+  <TowerRunModifier name="Coffee" defaultKey="5" baseCost="70"></TowerRunModifier>
+  <TowerRunModifier name="Wall1x1" defaultKey="W" baseCost="5"></TowerRunModifier>
+  
+</RunModifierDefs>

@@ -283,6 +283,9 @@
     <ClCompile Include="Game\EntityDebugContext.cpp">
       <Filter>Game\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Game\RunModifierDef.cpp">
+      <Filter>Definitions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -648,6 +651,9 @@
     <ClInclude Include="Game\EntityDebugContext.h">
       <Filter>Game\Debug</Filter>
     </ClInclude>
+    <ClInclude Include="Game\RunModifierDef.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -807,6 +813,9 @@
     </Xml>
     <Xml Include="..\..\Run\Data\SpriteSheets\StatusEffects.xml">
       <Filter>Data\SpriteSheets</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\RunModifierDefs.xml">
+      <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>
