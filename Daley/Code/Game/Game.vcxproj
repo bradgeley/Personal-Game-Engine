@@ -348,6 +348,7 @@
     <ClCompile Include="Game\SDebugInput.cpp" />
     <ClCompile Include="Game\SDebugOverlay.cpp" />
     <ClCompile Include="Game\SEntityTime.cpp" />
+    <ClCompile Include="Game\SExperience.cpp" />
     <ClCompile Include="Game\SFloatingText.cpp" />
     <ClCompile Include="Game\SGoal.cpp" />
     <ClCompile Include="Game\SLifetime.cpp" />
@@ -467,6 +468,7 @@
     <ClInclude Include="Game\SDebugInput.h" />
     <ClInclude Include="Game\SDebugOverlay.h" />
     <ClInclude Include="Game\SEntityTime.h" />
+    <ClInclude Include="Game\SExperience.h" />
     <ClInclude Include="Game\SFloatingText.h" />
     <ClInclude Include="Game\SGoal.h" />
     <ClInclude Include="Game\SLifetime.h" />

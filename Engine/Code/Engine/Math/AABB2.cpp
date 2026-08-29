@@ -262,8 +262,8 @@ void AABB2::Squeeze(float squeezeAmount)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AABB2::ExpandBy(float flatEpansionAmount)
+void AABB2::ExpandBy(float flatExpansionAmount)
 {
-    mins -= Vec2(flatEpansionAmount, flatEpansionAmount);
-    maxs += Vec2(flatEpansionAmount, flatEpansionAmount);
+    mins -= Vec2(flatExpansionAmount, flatExpansionAmount);
+    maxs += Vec2(flatExpansionAmount, flatExpansionAmount);
 }

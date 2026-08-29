@@ -235,6 +235,7 @@ void TowerDefenseState::ConfigureECS()
     g_ecs->RegisterSystem<SHealth>((int) FramePhase::PostPhysics);
     g_ecs->RegisterSystem<SGoal>((int) FramePhase::PostPhysics);
     g_ecs->RegisterSystem<SCurrency>((int) FramePhase::PostPhysics);
+    g_ecs->RegisterSystem<SExperience>((int) FramePhase::PostPhysics);
 
     // Render
     g_ecs->RegisterSystem<SCopyTransform>((int) FramePhase::Render);

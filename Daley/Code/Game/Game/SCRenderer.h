@@ -43,6 +43,7 @@ public:
 	VertexBufferID m_popupOverlayBackgroundVBO		= RendererUtils::InvalidID;		// Owned by SRenderPopupOverlay
 	VertexBufferID m_popupOverlayTextVBO			= RendererUtils::InvalidID;		// Owned by SRenderPopupOverlay
 
+	bool m_isHudEnabled								= true;
 	VertexBufferID m_hudUntexturedVBO				= RendererUtils::InvalidID;		// Owned by SRenderHUD
 	VertexBufferID m_hudTextVBO						= RendererUtils::InvalidID;		// Owned by SRenderHUD
 

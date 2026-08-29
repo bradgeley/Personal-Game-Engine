@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/Renderer/Rgba8.h"
+#include <array>
 
 
 
@@ -66,8 +67,9 @@ namespace StaticGameSettings
 	static constexpr float s_baseSellRefundRate				= 0.5f;
 	static constexpr int   s_baseSellMaximum				= 5;
 
-	static constexpr float s_baseLevelXpRequirement			= 100.f;
-	static constexpr float s_perLevelXpRequirement			= 1.5f; // Compounding multiplier, each level is 50% more xp than the last
+	static constexpr double s_baseLevelExpRequirement		= 100.0;
+	static constexpr double s_expRequirementExponent		= 1.15;
+	static constexpr int    s_maxLevel						= 100;
 
 	static constexpr int   s_numMissionsForVictory			= 9;
 	static constexpr int   s_numWavesInFirstMission			= 10;
@@ -80,4 +82,6 @@ namespace StaticGameSettings
     // Derived
     extern float s_burnDecayK;
 	extern float s_oneOverBurnDecayK;
+	extern uint64_t s_maximumExperience;
+	std::array<uint64_t, s_maxLevel>& GetExpLookupTable();
 };

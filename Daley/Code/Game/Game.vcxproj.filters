@@ -286,6 +286,9 @@
     <ClCompile Include="Game\RunModifierDef.cpp">
       <Filter>Definitions</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SExperience.cpp">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -653,6 +656,9 @@
     </ClInclude>
     <ClInclude Include="Game\RunModifierDef.h">
       <Filter>Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SExperience.h">
+      <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -31,6 +31,7 @@
 #include "SDebugOverlay.h"
 #include "SEntityFactory.h"
 #include "SEntityTime.h"
+#include "SExperience.h"
 #include "SFloatingText.h"
 #include "SFlowField.h"
 #include "SGoal.h"

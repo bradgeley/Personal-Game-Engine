@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "CDeath.h"
 #include "Engine/Core/XmlUtils.h"
+#include "Engine/Core/ErrorUtils.h"
 
 
 
@@ -12,6 +13,8 @@ CDeath::CDeath(void const* xmlElement)
 	m_deathAnimationName	= XmlUtils::ParseXmlAttribute(elem, "deathAnimation", m_deathAnimationName);
 	m_corpseDurationSeconds = XmlUtils::ParseXmlAttribute(elem, "corpseDurationSeconds", 1.f);
 	m_goldReward			= XmlUtils::ParseXmlAttribute(elem, "baseGoldReward", 0.f);
+	m_expReward				= XmlUtils::ParseXmlAttribute(elem, "baseExpReward", 0);
+	ASSERT_OR_DIE(m_expReward >= 0, "CDeath: baseExpReward must be non-negative");
 }
 
 

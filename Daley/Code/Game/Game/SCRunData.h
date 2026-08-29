@@ -29,17 +29,31 @@ struct MissionGenData
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct ExperienceLevelData
+{
+	bool m_isMaxLevel = false;
+	int m_level = 0;
+	float m_percentIntoLevel = 0.f;
+	uint64_t m_experienceIntoLevel = 0;
+	uint64_t m_experienceNeededForNextLevel = 0;
+	uint64_t m_totalExperienceForNextLevel = 0;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct RunData
 {
 public:
 
 	void Shutdown();
-	int CalculateCurrentLevel() const;
+
+	static ExperienceLevelData GetLevelData(uint64_t experience);
 
 	// Data that carries over from mission to mission
 	uint32_t	m_seed					= 0; // Mission seed = seed + missionIndex
 	int			m_missionIndex			= 0;
-	float 		m_currentXP				= 0.f;
+	uint64_t 	m_experience			= 0;
 	float		m_startingGold			= StaticGameSettings::s_baseGold;
 	float		m_creditLimit			= StaticGameSettings::s_baseCreditLimit;
 	float		m_savingsInterestRate	= StaticGameSettings::s_baseSavingsInterestRate;

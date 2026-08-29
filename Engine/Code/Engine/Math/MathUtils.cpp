@@ -498,6 +498,14 @@ float MathUtils::PowF(float base, float exp)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+double MathUtils::PowD(double base, int exp)
+{
+    return pow(base, exp);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 double MathUtils::Log(double val)
 {
     return log(val);

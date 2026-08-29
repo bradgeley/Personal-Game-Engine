@@ -70,6 +70,13 @@ void SInput::Run(SystemContext const& context) const
 	scInput.m_mouseTileCoords = world.GetTileCoordsAtWorldPosClamped(scInput.m_mouseWorldLocation);
 	scInput.m_mouseIntersectionCoords = world.GetTileIntersectionCoordsAtWorldPos(scInput.m_mouseWorldLocation);
 
+	// HUD Toggle
+	if (inputSystem.WasKeyJustPressed('H'))
+	{
+		SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+		scRenderer.m_isHudEnabled = !scRenderer.m_isHudEnabled;
+	}
+
 	// Game Over?
 	bool isVictory = waves.m_wavesFinished;
 	bool isDefeat = runData.m_health <= 0.f;

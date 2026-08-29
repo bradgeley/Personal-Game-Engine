@@ -111,6 +111,7 @@ namespace MathUtils
 	int		DecrementIntInRange(int val, int rangeMin, int rangeMax, bool wrap = false);
 	int		Pow(int base, int exp);
 	float	PowF(float base, float exp);
+	double	PowD(double base, int exp);
 	double	Log(double val);
 	float	LogF(float val);
 	float	ExpF(float val);
