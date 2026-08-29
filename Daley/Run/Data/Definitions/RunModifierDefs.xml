@@ -1,14 +1,44 @@
 <!--Bradley Christensen - 2022-2026-->
 
-
-
-<RunModifierDefs>
-
-  <TowerRunModifier name="Vanilla" defaultKey="1" baseCost="30"></TowerRunModifier>
-  <TowerRunModifier name="Chocolate" defaultKey="2" baseCost="40"></TowerRunModifier>
-  <TowerRunModifier name="Strawberry" defaultKey="3" baseCost="50"></TowerRunModifier>
-  <TowerRunModifier name="Mint" defaultKey="4" baseCost="60"></TowerRunModifier>
-  <TowerRunModifier name="Coffee" defaultKey="5" baseCost="70"></TowerRunModifier>
-  <TowerRunModifier name="Wall1x1" defaultKey="W" baseCost="5"></TowerRunModifier>
+<RunModifierPools>
   
-</RunModifierDefs>
+  <RunModifierPool name="Default">
+
+    <!-- Level 1 -->
+    <TowerUnlockRunModifier name="Vanilla"    defaultKey="1" baseCost="30"  levelRequirement="1" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Chocolate"  defaultKey="2" baseCost="40"  levelRequirement="1" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Strawberry" defaultKey="3" baseCost="50"  levelRequirement="1" weight="1"></TowerUnlockRunModifier>
+
+    <DamageRunModifier name="GenericDamage" baseValue="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" levels="5"></DamageRunModifier>
+    <DamageRunModifier name="GenericPoison" baseValue="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" levels="5"></DamageRunModifier>
+    <DamageRunModifier name="GenericBurn"   baseValue="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" levels="5"></DamageRunModifier>
+    <DamageRunModifier name="GenericSlow"   baseValue="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" levels="5"></DamageRunModifier>
+  
+    <!-- Level 3 -->
+    <TowerUnlockRunModifier name="Mint"    defaultKey="4" baseCost="60"  levelRequirement="3" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Coffee"  defaultKey="5" baseCost="70"  levelRequirement="3" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Wall1x1" defaultKey="W" baseCost="5"   levelRequirement="3" weight="1"></TowerUnlockRunModifier>
+    
+    <!-- Level 5 -->
+    <TowerUnlockRunModifier name="Neopolitan" defaultKey="6" baseCost="120" levelRequirement="5" weight="0.1" modRequirements="Vanilla,Chocolate,Strawberry"></TowerUnlockRunModifier>
+  
+  </RunModifierPool>
+  
+  <RunModifierPool name="Vanilla" requirement="Vanilla">
+    
+    <!-- Level 1 -->
+    <ProjectileHitRunModifier name="VanillaDamage" baseValue="0.2" perLevel="0.2" weight="1" levelRequirement="1" levels="5"></ProjectileHitRunModifier>
+    
+    <!-- Level 2 -->
+    <ProjectileHitRunModifier name="VanillaSlow"   baseValue="0.2" perLevel="0.2"  weight="0.25" levelRequirement="2" levels="5"></ProjectileHitRunModifier>
+    
+    <!-- Level 3 -->
+    <ProjectileHitRunModifier name="VanillaBurn"   baseValue="3" perLevel="3"  weight="0.5" levelRequirement="3" levels="5"></ProjectileHitRunModifier>
+    <ProjectileHitRunModifier name="VanillaPoison" baseValue="1" perLevel="1"  weight="0.5" levelRequirement="3" levels="5"></ProjectileHitRunModifier>
+    <ProjectileAoEHitRunModifier name="VanillaAoE" baseValue="1" perLevel="0.5" weight="0.25" levelRequirement="3" levels="5"></ProjectileAoEHitRunModifier>
+  
+  </RunModifierPool>
+
+</RunModifierPools>
+
+

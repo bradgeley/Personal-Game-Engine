@@ -34,10 +34,12 @@ struct RunData
 public:
 
 	void Shutdown();
+	int CalculateCurrentLevel() const;
 
 	// Data that carries over from mission to mission
 	uint32_t	m_seed					= 0; // Mission seed = seed + missionIndex
 	int			m_missionIndex			= 0;
+	float 		m_currentXP				= 0.f;
 	float		m_startingGold			= StaticGameSettings::s_baseGold;
 	float		m_creditLimit			= StaticGameSettings::s_baseCreditLimit;
 	float		m_savingsInterestRate	= StaticGameSettings::s_baseSavingsInterestRate;

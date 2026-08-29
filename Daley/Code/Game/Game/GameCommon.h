@@ -66,6 +66,9 @@ namespace StaticGameSettings
 	static constexpr float s_baseSellRefundRate				= 0.5f;
 	static constexpr int   s_baseSellMaximum				= 5;
 
+	static constexpr float s_baseLevelXpRequirement			= 100.f;
+	static constexpr float s_perLevelXpRequirement			= 1.5f; // Compounding multiplier, each level is 50% more xp than the last
+
 	static constexpr int   s_numMissionsForVictory			= 9;
 	static constexpr int   s_numWavesInFirstMission			= 10;
 	static constexpr int   s_numWavesIncreasePerMission		= 2;
