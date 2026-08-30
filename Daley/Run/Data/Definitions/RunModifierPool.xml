@@ -5,9 +5,9 @@
   <RunModifierPool name="Default">
 
     <!-- Level 1 -->
-    <TowerUnlockRunModifier name="Vanilla"    defaultKey="1" baseCost="30"  levelRequirement="1" weight="1"></TowerUnlockRunModifier>
-    <TowerUnlockRunModifier name="Chocolate"  defaultKey="2" baseCost="40"  levelRequirement="1" weight="1"></TowerUnlockRunModifier>
-    <TowerUnlockRunModifier name="Strawberry" defaultKey="3" baseCost="50"  levelRequirement="1" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Vanilla"    defaultKey="1" baseCost="30"  levelRequirement="0" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Chocolate"  defaultKey="2" baseCost="40"  levelRequirement="0" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Strawberry" defaultKey="3" baseCost="50"  levelRequirement="0" weight="1"></TowerUnlockRunModifier>
 
     <DamageRunModifier name="GenericDamage" baseValue="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" levels="5"></DamageRunModifier>
     <DamageRunModifier name="GenericPoison" baseValue="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" levels="5"></DamageRunModifier>

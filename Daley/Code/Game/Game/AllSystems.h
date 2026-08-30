@@ -54,6 +54,7 @@
 #include "SRenderStatusIcons.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"
+#include "SRunModifier.h"
 #include "SSaveLoad.h"
 #include "STowerSpawner.h"
 #include "SVisualEffects.h"

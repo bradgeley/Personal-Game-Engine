@@ -1,12 +1,14 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "GameCommon.h"
+#include "RunModifierPool.h"
 #include "Engine/Core/Name.h"
 #include <array>
 
 
 
 constexpr int MAX_PURCHASEABLE_TOWERS = 10;
+constexpr int MAX_MODIFIER_CHOICES = 3;
 
 
 
@@ -50,6 +52,8 @@ public:
 
 	static ExperienceLevelData GetLevelData(uint64_t experience);
 
+	void GenerateModifierChoices();
+
 	// Data that carries over from mission to mission
 	uint32_t	m_seed					= 0; // Mission seed = seed + missionIndex
 	int			m_missionIndex			= 0;
@@ -69,6 +73,15 @@ public:
 
 	std::array<PlaceableTower, MAX_PURCHASEABLE_TOWERS> m_placeableTowers;
 	std::array<MissionGenData, StaticGameSettings::s_numMissionsForVictory> m_missionGenData;
+
+	std::vector<RunModifier*> m_activeRunModifiers;
+
+	RunModifierPool m_runModifierPool;
+	int m_numModifierChoicesRemaining = 0;
+	int m_numModifierChoicesCompleted = 0;
+
+	bool m_hasGeneratedModifierChoices = false;
+	std::array<RunModifierDef const*, MAX_MODIFIER_CHOICES> m_modifierChoices;
 };
 
 

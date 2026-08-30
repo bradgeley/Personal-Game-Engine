@@ -289,6 +289,12 @@
     <ClCompile Include="Game\SExperience.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="Game\RunModifierPool.cpp">
+      <Filter>Game\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\SRunModifier.cpp">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -660,6 +666,12 @@
     <ClInclude Include="Game\SExperience.h">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="Game\RunModifierPool.h">
+      <Filter>Game\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRunModifier.h">
+      <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -820,7 +832,7 @@
     <Xml Include="..\..\Run\Data\SpriteSheets\StatusEffects.xml">
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
-    <Xml Include="..\..\Run\Data\Definitions\RunModifierDefs.xml">
+    <Xml Include="..\..\Run\Data\Definitions\RunModifierPool.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>

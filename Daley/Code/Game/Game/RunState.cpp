@@ -49,18 +49,10 @@ void RunState::Enter(NamedProperties const& props)
 	Font const* font = g_assetManager->Get<Font>(m_fontID);
 	ASSERT_OR_DIE(font != nullptr, StringUtils::StringF("Failed to load %s for RunState!", MAIN_MENU_FONT_NAME));
 
-	m_runData.Shutdown();
-	m_runData = RunData();
+	m_runData.m_runModifierPool.LoadFromXml("Data/Definitions/RunModifierPool.xml");
+	m_runData.m_numModifierChoicesRemaining = 1; // Give 1 mod choice at the start of the run.
 
 	m_runData.m_seed = g_rng->Rand();
-
-	// Todo: get initial placeable tower data from somewhere in xml
-	m_runData.m_placeableTowers[0] = PlaceableTower{ "Vanilla", '1', 30.f };
-	m_runData.m_placeableTowers[1] = PlaceableTower{ "Chocolate", '2', 40.f };
-	m_runData.m_placeableTowers[2] = PlaceableTower{ "Strawberry", '3', 50.f };
-	m_runData.m_placeableTowers[3] = PlaceableTower{ "Mint", '4', 60.f };
-	m_runData.m_placeableTowers[4] = PlaceableTower{ "Coffee", '5', 50.f };
-	m_runData.m_placeableTowers[5] = PlaceableTower{ "Wall1x1", 'W', 5.f };
 
 	// Forest Biome first
 	m_runData.m_missionGenData[0] = { "forest" };
@@ -89,6 +81,8 @@ void RunState::Exit(NamedProperties const& props)
 
 	g_renderer->ReleaseVertexBuffer(m_untexturedVerts);
 	g_renderer->ReleaseVertexBuffer(m_textVerts);
+
+	m_runData.Shutdown();
 }
 
 

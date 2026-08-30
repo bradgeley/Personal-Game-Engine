@@ -2,13 +2,15 @@
 #include "SCRunData.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Math/Noise.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void RunData::Shutdown()
 {
-
+	m_runModifierPool.Shutdown();
+	m_activeRunModifiers.clear();
 }
 
 
@@ -45,4 +47,77 @@ ExperienceLevelData RunData::GetLevelData(uint64_t experience)
 	levelData.m_totalExperienceForNextLevel = expRequiredForNextLevel - expRequiredForCurrentLevel;
 	levelData.m_percentIntoLevel = static_cast<float>(static_cast<double>(levelData.m_experienceIntoLevel) / static_cast<double>(levelData.m_totalExperienceForNextLevel));
 	return levelData;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunData::GenerateModifierChoices()
+{
+	std::vector<RunModifierDef const*> const& allRunModifiers = m_runModifierPool.m_runModifierDefs;
+
+	std::vector<RunModifierDef const*> filteredModifiers;
+
+	for (RunModifierDef const*& modifierChoice : m_modifierChoices)
+	{
+		modifierChoice = nullptr;
+	}
+
+	ExperienceLevelData levelData = GetLevelData(m_experience);
+
+	// Filter out modifiers that are already active and at max level, or require a higher level
+	float combinedWeight = 0.f;
+	for (RunModifierDef const* runModifierDef : allRunModifiers)
+	{
+		if (runModifierDef->m_levelRequirement > levelData.m_level)
+		{
+			continue;
+		}
+
+		// todo: check requirements, filter out modifiers that we dont currently satisfy requirements for
+
+		bool isAlreadyActiveAndMaxLevel = false;
+		for (RunModifier const* activeModifier : m_activeRunModifiers)
+		{
+			if (&activeModifier->m_def == runModifierDef && activeModifier->m_level == runModifierDef->m_maxLevel)
+			{
+				isAlreadyActiveAndMaxLevel = true;
+				break;
+			}
+		}
+		if (!isAlreadyActiveAndMaxLevel)
+		{
+			filteredModifiers.push_back(runModifierDef);
+			combinedWeight += runModifierDef->m_weight;
+		}
+	}
+
+	int numValidChoices = 0;
+	for (int choiceIndex = 0; choiceIndex < MAX_MODIFIER_CHOICES; ++choiceIndex)
+	{
+		float randomValue = Noise::GetNoiseZeroToOne1D(choiceIndex, m_seed + m_numModifierChoicesCompleted);
+		randomValue = MathUtils::RangeMapClamped(randomValue, 0.f, 1.f, 0.f, combinedWeight);
+		for (int filteredModIndex = 0; filteredModIndex < static_cast<int>(filteredModifiers.size()); ++filteredModIndex)
+		{
+			RunModifierDef const* runModifierDef = filteredModifiers[filteredModIndex];
+
+			randomValue -= runModifierDef->m_weight;
+			if (randomValue <= 0.f)
+			{
+				m_modifierChoices[choiceIndex] = runModifierDef;
+				numValidChoices++;
+				filteredModifiers[filteredModIndex] = filteredModifiers.back();
+				filteredModifiers.pop_back();
+				combinedWeight -= runModifierDef->m_weight;
+				break;
+			}
+		}
+	}
+
+	m_hasGeneratedModifierChoices = numValidChoices > 0;
+
+	if (!m_hasGeneratedModifierChoices)
+	{
+		ERROR_AND_DIE("RunData::GenerateModifierChoices: No valid modifier choices available");
+	}
 }

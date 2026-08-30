@@ -328,6 +328,7 @@
     <ClCompile Include="Game\MapGeneratorComponentDef.cpp" />
     <ClCompile Include="Game\MapGeneratorDef.cpp" />
     <ClCompile Include="Game\RunModifierDef.cpp" />
+    <ClCompile Include="Game\RunModifierPool.cpp" />
     <ClCompile Include="Game\RunState.cpp" />
     <ClCompile Include="Game\SAbility.cpp" />
     <ClCompile Include="Game\SAIController.cpp" />
@@ -361,6 +362,7 @@
     <ClCompile Include="Game\SRenderHUD.cpp" />
     <ClCompile Include="Game\SRenderPopupOverlay.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
+    <ClCompile Include="Game\SRunModifier.cpp" />
     <ClCompile Include="Game\SSaveLoad.cpp" />
     <ClCompile Include="Game\STowerSpawner.cpp" />
     <ClCompile Include="Game\SVisualEffects.cpp" />
@@ -424,6 +426,7 @@
     <ClInclude Include="Game\MapGeneratorDef.h" />
     <ClInclude Include="Game\OverlapInfo.h" />
     <ClInclude Include="Game\RunModifierDef.h" />
+    <ClInclude Include="Game\RunModifierPool.h" />
     <ClInclude Include="Game\RunState.h" />
     <ClInclude Include="Game\SAbility.h" />
     <ClInclude Include="Game\SAttachment.h" />
@@ -481,6 +484,7 @@
     <ClInclude Include="Game\SRenderHUD.h" />
     <ClInclude Include="Game\SRenderPopupOverlay.h" />
     <ClInclude Include="Game\SRenderUI.h" />
+    <ClInclude Include="Game\SRunModifier.h" />
     <ClInclude Include="Game\SSaveLoad.h" />
     <ClInclude Include="Game\STowerSpawner.h" />
     <ClInclude Include="Game\SVisualEffects.h" />
@@ -520,7 +524,7 @@
     <Xml Include="..\..\Run\Data\Definitions\BiomeDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\MapGeneratorDefs.xml" />
-    <Xml Include="..\..\Run\Data\Definitions\RunModifierDefs.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\RunModifierPool.xml" />
     <Xml Include="..\..\Run\Data\Definitions\TileDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\AbilityDefs.xml" />
     <Xml Include="..\..\Run\Data\Shaders\DefaultFontShader.xml" />

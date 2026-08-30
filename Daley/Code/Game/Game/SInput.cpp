@@ -70,6 +70,19 @@ void SInput::Run(SystemContext const& context) const
 	scInput.m_mouseTileCoords = world.GetTileCoordsAtWorldPosClamped(scInput.m_mouseWorldLocation);
 	scInput.m_mouseIntersectionCoords = world.GetTileIntersectionCoordsAtWorldPos(scInput.m_mouseWorldLocation);
 
+	// Run Modifier input
+	if (runData.m_numModifierChoicesRemaining > 0)
+	{
+		if (!gameState.IsPaused())
+		{
+			gameState.TogglePaused();
+		}
+
+		// Don't allow input, to force player to choose an option.
+
+		return;
+	}
+
 	// HUD Toggle
 	if (inputSystem.WasKeyJustPressed('H'))
 	{
