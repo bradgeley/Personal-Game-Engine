@@ -30,11 +30,13 @@ struct AbilityRenderComponentDef;
 struct AbilitySlowComponentDef;
 struct AbilityTargetingComponentDef;
 struct AoEHitAbilityDef;
+struct CTags;
 struct EntityDef;
 struct LaserAbilityDef;
 struct PassiveAoEAbilityDef;
 struct ProjectileHitAbilityDef;
 struct SystemContext;
+struct TowerPayloadRunModifier;
 struct Vec2;
 class RandomNumberGenerator;
 class VertexBuffer;
@@ -155,12 +157,16 @@ public:
 	AbilityDamageComponent() = default;
 	AbilityDamageComponent(AbilityDamageComponentDef const& def);
 
+	float GetMinDamage() const { return m_minDamage * m_damageMultiplier; }
+	float GetMaxDamage() const { return m_maxDamage * m_damageMultiplier; }
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_minDamage = 0.f;
 	float m_maxDamage = 0.f;
+	float m_damageMultiplier = 1.f;
 };
 
 
@@ -173,11 +179,14 @@ public:
 	AbilityBurnComponent() = default;
 	AbilityBurnComponent(AbilityBurnComponentDef const& def);
 
+	float GetBurn() const { return m_burn * m_burnMultiplier; }
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_burn = 0.f;
+	float m_burnMultiplier = 1.f;
 };
 
 
@@ -190,11 +199,14 @@ public:
 	AbilityPoisonComponent() = default;
 	AbilityPoisonComponent(AbilityPoisonComponentDef const& def);
 
+	float GetPoison() const { return m_poison * m_poisonMultiplier; }
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_poison = 0.f;
+	float m_poisonMultiplier = 1.f;
 };
 
 
@@ -207,11 +219,14 @@ public:
 	AbilitySlowComponent() = default;
 	AbilitySlowComponent(AbilitySlowComponentDef const& def);
 
+	float GetDuration() const { return m_duration * m_durationMultiplier; }
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_duration = 0.f;
+	float m_durationMultiplier = 1.f;
 };
 
 
@@ -224,11 +239,14 @@ public:
 	AbilityHasteComponent() = default;
 	AbilityHasteComponent(AbilityHasteComponentDef const& def);
 
+	float GetDuration() const { return m_duration * m_durationMultiplier; }
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_duration = 0.f;
+	float m_durationMultiplier = 1.f;
 };
 
 
@@ -249,7 +267,6 @@ public:
 	float m_chainDistance = 3.f;
 	float m_chainPayloadMulti = 1.f;
 	int	m_maxChains	= 0;
-	int	m_remainingChains = 0;
 };
 
 
@@ -299,6 +316,8 @@ public:
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
+	void ApplyModifier(TowerPayloadRunModifier const& modifier);
+
 public:
 
 	float m_radius = 0.f;
@@ -320,6 +339,8 @@ public:
 	AbilityAoEEffectComponent(AbilityAoEEffectComponentDef const& def);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
+
+	void ApplyModifier(TowerPayloadRunModifier const& modifier);
 
 public:
 
@@ -345,6 +366,8 @@ public:
 	AbilityOnHitComponent(AbilityOnHitComponentDef const& def);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
+
+	void ApplyModifier(TowerPayloadRunModifier const& modifier);
 
 public:
 
@@ -402,11 +425,15 @@ public:
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation = 1.f) = 0;
 	virtual void Render([[maybe_unused]] SystemContext const& context, [[maybe_unused]] Vec2 const& location) const {};
 	virtual Ability* DeepCopy() const = 0;
+	virtual void CopyTransientDataTo(Ability& other) const = 0;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
+	virtual void ApplyModifier(TowerPayloadRunModifier const& modifier, CTags const& tags);
+
 public:
 
+	bool m_needsRebuild = true;
 	AbilityDef const* m_abilityDef = nullptr;
 };
 
@@ -422,12 +449,16 @@ public:
 
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
+	virtual void CopyTransientDataTo(Ability& other) const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	RolledOnHitComponent RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
+	virtual void ApplyModifier(TowerPayloadRunModifier const& modifier, CTags const& tags) override;
+
 public:
+
 
 	Name m_projectileDefName = Name::Invalid;
 	float m_projSpeed = 1.f;
@@ -452,6 +483,7 @@ public:
 
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
+	virtual void CopyTransientDataTo(Ability& other) const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
@@ -480,8 +512,11 @@ public:
 
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
+	virtual void CopyTransientDataTo(Ability& other) const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
+
+	virtual void ApplyModifier(TowerPayloadRunModifier const& modifier, CTags const& tags) override;
 
 public:
 
@@ -503,6 +538,7 @@ public:
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual void Render(SystemContext const& context, Vec2 const& location) const override;
 	virtual Ability* DeepCopy() const override;
+	virtual void CopyTransientDataTo(Ability& other) const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 

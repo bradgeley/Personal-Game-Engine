@@ -12,8 +12,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRunModifier::Startup()
 {
-	AddWriteDependencies<SCRunData, SCGameState>();
-	AddReadDependencies<SCInputSystem>();
+	AddWriteAllDependencies();
 }
 
 
@@ -67,12 +66,28 @@ void SRunModifier::Run(SystemContext const& context) const
 
 	if (runData.m_modifierChoices[choice] != nullptr)
 	{
-		// Todo: level up existing modifier
+		RunModifier* activeMod = nullptr;
+		for (RunModifier* mod : runData.m_activeRunModifiers)
+		{
+			if (mod->m_def.m_name == runData.m_modifierChoices[choice]->m_name)
+			{
+				activeMod = mod;
+				break;
+			}
+		}
 
-		RunModifier* newModifier = runData.m_modifierChoices[choice]->MakeModifierInstance();
-		runData.m_activeRunModifiers.push_back(newModifier);
+		if (activeMod)
+		{
+			activeMod->m_level++;
+		}
+		else
+		{
+			RunModifier* newModifier = runData.m_modifierChoices[choice]->MakeModifierInstance();
+			runData.m_activeRunModifiers.push_back(newModifier);
+			activeMod = newModifier;
+		}
 
-		newModifier->Apply(context);
+		activeMod->Apply(context);
 		runData.m_numModifierChoicesCompleted++;
 		runData.m_numModifierChoicesRemaining--;
 		runData.m_numActiveModifierChoices = 0;

@@ -101,7 +101,24 @@ void SRenderModSelection::Run(SystemContext const& context) const
 		{
 			continue;
 		}
+
+		RunModifier const* activeMod = nullptr;
+		for (auto& mod : runData.m_activeRunModifiers)
+		{
+			if (mod->m_def.m_name == modifierDef->m_name)
+			{
+				modifierDef = &mod->m_def;
+				activeMod = mod;
+				break;
+			}
+		}
+
 		std::string cardText = StringUtils::StringF("(%i) - %s", cardIndex + 1, modifierDef->m_name.ToCStr());
+		if (activeMod != nullptr)
+		{
+			cardText += StringUtils::StringF("\nLevel %i/%i", activeMod->m_level, modifierDef->m_maxLevel);
+		}
+
 		Vec2 cardTextDims = font->GetTextDims(30.f, 5.f, cardText.c_str());
 		Vec2 cardPos = Vec2(cameraBounds.GetCenter().x - (numCards * (cardDims.x + cardSpacing)) / 2.f + (cardIndex * (cardDims.x + cardSpacing)), cameraBounds.GetCenter().y);
 		AABB2 cardBounds = AABB2(cardPos, cardPos + cardDims);

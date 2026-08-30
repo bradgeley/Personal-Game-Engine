@@ -324,7 +324,7 @@
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="243,229,171"></Render>
-    <Tags tags="tower"></Tags>
+    <Tags tags="tower,vanilla"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -333,7 +333,7 @@
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="0.66" rotateSprite="true" tint="243,229,171"></Render>
-    <Tags tags="projectile"></Tags>
+    <Tags tags="projectile,vanilla"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -346,7 +346,7 @@
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="112,66,20"></Render>
-    <Tags tags="tower"></Tags>
+    <Tags tags="tower,chocolate"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -355,7 +355,7 @@
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="112,66,20"></Render>
-    <Tags tags="projectile"></Tags>
+    <Tags tags="projectile,chocolate"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -368,7 +368,7 @@
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="250,80,83"></Render>
-    <Tags tags="tower"></Tags>
+    <Tags tags="tower,strawberry"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -377,7 +377,7 @@
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="250,80,83"></Render>
-    <Tags tags="projectile"></Tags>
+    <Tags tags="projectile,strawberry"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -392,7 +392,7 @@
     <Collision radius="1.5" type="building"></Collision>
     <Placeable dims="3,3" onPath="true"></Placeable>
     <Render scale="3" tint="250,250,250"></Render>
-    <Tags tags="tower"></Tags>
+    <Tags tags="tower,vanilla,chocolate,strawberry"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -405,7 +405,7 @@
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="147,197,114"></Render>
-    <Tags tags="tower"></Tags>
+    <Tags tags="tower,pistachio"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -414,7 +414,7 @@
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="147,197,114"></Render>
-    <Tags tags="projectile"></Tags>
+    <Tags tags="projectile,pistachio"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -427,7 +427,7 @@
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="173,235,179"></Render>
-    <Tags tags="tower"></Tags>
+    <Tags tags="tower,mint"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -436,7 +436,7 @@
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="173,235,179"></Render>
-    <Tags tags="projectile"></Tags>
+    <Tags tags="projectile,mint"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -449,16 +449,7 @@
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="165, 130, 90"></Render>
-    <Tags tags="tower"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "CoffeeProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
-    <Projectile></Projectile>
-    <Render scale="1" rotateSprite="true" tint="111,78,55"></Render>
-    <Tags tags="projectile"></Tags>
+    <Tags tags="tower,coffee"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -471,7 +462,7 @@
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="255,165,0"></Render>
-    <Tags tags="tower"></Tags>
+    <Tags tags="tower,sorbet,orange"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

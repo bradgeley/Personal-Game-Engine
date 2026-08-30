@@ -9,23 +9,23 @@ void CCollisionEffect::InitializeFromAoEEffect(AbilityAoEEffectComponent const& 
 {
     if (aoeEffectComp.m_damagePerSecond.has_value())
     {
-        m_damagePerSecond = aoeEffectComp.m_damagePerSecond->m_maxDamage;
+        m_damagePerSecond = aoeEffectComp.m_damagePerSecond->GetMaxDamage();
     }
     if (aoeEffectComp.m_burnPerSecond.has_value())
     {
-        m_burnPerSecond = aoeEffectComp.m_burnPerSecond->m_burn;
+        m_burnPerSecond = aoeEffectComp.m_burnPerSecond->GetBurn();
     }
     if (aoeEffectComp.m_poisonPerSecond.has_value())
     {
-        m_poisonPerSecond = aoeEffectComp.m_poisonPerSecond->m_poison;
+        m_poisonPerSecond = aoeEffectComp.m_poisonPerSecond->GetPoison();
     }
     if (aoeEffectComp.m_slowPerSecond.has_value())
     {
-        m_slowPerSecond = aoeEffectComp.m_slowPerSecond->m_duration;
+        m_slowPerSecond = aoeEffectComp.m_slowPerSecond->GetDuration();
     }
 	if (aoeEffectComp.m_hastePerSecond.has_value())
 	{
-		m_hastePerSecond = aoeEffectComp.m_hastePerSecond->m_duration;
+		m_hastePerSecond = aoeEffectComp.m_hastePerSecond->GetDuration();
 	}
     m_shouldRender = aoeEffectComp.m_renderComp.has_value();
     if (aoeEffectComp.m_renderComp.has_value())

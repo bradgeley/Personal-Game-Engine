@@ -6,8 +6,10 @@
 
 
 
-struct SystemContext;
+class Ability;
+struct CTags;
 struct RunModifier;
+struct SystemContext;
 
 
 
@@ -43,6 +45,7 @@ public:
 	virtual ~RunModifier() = default;
 
 	virtual void Apply(SystemContext const& context) const = 0;
+	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const;
 
 public:
 
@@ -81,4 +84,39 @@ public:
 	virtual void Apply(SystemContext const& context) const override;
 
 	TowerUnlockRunModifierDef const& GetDef() const;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct TowerPayloadRunModifierDef : public RunModifierDef
+{
+public:
+
+	TowerPayloadRunModifierDef(XmlElement const& modElement);
+
+	virtual RunModifier* MakeModifierInstance() const override;
+
+public:
+
+	// Linear increase per level of one payload type
+	uint8_t m_payloadDamageTypeFlags = 0;
+	float m_multiplierIncreaseBase = 1.f;
+	float m_multiplierIncreasePerLevel = 1.f;
+	std::array<Name, s_maxRequirements> m_tagRequirements; // this modifier applies to towers with these tags
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct TowerPayloadRunModifier : public RunModifier
+{
+public:
+
+	TowerPayloadRunModifier(TowerPayloadRunModifierDef const& def);
+
+	virtual void Apply(SystemContext const& context) const override;
+	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const override;
+
+	TowerPayloadRunModifierDef const& GetDef() const;
 };

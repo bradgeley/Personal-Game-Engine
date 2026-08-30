@@ -1,5 +1,8 @@
 // Bradley Christensen - 2022-2026
 #include "RunModifierDef.h"
+#include "Ability.h"
+#include "CAbility.h"
+#include "CTags.h"
 #include "SCRunData.h"
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Core/StringUtils.h"
@@ -48,6 +51,10 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 	{
 		return new TowerUnlockRunModifierDef(modElement);
 	}
+	else if (modTypeName == "TowerPayloadRunModifier")
+	{
+		return new TowerPayloadRunModifierDef(modElement);
+	}
 
 	//ERROR_AND_DIE("Unknown RunModifierDef type: " + std::string(element.Name()));
 	return nullptr;
@@ -57,6 +64,14 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 
 //----------------------------------------------------------------------------------------------------------------------
 RunModifier::RunModifier(RunModifierDef const& def) : m_def(def)
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunModifier::ApplyToAbility(Ability&, CTags const&) const
 {
 
 }
@@ -120,4 +135,119 @@ void TowerUnlockRunModifier::Apply(SystemContext const& context) const
 TowerUnlockRunModifierDef const& TowerUnlockRunModifier::GetDef() const
 {
 	return static_cast<TowerUnlockRunModifierDef const&>(m_def);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+TowerPayloadRunModifierDef::TowerPayloadRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
+{
+	m_multiplierIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "base", m_multiplierIncreaseBase);
+	m_multiplierIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "perLevel", m_multiplierIncreasePerLevel);
+
+	std::string payloadTypesString = XmlUtils::ParseXmlAttribute(modElement, "type", "");
+	Strings payloadTypeStrings = StringUtils::SplitStringOnDelimiter(payloadTypesString, ',');
+
+	for (std::string const& payloadTypeString : payloadTypeStrings)
+	{
+		if (Name(payloadTypeString) == "Damage")
+		{
+			m_payloadDamageTypeFlags |= static_cast<uint8_t>(PayloadType::Damage);
+		}
+		else if (Name(payloadTypeString) == "Slow")
+		{
+			m_payloadDamageTypeFlags |= static_cast<uint8_t>(PayloadType::Slow);
+		}
+		else if (Name(payloadTypeString) == "Burn")
+		{
+			m_payloadDamageTypeFlags |= static_cast<uint8_t>(PayloadType::Burn);
+		}
+		else if (Name(payloadTypeString) == "Poison")
+		{
+			m_payloadDamageTypeFlags |= static_cast<uint8_t>(PayloadType::Poison);
+		}
+		else
+		{
+			ASSERT_OR_DIE(false, StringUtils::StringF("Unknown payload damage type: %s", payloadTypeString.c_str()));
+		}
+	}
+
+	std::string tagRequirementsString = XmlUtils::ParseXmlAttribute(modElement, "tagRequirement", "");
+	Strings tagRequirementStrings = StringUtils::SplitStringOnDelimiter(tagRequirementsString, ',');
+
+	ASSERT_OR_DIE(tagRequirementStrings.size() <= s_maxRequirements, StringUtils::StringF("RunModifierDef \"%s\" has too many tag requirements. Max is %d", m_name.ToString().c_str(), s_maxRequirements));
+
+	for (size_t i = 0; i < tagRequirementStrings.size() && i < s_maxRequirements; ++i)
+	{
+		m_tagRequirements[i] = Name(tagRequirementStrings[i]);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+RunModifier* TowerPayloadRunModifierDef::MakeModifierInstance() const
+{
+	return new TowerPayloadRunModifier(*this);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+TowerPayloadRunModifier::TowerPayloadRunModifier(TowerPayloadRunModifierDef const& def) : RunModifier(def)
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void TowerPayloadRunModifier::Apply(SystemContext const& context) const
+{
+	auto& abilityStorage = context.GetMapStorage<CAbility>();
+	auto const& tagStorage = context.GetArrayStorageConst<CTags>();
+
+	for (auto it = context.Iterate<CAbility, CTags>(); it.IsValid(); it.Next())
+	{
+		CTags const& tagComponent = tagStorage[it];
+
+		bool matchesTagRequirement = true;
+		for (int tagIndex = 0; tagIndex < RunModifierDef::s_maxRequirements; ++tagIndex)
+		{
+			Name tagRequirement = GetDef().m_tagRequirements[tagIndex];
+			if (tagRequirement != Name::Invalid && !tagComponent.HasTag(tagRequirement))
+			{
+				matchesTagRequirement = false;
+				break;
+			}
+		}
+
+		if (!matchesTagRequirement)
+		{
+			continue;
+		}
+
+		CAbility& abilityComponent = abilityStorage[it];
+
+		for (Ability*& ability : abilityComponent.m_abilities)
+		{
+			ability->m_needsRebuild = true;
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void TowerPayloadRunModifier::ApplyToAbility(Ability& ability, CTags const& tags) const
+{
+	ability.ApplyModifier(*this, tags);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+TowerPayloadRunModifierDef const& TowerPayloadRunModifier::GetDef() const
+{
+	return static_cast<TowerPayloadRunModifierDef const&>(m_def);
 }
