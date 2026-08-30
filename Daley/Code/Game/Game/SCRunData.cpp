@@ -56,6 +56,25 @@ ExperienceLevelData RunData::GetLevelData(uint64_t experience)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool IsRequirementMet(Name requirement, std::vector<RunModifier*> const& activeModifiers)
+{
+	if (requirement == Name::Invalid)
+	{
+		return true;
+	}
+	for (RunModifier const* activeModifier : activeModifiers)
+	{
+		if (activeModifier->m_def.m_name == requirement)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void RunData::GenerateModifierChoices()
 {
 	std::vector<RunModifierDef const*> const& allRunModifiers = m_runModifierPool.m_runModifierDefs;
@@ -78,7 +97,20 @@ void RunData::GenerateModifierChoices()
 			continue;
 		}
 
-		// todo: check requirements, filter out modifiers that we dont currently satisfy requirements for
+		bool requirementsMet = true;
+		for (Name requirement : runModifierDef->m_requirements)
+		{
+			if (!IsRequirementMet(requirement, m_activeRunModifiers))
+			{
+				requirementsMet = false;
+				break;
+			}
+		}
+
+		if (!requirementsMet)
+		{
+			continue;
+		}
 
 		bool isAlreadyActiveAndMaxLevel = false;
 		for (RunModifier const* activeModifier : m_activeRunModifiers)

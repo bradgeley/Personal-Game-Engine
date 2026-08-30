@@ -26,7 +26,7 @@ RunModifierDef::RunModifierDef(XmlElement const& modElement)
 	std::string modRequirementsString = XmlUtils::ParseXmlAttribute(modElement, "requirements", "");
 	Strings modRequirementStrings = StringUtils::SplitStringOnDelimiter(modRequirementsString, ',');
 
-	Strings combinedRequirements = poolRequirementStrings;
+	Strings& combinedRequirements = poolRequirementStrings;
 	combinedRequirements.insert(combinedRequirements.end(), modRequirementStrings.begin(), modRequirementStrings.end());
 
 	ASSERT_OR_DIE(combinedRequirements.size() <= s_maxRequirements, StringUtils::StringF("RunModifierDef \"%s\" has too many requirements. Max is %d", m_name.ToString().c_str(), s_maxRequirements));
