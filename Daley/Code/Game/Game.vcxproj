@@ -333,7 +333,6 @@
     <ClCompile Include="Game\SAbility.cpp" />
     <ClCompile Include="Game\SAIController.cpp" />
     <ClCompile Include="Game\SAnimation.cpp" />
-    <ClCompile Include="Game\SAttachment.cpp" />
     <ClCompile Include="Game\SBackgroundMusic.cpp" />
     <ClCompile Include="Game\SCamera.cpp" />
     <ClCompile Include="Game\SCCollision.cpp" />
@@ -402,7 +401,6 @@
     <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
-    <ClInclude Include="Game\CAttachment.h" />
     <ClInclude Include="Game\CCollisionEffect.h" />
     <ClInclude Include="Game\CDeath.h" />
     <ClInclude Include="Game\CEntityName.h" />
@@ -430,7 +428,6 @@
     <ClInclude Include="Game\RunModifierPool.h" />
     <ClInclude Include="Game\RunState.h" />
     <ClInclude Include="Game\SAbility.h" />
-    <ClInclude Include="Game\SAttachment.h" />
     <ClInclude Include="Game\SCAssetManager.h" />
     <ClInclude Include="Game\SCAudioSystem.h" />
     <ClInclude Include="Game\SCCamera.h" />

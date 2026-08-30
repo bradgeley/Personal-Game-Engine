@@ -143,7 +143,6 @@ void TowerDefenseState::ConfigureECS()
     // Array components
     g_ecs->RegisterComponentArray<CAIController>();
     g_ecs->RegisterComponentArray<CAnimation>();
-    g_ecs->RegisterComponentArray<CAttachment>();
     g_ecs->RegisterComponentArray<CCollision>();
     g_ecs->RegisterComponentArray<CCollisionEffect>();
     g_ecs->RegisterComponentArray<CDeath>();
@@ -225,7 +224,6 @@ void TowerDefenseState::ConfigureECS()
     //physics.m_timeStep = 0.005f;
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SAttachment>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionEffect>((int) FramePhase::Physics);

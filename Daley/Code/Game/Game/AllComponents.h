@@ -21,7 +21,6 @@
 #include "CCollisionEffect.h"
 #include "CAIController.h"
 #include "CAnimation.h"
-#include "CAttachment.h"
 #include "CCollision.h"
 #include "CDeath.h"
 #include "CEntityName.h"

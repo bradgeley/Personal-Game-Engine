@@ -74,7 +74,6 @@ EntityID SEntityFactory::CreateEntityFromDef(SystemContext const& context, Entit
     if (def->m_ability.has_value())             context.AddComponent<CAbility>(id, *def->m_ability);
     if (def->m_ai.has_value())                  context.AddComponent<CAIController>(id, *def->m_ai);
     if (def->m_animation.has_value())           context.AddComponent<CAnimation>(id, *def->m_animation);
-    if (def->m_attachment.has_value())          context.AddComponent<CAttachment>(id, *def->m_attachment);
     if (def->m_collision.has_value())           context.AddComponent<CCollision>(id, *def->m_collision);
     if (def->m_collisionEffect.has_value())     context.AddComponent<CCollisionEffect>(id, *def->m_collisionEffect);
     if (def->m_death.has_value())               context.AddComponent<CDeath>(id, *def->m_death);
