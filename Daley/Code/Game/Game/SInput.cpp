@@ -73,13 +73,7 @@ void SInput::Run(SystemContext const& context) const
 	// Run Modifier input
 	if (runData.m_numModifierChoicesRemaining > 0)
 	{
-		if (!gameState.IsPaused())
-		{
-			gameState.TogglePaused();
-		}
-
 		// Don't allow input, to force player to choose an option.
-
 		return;
 	}
 

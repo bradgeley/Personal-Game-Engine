@@ -39,6 +39,10 @@ void SRunModifier::Run(SystemContext const& context) const
 	if (runData.m_numActiveModifierChoices == 0)
 	{
 		runData.GenerateModifierChoices();
+		if (runData.m_numActiveModifierChoices > 0 && !gameState.IsPaused())
+		{
+			gameState.TogglePaused();
+		}
 		return;
 	}
 
