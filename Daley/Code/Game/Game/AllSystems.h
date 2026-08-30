@@ -51,6 +51,7 @@
 #include "SRenderHealthBars.h"
 #include "SRenderHUD.h"
 #include "SRenderPopupOverlay.h"
+#include "SRenderModSelection.h"
 #include "SRenderStatusIcons.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"

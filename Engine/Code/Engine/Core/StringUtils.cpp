@@ -16,6 +16,11 @@ constexpr int ASCII_LOWER_TO_UPPER = 'A' - 'a'; // Dest (upper) - Source (lower)
 //----------------------------------------------------------------------------------------------------------------------
 Strings StringUtils::SplitStringOnAnyDelimiter(std::string const& string, std::string const& delimiters)
 {
+    if (string == "")
+    {
+        return {};
+    }
+
     Strings result;
 
     std::string line = "";
@@ -42,6 +47,11 @@ Strings StringUtils::SplitStringOnAnyDelimiter(std::string const& string, std::s
 //----------------------------------------------------------------------------------------------------------------------
 Strings StringUtils::SplitStringOnDelimiter(std::string const& string, char delimeter)
 {
+    if (string == "")
+    {
+        return {};
+    }
+
     Strings result;
 
     std::string line = "";

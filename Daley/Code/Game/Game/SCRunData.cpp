@@ -10,6 +10,10 @@
 void RunData::Shutdown()
 {
 	m_runModifierPool.Shutdown();
+	for (RunModifier* activeModifier : m_activeRunModifiers)
+	{
+		delete activeModifier;
+	}
 	m_activeRunModifiers.clear();
 }
 
@@ -92,7 +96,7 @@ void RunData::GenerateModifierChoices()
 		}
 	}
 
-	int numValidChoices = 0;
+	m_numActiveModifierChoices = 0;
 	for (int choiceIndex = 0; choiceIndex < MAX_MODIFIER_CHOICES; ++choiceIndex)
 	{
 		float randomValue = Noise::GetNoiseZeroToOne1D(choiceIndex, m_seed + m_numModifierChoicesCompleted);
@@ -105,7 +109,7 @@ void RunData::GenerateModifierChoices()
 			if (randomValue <= 0.f)
 			{
 				m_modifierChoices[choiceIndex] = runModifierDef;
-				numValidChoices++;
+				m_numActiveModifierChoices++;
 				filteredModifiers[filteredModIndex] = filteredModifiers.back();
 				filteredModifiers.pop_back();
 				combinedWeight -= runModifierDef->m_weight;
@@ -114,10 +118,9 @@ void RunData::GenerateModifierChoices()
 		}
 	}
 
-	m_hasGeneratedModifierChoices = numValidChoices > 0;
-
-	if (!m_hasGeneratedModifierChoices)
+	if (m_numActiveModifierChoices == 0)
 	{
-		ERROR_AND_DIE("RunData::GenerateModifierChoices: No valid modifier choices available");
+		// For now, just remove any extra choices after all options are exhausted
+		m_numModifierChoicesRemaining = 0;
 	}
 }

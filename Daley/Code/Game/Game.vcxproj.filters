@@ -295,6 +295,9 @@
     <ClCompile Include="Game\SRunModifier.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SRenderModSelection.cpp">
+      <Filter>ECS\Systems\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -671,6 +674,9 @@
     </ClInclude>
     <ClInclude Include="Game\SRunModifier.h">
       <Filter>ECS\Systems\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderModSelection.h">
+      <Filter>ECS\Systems\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

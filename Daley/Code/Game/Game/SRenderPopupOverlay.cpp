@@ -77,6 +77,11 @@ void SRenderPopupOverlay::Run(SystemContext const& context) const
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
 	Renderer& renderer = *scRenderer.GetRenderer();
 
+	if (runData.m_numActiveModifierChoices > 0)
+	{
+		return;
+	}
+
 	PopupOverlayType overlayType = PopupOverlayType::None;
 
 	if (runData.m_health <= 0.f)

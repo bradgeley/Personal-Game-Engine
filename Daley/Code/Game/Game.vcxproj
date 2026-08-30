@@ -360,6 +360,7 @@
     <ClCompile Include="Game\SRenderCollisionEffects.cpp" />
     <ClCompile Include="Game\SRenderDiscs.cpp" />
     <ClCompile Include="Game\SRenderHUD.cpp" />
+    <ClCompile Include="Game\SRenderModSelection.cpp" />
     <ClCompile Include="Game\SRenderPopupOverlay.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
     <ClCompile Include="Game\SRunModifier.cpp" />
@@ -482,6 +483,7 @@
     <ClInclude Include="Game\SRenderCollisionEffects.h" />
     <ClInclude Include="Game\SRenderDiscs.h" />
     <ClInclude Include="Game\SRenderHUD.h" />
+    <ClInclude Include="Game\SRenderModSelection.h" />
     <ClInclude Include="Game\SRenderPopupOverlay.h" />
     <ClInclude Include="Game\SRenderUI.h" />
     <ClInclude Include="Game\SRunModifier.h" />

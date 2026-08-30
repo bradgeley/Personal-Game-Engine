@@ -28,6 +28,23 @@ void SExperience::Shutdown() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void GrantExpInternal(RunData& runData, uint64_t exp)
+{
+	int levelBefore = RunData::GetLevelData(runData.m_experience).m_level;
+	runData.m_experience += exp;
+	if (runData.m_experience > StaticGameSettings::s_maximumExperience)
+	{
+		runData.m_experience = StaticGameSettings::s_maximumExperience;
+	}
+	int levelAfter = RunData::GetLevelData(runData.m_experience).m_level;
+
+	int levelsGained = levelAfter - levelBefore;
+	runData.m_numModifierChoicesRemaining += levelsGained;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SExperience::Run(SystemContext const& context) const
 {
 	// Read Dependencies
@@ -43,12 +60,7 @@ void SExperience::Run(SystemContext const& context) const
 		CDeath const& death = deathComponents[it];
 		if (death.GetDiedThisFrame())
 		{
-			runData.m_experience += static_cast<uint64_t>(death.m_expReward);
-
-			if (runData.m_experience > StaticGameSettings::s_maximumExperience)
-			{
-				runData.m_experience = StaticGameSettings::s_maximumExperience;
-			}
+			GrantExpInternal(runData, static_cast<uint64_t>(death.m_expReward));
 		}
 	}
 }
@@ -61,12 +73,8 @@ bool SExperience::GrantExp(NamedProperties& params)
 	SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
 	RunData& runData = *scRunData.m_data;
 	uint32_t exp = params.Get<uint32_t>("exp", 0);
-	runData.m_experience += static_cast<uint64_t>(exp);
 
-	if (runData.m_experience > StaticGameSettings::s_maximumExperience)
-	{
-		runData.m_experience = StaticGameSettings::s_maximumExperience;
-	}
+	GrantExpInternal(runData, static_cast<uint64_t>(exp));
 
 	return false;
 }

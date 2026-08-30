@@ -79,8 +79,7 @@ public:
 	RunModifierPool m_runModifierPool;
 	int m_numModifierChoicesRemaining = 0;
 	int m_numModifierChoicesCompleted = 0;
-
-	bool m_hasGeneratedModifierChoices = false;
+	int m_numActiveModifierChoices = 0;
 	std::array<RunModifierDef const*, MAX_MODIFIER_CHOICES> m_modifierChoices;
 };
 

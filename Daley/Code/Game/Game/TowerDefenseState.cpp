@@ -257,6 +257,7 @@ void TowerDefenseState::ConfigureECS()
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderHUD>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderPopupOverlay>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderModSelection>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugRender>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SDebugOverlay>((int) FramePhase::Render);
 

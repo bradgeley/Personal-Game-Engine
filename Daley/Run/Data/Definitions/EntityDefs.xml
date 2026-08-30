@@ -285,7 +285,7 @@
   <!-- Towers -->
 
   <EntityDef name = "Wall1x1">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="wall"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="wall" static="true"></Animation>
     <Placeable dims="1,1" onPath="true"></Placeable>
     <Render scale="1" tint="255,255,255"></Render>
     <Tags tags="tower"></Tags>
@@ -294,7 +294,7 @@
   </EntityDef>
 
   <EntityDef name = "Wall2x2">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="wall"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="wall" static="true"></Animation>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="255,255,255"></Render>
     <Tags tags="tower"></Tags>
@@ -303,7 +303,7 @@
   </EntityDef>
 
   <EntityDef name = "Tree1x1">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="tree"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="tree" static="true"></Animation>
     <Placeable dims="1,1" onPath="true"></Placeable>
     <Render scale="1" tint="0,200,0"></Render>
     <Tags tags="tower"></Tags>
@@ -312,7 +312,7 @@
   </EntityDef>
 
   <EntityDef name = "Tree2x2">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="tree"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="tree" static="true"></Animation>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="0,200,0"></Render>
     <Tags tags="tower"></Tags>
@@ -321,7 +321,7 @@
   </EntityDef>
 
   <EntityDef name = "Cactus2x2">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="cactus"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="cactus" static="true"></Animation>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="0,140,0"></Render>
     <Tags tags="tower"></Tags>
@@ -333,7 +333,7 @@
     <Ability>
       <Ability name="VanillaAttack"></Ability>
     </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="243,229,171"></Render>
@@ -343,7 +343,7 @@
   </EntityDef>
 
   <EntityDef name = "VanillaProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="0.66" rotateSprite="true" tint="243,229,171"></Render>
     <Tags tags="projectile"></Tags>
@@ -355,7 +355,7 @@
     <Ability>
       <Ability name="ChocolateAttack"></Ability>
     </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="112,66,20"></Render>
@@ -365,7 +365,7 @@
   </EntityDef>
 
   <EntityDef name = "ChocolateProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="112,66,20"></Render>
     <Tags tags="projectile"></Tags>
@@ -377,7 +377,7 @@
     <Ability>
       <Ability name="StrawberryAttack"></Ability>
     </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="250,80,83"></Render>
@@ -387,10 +387,25 @@
   </EntityDef>
 
   <EntityDef name = "StrawberryProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="250,80,83"></Render>
     <Tags tags="projectile"></Tags>
+    <Time></Time>
+    <Transform></Transform>
+  </EntityDef>
+
+  <EntityDef name = "Neopolitan">
+    <Ability>
+      <Ability name="VanillaAttack"></Ability>
+      <Ability name="ChocolateAttack"></Ability>
+      <Ability name="StrawberryAttack"></Ability>
+    </Ability>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
+    <Collision radius="1.5" type="building"></Collision>
+    <Placeable dims="3,3" onPath="true"></Placeable>
+    <Render scale="3" tint="250,250,250"></Render>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -399,7 +414,7 @@
     <Ability>
       <Ability name="PistachioAttack"></Ability>
     </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="147,197,114"></Render>
@@ -409,7 +424,7 @@
   </EntityDef>
 
   <EntityDef name = "PistachioProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="147,197,114"></Render>
     <Tags tags="projectile"></Tags>
@@ -421,7 +436,7 @@
     <Ability>
       <Ability name="MintAoEAttack"></Ability>
     </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="173,235,179"></Render>
@@ -431,7 +446,7 @@
   </EntityDef>
 
   <EntityDef name = "MintProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="1.5" rotateSprite="true" tint="173,235,179"></Render>
     <Tags tags="projectile"></Tags>
@@ -443,7 +458,7 @@
     <Ability>
       <Ability name="CoffeeAttack"></Ability>
     </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="165, 130, 90"></Render>
@@ -453,7 +468,7 @@
   </EntityDef>
 
   <EntityDef name = "CoffeeProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
     <Projectile></Projectile>
     <Render scale="1" rotateSprite="true" tint="111,78,55"></Render>
     <Tags tags="projectile"></Tags>
@@ -465,7 +480,7 @@
     <Ability>
       <Ability name="OrangeSorbetAttack"></Ability>
     </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="255,165,0"></Render>

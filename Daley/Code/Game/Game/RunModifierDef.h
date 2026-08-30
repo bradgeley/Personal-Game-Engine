@@ -16,14 +16,14 @@ struct RunModifierDef
 {
 public:
 
-	RunModifierDef(XmlElement const& element);
+	RunModifierDef(XmlElement const& modElement);
 	virtual ~RunModifierDef() = default;
-	static RunModifierDef const* MakeFromXml(XmlElement const& element);
+	static RunModifierDef const* MakeFromXml(XmlElement const& modElement);
 	virtual RunModifier* MakeModifierInstance() const = 0;
 
 public:
 
-	static constexpr int s_maxRequirements = 1;
+	static constexpr int s_maxRequirements = 3;
 
 	Name m_name = Name::Invalid;
 	int m_levelRequirement = 0;
@@ -57,7 +57,7 @@ struct TowerUnlockRunModifierDef : public RunModifierDef
 {
 public:
 
-	TowerUnlockRunModifierDef(XmlElement const& element);
+	TowerUnlockRunModifierDef(XmlElement const& modElement);
 
 	virtual RunModifier* MakeModifierInstance() const override;
 
