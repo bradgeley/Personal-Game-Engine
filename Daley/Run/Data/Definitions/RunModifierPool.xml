@@ -28,15 +28,29 @@
     
     <!-- Level 1 -->
     <TowerPayloadRunModifier name="VanillaDamage" type="damage" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
-    
-    <!-- Level 2 -->
-    <TowerPayloadRunModifier name="VanillaSlow" type="slow" tagRequirement="Vanilla" base="0.2" perLevel="0.2"  weight="0.25" levelRequirement="2" maxLevel="5"></TowerPayloadRunModifier>
-    
-    <!-- Level 3 -->
-    <TowerPayloadRunModifier name="VanillaBurn" type="burn" tagRequirement="Vanilla" base="3" perLevel="3"  weight="0.5" levelRequirement="3" maxLevel="5"></TowerPayloadRunModifier>
-    <TowerPayloadRunModifier name="VanillaPoison" type="poison" tagRequirement="Vanilla" base="1" perLevel="1"  weight="0.5" levelRequirement="3" maxLevel="5"></TowerPayloadRunModifier>
-    <TowerAoEHitRunModifier name="VanillaAoE" tagRequirement="Vanilla" base="1" perLevel="0.5" weight="0.25" levelRequirement="3" maxLevel="5"></TowerAoEHitRunModifier>
   
+  </RunModifierPool>
+
+  <RunModifierPool name="Chocolate" requirements="Chocolate">
+
+    <!-- Level 1 -->
+    <TowerPayloadRunModifier name="ChocolateDamage" type="damage" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
+
+  </RunModifierPool>
+
+  <RunModifierPool name="Strawberry" requirements="Strawberry">
+
+    <!-- Level 1 -->
+    <TowerPayloadRunModifier name="StrawberryBurn" type="burn" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
+
+  </RunModifierPool>
+
+  <RunModifierPool name="Mint" requirements="Mint">
+
+    <!-- Level 1 -->
+    <TowerPayloadRunModifier name="MintPoison" type="poison" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="MintSlow" type="slow" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
+
   </RunModifierPool>
 
 </RunModifierPools>
