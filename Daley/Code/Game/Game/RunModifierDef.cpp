@@ -64,19 +64,6 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RunModifierDef::AppendDebugString(std::string& outStr) const
-{
-	outStr += StringUtils::StringF("%s", m_name.ToCStr());
-	if (m_maxLevel > 1)
-	{
-		outStr += StringUtils::StringF("\nMax Level: %d", m_maxLevel);
-	}
-	outStr += "\n";
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 RunModifier::RunModifier(RunModifierDef const& def) : m_def(def)
 {
 
@@ -88,19 +75,6 @@ RunModifier::RunModifier(RunModifierDef const& def) : m_def(def)
 void RunModifier::ApplyToAbility(Ability&, CTags const&) const
 {
 
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void RunModifier::AppendDebugString(std::string& outStr) const
-{
-	outStr += StringUtils::StringF("%s", m_def.m_name.ToCStr());
-	if (m_def.m_maxLevel > 1)
-	{
-		outStr += StringUtils::StringF("\nLevel: %d/%d", m_level, m_def.m_maxLevel);
-	}
-	outStr += "\n";
 }
 
 
@@ -120,16 +94,6 @@ TowerUnlockRunModifierDef::TowerUnlockRunModifierDef(XmlElement const& modElemen
 RunModifier* TowerUnlockRunModifierDef::MakeModifierInstance() const
 {
 	return new TowerUnlockRunModifier(*this);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void TowerUnlockRunModifierDef::AppendDebugString(std::string& outStr) const
-{
-	RunModifierDef::AppendDebugString(outStr);
-
-	outStr += StringUtils::StringF("Gold Cost: %.2f\n", m_baseCost);
 }
 
 
@@ -177,10 +141,8 @@ void TowerUnlockRunModifier::Apply(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerUnlockRunModifier::AppendDebugString(std::string& outStr) const
+void TowerUnlockRunModifier::GetDescription(std::string& outStr) const
 {
-	RunModifier::AppendDebugString(outStr);
-
 	outStr += StringUtils::StringF("Tower Name: %s\nGold Cost: %.2f\n", GetDef().m_towerName.ToCStr(), GetDef().m_baseCost);
 }
 
@@ -249,19 +211,14 @@ RunModifier* TowerPayloadRunModifierDef::MakeModifierInstance() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerPayloadRunModifierDef::AppendDebugString(std::string& outStr) const
-{
-	RunModifierDef::AppendDebugString(outStr);
-
-	outStr += StringUtils::StringF("Multiplier Increase Base: %.2f\nMultiplier Increase Per Level: %.2f\n", m_multiplierIncreaseBase, m_multiplierIncreasePerLevel);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void TowerPayloadRunModifierDef::GetDescription(std::string& outStr) const
 {
-	outStr += StringUtils::StringF("Base: +%.2fx\nPer Level: +%.2fx\n", m_multiplierIncreaseBase, m_multiplierIncreasePerLevel);
+	float baseMultiplier = 1.f + m_multiplierIncreaseBase;
+	outStr += StringUtils::StringF("Base: %.2fx\nPer Level: +%.2fx\n", baseMultiplier, m_multiplierIncreasePerLevel);
+	if (m_maxLevel > 1)
+	{
+		outStr += StringUtils::StringF("Max Level: %d", m_maxLevel);
+	}
 }
 
 
@@ -320,11 +277,19 @@ void TowerPayloadRunModifier::ApplyToAbility(Ability& ability, CTags const& tags
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerPayloadRunModifier::AppendDebugString(std::string& outStr) const
+void TowerPayloadRunModifier::GetDescription(std::string& outStr) const
 {
-	RunModifier::AppendDebugString(outStr);
-
-	outStr += StringUtils::StringF("Payload Multiplier Increase Base: %.2f\nPayload Multiplier Increase Per Level: %.2f\n", GetDef().m_multiplierIncreaseBase, GetDef().m_multiplierIncreasePerLevel);
+	if (m_def.m_maxLevel > 1)
+	{
+		float currentMultiplier = 1.f + GetDef().m_multiplierIncreaseBase + (GetDef().m_multiplierIncreasePerLevel * static_cast<float>(m_level - 1));
+		float nextMultiplier = currentMultiplier + GetDef().m_multiplierIncreasePerLevel;
+		outStr += StringUtils::StringF("Current: %.2fx\nNext: %.2fx\nLevel: %d/%d\n", currentMultiplier, nextMultiplier, m_level, m_def.m_maxLevel);
+	}
+	else
+	{
+		float currentMultiplier = 1.f + GetDef().m_multiplierIncreaseBase;
+		outStr += StringUtils::StringF("Multiplier (additive): %.2fx\n", currentMultiplier);
+	}
 }
 
 

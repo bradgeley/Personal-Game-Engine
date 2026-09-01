@@ -115,7 +115,14 @@ void SRenderModSelection::Run(SystemContext const& context) const
 
 		std::string cardText = modifierDef->m_displayName.ToString();
 		cardText += "\n";
-		modifierDef->GetDescription(cardText);
+		if (activeMod)
+		{
+			activeMod->GetDescription(cardText);
+		}
+		else
+		{
+			modifierDef->GetDescription(cardText);
+		}
 
 		Vec2 cardTextDims = font->GetTextDims(30.f, 5.f, cardText.c_str());
 		Vec2 cardPos = Vec2(cameraBounds.GetCenter().x - (numCards * (cardDims.x + cardSpacing)) / 2.f + (cardIndex * (cardDims.x + cardSpacing)), cameraBounds.GetCenter().y);

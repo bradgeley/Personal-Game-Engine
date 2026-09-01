@@ -23,7 +23,6 @@ public:
 	virtual ~RunModifierDef() = default;
 	static RunModifierDef const* MakeFromXml(XmlElement const& modElement);
 	virtual RunModifier* MakeModifierInstance() const = 0;
-	virtual void AppendDebugString(std::string& outStr) const;
 	virtual void GetDescription(std::string& outStr) const = 0;
 
 public:
@@ -51,7 +50,7 @@ public:
 	virtual void Apply(SystemContext const& context) const = 0;
 	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const;
 
-	virtual void AppendDebugString(std::string& outStr) const;
+	virtual void GetDescription(std::string& outStr) const = 0;
 
 public:
 
@@ -70,7 +69,6 @@ public:
 
 	virtual RunModifier* MakeModifierInstance() const override;
 
-	virtual void AppendDebugString(std::string& outStr) const override;
 	virtual void GetDescription(std::string& outStr) const override;
 
 public:
@@ -92,7 +90,7 @@ public:
 
 	virtual void Apply(SystemContext const& context) const override;
 
-	virtual void AppendDebugString(std::string& outStr) const override;
+	virtual void GetDescription(std::string& outStr) const override;
 
 	TowerUnlockRunModifierDef const& GetDef() const;
 };
@@ -108,7 +106,6 @@ public:
 
 	virtual RunModifier* MakeModifierInstance() const override;
 
-	virtual void AppendDebugString(std::string& outStr) const override;
 	virtual void GetDescription(std::string& outStr) const override;
 
 public:
@@ -132,7 +129,7 @@ public:
 	virtual void Apply(SystemContext const& context) const override;
 	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const override;
 
-	virtual void AppendDebugString(std::string& outStr) const override;
+	virtual void GetDescription(std::string& outStr) const override;
 
 	TowerPayloadRunModifierDef const& GetDef() const;
 };
