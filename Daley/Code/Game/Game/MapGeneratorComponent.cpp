@@ -429,6 +429,28 @@ bool PerlinWormPathGeneratorComponent::Generate(MapGenerator& generator, SCWorld
 			float noiseValue = Noise::GetPerlinNoise1D(noiseLocation, 1.f, 5, 0.5f, 2.f, true, wormSeed);
 			Vec2 wormDir = worm.m_dir.GetRotated(noiseValue * 45.f); // todo: parameterize
 			Vec2 nextWormLocation = worm.m_pos + wormDir;
+			IntVec2 wormCoords = world.GetTileCoordsAtWorldPos(worm.m_pos);
+
+			if (!world.IsTileVisible(wormCoords))
+			{
+				if (wormCoords.x < StaticWorldSettings::s_visibleWorldBeginIndexX)
+				{
+					wormDir = Vec2(-1.f, 0.f);
+				}
+				if (wormCoords.x > StaticWorldSettings::s_visibleWorldEndIndexX)
+				{
+					wormDir = Vec2(1.f, 0.f);
+				}
+				if (wormCoords.y < StaticWorldSettings::s_visibleWorldBeginIndexY)
+				{
+					wormDir = Vec2(0.f, -1.f);
+				}
+				if (wormCoords.y > StaticWorldSettings::s_visibleWorldEndIndexY)
+				{
+					wormDir = Vec2(0.f, 1.f);
+				}
+				nextWormLocation = worm.m_pos + wormDir;
+			}
 
 			bool canSplit = numSplits < m_maxSplits;
 			if (canSplit)

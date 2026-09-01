@@ -113,11 +113,9 @@ void SRenderModSelection::Run(SystemContext const& context) const
 			}
 		}
 
-		std::string cardText = StringUtils::StringF("(%i) - %s", cardIndex + 1, modifierDef->m_name.ToCStr());
-		if (activeMod != nullptr)
-		{
-			cardText += StringUtils::StringF("\nLevel %i/%i", activeMod->m_level, modifierDef->m_maxLevel);
-		}
+		std::string cardText = modifierDef->m_displayName.ToString();
+		cardText += "\n";
+		modifierDef->GetDescription(cardText);
 
 		Vec2 cardTextDims = font->GetTextDims(30.f, 5.f, cardText.c_str());
 		Vec2 cardPos = Vec2(cameraBounds.GetCenter().x - (numCards * (cardDims.x + cardSpacing)) / 2.f + (cardIndex * (cardDims.x + cardSpacing)), cameraBounds.GetCenter().y);
@@ -125,7 +123,7 @@ void SRenderModSelection::Run(SystemContext const& context) const
 		cardBounds.Translate(Vec2(0.f, -cardDims.y / 2.f));
 
 		VertexUtils::AddVertsForAABB2(untexturedVerts, cardBounds, Rgba8(0, 0, 0, 128));
-		font->AddVertsForAlignedText2D(textVerts, cardBounds.GetCenter(), Vec2::ZeroVector, 30.f, cardText.c_str(), Rgba8::White, 5.f);
+		font->AddVertsForAlignedText2D(textVerts, cardBounds.GetCenter(), Vec2::ZeroVector, 30.f, cardText.c_str(), Rgba8::White, 0.5f);
 	}
 
 	renderer.BeginCamera(&camera.m_uiCamera);

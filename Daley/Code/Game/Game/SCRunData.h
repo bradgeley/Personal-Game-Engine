@@ -65,6 +65,7 @@ public:
 	float		m_maxHealth				= StaticGameSettings::s_basePlayerHealth;
 	float		m_interestTimerSeconds	= StaticGameSettings::s_baseInterestTimerSeconds;
 	float		m_healthRegen			= StaticGameSettings::s_basePlayerHealthRegen;
+	float		m_currentTimeDilation	= 1.f;
 	
 	float		m_gold							= StaticGameSettings::s_baseGold;
 	float		m_interestTimerSecondsRemaining	= StaticGameSettings::s_baseInterestTimerSeconds;

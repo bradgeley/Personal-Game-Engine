@@ -89,7 +89,7 @@ namespace StaticGameSettings
 	static constexpr float s_enemyHealthIncreasePerMission	= 0.1f;
 
 	static constexpr float s_minTimeDilation				= 0.25f;
-	static constexpr float s_maxTimeDilation				= 4.f;
+	static constexpr float s_maxTimeDilation				= 16.f;
 
     // Derived
     extern float s_burnDecayK;

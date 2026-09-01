@@ -5,51 +5,51 @@
   <RunModifierPool name="Default">
 
     <!-- Level 1 -->
-    <TowerUnlockRunModifier name="Vanilla"    defaultKey="1" baseCost="30"  levelRequirement="0" weight="1"></TowerUnlockRunModifier>
-    <TowerUnlockRunModifier name="Chocolate"  defaultKey="2" baseCost="40"  levelRequirement="0" weight="1"></TowerUnlockRunModifier>
-    <TowerUnlockRunModifier name="Strawberry" defaultKey="3" baseCost="50"  levelRequirement="0" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Vanilla"    displayName="Vanilla" defaultKey="Q" baseCost="30"  levelRequirement="0" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Chocolate"  displayName="Chocolate" defaultKey="W" baseCost="40"  levelRequirement="0" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Strawberry" displayName="Strawberry" defaultKey="E" baseCost="50"  levelRequirement="0" weight="1"></TowerUnlockRunModifier>
 
-    <TowerPayloadRunModifier name="GenericDamage" type="damage" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5"></TowerPayloadRunModifier>
-    <TowerPayloadRunModifier name="GenericPoison" type="poison" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5"></TowerPayloadRunModifier>
-    <TowerPayloadRunModifier name="GenericBurn"   type="burn" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5"></TowerPayloadRunModifier>
-    <TowerPayloadRunModifier name="GenericSlow"   type="slow" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="GenericDamage" displayName="Damage Multiplier" type="damage" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="GenericPoison" displayName="Poison Multiplier" type="poison" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="GenericBurn"   displayName="Burn Multiplier" type="burn" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="GenericSlow"   displayName="Slow Duration Multiplier" type="slow" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5"></TowerPayloadRunModifier>
   
     <!-- Level 3 -->
-    <TowerUnlockRunModifier name="Mint"    defaultKey="4" baseCost="60"  levelRequirement="3" weight="1"></TowerUnlockRunModifier>
-    <TowerUnlockRunModifier name="Coffee"  defaultKey="5" baseCost="70"  levelRequirement="3" weight="1"></TowerUnlockRunModifier>
-    <TowerUnlockRunModifier name="Wall1x1" defaultKey="W" baseCost="5"   levelRequirement="3" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Mint"    displayName="Mint" defaultKey="R" baseCost="60"  levelRequirement="3" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Coffee"  displayName="Coffee" defaultKey="A" baseCost="70"  levelRequirement="3" weight="1"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Wall1x1" displayName="Wall1x1" defaultKey="T" baseCost="5"   levelRequirement="3" weight="1"></TowerUnlockRunModifier>
     
     <!-- Level 5 -->
-    <TowerUnlockRunModifier name="Neopolitan" defaultKey="6" baseCost="120" levelRequirement="5" weight="0.1" requirements="Vanilla,Chocolate,Strawberry"></TowerUnlockRunModifier>
+    <TowerUnlockRunModifier name="Neopolitan" displayName="Neopolitan" defaultKey="D" baseCost="120" levelRequirement="5" weight="0.1" requirements="Vanilla,Chocolate,Strawberry"></TowerUnlockRunModifier>
   
   </RunModifierPool>
   
   <RunModifierPool name="Vanilla" requirements="Vanilla">
     
     <!-- Level 1 -->
-    <TowerPayloadRunModifier name="VanillaDamage" type="damage" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="VanillaDamage" displayName="Vanilla Damage Multiplier" type="damage" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
   
   </RunModifierPool>
 
   <RunModifierPool name="Chocolate" requirements="Chocolate">
 
     <!-- Level 1 -->
-    <TowerPayloadRunModifier name="ChocolateDamage" type="damage" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="ChocolateDamage" displayName="Chocolate Damage Multiplier" type="damage" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
 
   </RunModifierPool>
 
   <RunModifierPool name="Strawberry" requirements="Strawberry">
 
     <!-- Level 1 -->
-    <TowerPayloadRunModifier name="StrawberryBurn" type="burn" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="StrawberryBurn" displayName="Strawberry Burn Multiplier" type="burn" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
 
   </RunModifierPool>
 
   <RunModifierPool name="Mint" requirements="Mint">
 
     <!-- Level 1 -->
-    <TowerPayloadRunModifier name="MintPoison" type="poison" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
-    <TowerPayloadRunModifier name="MintSlow" type="slow" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="MintPoison" displayName="Mint Poison Multiplier" type="poison" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
+    <TowerPayloadRunModifier name="MintSlow" displayName="Mint Slow Duration Multiplier" type="slow" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5"></TowerPayloadRunModifier>
 
   </RunModifierPool>
 

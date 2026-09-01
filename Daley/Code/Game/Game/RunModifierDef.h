@@ -3,6 +3,7 @@
 #include "Engine/Core/Name.h"
 #include "Engine/Core/XmlUtils.h"
 #include <array>
+#include <string>
 
 
 
@@ -22,12 +23,15 @@ public:
 	virtual ~RunModifierDef() = default;
 	static RunModifierDef const* MakeFromXml(XmlElement const& modElement);
 	virtual RunModifier* MakeModifierInstance() const = 0;
+	virtual void AppendDebugString(std::string& outStr) const;
+	virtual void GetDescription(std::string& outStr) const = 0;
 
 public:
 
 	static constexpr int s_maxRequirements = 3;
 
 	Name m_name = Name::Invalid;
+	Name m_displayName = Name::Invalid;
 	int m_levelRequirement = 0;
 	int m_maxLevel = 1;
 	float m_weight = 1.f;
@@ -47,6 +51,8 @@ public:
 	virtual void Apply(SystemContext const& context) const = 0;
 	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const;
 
+	virtual void AppendDebugString(std::string& outStr) const;
+
 public:
 
 	RunModifierDef const& m_def;
@@ -63,6 +69,9 @@ public:
 	TowerUnlockRunModifierDef(XmlElement const& modElement);
 
 	virtual RunModifier* MakeModifierInstance() const override;
+
+	virtual void AppendDebugString(std::string& outStr) const override;
+	virtual void GetDescription(std::string& outStr) const override;
 
 public:
 
@@ -83,6 +92,8 @@ public:
 
 	virtual void Apply(SystemContext const& context) const override;
 
+	virtual void AppendDebugString(std::string& outStr) const override;
+
 	TowerUnlockRunModifierDef const& GetDef() const;
 };
 
@@ -96,6 +107,9 @@ public:
 	TowerPayloadRunModifierDef(XmlElement const& modElement);
 
 	virtual RunModifier* MakeModifierInstance() const override;
+
+	virtual void AppendDebugString(std::string& outStr) const override;
+	virtual void GetDescription(std::string& outStr) const override;
 
 public:
 
@@ -117,6 +131,8 @@ public:
 
 	virtual void Apply(SystemContext const& context) const override;
 	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const override;
+
+	virtual void AppendDebugString(std::string& outStr) const override;
 
 	TowerPayloadRunModifierDef const& GetDef() const;
 };

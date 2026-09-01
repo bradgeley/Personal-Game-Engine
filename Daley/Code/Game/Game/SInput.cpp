@@ -106,24 +106,21 @@ void SInput::Run(SystemContext const& context) const
 		// Game speed up/slow down
 		if (inputSystem.WasKeyJustPressed(KeyCode::Plus))
 		{
-			float timeDilation = gameState.m_clock->GetLocalTimeDilationF();
-			timeDilation *= 2.f;
-			if (timeDilation > StaticGameSettings::s_maxTimeDilation)
+			runData.m_currentTimeDilation *= 2.f;
+			if (runData.m_currentTimeDilation > StaticGameSettings::s_maxTimeDilation)
 			{
-				timeDilation = StaticGameSettings::s_maxTimeDilation;
+				runData.m_currentTimeDilation = StaticGameSettings::s_maxTimeDilation;
 			}
-			gameState.m_clock->SetLocalTimeDilation(timeDilation);
 		}
 		else if (inputSystem.WasKeyJustPressed(KeyCode::Minus))
 		{
-			float timeDilation = gameState.m_clock->GetLocalTimeDilationF();
-			timeDilation *= 0.5f;
-			if (timeDilation < StaticGameSettings::s_minTimeDilation)
+			runData.m_currentTimeDilation *= 0.5f;
+			if (runData.m_currentTimeDilation < StaticGameSettings::s_minTimeDilation)
 			{
-				timeDilation = StaticGameSettings::s_minTimeDilation;
+				runData.m_currentTimeDilation = StaticGameSettings::s_minTimeDilation;
 			}
-			gameState.m_clock->SetLocalTimeDilation(timeDilation);
 		}
+		gameState.m_clock->SetLocalTimeDilation(runData.m_currentTimeDilation);
 	}
 
 	// Tower Placement

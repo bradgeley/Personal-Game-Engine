@@ -87,60 +87,78 @@ void SRenderHUD::Run(SystemContext const& context) const
 	constexpr float hudPadding = 20.f; // TOOD: make configurable
 	constexpr float hudLineSpacing = 0.25f; // TOOD: make configurable
 
-	std::string hudText = StringUtils::StringF("Gold: %.2f\nHealth: %.2f/%.2f (+%.2f/s)\nInterest Timer (%.2f)\nWave %i/%i (%.2f)", 
-											   runData.m_gold, runData.m_health, runData.m_maxHealth, runData.m_healthRegen, 
-											   runData.m_interestTimerSecondsRemaining, waves.m_currentWaveIndex, waves.m_waves.size(), 
-											   waves.m_waveTimer.GetRemainingSeconds());
-
-	Vec2 hudTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, hudText);
-
-	ExperienceLevelData levelData = RunData::GetLevelData(runData.m_experience);
-
-	std::string experienceBarText;
-	if (levelData.m_isMaxLevel)
 	{
-		experienceBarText = StringUtils::StringF("Level %i", levelData.m_level);
+		std::string hudText = StringUtils::StringF("Gold: %.2f\nHealth: %.2f/%.2f (+%.2f/s)\nInterest Timer (%.2f)\nWave %i/%i (%.2f)",
+												   runData.m_gold, runData.m_health, runData.m_maxHealth, runData.m_healthRegen,
+												   runData.m_interestTimerSecondsRemaining, waves.m_currentWaveIndex, waves.m_waves.size(),
+												   waves.m_waveTimer.GetRemainingSeconds());
+
+		Vec2 hudTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, hudText);
+
+		ExperienceLevelData levelData = RunData::GetLevelData(runData.m_experience);
+
+		std::string experienceBarText;
+		if (levelData.m_isMaxLevel)
+		{
+			experienceBarText = StringUtils::StringF("Level %i", levelData.m_level);
+		}
+		else
+		{
+			experienceBarText = StringUtils::StringF("Level %i (%.2f%%)", levelData.m_level, levelData.m_percentIntoLevel * 100.f);
+		}
+
+		Vec2 experienceBarDims = Vec2(hudTextDims.x, 40.f);
+
+		AABB2 hudBounds = AABB2(Vec2(0.f, 0.f), Vec2(hudTextDims.x, hudTextDims.y + experienceBarDims.y));
+		hudBounds.ExpandBy(hudPadding);
+		hudBounds.Translate(Vec2(hudPadding, hudPadding));
+		VertexUtils::AddVertsForAABB2(untexturedVerts, hudBounds, Rgba8(0, 0, 0, 128));
+
+		AABB2 experienceBarBackgroundBounds = AABB2(hudBounds.GetTopLeft() + Vec2(hudPadding, -experienceBarDims.y - hudPadding), hudBounds.maxs + Vec2(-hudPadding, -hudPadding));
+		VertexUtils::AddVertsForAABB2(untexturedVerts, experienceBarBackgroundBounds, Rgba8::DarkGray);
+		AABB2 experienceBarForegroundBounds = experienceBarBackgroundBounds;
+		experienceBarForegroundBounds.maxs.x = experienceBarBackgroundBounds.mins.x + experienceBarBackgroundBounds.GetWidth() * levelData.m_percentIntoLevel;
+		VertexUtils::AddVertsForAABB2(untexturedVerts, experienceBarForegroundBounds, Rgba8::DarkGreen);
+
+		font->AddVertsForAlignedText2D(textVerts, hudBounds.GetBottomRight() + Vec2(-hudPadding, hudPadding), Vec2(-1.f, 1.f), hudTextSize, hudText, Rgba8::White, hudLineSpacing);
+		font->AddVertsForAlignedText2D(textVerts, experienceBarBackgroundBounds.GetCenter(), Vec2::ZeroVector, expBarTextSize, experienceBarText, Rgba8::White, hudLineSpacing);
 	}
-	else
-	{
-		experienceBarText = StringUtils::StringF("Level %i (%.2f%%)", levelData.m_level, levelData.m_percentIntoLevel * 100.f);
-	}
-
-	Vec2 experienceBarDims = Vec2(hudTextDims.x, 40.f);
-
-	AABB2 hudBounds = AABB2(Vec2(0.f, 0.f), Vec2(hudTextDims.x, hudTextDims.y + experienceBarDims.y));
-	hudBounds.ExpandBy(hudPadding);
-	hudBounds.Translate(Vec2(hudPadding, hudPadding));
-	VertexUtils::AddVertsForAABB2(untexturedVerts, hudBounds, Rgba8(0, 0, 0, 128));
-
-	AABB2 experienceBarBackgroundBounds = AABB2(hudBounds.GetTopLeft() + Vec2(hudPadding, -experienceBarDims.y - hudPadding), hudBounds.maxs + Vec2(-hudPadding, -hudPadding));
-	VertexUtils::AddVertsForAABB2(untexturedVerts, experienceBarBackgroundBounds, Rgba8::DarkGray);
-	AABB2 experienceBarForegroundBounds = experienceBarBackgroundBounds;
-	experienceBarForegroundBounds.maxs.x = experienceBarBackgroundBounds.mins.x + experienceBarBackgroundBounds.GetWidth() * levelData.m_percentIntoLevel;
-	VertexUtils::AddVertsForAABB2(untexturedVerts, experienceBarForegroundBounds, Rgba8::DarkGreen);
-
-	font->AddVertsForAlignedText2D(textVerts, hudBounds.GetBottomRight() + Vec2(-hudPadding, hudPadding), Vec2(-1.f, 1.f), hudTextSize, hudText, Rgba8::White, hudLineSpacing);
-	font->AddVertsForAlignedText2D(textVerts, experienceBarBackgroundBounds.GetCenter(), Vec2::ZeroVector, expBarTextSize, experienceBarText, Rgba8::White, hudLineSpacing);
 	//------------------------------------------------------
 
 	//------------------------------------------------------
 	// Top Left corner HUD
 	//
-	std::string placeableTowerText = "Placeable Towers";
-	for (auto& placeTower : runData.m_placeableTowers)
 	{
-		if (placeTower.m_towerName != Name::Invalid)
+		std::string placeableTowerText = "Placeable Towers";
+		for (auto& placeTower : runData.m_placeableTowers)
 		{
-			placeableTowerText += StringUtils::StringF("\n(%c) - %s : %.0f gold", placeTower.m_hotkey, placeTower.m_towerName.ToCStr(), placeTower.m_cost);
+			if (placeTower.m_towerName != Name::Invalid)
+			{
+				placeableTowerText += StringUtils::StringF("\n(%c) - %s : %.0f gold", placeTower.m_hotkey, placeTower.m_towerName.ToCStr(), placeTower.m_cost);
+			}
 		}
-	}
-	Vec2 topLeftHUDTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, placeableTowerText);
+		Vec2 topLeftHUDTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, placeableTowerText);
 
-	AABB2 topLeftHUDBounds = AABB2(Vec2(0.f, cameraBounds.maxs.y - topLeftHUDTextDims.y), Vec2(topLeftHUDTextDims.x, cameraBounds.maxs.y));
-	topLeftHUDBounds.mins.y -= hudPadding * 2.f;
-	topLeftHUDBounds.maxs.x += hudPadding * 2.f;
-	VertexUtils::AddVertsForAABB2(untexturedVerts, topLeftHUDBounds, Rgba8(0, 0, 0, 128));
-	font->AddVertsForAlignedText2D(textVerts, topLeftHUDBounds.GetBottomRight() + Vec2(-hudPadding, hudPadding), Vec2(-1.f, 1.f), hudTextSize, placeableTowerText, Rgba8::White, hudLineSpacing);
+		AABB2 topLeftHUDBounds = AABB2(Vec2(0.f, cameraBounds.maxs.y - topLeftHUDTextDims.y), Vec2(topLeftHUDTextDims.x, cameraBounds.maxs.y));
+		topLeftHUDBounds.mins.y -= hudPadding * 2.f;
+		topLeftHUDBounds.maxs.x += hudPadding * 2.f;
+		VertexUtils::AddVertsForAABB2(untexturedVerts, topLeftHUDBounds, Rgba8(0, 0, 0, 128));
+		font->AddVertsForAlignedText2D(textVerts, topLeftHUDBounds.GetBottomRight() + Vec2(-hudPadding, hudPadding), Vec2(-1.f, 1.f), hudTextSize, placeableTowerText, Rgba8::White, hudLineSpacing);
+	}
+	//------------------------------------------------------
+
+	//------------------------------------------------------
+	// Top Right corner HUD
+	//
+	{
+		std::string topRightHUDText = StringUtils::StringF("Game Speed: %.2fx (+/-)", runData.m_currentTimeDilation);
+		Vec2 topRightHUDTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, topRightHUDText);
+		AABB2 topRightHUDBounds = AABB2(Vec2(cameraBounds.maxs.x - topRightHUDTextDims.x, cameraBounds.maxs.y - topRightHUDTextDims.y), cameraBounds.maxs);
+		topRightHUDBounds.mins.y -= hudPadding * 2.f;
+		topRightHUDBounds.mins.x -= hudPadding * 2.f;
+		VertexUtils::AddVertsForAABB2(untexturedVerts, topRightHUDBounds, Rgba8(0, 0, 0, 128));
+		font->AddVertsForAlignedText2D(textVerts, topRightHUDBounds.GetBottomRight() + Vec2(-hudPadding, hudPadding), Vec2(-1.f, 1.f), hudTextSize, topRightHUDText, Rgba8::White, hudLineSpacing);
+	}
 	//------------------------------------------------------
 
 	renderer.BeginCamera(&camera.m_uiCamera);
