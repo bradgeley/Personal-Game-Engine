@@ -11,13 +11,29 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+RunModifierDisplayData::RunModifierDisplayData(XmlElement const& element)
+{
+	m_displayName = XmlUtils::ParseXmlAttribute(element, "displayName", m_displayName);
+	m_spriteSheet = XmlUtils::ParseXmlAttribute(element, "spriteSheet", m_spriteSheet);
+	m_anim = XmlUtils::ParseXmlAttribute(element, "anim", m_anim);
+	m_tint = XmlUtils::ParseXmlAttribute(element, "tint", m_tint);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 RunModifierDef::RunModifierDef(XmlElement const& modElement)
 {
 	m_name = XmlUtils::ParseXmlAttribute(modElement, "name", m_name);
-	m_displayName = XmlUtils::ParseXmlAttribute(modElement, "displayName", m_displayName);
 	m_levelRequirement = XmlUtils::ParseXmlAttribute(modElement, "levelRequirement", m_levelRequirement);
 	m_weight = XmlUtils::ParseXmlAttribute(modElement, "weight", m_weight);
 	m_maxLevel = XmlUtils::ParseXmlAttribute(modElement, "maxLevel", m_maxLevel);
+
+	XmlElement const* displayDataElement = modElement.FirstChildElement("RunModifierDisplayData");
+	if (displayDataElement != nullptr)
+	{
+		m_displayData = RunModifierDisplayData(*displayDataElement);
+	}
 
 	ASSERT_OR_DIE(modElement.Parent() != nullptr, "RunModifierDef XML element has no parent element.");
 	ASSERT_OR_DIE(modElement.Parent()->ToElement() != nullptr, "RunModifierDef XML element's parent is not a valid XML element.");

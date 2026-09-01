@@ -1,12 +1,13 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SRenderModSelection.h"
 #include "EntityDef.h"
+#include "SCAssetManager.h"
 #include "SCCamera.h"
 #include "SCRenderer.h"
 #include "SCRunData.h"
-#include "SCWaves.h"
+#include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/Font.h"
-#include "Engine/Core/StringUtils.h"
+#include "Engine/Assets/GridSpriteSheet.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Renderer/Renderer.h"
@@ -20,7 +21,7 @@
 void SRenderModSelection::Startup()
 {
 	AddReadDependencies<SCCamera, SCRunData>();
-	AddWriteDependencies<SCRenderer>();
+	AddWriteDependencies<SCAssetManager, SCRenderer>();
 
 	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
 	Renderer& renderer = *scRenderer.GetRenderer();
@@ -56,6 +57,9 @@ void SRenderModSelection::Run(SystemContext const& context) const
 	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
 	RunData const& runData = *scRunData.m_data;
 
+	SCAssetManager& scAssetManager = context.GetSingleton<SCAssetManager>();
+	AssetManager& assetManager = *scAssetManager.GetAssetManager();
+
 	if (runData.m_numActiveModifierChoices == 0)
 	{
 		return;
@@ -83,16 +87,21 @@ void SRenderModSelection::Run(SystemContext const& context) const
 	}
 
 	AABB2 cameraBounds = camera.m_uiCamera.GetOrthoBounds2D();
+
+	VertexBufferID spriteVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
+	VertexBuffer& spriteVboRef = *renderer.GetVertexBuffer(spriteVBO);
 	
 	//------------------------------------------------------
 	// Render Options
 	//
-	constexpr float cardScreenHeightPercentage = 0.8f;
+	constexpr float cardScreenHeightPercentage = 0.7f;
 	constexpr float cardAspect = 0.667f;
 	constexpr float cardSpacing = 20.f;
 	float cardHeight = cameraBounds.GetHeight() * cardScreenHeightPercentage;
 	Vec2 cardDims = Vec2(cardHeight * cardAspect, cardHeight);
 	int numCards = runData.m_numActiveModifierChoices;
+
+	renderer.BeginCamera(&camera.m_uiCamera);
 
 	for (int cardIndex = 0; cardIndex < numCards; ++cardIndex)
 	{
@@ -113,7 +122,8 @@ void SRenderModSelection::Run(SystemContext const& context) const
 			}
 		}
 
-		std::string cardText = modifierDef->m_displayName.ToString();
+		std::string cardTitle = modifierDef->m_displayData.m_displayName.ToString();
+		std::string cardText = "";
 		cardText += "\n";
 		if (activeMod)
 		{
@@ -130,15 +140,36 @@ void SRenderModSelection::Run(SystemContext const& context) const
 		cardBounds.Translate(Vec2(0.f, -cardDims.y / 2.f));
 
 		VertexUtils::AddVertsForAABB2(untexturedVerts, cardBounds, Rgba8(0, 0, 0, 128));
-		font->AddVertsForAlignedText2D(textVerts, cardBounds.GetCenter(), Vec2::ZeroVector, 30.f, cardText.c_str(), Rgba8::White, 0.5f);
+
+		AssetID spriteSheetID = assetManager.LoadSynchronous<GridSpriteSheet>(modifierDef->m_displayData.m_spriteSheet);
+		GridSpriteSheet const* spriteSheet = assetManager.Get<GridSpriteSheet>(spriteSheetID);
+		ASSERT_OR_DIE(spriteSheet != nullptr, "SRenderModSelection::Run - Failed to load sprite sheet for run modifier: " + modifierDef->m_displayData.m_spriteSheet.ToString());
+
+		SpriteAnimationDef const* animDef = spriteSheet->GetAnimationDef(modifierDef->m_displayData.m_anim);
+		ASSERT_OR_DIE(animDef != nullptr, "SRenderModSelection::Run - Failed to find animation in sprite sheet for run modifier: " + modifierDef->m_displayData.m_anim.ToString());
+		SpriteAnimation anim = animDef->MakeAnimInstance();
+
+		AABB2 spriteUVs = spriteSheet->GetSpriteUVs(anim.GetCurrentSpriteIndex());
+		float spriteAspect = spriteSheet->GetSpriteAspect();
+		Vec2 spriteDims = 0.4f * Vec2(cardDims.x, cardDims.x / spriteAspect);
+		AABB2 spriteBounds = AABB2(cardBounds.GetCenter() - spriteDims / 2.f, cardBounds.GetCenter() + spriteDims / 2.f);
+		VertexUtils::AddVertsForAABB2(spriteVboRef, spriteBounds, modifierDef->m_displayData.m_tint, spriteUVs);
+
+		font->AddVertsForAlignedText2D(textVerts, spriteBounds.GetTopCenter() + Vec2(0.f, 10.f), Vec2(0.f, 1.f), 30.f, cardTitle.c_str(), Rgba8::White, 0.5f);
+		font->AddVertsForAlignedText2D(textVerts, spriteBounds.GetBottomCenter() + Vec2(0.f, -10.f), Vec2(0.f, -1.f), 30.f, cardText.c_str(), Rgba8::White, 0.5f);
+
+		renderer.BindTexture();
+		renderer.BindShader();
+		renderer.DrawVertexBuffer(scRenderer.m_hudUntexturedVBO);
+
+		spriteSheet->SetRendererState();
+		renderer.DrawVertexBuffer(spriteVBO);
+
+		font->SetRendererState(renderer);
+		renderer.DrawVertexBuffer(scRenderer.m_hudTextVBO);
+
+		textVerts.ClearVerts();
+		untexturedVerts.ClearVerts();
+		spriteVboRef.ClearVerts();
 	}
-
-	renderer.BeginCamera(&camera.m_uiCamera);
-
-	renderer.BindTexture();
-	renderer.BindShader();
-	renderer.DrawVertexBuffer(scRenderer.m_hudUntexturedVBO);
-
-	font->SetRendererState(renderer);
-	renderer.DrawVertexBuffer(scRenderer.m_hudTextVBO);
 }

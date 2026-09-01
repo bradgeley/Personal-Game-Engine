@@ -15,6 +15,20 @@ struct SystemContext;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct RunModifierDisplayData
+{
+	RunModifierDisplayData() = default;
+	RunModifierDisplayData(XmlElement const& element);
+
+	Name m_displayName = "Invalid RunModifier";
+	Name m_spriteSheet = Name::Invalid;
+	Name m_anim = Name::Invalid;
+	Rgba8 m_tint = Rgba8::White;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct RunModifierDef
 {
 public:
@@ -30,11 +44,11 @@ public:
 	static constexpr int s_maxRequirements = 3;
 
 	Name m_name = Name::Invalid;
-	Name m_displayName = Name::Invalid;
 	int m_levelRequirement = 0;
 	int m_maxLevel = 1;
 	float m_weight = 1.f;
 	std::array<Name, s_maxRequirements> m_requirements;
+	RunModifierDisplayData m_displayData;
 };
 
 
