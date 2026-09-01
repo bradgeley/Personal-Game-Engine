@@ -29,7 +29,7 @@ RunModifierDef::RunModifierDef(XmlElement const& modElement)
 	m_weight = XmlUtils::ParseXmlAttribute(modElement, "weight", m_weight);
 	m_maxLevel = XmlUtils::ParseXmlAttribute(modElement, "maxLevel", m_maxLevel);
 
-	XmlElement const* displayDataElement = modElement.FirstChildElement("RunModifierDisplayData");
+	XmlElement const* displayDataElement = modElement.FirstChildElement("DisplayData");
 	if (displayDataElement != nullptr)
 	{
 		m_displayData = RunModifierDisplayData(*displayDataElement);

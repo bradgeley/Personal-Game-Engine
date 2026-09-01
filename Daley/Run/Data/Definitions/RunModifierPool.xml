@@ -6,49 +6,49 @@
 
     <!-- Level 1 -->
     <TowerUnlockRunModifier name="Vanilla" defaultKey="Q" baseCost="30"  levelRequirement="0" weight="1">
-      <RunModifierDisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></RunModifierDisplayData>
+      <DisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
     </TowerUnlockRunModifier>
     
     <TowerUnlockRunModifier name="Chocolate" defaultKey="W" baseCost="40"  levelRequirement="0" weight="1">
-      <RunModifierDisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></RunModifierDisplayData>
+      <DisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
     </TowerUnlockRunModifier>
     
     <TowerUnlockRunModifier name="Strawberry" defaultKey="E" baseCost="50"  levelRequirement="0" weight="1">
-      <RunModifierDisplayData displayName="Strawberry" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,80,83"></RunModifierDisplayData>
+      <DisplayData displayName="Strawberry" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,80,83"></DisplayData>
     </TowerUnlockRunModifier>
 
     <TowerPayloadRunModifier name="GenericDamage" type="damage" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <RunModifierDisplayData displayName="Damage Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></RunModifierDisplayData>
+      <DisplayData displayName="Damage Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></DisplayData>
     </TowerPayloadRunModifier>
     
     <TowerPayloadRunModifier name="GenericPoison" type="poison" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <RunModifierDisplayData displayName="Poison Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></RunModifierDisplayData>
+      <DisplayData displayName="Poison Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></DisplayData>
     </TowerPayloadRunModifier>
     
     <TowerPayloadRunModifier name="GenericBurn"   type="burn" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <RunModifierDisplayData displayName="Burn Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></RunModifierDisplayData>
+      <DisplayData displayName="Burn Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></DisplayData>
     </TowerPayloadRunModifier>
     
     <TowerPayloadRunModifier name="GenericSlow"   type="slow" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <RunModifierDisplayData displayName="Slow Duration Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></RunModifierDisplayData>
+      <DisplayData displayName="Slow Duration Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></DisplayData>
     </TowerPayloadRunModifier>
   
     <!-- Level 3 -->
     <TowerUnlockRunModifier name="Mint" defaultKey="R" baseCost="60"  levelRequirement="3" weight="1">
-      <RunModifierDisplayData displayName="Mint" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></RunModifierDisplayData>
+      <DisplayData displayName="Mint" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
     </TowerUnlockRunModifier>
     
     <TowerUnlockRunModifier name="Coffee" defaultKey="A" baseCost="70"  levelRequirement="3" weight="1">
-      <RunModifierDisplayData displayName="Coffee" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="165, 130, 90"></RunModifierDisplayData>
+      <DisplayData displayName="Coffee" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="165, 130, 90"></DisplayData>
     </TowerUnlockRunModifier>
     
     <TowerUnlockRunModifier name="Wall1x1" defaultKey="T" baseCost="5"   levelRequirement="3" weight="1">
-      <RunModifierDisplayData displayName="Wall" spriteSheet="Data/SpriteSheets/Towers.xml" anim="wall" tint="255,255,255"></RunModifierDisplayData>
+      <DisplayData displayName="Wall" spriteSheet="Data/SpriteSheets/Towers.xml" anim="wall" tint="255,255,255"></DisplayData>
     </TowerUnlockRunModifier>
     
     <!-- Level 5 -->
     <TowerUnlockRunModifier name="Neopolitan" defaultKey="D" baseCost="120" levelRequirement="5" weight="0.1" requirements="Vanilla,Chocolate,Strawberry">
-      <RunModifierDisplayData displayName="Neopolitan" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="150,150,150"></RunModifierDisplayData>
+      <DisplayData displayName="Neopolitan" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="150,150,150"></DisplayData>
     </TowerUnlockRunModifier>
   
   </RunModifierPool>
@@ -57,7 +57,7 @@
     
     <!-- Level 1 -->
     <TowerPayloadRunModifier name="VanillaDamage" type="damage" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <RunModifierDisplayData displayName="Vanilla Damage Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></RunModifierDisplayData>
+      <DisplayData displayName="Vanilla Damage Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
     </TowerPayloadRunModifier>
   
   </RunModifierPool>
@@ -66,7 +66,7 @@
 
     <!-- Level 1 -->
     <TowerPayloadRunModifier name="ChocolateDamage" type="damage" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <RunModifierDisplayData displayName="Chocolate Damage Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></RunModifierDisplayData>
+      <DisplayData displayName="Chocolate Damage Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
     </TowerPayloadRunModifier>
 
   </RunModifierPool>
@@ -75,7 +75,7 @@
 
     <!-- Level 1 -->
     <TowerPayloadRunModifier name="StrawberryBurn" type="burn" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <RunModifierDisplayData displayName="Strawberry Burn Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></RunModifierDisplayData>
+      <DisplayData displayName="Strawberry Burn Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
     </TowerPayloadRunModifier>
 
   </RunModifierPool>
@@ -84,11 +84,11 @@
 
     <!-- Level 1 -->
     <TowerPayloadRunModifier name="MintPoison" type="poison" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <RunModifierDisplayData displayName="Mint Poison Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></RunModifierDisplayData>
+      <DisplayData displayName="Mint Poison Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
     </TowerPayloadRunModifier>
     
     <TowerPayloadRunModifier name="MintSlow" type="slow" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <RunModifierDisplayData displayName="Mint Slow Duration Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></RunModifierDisplayData>
+      <DisplayData displayName="Mint Slow Duration Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
     </TowerPayloadRunModifier>
 
   </RunModifierPool>
