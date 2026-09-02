@@ -115,7 +115,7 @@ struct NamedProperties
 {
     ~NamedProperties();
 	NamedProperties() = default;
-    NamedProperties(NamedProperties const& other) = delete;
+    NamedProperties(NamedProperties const& other);
     
     template<typename T>
     void Set(Name name, T const& value);

@@ -26,6 +26,8 @@ enum class StateTransitionType : uint8_t
 //----------------------------------------------------------------------------------------------------------------------
 struct StateTransition
 {
+	explicit StateTransition(StateTransitionType type, NamedProperties const& props);
+
 	StateTransitionType m_type = StateTransitionType::None;
 	NamedProperties m_props;
 };
@@ -60,6 +62,6 @@ public:
 
 public:
 
-	StateTransition m_pendingTransition;
+	std::vector<StateTransition> m_pendingTransitions;
 	std::vector<GameState*> m_states;
 };

@@ -5,15 +5,15 @@
   <RunModifierPool name="Default">
 
     <!-- Level 1 -->
-    <TowerUnlockRunModifier name="Vanilla" defaultKey="Q" baseCost="30"  levelRequirement="0" weight="1">
+    <TowerUnlockRunModifier name="Vanilla" defaultKey="Q" baseCost="30"  levelRequirement="0" weight="1" desc="Fast, Projectile, Single Target">
       <DisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
     </TowerUnlockRunModifier>
     
-    <TowerUnlockRunModifier name="Chocolate" defaultKey="W" baseCost="40"  levelRequirement="0" weight="1">
+    <TowerUnlockRunModifier name="Chocolate" defaultKey="W" baseCost="30"  levelRequirement="0" weight="1" desc="Slow, Projectile, AoE">
       <DisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
     </TowerUnlockRunModifier>
     
-    <TowerUnlockRunModifier name="Strawberry" defaultKey="E" baseCost="50"  levelRequirement="0" weight="1">
+    <TowerUnlockRunModifier name="Strawberry" defaultKey="E" baseCost="30"  levelRequirement="0" weight="1" desc="Burn, Projectile, AoE">
       <DisplayData displayName="Strawberry" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,80,83"></DisplayData>
     </TowerUnlockRunModifier>
 
@@ -35,11 +35,11 @@
     </TowerPayloadRunModifier>
   
     <!-- Level 3 -->
-    <TowerUnlockRunModifier name="Mint" defaultKey="R" baseCost="60"  levelRequirement="3" weight="1">
+    <TowerUnlockRunModifier name="Mint" defaultKey="R" baseCost="60"  levelRequirement="3" weight="1" desc="Poison, Slow, AoE">
       <DisplayData displayName="Mint" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
     </TowerUnlockRunModifier>
     
-    <TowerUnlockRunModifier name="Coffee" defaultKey="A" baseCost="70"  levelRequirement="3" weight="1">
+    <TowerUnlockRunModifier name="Coffee" defaultKey="A" baseCost="70"  levelRequirement="3" weight="1" desc="Haste, AoE">
       <DisplayData displayName="Coffee" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="165, 130, 90"></DisplayData>
     </TowerUnlockRunModifier>
     
@@ -48,7 +48,7 @@
     </TowerUnlockRunModifier>
     
     <!-- Level 5 -->
-    <TowerUnlockRunModifier name="Neopolitan" defaultKey="D" baseCost="120" levelRequirement="5" weight="0.1" requirements="Vanilla,Chocolate,Strawberry">
+    <TowerUnlockRunModifier name="Neopolitan" defaultKey="D" baseCost="120" levelRequirement="5" weight="0.25" requirements="Vanilla,Chocolate,Strawberry" desc="Uses Vanilla, Chocolate, and Strawberry attacks">
       <DisplayData displayName="Neopolitan" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="150,150,150"></DisplayData>
     </TowerUnlockRunModifier>
   

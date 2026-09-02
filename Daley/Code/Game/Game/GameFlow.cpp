@@ -157,49 +157,54 @@ void GameFlow::PopToState(Name state, NamedProperties const& props)
 //----------------------------------------------------------------------------------------------------------------------
 void GameFlow::HandlePendingTransition()
 {
-	Name toState = m_pendingTransition.m_props.Get<Name>("state", Name::Invalid);
+	while (m_pendingTransitions.empty() == false)
+	{
+		StateTransition const& transition = m_pendingTransitions.front();
+		Name toState = transition.m_props.Get<Name>("state", Name::Invalid);
 
-	switch (m_pendingTransition.m_type)
-	{	
-		case StateTransitionType::Push:
+		switch (transition.m_type)
 		{
-			PushState(toState, m_pendingTransition.m_props);
-			break;
-		}
-		case StateTransitionType::Pop:
-		{
-			if (toState == Name::Invalid)
+			case StateTransitionType::Push:
 			{
-				PopState(m_pendingTransition.m_props);
+				PushState(toState, transition.m_props);
+				break;
 			}
-			else
+			case StateTransitionType::Pop:
 			{
-				PopToState(toState, m_pendingTransition.m_props);
+				if (toState == Name::Invalid)
+				{
+					PopState(transition.m_props);
+				}
+				else
+				{
+					PopToState(toState, transition.m_props);
+				}
+				break;
 			}
-			break;
-		}
-		case StateTransitionType::Change:
-		{
-			PopState(m_pendingTransition.m_props);
-			PushState(toState, m_pendingTransition.m_props);
-			break;
-		}
-		case StateTransitionType::Wipe:
-		{
-			while (m_states.empty() == false)
+			case StateTransitionType::Change:
 			{
-				PopState(m_pendingTransition.m_props);
+				PopState(transition.m_props);
+				PushState(toState, transition.m_props);
+				break;
 			}
-			PushState(toState, m_pendingTransition.m_props);
-			break;
+			case StateTransitionType::Wipe:
+			{
+				while (m_states.empty() == false)
+				{
+					PopState(transition.m_props);
+				}
+				PushState(toState, transition.m_props);
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
-		default:
-		{
-			break;
-		}
+
+		m_pendingTransitions.erase(m_pendingTransitions.begin());
 	}
-
-	m_pendingTransition = StateTransition();
+	
 }
 
 
@@ -207,9 +212,7 @@ void GameFlow::HandlePendingTransition()
 //----------------------------------------------------------------------------------------------------------------------
 bool GameFlow::PushStateEvent(NamedProperties& props)
 {
-	ASSERT_OR_DIE(m_pendingTransition.m_type == StateTransitionType::None, "GameFlow::ChangeState: There is already a pending state transition.");
-	m_pendingTransition.m_type = StateTransitionType::Push;
-	m_pendingTransition.m_props = props;
+	m_pendingTransitions.push_back(StateTransition(StateTransitionType::Push, props));
 	return false;
 }
 
@@ -218,9 +221,7 @@ bool GameFlow::PushStateEvent(NamedProperties& props)
 //----------------------------------------------------------------------------------------------------------------------
 bool GameFlow::PopStateEvent(NamedProperties& props)
 {
-	ASSERT_OR_DIE(m_pendingTransition.m_type == StateTransitionType::None, "GameFlow::ChangeState: There is already a pending state transition.");
-	m_pendingTransition.m_type = StateTransitionType::Pop;
-	m_pendingTransition.m_props = props;
+	m_pendingTransitions.push_back(StateTransition(StateTransitionType::Pop, props));
 	return false;
 }
 
@@ -229,17 +230,15 @@ bool GameFlow::PopStateEvent(NamedProperties& props)
 //----------------------------------------------------------------------------------------------------------------------
 bool GameFlow::ChangeStateEvent(NamedProperties& props)
 {
-	ASSERT_OR_DIE(m_pendingTransition.m_type == StateTransitionType::None, "GameFlow::ChangeState: There is already a pending state transition.");
 	bool wipe = props.Get<bool>("wipe", false);
 	if (wipe)
 	{
-		m_pendingTransition.m_type = StateTransitionType::Wipe;
+		m_pendingTransitions.push_back(StateTransition(StateTransitionType::Wipe, props));
 	}
 	else
 	{
-		m_pendingTransition.m_type = StateTransitionType::Change;
+		m_pendingTransitions.push_back(StateTransition(StateTransitionType::Change, props));
 	}
-	m_pendingTransition.m_props = props;
 	return false;
 }
 
@@ -254,4 +253,12 @@ bool GameFlow::GameFlowDump(NamedProperties&)
 	}
 
 	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+StateTransition::StateTransition(StateTransitionType type, NamedProperties const& props) : m_type(type)
+{
+	m_props = props;
 }

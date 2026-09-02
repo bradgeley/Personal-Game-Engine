@@ -133,10 +133,10 @@
 
   <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="StrawberryProj" projSpeed="100">
     <Cooldown cooldown="0.5"></Cooldown>
-    <Targeting maxRange="6"></Targeting>
+    <Targeting maxRange="10"></Targeting>
     <OnHit>
       <Burn burn="20"></Burn>
-      <AoEEffect duration="0.5" radius="1">
+      <AoEEffect duration="0.5" radius="1.25">
         <Burn burn="20"></Burn>
         <Render tint="255,0,0,25"></Render>
       </AoEEffect>

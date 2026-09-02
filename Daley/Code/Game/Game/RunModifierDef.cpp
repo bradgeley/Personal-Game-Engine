@@ -25,6 +25,7 @@ RunModifierDisplayData::RunModifierDisplayData(XmlElement const& element)
 RunModifierDef::RunModifierDef(XmlElement const& modElement)
 {
 	m_name = XmlUtils::ParseXmlAttribute(modElement, "name", m_name);
+	m_description = XmlUtils::ParseXmlAttribute(modElement, "desc", m_description);
 	m_levelRequirement = XmlUtils::ParseXmlAttribute(modElement, "levelRequirement", m_levelRequirement);
 	m_weight = XmlUtils::ParseXmlAttribute(modElement, "weight", m_weight);
 	m_maxLevel = XmlUtils::ParseXmlAttribute(modElement, "maxLevel", m_maxLevel);
@@ -130,6 +131,10 @@ RunModifier* TowerUnlockRunModifierDef::MakeModifierInstance() const
 void TowerUnlockRunModifierDef::GetDescription(std::string& outStr) const
 {
 	outStr += StringUtils::StringF("Gold Cost: %.2f\n", m_baseCost);
+	if (m_description != Name::Invalid)
+	{
+		outStr += StringUtils::StringF("%s\n", m_description.ToCStr());
+	}
 }
 
 

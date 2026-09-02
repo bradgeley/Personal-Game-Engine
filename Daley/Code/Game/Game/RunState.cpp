@@ -68,6 +68,11 @@ void RunState::Enter(NamedProperties const& props)
 	m_runData.m_missionGenData[6] = { "river" };
 	m_runData.m_missionGenData[7] = { "river" };
 	m_runData.m_missionGenData[8] = { "riverCross" };
+
+	NamedProperties transitionProps;
+	transitionProps.Set<Name>("state", "TowerDefense");
+	transitionProps.Set<RunData*>("runData", &m_runData);
+	g_eventSystem->FireEvent("PushState", transitionProps);
 }
 
 
@@ -90,19 +95,6 @@ void RunState::Exit(NamedProperties const& props)
 //----------------------------------------------------------------------------------------------------------------------
 void RunState::Update(float)
 {
-	if (g_input->WasKeyJustPressed(KeyCode::Space))
-	{
-		NamedProperties props;
-		props.Set<Name>("state", "TowerDefense");
-		props.Set<RunData*>("runData", &m_runData);
-		g_eventSystem->FireEvent("PushState", props);
-	}
-	else if (g_input->WasKeyJustPressed(KeyCode::Escape))
-	{
-		NamedProperties props;
-		props.Set<Name>("state", "MainMenu");
-		g_eventSystem->FireEvent("ChangeState", props);
-	}
 }
 
 
@@ -110,6 +102,8 @@ void RunState::Update(float)
 //----------------------------------------------------------------------------------------------------------------------
 void RunState::Render() const
 {
+	// No longer renders right now, we skip straight to the next mission
+
 	VertexBuffer& textVBO = *g_renderer->GetVertexBuffer(m_textVerts);
 	textVBO.ClearVerts();
 
@@ -161,6 +155,11 @@ bool RunState::MissionOver(NamedProperties&)
 			NamedProperties popStateProps;
 			popStateProps.Set<Name>("state", "RunState");
 			g_eventSystem->FireEvent("PopState", popStateProps);
+
+			NamedProperties transitionProps;
+			transitionProps.Set<Name>("state", "TowerDefense");
+			transitionProps.Set<RunData*>("runData", &m_runData);
+			g_eventSystem->FireEvent("PushState", transitionProps);
 		}
 	}
 

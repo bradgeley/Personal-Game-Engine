@@ -155,9 +155,10 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	{
 		CTags const& tags = tagsStorage[it];
 		bool isTower = tags.HasTag("Tower");
+		bool isObstacle = tags.HasTag("obstacle");
 		bool isEnemy = tags.HasTag("enemy");
 		bool isProj = tags.HasTag("projectile");
-		bool isDebugabble = isTower || isEnemy || isProj;
+		bool isDebugabble = isTower || isObstacle || isEnemy || isProj;
 		if (isDebugabble)
 		{
 			CTransform const& transform = transStorage[it];

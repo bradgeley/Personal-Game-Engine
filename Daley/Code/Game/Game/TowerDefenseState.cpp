@@ -33,6 +33,7 @@ void TowerDefenseState::Enter(NamedProperties const& props)
 
 	DevConsoleUtils::AddDevConsoleCommand("Win", &TowerDefenseState::Win);
 	DevConsoleUtils::AddDevConsoleCommand("Lose", &TowerDefenseState::Lose);
+	DevConsoleUtils::AddDevConsoleCommand("Restart", &TowerDefenseState::Restart);
 
     StartGame(props);
 }
@@ -46,6 +47,7 @@ void TowerDefenseState::Exit(NamedProperties const& props)
 
 	DevConsoleUtils::RemoveDevConsoleCommand("Win", &TowerDefenseState::Win);
 	DevConsoleUtils::RemoveDevConsoleCommand("Lose", &TowerDefenseState::Lose);
+	DevConsoleUtils::RemoveDevConsoleCommand("Restart", &TowerDefenseState::Restart);
 
     ShutdownGame();
 }
@@ -307,6 +309,45 @@ bool TowerDefenseState::Lose(NamedProperties&)
     RunData& runData = *scRunData.m_data;
 
     runData.m_health = 0.f;
+
+    return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool TowerDefenseState::Restart(NamedProperties&)
+{
+    SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
+    RunData& runData = *scRunData.m_data;
+
+	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
+
+	runData.m_health = runData.m_maxHealth;
+	runData.m_gold = StaticGameSettings::s_baseGold;
+	runData.m_interestTimerSecondsRemaining = runData.m_interestTimerSeconds;
+    runData.m_needsModifierRecalculation = true;
+
+    // Maybe later we have to regenerate the whole map
+    for (auto it = g_ecs->IterateAll<CTags>(); it.IsValid(); ++it)
+    {
+		CTags const& tags = *g_ecs->GetComponent<CTags>(it);
+		if (tags.HasTag("tower"))
+        {
+			TowerRemovalRequest removalRequest;
+			removalRequest.m_towerEntityID = it.GetEntityID();
+			factory.m_towerRemovals.push_back(removalRequest);
+        }
+        else if (tags.HasTag("enemy"))
+        {
+            factory.m_entitiesToDestroy.push_back(it.GetEntityID());
+        }
+    }
+
+	SCEventSystem& scEventSystem = g_ecs->GetSingleton<SCEventSystem>();
+	EventSystem& eventSystem = *scEventSystem.GetEventSystem();
+	eventSystem.FireEvent("StartWaves");
+    
 
     return false;
 }

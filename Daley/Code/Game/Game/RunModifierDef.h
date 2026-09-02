@@ -46,6 +46,7 @@ public:
 	static constexpr int s_maxRequirements = 3;
 
 	Name m_name = Name::Invalid;
+	Name m_description = Name::Invalid;
 	int m_levelRequirement = 0;
 	int m_maxLevel = 1;
 	float m_weight = 1.f;

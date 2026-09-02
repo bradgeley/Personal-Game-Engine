@@ -29,6 +29,7 @@ protected:
 
 	static bool Win(NamedProperties& props);
 	static bool Lose(NamedProperties& props);
+	static bool Restart(NamedProperties& props);
 
 private:
 
