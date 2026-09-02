@@ -17,20 +17,21 @@
       <DisplayData displayName="Strawberry" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,80,83"></DisplayData>
     </TowerUnlockRunModifier>
 
+    <!-- Level 2 -->
     <TowerPayloadRunModifier name="GenericDamage" type="damage" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <DisplayData displayName="Damage Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></DisplayData>
+      <DisplayData displayName="Damage Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
     </TowerPayloadRunModifier>
     
     <TowerPayloadRunModifier name="GenericPoison" type="poison" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <DisplayData displayName="Poison Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></DisplayData>
+      <DisplayData displayName="Poison Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="poison"></DisplayData>
     </TowerPayloadRunModifier>
     
     <TowerPayloadRunModifier name="GenericBurn"   type="burn" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <DisplayData displayName="Burn Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></DisplayData>
+      <DisplayData displayName="Burn Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="burn"></DisplayData>
     </TowerPayloadRunModifier>
     
     <TowerPayloadRunModifier name="GenericSlow"   type="slow" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <DisplayData displayName="Slow Duration Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="haste"></DisplayData>
+      <DisplayData displayName="Slow Duration Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="slow"></DisplayData>
     </TowerPayloadRunModifier>
   
     <!-- Level 3 -->
@@ -91,6 +92,30 @@
       <DisplayData displayName="Mint Slow Duration Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
     </TowerPayloadRunModifier>
 
+  </RunModifierPool>
+
+  <RunModifierPool name="Economy">
+    
+    <!-- Level 2 -->
+    <EconomyRunModifier name="GoldGain" goldGainBase="0.075" goldGainPerLevel="0.075" weight="1" levelRequirement="2" maxLevel="5">
+      <DisplayData displayName="Gold Gain Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
+    </EconomyRunModifier>
+
+    <!-- Level 10 -->
+    <EconomyRunModifier name="Sells" baseSells="2" sellsPerLevel="2" baseSellRateIncrease="0.05" sellRateIncreasePerLevel="0.05" weight="0.5" levelRequirement="10" maxLevel="5">
+      <DisplayData displayName="Sell Power" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
+    </EconomyRunModifier>
+
+    <!-- Level 20 -->
+    <EconomyRunModifier name="Interest Rate" interestBase="0.025" interestPerLevel="0.025" interestTimerSpeedBase="0.05" interestTimerSpeedPerLevel="0.05" weight="0.5" levelRequirement="20" maxLevel="5">
+      <DisplayData displayName="Interest Rate Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
+    </EconomyRunModifier>
+
+    <!-- Level 30 -->
+    <EconomyRunModifier name="Debt" creditLimitBase="50" creditLimitPerLevel="50" debtInterestRateBase="-0.05" debtInterestRatePerLevel="-0.05" weight="1" levelRequirement="30" maxLevel="5">
+      <DisplayData displayName="Credit Limit" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
+    </EconomyRunModifier>
+    
   </RunModifierPool>
 
 </RunModifierPools>

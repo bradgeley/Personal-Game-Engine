@@ -1,10 +1,14 @@
 
 
 
-<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="3,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="7,1" edgePadding="0,0" innerPadding="0,0">
   
     <SpriteAnimation name="Slow" frames="0"></SpriteAnimation>
-    <SpriteAnimation name="Void" frames="1"></SpriteAnimation> <!-- unused -->
-    <SpriteAnimation name="Haste" frames="2"></SpriteAnimation> <!-- unused -->
+    <SpriteAnimation name="Void" frames="1"></SpriteAnimation>
+    <SpriteAnimation name="Haste" frames="2"></SpriteAnimation>
+    <SpriteAnimation name="Gold" frames="3"></SpriteAnimation>
+    <SpriteAnimation name="Burn" frames="4"></SpriteAnimation>
+    <SpriteAnimation name="Poison" frames="5"></SpriteAnimation>
+    <SpriteAnimation name="Damage" frames="6"></SpriteAnimation>
   
 </GridSpriteSheet>

@@ -53,6 +53,7 @@ public:
 	static ExperienceLevelData GetLevelData(uint64_t experience);
 
 	void GenerateModifierChoices();
+	void ResetModifiableAttributes();
 
 	// Data that carries over from mission to mission
 	uint32_t	m_seed					= 0; // Mission seed = seed + missionIndex
@@ -71,6 +72,10 @@ public:
 	float		m_interestTimerSecondsRemaining	= StaticGameSettings::s_baseInterestTimerSeconds;
 	float		m_health						= StaticGameSettings::s_basePlayerHealth;
 	int			m_numSoldTowers					= 0;
+	int			m_maxSellsPerMission			= StaticGameSettings::s_baseSellMaximum;
+
+	float		m_sellRefundRate		= StaticGameSettings::s_baseSellRefundRate;
+	float 		m_goldGainMultiplier	= 1.f;
 
 	std::array<PlaceableTower, MAX_PURCHASEABLE_TOWERS> m_placeableTowers;
 	std::array<MissionGenData, StaticGameSettings::s_numMissionsForVictory> m_missionGenData;
@@ -82,6 +87,9 @@ public:
 	int m_numModifierChoicesCompleted = 0;
 	int m_numActiveModifierChoices = 0;
 	std::array<RunModifierDef const*, MAX_MODIFIER_CHOICES> m_modifierChoices;
+
+	// Transient Data
+	bool m_needsModifierRecalculation = true;
 };
 
 

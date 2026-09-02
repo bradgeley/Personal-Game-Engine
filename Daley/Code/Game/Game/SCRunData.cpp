@@ -156,3 +156,17 @@ void RunData::GenerateModifierChoices()
 		m_numModifierChoicesRemaining = 0;
 	}
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunData::ResetModifiableAttributes()
+{
+	m_goldGainMultiplier = 1.f;
+	m_savingsInterestRate = StaticGameSettings::s_baseSavingsInterestRate;
+	m_interestTimerSeconds = StaticGameSettings::s_baseInterestTimerSeconds;
+	m_maxSellsPerMission = StaticGameSettings::s_baseSellMaximum;
+	m_sellRefundRate = StaticGameSettings::s_baseSellRefundRate;
+	m_creditLimit = StaticGameSettings::s_baseCreditLimit;
+	m_debtInterestRate = StaticGameSettings::s_baseDebtInterestRate;
+}

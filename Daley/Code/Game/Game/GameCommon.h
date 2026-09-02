@@ -73,7 +73,7 @@ namespace StaticGameSettings
 	static constexpr float s_basePlayerHealthRegen			= 0.1f;
 	static constexpr float s_baseGold						= 100.f;
 	static constexpr float s_baseCreditLimit				= 0.f;
-	static constexpr float s_baseSavingsInterestRate		= 0.08f;
+	static constexpr float s_baseSavingsInterestRate		= 0.01f;
 	static constexpr float s_baseDebtInterestRate			= 0.5f;
 	static constexpr float s_baseInterestTimerSeconds		= 30.f;
 	static constexpr float s_baseSellRefundRate				= 0.5f;

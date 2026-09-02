@@ -30,6 +30,16 @@ void SRunModifier::Run(SystemContext const& context) const
 	SCInputSystem const	& scInput = context.GetSingletonConst<SCInputSystem>();
 	InputSystem const& input = *scInput.GetInputSystem();
 
+	if (runData.m_needsModifierRecalculation)
+	{
+		runData.ResetModifiableAttributes();
+		for (RunModifier* mod : runData.m_activeRunModifiers)
+		{
+			mod->ApplyToRunData(runData);
+		}
+		runData.m_needsModifierRecalculation = false;
+	}
+
 	if (runData.m_numModifierChoicesRemaining == 0)
 	{
 		return;

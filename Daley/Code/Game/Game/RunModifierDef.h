@@ -9,7 +9,9 @@
 
 class Ability;
 struct CTags;
+struct RunData;
 struct RunModifier;
+struct SCRunData;
 struct SystemContext;
 
 
@@ -63,6 +65,7 @@ public:
 
 	virtual void Apply(SystemContext const& context) const = 0;
 	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const;
+	virtual void ApplyToRunData(RunData& runData) const;
 
 	virtual void GetDescription(std::string& outStr) const = 0;
 
@@ -146,4 +149,59 @@ public:
 	virtual void GetDescription(std::string& outStr) const override;
 
 	TowerPayloadRunModifierDef const& GetDef() const;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct EconomyRunModifierDef : public RunModifierDef
+{
+public:
+
+	EconomyRunModifierDef(XmlElement const& modElement);
+
+	virtual RunModifier* MakeModifierInstance() const override;
+
+	virtual void GetDescription(std::string& outStr) const override;
+
+public:
+
+	// Gold gain
+	float m_goldGainMultiplierIncreaseBase = 0.f;
+	float m_goldGainMultiplierIncreasePerLevel = 0.f;
+
+	// Interest
+	float m_interestRateIncreaseBase = 0.f;
+	float m_interestRateIncreasePerLevel = 0.f;
+	float m_interestTimerSpeedIncreaseBase = 0.f;
+	float m_interestTimerSpeedIncreasePerLevel = 0.f;
+
+	// Selling
+	int m_baseSells = 0;
+	int m_sellsPerLevel = 0;
+	float m_baseSellRateIncrease = 0.f;
+	float m_sellRateIncreasePerLevel = 0.f;
+
+	// Debt
+	float m_creditLimitIncreaseBase = 0.f;
+	float m_creditLimitIncreasePerLevel = 0.f;
+	float m_debtInterestRateDecreaseBase = 0.f;
+	float m_debtInterestRateDecreasePerLevel = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct EconomyRunModifier : public RunModifier
+{
+public:
+
+	EconomyRunModifier(EconomyRunModifierDef const& def);
+
+	virtual void Apply(SystemContext const& context) const override;
+	virtual void ApplyToRunData(RunData& runData) const override;
+
+	virtual void GetDescription(std::string& outStr) const override;
+
+	EconomyRunModifierDef const& GetDef() const;
 };

@@ -72,6 +72,10 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 	{
 		return new TowerPayloadRunModifierDef(modElement);
 	}
+	else if (modTypeName == "EconomyRunModifier")
+	{
+		return new EconomyRunModifierDef(modElement);
+	}
 
 	//ERROR_AND_DIE("Unknown RunModifierDef type: " + std::string(element.Name()));
 	return nullptr;
@@ -90,7 +94,15 @@ RunModifier::RunModifier(RunModifierDef const& def) : m_def(def)
 //----------------------------------------------------------------------------------------------------------------------
 void RunModifier::ApplyToAbility(Ability&, CTags const&) const
 {
+	// Empty Base
+}
 
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunModifier::ApplyToRunData(RunData&) const
+{
+	// Empty Base
 }
 
 
@@ -314,4 +326,204 @@ void TowerPayloadRunModifier::GetDescription(std::string& outStr) const
 TowerPayloadRunModifierDef const& TowerPayloadRunModifier::GetDef() const
 {
 	return static_cast<TowerPayloadRunModifierDef const&>(m_def);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EconomyRunModifierDef::EconomyRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
+{
+	// Gold gain
+	m_goldGainMultiplierIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "goldGainBase", m_goldGainMultiplierIncreaseBase);
+	m_goldGainMultiplierIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "goldGainPerLevel", m_goldGainMultiplierIncreasePerLevel);
+
+	// Interest
+	m_interestRateIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "interestBase", m_interestRateIncreaseBase);
+	m_interestRateIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "interestPerLevel", m_interestRateIncreasePerLevel);
+	m_interestTimerSpeedIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "interestTimerSpeedBase", m_interestTimerSpeedIncreaseBase);
+	m_interestTimerSpeedIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "interestTimerSpeedPerLevel", m_interestTimerSpeedIncreasePerLevel);
+
+	// Selling
+	m_baseSells = XmlUtils::ParseXmlAttribute(modElement, "baseSells", m_baseSells);
+	m_sellsPerLevel = XmlUtils::ParseXmlAttribute(modElement, "sellsPerLevel", m_sellsPerLevel);
+	m_baseSellRateIncrease = XmlUtils::ParseXmlAttribute(modElement, "baseSellRateIncrease", m_baseSellRateIncrease);
+	m_sellRateIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "sellRateIncreasePerLevel", m_sellRateIncreasePerLevel);
+
+	// Debt
+	m_creditLimitIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "creditLimitBase", m_creditLimitIncreaseBase);
+	m_creditLimitIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "creditLimitPerLevel", m_creditLimitIncreasePerLevel);
+	m_debtInterestRateDecreaseBase = XmlUtils::ParseXmlAttribute(modElement, "debtInterestRateBase", m_debtInterestRateDecreaseBase);
+	m_debtInterestRateDecreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "debtInterestRatePerLevel", m_debtInterestRateDecreasePerLevel);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+RunModifier* EconomyRunModifierDef::MakeModifierInstance() const
+{
+	return new EconomyRunModifier(*this);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void EconomyRunModifierDef::GetDescription(std::string& outStr) const
+{
+	if (m_goldGainMultiplierIncreaseBase > 0.f || m_goldGainMultiplierIncreasePerLevel > 0.f)
+	{
+		outStr += StringUtils::StringF("Gold Gain: +%.2fx (+%.2fx Per Level)\n", m_goldGainMultiplierIncreaseBase, m_goldGainMultiplierIncreasePerLevel);
+	}
+	if (m_interestRateIncreaseBase > 0.f || m_interestRateIncreasePerLevel > 0.f)
+	{
+		outStr += StringUtils::StringF("Interest Rate: +%.2fx (+%.2fx Per Level)\n", m_interestRateIncreaseBase, m_interestRateIncreasePerLevel);
+	}
+	if (m_interestTimerSpeedIncreaseBase > 0.f || m_interestTimerSpeedIncreasePerLevel > 0.f)
+	{
+		outStr += StringUtils::StringF("Interest Timer Speed: +%.2fx (+%.2fx Per Level)\n", m_interestTimerSpeedIncreaseBase, m_interestTimerSpeedIncreasePerLevel);
+	}
+	if (m_baseSells > 0.f || m_sellsPerLevel > 0.f)
+	{
+		outStr += StringUtils::StringF("Sells: +%d (+%d Per Level)\n", m_baseSells, m_sellsPerLevel);
+	}
+	if (m_baseSellRateIncrease > 0.f || m_sellRateIncreasePerLevel > 0.f)
+	{
+		outStr += StringUtils::StringF("Sell Rate: +%.2fx (+%.2fx Per Level)\n", m_baseSellRateIncrease, m_sellRateIncreasePerLevel);
+	}
+	if (m_creditLimitIncreaseBase > 0.f || m_creditLimitIncreasePerLevel > 0.f)
+	{
+		outStr += StringUtils::StringF("Credit Limit: +%.2f (+%.2f Per Level)\n", m_creditLimitIncreaseBase, m_creditLimitIncreasePerLevel);
+	}
+	if (m_debtInterestRateDecreaseBase != 0.f || m_debtInterestRateDecreasePerLevel != 0.f)
+	{
+		outStr += StringUtils::StringF("Debt Interest Rate: +%.2fx (+%.2fx Per Level)\n", m_debtInterestRateDecreaseBase, m_debtInterestRateDecreasePerLevel);
+	}	
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EconomyRunModifier::EconomyRunModifier(EconomyRunModifierDef const& def) : RunModifier(def)
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void EconomyRunModifier::Apply(SystemContext const& context) const
+{
+	SCRunData& scRunData = context.GetSingleton<SCRunData>();
+	RunData& runData = *scRunData.m_data;
+
+	runData.m_needsModifierRecalculation = true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void EconomyRunModifier::ApplyToRunData(RunData& runData) const
+{
+	EconomyRunModifierDef const& def = GetDef();
+	runData.m_goldGainMultiplier += def.m_goldGainMultiplierIncreaseBase + (def.m_goldGainMultiplierIncreasePerLevel * static_cast<float>(m_level - 1));
+	runData.m_savingsInterestRate += def.m_interestRateIncreaseBase + (def.m_interestRateIncreasePerLevel * static_cast<float>(m_level - 1));
+	runData.m_maxSellsPerMission += def.m_baseSells + (def.m_sellsPerLevel * (m_level - 1));
+	runData.m_sellRefundRate += def.m_baseSellRateIncrease + (def.m_sellRateIncreasePerLevel * static_cast<float>(m_level - 1));
+	runData.m_creditLimit += def.m_creditLimitIncreaseBase + (def.m_creditLimitIncreasePerLevel * static_cast<float>(m_level - 1));
+	float interestRateMultiplier = 1.f - (def.m_interestRateIncreaseBase + (def.m_interestRateIncreasePerLevel * static_cast<float>(m_level - 1)));
+	runData.m_interestTimerSeconds *= interestRateMultiplier;
+	runData.m_debtInterestRate += def.m_debtInterestRateDecreaseBase + (def.m_debtInterestRateDecreasePerLevel * static_cast<float>(m_level - 1));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void EconomyRunModifier::GetDescription(std::string& outStr) const
+{
+	EconomyRunModifierDef const& def = GetDef();
+	if (def.m_maxLevel > 1)
+	{
+		if (def.m_goldGainMultiplierIncreaseBase > 0.f || def.m_goldGainMultiplierIncreasePerLevel > 0.f)
+		{
+			float currentMultiplier = 1.f + def.m_goldGainMultiplierIncreaseBase + (def.m_goldGainMultiplierIncreasePerLevel * static_cast<float>(m_level - 1));
+			float nextMultiplier = currentMultiplier + def.m_goldGainMultiplierIncreasePerLevel;
+			outStr += StringUtils::StringF("Gold Gain: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
+		}
+		if (def.m_interestRateIncreaseBase > 0.f || def.m_interestRateIncreasePerLevel > 0.f)
+		{
+			float currentMultiplier = def.m_interestRateIncreaseBase + (def.m_interestRateIncreasePerLevel * static_cast<float>(m_level - 1));
+			float nextMultiplier = currentMultiplier + def.m_interestRateIncreasePerLevel;
+			outStr += StringUtils::StringF("Interest Rate: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
+		}
+		if (def.m_interestTimerSpeedIncreaseBase > 0.f || def.m_interestTimerSpeedIncreasePerLevel > 0.f)
+		{
+			float currentMultiplier = 1.f + def.m_interestTimerSpeedIncreaseBase + (def.m_interestTimerSpeedIncreasePerLevel * static_cast<float>(m_level - 1));
+			float nextMultiplier = currentMultiplier + def.m_interestTimerSpeedIncreasePerLevel;
+			outStr += StringUtils::StringF("Interest Timer Speed: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
+		}
+		if (def.m_baseSells > 0 || def.m_sellsPerLevel > 0)
+		{
+			int currentSells = def.m_baseSells + (def.m_sellsPerLevel * (m_level - 1));
+			int nextSells = currentSells + def.m_sellsPerLevel;
+			outStr += StringUtils::StringF("Sells: Current: %d, Next: %d\n", currentSells, nextSells);
+		}
+		if (def.m_baseSellRateIncrease > 0.f || def.m_sellRateIncreasePerLevel > 0.f)
+		{
+			float currentMultiplier = def.m_baseSellRateIncrease + (def.m_sellRateIncreasePerLevel * static_cast<float>(m_level - 1));
+			float nextMultiplier = currentMultiplier + def.m_sellRateIncreasePerLevel;
+			outStr += StringUtils::StringF("Sell Rate: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
+		}
+		if (def.m_creditLimitIncreaseBase > 0.f || def.m_creditLimitIncreasePerLevel > 0.f)
+		{
+			float currentMultiplier = def.m_creditLimitIncreaseBase + (def.m_creditLimitIncreasePerLevel * static_cast<float>(m_level - 1));
+			float nextMultiplier = currentMultiplier + def.m_creditLimitIncreasePerLevel;
+			outStr += StringUtils::StringF("Credit Limit: Current: %.2f, Next: %.2f\n", currentMultiplier, nextMultiplier);
+		}
+		if (def.m_debtInterestRateDecreaseBase != 0.f || def.m_debtInterestRateDecreasePerLevel != 0.f)
+		{
+			float currentMultiplier = def.m_debtInterestRateDecreaseBase + (def.m_debtInterestRateDecreasePerLevel * static_cast<float>(m_level - 1));
+			float nextMultiplier = currentMultiplier + def.m_debtInterestRateDecreasePerLevel;
+			outStr += StringUtils::StringF("Debt Interest Rate: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
+		}
+
+		outStr += StringUtils::StringF("Level: %d/%d\n", m_level, m_def.m_maxLevel);
+	}
+	else
+	{
+		if (def.m_goldGainMultiplierIncreaseBase > 0.f || def.m_goldGainMultiplierIncreasePerLevel > 0.f)
+		{
+			outStr += StringUtils::StringF("Gold Gain: +%.2fx\n", def.m_goldGainMultiplierIncreaseBase);
+		}
+		if (def.m_interestRateIncreaseBase > 0.f || def.m_interestRateIncreasePerLevel > 0.f)
+		{
+			outStr += StringUtils::StringF("Interest Rate: +%.2fx\n", def.m_interestRateIncreaseBase);
+		}
+		if (def.m_interestTimerSpeedIncreaseBase > 0.f || def.m_interestTimerSpeedIncreasePerLevel > 0.f)
+		{
+			outStr += StringUtils::StringF("Interest Timer Speed: +%.2fx\n", def.m_interestTimerSpeedIncreaseBase);
+		}
+		if (def.m_baseSells > 0 || def.m_sellsPerLevel > 0)
+		{
+			outStr += StringUtils::StringF("Sells: +%d\n", def.m_baseSells);
+		}
+		if (def.m_baseSellRateIncrease > 0.f || def.m_sellRateIncreasePerLevel > 0.f)
+		{
+			outStr += StringUtils::StringF("Sell Rate: +%.2fx\n", def.m_baseSellRateIncrease);
+		}
+		if (def.m_creditLimitIncreaseBase > 0.f || def.m_creditLimitIncreasePerLevel > 0.f)
+		{
+			outStr += StringUtils::StringF("Credit Limit: +%.2f\n", def.m_creditLimitIncreaseBase);
+		}
+		if (def.m_debtInterestRateDecreaseBase != 0.f || def.m_debtInterestRateDecreasePerLevel != 0.f)
+		{
+			outStr += StringUtils::StringF("Debt Interest Rate: +%.2fx\n", def.m_debtInterestRateDecreaseBase);
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EconomyRunModifierDef const& EconomyRunModifier::GetDef() const
+{
+	return static_cast<EconomyRunModifierDef const&>(m_def);
 }

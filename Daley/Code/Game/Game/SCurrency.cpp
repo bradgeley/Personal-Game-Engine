@@ -45,7 +45,7 @@ void SCurrency::Run(SystemContext const& context) const
 		CDeath const& death = deathComponents[it];
 		if (death.GetDiedThisFrame())
 		{
-			runData.m_gold += death.m_goldReward;
+			runData.m_gold += death.m_goldReward * runData.m_goldGainMultiplier;
 		}
 	}
 

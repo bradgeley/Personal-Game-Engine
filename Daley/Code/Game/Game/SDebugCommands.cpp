@@ -138,7 +138,7 @@ bool SDebugCommands::SlowAllEnemies(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugCommands::God(NamedProperties& args)
+bool SDebugCommands::God(NamedProperties&)
 {
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 	scDebug.m_godMode = !scDebug.m_godMode;
