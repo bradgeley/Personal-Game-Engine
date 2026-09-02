@@ -24,6 +24,8 @@ public:
 	// Overlay
 	bool m_debugOverlayEnabled				= false;						// Toggle used by SDebugOverlay
 
+	bool m_godMode							= false;
+
 	// Debug draw toggles
 	bool m_debugRenderGrid					= false;						// Toggle used by SDebugRender
 	bool m_debugRenderEdges					= false;						// Toggle used by SDebugRender

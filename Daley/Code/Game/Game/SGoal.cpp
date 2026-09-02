@@ -2,6 +2,7 @@
 #include "SGoal.h"
 #include "CTags.h"
 #include "CTransform.h"
+#include "SCDebug.h"
 #include "SCEntityFactory.h"
 #include "SCRunData.h"
 #include "SCWorld.h"
@@ -12,7 +13,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SGoal::Startup()
 {
-	AddReadDependencies<CTags, CTransform, SCWorld>();
+	AddReadDependencies<CTags, CTransform, SCDebug, SCWorld>();
 	AddWriteDependencies<SCEntityFactory, SCRunData>();
 
 	m_runWhilePaused = false;
@@ -27,6 +28,7 @@ void SGoal::Run(SystemContext const& context) const
 	auto const& tagsStorage = context.GetArrayStorageConst<CTags>();
 	auto const& transStorage =context.GetArrayStorageConst<CTransform>();
 	auto const& world = context.GetSingletonConst<SCWorld>();
+	auto const& scDebug = context.GetSingletonConst<SCDebug>();
 
 	// Write Dependencies
 	SCEntityFactory& entityFactory = context.GetSingleton<SCEntityFactory>();
@@ -50,8 +52,11 @@ void SGoal::Run(SystemContext const& context) const
 		{
 			entityFactory.m_entitiesToDestroy.push_back(it.GetEntityID());
 
-			float damage = GetDamageToPlayerByTags(tags);
-			runData.m_health -= damage;
+			if (!scDebug.m_godMode)
+			{
+				float damage = GetDamageToPlayerByTags(tags);
+				runData.m_health -= damage;
+			}
 		}
 	}
 }

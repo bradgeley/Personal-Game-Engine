@@ -106,10 +106,12 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	float currentHeightOffset = -10.f;
 	float overlayTextHeight = 25.f;
 	float spacing = 5.f;
-	float leftSidePadding = 10.f;
+	float leftSidePadding = 200.f;
 	float spaceBetweenLines = overlayTextHeight + spacing;
 
+
 	Vec2 topLeft = screenBounds.GetTopLeft();
+	currentHeightOffset -= 100.f;
 	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, "Debug Overlay Enabled", Rgba8::White);
 
 	currentHeightOffset -= spaceBetweenLines;
@@ -121,10 +123,21 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Remaining Enemies: %d", numEnemies), Rgba8::White);
 
 	currentHeightOffset -= spaceBetweenLines;
+	Name mapName = runData.m_missionGenData[runData.m_missionIndex].m_mapName;
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Map: %s", mapName.ToCStr()), Rgba8::White);
+
+	currentHeightOffset -= spaceBetweenLines;
 	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Run Seed: %d", runData.m_seed), Rgba8::White);
 
 	currentHeightOffset -= spaceBetweenLines;
 	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Mission Seed: %d", runData.m_seed + runData.m_missionIndex), Rgba8::White);
+
+	currentHeightOffset -= spaceBetweenLines;
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Current Mission: %d/%d", runData.m_missionIndex + 1, runData.m_missionGenData.size()), Rgba8::White);
+
+	currentHeightOffset -= spaceBetweenLines;
+	bool isGodMode = scDebug.m_godMode;
+	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("God Mode: %s", isGodMode ? "Enabled" : "Disabled"), Rgba8::White);
 
 	// Wave spawner info
 	Vec2 wavesTopLeft = screenBounds.maxs - Vec2(350.f, 10.f);

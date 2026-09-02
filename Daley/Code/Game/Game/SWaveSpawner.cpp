@@ -104,6 +104,11 @@ void SWaveSpawner::Run(SystemContext const& context) const
 
 		for (int spawnIndex = 0; spawnIndex < (int) numSpawns; ++spawnIndex)
 		{
+			spawnInfo.m_outlineTint = Rgba8::TransparentWhite;
+			spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier;
+			spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier;
+			spawnInfo.m_spawnScale = 1.f;
+
 			if (canHaveRarity)
 			{
 				int entityPos = stream.m_numSpawned;
@@ -124,13 +129,6 @@ void SWaveSpawner::Run(SystemContext const& context) const
 					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier * StaticGameSettings::s_magicEnemySpeedMultiplier;
 					spawnInfo.m_spawnScale = StaticGameSettings::s_magicEnemySizeMultiplier;
 					spawnInfo.m_spawnTags[0] = "magic";
-				}
-				else // Normal
-				{
-					spawnInfo.m_outlineTint = Rgba8::TransparentWhite;
-					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier;
-					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier;
-					spawnInfo.m_spawnScale = 1.f;
 				}
 			}
 

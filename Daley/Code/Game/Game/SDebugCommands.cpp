@@ -17,6 +17,7 @@ void SDebugCommands::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
 	DevConsoleUtils::AddDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity, "name", DevConsoleArgType::String);
 	DevConsoleUtils::AddDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies, "duration", DevConsoleArgType::Float);
+	DevConsoleUtils::AddDevConsoleCommand("God", &SDebugCommands::God, "duration", DevConsoleArgType::Float);
 
 	m_ignoreRun = true;
 }
@@ -30,6 +31,7 @@ void SDebugCommands::Shutdown() const
 	DevConsoleUtils::RemoveDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity);
 	DevConsoleUtils::RemoveDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies);
+	DevConsoleUtils::RemoveDevConsoleCommand("God", &SDebugCommands::God);
 }
 
 
@@ -130,5 +132,15 @@ bool SDebugCommands::SlowAllEnemies(NamedProperties& args)
 		time.m_remainingSlowDuration += duration;
 	}
 
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::God(NamedProperties& args)
+{
+	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
+	scDebug.m_godMode = !scDebug.m_godMode;
 	return false;
 }

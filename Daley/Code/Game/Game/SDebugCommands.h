@@ -23,4 +23,5 @@ protected:
     static bool DumpEntityDebug(NamedProperties& args);
     static bool SetDebugPlacementEntity(NamedProperties& args);
 	static bool SlowAllEnemies(NamedProperties& args);
+	static bool God(NamedProperties& args);
 };
