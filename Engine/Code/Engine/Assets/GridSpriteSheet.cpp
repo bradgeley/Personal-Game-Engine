@@ -311,6 +311,7 @@ int GridSpriteSheet::GetNumAnimations() const
 //----------------------------------------------------------------------------------------------------------------------
 void GridSpriteSheet::SetRendererState() const
 {
+	g_renderer->SetSamplerMode(SamplerFilter::Point, SamplerAddressMode::Clamp);
 	g_renderer->SetCullMode(CullMode::None);
 	g_renderer->SetFillMode(FillMode::Solid);
 	g_renderer->SetBlendMode(BlendMode::Alpha);
