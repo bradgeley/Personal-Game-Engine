@@ -8,6 +8,7 @@
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Assets/GridSpriteSheet.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Renderer/Renderer.h"
@@ -155,8 +156,14 @@ void SRenderModSelection::Run(SystemContext const& context) const
 		AABB2 spriteBounds = AABB2(cardBounds.GetCenter() - spriteDims / 2.f, cardBounds.GetCenter() + spriteDims / 2.f);
 		VertexUtils::AddVertsForAABB2(spriteVboRef, spriteBounds, modifierDef->m_displayData.m_tint, spriteUVs);
 
+		std::string buttonText = StringUtils::StringF("Press %d to select", cardIndex + 1);
+		float currentTime = context.GetRealTimeSeconds();
+		float alpha = 0.5f * (1.f + MathUtils::SinDegrees(360.f * currentTime));
+		Rgba8 buttonColor = Rgba8(255, 255, 255, (unsigned char) (alpha * 255.f));
+
 		font->AddVertsForAlignedText2D(textVerts, spriteBounds.GetTopCenter() + Vec2(0.f, 10.f), Vec2(0.f, 1.f), 30.f, cardTitle.c_str(), Rgba8::White, 0.5f);
 		font->AddVertsForAlignedText2D(textVerts, spriteBounds.GetBottomCenter() + Vec2(0.f, -10.f), Vec2(0.f, -1.f), 30.f, cardText.c_str(), Rgba8::White, 0.5f);
+		font->AddVertsForAlignedText2D(textVerts, cardBounds.GetBottomCenter() + Vec2(0.f, 10.f), Vec2(0.f, 1.f), 30.f, buttonText.c_str(), buttonColor, 0.5f);
 
 		renderer.BindTexture();
 		renderer.BindShader();

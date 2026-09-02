@@ -80,9 +80,9 @@ void AdminSystem::RunFrame(float deltaSeconds)
 		deltaSeconds = m_config.m_maxDeltaSeconds;
 	}
 
-	float realTime = Time::GetCurrentTimeSecondsF();
-	m_realTimeDeltaSeconds = realTime - m_runFrameTimeStamp;
-	m_runFrameTimeStamp = realTime;
+	m_realTimeSeconds = Time::GetCurrentTimeSecondsF();
+	m_realTimeDeltaSeconds = m_realTimeSeconds - m_runFrameTimeStamp;
+	m_runFrameTimeStamp = m_realTimeSeconds;
 
 	m_systemScheduler->ScheduleFrame(m_systemSubgraphs);
 	m_systemScheduler->RunFrame(deltaSeconds);
@@ -267,6 +267,14 @@ void AdminSystem::SetAutoMultithreadingThreshold(int newThreshold)
 float AdminSystem::GetRealTimeDeltaSeconds() const
 {
 	return m_realTimeDeltaSeconds;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float AdminSystem::GetRealTimeSeconds() const
+{
+	return m_realTimeSeconds;
 }
 
 

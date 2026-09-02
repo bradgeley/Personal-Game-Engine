@@ -115,6 +115,7 @@ public:
     // MISC
     //
     float GetRealTimeDeltaSeconds() const;
+    float GetRealTimeSeconds() const;
 
 protected:
 
