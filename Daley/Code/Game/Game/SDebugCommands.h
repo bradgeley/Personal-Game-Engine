@@ -24,4 +24,5 @@ protected:
     static bool SetDebugPlacementEntity(NamedProperties& args);
 	static bool SlowAllEnemies(NamedProperties& args);
 	static bool God(NamedProperties& args);
+	static bool UnlockAllMods(NamedProperties& args);
 };

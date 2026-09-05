@@ -70,6 +70,7 @@ namespace StaticGameSettings
 	static constexpr float s_baseChainChance				= 1.f;
 	static constexpr float s_baseChainDistance				= 3.f;
 	static constexpr float s_baseChainPayloadMulti			= 0.8f;
+	static constexpr int   s_maxChainTargets				= 5;
 
 	static constexpr float s_baseMagicEnemyChance			= 0.05f;
 	static constexpr float s_baseRareEnemyChance			= 0.01f;

@@ -28,6 +28,22 @@ void SProjectile::Startup()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+EntityID GetNextValidProjTarget(CProjectile& proj, SystemContext const& context)
+{
+	while (proj.NextTarget())
+	{
+		EntityID nextTarget = proj.GetTarget();
+		if (nextTarget != EntityID::Invalid && context.IsValid(nextTarget))
+		{
+			return nextTarget;
+		}
+	}
+	return EntityID::Invalid;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SProjectile::Run(SystemContext const& context) const
 {
 	// Read Dependencies
@@ -48,7 +64,9 @@ void SProjectile::Run(SystemContext const& context) const
 	for (auto it = context.Iterate<CProjectile, CTransform>(); it.IsValid(); ++it)
 	{
 		CProjectile& proj = projStorage[it];
-		if (proj.m_targetID == EntityID::Invalid || !context.IsValid(proj.m_targetID))
+		EntityID target = proj.GetTarget();
+		
+		if (target == EntityID::Invalid || !context.IsValid(target))
 		{
 			if (!proj.m_targetPos.has_value())
 			{
@@ -58,7 +76,7 @@ void SProjectile::Run(SystemContext const& context) const
 		}
 
 		CTransform& transform = transStorage[it];
-		CTransform& targetTransform = transStorage[proj.m_targetID];
+		CTransform& targetTransform = transStorage[target];
 		proj.m_targetPos = targetTransform.m_pos;
 
 		Vec2 toTarget = proj.m_targetPos.value() - transform.m_pos;
@@ -69,7 +87,11 @@ void SProjectile::Run(SystemContext const& context) const
 		if (distSquaredToTarget <= moveDistThisFrame * moveDistThisFrame)
 		{
 			// Projectile hit target
-			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
+			EntityID nextTarget = GetNextValidProjTarget(proj, context);
+			if (nextTarget == EntityID::Invalid)
+			{
+				factory.m_entitiesToDestroy.push_back(it.GetEntityID());
+			}
 
 			if (proj.m_onHitComp.IsRelevant())
 			{
@@ -78,21 +100,14 @@ void SProjectile::Run(SystemContext const& context) const
 				{
 					if (mainTargetPayload.IsRelevantToHealth())
 					{
-						if (context.HasComponent<CHealth>(proj.m_targetID))
-						{
-							CHealth& targetHealth = healthStorage[proj.m_targetID];
-							targetHealth.TakePayload(mainTargetPayload);
-						}
+						CHealth& targetHealth = healthStorage[target];
+						targetHealth.TakePayload(mainTargetPayload);
 					}
 					if (mainTargetPayload.IsRelevantToTime())
 					{
-						// Add slow/haste effect to target
-						if (context.HasComponent<CTime>(proj.m_targetID))
-						{
-							CTime& targetTime = timeStorage[proj.m_targetID];
-							targetTime.m_remainingSlowDuration += mainTargetPayload.m_slowDuration;
-							targetTime.m_remainingHasteDuration += mainTargetPayload.m_hasteDuration;
-						}
+						CTime& targetTime = timeStorage[target];
+						targetTime.m_remainingSlowDuration += mainTargetPayload.m_slowDuration;
+						targetTime.m_remainingHasteDuration += mainTargetPayload.m_hasteDuration;
 					}
 				}
 

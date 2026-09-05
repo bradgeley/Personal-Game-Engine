@@ -482,7 +482,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags);
+	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 public:
 
@@ -508,7 +508,7 @@ public:
 
 	RolledOnHitComponent RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
-	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags) override;
+	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier) override;
 
 public:
 
@@ -568,7 +568,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
-	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags) override;
+	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier) override;
 
 public:
 

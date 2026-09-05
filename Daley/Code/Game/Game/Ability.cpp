@@ -238,7 +238,7 @@ bool AbilityPrecisionTargetingComponent::FindTargets(SystemContext const& contex
     BitMask healthBit = context.GetComponentBitMask<CHealth>();
 
     IntVec2 targetChainDims = IntVec2(maxTargets, 1 + maxChains);
-	m_targetChains.Initialize(targetChainDims, EntityID::Invalid);
+    m_targetChains.Initialize(targetChainDims, EntityID::Invalid);
 
     int numTargets = 0;
 
@@ -305,39 +305,40 @@ EntityID AbilityPrecisionTargetingComponent::FindChainTarget(SystemContext const
     SCWorld const& world = context.GetSingletonConst<SCWorld>();
     SCCollision const& collision = context.GetSingletonConst<SCCollision>();
 
+	auto& transStorage = context.GetArrayStorageConst<CTransform>();
+	auto& healthStorage = context.GetArrayStorageConst<CHealth>();
+
     CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
 
     float maxDistanceSquared = maxDistance * maxDistance;
 
     EntityID result = EntityID::Invalid;
 
-    for (auto& tile : m_cachedTilesInRange)
-    {
-        int tileIndex = world.m_tiles.GetIndexForCoords(tile);
-        CollisionBucket const& tileBucket = enemyLayer[tileIndex];
-
-        for (EntityID entityID : tileBucket)
-        {
-            if (m_targetChains.Contains(entityID))
-            {
-                continue;
-            }
-
-            CTransform const& transformComp = *context.GetComponentConst<CTransform>(entityID);
-            float distSquared = MathUtils::GetDistanceSquared2D(pos, transformComp.m_pos);
-            if (distSquared > maxDistanceSquared)
-            {
-                continue;
-            }
-
-            CHealth const& healthComp = *context.GetComponentConst<CHealth>(entityID);
-            if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
-            {
-                result = entityID;
-                break;
-            }
-        }
-    }
+	world.ForEachPathTileInRange(pos, 0.f, maxDistance, [&](IntVec2 const& worldCoords)
+	{
+		int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
+		CollisionBucket const& tileBucket = enemyLayer[tileIndex];
+		for (EntityID entityID : tileBucket)
+		{
+			if (m_targetChains.Contains(entityID))
+			{
+				continue;
+			}
+			CTransform const& transformComp = transStorage[entityID];
+			float distSquared = MathUtils::GetDistanceSquared2D(pos, transformComp.m_pos);
+			if (distSquared > maxDistanceSquared)
+			{
+				continue;
+			}
+			CHealth const& healthComp = healthStorage[entityID];
+			if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
+			{
+				result = entityID;
+				break;
+			}
+		}
+		return true; // keep iterating
+	});
 
     return result;
 }
@@ -1006,7 +1007,7 @@ void Ability::AppendDebugString(EntityDebugContext& debugContext) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Ability::ApplyModifier(TowerAbilityRunModifier const&, CTags const&)
+void Ability::ApplyModifier(TowerAbilityRunModifier const&)
 {
 
 }
@@ -1089,7 +1090,14 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
             ASSERT_OR_DIE(context.HasComponent<CProjectile>(projectileID), "ProjectileHitAbility::Update - spawned projectile is missing CProjectile component.");
             CProjectile& projComp = projectileStorage[projectileID];
 
-            projComp.m_targetID = targetID;
+            // copy targets from target chain to proj
+			for (int chainIndex = 0; chainIndex < m_targetingComp.m_targetChains.GetDimensions().y; ++chainIndex)
+			{
+				EntityID chainTargetID = m_targetingComp.m_targetChains.Get(IntVec2(targetIndex, chainIndex));
+				projComp.m_targets[chainIndex] = chainTargetID;
+			}
+
+            projComp.m_numChains = maxChains;
             projComp.m_targetPos = std::nullopt;
             projComp.m_accumulatedTime += m_cooldownComp.m_accumulatedTime;
             projComp.m_projSpeed = m_projSpeed * timeDilation;
@@ -1255,7 +1263,7 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGene
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags)
+void ProjectileHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
     m_cooldownComp.ApplyModifier(modifier);
 	m_targetingComp.ApplyModifier(modifier);
@@ -1600,7 +1608,7 @@ void PassiveAoEAbility::AppendDebugString(EntityDebugContext& debugContext) cons
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags)
+void PassiveAoEAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
 	m_targetingComp.ApplyModifier(modifier);
     m_aoeEffectComp.ApplyModifier(modifier);

@@ -8,8 +8,11 @@
 #include "SCWorld.h"
 #include "SEntityFactory.h"
 #include "SFlowField.h"
+#include "SInput.h"
 #include "WorldSettings.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Core/NamedProperties.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/SystemContext.h"
 
 
@@ -18,6 +21,8 @@
 void STowerSpawner::Startup()
 {
 	AddWriteAllDependencies(); // Spawns towers..
+
+    DevConsoleUtils::AddDevConsoleCommand("FillMap", STowerSpawner::FillMapWithTower, "tower", DevConsoleArgType::Name);
 }
 
 
@@ -25,6 +30,7 @@ void STowerSpawner::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void STowerSpawner::Shutdown() const
 {
+	DevConsoleUtils::RemoveDevConsoleCommand("FillMap", STowerSpawner::FillMapWithTower);
 }
 
 
@@ -273,4 +279,25 @@ bool STowerSpawner::WillChangePathSolidness(TowerPlacementRequest const& placeme
     });
 
     return willChangePathSolidness;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool STowerSpawner::FillMapWithTower(NamedProperties& properties)
+{
+	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
+
+	Name towerName = properties.Get<Name>("tower", Name("Vanilla"));
+
+	world.ForEachVisibleTile([&](IntVec2 const& worldCoords, int)
+	{
+		TowerPlacementRequest placementInfo = SInput::MakeTowerPlacementRequest(towerName, world.GetTileBounds(worldCoords).GetCenter(), world);
+        factory.m_towerPlacements.push_back(placementInfo);
+		return true; // keep iterating
+	});
+
+
+    return false;
 }

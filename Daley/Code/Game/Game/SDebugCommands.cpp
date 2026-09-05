@@ -18,6 +18,7 @@ void SDebugCommands::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity, "name", DevConsoleArgType::String);
 	DevConsoleUtils::AddDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies, "duration", DevConsoleArgType::Float);
 	DevConsoleUtils::AddDevConsoleCommand("God", &SDebugCommands::God, "duration", DevConsoleArgType::Float);
+	DevConsoleUtils::AddDevConsoleCommand("UnlockAllMods", &SDebugCommands::UnlockAllMods);
 
 	m_ignoreRun = true;
 }
@@ -32,6 +33,7 @@ void SDebugCommands::Shutdown() const
 	DevConsoleUtils::RemoveDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity);
 	DevConsoleUtils::RemoveDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies);
 	DevConsoleUtils::RemoveDevConsoleCommand("God", &SDebugCommands::God);
+	DevConsoleUtils::RemoveDevConsoleCommand("UnlockAllMods", &SDebugCommands::UnlockAllMods);
 }
 
 
@@ -142,5 +144,53 @@ bool SDebugCommands::God(NamedProperties&)
 {
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
 	scDebug.m_godMode = !scDebug.m_godMode;
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::UnlockAllMods(NamedProperties&)
+{
+	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
+	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
+
+	for (auto& mod : runData.m_data->m_runModifierPool.m_runModifierDefs)
+	{
+		if (mod->m_name == Name::Invalid)
+		{
+			continue;
+		}
+
+		bool alreadyUnlocked = false;
+		for (auto& activeMod : runData.m_data->m_activeRunModifiers)
+		{
+			if (activeMod->m_def.m_name == mod->m_name)
+			{
+				activeMod->m_level = mod->m_maxLevel;
+				alreadyUnlocked = true;
+				break;
+			}
+		}
+
+		if (!alreadyUnlocked)
+		{
+			RunModifier* newMod = mod->MakeModifierInstance();
+			newMod->m_level = mod->m_maxLevel;
+			runData.m_data->m_activeRunModifiers.push_back(newMod);
+		}
+	}
+
+	runData.m_data->m_needsModifierRecalculation = true;
+
+	for (auto it = g_ecs->IterateAll<CAbility>(); it.IsValid(); ++it)
+	{
+		CAbility& ability = abilityStorage[it];
+		for (auto& abilityInstance : ability.m_abilities)
+		{
+			abilityInstance->m_needsRebuild = true;
+		}
+	}
+
 	return false;
 }

@@ -353,7 +353,7 @@ void TowerAbilityRunModifier::ApplyToAbility(Ability& ability, CTags const& tags
 		}
 	}
 
-	ability.ApplyModifier(*this, tags);
+	ability.ApplyModifier(*this);
 }
 
 

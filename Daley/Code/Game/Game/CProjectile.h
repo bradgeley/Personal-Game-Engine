@@ -20,6 +20,9 @@ public:
     CProjectile() = default;
     CProjectile(void const* xmlElement);
 
+    EntityID GetTarget() const { return m_targets[m_currentTargetIndex]; }
+    bool NextTarget();
+
 	HitPayload GetMainTargetPayload() const;
     HitPayload GetAoeTargetPayload() const;
 
@@ -27,7 +30,9 @@ public:
 
 public:
 
-    EntityID m_targetID;
+    int m_currentTargetIndex = 0;
+    int m_numChains = 0;
+    std::array<EntityID, StaticGameSettings::s_maxChainTargets> m_targets = { EntityID::Invalid };
 	std::optional<Vec2> m_targetPos; // Used if TargetID is invalid. If TargetID is valid, then this is updated to the target's location each frame.
     float m_accumulatedTime = 0.f;
     float m_projSpeed = 1.f;

@@ -87,11 +87,11 @@
   <!-- Attacks -->
 
   <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="100">
-    <Cooldown cooldown="0.1"></Cooldown>
+    <Cooldown cooldown="0.2"></Cooldown>
     <Targeting maxRange="15"></Targeting>
     <Crit critChance="0.1"></Crit>
     <OnHit>
-      <Damage minDamage="10" maxDamage="15"></Damage>
+      <Damage minDamage="20" maxDamage="30"></Damage>
     </OnHit>
   </ProjectileHitAbilityDef>
 
