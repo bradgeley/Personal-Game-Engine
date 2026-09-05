@@ -30,7 +30,6 @@ public:
 	float m_hastePerSecond		 = 0.f;
 
 	// Rendering (uses radius and position from Collision Component)
-	bool m_shouldRender			= false;
-	Rgba8 m_tint				= Rgba8::White;
+	Rgba8 m_tint				= Rgba8::TransparentWhite;
 	float m_depth				= 0.f;
 };

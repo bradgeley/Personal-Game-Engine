@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "GameCommon.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Renderer/Rgba8.h"
 #include <optional>

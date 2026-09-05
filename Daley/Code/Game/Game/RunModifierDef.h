@@ -2,6 +2,7 @@
 #pragma once
 #include "Engine/Core/Name.h"
 #include "Engine/Core/XmlUtils.h"
+#include "GameCommon.h"
 #include <array>
 #include <string>
 
@@ -116,11 +117,11 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct TowerPayloadRunModifierDef : public RunModifierDef
+struct TowerAbilityRunModifierDef : public RunModifierDef
 {
 public:
 
-	TowerPayloadRunModifierDef(XmlElement const& modElement);
+	TowerAbilityRunModifierDef(XmlElement const& modElement);
 
 	virtual RunModifier* MakeModifierInstance() const override;
 
@@ -128,28 +129,30 @@ public:
 
 public:
 
-	// Linear increase per level of one payload type
-	uint8_t m_payloadDamageTypeFlags = 0;
-	float m_multiplierIncreaseBase = 1.f;
-	float m_multiplierIncreasePerLevel = 1.f;
+	// Linear increase per level of one attribute
+	TowerAbilityAttribute m_abilityAttribute = TowerAbilityAttribute::Invalid;
+	float m_valueBase = 1.f;
+	float m_valueIncreasePerLevel = 1.f;
 	std::array<Name, s_maxRequirements> m_tagRequirements; // this modifier applies to towers with these tags
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct TowerPayloadRunModifier : public RunModifier
+struct TowerAbilityRunModifier : public RunModifier
 {
 public:
 
-	TowerPayloadRunModifier(TowerPayloadRunModifierDef const& def);
+	TowerAbilityRunModifier(TowerAbilityRunModifierDef const& def);
+
+	float GetValue() const;
 
 	virtual void Apply(SystemContext const& context) const override;
 	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const override;
 
 	virtual void GetDescription(std::string& outStr) const override;
 
-	TowerPayloadRunModifierDef const& GetDef() const;
+	TowerAbilityRunModifierDef const& GetDef() const;
 };
 
 

@@ -38,13 +38,21 @@ enum class EDirection : int
 
 
 //----------------------------------------------------------------------------------------------------------------------
-enum class PayloadType : uint8_t
+enum class TowerAbilityAttribute : uint32_t
 {
-	Damage	= 1 << 0,
-	Burn	= 1 << 1,
-	Poison	= 1 << 2,
-	Slow	= 1 << 3,
-	Haste	= 1 << 4,
+	Invalid	= 0,
+	Damage,
+	Burn,
+	Poison,
+	Slow,
+	Haste,
+	AttackSpeed,
+	CritChance,
+	CritDamage,
+	AoE,
+	Multishot,
+	NumChains,
+	Range,
 };
 
 
@@ -57,6 +65,11 @@ namespace StaticGameSettings
 	static constexpr double s_slowStatusTimeDilation		= 0.5;
 	static constexpr double s_hasteStatusTimeDilation		= 1.5;
     static constexpr float s_defaultCollisionEffectDepth	= 0.95f;
+
+	static constexpr float s_baseCritMultiplier				= 2.f;
+	static constexpr float s_baseChainChance				= 1.f;
+	static constexpr float s_baseChainDistance				= 3.f;
+	static constexpr float s_baseChainPayloadMulti			= 0.8f;
 
 	static constexpr float s_baseMagicEnemyChance			= 0.05f;
 	static constexpr float s_baseRareEnemyChance			= 0.01f;

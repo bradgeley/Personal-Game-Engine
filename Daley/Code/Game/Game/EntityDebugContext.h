@@ -18,7 +18,7 @@ struct EntityDebugContext
 	EntityDebugContext(EntityID eid, SystemContext const& context);
 
 	std::string m_debugString;
-	float m_timeDilation = 1.f;
+	float m_entityTimeDilation = 1.f;
 	bool m_isHasted = false;
 	bool m_isSlowed = false;
 };

@@ -293,8 +293,10 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				// Background Outline
 				VertexUtils::AddVertsForWireBox2D(untexVerts, informationCardBounds, infoCardEdgeWidth, Rgba8::Black);
 
-				// Title
-				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(infoCardEdgeWidth, -infoCardEdgeWidth), Vec2(1.f, -1.f), titleLineHeight, debug.m_defName.ToString(), Rgba8::White);
+				// Title (def + entity ID)
+				std::string title = debug.m_defName.ToString();
+				title += StringUtils::StringF(" (ID: %d)", it.GetEntityID());
+				font->AddVertsForAlignedText2D(fontVerts, informationCardBounds.GetTopLeft() + Vec2(infoCardEdgeWidth, -infoCardEdgeWidth), Vec2(1.f, -1.f), titleLineHeight, title, Rgba8::White);
 
 				// Debug Information
 				Vec2 debugInfoTextDims = font->GetTextDims(textLineHeight, textLineSpacingRatio, debugContext.m_debugString);

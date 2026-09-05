@@ -13,6 +13,6 @@ EntityDebugContext::EntityDebugContext(EntityID eid, SystemContext const& contex
 	{
 		m_isSlowed = time->IsSlowed();
 		m_isHasted = time->IsHasted();
-		m_timeDilation = time->m_clock.GetTimeDilationF();
+		m_entityTimeDilation = time->m_clock.GetTimeDilationF();
 	}
 }

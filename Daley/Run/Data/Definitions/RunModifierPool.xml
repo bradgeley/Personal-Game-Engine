@@ -1,8 +1,9 @@
 <!--Bradley Christensen - 2022-2026-->
 
 <RunModifierPools>
-  
-  <RunModifierPool name="Default">
+
+  <!-- Tower Unlocks -->
+  <RunModifierPool name="Towers">
 
     <!-- Level 1 -->
     <TowerUnlockRunModifier name="Vanilla" defaultKey="Q" baseCost="30"  levelRequirement="0" weight="1" desc="Fast, Projectile, Single Target">
@@ -16,23 +17,6 @@
     <TowerUnlockRunModifier name="Strawberry" defaultKey="E" baseCost="30"  levelRequirement="0" weight="1" desc="Burn, Projectile, AoE">
       <DisplayData displayName="Strawberry" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,80,83"></DisplayData>
     </TowerUnlockRunModifier>
-
-    <!-- Level 2 -->
-    <TowerPayloadRunModifier name="GenericDamage" type="damage" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <DisplayData displayName="Damage Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
-    </TowerPayloadRunModifier>
-    
-    <TowerPayloadRunModifier name="GenericPoison" type="poison" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <DisplayData displayName="Poison Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="poison"></DisplayData>
-    </TowerPayloadRunModifier>
-    
-    <TowerPayloadRunModifier name="GenericBurn"   type="burn" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <DisplayData displayName="Burn Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="burn"></DisplayData>
-    </TowerPayloadRunModifier>
-    
-    <TowerPayloadRunModifier name="GenericSlow"   type="slow" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
-      <DisplayData displayName="Slow Duration Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="slow"></DisplayData>
-    </TowerPayloadRunModifier>
   
     <!-- Level 3 -->
     <TowerUnlockRunModifier name="Mint" defaultKey="R" baseCost="60"  levelRequirement="3" weight="1" desc="Poison, Slow, AoE">
@@ -49,56 +33,116 @@
     
     <!-- Level 5 -->
     <TowerUnlockRunModifier name="Neopolitan" defaultKey="D" baseCost="120" levelRequirement="5" weight="0.25" requirements="Vanilla,Chocolate,Strawberry" desc="Uses Vanilla, Chocolate, and Strawberry attacks">
-      <DisplayData displayName="Neopolitan" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="150,150,150"></DisplayData>
+      <DisplayData displayName="Neopolitan" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250"></DisplayData>
     </TowerUnlockRunModifier>
   
   </RunModifierPool>
-  
+
+  <!-- Generic Tower Mods -->
+  <RunModifierPool name="Generic">
+    
+    <!-- Level 2 -->
+    <TowerAbilityRunModifier name="GenericDamage" type="damage" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
+      <DisplayData displayName="Damage" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <TowerAbilityRunModifier name="GenericPoison" type="poison" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
+      <DisplayData displayName="Poison" spriteSheet="Data/SpriteSheets/Icons.xml" anim="poison"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <TowerAbilityRunModifier name="GenericBurn" type="burn" base="0.15" perLevel="0.1" weight="0.2" levelRequirement="2" maxLevel="5">
+      <DisplayData displayName="Burn" spriteSheet="Data/SpriteSheets/Icons.xml" anim="burn"></DisplayData>
+    </TowerAbilityRunModifier>
+    
+    <!-- Level 10 -->
+    <TowerAbilityRunModifier name="GenericAttackSpeed" type="attackSpeed" base="0.05" perLevel="0.05" weight="0.2" levelRequirement="10" maxLevel="5">
+      <DisplayData displayName="Attack Speed" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    </TowerAbilityRunModifier>
+    
+    <TowerAbilityRunModifier name="GenericRange" type="range" base="0.05" perLevel="0.05" weight="0.2" levelRequirement="10" maxLevel="5">
+      <DisplayData displayName="Range" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    </TowerAbilityRunModifier>
+    
+    <TowerAbilityRunModifier name="GenericCritChance" type="critChance" base="0.05" perLevel="0.05" weight="0.2" levelRequirement="10" maxLevel="5">
+      <DisplayData displayName="Crit Chance" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <TowerAbilityRunModifier name="GenericCritDamage" type="critDamage" base="0.05" perLevel="0.05" weight="0.2" levelRequirement="10" maxLevel="5">
+      <DisplayData displayName="Crit Damage" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <TowerAbilityRunModifier name="GenericAoE" type="aoe" base="0.1" perLevel="0.1" weight="0.2" levelRequirement="10" maxLevel="5">
+      <DisplayData displayName="AoE" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <TowerAbilityRunModifier name="GenericMultiShot" type="multiShot" base="1" perLevel="1" weight="0.1" levelRequirement="10" maxLevel="3">
+      <DisplayData displayName="Multi-Shot" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <TowerAbilityRunModifier name="GenericChain" type="chain" base="1" perLevel="1" weight="0.2" levelRequirement="10" maxLevel="3">
+      <DisplayData displayName="Chain" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    </TowerAbilityRunModifier>
+    
+  </RunModifierPool>
+
+  <!-- Vanilla Tower Mods -->
   <RunModifierPool name="Vanilla" requirements="Vanilla">
     
     <!-- Level 1 -->
-    <TowerPayloadRunModifier name="VanillaDamage" type="damage" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <DisplayData displayName="Vanilla Damage Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
-    </TowerPayloadRunModifier>
+    <TowerAbilityRunModifier name="VanillaDamage" type="damage" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+      <DisplayData displayName="Vanilla Damage" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
+    </TowerAbilityRunModifier>
+    
+    <TowerAbilityRunModifier name="VanillaAttackSpeed" type="attackSpeed" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+      <DisplayData displayName="Vanilla Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
+    </TowerAbilityRunModifier>
   
   </RunModifierPool>
 
+  <!-- Chocolate Tower Mods -->
   <RunModifierPool name="Chocolate" requirements="Chocolate">
 
     <!-- Level 1 -->
-    <TowerPayloadRunModifier name="ChocolateDamage" type="damage" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <DisplayData displayName="Chocolate Damage Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
-    </TowerPayloadRunModifier>
+    <TowerAbilityRunModifier name="ChocolateDamage" type="damage" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+      <DisplayData displayName="Chocolate Damage" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
+    </TowerAbilityRunModifier>
+    
+    <TowerAbilityRunModifier name="ChocolateAttackSpeed" type="attackSpeed" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+      <DisplayData displayName="Chocolate Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
+    </TowerAbilityRunModifier>
 
   </RunModifierPool>
 
+  <!-- Strawberry Tower Mods -->
   <RunModifierPool name="Strawberry" requirements="Strawberry">
 
     <!-- Level 1 -->
-    <TowerPayloadRunModifier name="StrawberryBurn" type="burn" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <DisplayData displayName="Strawberry Burn Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
-    </TowerPayloadRunModifier>
+    <TowerAbilityRunModifier name="StrawberryBurn" type="burn" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+      <DisplayData displayName="Strawberry Burn" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <TowerAbilityRunModifier name="StrawberryAttackSpeed" type="attackSpeed" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+      <DisplayData displayName="Strawberry Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
+    </TowerAbilityRunModifier>
 
   </RunModifierPool>
 
+  <!-- Mint Tower Mods -->
   <RunModifierPool name="Mint" requirements="Mint">
 
     <!-- Level 1 -->
-    <TowerPayloadRunModifier name="MintPoison" type="poison" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <DisplayData displayName="Mint Poison Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
-    </TowerPayloadRunModifier>
-    
-    <TowerPayloadRunModifier name="MintSlow" type="slow" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
-      <DisplayData displayName="Mint Slow Duration Multiplier" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
-    </TowerPayloadRunModifier>
+    <TowerAbilityRunModifier name="MintPoison" type="poison" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+      <DisplayData displayName="Mint Poison" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
+    </TowerAbilityRunModifier>
 
   </RunModifierPool>
 
+  <!-- Economy Mods -->
   <RunModifierPool name="Economy">
     
     <!-- Level 2 -->
     <EconomyRunModifier name="GoldGain" goldGainBase="0.075" goldGainPerLevel="0.075" weight="1" levelRequirement="2" maxLevel="5">
-      <DisplayData displayName="Gold Gain Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
+      <DisplayData displayName="Gold Gain" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
     </EconomyRunModifier>
 
     <!-- Level 10 -->
@@ -108,7 +152,7 @@
 
     <!-- Level 20 -->
     <EconomyRunModifier name="Interest Rate" interestBase="0.025" interestPerLevel="0.025" interestTimerSpeedBase="0.05" interestTimerSpeedPerLevel="0.05" weight="0.5" levelRequirement="20" maxLevel="5">
-      <DisplayData displayName="Interest Rate Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
+      <DisplayData displayName="Interest Rate" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
     </EconomyRunModifier>
 
     <!-- Level 30 -->

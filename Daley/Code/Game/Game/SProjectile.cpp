@@ -71,7 +71,7 @@ void SProjectile::Run(SystemContext const& context) const
 			// Projectile hit target
 			factory.m_entitiesToDestroy.push_back(it.GetEntityID());
 
-			if (proj.m_onHitComp.has_value())
+			if (proj.m_onHitComp.IsRelevant())
 			{
 				HitPayload mainTargetPayload = proj.GetMainTargetPayload();
 				if (mainTargetPayload.HasValue())
@@ -96,10 +96,10 @@ void SProjectile::Run(SystemContext const& context) const
 					}
 				}
 
-				if (proj.m_onHitComp->m_aoeHitOnHit.has_value())
+				if (proj.m_onHitComp.m_aoeHitOnHit.IsRelevant())
 				{
 					// Projectile is doing aoe damage around target
-					float const& splashRadius = proj.m_onHitComp->m_aoeHitOnHit->m_radius;
+					float const& splashRadius = proj.m_onHitComp.m_aoeHitOnHit.m_radius;
 					float const& splashRadiusSquared = splashRadius * splashRadius;
 
 					HitPayload aoeTargetPayload = proj.GetAoeTargetPayload();
@@ -143,15 +143,15 @@ void SProjectile::Run(SystemContext const& context) const
 					}
 				}
 
-				if (proj.m_onHitComp->m_aoeEffectOnHit.has_value())
+				if (proj.m_onHitComp.m_aoeEffectOnHit.IsRelevant())
 				{
 					SpawnInfo aoeEffectSpawnInfo;
-					aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(proj.m_onHitComp->m_aoeEffectOnHit->m_aoeEffectDefName);
-					ASSERT_OR_DIE(aoeEffectSpawnInfo.m_def != nullptr, StringUtils::StringF("EntityDef not found for name: %s", proj.m_onHitComp->m_aoeEffectOnHit->m_aoeEffectDefName.ToCStr()));
+					aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(proj.m_onHitComp.m_aoeEffectOnHit.m_aoeEffectDefName);
+					ASSERT_OR_DIE(aoeEffectSpawnInfo.m_def != nullptr, StringUtils::StringF("EntityDef not found for name: %s", proj.m_onHitComp.m_aoeEffectOnHit.m_aoeEffectDefName.ToCStr()));
 					aoeEffectSpawnInfo.m_spawnPos = proj.m_targetPos.value();
 					aoeEffectSpawnInfo.m_spawnOrientation = 0.f;
-					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp->m_aoeEffectOnHit->m_durationSeconds;
-					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp->m_aoeEffectOnHit->m_radius;
+					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp.m_aoeEffectOnHit.m_durationSeconds;
+					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp.m_aoeEffectOnHit.m_radius;
 
 					EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 					if (context.IsValid(aoeEffect))
@@ -160,7 +160,7 @@ void SProjectile::Run(SystemContext const& context) const
 						if (context.HasComponent<CCollisionEffect>(aoeEffect))
 						{
 							CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
-							aoeEffectComp.InitializeFromAoEEffect(proj.m_onHitComp->m_aoeEffectOnHit.value());
+							aoeEffectComp.InitializeFromAoEEffect(proj.m_onHitComp.m_aoeEffectOnHit);
 						}
 					}
 				}

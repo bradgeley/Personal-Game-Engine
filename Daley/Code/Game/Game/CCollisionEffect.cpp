@@ -7,32 +7,14 @@
 //----------------------------------------------------------------------------------------------------------------------
 void CCollisionEffect::InitializeFromAoEEffect(AbilityAoEEffectComponent const& aoeEffectComp)
 {
-    if (aoeEffectComp.m_damagePerSecond.has_value())
-    {
-        m_damagePerSecond = aoeEffectComp.m_damagePerSecond->GetMaxDamage();
-    }
-    if (aoeEffectComp.m_burnPerSecond.has_value())
-    {
-        m_burnPerSecond = aoeEffectComp.m_burnPerSecond->GetBurn();
-    }
-    if (aoeEffectComp.m_poisonPerSecond.has_value())
-    {
-        m_poisonPerSecond = aoeEffectComp.m_poisonPerSecond->GetPoison();
-    }
-    if (aoeEffectComp.m_slowPerSecond.has_value())
-    {
-        m_slowPerSecond = aoeEffectComp.m_slowPerSecond->GetDuration();
-    }
-	if (aoeEffectComp.m_hastePerSecond.has_value())
-	{
-		m_hastePerSecond = aoeEffectComp.m_hastePerSecond->GetDuration();
-	}
-    m_shouldRender = aoeEffectComp.m_renderComp.has_value();
-    if (aoeEffectComp.m_renderComp.has_value())
-    {
-        m_tint = aoeEffectComp.m_renderComp->m_tint;
-        m_depth = aoeEffectComp.m_renderComp->m_depth;
-    }
+	m_damagePerSecond = aoeEffectComp.m_damagePerSecond.GetMaxDamage();
+	m_burnPerSecond = aoeEffectComp.m_burnPerSecond.GetBurn();
+	m_poisonPerSecond = aoeEffectComp.m_poisonPerSecond.GetPoison();
+	m_slowPerSecond = aoeEffectComp.m_slowPerSecond.GetDuration();
+	m_hastePerSecond = aoeEffectComp.m_hastePerSecond.GetDuration();
+
+    m_tint = aoeEffectComp.m_renderComp.m_tint;
+    m_depth = aoeEffectComp.m_renderComp.m_depth;
 }
 
 

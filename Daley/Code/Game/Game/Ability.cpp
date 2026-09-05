@@ -21,11 +21,6 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-static constexpr float s_baseCritMultiplier = 2.f; // todo: move to gameplay static constants file?
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 AbilityTargetingComponent::AbilityTargetingComponent(AbilityTargetingComponentDef const& def)
 {
     m_minRange = def.m_minRange;
@@ -36,27 +31,42 @@ AbilityTargetingComponent::AbilityTargetingComponent(AbilityTargetingComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityTargetingComponent::NeedsCacheUpdate(Vec2 const& location) const
+void AbilityTargetingComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
-	return m_minRange != m_minRangeAtTimeOfCache || m_maxRange != m_maxRangeAtTimeOfCache || m_locationAtTimeOfCache != location;
+	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+	if (def.m_abilityAttribute == TowerAbilityAttribute::Range)
+	{
+		m_rangeMultiplier += modifier.GetValue();
+		m_needsCacheUpdate = 1;
+	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, Vec2 const& location)
+void AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, Vec2 const& location)
 {
-    bool needsUpdate = NeedsCacheUpdate(location);
-    if (needsUpdate)
+    if (location != m_cachedLocation)
+    {
+		m_needsCacheUpdate = 1;
+    }
+
+    if (m_needsCacheUpdate)
     {
         SCWorld const& world = context.GetSingletonConst<SCWorld>();
 
+		m_cachedLocation = location;
+		m_needsCacheUpdate = 0;
+
         m_cachedTilesInRange.clear();
+
+		float minRange = GetMinRange();
+		float maxRange = GetMaxRange();
 
         // Note: Tower case covers Tower+Enemy case, but Enemy case does not. So we check tower first.
         if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Tower)
         {
-            world.ForEachPlayableTileOverlappingCircle(location, m_maxRange, [&](IntVec2 const& worldCoords)
+            world.ForEachPlayableTileOverlappingCircle(location, maxRange, [&](IntVec2 const& worldCoords)
             {
                 m_cachedTilesInRange.push_back(worldCoords);
                 return true;
@@ -64,16 +74,12 @@ bool AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
         }
         else if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Enemy)
         {
-            world.ForEachPathTileInRange(location, m_minRange, m_maxRange, [&](IntVec2 const& worldCoords)
+            world.ForEachPathTileInRange(location, minRange, maxRange, [&](IntVec2 const& worldCoords)
             {
                 m_cachedTilesInRange.push_back(worldCoords);
                 return true;
             });
         }
-
-        m_minRangeAtTimeOfCache = m_minRange;
-        m_maxRangeAtTimeOfCache = m_maxRange;
-        m_locationAtTimeOfCache = location;
 
         if (m_targetingMode == AbilityTargetingMode::ClosestToGoal)
         {
@@ -87,7 +93,6 @@ bool AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
             });
         }
     }
-    return needsUpdate;
 }
 
 
@@ -95,13 +100,15 @@ bool AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityTargetingComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
-    if (m_minRange > 0.f)
+    float minRange = GetMinRange();
+	float maxRange = GetMaxRange();
+    if (minRange > 0.f)
     {
-        debugContext.m_debugString += StringUtils::StringF("Range: %.1f - %.1f\n", m_minRange, m_maxRange);
+        debugContext.m_debugString += StringUtils::StringF("Range: %.1f - %.1f (x%.1f)\n", minRange, maxRange, m_rangeMultiplier);
     }
     else
     {
-        debugContext.m_debugString += StringUtils::StringF("Range: %.1f\n", m_maxRange);
+        debugContext.m_debugString += StringUtils::StringF("Range: %.1f (x%.1f)\n", maxRange, m_rangeMultiplier);
     }
 }
 
@@ -119,12 +126,15 @@ AbilityAoETargetingComponent::AbilityAoETargetingComponent(AbilityTargetingCompo
 bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, int maxTargets /*= -1*/)
 {
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
-	SCCollision const& collision = context.GetSingletonConst<SCCollision>();
-	CollisionLayer const& enemyLayer = collision.GetCollisionLayer(CollisionChannel::Enemy);
-	CollisionLayer const& buildingLayer = collision.GetCollisionLayer(CollisionChannel::Building);
+	SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
+	CollisionLayer const& enemyLayer = scCollision.GetCollisionLayer(CollisionChannel::Enemy);
+	CollisionLayer const& buildingLayer = scCollision.GetCollisionLayer(CollisionChannel::Building);
 	auto& healthStorage = context.GetArrayStorageConst<CHealth>();
 	auto& transformStorage = context.GetArrayStorageConst<CTransform>();
+	auto& collisionStorage = context.GetArrayStorageConst<CCollision>();
 	BitMask healthBit = context.GetComponentBitMask<CHealth>();
+
+	float maxRange = GetMaxRange();
 
     m_targets.clear();
 
@@ -139,6 +149,16 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, int
             for (EntityID entityID : tileBucket)
             {
                 if (m_targets.find(entityID) != m_targets.end())
+                {
+                    continue;
+                }
+
+                CTransform const& transform = transformStorage[entityID];
+                CCollision const& collision = collisionStorage[entityID];
+                float range = collision.m_radius + maxRange; // Add target's radius to the range
+                float rangeSquared = range * range;
+                float distSquared = MathUtils::GetDistanceSquared2D(transform.m_pos, m_cachedLocation);
+                if (distSquared > rangeSquared || distSquared < rangeSquared)
                 {
                     continue;
                 }
@@ -170,9 +190,12 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, int
 					continue;
 				}
 
-				CTransform const& pos = transformStorage[entityID];
-				float distSquared = MathUtils::GetDistanceSquared2D(pos.m_pos, m_locationAtTimeOfCache);
-				if (distSquared > m_maxRange * m_maxRange || distSquared < m_minRange * m_minRange)
+				CTransform const& transform = transformStorage[entityID];
+				CCollision const& collision = collisionStorage[entityID];
+                float range = collision.m_radius + maxRange; // Add target's radius to the range
+				float rangeSquared = range * range;
+				float distSquared = MathUtils::GetDistanceSquared2D(transform.m_pos, m_cachedLocation);
+				if (distSquared > rangeSquared || distSquared < rangeSquared)
 				{
 					continue;
 				}
@@ -330,10 +353,32 @@ AbilityCooldownComponent::AbilityCooldownComponent(AbilityCooldownComponentDef c
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float AbilityCooldownComponent::GetCooldown() const
+{
+	float cooldown = m_cooldownSeconds / (1.f + m_attackSpeedIncrease);
+    return cooldown;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityCooldownComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    if (def.m_abilityAttribute == TowerAbilityAttribute::AttackSpeed)
+    {
+		m_attackSpeedIncrease += modifier.GetValue();
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AbilityCooldownComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
-	float cooldown = m_cooldownSeconds / debugContext.m_timeDilation;
-    debugContext.m_debugString += StringUtils::StringF("Cooldown: %.3f\n", cooldown);
+	float cooldown = GetCooldown() / debugContext.m_entityTimeDilation;
+	cooldown /= debugContext.m_entityTimeDilation;
+    debugContext.m_debugString += StringUtils::StringF("Cooldown: %.3f (x%.2f)\n", cooldown, 1.f + m_attackSpeedIncrease);
 }
 
 
@@ -348,6 +393,22 @@ AbilityCritComponent::AbilityCritComponent(AbilityCritComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityCritComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    if (def.m_abilityAttribute == TowerAbilityAttribute::CritChance)
+    {
+		m_critChance += modifier.GetValue();
+    }
+    else if (def.m_abilityAttribute == TowerAbilityAttribute::CritDamage)
+    {
+		m_critMulti += modifier.GetValue();
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AbilityCritComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (m_critChance <= 0.f)
@@ -355,7 +416,7 @@ void AbilityCritComponent::AppendDebugString(EntityDebugContext& debugContext) c
         return;
 	}
     debugContext.m_debugString += StringUtils::StringF("Crit Chance: %.1f%%\n", m_critChance * 100.f);
-    debugContext.m_debugString += StringUtils::StringF("Crit Mult: %.1f\n", 2.f + m_critMulti);
+    debugContext.m_debugString += StringUtils::StringF("Crit Mult: %.1f\n", StaticGameSettings::s_baseCritMultiplier + m_critMulti);
 }
 
 
@@ -365,6 +426,19 @@ AbilityDamageComponent::AbilityDamageComponent(AbilityDamageComponentDef const& 
 {
     m_minDamage = def.m_minDamage;
 	m_maxDamage = def.m_maxDamage;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityDamageComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+	if (def.m_abilityAttribute == TowerAbilityAttribute::Damage)
+	{
+		m_damageMultiplier += modifier.GetValue();
+	}
 }
 
 
@@ -400,6 +474,19 @@ AbilityBurnComponent::AbilityBurnComponent(AbilityBurnComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityBurnComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+    if (def.m_abilityAttribute == TowerAbilityAttribute::Burn)
+    {
+        m_burnMultiplier += modifier.GetValue();
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AbilityBurnComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
 	float burn = GetBurn();
@@ -416,6 +503,19 @@ void AbilityBurnComponent::AppendDebugString(EntityDebugContext& debugContext) c
 AbilityPoisonComponent::AbilityPoisonComponent(AbilityPoisonComponentDef const& def)
 {
 	m_poison = def.m_poison;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityPoisonComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+    if (def.m_abilityAttribute == TowerAbilityAttribute::Poison)
+    {
+        m_poisonMultiplier += modifier.GetValue();
+    }
 }
 
 
@@ -442,6 +542,19 @@ AbilitySlowComponent::AbilitySlowComponent(AbilitySlowComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilitySlowComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+    if (def.m_abilityAttribute == TowerAbilityAttribute::Slow)
+    {
+        m_durationMultiplier += modifier.GetValue();
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AbilitySlowComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
 	float duration = GetDuration();
@@ -458,6 +571,19 @@ void AbilitySlowComponent::AppendDebugString(EntityDebugContext& debugContext) c
 AbilityHasteComponent::AbilityHasteComponent(AbilityHasteComponentDef const& def)
 {
 	m_duration = def.m_duration;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityHasteComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+	if (def.m_abilityAttribute == TowerAbilityAttribute::Haste)
+	{
+		m_durationMultiplier += modifier.GetValue();
+	}
 }
 
 
@@ -487,8 +613,26 @@ AbilityChainComponent::AbilityChainComponent(AbilityChainComponentDef const& def
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityChainComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+	if (def.m_abilityAttribute == TowerAbilityAttribute::NumChains)
+	{
+		int chainIncrease = MathUtils::RoundF(modifier.GetValue());
+		m_maxChains += chainIncrease;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AbilityChainComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
+	if (m_maxChains <= 0)
+	{
+		return;
+	}
     debugContext.m_debugString += StringUtils::StringF("Chain Chance: %.2f\n", m_chainChance * 100.f);
     debugContext.m_debugString += StringUtils::StringF("Max Chains: %d\n", m_maxChains);
 }
@@ -499,6 +643,20 @@ void AbilityChainComponent::AppendDebugString(EntityDebugContext& debugContext) 
 AbilityMultishotComponent::AbilityMultishotComponent(AbilityMultishotComponentDef const& def)
 {
 	m_additionalTargets = def.m_additionalTargets;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityMultishotComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+	if (def.m_abilityAttribute == TowerAbilityAttribute::Multishot)
+	{
+		int additionalTargetsIncrease = MathUtils::RoundF(modifier.GetValue());
+		m_additionalTargets += additionalTargetsIncrease;
+	}
 }
 
 
@@ -519,12 +677,21 @@ void AbilityMultishotComponent::AppendDebugString(EntityDebugContext& debugConte
 //----------------------------------------------------------------------------------------------------------------------
 AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def)
 {
-    m_damageOnHit = def.m_damageOnHit;
-	m_poisonOnHit = def.m_poisonOnHit;
-	m_burnOnHit = def.m_burnOnHit;
-	m_aoeHitOnHit = def.m_aoeHitOnHit;
-	m_aoeEffectOnHit = def.m_aoeEffectOnHit;
-	m_slowOnHit = def.m_slowOnHit;
+    m_damageOnHit       = def.m_damageOnHit.has_value() ? *def.m_damageOnHit : AbilityDamageComponent();
+	m_poisonOnHit       = def.m_poisonOnHit.has_value() ? *def.m_poisonOnHit : AbilityPoisonComponent();
+	m_burnOnHit         = def.m_burnOnHit.has_value() ? *def.m_burnOnHit : AbilityBurnComponent();
+	m_aoeHitOnHit       = def.m_aoeHitOnHit.has_value() ? *def.m_aoeHitOnHit : AbilityAoEHitComponent();
+	m_aoeEffectOnHit    = def.m_aoeEffectOnHit.has_value() ? *def.m_aoeEffectOnHit : AbilityAoEEffectComponent();
+	m_slowOnHit         = def.m_slowOnHit.has_value() ? *def.m_slowOnHit : AbilitySlowComponent();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AbilityOnHitComponent::IsRelevant() const
+{
+	bool hasPayload = m_damageOnHit.IsRelevant() || m_poisonOnHit.IsRelevant() || m_burnOnHit.IsRelevant() || m_aoeHitOnHit.IsRelevant() || m_aoeEffectOnHit.IsRelevant() || m_slowOnHit.IsRelevant();
+    return hasPayload;
 }
 
 
@@ -532,86 +699,98 @@ AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
+    if (!IsRelevant())
+    {
+        return;
+    }
+
     debugContext.m_debugString += StringUtils::StringF("---Hit---\n");
 
-	if (m_damageOnHit.has_value())
+	float minDamage = m_damageOnHit.GetMinDamage();
+	float maxDamage = m_damageOnHit.GetMaxDamage();
+	if (minDamage > 0.f || maxDamage > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF("D(%.1f-%.1f)", m_damageOnHit->GetMinDamage(), m_damageOnHit->GetMaxDamage());
+        debugContext.m_debugString += StringUtils::StringF("D(%.1f-%.1f)", minDamage, maxDamage);
 	}
 
-	if (m_burnOnHit.has_value())
+	float burn = m_burnOnHit.GetBurn();
+	if (burn > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF(" B(%.1f)", m_burnOnHit->GetBurn());
+		debugContext.m_debugString += StringUtils::StringF(" B(%.1f)", burn);
 	}
 
-	if (m_poisonOnHit.has_value())
+	float poison = m_poisonOnHit.GetPoison();
+	if (poison > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF(" P(%.1f)", m_poisonOnHit->GetPoison());
+		debugContext.m_debugString += StringUtils::StringF(" P(%.1f)", poison);
 	}
 
-	if (m_slowOnHit.has_value())
+	float slow = m_slowOnHit.GetDuration();
+	if (slow > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF(" S(%.1f)", m_slowOnHit->GetDuration());
+		debugContext.m_debugString += StringUtils::StringF(" S(%.1f)", slow);
 	}
 	debugContext.m_debugString += '\n';
 
-    if (m_aoeHitOnHit.has_value())
-    {
-        m_aoeHitOnHit->AppendDebugString(debugContext);
-    }
-    if (m_aoeEffectOnHit.has_value())
-    {
-        m_aoeEffectOnHit->AppendDebugString(debugContext);
-	}
+    m_aoeHitOnHit.AppendDebugString(debugContext);
+    m_aoeEffectOnHit.AppendDebugString(debugContext);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityOnHitComponent::ApplyModifier(TowerPayloadRunModifier const& modifier)
+void AbilityOnHitComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
-	TowerPayloadRunModifierDef const& def = modifier.GetDef();
+	m_damageOnHit.ApplyModifier(modifier);
+	m_burnOnHit.ApplyModifier(modifier);
+	m_poisonOnHit.ApplyModifier(modifier);
+	m_slowOnHit.ApplyModifier(modifier);
+	m_aoeHitOnHit.ApplyModifier(modifier);
+	m_aoeEffectOnHit.ApplyModifier(modifier);
+}
 
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Damage)
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool RolledAoEHitComponent::IsRelevant() const
+{
+	return m_radius > 0.f && m_payload.HasValue();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RolledAoEHitComponent::AppendDebugString(EntityDebugContext& debugContext) const
+{
+    if (!IsRelevant())
     {
-        if (m_damageOnHit.has_value())
-        {
-            m_damageOnHit->m_damageMultiplier += def.m_multiplierIncreaseBase;
-            m_damageOnHit->m_damageMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
+        return;
     }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Burn)
+	debugContext.m_debugString += StringUtils::StringF("---Rolled AOE Hit---\n");
+	m_payload.AppendDebugString(debugContext);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool RolledOnHitComponent::IsRelevant() const
+{
+	return m_payload.HasValue() || m_aoeHitOnHit.IsRelevant() || m_aoeEffectOnHit.IsRelevant();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RolledOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) const
+{
+    if (!IsRelevant())
     {
-        if (m_burnOnHit.has_value())
-        {
-            m_burnOnHit->m_burnMultiplier += def.m_multiplierIncreaseBase;
-            m_burnOnHit->m_burnMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
+        return;
     }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Poison)
-    {
-        if (m_poisonOnHit.has_value())
-        {
-            m_poisonOnHit->m_poisonMultiplier += def.m_multiplierIncreaseBase;
-            m_poisonOnHit->m_poisonMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Slow)
-    {
-        if (m_slowOnHit.has_value())
-        {
-            m_slowOnHit->m_durationMultiplier += def.m_multiplierIncreaseBase;
-            m_slowOnHit->m_durationMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-    if (m_aoeHitOnHit.has_value())
-    {
-        m_aoeHitOnHit->ApplyModifier(modifier);
-    }
-    if (m_aoeEffectOnHit.has_value())
-    {
-        m_aoeEffectOnHit->ApplyModifier(modifier);
-    }
+	debugContext.m_debugString += StringUtils::StringF("---Rolled On Hit---\n");
+	m_payload.AppendDebugString(debugContext);
+	m_aoeHitOnHit.AppendDebugString(debugContext);
+	m_aoeEffectOnHit.AppendDebugString(debugContext);
 }
 
 
@@ -620,11 +799,38 @@ void AbilityOnHitComponent::ApplyModifier(TowerPayloadRunModifier const& modifie
 AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def)
 {
     m_radius = def.m_radius;
-    m_damageOnHit = def.m_damageOnHit;
-    m_poisonOnHit = def.m_poisonOnHit;
-	m_burnOnHit = def.m_burnOnHit;
-	m_slowOnHit = def.m_slowOnHit;
-	m_hasteOnHit = def.m_hasteOnHit;
+    m_damageOnHit = def.m_damageOnHit.has_value() ? *def.m_damageOnHit : AbilityDamageComponent();
+    m_poisonOnHit = def.m_poisonOnHit.has_value() ? *def.m_poisonOnHit : AbilityPoisonComponent();
+	m_burnOnHit = def.m_burnOnHit.has_value() ? *def.m_burnOnHit : AbilityBurnComponent();
+	m_slowOnHit = def.m_slowOnHit.has_value() ? *def.m_slowOnHit : AbilitySlowComponent();
+	m_hasteOnHit = def.m_hasteOnHit.has_value() ? *def.m_hasteOnHit : AbilityHasteComponent();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AbilityAoEHitComponent::IsRelevant() const
+{
+	bool hasRadius = m_radius > 0.f;
+	if (!hasRadius)
+	{
+		return false;
+	}
+
+	bool hasPayload = m_damageOnHit.IsRelevant() || m_poisonOnHit.IsRelevant() || m_burnOnHit.IsRelevant() || m_slowOnHit.IsRelevant() || m_hasteOnHit.IsRelevant();
+    return hasPayload;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityAoEHitComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+    m_damageOnHit.ApplyModifier(modifier);
+	m_burnOnHit.ApplyModifier(modifier);
+	m_poisonOnHit.ApplyModifier(modifier);
+	m_slowOnHit.ApplyModifier(modifier);
+	m_hasteOnHit.ApplyModifier(modifier);
 }
 
 
@@ -632,93 +838,49 @@ AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& 
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityAoEHitComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
+    if (!IsRelevant())
+    {
+		return;
+	}   
+
     debugContext.m_debugString += StringUtils::StringF("---AOE Hit---\n");
     if (m_radius > 0.f)
     {
         debugContext.m_debugString += StringUtils::StringF("Radius: %.1f\n", m_radius);
     }
 
-    if (m_damageOnHit.has_value())
-    {
-		float minDamage = m_damageOnHit->GetMinDamage();
-		float maxDamage = m_damageOnHit->GetMaxDamage();
-		debugContext.m_debugString += StringUtils::StringF("D(%.1f-%.1f) ", minDamage, maxDamage);
-    }
-
-	if (m_poisonOnHit.has_value())
+    float minDamage = m_damageOnHit.GetMinDamage();
+    float maxDamage = m_damageOnHit.GetMaxDamage();
+	if (minDamage > 0.f || maxDamage > 0.f)
 	{
-		float poison = m_poisonOnHit->GetPoison();
+        debugContext.m_debugString += StringUtils::StringF("D(%.1f-%.1f) ", minDamage, maxDamage);
+	}
+
+	float poison = m_poisonOnHit.GetPoison();
+	if (poison > 0.f)
+	{
 		debugContext.m_debugString += StringUtils::StringF("P(%.1f) ", poison);
 	}
 
-	if (m_burnOnHit.has_value())
+	float burn = m_burnOnHit.GetBurn();
+	if (burn > 0.f)
 	{
-		float burn = m_burnOnHit->GetBurn();
 		debugContext.m_debugString += StringUtils::StringF("B(%.1f) ", burn);
 	}
 
-	if (m_slowOnHit.has_value())
+	float slow = m_slowOnHit.GetDuration();
+	if (slow > 0.f)
 	{
-		float slow = m_slowOnHit->GetDuration();
 		debugContext.m_debugString += StringUtils::StringF("S(%.1f) ", slow);
 	}
 
-	if (m_hasteOnHit.has_value())
+	float haste = m_hasteOnHit.GetDuration();
+	if (haste > 0.f)
 	{
-		float haste = m_hasteOnHit->GetDuration();
-		debugContext.m_debugString += StringUtils::StringF("H(%.1f)", haste);
+		debugContext.m_debugString += StringUtils::StringF("H(%.1f) ", haste);
 	}
 
 	debugContext.m_debugString += '\n';
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void AbilityAoEHitComponent::ApplyModifier(TowerPayloadRunModifier const& modifier)
-{
-    TowerPayloadRunModifierDef const& def = modifier.GetDef();
-
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Damage)
-    {
-        if (m_damageOnHit.has_value())
-        {
-            m_damageOnHit->m_damageMultiplier += def.m_multiplierIncreaseBase;
-            m_damageOnHit->m_damageMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Burn)
-    {
-        if (m_burnOnHit.has_value())
-        {
-            m_burnOnHit->m_burnMultiplier += def.m_multiplierIncreaseBase;
-            m_burnOnHit->m_burnMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Poison)
-    {
-        if (m_poisonOnHit.has_value())
-        {
-            m_poisonOnHit->m_poisonMultiplier += def.m_multiplierIncreaseBase;
-            m_poisonOnHit->m_poisonMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Slow)
-    {
-        if (m_slowOnHit.has_value())
-        {
-            m_slowOnHit->m_durationMultiplier += def.m_multiplierIncreaseBase;
-            m_slowOnHit->m_durationMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-	if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Haste)
-	{
-		if (m_hasteOnHit.has_value())
-		{
-			m_hasteOnHit->m_durationMultiplier += def.m_multiplierIncreaseBase;
-			m_hasteOnHit->m_durationMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-		}
-	}
 }
 
 
@@ -729,11 +891,31 @@ AbilityAoEEffectComponent::AbilityAoEEffectComponent(AbilityAoEEffectComponentDe
     m_aoeEffectDefName = def.m_aoeEffectDefName;
     m_radius = def.m_radius;
     m_durationSeconds = def.m_durationSeconds;
-    m_damagePerSecond = def.m_damagePerSecond;
-    m_poisonPerSecond = def.m_poisonPerSecond;
-	m_burnPerSecond = def.m_burnPerSecond;
-	m_slowPerSecond = def.m_slowPerSecond;
-	m_renderComp = def.m_renderDef;
+    m_damagePerSecond = def.m_damagePerSecond.has_value() ? *def.m_damagePerSecond : AbilityDamageComponent();
+    m_poisonPerSecond = def.m_poisonPerSecond.has_value() ? *def.m_poisonPerSecond : AbilityPoisonComponent();
+	m_burnPerSecond = def.m_burnPerSecond.has_value() ? *def.m_burnPerSecond : AbilityBurnComponent();
+	m_slowPerSecond = def.m_slowPerSecond.has_value() ? *def.m_slowPerSecond : AbilitySlowComponent();
+	m_hastePerSecond = def.m_hastePerSecond.has_value() ? *def.m_hastePerSecond : AbilityHasteComponent();
+	m_renderComp = def.m_renderDef.has_value() ? *def.m_renderDef : AbilityRenderComponent();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AbilityAoEEffectComponent::IsRelevant() const
+{
+	if (m_aoeEffectDefName == Name::Invalid)
+	{
+		return false;
+	}
+
+	if (m_radius <= 0.f)
+	{
+		return false;
+	}
+
+	bool hasPayload = m_damagePerSecond.IsRelevant() || m_poisonPerSecond.IsRelevant() || m_burnPerSecond.IsRelevant() || m_slowPerSecond.IsRelevant() || m_hastePerSecond.IsRelevant();
+	return hasPayload;
 }
 
 
@@ -741,6 +923,11 @@ AbilityAoEEffectComponent::AbilityAoEEffectComponent(AbilityAoEEffectComponentDe
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityAoEEffectComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
+    if (!IsRelevant())
+    {
+        return;
+    }
+
     debugContext.m_debugString += StringUtils::StringF("---AOE Effect---\n", m_radius);
     if (m_radius > 0.f)
     {
@@ -748,76 +935,49 @@ void AbilityAoEEffectComponent::AppendDebugString(EntityDebugContext& debugConte
 	}
     debugContext.m_debugString += StringUtils::StringF("Duration: %.1f\n", m_durationSeconds);	
 
-	if (m_damagePerSecond.has_value())
+    float dps = m_damagePerSecond.GetMaxDamage() * debugContext.m_entityTimeDilation;
+    if (dps > 0.f)
+    {
+        debugContext.m_debugString += StringUtils::StringF("DPS(%.1f)", dps);
+    }
+
+	float bps = m_burnPerSecond.GetBurn() * debugContext.m_entityTimeDilation;
+	if (bps > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF("DPS(%.1f)", m_damagePerSecond->GetMaxDamage() * debugContext.m_timeDilation);
+		debugContext.m_debugString += StringUtils::StringF(" BPS(%.1f)", bps);
 	}
-	if (m_burnPerSecond.has_value())
+
+	float pps = m_poisonPerSecond.GetPoison() * debugContext.m_entityTimeDilation;
+	if (pps > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF(" BPS(%.1f)", m_burnPerSecond->GetBurn() * debugContext.m_timeDilation);
+		debugContext.m_debugString += StringUtils::StringF(" PPS(%.1f)", pps);
 	}
-	if (m_poisonPerSecond.has_value())
+
+	float sps = m_slowPerSecond.GetDuration() * debugContext.m_entityTimeDilation;
+	if (sps > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF(" PPS(%.1f)", m_poisonPerSecond->GetPoison() * debugContext.m_timeDilation);
+		debugContext.m_debugString += StringUtils::StringF(" SPS(%.1f)", sps);
 	}
-	if (m_slowPerSecond.has_value())
+
+	float hps = m_hastePerSecond.GetDuration() * debugContext.m_entityTimeDilation;
+	if (hps > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF(" SPS(%.1f)", m_slowPerSecond->GetDuration() * debugContext.m_timeDilation);
+		debugContext.m_debugString += StringUtils::StringF(" HPS(%.1f)", hps);
 	}
-	if (m_hastePerSecond.has_value())
-	{
-		debugContext.m_debugString += StringUtils::StringF(" HPS(%.1f)", m_hastePerSecond->GetDuration() * debugContext.m_timeDilation);
-	}
+
 	debugContext.m_debugString += '\n';
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityAoEEffectComponent::ApplyModifier(TowerPayloadRunModifier const& modifier)
+void AbilityAoEEffectComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
-    TowerPayloadRunModifierDef const& def = modifier.GetDef();
-
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Damage)
-    {
-        if (m_damagePerSecond.has_value())
-        {
-            m_damagePerSecond->m_damageMultiplier += def.m_multiplierIncreaseBase;
-            m_damagePerSecond->m_damageMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Burn)
-    {
-        if (m_burnPerSecond.has_value())
-        {
-            m_burnPerSecond->m_burnMultiplier += def.m_multiplierIncreaseBase;
-            m_burnPerSecond->m_burnMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Poison)
-    {
-        if (m_poisonPerSecond.has_value())
-        {
-            m_poisonPerSecond->m_poisonMultiplier += def.m_multiplierIncreaseBase;
-            m_poisonPerSecond->m_poisonMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Slow)
-    {
-        if (m_slowPerSecond.has_value())
-        {
-            m_slowPerSecond->m_durationMultiplier += def.m_multiplierIncreaseBase;
-            m_slowPerSecond->m_durationMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
-    if (def.m_payloadDamageTypeFlags & (uint8_t) PayloadType::Haste)
-    {
-        if (m_hastePerSecond.has_value())
-        {
-            m_hastePerSecond->m_durationMultiplier += def.m_multiplierIncreaseBase;
-            m_hastePerSecond->m_durationMultiplier += def.m_multiplierIncreasePerLevel * (modifier.m_level - 1);
-        }
-    }
+	m_damagePerSecond.ApplyModifier(modifier);
+	m_burnPerSecond.ApplyModifier(modifier);
+	m_poisonPerSecond.ApplyModifier(modifier);
+	m_slowPerSecond.ApplyModifier(modifier);
+	m_hastePerSecond.ApplyModifier(modifier);
 }
 
 
@@ -846,7 +1006,7 @@ void Ability::AppendDebugString(EntityDebugContext& debugContext) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Ability::ApplyModifier(TowerPayloadRunModifier const&, CTags const&)
+void Ability::ApplyModifier(TowerAbilityRunModifier const&, CTags const&)
 {
 
 }
@@ -859,12 +1019,12 @@ ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def) :
     m_projectileDefName = def.m_projectileDefName;
     m_projSpeed = def.m_projSpeed;
 
-    m_cooldownComp = def.m_cooldownDef;
-    m_targetingComp = def.m_targetingDef;
-    m_critComp = def.m_critDef;
-    m_onHitComp = def.m_onHitDef;
-    m_chainComp = def.m_chainDef;
-    m_multishotComp = def.m_multishotDef;
+    m_cooldownComp = def.m_cooldownDef.has_value() ? *def.m_cooldownDef : AbilityCooldownComponent();
+    m_targetingComp = def.m_targetingDef.has_value() ? *def.m_targetingDef : AbilityPrecisionTargetingComponent();
+    m_critComp = def.m_critDef.has_value() ? *def.m_critDef : AbilityCritComponent();
+    m_onHitComp = def.m_onHitDef.has_value() ? *def.m_onHitDef : AbilityOnHitComponent();
+    m_chainComp = def.m_chainDef.has_value() ? *def.m_chainDef : AbilityChainComponent();
+    m_multishotComp = def.m_multishotDef.has_value() ? *def.m_multishotDef : AbilityMultishotComponent();
 };
 
 
@@ -873,20 +1033,17 @@ ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def) :
 void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& location, float timeDilation)
 {
     ASSERT_OR_DIE(m_abilityDef, "ProjectileHitAbility::Update - m_abilityDef is null.");
-    ASSERT_OR_DIE(m_cooldownComp.has_value(), "ProjectileHitAbility::Update - m_cooldownComp is null.");
-    ASSERT_OR_DIE(m_targetingComp.has_value(), "ProjectileHitAbility::Update - m_targetingComp is null.");
-    ASSERT_OR_DIE(m_onHitComp.has_value(), "ProjectileHitAbility::Update - m_onHitComp is null.");
 
     float deltaSeconds = context.m_deltaSeconds * timeDilation;
-    m_cooldownComp->m_accumulatedTime += deltaSeconds;
+    m_cooldownComp.m_accumulatedTime += deltaSeconds;
 
     constexpr float maxAttacksPerSecond = 1000.f;
     constexpr float minTimeBetweenAttacks = 1.f / maxAttacksPerSecond;
 
-    float timeBetweenAttacks = m_cooldownComp->m_cooldownSeconds;
+    float timeBetweenAttacks = m_cooldownComp.GetCooldown();
     timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
 
-    if (m_cooldownComp->m_accumulatedTime <= timeBetweenAttacks)
+    if (m_cooldownComp.m_accumulatedTime <= timeBetweenAttacks)
     {
         return;
     }
@@ -896,27 +1053,27 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
     RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
 
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
-    m_targetingComp->UpdateCachedTiles(context, location);
+    m_targetingComp.UpdateCachedTiles(context, location);
 
-	int maxTargets = m_multishotComp.has_value() ? 1 + m_multishotComp->m_additionalTargets : 1;
-	int maxChains = m_chainComp.has_value() ? m_chainComp->m_maxChains : 0;
-	float chainDistance = m_chainComp.has_value() ? m_chainComp->m_chainDistance : 0.f;
+	int maxTargets = m_multishotComp.m_additionalTargets + 1;
+	int maxChains = m_chainComp.m_maxChains;
+	float chainDistance = m_chainComp.m_chainDistance;
 
-    if (!m_targetingComp->FindTargets(context, maxTargets, maxChains, chainDistance))
+    if (!m_targetingComp.FindTargets(context, maxTargets, maxChains, chainDistance))
     {
         // No targets in range, clamp cooldown
-        m_cooldownComp->m_accumulatedTime = MathUtils::Clamp(m_cooldownComp->m_accumulatedTime, 0.f, timeBetweenAttacks);
+        m_cooldownComp.m_accumulatedTime = MathUtils::Clamp(m_cooldownComp.m_accumulatedTime, 0.f, timeBetweenAttacks);
         return;
     }
 
     // Shoot at targets
-    while (m_cooldownComp->m_accumulatedTime > timeBetweenAttacks)
+    while (m_cooldownComp.m_accumulatedTime > timeBetweenAttacks)
     {
-        m_cooldownComp->m_accumulatedTime -= timeBetweenAttacks;
+        m_cooldownComp.m_accumulatedTime -= timeBetweenAttacks;
 
-        for (int targetIndex = 0; targetIndex < m_targetingComp->m_targetChains.GetDimensions().x; ++targetIndex)
+        for (int targetIndex = 0; targetIndex < m_targetingComp.m_targetChains.GetDimensions().x; ++targetIndex)
         {
-            EntityID targetID = m_targetingComp->m_targetChains.Get(IntVec2(targetIndex, 0));
+            EntityID targetID = m_targetingComp.m_targetChains.Get(IntVec2(targetIndex, 0));
 
             SpawnInfo spawnInfo;
             spawnInfo.m_spawnPos = location;
@@ -934,7 +1091,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
 
             projComp.m_targetID = targetID;
             projComp.m_targetPos = std::nullopt;
-            projComp.m_accumulatedTime += m_cooldownComp->m_accumulatedTime;
+            projComp.m_accumulatedTime += m_cooldownComp.m_accumulatedTime;
             projComp.m_projSpeed = m_projSpeed * timeDilation;
             projComp.m_onHitComp = RollDamageAndEffects(rng);
         }
@@ -958,10 +1115,7 @@ void ProjectileHitAbility::CopyTransientDataTo(Ability& other) const
 {
 	ProjectileHitAbility& otherProj = static_cast<ProjectileHitAbility&>(other);
 
-    if (m_cooldownComp.has_value() && otherProj.m_cooldownComp.has_value())
-    {
-        otherProj.m_cooldownComp->m_accumulatedTime = m_cooldownComp->m_accumulatedTime;
-    }
+    otherProj.m_cooldownComp.m_accumulatedTime = m_cooldownComp.m_accumulatedTime;
 }
 
 
@@ -969,16 +1123,16 @@ void ProjectileHitAbility::CopyTransientDataTo(Ability& other) const
 //----------------------------------------------------------------------------------------------------------------------
 void ProjectileHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
 {
-    if (m_targetingComp.has_value())
+    float minRange = m_targetingComp.GetMinRange();
+    float maxRange = m_targetingComp.GetMaxRange();
+
+    if (minRange > 0.f)
     {
-        if (m_targetingComp->m_minRange > 0.f)
-        {
-            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
-        }
-        if (m_targetingComp->m_maxRange > 0.f)
-        {
-            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
-        }
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, minRange, 0.1f, 32, Rgba8::Green);
+    }
+    if (maxRange > 0.f)
+    {
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, maxRange, 0.1f, 32, Rgba8::Orange);
     }
 }
 
@@ -989,24 +1143,14 @@ void ProjectileHitAbility::AppendDebugString(EntityDebugContext& debugContext) c
 {
 	Ability::AppendDebugString(debugContext);
     debugContext.m_debugString += StringUtils::StringF("Proj Def: %s\n", m_projectileDefName.ToCStr());
-    debugContext.m_debugString += StringUtils::StringF("Proj Speed: %.1f\n", m_projSpeed * debugContext.m_timeDilation);
+    debugContext.m_debugString += StringUtils::StringF("Proj Speed: %.1f\n", m_projSpeed * debugContext.m_entityTimeDilation);
 
-    if (m_cooldownComp.has_value())     
-    {
-        m_cooldownComp->AppendDebugString(debugContext);
-    }
-    if (m_targetingComp.has_value())
-    {
-        m_targetingComp->AppendDebugString(debugContext);
-    }
-    if (m_critComp.has_value())
-    {
-        m_critComp->AppendDebugString(debugContext);
-    }
-    if (m_onHitComp.has_value())
-    {
-        m_onHitComp->AppendDebugString(debugContext);
-    }
+    m_cooldownComp.AppendDebugString(debugContext);
+    m_targetingComp.AppendDebugString(debugContext);
+    m_critComp.AppendDebugString(debugContext);
+    m_onHitComp.AppendDebugString(debugContext);
+	m_multishotComp.AppendDebugString(debugContext);
+	m_chainComp.AppendDebugString(debugContext);
 }
 
 
@@ -1016,109 +1160,93 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGene
 {
 	RolledOnHitComponent hitResult;
 
-	float critMultiplier = s_baseCritMultiplier;
+	float critMultiplier = StaticGameSettings::s_baseCritMultiplier;
     bool didCrit = false;
-    if (m_critComp.has_value())
+    if (m_critComp.CanCrit())
     {
-        AbilityCritComponent const& critComp = m_critComp.value();
         float critRoll = rng.GetRandomFloatZeroToOne();
-        critMultiplier += critComp.m_critMulti;
-        didCrit = critRoll < critComp.m_critChance;
+        critMultiplier += m_critComp.m_critMulti;
+        didCrit = critRoll < m_critComp.m_critChance;
     }
 
-    if (m_onHitComp.has_value())
+    AbilityOnHitComponent const& onHitComp = m_onHitComp;
+    HitPayload& onHitPayload = hitResult.m_payload;
+    onHitPayload.m_didCrit = didCrit;
+
+    AbilityDamageComponent const& damageComp = onHitComp.m_damageOnHit;
+    onHitPayload.m_damage = rng.GetRandomFloatInRange(damageComp.GetMinDamage(), damageComp.GetMaxDamage());
+    if (didCrit)
     {
-        AbilityOnHitComponent const& onHitComp = m_onHitComp.value();
-        HitPayload& onHitPayload = hitResult.m_payload;
-        onHitPayload.m_didCrit = didCrit;
+        onHitPayload.m_damage *= critMultiplier;
+    }
 
-        if (onHitComp.m_damageOnHit.has_value())
+    AbilityBurnComponent const& burnComp = onHitComp.m_burnOnHit;
+    onHitPayload.m_burn = burnComp.GetBurn();
+    if (didCrit)
+    {
+        onHitPayload.m_burn *= critMultiplier;
+    }
+
+    AbilityPoisonComponent const& poisonComp = onHitComp.m_poisonOnHit;
+    onHitPayload.m_poison = poisonComp.GetPoison();
+    if (didCrit)
+    {
+        onHitPayload.m_poison *= critMultiplier;
+    }
+
+    AbilitySlowComponent const& slowComp = onHitComp.m_slowOnHit;
+    onHitPayload.m_slowDuration = slowComp.GetDuration();
+
+    if (onHitComp.m_aoeHitOnHit.IsRelevant())
+    {
+        RolledAoEHitComponent aoeHitResult;
+        aoeHitResult.m_radius = onHitComp.m_aoeHitOnHit.m_radius;
+		HitPayload& aoeHitPayload = aoeHitResult.m_payload;
+        aoeHitPayload.m_didCrit = didCrit;
+
+        AbilityAoEHitComponent const& aoeHitComp = onHitComp.m_aoeHitOnHit;
+        if (aoeHitComp.m_damageOnHit.IsRelevant())
         {
-            AbilityDamageComponent const& damageComp = onHitComp.m_damageOnHit.value();
-            onHitPayload.m_damage = rng.GetRandomFloatInRange(damageComp.GetMinDamage(), damageComp.GetMaxDamage());
+            AbilityDamageComponent const& aoeDamageComp = aoeHitComp.m_damageOnHit;
+            aoeHitPayload.m_damage = rng.GetRandomFloatInRange(aoeDamageComp.GetMinDamage(), aoeDamageComp.GetMaxDamage());
             if (didCrit)
             {
-                onHitPayload.m_damage *= critMultiplier;
+                aoeHitPayload.m_damage *= critMultiplier;
             }
         }
 
-        if (onHitComp.m_burnOnHit.has_value())
+        if (aoeHitComp.m_burnOnHit.IsRelevant())
         {
-            AbilityBurnComponent const& burnComp = onHitComp.m_burnOnHit.value();
-            onHitPayload.m_burn = burnComp.GetBurn();
+            AbilityBurnComponent const& aoeBurnComp = aoeHitComp.m_burnOnHit;
+            aoeHitPayload.m_burn = aoeBurnComp.GetBurn();
             if (didCrit)
             {
-                onHitPayload.m_burn *= critMultiplier;
+                aoeHitPayload.m_burn *= critMultiplier;
             }
         }
 
-        if (onHitComp.m_poisonOnHit.has_value())
+        if (aoeHitComp.m_poisonOnHit.IsRelevant())
         {
-            AbilityPoisonComponent const& poisonComp = onHitComp.m_poisonOnHit.value();
-            onHitPayload.m_poison = poisonComp.GetPoison();
+            AbilityPoisonComponent const& aoePoisonComp = aoeHitComp.m_poisonOnHit;
+            aoeHitPayload.m_poison = aoePoisonComp.GetPoison();
             if (didCrit)
             {
-                onHitPayload.m_poison *= critMultiplier;
+                aoeHitPayload.m_poison *= critMultiplier;
             }
         }
 
-        if (onHitComp.m_slowOnHit.has_value())
+        if (aoeHitComp.m_slowOnHit.IsRelevant())
         {
-            AbilitySlowComponent const& slowComp = onHitComp.m_slowOnHit.value();
-            onHitPayload.m_slowDuration = slowComp.GetDuration();
+            AbilitySlowComponent const& aoeSlowComp = aoeHitComp.m_slowOnHit;
+            aoeHitPayload.m_slowDuration = aoeSlowComp.GetDuration();
 		}
 
-        if (onHitComp.m_aoeHitOnHit.has_value())
-        {
-            RolledAoEHitComponent aoeHitResult;
-            aoeHitResult.m_radius = onHitComp.m_aoeHitOnHit->m_radius;
-			HitPayload& aoeHitPayload = aoeHitResult.m_payload;
-            aoeHitPayload.m_didCrit = didCrit;
+		hitResult.m_aoeHitOnHit = aoeHitResult;
+    }
 
-            AbilityAoEHitComponent const& aoeHitComp = onHitComp.m_aoeHitOnHit.value();
-            if (aoeHitComp.m_damageOnHit.has_value())
-            {
-                AbilityDamageComponent const& aoeDamageComp = aoeHitComp.m_damageOnHit.value();
-                aoeHitPayload.m_damage = rng.GetRandomFloatInRange(aoeDamageComp.GetMinDamage(), aoeDamageComp.GetMaxDamage());
-                if (didCrit)
-                {
-                    aoeHitPayload.m_damage *= critMultiplier;
-                }
-            }
-
-            if (aoeHitComp.m_burnOnHit.has_value())
-            {
-                AbilityBurnComponent const& aoeBurnComp = aoeHitComp.m_burnOnHit.value();
-                aoeHitPayload.m_burn = aoeBurnComp.GetBurn();
-                if (didCrit)
-                {
-                    aoeHitPayload.m_burn *= critMultiplier;
-                }
-            }
-
-            if (aoeHitComp.m_poisonOnHit.has_value())
-            {
-                AbilityPoisonComponent const& aoePoisonComp = aoeHitComp.m_poisonOnHit.value();
-                aoeHitPayload.m_poison = aoePoisonComp.GetPoison();
-                if (didCrit)
-                {
-                    aoeHitPayload.m_poison *= critMultiplier;
-                }
-            }
-
-            if (aoeHitComp.m_slowOnHit.has_value())
-            {
-                AbilitySlowComponent const& aoeSlowComp = aoeHitComp.m_slowOnHit.value();
-                aoeHitPayload.m_slowDuration = aoeSlowComp.GetDuration();
-			}
-
-			hitResult.m_aoeHitOnHit = aoeHitResult;
-        }
-
-        if (m_onHitComp->m_aoeEffectOnHit.has_value())
-        {
-			hitResult.m_aoeEffectOnHit = m_onHitComp->m_aoeEffectOnHit.value();
-        }
+    if (onHitComp.m_aoeEffectOnHit.IsRelevant())
+    {
+		hitResult.m_aoeEffectOnHit = onHitComp.m_aoeEffectOnHit;
     }
 
 	return hitResult;
@@ -1127,20 +1255,14 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGene
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::ApplyModifier(TowerPayloadRunModifier const& modifier, CTags const& tags)
+void ProjectileHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags)
 {
-    for (auto& tag : modifier.GetDef().m_tagRequirements)
-    {
-        if (!tags.HasTag(tag))
-        {
-            return;
-        }
-    }
-
-	if (m_onHitComp.has_value())
-	{
-		m_onHitComp->ApplyModifier(modifier);
-	}
+    m_cooldownComp.ApplyModifier(modifier);
+	m_targetingComp.ApplyModifier(modifier);
+    m_critComp.ApplyModifier(modifier);
+	m_chainComp.ApplyModifier(modifier);
+	m_multishotComp.ApplyModifier(modifier);
+	m_onHitComp.ApplyModifier(modifier);
 }
 
 
@@ -1148,11 +1270,11 @@ void ProjectileHitAbility::ApplyModifier(TowerPayloadRunModifier const& modifier
 //----------------------------------------------------------------------------------------------------------------------
 AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def) : Ability(def)
 {
-	m_cooldownComp = def.m_cooldownDef;
-	m_targetingComp = def.m_targetingDef;
-	m_critComp = def.m_critDef;
-	m_aoeHitComp = def.m_aoeHitDef;
-	m_aoeEffectComp = def.m_aoeEffectDef;
+	m_cooldownComp = def.m_cooldownDef.has_value() ? AbilityCooldownComponent(def.m_cooldownDef.value()) : AbilityCooldownComponent();
+	m_targetingComp = def.m_targetingDef.has_value() ? AbilityAoETargetingComponent(def.m_targetingDef.value()) : AbilityAoETargetingComponent();
+	m_critComp = def.m_critDef.has_value() ? AbilityCritComponent(def.m_critDef.value()) : AbilityCritComponent();
+	m_aoeHitComp = def.m_aoeHitDef.has_value() ? AbilityAoEHitComponent(def.m_aoeHitDef.value()) : AbilityAoEHitComponent();
+	m_aoeEffectComp = def.m_aoeEffectDef.has_value() ? AbilityAoEEffectComponent(def.m_aoeEffectDef.value()) : AbilityAoEEffectComponent();
 }
 
 
@@ -1161,20 +1283,17 @@ AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def) : Ability(def)
 void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location, float timeDilation /*= 1.f*/)
 {
     ASSERT_OR_DIE(m_abilityDef, "ProjectileHitAbility::Update - m_abilityDef is null.");
-    ASSERT_OR_DIE(m_cooldownComp.has_value(), "ProjectileHitAbility::Update - m_cooldownComp is null.");
-    ASSERT_OR_DIE(m_targetingComp.has_value(), "ProjectileHitAbility::Update - m_targetingComp is null.");
-    ASSERT_OR_DIE(m_aoeHitComp.has_value(), "ProjectileHitAbility::Update - m_aoeHitComp is null.");
 
 	float deltaSeconds = context.m_deltaSeconds * timeDilation;
-    m_cooldownComp->m_accumulatedTime += deltaSeconds;
+    m_cooldownComp.m_accumulatedTime += deltaSeconds;
 
     constexpr float maxAttacksPerSecond = 1000.f;
     constexpr float minTimeBetweenAttacks = 1.f / maxAttacksPerSecond;
 
-    float timeBetweenAttacks = m_cooldownComp->m_cooldownSeconds;
+    float timeBetweenAttacks = m_cooldownComp.GetCooldown();
     timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
 
-    if (m_cooldownComp->m_accumulatedTime <= timeBetweenAttacks)
+    if (m_cooldownComp.m_accumulatedTime <= timeBetweenAttacks)
     {
         return;
     }
@@ -1192,26 +1311,28 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location, f
 	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
 
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
-	m_targetingComp->UpdateCachedTiles(context, location);
+	m_targetingComp.UpdateCachedTiles(context, location);
 
-	if (!m_targetingComp->FindTargets(context))
+	float maxRange = m_targetingComp.GetMaxRange();
+
+	if (!m_targetingComp.FindTargets(context))
     {
         // No targets in range, clamp cooldown
-        m_cooldownComp->m_accumulatedTime = MathUtils::Clamp(m_cooldownComp->m_accumulatedTime, 0.f, timeBetweenAttacks);
+        m_cooldownComp.m_accumulatedTime = MathUtils::Clamp(m_cooldownComp.m_accumulatedTime, 0.f, timeBetweenAttacks);
         return;
     }
 
-    while (m_cooldownComp->m_accumulatedTime > timeBetweenAttacks)
+    while (m_cooldownComp.m_accumulatedTime > timeBetweenAttacks)
     {
-        m_cooldownComp->m_accumulatedTime -= timeBetweenAttacks;
+        m_cooldownComp.m_accumulatedTime -= timeBetweenAttacks;
 
-        if (m_aoeEffectComp.has_value())
+        if (m_aoeEffectComp.IsRelevant())
         {
             SpawnInfo aoeEffectSpawnInfo;
             aoeEffectSpawnInfo.m_spawnPos = location;
-            aoeEffectSpawnInfo.m_spawnLifetime = m_aoeEffectComp->m_durationSeconds;
-            aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp->m_aoeEffectDefName);
-            aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange; // Initial radius is assumed to be 1
+            aoeEffectSpawnInfo.m_spawnLifetime = m_aoeEffectComp.m_durationSeconds;
+            aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp.m_aoeEffectDefName);
+            aoeEffectSpawnInfo.m_spawnScale = maxRange; // Initial radius is assumed to be 1
 
             EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 
@@ -1219,7 +1340,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location, f
             if (context.HasComponents(aoeEffect, collisionEffectBit))
             {
                 CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
-                aoeEffectComp.InitializeFromAoEEffect(m_aoeEffectComp.value());
+                aoeEffectComp.InitializeFromAoEEffect(m_aoeEffectComp);
             }
 		}
 
@@ -1229,7 +1350,7 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location, f
             continue;
         }
 
-        for (EntityID entityID : m_targetingComp->m_targets)
+        for (EntityID entityID : m_targetingComp.m_targets)
         {
             if (payload.IsRelevantToHealth() && context.HasComponents(entityID, healthBit))
             {
@@ -1264,10 +1385,7 @@ void AoEHitAbility::CopyTransientDataTo(Ability& other) const
 {
 	AoEHitAbility& otherAoE = static_cast<AoEHitAbility&>(other);
 
-	if (m_cooldownComp.has_value() && otherAoE.m_cooldownComp.has_value())
-	{
-		otherAoE.m_cooldownComp->m_accumulatedTime = m_cooldownComp->m_accumulatedTime;
-	}
+	otherAoE.m_cooldownComp.m_accumulatedTime = m_cooldownComp.m_accumulatedTime;
 }
 
 
@@ -1275,16 +1393,15 @@ void AoEHitAbility::CopyTransientDataTo(Ability& other) const
 //----------------------------------------------------------------------------------------------------------------------
 void AoEHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
 {
-    if (m_targetingComp.has_value())
+    float minRange = m_targetingComp.GetMinRange();
+    float maxRange = m_targetingComp.GetMaxRange();
+    if (minRange > 0.f)
     {
-        if (m_targetingComp->m_minRange > 0.f)
-        {
-            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
-        }
-        if (m_targetingComp->m_maxRange > 0.f)
-        {
-            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
-        }
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, minRange, 0.1f, 32, Rgba8::Green);
+    }
+    if (maxRange > 0.f)
+    {
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, maxRange, 0.1f, 32, Rgba8::Orange);
     }
 }
 
@@ -1294,27 +1411,12 @@ void AoEHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) c
 void AoEHitAbility::AppendDebugString(EntityDebugContext& debugContext) const
 {
     Ability::AppendDebugString(debugContext);
-        
-    if (m_cooldownComp.has_value())
-    {
-        m_cooldownComp->AppendDebugString(debugContext);
-    }
-    if (m_targetingComp.has_value())
-    {
-        m_targetingComp->AppendDebugString(debugContext);
-    }
-    if (m_critComp.has_value())
-    {
-        m_critComp->AppendDebugString(debugContext);
-    }
-    if (m_aoeHitComp.has_value())
-    {
-        m_aoeHitComp->AppendDebugString(debugContext);
-    }
-    if (m_aoeEffectComp.has_value())
-    {
-        m_aoeEffectComp->AppendDebugString(debugContext);
-	}
+
+	m_cooldownComp.AppendDebugString(debugContext);
+	m_targetingComp.AppendDebugString(debugContext);
+	m_critComp.AppendDebugString(debugContext);
+	m_aoeHitComp.AppendDebugString(debugContext);
+	m_aoeEffectComp.AppendDebugString(debugContext);
 }
 
 
@@ -1324,23 +1426,23 @@ HitPayload AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
 {
 	HitPayload payload;
 
-    float critMultiplier = s_baseCritMultiplier;
+    float critMultiplier = StaticGameSettings::s_baseCritMultiplier;
     bool didCrit = false;
-    if (m_critComp.has_value())
+    if (m_critComp.CanCrit())
     {
-        AbilityCritComponent const& critComp = m_critComp.value();
+        AbilityCritComponent const& critComp = m_critComp;
         float critRoll = rng.GetRandomFloatZeroToOne();
         critMultiplier += critComp.m_critMulti;
         didCrit = critRoll < critComp.m_critChance;
 		payload.m_didCrit = didCrit;
     }
 
-    if (m_aoeHitComp.has_value())
+    if (m_aoeHitComp.IsRelevant())
     {
-        AbilityAoEHitComponent const& aoeHitComp = m_aoeHitComp.value();
-        if (aoeHitComp.m_damageOnHit.has_value())
+        AbilityAoEHitComponent const& aoeHitComp = m_aoeHitComp;
+        if (aoeHitComp.m_damageOnHit.IsRelevant())
         {
-            AbilityDamageComponent const& damageComp = aoeHitComp.m_damageOnHit.value();
+            AbilityDamageComponent const& damageComp = aoeHitComp.m_damageOnHit;
             payload.m_damage = rng.GetRandomFloatInRange(damageComp.GetMinDamage(), damageComp.GetMaxDamage());
             if (didCrit)
             {
@@ -1348,9 +1450,9 @@ HitPayload AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
             }
         }
 
-        if (aoeHitComp.m_burnOnHit.has_value())
+        if (aoeHitComp.m_burnOnHit.IsRelevant())
         {
-            AbilityBurnComponent const& burnComp = aoeHitComp.m_burnOnHit.value();
+            AbilityBurnComponent const& burnComp = aoeHitComp.m_burnOnHit;
             payload.m_burn = burnComp.m_burn;
             if (didCrit)
             {
@@ -1358,9 +1460,9 @@ HitPayload AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
             }
         }
 
-        if (aoeHitComp.m_poisonOnHit.has_value())
+        if (aoeHitComp.m_poisonOnHit.IsRelevant())
         {
-            AbilityPoisonComponent const& poisonComp = aoeHitComp.m_poisonOnHit.value();
+            AbilityPoisonComponent const& poisonComp = aoeHitComp.m_poisonOnHit;
             payload.m_poison = poisonComp.m_poison;
             if (didCrit)
             {
@@ -1368,15 +1470,15 @@ HitPayload AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
             }
         }
 
-        if (aoeHitComp.m_slowOnHit.has_value())
+        if (aoeHitComp.m_slowOnHit.IsRelevant())
         {
-            AbilitySlowComponent const& slowComp = aoeHitComp.m_slowOnHit.value();
+            AbilitySlowComponent const& slowComp = aoeHitComp.m_slowOnHit;
             payload.m_slowDuration = slowComp.m_duration;
 		}
 
-        if (aoeHitComp.m_hasteOnHit.has_value())
+        if (aoeHitComp.m_hasteOnHit.IsRelevant())
         {
-			AbilityHasteComponent const& hasteComp = aoeHitComp.m_hasteOnHit.value();
+			AbilityHasteComponent const& hasteComp = aoeHitComp.m_hasteOnHit;
 			payload.m_hasteDuration = hasteComp.m_duration;
         }
     }
@@ -1389,8 +1491,8 @@ HitPayload AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
 //----------------------------------------------------------------------------------------------------------------------
 PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def) : Ability(def)
 {
-	m_targetingComp = def.m_targetingDef;
-	m_aoeEffectComp = def.m_aoeEffectDef;
+	m_targetingComp = def.m_targetingDef.has_value() ? *def.m_targetingDef : AbilityAoETargetingComponent();
+	m_aoeEffectComp = def.m_aoeEffectDef.has_value() ? *def.m_aoeEffectDef : AbilityAoEEffectComponent();
 }
 
 
@@ -1411,21 +1513,21 @@ void PassiveAoEAbility::Shutdown(SystemContext const& context)
 void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& location, float timeDilation)
 {
     ASSERT_OR_DIE(m_abilityDef, "PassiveAoEAbility::Update - m_abilityDef is null.");
-    ASSERT_OR_DIE(m_targetingComp.has_value(), "PassiveAoEAbility::Update - m_targetingComp is null.");
-    ASSERT_OR_DIE(m_aoeEffectComp.has_value(), "PassiveAoEAbility::Update - m_aoeEffectComp is null.");
 
     // Write Dependencies
 	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
 
 	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
 
+	float maxRange = m_targetingComp.GetMaxRange();
+
     if (m_activeAoEEffect == EntityID::Invalid)
     {
         SpawnInfo aoeEffectSpawnInfo;
         aoeEffectSpawnInfo.m_spawnPos = location;
         aoeEffectSpawnInfo.m_spawnLifetime = -1.f; // Infinite bc this is a passive ability
-        aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp->m_aoeEffectDefName);
-        aoeEffectSpawnInfo.m_spawnScale = m_targetingComp->m_maxRange;
+        aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp.m_aoeEffectDefName);
+        aoeEffectSpawnInfo.m_spawnScale = maxRange;
 
         m_activeAoEEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 
@@ -1435,7 +1537,7 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
             if (context.HasComponents(m_activeAoEEffect, collisionEffectBit))
             {
 				CCollisionEffect& aoeEffectComp = collisionEffectStorage[m_activeAoEEffect];
-				aoeEffectComp.InitializeFromAoEEffect(m_aoeEffectComp.value());
+				aoeEffectComp.InitializeFromAoEEffect(m_aoeEffectComp);
             }
 		}
     }
@@ -1472,16 +1574,15 @@ void PassiveAoEAbility::CopyTransientDataTo(Ability&) const
 //----------------------------------------------------------------------------------------------------------------------
 void PassiveAoEAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
 {
-    if (m_targetingComp.has_value())
+    float minRange = m_targetingComp.GetMinRange();
+    float maxRange = m_targetingComp.GetMaxRange();
+    if (minRange > 0.f)
     {
-        if (m_targetingComp->m_minRange > 0.f)
-        {
-            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
-        }
-        if (m_targetingComp->m_maxRange > 0.f)
-        {
-            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
-        }
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, minRange, 0.1f, 32, Rgba8::Green);
+    }
+    if (maxRange > 0.f)
+    {
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, maxRange, 0.1f, 32, Rgba8::Orange);
     }
 }
 
@@ -1492,29 +1593,17 @@ void PassiveAoEAbility::AppendDebugString(EntityDebugContext& debugContext) cons
 {
     Ability::AppendDebugString(debugContext);
 
-    if (m_aoeEffectComp.has_value())
-    {
-        m_aoeEffectComp->AppendDebugString(debugContext);
-	}
+	m_targetingComp.AppendDebugString(debugContext);
+    m_aoeEffectComp.AppendDebugString(debugContext);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::ApplyModifier(TowerPayloadRunModifier const& modifier, CTags const& tags)
+void PassiveAoEAbility::ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags)
 {
-	for (auto& tag : modifier.GetDef().m_tagRequirements)
-	{
-		if (!tags.HasTag(tag))
-		{
-			return;
-		}
-	}
-
-	if (m_aoeEffectComp.has_value())
-	{
-		m_aoeEffectComp->ApplyModifier(modifier);
-	}
+	m_targetingComp.ApplyModifier(modifier);
+    m_aoeEffectComp.ApplyModifier(modifier);
 }
 
 
@@ -1531,11 +1620,11 @@ AbilityRenderComponent::AbilityRenderComponent(AbilityRenderComponentDef const& 
 //----------------------------------------------------------------------------------------------------------------------
 LaserAbility::LaserAbility(LaserAbilityDef const& def) : Ability(def)
 {
-    m_targetingComp = def.m_targetingDef;
-	m_onHitComp = def.m_onHitDef;
-	m_renderComp = def.m_renderDef;
-	m_chainComp = def.m_chainDef;
-	m_multishotComp = def.m_multishotDef;
+    m_targetingComp = def.m_targetingDef.has_value() ? *def.m_targetingDef : AbilityPrecisionTargetingComponent();
+	m_onHitComp = def.m_onHitDef.has_value() ? *def.m_onHitDef : AbilityOnHitComponent();
+	m_renderComp = def.m_renderDef.has_value() ? *def.m_renderDef : AbilityRenderComponent();
+	m_chainComp = def.m_chainDef.has_value() ? *def.m_chainDef : AbilityChainComponent();
+	m_multishotComp = def.m_multishotDef.has_value() ? *def.m_multishotDef : AbilityMultishotComponent();
 }
 
 
@@ -1544,8 +1633,6 @@ LaserAbility::LaserAbility(LaserAbilityDef const& def) : Ability(def)
 void LaserAbility::Update(SystemContext const& context, Vec2 const& location, float timeDilation)
 {
 	ASSERT_OR_DIE(m_abilityDef, "LaserAbility::Update - m_abilityDef is null.");
-	ASSERT_OR_DIE(m_targetingComp.has_value(), "LaserAbility::Update - m_targetingComp is null.");
-	ASSERT_OR_DIE(m_onHitComp.has_value(), "LaserAbility::Update - m_onHitComp is null.");
 
 	float deltaSeconds = context.m_deltaSeconds * timeDilation;
     if (deltaSeconds == 0.f)
@@ -1557,26 +1644,26 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
     BitMask timeBit = context.GetComponentBitMask<CTime>();
 
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
-    m_targetingComp->UpdateCachedTiles(context, location);
+    m_targetingComp.UpdateCachedTiles(context, location);
 
-    int maxTargets = m_multishotComp.has_value() ? 1 + m_multishotComp->m_additionalTargets : 1;
-    int maxChains = m_chainComp.has_value() ? m_chainComp->m_maxChains : 0;
-    float chainDistance = m_chainComp.has_value() ? m_chainComp->m_chainDistance : 0.f;
+    int maxTargets = m_multishotComp.m_additionalTargets + 1;
+    int maxChains = m_chainComp.m_maxChains;
+    float chainDistance = m_chainComp.m_chainDistance;
 
-    if (!m_targetingComp->FindTargets(context, maxTargets, maxChains, chainDistance))
+    if (!m_targetingComp.FindTargets(context, maxTargets, maxChains, chainDistance))
     {
         return;
     }
 
     HitPayload const payload = RollDamageAndEffects(deltaSeconds);
 
-    for (int targetIndex = 0; targetIndex < m_targetingComp->m_targetChains.GetDimensions().x; ++targetIndex)
+    for (int targetIndex = 0; targetIndex < m_targetingComp.m_targetChains.GetDimensions().x; ++targetIndex)
     {
         float chainPayloadMulti = 1.f;
 
-        for (int chainIndex = 0; chainIndex < m_targetingComp->m_targetChains.GetDimensions().y; ++chainIndex)
+        for (int chainIndex = 0; chainIndex < m_targetingComp.m_targetChains.GetDimensions().y; ++chainIndex)
         {
-            EntityID target = m_targetingComp->m_targetChains.Get(IntVec2(targetIndex, chainIndex));
+            EntityID target = m_targetingComp.m_targetChains.Get(IntVec2(targetIndex, chainIndex));
             if (target == EntityID::Invalid)
             {
                 break;
@@ -1585,10 +1672,7 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
 			HitPayload chainPayload = payload;
             chainPayload *= chainPayloadMulti;
 
-            if (m_chainComp.has_value())
-            {
-                chainPayloadMulti *= m_chainComp->m_chainPayloadMulti;
-            }
+            chainPayloadMulti *= m_chainComp.m_chainPayloadMulti;
 
             if (chainPayload.IsRelevantToHealth() && context.HasComponentsUnsafe(target.GetIndex(), healthBit))
             {
@@ -1602,21 +1686,21 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
                 timeComp.m_remainingSlowDuration += chainPayload.m_slowDuration;
             }
 
-            if (m_onHitComp->m_aoeEffectOnHit.has_value())
+            if (m_onHitComp.m_aoeEffectOnHit.IsRelevant())
             {
                 CTransform const& targetTransform = *context.GetComponentConst<CTransform>(target);
 
                 SpawnInfo aoeEffectSpawnInfo;
                 aoeEffectSpawnInfo.m_spawnPos = targetTransform.m_pos;
-                aoeEffectSpawnInfo.m_spawnLifetime = m_onHitComp->m_aoeEffectOnHit->m_durationSeconds;
-                aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_onHitComp->m_aoeEffectOnHit->m_aoeEffectDefName);
-                aoeEffectSpawnInfo.m_spawnScale = m_onHitComp->m_aoeEffectOnHit->m_radius;
+                aoeEffectSpawnInfo.m_spawnLifetime = m_onHitComp.m_aoeEffectOnHit.m_durationSeconds;
+                aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_onHitComp.m_aoeEffectOnHit.m_aoeEffectDefName);
+                aoeEffectSpawnInfo.m_spawnScale = m_onHitComp.m_aoeEffectOnHit.m_radius;
 
                 EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
                 if (context.IsValid(aoeEffect))
                 {
                     CCollisionEffect& aoeEffectComp = *context.GetComponent<CCollisionEffect>(aoeEffect);
-                    aoeEffectComp.InitializeFromAoEEffect(m_onHitComp->m_aoeEffectOnHit.value());
+                    aoeEffectComp.InitializeFromAoEEffect(m_onHitComp.m_aoeEffectOnHit);
                 }
             }
 		}
@@ -1628,21 +1712,19 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
 //----------------------------------------------------------------------------------------------------------------------
 void LaserAbility::Render(SystemContext const& context, Vec2 const& location) const
 {
-	ASSERT_OR_DIE(m_renderComp.has_value(), "LaserAbility::Render - m_renderComp is null.");
-
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
 	Renderer& renderer = *scRenderer.GetRenderer();
 
     VertexBuffer& vbo = *renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
     vbo.ClearVerts();
 
-    for (int targetIndex = 0; targetIndex < m_targetingComp->m_targetChains.GetDimensions().x; ++targetIndex)
+    for (int targetIndex = 0; targetIndex < m_targetingComp.m_targetChains.GetDimensions().x; ++targetIndex)
     {
         Vec2 currentChainStartLocation = location;
 
-        for (int chainIndex = 0; chainIndex < m_targetingComp->m_targetChains.GetDimensions().y; ++chainIndex)
+        for (int chainIndex = 0; chainIndex < m_targetingComp.m_targetChains.GetDimensions().y; ++chainIndex)
         {
-            EntityID target = m_targetingComp->m_targetChains.Get(IntVec2(targetIndex, chainIndex));
+            EntityID target = m_targetingComp.m_targetChains.Get(IntVec2(targetIndex, chainIndex));
             if (!context.IsValid(target))
             {
                 continue;
@@ -1650,7 +1732,7 @@ void LaserAbility::Render(SystemContext const& context, Vec2 const& location) co
 
             if (CTransform const* transform = context.GetComponent<CTransform>(target))
             {
-                VertexUtils::AddVertsForLine2D(vbo, currentChainStartLocation, transform->m_pos, 0.25f, m_renderComp->m_tint, m_renderComp->m_depth);
+                VertexUtils::AddVertsForLine2D(vbo, currentChainStartLocation, transform->m_pos, 0.25f, m_renderComp.m_tint, m_renderComp.m_depth);
                 currentChainStartLocation = transform->m_pos;
             }
         }
@@ -1684,17 +1766,16 @@ void LaserAbility::CopyTransientDataTo(Ability&) const
 //----------------------------------------------------------------------------------------------------------------------
 void LaserAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
 {
-    if (m_targetingComp.has_value())
+    float minRange = m_targetingComp.GetMinRange();
+    float maxRange = m_targetingComp.GetMaxRange();
+    if (minRange > 0.f)
     {
-        if (m_targetingComp->m_minRange > 0.f)
-        {
-            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_minRange, 0.1f, 32, Rgba8::Green);
-        }
-        if (m_targetingComp->m_maxRange > 0.f)
-        {
-            VertexUtils::AddVertsForWireDisc2D(out_vbo, location, m_targetingComp->m_maxRange, 0.1f, 32, Rgba8::Orange);
-        }
-	}
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, minRange, 0.1f, 32, Rgba8::Green);
+    }
+    if (maxRange > 0.f)
+    {
+        VertexUtils::AddVertsForWireDisc2D(out_vbo, location, maxRange, 0.1f, 32, Rgba8::Orange);
+    }
 }
 
 
@@ -1704,14 +1785,10 @@ void LaserAbility::AppendDebugString(EntityDebugContext& debugContext) const
 {
     Ability::AppendDebugString(debugContext);
 
-    if (m_targetingComp.has_value())
-    {
-        m_targetingComp->AppendDebugString(debugContext);
-	}
-    if (m_onHitComp.has_value())
-    {
-        m_onHitComp->AppendDebugString(debugContext);
-    }
+    m_targetingComp.AppendDebugString(debugContext);    
+    m_onHitComp.AppendDebugString(debugContext);
+	m_chainComp.AppendDebugString(debugContext);
+	m_multishotComp.AppendDebugString(debugContext);
 }
 
 
@@ -1721,10 +1798,10 @@ HitPayload LaserAbility::RollDamageAndEffects(float deltaSeconds) const
 {
     HitPayload result;
     result.m_didCrit = false;
-	result.m_damage = m_onHitComp.has_value() && m_onHitComp->m_damageOnHit.has_value() ? m_onHitComp->m_damageOnHit->GetMaxDamage() : 0.f;
-    result.m_burn = m_onHitComp.has_value() && m_onHitComp->m_burnOnHit.has_value() ? m_onHitComp->m_burnOnHit->GetBurn() : 0.f;
-    result.m_poison = m_onHitComp.has_value() && m_onHitComp->m_poisonOnHit.has_value() ? m_onHitComp->m_poisonOnHit->GetPoison() : 0.f;
-    result.m_slowDuration = m_onHitComp.has_value() && m_onHitComp->m_slowOnHit.has_value() ? m_onHitComp->m_slowOnHit->GetDuration() : 0.f;
+	result.m_damage = m_onHitComp.m_damageOnHit.GetMaxDamage();
+    result.m_burn = m_onHitComp.m_burnOnHit.GetBurn();
+    result.m_poison = m_onHitComp.m_poisonOnHit.GetPoison();
+    result.m_slowDuration = m_onHitComp.m_slowOnHit.GetDuration();
     result *= deltaSeconds;
 	return result;
 }

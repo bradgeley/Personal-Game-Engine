@@ -45,9 +45,9 @@ void SRenderCollisionEffects::Run(SystemContext const& context) const
 	for (auto it = context.Iterate<CCollisionEffect, CCollision, CTransform>(); it.IsValid(); ++it)
 	{
 		CCollisionEffect const& collisionEffect = collisionEffectStorage[it];
-        if (!collisionEffect.m_shouldRender)
-        {
-            continue;
+		if (collisionEffect.m_tint.a == 0)
+		{
+			continue;
 		}
 
 		CCollision const& collision = collisionStorage[it];

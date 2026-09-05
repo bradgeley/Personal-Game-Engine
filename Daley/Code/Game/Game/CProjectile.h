@@ -32,5 +32,5 @@ public:
     float m_accumulatedTime = 0.f;
     float m_projSpeed = 1.f;
 
-    std::optional<RolledOnHitComponent> m_onHitComp;
+    RolledOnHitComponent m_onHitComp;
 };

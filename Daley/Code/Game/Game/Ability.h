@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "EntityDebugContext.h"
+#include "GameCommon.h"
 #include "HitPayload.h"
 #include "Engine/Core/Name.h"
 #include "Engine/ECS/EntityID.h"
@@ -8,7 +9,6 @@
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/Rgba8.h"
-#include <optional>
 #include <set>
 #include <vector>
 
@@ -36,7 +36,7 @@ struct LaserAbilityDef;
 struct PassiveAoEAbilityDef;
 struct ProjectileHitAbilityDef;
 struct SystemContext;
-struct TowerPayloadRunModifier;
+struct TowerAbilityRunModifier;
 struct Vec2;
 class RandomNumberGenerator;
 class VertexBuffer;
@@ -59,12 +59,17 @@ public:
 	AbilityCooldownComponent() = default;
 	AbilityCooldownComponent(AbilityCooldownComponentDef const& def);
 
+	float GetCooldown() const;
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_cooldownSeconds = 0.f;
 	float m_accumulatedTime = 0.f;
+	float m_attackSpeedIncrease = 0.f;
 };
 
 
@@ -77,8 +82,12 @@ public:
 	AbilityTargetingComponent() = default;
 	AbilityTargetingComponent(AbilityTargetingComponentDef const& def);
 
-	bool NeedsCacheUpdate(Vec2 const& location) const;
-	bool UpdateCachedTiles(SystemContext const& context, Vec2 const& location);
+	float GetMinRange() const { return m_minRange; } // Min range not affected by multipliers
+	float GetMaxRange() const { return m_maxRange * m_rangeMultiplier; }
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+
+	void UpdateCachedTiles(SystemContext const& context, Vec2 const& location);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -86,13 +95,13 @@ public:
 
 	float m_minRange = 0.f;
 	float m_maxRange = 0.f;
+	float m_rangeMultiplier = 1.f;
 
 	uint8_t m_abilityTargetFlags = 0;
 	AbilityTargetingMode m_targetingMode = AbilityTargetingMode::ClosestToGoal;
 
-	float m_minRangeAtTimeOfCache = -1.f;
-	float m_maxRangeAtTimeOfCache = -1.f;
-	Vec2 m_locationAtTimeOfCache = Vec2::ZeroVector;
+	uint8_t m_needsCacheUpdate = 1;
+	Vec2 m_cachedLocation = Vec2::ZeroVector;
 	std::vector<IntVec2> m_cachedTilesInRange;
 };
 
@@ -103,6 +112,7 @@ struct AbilityAoETargetingComponent : public AbilityTargetingComponent
 {
 public:
 
+	AbilityAoETargetingComponent() = default;
 	AbilityAoETargetingComponent(AbilityTargetingComponentDef const& def);
 
 	bool FindTargets(SystemContext const& context, int maxTargets = -1);
@@ -118,7 +128,8 @@ public:
 struct AbilityPrecisionTargetingComponent : public AbilityTargetingComponent
 {
 public:
-
+	
+	AbilityPrecisionTargetingComponent() = default;
 	AbilityPrecisionTargetingComponent(AbilityTargetingComponentDef const& def);
 
 	bool FindTargets(SystemContext const& context, int maxTargets = 1, int maxChains = 0, float maxChainDistance = 1.f);
@@ -139,6 +150,10 @@ public:
 	AbilityCritComponent() = default;
 	AbilityCritComponent(AbilityCritComponentDef const& def);
 
+	bool CanCrit() const { return m_critChance > 0.f; }
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
@@ -157,8 +172,12 @@ public:
 	AbilityDamageComponent() = default;
 	AbilityDamageComponent(AbilityDamageComponentDef const& def);
 
+	bool IsRelevant() const { return GetMaxDamage() > 0.f; }
+
 	float GetMinDamage() const { return m_minDamage * m_damageMultiplier; }
 	float GetMaxDamage() const { return m_maxDamage * m_damageMultiplier; }
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -179,7 +198,11 @@ public:
 	AbilityBurnComponent() = default;
 	AbilityBurnComponent(AbilityBurnComponentDef const& def);
 
+	bool IsRelevant() const { return GetBurn() > 0.f; }
+
 	float GetBurn() const { return m_burn * m_burnMultiplier; }
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -199,7 +222,11 @@ public:
 	AbilityPoisonComponent() = default;
 	AbilityPoisonComponent(AbilityPoisonComponentDef const& def);
 
+	bool IsRelevant() const { return GetPoison() > 0.f; }
+
 	float GetPoison() const { return m_poison * m_poisonMultiplier; }
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -219,7 +246,11 @@ public:
 	AbilitySlowComponent() = default;
 	AbilitySlowComponent(AbilitySlowComponentDef const& def);
 
+	bool IsRelevant() const { return GetDuration() > 0.f; }
+
 	float GetDuration() const { return m_duration * m_durationMultiplier; }
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -239,7 +270,11 @@ public:
 	AbilityHasteComponent() = default;
 	AbilityHasteComponent(AbilityHasteComponentDef const& def);
 
+	bool IsRelevant() const { return GetDuration() > 0.f; }
+
 	float GetDuration() const { return m_duration * m_durationMultiplier; }
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -259,13 +294,17 @@ public:
 	AbilityChainComponent() = default;
 	AbilityChainComponent(AbilityChainComponentDef const& def);
 
+	bool IsRelevant() const { return m_maxChains > 0; }
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
-	float m_chainChance	= 0.f;
-	float m_chainDistance = 3.f;
-	float m_chainPayloadMulti = 1.f;
+	float m_chainChance	= StaticGameSettings::s_baseChainChance;
+	float m_chainDistance = StaticGameSettings::s_baseChainDistance;
+	float m_chainPayloadMulti = StaticGameSettings::s_baseChainPayloadMulti;
 	int	m_maxChains	= 0;
 };
 
@@ -279,11 +318,15 @@ public:
 	AbilityMultishotComponent() = default;
 	AbilityMultishotComponent(AbilityMultishotComponentDef const& def);
 
+	bool IsRelevant() const { return m_additionalTargets > 0; }
+
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
-	int m_additionalTargets = 1;
+	int m_additionalTargets = 0;
 };
 
 
@@ -314,18 +357,20 @@ public:
 	AbilityAoEHitComponent() = default;
 	AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def);
 
-	void AppendDebugString(EntityDebugContext& debugContext) const;
+	bool IsRelevant() const;
 
-	void ApplyModifier(TowerPayloadRunModifier const& modifier);
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_radius = 0.f;
-	std::optional<AbilityDamageComponent>	m_damageOnHit;
-	std::optional<AbilityPoisonComponent>	m_poisonOnHit;
-	std::optional<AbilityBurnComponent>		m_burnOnHit;
-	std::optional<AbilitySlowComponent>		m_slowOnHit;
-	std::optional<AbilityHasteComponent>	m_hasteOnHit;
+	AbilityDamageComponent m_damageOnHit;
+	AbilityPoisonComponent m_poisonOnHit;
+	AbilityBurnComponent m_burnOnHit;
+	AbilitySlowComponent m_slowOnHit;
+	AbilityHasteComponent m_hasteOnHit;
 };
 
 
@@ -338,21 +383,23 @@ public:
 	AbilityAoEEffectComponent() = default;
 	AbilityAoEEffectComponent(AbilityAoEEffectComponentDef const& def);
 
+	bool IsRelevant() const;
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	void ApplyModifier(TowerPayloadRunModifier const& modifier);
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 public:
 
 	Name m_aoeEffectDefName = Name::Invalid;
 	float m_radius = 0.f;
 	float m_durationSeconds = 0.f;
-	std::optional<AbilityDamageComponent>	m_damagePerSecond;
-	std::optional<AbilityPoisonComponent>	m_poisonPerSecond;
-	std::optional<AbilityBurnComponent>		m_burnPerSecond;
-	std::optional<AbilitySlowComponent>		m_slowPerSecond;
-	std::optional<AbilityHasteComponent>	m_hastePerSecond;	
-	std::optional<AbilityRenderComponent>	m_renderComp;
+	AbilityDamageComponent	m_damagePerSecond;
+	AbilityPoisonComponent	m_poisonPerSecond;
+	AbilityBurnComponent	m_burnPerSecond;
+	AbilitySlowComponent	m_slowPerSecond;
+	AbilityHasteComponent	m_hastePerSecond;	
+	AbilityRenderComponent	m_renderComp;
 };
 
 
@@ -365,18 +412,20 @@ public:
 	AbilityOnHitComponent() = default;
 	AbilityOnHitComponent(AbilityOnHitComponentDef const& def);
 
+	bool IsRelevant() const;
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	void ApplyModifier(TowerPayloadRunModifier const& modifier);
+	void ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 public:
 
-	std::optional<AbilityDamageComponent>		m_damageOnHit;
-	std::optional<AbilityPoisonComponent>		m_poisonOnHit;
-	std::optional<AbilityBurnComponent>			m_burnOnHit;
-	std::optional<AbilityAoEHitComponent>		m_aoeHitOnHit;
-	std::optional<AbilityAoEEffectComponent>	m_aoeEffectOnHit;
-	std::optional<AbilitySlowComponent>			m_slowOnHit;
+	AbilityDamageComponent		m_damageOnHit;
+	AbilityPoisonComponent		m_poisonOnHit;
+	AbilityBurnComponent		m_burnOnHit;
+	AbilityAoEHitComponent		m_aoeHitOnHit;
+	AbilityAoEEffectComponent	m_aoeEffectOnHit;
+	AbilitySlowComponent		m_slowOnHit;
 };
 
 
@@ -385,6 +434,8 @@ public:
 struct RolledAoEHitComponent
 {
 public:
+
+	bool IsRelevant() const;
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -401,13 +452,15 @@ struct RolledOnHitComponent
 {
 public:
 
+	bool IsRelevant() const;
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	HitPayload m_payload;
-	std::optional<RolledAoEHitComponent>		m_aoeHitOnHit;
-	std::optional<AbilityAoEEffectComponent>	m_aoeEffectOnHit;
+	RolledAoEHitComponent m_aoeHitOnHit;
+	AbilityAoEEffectComponent m_aoeEffectOnHit;
 };
 
 
@@ -429,7 +482,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	virtual void ApplyModifier(TowerPayloadRunModifier const& modifier, CTags const& tags);
+	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags);
 
 public:
 
@@ -455,20 +508,19 @@ public:
 
 	RolledOnHitComponent RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
-	virtual void ApplyModifier(TowerPayloadRunModifier const& modifier, CTags const& tags) override;
+	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags) override;
 
 public:
-
 
 	Name m_projectileDefName = Name::Invalid;
 	float m_projSpeed = 1.f;
 
-	std::optional<AbilityCooldownComponent>				m_cooldownComp;
-	std::optional<AbilityPrecisionTargetingComponent>	m_targetingComp;
-	std::optional<AbilityCritComponent>					m_critComp;
-	std::optional<AbilityOnHitComponent>				m_onHitComp;
-	std::optional<AbilityChainComponent>				m_chainComp;
-	std::optional<AbilityMultishotComponent>			m_multishotComp;
+	AbilityCooldownComponent m_cooldownComp;
+	AbilityPrecisionTargetingComponent m_targetingComp;
+	AbilityCritComponent m_critComp;
+	AbilityOnHitComponent m_onHitComp;
+	AbilityChainComponent m_chainComp;
+	AbilityMultishotComponent m_multishotComp;
 };
 
 
@@ -491,11 +543,11 @@ public:
 
 public:
 
-	std::optional<AbilityCooldownComponent>		m_cooldownComp;
-	std::optional<AbilityAoETargetingComponent>	m_targetingComp;
-	std::optional<AbilityCritComponent>			m_critComp;
-	std::optional<AbilityAoEHitComponent>		m_aoeHitComp;
-	std::optional<AbilityAoEEffectComponent>	m_aoeEffectComp;
+	AbilityCooldownComponent		m_cooldownComp;
+	AbilityAoETargetingComponent	m_targetingComp;
+	AbilityCritComponent			m_critComp;
+	AbilityAoEHitComponent			m_aoeHitComp;
+	AbilityAoEEffectComponent		m_aoeEffectComp;
 };
 
 
@@ -516,13 +568,13 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
-	virtual void ApplyModifier(TowerPayloadRunModifier const& modifier, CTags const& tags) override;
+	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier, CTags const& tags) override;
 
 public:
 
 	EntityID m_activeAoEEffect = EntityID::Invalid;
-	std::optional<AbilityAoETargetingComponent>	m_targetingComp;
-	std::optional<AbilityAoEEffectComponent>	m_aoeEffectComp;
+	AbilityAoETargetingComponent	m_targetingComp;
+	AbilityAoEEffectComponent		m_aoeEffectComp;
 };
 
 
@@ -546,9 +598,9 @@ public:
 
 public:
 
-	std::optional<AbilityPrecisionTargetingComponent>	m_targetingComp;
-	std::optional<AbilityOnHitComponent>				m_onHitComp;
-	std::optional<AbilityRenderComponent>				m_renderComp;
-	std::optional<AbilityChainComponent>				m_chainComp;
-	std::optional<AbilityMultishotComponent>			m_multishotComp;
+	AbilityPrecisionTargetingComponent	m_targetingComp;
+	AbilityOnHitComponent				m_onHitComp;
+	AbilityRenderComponent				m_renderComp;
+	AbilityChainComponent				m_chainComp;
+	AbilityMultishotComponent			m_multishotComp;
 };

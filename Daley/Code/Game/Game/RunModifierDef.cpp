@@ -69,9 +69,9 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 	{
 		return new TowerUnlockRunModifierDef(modElement);
 	}
-	else if (modTypeName == "TowerPayloadRunModifier")
+	else if (modTypeName == "TowerAbilityRunModifier")
 	{
-		return new TowerPayloadRunModifierDef(modElement);
+		return new TowerAbilityRunModifierDef(modElement);
 	}
 	else if (modTypeName == "EconomyRunModifier")
 	{
@@ -190,10 +190,10 @@ TowerUnlockRunModifierDef const& TowerUnlockRunModifier::GetDef() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPayloadRunModifierDef::TowerPayloadRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
+TowerAbilityRunModifierDef::TowerAbilityRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
 {
-	m_multiplierIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "base", m_multiplierIncreaseBase);
-	m_multiplierIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "perLevel", m_multiplierIncreasePerLevel);
+	m_valueBase = XmlUtils::ParseXmlAttribute(modElement, "base", m_valueBase);
+	m_valueIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "perLevel", m_valueIncreasePerLevel);
 
 	std::string payloadTypesString = XmlUtils::ParseXmlAttribute(modElement, "type", "");
 	Strings payloadTypeStrings = StringUtils::SplitStringOnDelimiter(payloadTypesString, ',');
@@ -202,19 +202,51 @@ TowerPayloadRunModifierDef::TowerPayloadRunModifierDef(XmlElement const& modElem
 	{
 		if (Name(payloadTypeString) == "Damage")
 		{
-			m_payloadDamageTypeFlags |= static_cast<uint8_t>(PayloadType::Damage);
+			m_abilityAttribute = TowerAbilityAttribute::Damage;
 		}
 		else if (Name(payloadTypeString) == "Slow")
 		{
-			m_payloadDamageTypeFlags |= static_cast<uint8_t>(PayloadType::Slow);
+			m_abilityAttribute = TowerAbilityAttribute::Slow;
 		}
 		else if (Name(payloadTypeString) == "Burn")
 		{
-			m_payloadDamageTypeFlags |= static_cast<uint8_t>(PayloadType::Burn);
+			m_abilityAttribute = TowerAbilityAttribute::Burn;
 		}
 		else if (Name(payloadTypeString) == "Poison")
 		{
-			m_payloadDamageTypeFlags |= static_cast<uint8_t>(PayloadType::Poison);
+			m_abilityAttribute = TowerAbilityAttribute::Poison;
+		}
+		else if (Name(payloadTypeString) == "Haste")
+		{
+			m_abilityAttribute = TowerAbilityAttribute::Haste;
+		}
+		else if (Name(payloadTypeString) == "AttackSpeed")
+		{
+			m_abilityAttribute = TowerAbilityAttribute::AttackSpeed;
+		}
+		else if (Name(payloadTypeString) == "CritChance")
+		{
+			m_abilityAttribute = TowerAbilityAttribute::CritChance;
+		}
+		else if (Name(payloadTypeString) == "CritDamage")
+		{
+			m_abilityAttribute = TowerAbilityAttribute::CritDamage;
+		}
+		else if (Name(payloadTypeString) == "AoE")
+		{
+			m_abilityAttribute = TowerAbilityAttribute::AoE;
+		}
+		else if (Name(payloadTypeString) == "MultiShot")
+		{
+			m_abilityAttribute = TowerAbilityAttribute::Multishot;
+		}
+		else if (Name(payloadTypeString) == "Chain")
+		{
+			m_abilityAttribute = TowerAbilityAttribute::NumChains;
+		}
+		else if (Name(payloadTypeString) == "Range")
+		{
+			m_abilityAttribute = TowerAbilityAttribute::Range;
 		}
 		else
 		{
@@ -236,18 +268,18 @@ TowerPayloadRunModifierDef::TowerPayloadRunModifierDef(XmlElement const& modElem
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RunModifier* TowerPayloadRunModifierDef::MakeModifierInstance() const
+RunModifier* TowerAbilityRunModifierDef::MakeModifierInstance() const
 {
-	return new TowerPayloadRunModifier(*this);
+	return new TowerAbilityRunModifier(*this);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerPayloadRunModifierDef::GetDescription(std::string& outStr) const
+void TowerAbilityRunModifierDef::GetDescription(std::string& outStr) const
 {
-	float baseMultiplier = 1.f + m_multiplierIncreaseBase;
-	outStr += StringUtils::StringF("Base: %.2fx\nPer Level: +%.2fx\n", baseMultiplier, m_multiplierIncreasePerLevel);
+	float baseMultiplier = 1.f + m_valueBase;
+	outStr += StringUtils::StringF("Base: %.2fx\nPer Level: +%.2fx\n", baseMultiplier, m_valueIncreasePerLevel);
 	if (m_maxLevel > 1)
 	{
 		outStr += StringUtils::StringF("Max Level: %d", m_maxLevel);
@@ -257,7 +289,7 @@ void TowerPayloadRunModifierDef::GetDescription(std::string& outStr) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPayloadRunModifier::TowerPayloadRunModifier(TowerPayloadRunModifierDef const& def) : RunModifier(def)
+TowerAbilityRunModifier::TowerAbilityRunModifier(TowerAbilityRunModifierDef const& def) : RunModifier(def)
 {
 
 }
@@ -265,7 +297,16 @@ TowerPayloadRunModifier::TowerPayloadRunModifier(TowerPayloadRunModifierDef cons
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerPayloadRunModifier::Apply(SystemContext const& context) const
+float TowerAbilityRunModifier::GetValue() const
+{
+	TowerAbilityRunModifierDef const& def = GetDef();
+	return def.m_valueBase + (def.m_valueIncreasePerLevel * static_cast<float>(m_level - 1));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void TowerAbilityRunModifier::Apply(SystemContext const& context) const
 {
 	auto& abilityStorage = context.GetMapStorage<CAbility>();
 	auto const& tagStorage = context.GetArrayStorageConst<CTags>();
@@ -302,25 +343,33 @@ void TowerPayloadRunModifier::Apply(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerPayloadRunModifier::ApplyToAbility(Ability& ability, CTags const& tags) const
+void TowerAbilityRunModifier::ApplyToAbility(Ability& ability, CTags const& tags) const
 {
+	for (auto& tag : GetDef().m_tagRequirements)
+	{
+		if (!tags.HasTag(tag))
+		{
+			return;
+		}
+	}
+
 	ability.ApplyModifier(*this, tags);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerPayloadRunModifier::GetDescription(std::string& outStr) const
+void TowerAbilityRunModifier::GetDescription(std::string& outStr) const
 {
 	if (m_def.m_maxLevel > 1)
 	{
-		float currentMultiplier = 1.f + GetDef().m_multiplierIncreaseBase + (GetDef().m_multiplierIncreasePerLevel * static_cast<float>(m_level - 1));
-		float nextMultiplier = currentMultiplier + GetDef().m_multiplierIncreasePerLevel;
+		float currentMultiplier = 1.f + GetValue();
+		float nextMultiplier = currentMultiplier + GetDef().m_valueIncreasePerLevel;
 		outStr += StringUtils::StringF("Current: %.2fx\nNext: %.2fx\nLevel: %d/%d\n", currentMultiplier, nextMultiplier, m_level, m_def.m_maxLevel);
 	}
 	else
 	{
-		float currentMultiplier = 1.f + GetDef().m_multiplierIncreaseBase;
+		float currentMultiplier = 1.f + GetDef().m_valueBase;
 		outStr += StringUtils::StringF("Multiplier (additive): %.2fx\n", currentMultiplier);
 	}
 }
@@ -328,9 +377,9 @@ void TowerPayloadRunModifier::GetDescription(std::string& outStr) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPayloadRunModifierDef const& TowerPayloadRunModifier::GetDef() const
+TowerAbilityRunModifierDef const& TowerAbilityRunModifier::GetDef() const
 {
-	return static_cast<TowerPayloadRunModifierDef const&>(m_def);
+	return static_cast<TowerAbilityRunModifierDef const&>(m_def);
 }
 
 
