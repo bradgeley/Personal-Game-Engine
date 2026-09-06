@@ -61,7 +61,7 @@ public:
 
 	float GetCooldown() const;
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -85,7 +85,7 @@ public:
 	float GetMinRange() const { return m_minRange; } // Min range not affected by multipliers
 	float GetMaxRange() const { return m_maxRange * m_rangeMultiplier; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void UpdateCachedTiles(SystemContext const& context, Vec2 const& location);
 
@@ -152,7 +152,7 @@ public:
 
 	bool CanCrit() const { return m_critChance > 0.f; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -177,7 +177,7 @@ public:
 	float GetMinDamage() const { return m_minDamage * m_damageMultiplier; }
 	float GetMaxDamage() const { return m_maxDamage * m_damageMultiplier; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -202,7 +202,7 @@ public:
 
 	float GetBurn() const { return m_burn * m_burnMultiplier; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -226,7 +226,7 @@ public:
 
 	float GetPoison() const { return m_poison * m_poisonMultiplier; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -250,7 +250,7 @@ public:
 
 	float GetDuration() const { return m_duration * m_durationMultiplier; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -274,7 +274,7 @@ public:
 
 	float GetDuration() const { return m_duration * m_durationMultiplier; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -296,7 +296,7 @@ public:
 
 	bool IsRelevant() const { return m_maxChains > 0; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -320,7 +320,7 @@ public:
 
 	bool IsRelevant() const { return m_additionalTargets > 0; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -358,14 +358,16 @@ public:
 	AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def);
 
 	bool IsRelevant() const;
+	float GetRadius() const { return m_radius * m_radiusMultiplier; }
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_radius = 0.f;
+	float m_radiusMultiplier = 1.f;
 	AbilityDamageComponent m_damageOnHit;
 	AbilityPoisonComponent m_poisonOnHit;
 	AbilityBurnComponent m_burnOnHit;
@@ -384,16 +386,20 @@ public:
 	AbilityAoEEffectComponent(AbilityAoEEffectComponentDef const& def);
 
 	bool IsRelevant() const;
+	float GetRadius() const { return m_radius * m_radiusMultiplier; }
+	float GetDuration() const { return m_durationSeconds * m_durationMultiplier; }
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 public:
 
 	Name m_aoeEffectDefName = Name::Invalid;
 	float m_radius = 0.f;
+	float m_radiusMultiplier = 1.f;
 	float m_durationSeconds = 0.f;
+	float m_durationMultiplier = 1.f;
 	AbilityDamageComponent	m_damagePerSecond;
 	AbilityPoisonComponent	m_poisonPerSecond;
 	AbilityBurnComponent	m_burnPerSecond;
@@ -416,7 +422,7 @@ public:
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 public:
 
@@ -482,7 +488,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier);
+	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier);
 
 public:
 
@@ -508,7 +514,7 @@ public:
 
 	RolledOnHitComponent RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
-	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier) override;
+	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
 
 public:
 
@@ -568,11 +574,12 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
-	virtual void ApplyModifier(TowerAbilityRunModifier const& modifier) override;
+	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
 
 public:
 
 	EntityID m_activeAoEEffect = EntityID::Invalid;
+	bool m_needsEffectRespawn = true;
 	AbilityAoETargetingComponent	m_targetingComp;
 	AbilityAoEEffectComponent		m_aoeEffectComp;
 };

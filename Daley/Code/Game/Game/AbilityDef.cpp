@@ -3,6 +3,7 @@
 #include "Ability.h"
 #include "EntityDef.h"
 #include "GameCommon.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
@@ -262,6 +263,8 @@ AbilityChainComponentDef::AbilityChainComponentDef(void const* xmlElement)
 	m_chainDistance = XmlUtils::ParseXmlAttribute(elem, "chainDistance", m_chainDistance);
 	m_chainPayloadMulti = XmlUtils::ParseXmlAttribute(elem, "chainPayloadMulti", m_chainPayloadMulti);
 	m_maxChains = XmlUtils::ParseXmlAttribute(elem, "maxChains", m_maxChains);
+
+    ASSERT_OR_DIE(m_maxChains <= StaticGameSettings::s_maxChainTargets, StringUtils::StringF("AbilityChainComponentDef: m_maxChains (%d) exceeded StaticGameSettings::s_maxChainTargets (%d).", m_maxChains, StaticGameSettings::s_maxChainTargets));
 }
 
 

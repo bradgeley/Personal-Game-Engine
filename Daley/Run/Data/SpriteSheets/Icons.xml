@@ -1,7 +1,7 @@
 
 
 
-<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="7,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="12,1" edgePadding="0,0" innerPadding="0,0">
   
     <SpriteAnimation name="Slow" frames="0"></SpriteAnimation>
     <SpriteAnimation name="Void" frames="1"></SpriteAnimation>
@@ -10,5 +10,10 @@
     <SpriteAnimation name="Burn" frames="4"></SpriteAnimation>
     <SpriteAnimation name="Poison" frames="5"></SpriteAnimation>
     <SpriteAnimation name="Damage" frames="6"></SpriteAnimation>
+    <SpriteAnimation name="Multishot" frames="7"></SpriteAnimation>
+    <SpriteAnimation name="Chain" frames="8"></SpriteAnimation>
+    <SpriteAnimation name="Range" frames="9"></SpriteAnimation>
+    <SpriteAnimation name="CritDamage" frames="10"></SpriteAnimation>
+    <SpriteAnimation name="CritChance" frames="11"></SpriteAnimation>
   
 </GridSpriteSheet>

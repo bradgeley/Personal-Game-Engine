@@ -17,7 +17,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderUI::Startup()
 {
-	AddReadDependencies<SCInputSystem, SCWorld>();
+	AddReadDependencies<SCInputSystem, SCRunData, SCWorld>();
 	AddWriteDependencies<SCRenderer>();
 
 	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
@@ -46,6 +46,7 @@ void SRenderUI::Run(SystemContext const& context) const
 	// Read Dependencies
 	SCInputSystem const& scInput = context.GetSingletonConst<SCInputSystem>();
 	SCWorld const& scWorld = context.GetSingletonConst<SCWorld>();
+	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
 	
 	// Write Dependencies
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
@@ -58,11 +59,18 @@ void SRenderUI::Run(SystemContext const& context) const
 		TowerPlacementRequest const& placementInfo = scInput.m_towerPlacementRequest;
 		EntityDef const* def = EntityDef::GetEntityDef(placementInfo.m_towerName);
 		CPlaceable const& placeable = def->m_placeable.value();
+		CTags const& tags = def->m_tags.has_value() ? *def->m_tags : CTags();
 
 		if (def->m_ability.has_value())
 		{
-			for (auto& ability : def->m_ability->m_abilities)
+			CAbility copy(def->m_ability.value());
+
+			for (auto& ability : copy.m_abilities)
 			{
+				for (auto& modifier : scRunData.m_data->m_activeRunModifiers)
+				{
+					modifier->ApplyToAbility(*ability, tags);
+				}
 				// Render range indicators for abilities when in placement mode
 				ability->AddDebugVerts(untexturedVerts, placementInfo.m_worldPos);
 			}

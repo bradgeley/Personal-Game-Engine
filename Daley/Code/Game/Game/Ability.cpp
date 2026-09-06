@@ -10,6 +10,7 @@
 #include "SEntityFactory.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Math/Grid.h"
 #include "Engine/Math/MathUtils.h"
@@ -31,14 +32,16 @@ AbilityTargetingComponent::AbilityTargetingComponent(AbilityTargetingComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityTargetingComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityTargetingComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
 	TowerAbilityRunModifierDef const& def = modifier.GetDef();
 	if (def.m_abilityAttribute == TowerAbilityAttribute::Range)
 	{
 		m_rangeMultiplier += modifier.GetValue();
 		m_needsCacheUpdate = 1;
+		return true;
 	}
+	return false;
 }
 
 
@@ -363,13 +366,15 @@ float AbilityCooldownComponent::GetCooldown() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityCooldownComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityCooldownComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
 	TowerAbilityRunModifierDef const& def = modifier.GetDef();
     if (def.m_abilityAttribute == TowerAbilityAttribute::AttackSpeed)
     {
 		m_attackSpeedIncrease += modifier.GetValue();
+        return true;
     }
+    return false;
 }
 
 
@@ -394,17 +399,20 @@ AbilityCritComponent::AbilityCritComponent(AbilityCritComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityCritComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityCritComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
 	TowerAbilityRunModifierDef const& def = modifier.GetDef();
     if (def.m_abilityAttribute == TowerAbilityAttribute::CritChance)
     {
 		m_critChance += modifier.GetValue();
+		return true;
     }
     else if (def.m_abilityAttribute == TowerAbilityAttribute::CritDamage)
     {
 		m_critMulti += modifier.GetValue();
+        return true;
     }
+    return false;
 }
 
 
@@ -432,14 +440,16 @@ AbilityDamageComponent::AbilityDamageComponent(AbilityDamageComponentDef const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityDamageComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityDamageComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
     TowerAbilityRunModifierDef const& def = modifier.GetDef();
 
 	if (def.m_abilityAttribute == TowerAbilityAttribute::Damage)
 	{
 		m_damageMultiplier += modifier.GetValue();
+		return true;
 	}
+	return false;
 }
 
 
@@ -475,14 +485,16 @@ AbilityBurnComponent::AbilityBurnComponent(AbilityBurnComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityBurnComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityBurnComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
     TowerAbilityRunModifierDef const& def = modifier.GetDef();
 
     if (def.m_abilityAttribute == TowerAbilityAttribute::Burn)
     {
         m_burnMultiplier += modifier.GetValue();
+        return true;
     }
+    return false;
 }
 
 
@@ -509,14 +521,16 @@ AbilityPoisonComponent::AbilityPoisonComponent(AbilityPoisonComponentDef const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityPoisonComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityPoisonComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
     TowerAbilityRunModifierDef const& def = modifier.GetDef();
 
     if (def.m_abilityAttribute == TowerAbilityAttribute::Poison)
     {
         m_poisonMultiplier += modifier.GetValue();
+        return true;
     }
+    return false;
 }
 
 
@@ -543,14 +557,16 @@ AbilitySlowComponent::AbilitySlowComponent(AbilitySlowComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilitySlowComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilitySlowComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
     TowerAbilityRunModifierDef const& def = modifier.GetDef();
 
     if (def.m_abilityAttribute == TowerAbilityAttribute::Slow)
     {
         m_durationMultiplier += modifier.GetValue();
+        return true;
     }
+    return false;
 }
 
 
@@ -577,14 +593,16 @@ AbilityHasteComponent::AbilityHasteComponent(AbilityHasteComponentDef const& def
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityHasteComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityHasteComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
     TowerAbilityRunModifierDef const& def = modifier.GetDef();
 
 	if (def.m_abilityAttribute == TowerAbilityAttribute::Haste)
 	{
 		m_durationMultiplier += modifier.GetValue();
+		return true;
 	}
+	return false;
 }
 
 
@@ -614,7 +632,7 @@ AbilityChainComponent::AbilityChainComponent(AbilityChainComponentDef const& def
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityChainComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityChainComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
     TowerAbilityRunModifierDef const& def = modifier.GetDef();
 
@@ -622,7 +640,14 @@ void AbilityChainComponent::ApplyModifier(TowerAbilityRunModifier const& modifie
 	{
 		int chainIncrease = MathUtils::RoundF(modifier.GetValue());
 		m_maxChains += chainIncrease;
+		if (m_maxChains > StaticGameSettings::s_maxChainTargets)
+		{
+			DevConsoleUtils::LogWarning("AbilityChainComponent::ApplyModifier: m_maxChains (%d) exceeded StaticGameSettings::s_maxChainTargets (%d). Clamping to max.", m_maxChains, StaticGameSettings::s_maxChainTargets);
+			m_maxChains = StaticGameSettings::s_maxChainTargets;
+		}
+		return true;
 	}
+	return false;
 }
 
 
@@ -649,7 +674,7 @@ AbilityMultishotComponent::AbilityMultishotComponent(AbilityMultishotComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityMultishotComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityMultishotComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
 	TowerAbilityRunModifierDef const& def = modifier.GetDef();
 
@@ -657,7 +682,9 @@ void AbilityMultishotComponent::ApplyModifier(TowerAbilityRunModifier const& mod
 	{
 		int additionalTargetsIncrease = MathUtils::RoundF(modifier.GetValue());
 		m_additionalTargets += additionalTargetsIncrease;
+		return true;
 	}
+	return false;
 }
 
 
@@ -740,14 +767,16 @@ void AbilityOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityOnHitComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityOnHitComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
-	m_damageOnHit.ApplyModifier(modifier);
-	m_burnOnHit.ApplyModifier(modifier);
-	m_poisonOnHit.ApplyModifier(modifier);
-	m_slowOnHit.ApplyModifier(modifier);
-	m_aoeHitOnHit.ApplyModifier(modifier);
-	m_aoeEffectOnHit.ApplyModifier(modifier);
+	bool applied = false;
+	applied |= m_damageOnHit.ApplyModifier(modifier);
+	applied |= m_burnOnHit.ApplyModifier(modifier);
+	applied |= m_poisonOnHit.ApplyModifier(modifier);
+	applied |= m_slowOnHit.ApplyModifier(modifier);
+	applied |= m_aoeHitOnHit.ApplyModifier(modifier);
+	applied |= m_aoeEffectOnHit.ApplyModifier(modifier);
+	return applied;
 }
 
 
@@ -812,7 +841,8 @@ AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& 
 //----------------------------------------------------------------------------------------------------------------------
 bool AbilityAoEHitComponent::IsRelevant() const
 {
-	bool hasRadius = m_radius > 0.f;
+	float radius = GetRadius();
+	bool hasRadius = radius > 0.f;
 	if (!hasRadius)
 	{
 		return false;
@@ -825,13 +855,23 @@ bool AbilityAoEHitComponent::IsRelevant() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityAoEHitComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityAoEHitComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
-    m_damageOnHit.ApplyModifier(modifier);
-	m_burnOnHit.ApplyModifier(modifier);
-	m_poisonOnHit.ApplyModifier(modifier);
-	m_slowOnHit.ApplyModifier(modifier);
-	m_hasteOnHit.ApplyModifier(modifier);
+	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+    bool applied = false;
+    if (def.m_abilityAttribute == TowerAbilityAttribute::AoE)
+    {
+		m_radiusMultiplier += modifier.GetValue();
+        applied = true;
+    }
+
+    applied |= m_damageOnHit.ApplyModifier(modifier);
+    applied |= m_burnOnHit.ApplyModifier(modifier);
+    applied |= m_poisonOnHit.ApplyModifier(modifier);
+    applied |= m_slowOnHit.ApplyModifier(modifier);
+	applied |= m_hasteOnHit.ApplyModifier(modifier);
+    return applied;
 }
 
 
@@ -845,9 +885,11 @@ void AbilityAoEHitComponent::AppendDebugString(EntityDebugContext& debugContext)
 	}   
 
     debugContext.m_debugString += StringUtils::StringF("---AOE Hit---\n");
-    if (m_radius > 0.f)
+
+	float radius = GetRadius();
+    if (radius > 0.f)
     {
-        debugContext.m_debugString += StringUtils::StringF("Radius: %.1f\n", m_radius);
+        debugContext.m_debugString += StringUtils::StringF("Radius: %.1f\n", radius);
     }
 
     float minDamage = m_damageOnHit.GetMinDamage();
@@ -910,7 +952,7 @@ bool AbilityAoEEffectComponent::IsRelevant() const
 		return false;
 	}
 
-	if (m_radius <= 0.f)
+	if (GetRadius() <= 0.f)
 	{
 		return false;
 	}
@@ -929,12 +971,15 @@ void AbilityAoEEffectComponent::AppendDebugString(EntityDebugContext& debugConte
         return;
     }
 
-    debugContext.m_debugString += StringUtils::StringF("---AOE Effect---\n", m_radius);
-    if (m_radius > 0.f)
+	float radius = GetRadius();
+	float duration = GetDuration();
+
+    debugContext.m_debugString += StringUtils::StringF("---AOE Effect---\n", radius);
+    if (radius > 0.f)
     {
-        debugContext.m_debugString += StringUtils::StringF("Radius: %.1f\n", m_radius);
+        debugContext.m_debugString += StringUtils::StringF("Radius: %.1f\n", radius);
 	}
-    debugContext.m_debugString += StringUtils::StringF("Duration: %.1f\n", m_durationSeconds);	
+    debugContext.m_debugString += StringUtils::StringF("Duration: %.1f\n", duration);	
 
     float dps = m_damagePerSecond.GetMaxDamage() * debugContext.m_entityTimeDilation;
     if (dps > 0.f)
@@ -972,13 +1017,21 @@ void AbilityAoEEffectComponent::AppendDebugString(EntityDebugContext& debugConte
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityAoEEffectComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityAoEEffectComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
-	m_damagePerSecond.ApplyModifier(modifier);
-	m_burnPerSecond.ApplyModifier(modifier);
-	m_poisonPerSecond.ApplyModifier(modifier);
-	m_slowPerSecond.ApplyModifier(modifier);
-	m_hastePerSecond.ApplyModifier(modifier);
+	bool applied = false;
+	if (modifier.GetDef().m_abilityAttribute == TowerAbilityAttribute::AoE)
+	{
+		m_radiusMultiplier += modifier.GetValue();
+		applied = true;
+	}
+
+	applied |= m_damagePerSecond.ApplyModifier(modifier);
+	applied |= m_burnPerSecond.ApplyModifier(modifier);
+	applied |= m_poisonPerSecond.ApplyModifier(modifier);
+	applied |= m_slowPerSecond.ApplyModifier(modifier);
+	applied |= m_hastePerSecond.ApplyModifier(modifier);
+	return applied;
 }
 
 
@@ -1007,9 +1060,9 @@ void Ability::AppendDebugString(EntityDebugContext& debugContext) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Ability::ApplyModifier(TowerAbilityRunModifier const&)
+bool Ability::ApplyModifier(TowerAbilityRunModifier const&)
 {
-
+    return false;
 }
 
 
@@ -1208,7 +1261,7 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGene
     if (onHitComp.m_aoeHitOnHit.IsRelevant())
     {
         RolledAoEHitComponent aoeHitResult;
-        aoeHitResult.m_radius = onHitComp.m_aoeHitOnHit.m_radius;
+        aoeHitResult.m_radius = onHitComp.m_aoeHitOnHit.GetRadius();
 		HitPayload& aoeHitPayload = aoeHitResult.m_payload;
         aoeHitPayload.m_didCrit = didCrit;
 
@@ -1263,14 +1316,16 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGene
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool ProjectileHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
-    m_cooldownComp.ApplyModifier(modifier);
-	m_targetingComp.ApplyModifier(modifier);
-    m_critComp.ApplyModifier(modifier);
-	m_chainComp.ApplyModifier(modifier);
-	m_multishotComp.ApplyModifier(modifier);
-	m_onHitComp.ApplyModifier(modifier);
+    bool applied = false;
+    applied |= m_cooldownComp.ApplyModifier(modifier);
+	applied |= m_targetingComp.ApplyModifier(modifier);
+    applied |= m_critComp.ApplyModifier(modifier);
+	applied |= m_chainComp.ApplyModifier(modifier);
+	applied |= m_multishotComp.ApplyModifier(modifier);
+	applied |= m_onHitComp.ApplyModifier(modifier);
+    return applied;
 }
 
 
@@ -1524,12 +1579,23 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
 
     // Write Dependencies
 	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
+	auto& timeStorage = context.GetArrayStorage<CTime>();
 
 	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
 
 	float maxRange = m_targetingComp.GetMaxRange();
 
-    if (m_activeAoEEffect == EntityID::Invalid)
+	if (m_needsEffectRespawn)
+	{
+		m_needsEffectRespawn = false;
+		if (context.IsValid(m_activeAoEEffect))
+		{
+			context.DestroyEntity(m_activeAoEEffect);
+			m_activeAoEEffect = EntityID::Invalid;
+		}
+	}
+
+    if (!context.IsValid(m_activeAoEEffect))
     {
         SpawnInfo aoeEffectSpawnInfo;
         aoeEffectSpawnInfo.m_spawnPos = location;
@@ -1549,13 +1615,11 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
             }
 		}
     }
-    else
+
+    if (context.IsValid(m_activeAoEEffect))
     {
-		CTime* aoeEffectTimeComp = context.GetComponent<CTime>(m_activeAoEEffect);
-        if (aoeEffectTimeComp)
-        {
-			aoeEffectTimeComp->m_clock.SetTimeDilation(timeDilation);
-        }
+        CTime& aoeEffectTimeComp = timeStorage[m_activeAoEEffect];
+        aoeEffectTimeComp.m_clock.SetTimeDilation(timeDilation);
     }
 }
 
@@ -1608,10 +1672,31 @@ void PassiveAoEAbility::AppendDebugString(EntityDebugContext& debugContext) cons
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool PassiveAoEAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
-	m_targetingComp.ApplyModifier(modifier);
-    m_aoeEffectComp.ApplyModifier(modifier);
+    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+    bool applied = false;
+
+	if (def.m_abilityAttribute == TowerAbilityAttribute::Range)
+	{
+        // For Passive Aoe abilities, range == AoE
+		m_aoeEffectComp.m_radiusMultiplier += modifier.GetValue();
+		applied = true;
+	}
+
+    if (def.m_abilityAttribute == TowerAbilityAttribute::AoE)
+    {
+        // For Passive Aoe abilities, range == AoE
+        m_targetingComp.m_rangeMultiplier += modifier.GetValue();
+        applied = true;
+    }
+
+	applied |= m_targetingComp.ApplyModifier(modifier);
+    applied |= m_aoeEffectComp.ApplyModifier(modifier);
+
+    m_needsEffectRespawn = applied;
+    return applied;
 }
 
 
@@ -1700,9 +1785,9 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
 
                 SpawnInfo aoeEffectSpawnInfo;
                 aoeEffectSpawnInfo.m_spawnPos = targetTransform.m_pos;
-                aoeEffectSpawnInfo.m_spawnLifetime = m_onHitComp.m_aoeEffectOnHit.m_durationSeconds;
+                aoeEffectSpawnInfo.m_spawnLifetime = m_onHitComp.m_aoeEffectOnHit.GetDuration();
                 aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_onHitComp.m_aoeEffectOnHit.m_aoeEffectDefName);
-                aoeEffectSpawnInfo.m_spawnScale = m_onHitComp.m_aoeEffectOnHit.m_radius;
+                aoeEffectSpawnInfo.m_spawnScale = m_onHitComp.m_aoeEffectOnHit.GetRadius();
 
                 EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
                 if (context.IsValid(aoeEffect))

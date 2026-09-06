@@ -108,6 +108,7 @@ public:
 	TowerUnlockRunModifier(TowerUnlockRunModifierDef const& def);
 
 	virtual void Apply(SystemContext const& context) const override;
+	virtual void ApplyToRunData(RunData& runData) const override;
 
 	virtual void GetDescription(std::string& outStr) const override;
 

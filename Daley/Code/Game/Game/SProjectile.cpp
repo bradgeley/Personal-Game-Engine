@@ -165,8 +165,8 @@ void SProjectile::Run(SystemContext const& context) const
 					ASSERT_OR_DIE(aoeEffectSpawnInfo.m_def != nullptr, StringUtils::StringF("EntityDef not found for name: %s", proj.m_onHitComp.m_aoeEffectOnHit.m_aoeEffectDefName.ToCStr()));
 					aoeEffectSpawnInfo.m_spawnPos = proj.m_targetPos.value();
 					aoeEffectSpawnInfo.m_spawnOrientation = 0.f;
-					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp.m_aoeEffectOnHit.m_durationSeconds;
-					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp.m_aoeEffectOnHit.m_radius;
+					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp.m_aoeEffectOnHit.GetDuration();
+					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp.m_aoeEffectOnHit.GetRadius();
 
 					EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 					if (context.IsValid(aoeEffect))

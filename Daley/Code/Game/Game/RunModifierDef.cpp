@@ -150,10 +150,18 @@ TowerUnlockRunModifier::TowerUnlockRunModifier(TowerUnlockRunModifierDef const& 
 //----------------------------------------------------------------------------------------------------------------------
 void TowerUnlockRunModifier::Apply(SystemContext const& context) const
 {
-	SCRunData& runData = context.GetSingleton<SCRunData>();
+	RunData& runData = *context.GetSingleton<SCRunData>().m_data;
+	ApplyToRunData(runData);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void TowerUnlockRunModifier::ApplyToRunData(RunData& runData) const
+{
 	TowerUnlockRunModifierDef const& def = GetDef();
 
-	for (PlaceableTower& placeableTower : runData.m_data->m_placeableTowers)
+	for (PlaceableTower& placeableTower : runData.m_placeableTowers)
 	{
 		if (placeableTower.m_towerName == Name::Invalid)
 		{

@@ -56,31 +56,31 @@
     
     <!-- Level 10 -->
     <TowerAbilityRunModifier name="GenericAttackSpeed" type="attackSpeed" base="0.05" perLevel="0.05" weight="0.2" levelRequirement="10" maxLevel="5">
-      <DisplayData displayName="Attack Speed" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+      <DisplayData displayName="Attack Speed" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Haste"></DisplayData>
     </TowerAbilityRunModifier>
     
     <TowerAbilityRunModifier name="GenericRange" type="range" base="0.05" perLevel="0.05" weight="0.2" levelRequirement="10" maxLevel="5">
-      <DisplayData displayName="Range" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+      <DisplayData displayName="Range" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </TowerAbilityRunModifier>
     
     <TowerAbilityRunModifier name="GenericCritChance" type="critChance" base="0.05" perLevel="0.05" weight="0.2" levelRequirement="10" maxLevel="5">
-      <DisplayData displayName="Crit Chance" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+      <DisplayData displayName="Crit Chance" spriteSheet="Data/SpriteSheets/Icons.xml" anim="CritChance"></DisplayData>
     </TowerAbilityRunModifier>
 
     <TowerAbilityRunModifier name="GenericCritDamage" type="critDamage" base="0.05" perLevel="0.05" weight="0.2" levelRequirement="10" maxLevel="5">
-      <DisplayData displayName="Crit Damage" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+      <DisplayData displayName="Crit Damage" spriteSheet="Data/SpriteSheets/Icons.xml" anim="CritDamage"></DisplayData>
     </TowerAbilityRunModifier>
 
-    <TowerAbilityRunModifier name="GenericAoE" type="aoe" base="0.1" perLevel="0.1" weight="0.2" levelRequirement="10" maxLevel="5">
-      <DisplayData displayName="AoE" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    <TowerAbilityRunModifier name="GenericAoE" type="aoe" base="0.1" perLevel="0.1" weight="0.2" levelRequirement="10" maxLevel="3">
+      <DisplayData displayName="Area of Effect" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </TowerAbilityRunModifier>
 
-    <TowerAbilityRunModifier name="GenericMultiShot" type="multiShot" base="1" perLevel="1" weight="0.1" levelRequirement="10" maxLevel="3">
-      <DisplayData displayName="Multi-Shot" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    <TowerAbilityRunModifier name="GenericMultiShot" type="multiShot" base="1" perLevel="1" weight="0.1" levelRequirement="10" maxLevel="2">
+      <DisplayData displayName="+1 Multi-Shot" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Multishot"></DisplayData>
     </TowerAbilityRunModifier>
 
-    <TowerAbilityRunModifier name="GenericChain" type="chain" base="1" perLevel="1" weight="0.2" levelRequirement="10" maxLevel="3">
-      <DisplayData displayName="Chain" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+    <TowerAbilityRunModifier name="GenericChain" type="chain" base="1" perLevel="1" weight="0.2" levelRequirement="10" maxLevel="2">
+      <DisplayData displayName="+1 Chain" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Chain"></DisplayData>
     </TowerAbilityRunModifier>
     
   </RunModifierPool>
@@ -92,9 +92,25 @@
     <TowerAbilityRunModifier name="VanillaDamage" type="damage" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
       <DisplayData displayName="Vanilla Damage" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
     </TowerAbilityRunModifier>
-    
-    <TowerAbilityRunModifier name="VanillaAttackSpeed" type="attackSpeed" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+
+    <!-- Level 5 -->
+    <TowerAbilityRunModifier name="VanillaAttackSpeed" type="attackSpeed" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="5">
       <DisplayData displayName="Vanilla Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <TowerAbilityRunModifier name="VanillaRange" type="chain" tagRequirement="Vanilla" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="3">
+      <DisplayData displayName="Vanilla Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
+    </TowerAbilityRunModifier>
+
+
+    <!-- Level 20 -->
+    <TowerAbilityRunModifier name="VanillaMultiShot" type="multiShot" tagRequirement="Vanilla" base="1" perLevel="1" weight="0.1" levelRequirement="20" maxLevel="2">
+      <DisplayData displayName="Vanilla Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <!-- Level 30 -->
+    <TowerAbilityRunModifier name="VanillaChain" type="chain" tagRequirement="Vanilla" base="1" perLevel="1" weight="0.1" levelRequirement="30" maxLevel="2">
+      <DisplayData displayName="Vanilla Chain" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
     </TowerAbilityRunModifier>
   
   </RunModifierPool>
@@ -106,9 +122,24 @@
     <TowerAbilityRunModifier name="ChocolateDamage" type="damage" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
       <DisplayData displayName="Chocolate Damage" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
     </TowerAbilityRunModifier>
-    
-    <TowerAbilityRunModifier name="ChocolateAttackSpeed" type="attackSpeed" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+
+    <!-- Level 5 -->
+    <TowerAbilityRunModifier name="ChocolateAttackSpeed" type="attackSpeed" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="5">
       <DisplayData displayName="Chocolate Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <TowerAbilityRunModifier name="ChocolateRange" type="chain" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="3">
+      <DisplayData displayName="Chocolate Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <!-- Level 20 -->
+    <TowerAbilityRunModifier name="ChocolateMultiShot" type="multiShot" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="20" maxLevel="5">
+      <DisplayData displayName="Chocolate Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <!-- Level 30 -->
+    <TowerAbilityRunModifier name="ChocolateChain" type="chain" tagRequirement="Chocolate" base="0.2" perLevel="0.2" weight="1" levelRequirement="30" maxLevel="5">
+      <DisplayData displayName="Chocolate Chain" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
     </TowerAbilityRunModifier>
 
   </RunModifierPool>
@@ -121,9 +152,25 @@
       <DisplayData displayName="Strawberry Burn" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
     </TowerAbilityRunModifier>
 
-    <TowerAbilityRunModifier name="StrawberryAttackSpeed" type="attackSpeed" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
+    <!-- Level 5 -->
+    <TowerAbilityRunModifier name="StrawberryAttackSpeed" type="attackSpeed" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="5">
       <DisplayData displayName="Strawberry Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
     </TowerAbilityRunModifier>
+    
+    <TowerAbilityRunModifier name="StrawberryRange" type="chain" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="3">
+      <DisplayData displayName="Strawberry Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <!-- Level 20 -->
+    <TowerAbilityRunModifier name="StrawberryMultiShot" type="multiShot" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="20" maxLevel="5">
+      <DisplayData displayName="Strawberry Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <!-- Level 30 -->
+    <TowerAbilityRunModifier name="StrawberryChain" type="chain" tagRequirement="Strawberry" base="0.2" perLevel="0.2" weight="1" levelRequirement="30" maxLevel="5">
+      <DisplayData displayName="Strawberry Chain" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
+    </TowerAbilityRunModifier>
+    
 
   </RunModifierPool>
 
@@ -133,6 +180,12 @@
     <!-- Level 1 -->
     <TowerAbilityRunModifier name="MintPoison" type="poison" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="5">
       <DisplayData displayName="Mint Poison" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
+    </TowerAbilityRunModifier>
+
+    <!-- Level 5 -->
+    <TowerAbilityRunModifier name="MintRange" type="chain" tagRequirement="Mint" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="3">
+      <DisplayData displayName="Mint Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
+      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </TowerAbilityRunModifier>
 
   </RunModifierPool>
