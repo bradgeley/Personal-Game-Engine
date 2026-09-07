@@ -317,7 +317,7 @@ EntityID AbilityPrecisionTargetingComponent::FindChainTarget(SystemContext const
 
     EntityID result = EntityID::Invalid;
 
-	world.ForEachPathTileInRange(pos, 0.f, maxDistance, [&](IntVec2 const& worldCoords)
+	world.ForEachPathTileOverlappingCircle(pos, maxDistance, [&](IntVec2 const& worldCoords)
 	{
 		int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
 		CollisionBucket const& tileBucket = enemyLayer[tileIndex];
@@ -337,7 +337,7 @@ EntityID AbilityPrecisionTargetingComponent::FindChainTarget(SystemContext const
 			if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
 			{
 				result = entityID;
-				break;
+                return false; // stop iterating
 			}
 		}
 		return true; // keep iterating
@@ -1120,6 +1120,12 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
         return;
     }
 
+	EntityDef const* projDef = EntityDef::GetEntityDef(m_projectileDefName);
+
+    SpawnInfo spawnInfo;
+    spawnInfo.m_spawnPos = location;
+    spawnInfo.m_def = projDef;
+
     // Shoot at targets
     while (m_cooldownComp.m_accumulatedTime > timeBetweenAttacks)
     {
@@ -1129,10 +1135,6 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
         {
             EntityID targetID = m_targetingComp.m_targetChains.Get(IntVec2(targetIndex, 0));
 
-            SpawnInfo spawnInfo;
-            spawnInfo.m_spawnPos = location;
-            spawnInfo.m_spawnOrientation = 0.f;
-            spawnInfo.m_def = EntityDef::GetEntityDef(m_projectileDefName);
             EntityID projectileID = SEntityFactory::SpawnEntity(context, spawnInfo);
             if (!context.IsValid(projectileID))
             {
@@ -1219,7 +1221,7 @@ void ProjectileHitAbility::AppendDebugString(EntityDebugContext& debugContext) c
 //----------------------------------------------------------------------------------------------------------------------
 RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
 {
-	RolledOnHitComponent hitResult;
+	RolledOnHitComponent rolledHitResult;
 
 	float critMultiplier = StaticGameSettings::s_baseCritMultiplier;
     bool didCrit = false;
@@ -1231,86 +1233,72 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGene
     }
 
     AbilityOnHitComponent const& onHitComp = m_onHitComp;
-    HitPayload& onHitPayload = hitResult.m_payload;
-    onHitPayload.m_didCrit = didCrit;
+    HitPayload& rolledHitPayload = rolledHitResult.m_payload;
+    rolledHitPayload.m_didCrit = didCrit;
 
     AbilityDamageComponent const& damageComp = onHitComp.m_damageOnHit;
-    onHitPayload.m_damage = rng.GetRandomFloatInRange(damageComp.GetMinDamage(), damageComp.GetMaxDamage());
-    if (didCrit)
-    {
-        onHitPayload.m_damage *= critMultiplier;
-    }
-
     AbilityBurnComponent const& burnComp = onHitComp.m_burnOnHit;
-    onHitPayload.m_burn = burnComp.GetBurn();
-    if (didCrit)
-    {
-        onHitPayload.m_burn *= critMultiplier;
-    }
-
     AbilityPoisonComponent const& poisonComp = onHitComp.m_poisonOnHit;
-    onHitPayload.m_poison = poisonComp.GetPoison();
+    AbilitySlowComponent const& slowComp = onHitComp.m_slowOnHit;
+
+    rolledHitPayload.m_damage = rng.GetRandomFloatInRange(damageComp.GetMinDamage(), damageComp.GetMaxDamage());
+    rolledHitPayload.m_burn = burnComp.GetBurn();
+    rolledHitPayload.m_poison = poisonComp.GetPoison();
+    rolledHitPayload.m_slowDuration = slowComp.GetDuration();
+
     if (didCrit)
     {
-        onHitPayload.m_poison *= critMultiplier;
+        rolledHitPayload.m_damage *= critMultiplier;
+        rolledHitPayload.m_burn *= critMultiplier;
+        rolledHitPayload.m_poison *= critMultiplier;
     }
-
-    AbilitySlowComponent const& slowComp = onHitComp.m_slowOnHit;
-    onHitPayload.m_slowDuration = slowComp.GetDuration();
 
     if (onHitComp.m_aoeHitOnHit.IsRelevant())
     {
-        RolledAoEHitComponent aoeHitResult;
-        aoeHitResult.m_radius = onHitComp.m_aoeHitOnHit.GetRadius();
-		HitPayload& aoeHitPayload = aoeHitResult.m_payload;
-        aoeHitPayload.m_didCrit = didCrit;
+        RolledAoEHitComponent& rolledAoeHitResult = rolledHitResult.m_aoeHitOnHit;
+        rolledAoeHitResult.m_radius = onHitComp.m_aoeHitOnHit.GetRadius();
+		HitPayload& rolledAoeHitPayload = rolledAoeHitResult.m_payload;
+        rolledAoeHitPayload.m_didCrit = didCrit;
 
         AbilityAoEHitComponent const& aoeHitComp = onHitComp.m_aoeHitOnHit;
         if (aoeHitComp.m_damageOnHit.IsRelevant())
         {
             AbilityDamageComponent const& aoeDamageComp = aoeHitComp.m_damageOnHit;
-            aoeHitPayload.m_damage = rng.GetRandomFloatInRange(aoeDamageComp.GetMinDamage(), aoeDamageComp.GetMaxDamage());
-            if (didCrit)
-            {
-                aoeHitPayload.m_damage *= critMultiplier;
-            }
+            rolledAoeHitPayload.m_damage = rng.GetRandomFloatInRange(aoeDamageComp.GetMinDamage(), aoeDamageComp.GetMaxDamage());
         }
 
         if (aoeHitComp.m_burnOnHit.IsRelevant())
         {
             AbilityBurnComponent const& aoeBurnComp = aoeHitComp.m_burnOnHit;
-            aoeHitPayload.m_burn = aoeBurnComp.GetBurn();
-            if (didCrit)
-            {
-                aoeHitPayload.m_burn *= critMultiplier;
-            }
+            rolledAoeHitPayload.m_burn = aoeBurnComp.GetBurn();
         }
 
         if (aoeHitComp.m_poisonOnHit.IsRelevant())
         {
             AbilityPoisonComponent const& aoePoisonComp = aoeHitComp.m_poisonOnHit;
-            aoeHitPayload.m_poison = aoePoisonComp.GetPoison();
-            if (didCrit)
-            {
-                aoeHitPayload.m_poison *= critMultiplier;
-            }
+            rolledAoeHitPayload.m_poison = aoePoisonComp.GetPoison();
         }
 
         if (aoeHitComp.m_slowOnHit.IsRelevant())
         {
             AbilitySlowComponent const& aoeSlowComp = aoeHitComp.m_slowOnHit;
-            aoeHitPayload.m_slowDuration = aoeSlowComp.GetDuration();
+            rolledAoeHitPayload.m_slowDuration = aoeSlowComp.GetDuration();
 		}
 
-		hitResult.m_aoeHitOnHit = aoeHitResult;
+        if (didCrit)
+        {
+            rolledAoeHitPayload.m_damage *= critMultiplier;
+            rolledAoeHitPayload.m_burn *= critMultiplier;
+            rolledAoeHitPayload.m_poison *= critMultiplier;
+        }
     }
 
     if (onHitComp.m_aoeEffectOnHit.IsRelevant())
     {
-		hitResult.m_aoeEffectOnHit = onHitComp.m_aoeEffectOnHit;
+		rolledHitResult.m_aoeEffectOnHit = onHitComp.m_aoeEffectOnHit;
     }
 
-	return hitResult;
+	return rolledHitResult;
 }
 
 

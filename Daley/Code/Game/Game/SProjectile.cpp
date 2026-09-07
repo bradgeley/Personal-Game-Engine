@@ -60,6 +60,7 @@ void SProjectile::Run(SystemContext const& context) const
 	// Spawn Entity (All)
 
 	CollisionLayer const& enemyLayer = scCollision.GetCollisionLayer(CollisionChannel::Enemy);
+	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
 
 	for (auto it = context.Iterate<CProjectile, CTransform>(); it.IsValid(); ++it)
 	{
@@ -136,21 +137,15 @@ void SProjectile::Run(SystemContext const& context) const
 
 								if (aoeTargetPayload.IsRelevantToHealth())
 								{
-									if (context.HasComponent<CHealth>(entityID))
-									{
-										CHealth& targetHealth = healthStorage[entityID];
-										targetHealth.TakePayload(aoeTargetPayload);
-									}
+									CHealth& targetHealth = healthStorage[entityID];
+									targetHealth.TakePayload(aoeTargetPayload);
 								}
 
 								if (aoeTargetPayload.IsRelevantToTime())
 								{
-									if (context.HasComponent<CTime>(entityID))
-									{
-										CTime& targetTime = timeStorage[entityID];
-										targetTime.m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
-										targetTime.m_remainingHasteDuration += aoeTargetPayload.m_hasteDuration;
-									}
+									CTime& targetTime = timeStorage[entityID];
+									targetTime.m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
+									targetTime.m_remainingHasteDuration += aoeTargetPayload.m_hasteDuration;
 								}
 							}
 							return true;
@@ -172,11 +167,9 @@ void SProjectile::Run(SystemContext const& context) const
 					if (context.IsValid(aoeEffect))
 					{
 						// Pass along damage, color, to aoe effect
-						if (context.HasComponent<CCollisionEffect>(aoeEffect))
-						{
-							CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
-							aoeEffectComp.InitializeFromAoEEffect(proj.m_onHitComp.m_aoeEffectOnHit);
-						}
+						ASSERT_OR_DIE(context.HasComponentsUnsafe(aoeEffect.GetIndex(), collisionEffectBit), "Spawned aoe effect does not have CCollisionEffect component.");
+						CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
+						aoeEffectComp.InitializeFromAoEEffect(proj.m_onHitComp.m_aoeEffectOnHit);
 					}
 				}
 			}

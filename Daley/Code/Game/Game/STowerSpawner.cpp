@@ -294,6 +294,7 @@ bool STowerSpawner::FillMapWithTower(NamedProperties& properties)
 	world.ForEachVisibleTile([&](IntVec2 const& worldCoords, int)
 	{
 		TowerPlacementRequest placementInfo = SInput::MakeTowerPlacementRequest(towerName, world.GetTileBounds(worldCoords).GetCenter(), world);
+        placementInfo.m_isGenerated = true;
         factory.m_towerPlacements.push_back(placementInfo);
 		return true; // keep iterating
 	});

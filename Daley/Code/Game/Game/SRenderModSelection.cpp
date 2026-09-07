@@ -88,9 +88,6 @@ void SRenderModSelection::Run(SystemContext const& context) const
 	}
 
 	AABB2 cameraBounds = camera.m_uiCamera.GetOrthoBounds2D();
-
-	VertexBufferID spriteVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
-	VertexBuffer& spriteVboRef = *renderer.GetVertexBuffer(spriteVBO);
 	
 	//------------------------------------------------------
 	// Render Options
@@ -135,13 +132,22 @@ void SRenderModSelection::Run(SystemContext const& context) const
 			modifierDef->GetDescription(cardText);
 		}
 
+		VertexBufferID spriteVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
+		VertexBuffer& spriteVboRef = *renderer.GetVertexBuffer(spriteVBO);
+		VertexBufferID secondarySpriteVBO = renderer.MakeVertexBuffer<Vertex_PCU>();
+		VertexBuffer& secondarySpriteVboRef = *renderer.GetVertexBuffer(secondarySpriteVBO);
+
 		Vec2 cardTextDims = font->GetTextDims(30.f, 5.f, cardText.c_str());
 		Vec2 cardPos = Vec2(cameraBounds.GetCenter().x - (numCards * (cardDims.x + cardSpacing)) / 2.f + (cardIndex * (cardDims.x + cardSpacing)), cameraBounds.GetCenter().y);
 		AABB2 cardBounds = AABB2(cardPos, cardPos + cardDims);
 		cardBounds.Translate(Vec2(0.f, -cardDims.y / 2.f));
 
 		VertexUtils::AddVertsForAABB2(untexturedVerts, cardBounds, Rgba8(0, 0, 0, 128));
+		renderer.BindTexture();
+		renderer.BindShader();
+		renderer.DrawVertexBuffer(untexturedVerts);
 
+		// Main Sprite
 		AssetID spriteSheetID = assetManager.LoadSynchronous<GridSpriteSheet>(modifierDef->m_displayData.m_spriteSheet);
 		GridSpriteSheet const* spriteSheet = assetManager.Get<GridSpriteSheet>(spriteSheetID);
 		ASSERT_OR_DIE(spriteSheet != nullptr, "SRenderModSelection::Run - Failed to load sprite sheet for run modifier: " + modifierDef->m_displayData.m_spriteSheet.ToString());
@@ -156,6 +162,32 @@ void SRenderModSelection::Run(SystemContext const& context) const
 		AABB2 spriteBounds = AABB2(cardBounds.GetCenter() - spriteDims / 2.f, cardBounds.GetCenter() + spriteDims / 2.f);
 		VertexUtils::AddVertsForAABB2(spriteVboRef, spriteBounds, modifierDef->m_displayData.m_tint, spriteUVs);
 
+		spriteSheet->SetRendererState();
+		renderer.DrawVertexBuffer(spriteVBO);
+
+		// Secondary Sprite (optional)
+		if (modifierDef->m_secondaryDisplayData.m_spriteSheet != Name::Invalid)
+		{
+			AssetID secondarySpriteSheetID = assetManager.LoadSynchronous<GridSpriteSheet>(modifierDef->m_secondaryDisplayData.m_spriteSheet);
+			GridSpriteSheet const* secondarySpriteSheet = assetManager.Get<GridSpriteSheet>(secondarySpriteSheetID);
+			if (secondarySpriteSheet)
+			{
+				SpriteAnimationDef const* secondaryAnimDef = secondarySpriteSheet->GetAnimationDef(modifierDef->m_secondaryDisplayData.m_anim);
+				ASSERT_OR_DIE(secondaryAnimDef != nullptr, "SRenderModSelection::Run - Failed to find secondary animation in sprite sheet for run modifier: " + modifierDef->m_secondaryDisplayData.m_anim.ToString());
+
+				SpriteAnimation secondaryAnim = secondaryAnimDef->MakeAnimInstance();
+				AABB2 secondarySpriteUVs = secondarySpriteSheet->GetSpriteUVs(secondaryAnim.GetCurrentSpriteIndex());
+				float secondarySpriteAspect = secondarySpriteSheet->GetSpriteAspect();
+				Vec2 secondarySpriteDims = 0.5f * Vec2(spriteDims.x, spriteDims.x / secondarySpriteAspect);
+				Vec2 secondarySpritePos = spriteBounds.maxs - spriteBounds.GetDimensions() * 0.25f;
+				AABB2 secondarySpriteBounds = AABB2(secondarySpritePos - secondarySpriteDims / 2.f, secondarySpritePos + secondarySpriteDims / 2.f);
+				VertexUtils::AddVertsForAABB2(secondarySpriteVboRef, secondarySpriteBounds, modifierDef->m_secondaryDisplayData.m_tint, secondarySpriteUVs);
+
+				secondarySpriteSheet->SetRendererState();
+				renderer.DrawVertexBuffer(secondarySpriteVBO);
+			}
+		}
+
 		std::string buttonText = StringUtils::StringF("Press %d to select", cardIndex + 1);
 		float currentTime = context.GetRealTimeSeconds();
 		float alpha = 0.5f * (1.f + MathUtils::SinDegrees(360.f * currentTime));
@@ -165,18 +197,14 @@ void SRenderModSelection::Run(SystemContext const& context) const
 		font->AddVertsForAlignedText2D(textVerts, spriteBounds.GetBottomCenter() + Vec2(0.f, -10.f), Vec2(0.f, -1.f), 30.f, cardText.c_str(), Rgba8::White, 0.5f);
 		font->AddVertsForAlignedText2D(textVerts, cardBounds.GetBottomCenter() + Vec2(0.f, 10.f), Vec2(0.f, 1.f), 30.f, buttonText.c_str(), buttonColor, 0.5f);
 
-		renderer.BindTexture();
-		renderer.BindShader();
-		renderer.DrawVertexBuffer(scRenderer.m_hudUntexturedVBO);
-
-		spriteSheet->SetRendererState();
-		renderer.DrawVertexBuffer(spriteVBO);
-
 		font->SetRendererState(renderer);
 		renderer.DrawVertexBuffer(scRenderer.m_hudTextVBO);
 
 		textVerts.ClearVerts();
 		untexturedVerts.ClearVerts();
 		spriteVboRef.ClearVerts();
+
+		renderer.ReleaseVertexBuffer(spriteVBO);
+		renderer.ReleaseVertexBuffer(secondarySpriteVBO);
 	}
 }

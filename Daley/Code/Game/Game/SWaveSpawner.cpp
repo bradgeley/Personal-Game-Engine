@@ -14,6 +14,7 @@
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/SystemContext.h"
+#include "Engine/Events/EventSystem.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/Noise.h"
 #include "Engine/Math/RandomNumberGenerator.h"
@@ -31,6 +32,7 @@ void SWaveSpawner::Startup()
 
 	DevConsoleUtils::AddDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
 	DevConsoleUtils::AddDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves, "seed", DevConsoleArgType::Int, "numWaves", DevConsoleArgType::Int);
+	DevConsoleUtils::AddDevConsoleCommand("StressTest", SWaveSpawner::StressTest, "fillMapTower", DevConsoleArgType::Name);
 }
 
 
@@ -40,6 +42,7 @@ void SWaveSpawner::Shutdown() const
 {
 	DevConsoleUtils::RemoveDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
 	DevConsoleUtils::RemoveDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves);
+	DevConsoleUtils::RemoveDevConsoleCommand("StressTest", SWaveSpawner::StressTest);
 }
 
 
@@ -199,6 +202,45 @@ bool SWaveSpawner::GenerateWaves(NamedProperties& args)
 	RunData const& runData = *scRunData.m_data;
 
 	GenerateWaves(waves, runData, seed, numWaves);
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SWaveSpawner::StressTest(NamedProperties& args)
+{
+	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
+
+	Name fillMapTower = args.Get<Name>("fillMapTower", Name::Invalid);
+	if (fillMapTower != Name::Invalid)
+	{
+		NamedProperties fillMapArgs;
+		fillMapArgs.Set("tower", fillMapTower);
+		g_eventSystem->FireEvent("FillMap", fillMapArgs);
+	}
+
+	waves.m_waves.clear();
+
+	Wave wave;
+	WaveStream stream;
+	stream.m_entityName = Name("BossWaterBug");
+	stream.m_healthMultiplier = 100.f;
+	stream.m_numEntities = 1'000'000;
+	stream.m_overTimeSeconds = 10'000.f;
+	stream.m_magicEnemyChance = 0.1f;
+	stream.m_rareEnemyChance = 0.1f;
+	stream.m_speedMultiplier = 1.f;
+	stream.m_id = 0;
+
+	wave.m_waveStreams.push_back(stream);
+	waves.m_waves.push_back(wave);
+
+	NamedProperties empty;
+	g_eventSystem->FireEvent("God", empty);
+	g_eventSystem->FireEvent("UnlockAllMods", empty);
+	g_eventSystem->FireEvent("StartWaves", empty);
 
 	return false;
 }

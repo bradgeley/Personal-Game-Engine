@@ -473,6 +473,7 @@
   <EntityDef name="AoEEffect">
     <CollisionEffect></CollisionEffect>
     <Collision radius="1" type="GroundEffect"></Collision>
+    <Lifetime></Lifetime>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
@@ -480,6 +481,7 @@
   <EntityDef name="AoEPlayerBuff">
     <CollisionEffect></CollisionEffect>
     <Collision radius="1" type="PlayerBuff"></Collision>
+    <Lifetime></Lifetime>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

@@ -71,23 +71,23 @@ EntityID SEntityFactory::CreateEntityFromDef(SystemContext const& context, Entit
     }
 
     // Add components that exist in the def
-    if (def->m_ability.has_value())             context.AddComponent<CAbility>(id, *def->m_ability);
-    if (def->m_ai.has_value())                  context.AddComponent<CAIController>(id, *def->m_ai);
-    if (def->m_animation.has_value())           context.AddComponent<CAnimation>(id, *def->m_animation);
-    if (def->m_collision.has_value())           context.AddComponent<CCollision>(id, *def->m_collision);
-    if (def->m_collisionEffect.has_value())     context.AddComponent<CCollisionEffect>(id, *def->m_collisionEffect);
-    if (def->m_death.has_value())               context.AddComponent<CDeath>(id, *def->m_death);
-    if (def->m_health.has_value())              context.AddComponent<CHealth>(id, *def->m_health);
-    if (def->m_lifetime.has_value())            context.AddComponent<CLifetime>(id, *def->m_lifetime);
-    if (def->m_movement.has_value())            context.AddComponent<CMovement>(id, *def->m_movement);
-    if (def->m_placeable.has_value())           context.AddComponent<CPlaceable>(id, *def->m_placeable);
-    if (def->m_proj.has_value())                context.AddComponent<CProjectile>(id, *def->m_proj);
-    if (def->m_render.has_value())              context.AddComponent<CRender>(id, *def->m_render);
-    if (def->m_tags.has_value())                context.AddComponent<CTags>(id, *def->m_tags);
-    if (def->m_time.has_value())                context.AddComponent<CTime>(id, *def->m_time);
-    if (def->m_transform.has_value())           context.AddComponent<CTransform>(id, *def->m_transform);
+    if (def->m_ability.has_value())             context.AddComponentUnsafe<CAbility>(id, *def->m_ability);
+    if (def->m_ai.has_value())                  context.AddComponentUnsafe<CAIController>(id, *def->m_ai);
+    if (def->m_animation.has_value())           context.AddComponentUnsafe<CAnimation>(id, *def->m_animation);
+    if (def->m_collision.has_value())           context.AddComponentUnsafe<CCollision>(id, *def->m_collision);
+    if (def->m_collisionEffect.has_value())     context.AddComponentUnsafe<CCollisionEffect>(id, *def->m_collisionEffect);
+    if (def->m_death.has_value())               context.AddComponentUnsafe<CDeath>(id, *def->m_death);
+    if (def->m_health.has_value())              context.AddComponentUnsafe<CHealth>(id, *def->m_health);
+    if (def->m_lifetime.has_value())            context.AddComponentUnsafe<CLifetime>(id, *def->m_lifetime);
+    if (def->m_movement.has_value())            context.AddComponentUnsafe<CMovement>(id, *def->m_movement);
+    if (def->m_placeable.has_value())           context.AddComponentUnsafe<CPlaceable>(id, *def->m_placeable);
+    if (def->m_proj.has_value())                context.AddComponentUnsafe<CProjectile>(id, *def->m_proj);
+    if (def->m_render.has_value())              context.AddComponentUnsafe<CRender>(id, *def->m_render);
+    if (def->m_tags.has_value())                context.AddComponentUnsafe<CTags>(id, *def->m_tags);
+    if (def->m_time.has_value())                context.AddComponentUnsafe<CTime>(id, *def->m_time);
+    if (def->m_transform.has_value())           context.AddComponentUnsafe<CTransform>(id, *def->m_transform);
 
-    CEntityName* nameComponent = context.AddComponent<CEntityName>(id);
+    CEntityName* nameComponent = context.AddComponentUnsafe<CEntityName>(id);
     nameComponent->m_defName = def->m_name;
 
     return id;
@@ -109,70 +109,63 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
         return EntityID::Invalid;
     }
 
-    if (CTransform* transform = context.GetComponent<CTransform>(id))
+    if (CTransform* transform = context.GetComponentUnsafe<CTransform>(id))
     {
         transform->m_pos = spawnInfo.m_spawnPos;
         transform->m_orientation = spawnInfo.m_spawnOrientation;
     }
 
-    if (CCollision* collision = context.GetComponent<CCollision>(id))
+    if (CCollision* collision = context.GetComponentUnsafe<CCollision>(id))
     {
         collision->m_radius *= spawnInfo.m_spawnScale;
 		collision->m_offset *= spawnInfo.m_spawnScale;
     }
 
-    if (CRender* render = context.GetComponent<CRender>(id))
+    if (CRender* render = context.GetComponentUnsafe<CRender>(id))
     {
         render->m_renderRadius *= spawnInfo.m_spawnScale;
 		render->m_outlineTint = spawnInfo.m_outlineTint;
     }
 
-    if (CHealth* health = context.GetComponent<CHealth>(id))
+    if (CHealth* health = context.GetComponentUnsafe<CHealth>(id))
     {
         health->m_maxHealth *= spawnInfo.m_spawnHealthMultiplier;
         health->m_currentHealth *= spawnInfo.m_spawnHealthMultiplier;
 	}
 
-    if (CMovement* movement = context.GetComponent<CMovement>(id))
+    if (CMovement* movement = context.GetComponentUnsafe<CMovement>(id))
     {
         movement->m_movementSpeedMultiplier = spawnInfo.m_spawnSpeedMultiplier;
 	}
 
-    CLifetime* lifetime = context.GetComponent<CLifetime>(id);
+    CLifetime* lifetime = context.GetComponentUnsafe<CLifetime>(id);
     if (spawnInfo.m_spawnLifetime >= 0.f)
     {
         if (!lifetime)
         {
-			lifetime = context.AddComponent<CLifetime>(id);
+			lifetime = context.AddComponentUnsafe<CLifetime>(id);
         }
 
         lifetime->m_lifetime = spawnInfo.m_spawnLifetime;
         lifetime->m_lifetimeRemaining = spawnInfo.m_spawnLifetime;
     }
 
-	CTags* tags = context.GetComponent<CTags>(id);
-
-    bool hasValidTag = false;
-	for (int i = 0; i < (int) spawnInfo.m_spawnTags.size(); ++i)
-	{
-        if (spawnInfo.m_spawnTags[i] != Name::Invalid)
-        {
-            hasValidTag = true;
-            break;
-        }
-	}
-
-	if (hasValidTag)
-	{
-		if (!tags)
+    CTags* tags = context.GetComponentUnsafe<CTags>(id);
+    for (int i = 0; i < (int) spawnInfo.m_spawnTags.size(); ++i)
+    {
+		Name tag = spawnInfo.m_spawnTags[i];
+		if (tag == Name::Invalid)
 		{
-			tags = context.AddComponent<CTags>(id);
+            break;
 		}
-        for (int i = 0; i < (int) spawnInfo.m_spawnTags.size(); ++i)
+
+        if (!tags)
         {
-            tags->AddTag(spawnInfo.m_spawnTags[i]);
+			tags = context.AddComponentUnsafe<CTags>(id);
         }
-	}
+
+        tags->AddTag(tag);
+    }
 
     return id;
 }

@@ -34,6 +34,12 @@ RunModifierDef::RunModifierDef(XmlElement const& modElement)
 	if (displayDataElement != nullptr)
 	{
 		m_displayData = RunModifierDisplayData(*displayDataElement);
+
+		displayDataElement = displayDataElement->NextSiblingElement("DisplayData");
+		if (displayDataElement != nullptr)
+		{
+			m_secondaryDisplayData = RunModifierDisplayData(*displayDataElement);
+		}
 	}
 
 	ASSERT_OR_DIE(modElement.Parent() != nullptr, "RunModifierDef XML element has no parent element.");

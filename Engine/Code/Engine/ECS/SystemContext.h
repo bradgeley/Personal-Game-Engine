@@ -36,6 +36,12 @@ public:
     CType const* GetComponentConst(GroupIter const& it) const;
 
     template <typename CType>
+    CType* GetComponentUnsafe(EntityID entityID) const;
+
+    template <typename CType>
+    CType const* GetComponentConstUnsafe(EntityID entityID) const;
+
+    template <typename CType>
     CType& GetSingleton() const;
 
     template <typename CType>
@@ -85,6 +91,12 @@ public:
 
     template <typename CType>
     CType* AddComponent(EntityID entityID, CType const& copy) const;
+
+    template <typename CType, typename...Args>
+    CType* AddComponentUnsafe(EntityID entityID, Args const& ...args) const;
+        
+    template <typename CType>
+    CType* AddComponentUnsafe(EntityID entityID, CType const& copy) const;
 
     //----------------------------------------------------------------------------------------------------------------------
     // REMOVE COMPONENTS
@@ -177,6 +189,16 @@ CType const* SystemContext::GetComponentConst(GroupIter const& it) const
 {
     ASSERT_OR_DIE(IsComponentAccessValid(typeid(CType), false), "SystemContext::GetComponentConst - Does not have read access.");
     return g_ecs->GetComponent<CType>(it);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename CType>
+inline CType* SystemContext::GetComponentUnsafe(EntityID entityID) const
+{
+    ASSERT_OR_DIE(IsComponentAccessValid(typeid(CType), false), "SystemContext::GetComponentUnsafe - Does not have read access.");
+    return g_ecs->GetComponentUnsafe<CType>(entityID);
 }
 
 
@@ -303,6 +325,26 @@ CType* SystemContext::AddComponent(EntityID entityID, CType const& copy) const
 {
     ASSERT_OR_DIE(HasFullECSAccess(), "SystemContext::AddComponent - System does not have full ECS access, cannot add component.");
     return g_ecs->AddComponent<CType>(entityID, copy);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename CType, typename...Args>
+CType* SystemContext::AddComponentUnsafe(EntityID entityID, Args const& ...args) const
+{
+    ASSERT_OR_DIE(HasFullECSAccess(), "SystemContext::AddComponentUnsafe - System does not have full ECS access, cannot add component.");
+    return g_ecs->AddComponentUnsafe<CType>(entityID, args...);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template <typename CType>
+CType* SystemContext::AddComponentUnsafe(EntityID entityID, CType const& copy) const
+{
+    ASSERT_OR_DIE(HasFullECSAccess(), "SystemContext::AddComponentUnsafe - System does not have full ECS access, cannot add component.");
+    return g_ecs->AddComponentUnsafe<CType>(entityID, copy);
 }
 
 

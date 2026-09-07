@@ -87,7 +87,7 @@
   <!-- Attacks -->
 
   <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="100">
-    <Cooldown cooldown="0.2"></Cooldown>
+    <Cooldown cooldown="0.33"></Cooldown>
     <Targeting maxRange="15"></Targeting>
     <Crit critChance="0.1"></Crit>
     <OnHit>
@@ -100,9 +100,9 @@
     <Targeting maxRange="12"></Targeting>
     <Crit critChance="0.05"></Crit>
     <OnHit>
-      <Damage minDamage="25" maxDamage="50"></Damage>
-      <AoEHit radius="2">
-        <Damage damage="50"></Damage>
+      <Damage minDamage="40" maxDamage="80"></Damage>
+      <AoEHit radius="4">
+        <Damage damage="60"></Damage>
       </AoEHit>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -111,13 +111,9 @@
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="12"></Targeting>
     <OnHit>
-      <AoEHit radius="2">
+      <AoEHit radius="3">
         <Poison poison="5"></Poison>
       </AoEHit>
-      <AoEEffect duration="2" radius="2">
-        <Poison poison="5"></Poison>
-        <Render tint="0,255,0,25"></Render>
-      </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
 
@@ -132,14 +128,17 @@
   </ProjectileHitAbilityDef>
 
   <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="StrawberryProj" projSpeed="100">
-    <Cooldown cooldown="0.5"></Cooldown>
+    <Cooldown cooldown="1.5"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <OnHit>
-      <Burn burn="20"></Burn>
-      <AoEEffect duration="0.5" radius="1.25">
-        <Burn burn="20"></Burn>
+      <Burn burn="50"></Burn>
+      <!--<AoEEffect duration="0.25" radius="0.5">
+        <Burn burn="100"></Burn>
         <Render tint="255,0,0,25"></Render>
-      </AoEEffect>
+      </AoEEffect>-->
+      <AoEHit radius="0.5">
+        <Burn burn="50"></Burn>
+      </AoEHit>
     </OnHit>
   </ProjectileHitAbilityDef>
 
@@ -161,9 +160,9 @@
   </AoEHitAbilityDef>
 
   <PassiveAoEAbilityDef name="OrangeSorbetAttack">
-    <Targeting maxRange="5"></Targeting>
-    <AoEEffect radius="5">
-      <Burn burn="10"></Burn>
+    <Targeting maxRange="6"></Targeting>
+    <AoEEffect radius="6">
+      <Burn burn="25"></Burn>
       <Render tint="255,165,0,25"></Render>
     </AoEEffect>
   </PassiveAoEAbilityDef>

@@ -53,6 +53,7 @@ public:
 	float m_weight = 1.f;
 	std::array<Name, s_maxRequirements> m_requirements;
 	RunModifierDisplayData m_displayData;
+	RunModifierDisplayData m_secondaryDisplayData;
 };
 
 
