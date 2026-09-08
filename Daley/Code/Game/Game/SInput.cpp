@@ -99,27 +99,28 @@ void SInput::Run(SystemContext const& context) const
 		}
 		return;
 	}
-	
+
+	// Game speed up/slow down
+	if (inputSystem.WasKeyJustPressed(KeyCode::Plus))
+	{
+		runData.m_currentTimeDilation *= 2.f;
+		if (runData.m_currentTimeDilation > StaticGameSettings::s_maxTimeDilation)
+		{
+			runData.m_currentTimeDilation = StaticGameSettings::s_maxTimeDilation;
+		}
+	}
+	else if (inputSystem.WasKeyJustPressed(KeyCode::Minus))
+	{
+		runData.m_currentTimeDilation *= 0.5f;
+		if (runData.m_currentTimeDilation < StaticGameSettings::s_minTimeDilation)
+		{
+			runData.m_currentTimeDilation = StaticGameSettings::s_minTimeDilation;
+		}
+	}
+
 	bool isPaused = gameState.IsPaused();
 	if (!isPaused)
 	{
-		// Game speed up/slow down
-		if (inputSystem.WasKeyJustPressed(KeyCode::Plus))
-		{
-			runData.m_currentTimeDilation *= 2.f;
-			if (runData.m_currentTimeDilation > StaticGameSettings::s_maxTimeDilation)
-			{
-				runData.m_currentTimeDilation = StaticGameSettings::s_maxTimeDilation;
-			}
-		}
-		else if (inputSystem.WasKeyJustPressed(KeyCode::Minus))
-		{
-			runData.m_currentTimeDilation *= 0.5f;
-			if (runData.m_currentTimeDilation < StaticGameSettings::s_minTimeDilation)
-			{
-				runData.m_currentTimeDilation = StaticGameSettings::s_minTimeDilation;
-			}
-		}
 		gameState.m_clock->SetLocalTimeDilation(runData.m_currentTimeDilation);
 	}
 

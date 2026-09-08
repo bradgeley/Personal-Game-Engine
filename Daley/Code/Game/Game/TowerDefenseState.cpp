@@ -95,7 +95,7 @@ void TowerDefenseState::StartGame(NamedProperties const& inProps)
     scRunData.m_data = inProps.Get<RunData*>("runData", nullptr);
 
 	RunData& runData = *scRunData.m_data;
-	runData.m_gold = StaticGameSettings::s_baseGold;
+	runData.m_gold = StaticGameSettings::s_baseGold * scRunData.m_data->m_goldGainMultiplier;
 	runData.m_health = StaticGameSettings::s_basePlayerHealth;
 	runData.m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
 	runData.m_numSoldTowers = 0;
