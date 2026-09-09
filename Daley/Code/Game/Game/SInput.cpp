@@ -219,7 +219,7 @@ void SInput::Run(SystemContext const& context) const
 	// Sell
 	if (inputSystem.WasKeyJustPressed('S') && scInput.m_towerUnderCursor != EntityID::Invalid)
 	{
-		if (runData.m_numSoldTowers < StaticGameSettings::s_baseSellMaximum)
+		if (runData.m_numSoldTowers < runData.m_maxSellsPerMission)
 		{
 			factory.m_towerRemovals.push_back(TowerRemovalRequest{ scInput.m_towerUnderCursor, true });
 			runData.m_numSoldTowers++;

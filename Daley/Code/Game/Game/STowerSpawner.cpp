@@ -76,7 +76,7 @@ void STowerSpawner::Run(SystemContext const& context) const
             floatingTextInstance.m_lifetimeSeconds = 2.f;
             floatingTextInstance.m_pos = transform.m_pos;
             floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
-            floatingTextInstance.m_text = StringUtils::StringF("+$%.1f (%i remaining)", refund, StaticGameSettings::s_baseSellMaximum - runData.m_numSoldTowers);
+            floatingTextInstance.m_text = StringUtils::StringF("+$%.1f (%i remaining)", refund, runData.m_maxSellsPerMission - runData.m_numSoldTowers);
             floatingTextInstance.m_tint = Rgba8::Green;
             floatingTextInstance.m_scale = 1.5f;
             scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
