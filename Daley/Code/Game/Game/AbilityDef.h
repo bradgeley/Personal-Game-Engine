@@ -278,6 +278,22 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct AdjacentHitAbilityDef : public AbilityDef
+{
+public:
+
+	explicit AdjacentHitAbilityDef(void const* xmlElement);
+	virtual Ability* MakeAbilityInstance() const override;
+
+public:
+
+	std::optional<AbilityCooldownComponentDef> m_cooldownDef;
+	std::optional<AbilityHasteComponentDef> m_hasteOnHit;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct LaserAbilityDef : public AbilityDef
 {
 public:

@@ -15,6 +15,8 @@ public:
 
 public:
 
+	float m_costOfPurchase = 10.f;
 	IntVec2 m_dims = IntVec2::OneVector;
+	IntVec2 m_botLeftTile = IntVec2::ZeroVector;
 	TagQuery m_tileTagQuery;
 };

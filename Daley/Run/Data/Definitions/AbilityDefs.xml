@@ -150,14 +150,10 @@
     </AoEHit>
   </AoEHitAbilityDef>
 
-  <AoEHitAbilityDef name="CoffeeAttack">
+  <AdjacentHitAbilityDef name="CoffeeAttack">
     <Cooldown cooldown="2"></Cooldown>
-    <Targeting minRange="1" maxRange="2" targets="Towers"></Targeting>
-    <Crit critChance="0.15"></Crit>
-    <AoEHit>
-      <Haste duration="1"></Haste>
-    </AoEHit>
-  </AoEHitAbilityDef>
+    <Haste duration="1"></Haste>
+  </AdjacentHitAbilityDef>
 
   <PassiveAoEAbilityDef name="OrangeSorbetAttack">
     <Targeting maxRange="6"></Targeting>

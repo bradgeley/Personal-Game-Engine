@@ -39,7 +39,6 @@ void AbilityDef::LoadFromXML()
 			DevConsoleUtils::LogError("Duplicate Ability Def: %s", name.ToCStr());
         }
 
-        // Emplace new definition using the constructor that takes an Xml Element
 		ProjectileHitAbilityDef* newDef = new ProjectileHitAbilityDef(abilityDefElem);
         s_abilityDefs.push_back(newDef);
 
@@ -56,7 +55,6 @@ void AbilityDef::LoadFromXML()
             DevConsoleUtils::LogError("Duplicate Ability Def: %s", name.ToCStr());
         }
 
-        // Emplace new definition using the constructor that takes an Xml Element
         AoEHitAbilityDef* newDef = new AoEHitAbilityDef(aoeHitAbilityDefElem);
         s_abilityDefs.push_back(newDef);
 
@@ -73,10 +71,25 @@ void AbilityDef::LoadFromXML()
         {
             DevConsoleUtils::LogError("Duplicate Ability Def: %s", name.ToCStr());
         }
-        // Emplace new definition using the constructor that takes an Xml Element
+
         PassiveAoEAbilityDef* newDef = new PassiveAoEAbilityDef(passiveAoEAbilityDefElem);
         s_abilityDefs.push_back(newDef);
         passiveAoEAbilityDefElem = passiveAoEAbilityDefElem->NextSiblingElement("PassiveAoEAbilityDef");
+	}
+
+    // Adjacent Hit Abilities
+	XmlElement* adjacentHitAbilityDefElem = root->FirstChildElement("AdjacentHitAbilityDef");
+    while (adjacentHitAbilityDefElem)
+    {
+        Name name = XmlUtils::ParseXmlAttribute(*adjacentHitAbilityDefElem, "name", Name::Invalid);
+        if (GetAbilityDefID(name) != -1)
+        {
+            DevConsoleUtils::LogError("Duplicate Ability Def: %s", name.ToCStr());
+        }
+
+        AdjacentHitAbilityDef* newDef = new AdjacentHitAbilityDef(adjacentHitAbilityDefElem);
+        s_abilityDefs.push_back(newDef);
+        adjacentHitAbilityDefElem = adjacentHitAbilityDefElem->NextSiblingElement("AdjacentHitAbilityDef");
 	}
 
     // Laser Abilities
@@ -88,7 +101,7 @@ void AbilityDef::LoadFromXML()
         {
             DevConsoleUtils::LogError("Duplicate Ability Def: %s", name.ToCStr());
         }
-        // Emplace new definition using the constructor that takes an Xml Element
+
         LaserAbilityDef* newDef = new LaserAbilityDef(laserAbilityDefElem);
         s_abilityDefs.push_back(newDef);
         laserAbilityDefElem = laserAbilityDefElem->NextSiblingElement("LaserAbilityDef");
@@ -487,6 +500,34 @@ Ability* PassiveAoEAbilityDef::MakeAbilityInstance() const
 {
     PassiveAoEAbility* ability = new PassiveAoEAbility(*this);
 	return ability;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AdjacentHitAbilityDef::AdjacentHitAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
+{
+	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+
+    if (XmlElement const* cooldownElem = elem.FirstChildElement("Cooldown"))
+    {
+        m_cooldownDef.emplace(cooldownElem);
+    }
+
+    // targeting component is implicit, no data in it anyway
+
+	if (XmlElement const* hasteElem = elem.FirstChildElement("Haste"))
+	{
+		m_hasteOnHit.emplace(hasteElem);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Ability* AdjacentHitAbilityDef::MakeAbilityInstance() const
+{
+	return new AdjacentHitAbility(*this);
 }
 
 

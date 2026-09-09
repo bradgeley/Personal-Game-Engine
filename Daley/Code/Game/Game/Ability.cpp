@@ -218,6 +218,37 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, int
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool AbilityAdjacentTargetingComponent::FindTargets(SystemContext const& context, EntityID owner)
+{
+    SCWorld const& world = context.GetSingletonConst<SCWorld>();
+    SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
+    CollisionLayer const& buildingLayer = scCollision.GetCollisionLayer(CollisionChannel::Building);
+
+    m_targets.clear();
+
+	CPlaceable const& placeableComp = *context.GetComponentConst<CPlaceable>(owner);
+
+    world.ForEachPlayableTileInRegion(placeableComp.m_botLeftTile, placeableComp.m_botLeftTile + placeableComp.m_dims - IntVec2::OneVector, [&](IntVec2 const& worldCoords)
+    {
+        int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
+        CollisionBucket const& tileBucket = buildingLayer[tileIndex];
+        for (EntityID entityID : tileBucket)
+        {
+            if (entityID == owner)
+            {
+                continue;
+            }
+            m_targets.insert(entityID);
+        }
+        return true;
+    });
+
+    return !m_targets.empty();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityPrecisionTargetingComponent::AbilityPrecisionTargetingComponent(AbilityTargetingComponentDef const& def) : AbilityTargetingComponent(def)
 {
 
@@ -1044,6 +1075,15 @@ Ability::Ability(AbilityDef const& def) : m_abilityDef(&def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Ability::Initialize(SystemContext const& context, EntityID ownerEntityID)
+{
+    ASSERT_OR_DIE(context.IsValid(ownerEntityID), "Ability::Initialize - owner entity is invalid.");
+    m_owner = ownerEntityID;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Ability::Shutdown(SystemContext const&)
 {
 
@@ -1184,7 +1224,7 @@ void ProjectileHitAbility::CopyTransientDataTo(Ability& other) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
+void ProjectileHitAbility::AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const&, Vec2 const& location) const
 {
     float minRange = m_targetingComp.GetMinRange();
     float maxRange = m_targetingComp.GetMaxRange();
@@ -1442,7 +1482,7 @@ void AoEHitAbility::CopyTransientDataTo(Ability& other) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AoEHitAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
+void AoEHitAbility::AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const&, Vec2 const& location) const
 {
     float minRange = m_targetingComp.GetMinRange();
     float maxRange = m_targetingComp.GetMaxRange();
@@ -1632,7 +1672,7 @@ void PassiveAoEAbility::CopyTransientDataTo(Ability&) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
+void PassiveAoEAbility::AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const&, Vec2 const& location) const
 {
     float minRange = m_targetingComp.GetMinRange();
     float maxRange = m_targetingComp.GetMaxRange();
@@ -1685,6 +1725,153 @@ bool PassiveAoEAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
 
     m_needsEffectRespawn = applied;
     return applied;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AdjacentHitAbility::AdjacentHitAbility(AdjacentHitAbilityDef const& def) : Ability(def)
+{
+	m_cooldownComp = def.m_cooldownDef.has_value() ? *def.m_cooldownDef : AbilityCooldownComponent();
+	m_hasteOnHit = def.m_hasteOnHit.has_value() ? *def.m_hasteOnHit : AbilityHasteComponent();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AdjacentHitAbility::Update(SystemContext const& context, Vec2 const&, float timeDilation)
+{
+    ASSERT_OR_DIE(m_abilityDef, "AdjacentHitAbility::Update - m_abilityDef is null.");
+
+    float deltaSeconds = context.m_deltaSeconds * timeDilation;
+    m_cooldownComp.m_accumulatedTime += deltaSeconds;
+
+    constexpr float maxAttacksPerSecond = 1000.f;
+    constexpr float minTimeBetweenAttacks = 1.f / maxAttacksPerSecond;
+
+    float timeBetweenAttacks = m_cooldownComp.GetCooldown();
+    timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
+
+    if (m_cooldownComp.m_accumulatedTime <= timeBetweenAttacks)
+    {
+        return;
+    }
+
+    if (!m_targetingComp.FindTargets(context, m_owner))
+    {
+        // No targets in range, clamp cooldown
+        m_cooldownComp.m_accumulatedTime = MathUtils::Clamp(m_cooldownComp.m_accumulatedTime, 0.f, timeBetweenAttacks);
+        return;
+    }
+
+	auto& timeStorage = context.GetArrayStorage<CTime>();
+
+    while (m_cooldownComp.m_accumulatedTime > timeBetweenAttacks)
+    {
+        m_cooldownComp.m_accumulatedTime -= timeBetweenAttacks;
+
+		for (EntityID targetID : m_targetingComp.m_targets)
+		{
+			if (!context.IsValid(targetID))
+			{
+				continue;
+			}
+
+            if (m_hasteOnHit.IsRelevant())
+            {
+                CTime& time = timeStorage[targetID];
+                time.m_remainingHasteDuration += m_hasteOnHit.GetDuration();
+            }
+		}
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Ability* AdjacentHitAbility::DeepCopy() const
+{
+	return new AdjacentHitAbility(*reinterpret_cast<AdjacentHitAbilityDef const*>(m_abilityDef));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AdjacentHitAbility::CopyTransientDataTo(Ability& other) const
+{
+    AdjacentHitAbility& otherAbility = static_cast<AdjacentHitAbility&>(other);
+
+    otherAbility.m_cooldownComp.m_accumulatedTime = m_cooldownComp.m_accumulatedTime;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AdjacentHitAbility::AddDebugVerts(VertexBuffer& vbo, CPlaceable const& placeable, Vec2 const&) const
+{
+	IntVec2 topRight = placeable.m_botLeftTile + placeable.m_dims - IntVec2::OneVector;
+
+	Rgba8 tint = Rgba8::Orange;
+	tint.a = 128;
+
+    // Top Row
+	for (int x = placeable.m_botLeftTile.x; x <= topRight.x; ++x)
+	{
+		AABB2 aabb = AABB2(Vec2((float) x, (float) topRight.y + 1.f), Vec2((float) x + 1.f, (float) topRight.y + 2.f));
+		aabb.Translate(Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY));
+		VertexUtils::AddVertsForAABB2(vbo, aabb, tint);
+	}
+
+	// Bottom Row
+	for (int x = placeable.m_botLeftTile.x; x <= topRight.x; ++x)
+	{
+		AABB2 aabb = AABB2(Vec2((float) x, (float) placeable.m_botLeftTile.y - 1.f), Vec2((float) x + 1.f, (float) placeable.m_botLeftTile.y));
+		aabb.Translate(Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY));
+		VertexUtils::AddVertsForAABB2(vbo, aabb, tint);
+	}
+
+    // Left Column
+	for (int y = placeable.m_botLeftTile.y; y <= topRight.y; ++y)
+	{
+		AABB2 aabb = AABB2(Vec2((float) placeable.m_botLeftTile.x - 1.f, (float) y), Vec2((float) placeable.m_botLeftTile.x, (float) y + 1.f));
+		aabb.Translate(Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY));
+		VertexUtils::AddVertsForAABB2(vbo, aabb, tint);
+	}
+
+    // Right Column
+	for (int y = placeable.m_botLeftTile.y; y <= topRight.y; ++y)
+	{
+		AABB2 aabb = AABB2(Vec2((float) topRight.x + 1.f, (float) y), Vec2((float) topRight.x + 2.f, (float) y + 1.f));
+		aabb.Translate(Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY));
+		VertexUtils::AddVertsForAABB2(vbo, aabb, tint);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AdjacentHitAbility::AppendDebugString(EntityDebugContext& debugContext) const
+{
+    Ability::AppendDebugString(debugContext);
+
+	m_cooldownComp.AppendDebugString(debugContext);
+	m_hasteOnHit.AppendDebugString(debugContext);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool AdjacentHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+	if (def.m_abilityAttribute == TowerAbilityAttribute::Haste)
+	{
+		m_hasteOnHit.m_duration += modifier.GetValue();
+		return true;
+	}
+
+    return false;
 }
 
 
@@ -1845,7 +2032,7 @@ void LaserAbility::CopyTransientDataTo(Ability&) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void LaserAbility::AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const
+void LaserAbility::AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const&, Vec2 const& location) const
 {
     float minRange = m_targetingComp.GetMinRange();
     float maxRange = m_targetingComp.GetMaxRange();

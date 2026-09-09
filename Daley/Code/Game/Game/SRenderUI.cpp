@@ -64,6 +64,8 @@ void SRenderUI::Run(SystemContext const& context) const
 		if (def->m_ability.has_value())
 		{
 			CAbility copy(def->m_ability.value());
+			CPlaceable placeableCopy = placeable;
+			placeableCopy.m_botLeftTile = scInput.m_towerPlacementRequest.m_botLeftTileCoords;
 
 			for (auto& ability : copy.m_abilities)
 			{
@@ -72,7 +74,7 @@ void SRenderUI::Run(SystemContext const& context) const
 					modifier->ApplyToAbility(*ability, tags);
 				}
 				// Render range indicators for abilities when in placement mode
-				ability->AddDebugVerts(untexturedVerts, placementInfo.m_worldPos);
+				ability->AddDebugVerts(untexturedVerts, placeableCopy, placementInfo.m_worldPos);
 			}
 		}
 

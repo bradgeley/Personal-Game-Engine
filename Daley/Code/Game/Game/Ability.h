@@ -29,7 +29,9 @@ struct AbilityPoisonComponentDef;
 struct AbilityRenderComponentDef;
 struct AbilitySlowComponentDef;
 struct AbilityTargetingComponentDef;
+struct AdjacentHitAbilityDef;
 struct AoEHitAbilityDef;
+struct CPlaceable;
 struct CTags;
 struct EntityDef;
 struct LaserAbilityDef;
@@ -116,6 +118,22 @@ public:
 	AbilityAoETargetingComponent(AbilityTargetingComponentDef const& def);
 
 	bool FindTargets(SystemContext const& context, int maxTargets = -1);
+
+public:
+
+	std::set<EntityID> m_targets;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct AbilityAdjacentTargetingComponent
+{
+public:
+
+	AbilityAdjacentTargetingComponent() = default;
+
+	bool FindTargets(SystemContext const& context, EntityID owner);
 
 public:
 
@@ -479,13 +497,14 @@ public:
 	Ability(AbilityDef const& def);
 	virtual ~Ability() = default;
 
+	virtual void Initialize(SystemContext const& context, EntityID ownerEntityID);
 	virtual void Shutdown(SystemContext const& context);
 
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation = 1.f) = 0;
 	virtual void Render([[maybe_unused]] SystemContext const& context, [[maybe_unused]] Vec2 const& location) const {};
 	virtual Ability* DeepCopy() const = 0;
 	virtual void CopyTransientDataTo(Ability& other) const = 0;
-	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const = 0;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
 	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier);
@@ -493,6 +512,7 @@ public:
 public:
 
 	bool m_needsRebuild = true;
+	EntityID m_owner = EntityID::Invalid;
 	AbilityDef const* m_abilityDef = nullptr;
 };
 
@@ -509,7 +529,7 @@ public:
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void CopyTransientDataTo(Ability& other) const override;
-	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	RolledOnHitComponent RollDamageAndEffects(RandomNumberGenerator& rng) const;
@@ -542,7 +562,7 @@ public:
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void CopyTransientDataTo(Ability& other) const override;
-	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	virtual HitPayload RollDamageAndEffects(RandomNumberGenerator& rng) const;
@@ -571,7 +591,7 @@ public:
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void CopyTransientDataTo(Ability& other) const override;
-	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
@@ -582,6 +602,31 @@ public:
 	bool m_needsEffectRespawn = true;
 	AbilityAoETargetingComponent	m_targetingComp;
 	AbilityAoEEffectComponent		m_aoeEffectComp;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+class AdjacentHitAbility : public Ability
+{
+public:
+
+	AdjacentHitAbility() = default;
+	explicit AdjacentHitAbility(AdjacentHitAbilityDef const& def);
+
+	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
+	virtual Ability* DeepCopy() const override;
+	virtual void CopyTransientDataTo(Ability& other) const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const override;
+	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
+
+	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
+
+public:
+
+	AbilityCooldownComponent			m_cooldownComp;
+	AbilityAdjacentTargetingComponent	m_targetingComp;
+	AbilityHasteComponent				m_hasteOnHit;
 };
 
 
@@ -598,7 +643,7 @@ public:
 	virtual void Render(SystemContext const& context, Vec2 const& location) const override;
 	virtual Ability* DeepCopy() const override;
 	virtual void CopyTransientDataTo(Ability& other) const override;
-	virtual void AddDebugVerts(VertexBuffer& out_vbo, Vec2 const& location) const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	HitPayload RollDamageAndEffects(float deltaSeconds) const;

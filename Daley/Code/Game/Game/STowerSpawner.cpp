@@ -69,24 +69,17 @@ void STowerSpawner::Run(SystemContext const& context) const
 
         if (removalRequest.m_isSell)
         {
-            for (auto const& placeableTower : runData.m_placeableTowers)
-            {
-                if (placeableTower.m_towerName == entityName.m_defName)
-                {
-                    runData.m_gold += placeableTower.m_cost * StaticGameSettings::s_baseSellRefundRate;
+            float refund = placeable.m_costOfPurchase * runData.m_sellRefundRate;
+			runData.m_gold += refund;
 
-                    FloatingTextInstance floatingTextInstance;
-                    floatingTextInstance.m_lifetimeSeconds = 2.f;
-                    floatingTextInstance.m_pos = transform.m_pos;
-                    floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
-                    floatingTextInstance.m_text = StringUtils::StringF("+$%.1f (%i remaining)", placeableTower.m_cost * StaticGameSettings::s_baseSellRefundRate, StaticGameSettings::s_baseSellMaximum - runData.m_numSoldTowers);
-                    floatingTextInstance.m_tint = Rgba8::Green;
-                    floatingTextInstance.m_scale = 1.5f;
-                    scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
-
-                    break;
-                }
-            }
+            FloatingTextInstance floatingTextInstance;
+            floatingTextInstance.m_lifetimeSeconds = 2.f;
+            floatingTextInstance.m_pos = transform.m_pos;
+            floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+            floatingTextInstance.m_text = StringUtils::StringF("+$%.1f (%i remaining)", refund, StaticGameSettings::s_baseSellMaximum - runData.m_numSoldTowers);
+            floatingTextInstance.m_tint = Rgba8::Green;
+            floatingTextInstance.m_scale = 1.5f;
+            scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
         }
 
 		CAbility const* abilityComp = context.GetComponentConst<CAbility>(removalRequest.m_towerEntityID);
@@ -113,7 +106,15 @@ void STowerSpawner::Run(SystemContext const& context) const
             SpawnInfo spawnInfo;
             spawnInfo.m_spawnPos = placementInfo.m_worldPos;
             spawnInfo.m_def = EntityDef::GetEntityDef(placementInfo.m_towerName);
-            SEntityFactory::SpawnEntity(context, spawnInfo);
+            EntityID tower = SEntityFactory::SpawnEntity(context, spawnInfo);
+
+            if (context.IsValid(tower))
+            {
+                // Pass data to tower
+				CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(tower);
+				placeableComp.m_botLeftTile = placementInfo.m_botLeftTileCoords;
+				placeableComp.m_costOfPurchase = placementInfo.m_cost;
+            }
 
 			runData.m_gold -= placementInfo.m_cost;
         }

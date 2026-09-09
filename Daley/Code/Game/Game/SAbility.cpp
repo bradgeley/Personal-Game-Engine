@@ -32,12 +32,13 @@ void SAbility::Shutdown() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Ability* RebuildAbility(Ability* ability, CTags const& tags, SystemContext const& context)
+Ability* RebuildAbility(Ability* ability, CTags const& tags, SystemContext const& context, EntityID owner)
 {
 	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
 	RunData const& runData = *scRunData.m_data;
 
 	Ability* newAbility = ability->m_abilityDef->MakeAbilityInstance();
+	newAbility->Initialize(context, owner);
 
 	for (RunModifier const* mod : runData.m_activeRunModifiers)
 	{
@@ -81,7 +82,7 @@ void SAbility::Run(SystemContext const& context) const
 		{
 			if (abilityInstance->m_needsRebuild)
 			{
-				abilityInstance = RebuildAbility(abilityInstance, tags, context);
+				abilityInstance = RebuildAbility(abilityInstance, tags, context, it.GetEntityID());
 			}
 		}
 

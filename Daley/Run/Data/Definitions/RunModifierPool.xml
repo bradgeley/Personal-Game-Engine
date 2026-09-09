@@ -76,7 +76,7 @@
     </TowerAbilityRunModifier>
 
     <TowerAbilityRunModifier name="GenericCritDamage" type="critDamage" base="0.05" perLevel="0.05" weight="0.5" levelRequirement="10" maxLevel="5">
-      <DisplayData displayName="Crit Damage" spriteSheet="Data/SpriteSheets/Icons.xml" anim="CritDamage"></DisplayData>
+      <DisplayData displayName="Crit Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="CritDamage"></DisplayData>
     </TowerAbilityRunModifier>
 
     <TowerAbilityRunModifier name="GenericAoE" type="aoe" base="0.1" perLevel="0.1" weight="0.5" levelRequirement="10" maxLevel="3">
