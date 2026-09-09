@@ -413,7 +413,7 @@ bool AbilityCooldownComponent::ApplyModifier(TowerAbilityRunModifier const& modi
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityCooldownComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
-	float cooldown = GetCooldown() / debugContext.m_entityTimeDilation;
+	float cooldown = GetCooldown();
 	cooldown /= debugContext.m_entityTimeDilation;
     debugContext.m_debugString += StringUtils::StringF("Cooldown: %.3f (x%.2f)\n", cooldown, 1.f + m_attackSpeedIncrease);
 }

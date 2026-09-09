@@ -18,7 +18,7 @@
       <DisplayData displayName="Strawberry" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,80,83"></DisplayData>
     </TowerUnlockRunModifier>
 
-    <TowerUnlockRunModifier name="OrangeSorbet" defaultKey="O" baseCost="30"  levelRequirement="0" weight="1" desc="Burn, AoE">
+    <TowerUnlockRunModifier name="OrangeSorbet" defaultKey="O" baseCost="50"  levelRequirement="0" weight="1" desc="Burn, AoE">
       <DisplayData displayName="OrangeSorbet" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,165,0"></DisplayData>
     </TowerUnlockRunModifier>
 
@@ -27,7 +27,7 @@
     </TowerUnlockRunModifier>
   
     <!-- Level 3 -->
-    <TowerUnlockRunModifier name="Mint" defaultKey="M" baseCost="60"  levelRequirement="3" weight="1" desc="Poison, Slow, AoE">
+    <TowerUnlockRunModifier name="Mint" defaultKey="M" baseCost="50"  levelRequirement="3" weight="1" desc="Poison, Slow, AoE">
       <DisplayData displayName="Mint" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
     </TowerUnlockRunModifier>
     

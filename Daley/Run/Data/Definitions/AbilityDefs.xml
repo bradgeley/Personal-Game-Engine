@@ -131,7 +131,7 @@
     <Cooldown cooldown="1.5"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <OnHit>
-      <Burn burn="50"></Burn>
+      <Burn burn="100"></Burn>
       <!--<AoEEffect duration="0.25" radius="0.5">
         <Burn burn="100"></Burn>
         <Render tint="255,0,0,25"></Render>
@@ -166,7 +166,7 @@
   <PassiveAoEAbilityDef name="MintAoEAttack">
     <Targeting maxRange="5"></Targeting>
     <AoEEffect radius="5">
-      <Poison poison="1"></Poison>
+      <Poison poison="0.25"></Poison>
       <Slow duration="1"></Slow>
       <Render tint="173,235,179,25"></Render>
     </AoEEffect>
