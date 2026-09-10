@@ -26,7 +26,7 @@
         <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
       </NoisePeakSelector>
 
-      <DistanceFieldSelector name="treesDistanceField" range="12,30">
+      <DistanceFieldSelector name="treesDistanceField" range="12,40">
         <TagQuery hasAny="path,goal"></TagQuery>
       </DistanceFieldSelector>
 

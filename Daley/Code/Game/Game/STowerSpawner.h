@@ -16,6 +16,7 @@ enum class TowerPlacementResult
 {
     Success,
     Blocked,
+    OffVisibleMap,
     BlocksPath,
     CannotAfford,
 };

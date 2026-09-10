@@ -82,7 +82,7 @@ void STowerSpawner::Run(SystemContext const& context) const
             scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
         }
 
-		CAbility const* abilityComp = context.GetComponentConst<CAbility>(removalRequest.m_towerEntityID);
+		CAbility* abilityComp = context.GetComponent<CAbility>(removalRequest.m_towerEntityID);
         if (abilityComp)
         {
             for (Ability* ability : abilityComp->m_abilities)
@@ -125,21 +125,23 @@ void STowerSpawner::Run(SystemContext const& context) const
             floatingTextInstance.m_lifetimeSeconds = 2.f;
             floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
             floatingTextInstance.m_scale = 1.f;
+            floatingTextInstance.m_tint = Rgba8::Red;
 
 			if (result == TowerPlacementResult::Blocked)
 			{
 				floatingTextInstance.m_text = "Blocked!";
-				floatingTextInstance.m_tint = Rgba8::Red;
 			}
 			else if (result == TowerPlacementResult::BlocksPath)
 			{
 				floatingTextInstance.m_text = "Cannot block path!";
-				floatingTextInstance.m_tint = Rgba8::Red;
 			}
 			else if (result == TowerPlacementResult::CannotAfford)
 			{
 				floatingTextInstance.m_text = "Cannot Afford!";
-				floatingTextInstance.m_tint = Rgba8::Red;
+			}
+			else if (result == TowerPlacementResult::OffVisibleMap)
+			{
+				floatingTextInstance.m_text = "Cannot build there!";
 			}
 
             scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
@@ -157,6 +159,18 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& i
 	if (info.m_canAfford == false)
 	{
 		return TowerPlacementResult::CannotAfford;
+	}
+
+    IntVec2 tileCoords;
+	for (tileCoords.x = info.m_botLeftTileCoords.x; tileCoords.x <= info.m_topRightTileCoords.x; ++tileCoords.x)
+	{
+		for (tileCoords.y = info.m_botLeftTileCoords.y; tileCoords.y <= info.m_topRightTileCoords.y; ++tileCoords.y)
+		{
+			if (!world.IsTileVisible(tileCoords))
+			{
+				return TowerPlacementResult::OffVisibleMap;
+			}
+		}
 	}
 
     SCWorld copy;

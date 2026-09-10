@@ -2,8 +2,10 @@
 #include "SFloatingText.h"
 #include "SCFloatingText.h"
 #include "SCRenderer.h"
+#include "WorldSettings.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/ECS/SystemContext.h"
+#include "Engine/Math/AABB2.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 
@@ -57,9 +59,16 @@ void SFloatingText::Run(SystemContext const& context) const
 	VertexBuffer& immediateVbo = *renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
 	immediateVbo.ClearVerts();
 
-	for (auto const& instance : floatingText.m_floatingTextInstances)
+	static AABB2 visibleWorldBounds = AABB2(Vec2(StaticWorldSettings::s_visibleWorldMinsX, StaticWorldSettings::s_visibleWorldMinsY), Vec2(StaticWorldSettings::s_visibleWorldMaxsX, StaticWorldSettings::s_visibleWorldMaxsY));
+
+	for (FloatingTextInstance& instance : floatingText.m_floatingTextInstances)
 	{
-		defaultFont->AddVertsForAlignedText2D(immediateVbo, instance.m_pos, Vec2::ZeroVector, instance.m_scale, instance.m_text, instance.m_tint);
+		float lineWidth =defaultFont->GetLineWidth(instance.m_scale, instance.m_text);
+		Vec2 renderPos = instance.m_pos;
+		Vec2 renderDims = Vec2(lineWidth, instance.m_scale);
+		AABB2 textBounds = AABB2(renderPos - (renderDims * 0.5f), renderPos + (renderDims * 0.5f));
+		textBounds.ClampInside(visibleWorldBounds);
+		defaultFont->AddVertsForAlignedText2D(immediateVbo, textBounds.GetCenter(), Vec2::ZeroVector, instance.m_scale, instance.m_text, instance.m_tint);
 	}
 
 	defaultFont->SetRendererState(renderer);

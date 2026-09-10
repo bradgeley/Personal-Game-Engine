@@ -221,6 +221,26 @@ void AABB2::SetCenter(Vec2 const& newCenter)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AABB2::SetCenterX(float newCenterX)
+{
+	float halfWidth = GetHalfDimensions().x;
+	mins.x = newCenterX - halfWidth;
+	maxs.x = newCenterX + halfWidth;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AABB2::SetCenterY(float newCenterY)
+{
+    float halfHeight = GetHalfDimensions().y;
+	mins.y = newCenterY - halfHeight;
+	maxs.y = newCenterY + halfHeight;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AABB2::SetDimsAboutCenter(Vec2 const& newDims)
 {
     Vec2 center = GetCenter();
@@ -266,4 +286,50 @@ void AABB2::ExpandBy(float flatExpansionAmount)
 {
     mins -= Vec2(flatExpansionAmount, flatExpansionAmount);
     maxs += Vec2(flatExpansionAmount, flatExpansionAmount);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AABB2::ClampInside(AABB2 const& otherBox)
+{
+	if (GetWidth() > otherBox.GetWidth())
+	{
+		SetCenterX(otherBox.GetCenter().x);
+	}
+    else
+    {
+        if (mins.x < otherBox.mins.x)
+        {
+            float offset = otherBox.mins.x - mins.x;
+            mins.x += offset;
+            maxs.x += offset;
+        }
+        if (maxs.x > otherBox.maxs.x)
+        {
+            float offset = maxs.x - otherBox.maxs.x;
+            mins.x -= offset;
+            maxs.x -= offset;
+        }
+    }
+
+	if (GetHeight() > otherBox.GetHeight())
+	{
+		SetCenterY(otherBox.GetCenter().y);
+	}
+    else
+    {
+        if (mins.y < otherBox.mins.y)
+        {
+            float offset = otherBox.mins.y - mins.y;
+            mins.y += offset;
+            maxs.y += offset;
+        }
+        if (maxs.y > otherBox.maxs.y)
+        {
+            float offset = maxs.y - otherBox.maxs.y;
+            mins.y -= offset;
+            maxs.y -= offset;
+        }
+    }
 }

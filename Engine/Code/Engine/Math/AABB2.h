@@ -48,10 +48,13 @@ public:
     // Mutators
     void Translate(Vec2 const& translation);
     void SetCenter(Vec2 const& newCenter);
+    void SetCenterX(float newCenterX);
+    void SetCenterY(float newCenterY);
     void SetDimsAboutCenter(Vec2 const& newDims);
     void SetHalfDimsAboutCenter(Vec2 const& newHalfDims);
     void Squeeze(float flatSqueezeAmount);
     void ExpandBy(float flatExpansionAmount);
+	void ClampInside(AABB2 const& otherBox);
 
 public:
     
