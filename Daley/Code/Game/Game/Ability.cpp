@@ -1939,6 +1939,11 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
     BitMask healthBit = context.GetComponentBitMask<CHealth>();
     BitMask timeBit = context.GetComponentBitMask<CTime>();
 
+	auto& healthStorage = context.GetArrayStorage<CHealth>();
+	auto& timeStorage = context.GetArrayStorage<CTime>();
+	auto& transformStorage = context.GetArrayStorage<CTransform>();
+	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
+
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
     m_targetingComp.UpdateCachedTiles(context, location);
 
@@ -1972,19 +1977,19 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
 
             if (chainPayload.IsRelevantToHealth() && context.HasComponentsUnsafe(target.GetIndex(), healthBit))
             {
-                CHealth& healthComp = context.GetArrayStorage<CHealth>()[target];
+                CHealth& healthComp = healthStorage[target];
                 healthComp.TakePayload(chainPayload);
             }
 
             if (chainPayload.IsRelevantToTime() && context.HasComponentsUnsafe(target.GetIndex(), timeBit))
             {
-                CTime& timeComp = context.GetArrayStorage<CTime>()[target];
+                CTime& timeComp = timeStorage[target];
                 timeComp.m_remainingSlowDuration += chainPayload.m_slowDuration;
             }
 
             if (m_onHitComp.m_aoeEffectOnHit.IsRelevant())
             {
-                CTransform const& targetTransform = *context.GetComponentConst<CTransform>(target);
+                CTransform const& targetTransform = transformStorage[target];
 
                 SpawnInfo aoeEffectSpawnInfo;
                 aoeEffectSpawnInfo.m_spawnPos = targetTransform.m_pos;
@@ -1995,7 +2000,7 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
                 EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
                 if (context.IsValid(aoeEffect))
                 {
-                    CCollisionEffect& aoeEffectComp = *context.GetComponent<CCollisionEffect>(aoeEffect);
+                    CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
                     aoeEffectComp.InitializeFromAoEEffect(m_onHitComp.m_aoeEffectOnHit);
                 }
             }
