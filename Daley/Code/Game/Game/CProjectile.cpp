@@ -16,7 +16,7 @@ CProjectile::CProjectile(void const*)
 //----------------------------------------------------------------------------------------------------------------------
 bool CProjectile::NextTarget()
 {
-	if (m_currentTargetIndex + 1 >= m_numChains)
+	if (m_currentTargetIndex + 1 > m_numChains)
 	{
 		return false;
 	}

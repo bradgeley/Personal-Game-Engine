@@ -73,15 +73,15 @@ float SGoal::GetDamageToPlayerByTags(CTags const& tags)
 	}
 	else if (tags.HasTag("medium"))
 	{
-		damage += 2.f;
+		damage += 3.f;
 	}
 	else if (tags.HasTag("large"))
 	{
-		damage += 3.f;
+		damage += 9.f;
 	}
 	else if (tags.HasTag("boss"))
 	{
-		damage += 999.f;
+		damage += 80.f;
 	}
 	if (tags.HasTag("magic"))
 	{

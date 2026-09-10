@@ -77,19 +77,19 @@ namespace StaticGameSettings
 
 	static constexpr float s_baseCritMultiplier				= 2.f;
 	static constexpr float s_baseChainChance				= 1.f;
-	static constexpr float s_baseChainDistance				= 3.f;
+	static constexpr float s_baseChainDistance				= 10.f;
 	static constexpr float s_baseChainPayloadMulti			= 0.8f;
-	static constexpr int   s_maxChainTargets				= 5;
+	static constexpr int   s_maxChainTargets				= 10; // Absolute maximum
 
 	static constexpr float s_baseMagicEnemyChance			= 0.05f;
 	static constexpr float s_baseRareEnemyChance			= 0.01f;
 	static Rgba8		   s_magicEnemyOutlineTint			= Rgba8(0, 0, 255, 255);
 	static Rgba8		   s_rareEnemyOutlineTint			= Rgba8(255, 255, 0, 255);
 	static constexpr float s_magicEnemyHealthMultiplier		= 1.5f;
-	static constexpr float s_magicEnemySizeMultiplier		= 1.25f;
+	static constexpr float s_magicEnemySizeMultiplier		= 1.1f;
 	static constexpr float s_magicEnemySpeedMultiplier		= 0.9f;
 	static constexpr float s_rareEnemyHealthMultiplier		= 5.f;
-	static constexpr float s_rareEnemySizeMultiplier		= 1.75f;
+	static constexpr float s_rareEnemySizeMultiplier		= 1.25f;
 	static constexpr float s_rareEnemySpeedMultiplier		= 0.75f;
 
 	static constexpr float s_basePlayerHealth				= 100.f;

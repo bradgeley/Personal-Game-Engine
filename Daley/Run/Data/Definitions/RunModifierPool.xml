@@ -356,36 +356,42 @@
   <RunModifierPool name="Ube" requirements="Ube">
 
     <!-- Level 1 -->
-    <TowerAbilityRunModifier name="UbeDamage" type="damage" tagRequirement="Ube" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="3">
+    <TowerAbilityRunModifier name="UbeDamage" type="damage" tagRequirement="Ube" base="0.25" perLevel="0.25" weight="1" levelRequirement="1" maxLevel="3">
       <DisplayData displayName="Ube Damage" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Damage"></DisplayData>
     </TowerAbilityRunModifier>
     
-    <TowerAbilityRunModifier name="UbeBurn" type="burn" tagRequirement="Ube" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="3">
+    <TowerAbilityRunModifier name="UbeBurn" type="burn" tagRequirement="Ube" base="0.25" perLevel="0.25" weight="1" levelRequirement="1" maxLevel="3">
       <DisplayData displayName="Ube Burn" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Burn"></DisplayData>
     </TowerAbilityRunModifier>
     
-    <TowerAbilityRunModifier name="UbePoison" type="poison" tagRequirement="Ube" base="0.2" perLevel="0.2" weight="1" levelRequirement="1" maxLevel="3">
+    <TowerAbilityRunModifier name="UbePoison" type="poison" tagRequirement="Ube" base="0.25" perLevel="0.25" weight="1" levelRequirement="1" maxLevel="3">
       <DisplayData displayName="Ube Poison" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Poison"></DisplayData>
     </TowerAbilityRunModifier>
 
     <!-- Level 5 -->
-    <TowerAbilityRunModifier name="UbeAttackSpeed" type="attackSpeed" tagRequirement="Ube" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="3">
-      <DisplayData displayName="Ube Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="AttackSpeed"></DisplayData>
-    </TowerAbilityRunModifier>
 
     <TowerAbilityRunModifier name="UbeRange" type="range" tagRequirement="Ube" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="3">
       <DisplayData displayName="Ube Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </TowerAbilityRunModifier>
+    
+    <TowerAbilityRunModifier name="UbeAttackSpeed" type="attackSpeed" tagRequirement="Ube" base="0.2" perLevel="0.2" weight="1" levelRequirement="5" maxLevel="3">
+      <DisplayData displayName="Ube Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
+      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="AttackSpeed"></DisplayData>
+    </TowerAbilityRunModifier>
 
     <!-- Level 10 -->
-    <TowerAbilityRunModifier name="UbeChain" type="chain" tagRequirement="Ube" base="1" perLevel="1" weight="1" levelRequirement="10" maxLevel="2">
+    <TowerAbilityRunModifier name="UbeChain" type="chain" tagRequirement="Ube" base="1" perLevel="1" weight="1" levelRequirement="10" maxLevel="3">
+      <DisplayData displayName="Ube Chain" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
+      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="chain"></DisplayData>
+    </TowerAbilityRunModifier>
+    
+    <TowerAbilityRunModifier name="UbeMultishot" type="multishot" tagRequirement="Ube" base="1" perLevel="1" weight="1" levelRequirement="10" maxLevel="1">
       <DisplayData displayName="Ube Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="multiShot"></DisplayData>
+      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="multishot"></DisplayData>
     </TowerAbilityRunModifier>
     
   </RunModifierPool>

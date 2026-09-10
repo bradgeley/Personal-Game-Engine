@@ -107,7 +107,7 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <ProjectileHitAbilityDef name="PistachioAttack" projectileDef="PistachioProj" projSpeed="40">
+  <ProjectileHitAbilityDef name="PistachioAttack" projectileDef="PistachioProj" projSpeed="30">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="12"></Targeting>
     <OnHit>
@@ -118,7 +118,7 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="StrawberryProj" projSpeed="100">
+  <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="StrawberryProj" projSpeed="30">
     <Cooldown cooldown="1.5"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <OnHit>
@@ -175,15 +175,9 @@
     <Chain maxChains="1" chainDistance="2" chainPayloadMulti="0.5"></Chain>
     <OnHit>
       <!-- per second -->
-      <Damage damage="50"></Damage>
-      <Burn burn="10"></Burn>
-      <Poison poison="2"></Poison>
-      <AoEEffect radius="0.5" duration="0">
-        <Damage damage="20"></Damage>
-        <Burn burn="5"></Burn>
-        <Poison poison="1"></Poison>
-        <Render tint="174,153,245, 100" depth="0.95"></Render>
-      </AoEEffect>
+      <Damage damage="100"></Damage>
+      <Burn burn="50"></Burn>
+      <Poison poison="10"></Poison>
     </OnHit>
   </LaserAbilityDef>
 

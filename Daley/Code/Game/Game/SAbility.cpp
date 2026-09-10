@@ -18,7 +18,7 @@ void SAbility::Startup()
 
 	AddWriteAllDependencies(); // Abilities spawn things
 
-	m_runWhilePaused = false;
+	m_runWhilePaused = true;
 }
 
 
@@ -84,6 +84,11 @@ void SAbility::Run(SystemContext const& context) const
 			{
 				abilityInstance = RebuildAbility(abilityInstance, tags, context, it.GetEntityID());
 			}
+		}
+
+		if (context.m_deltaSeconds <= 0.f)
+		{
+			continue;
 		}
 
 		for (Ability* abilityInstance : ability.m_abilities)

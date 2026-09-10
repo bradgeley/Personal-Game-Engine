@@ -655,6 +655,8 @@ public:
 public:
 
 	AbilityPrecisionTargetingComponent	m_targetingComp;
+	AbilityCooldownComponent 			m_cooldownComp; // Cooldown is 0 for lasers, this is just a receptacle for attack speed modifiers
+	AbilityCritComponent 				m_critComp;
 	AbilityOnHitComponent				m_onHitComp;
 	AbilityRenderComponent				m_renderComp;
 	AbilityChainComponent				m_chainComp;

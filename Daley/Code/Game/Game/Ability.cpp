@@ -415,7 +415,7 @@ void AbilityCooldownComponent::AppendDebugString(EntityDebugContext& debugContex
 {
 	float cooldown = GetCooldown();
 	cooldown /= debugContext.m_entityTimeDilation;
-    debugContext.m_debugString += StringUtils::StringF("Cooldown: %.3f (x%.2f)\n", cooldown, 1.f + m_attackSpeedIncrease);
+    debugContext.m_debugString += StringUtils::StringF("Cooldown: %.3f (x%.2f)\n", cooldown, (1.f + m_attackSpeedIncrease) * debugContext.m_entityTimeDilation);
 }
 
 
@@ -1943,7 +1943,7 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
 	auto& timeStorage = context.GetArrayStorage<CTime>();
 	auto& transformStorage = context.GetArrayStorage<CTransform>();
 	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
-
+     
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
     m_targetingComp.UpdateCachedTiles(context, location);
 
@@ -2086,6 +2086,8 @@ void LaserAbility::AppendDebugString(EntityDebugContext& debugContext) const
 {
     Ability::AppendDebugString(debugContext);
 
+	m_cooldownComp.AppendDebugString(debugContext);
+	m_critComp.AppendDebugString(debugContext);
     m_targetingComp.AppendDebugString(debugContext);    
     m_onHitComp.AppendDebugString(debugContext);
 	m_chainComp.AppendDebugString(debugContext);
@@ -2104,6 +2106,13 @@ HitPayload LaserAbility::RollDamageAndEffects(float deltaSeconds) const
     result.m_poison = m_onHitComp.m_poisonOnHit.GetPoison();
     result.m_slowDuration = m_onHitComp.m_slowOnHit.GetDuration();
     result *= deltaSeconds;
+
+    float critMulti = StaticGameSettings::s_baseCritMultiplier + m_critComp.m_critMulti;
+	float avgDPSMultiplierFromCrit = 1.f + m_critComp.m_critChance * (critMulti - 1.f);
+
+    result *= 1.f + m_cooldownComp.m_attackSpeedIncrease;
+    result *= avgDPSMultiplierFromCrit;
+
 	return result;
 }
 
@@ -2113,6 +2122,9 @@ HitPayload LaserAbility::RollDamageAndEffects(float deltaSeconds) const
 bool LaserAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
 	bool didApply = false;
+
+	didApply |= m_cooldownComp.ApplyModifier(modifier);
+	didApply |= m_critComp.ApplyModifier(modifier);
 	didApply |= m_targetingComp.ApplyModifier(modifier);
 	didApply |= m_onHitComp.ApplyModifier(modifier);
 	didApply |= m_chainComp.ApplyModifier(modifier);
