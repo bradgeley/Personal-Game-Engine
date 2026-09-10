@@ -41,7 +41,6 @@ void STowerSpawner::Run(SystemContext const& context) const
 	// Read Dependencies
 	auto const& placeableStorage = context.GetMapStorageConst<CPlaceable>();
 	auto const& transformStorage = context.GetArrayStorageConst<CTransform>();
-	auto const& nameStorage = context.GetArrayStorageConst<CEntityName>();
 
 	// Write Dependencies
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
@@ -54,7 +53,6 @@ void STowerSpawner::Run(SystemContext const& context) const
     {
 		CTransform const& transform = transformStorage[removalRequest.m_towerEntityID];
 		CPlaceable const& placeable = placeableStorage[removalRequest.m_towerEntityID];
-		CEntityName const& entityName = nameStorage[removalRequest.m_towerEntityID];
 
 		AABB2 towerBounds = AABB2(transform.m_pos, static_cast<float>(placeable.m_dims.x) * 0.5f, static_cast<float>(placeable.m_dims.y) * 0.5f);
 		towerBounds.Squeeze(0.1f);

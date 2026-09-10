@@ -1863,13 +1863,10 @@ void AdjacentHitAbility::AppendDebugString(EntityDebugContext& debugContext) con
 //----------------------------------------------------------------------------------------------------------------------
 bool AdjacentHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
-	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+	m_cooldownComp.ApplyModifier(modifier);
+	m_hasteOnHit.ApplyModifier(modifier);
 
-	if (def.m_abilityAttribute == TowerAbilityAttribute::Haste)
-	{
-		m_hasteOnHit.m_duration += modifier.GetValue();
-		return true;
-	}
+    // Nothing can affect range of "adjacent", so dont apply mods to targeting component
 
     return false;
 }

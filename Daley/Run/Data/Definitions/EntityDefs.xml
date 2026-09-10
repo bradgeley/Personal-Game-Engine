@@ -462,7 +462,7 @@
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="255,165,0"></Render>
-    <Tags tags="tower,sorbet,orange"></Tags>
+    <Tags tags="tower,orangeSorbet"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

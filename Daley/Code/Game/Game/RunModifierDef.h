@@ -160,6 +160,45 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct MetaRunModifierDef : public RunModifierDef
+{
+public:
+
+	MetaRunModifierDef(XmlElement const& modElement);
+
+	virtual RunModifier* MakeModifierInstance() const override;
+
+	virtual void GetDescription(std::string& outStr) const override;
+
+public:
+
+	MetaAttribute m_metaAttribute = MetaAttribute::Invalid;
+	float m_baseValue = 0.f;
+	float m_valuePerLevel = 0.f;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct MetaRunModifier : public RunModifier
+{
+public:
+
+	MetaRunModifier(MetaRunModifierDef const& def);
+
+	float GetValue() const;
+
+	virtual void Apply(SystemContext const& context) const override;
+	virtual void ApplyToRunData(RunData& runData) const override;
+
+	virtual void GetDescription(std::string& outStr) const override;
+
+	MetaRunModifierDef const& GetDef() const;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct EconomyRunModifierDef : public RunModifierDef
 {
 public:

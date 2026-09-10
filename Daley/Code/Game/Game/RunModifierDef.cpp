@@ -83,8 +83,12 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 	{
 		return new EconomyRunModifierDef(modElement);
 	}
+	else if (modTypeName == "MetaRunModifier")
+	{
+		return new MetaRunModifierDef(modElement);
+	}
 
-	//ERROR_AND_DIE("Unknown RunModifierDef type: " + std::string(element.Name()));
+	ERROR_AND_DIE(StringUtils::StringF("Unknown RunModifierDef type: %s", modElement.Name()));
 	return nullptr;
 }
 
@@ -394,6 +398,116 @@ void TowerAbilityRunModifier::GetDescription(std::string& outStr) const
 TowerAbilityRunModifierDef const& TowerAbilityRunModifier::GetDef() const
 {
 	return static_cast<TowerAbilityRunModifierDef const&>(m_def);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+MetaRunModifierDef::MetaRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
+{
+	m_baseValue = XmlUtils::ParseXmlAttribute(modElement, "base", m_baseValue);
+	m_valuePerLevel = XmlUtils::ParseXmlAttribute(modElement, "perLevel", m_valuePerLevel);
+
+	Name metaTypeName = Name(XmlUtils::ParseXmlAttribute(modElement, "type", ""));
+	if (metaTypeName == "Exp")
+	{
+		m_metaAttribute = MetaAttribute::Exp;
+	}
+	else
+	{
+		ASSERT_OR_DIE(false, StringUtils::StringF("Unknown MetaRunModifier type: %s", metaTypeName.ToString().c_str()));
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+RunModifier* MetaRunModifierDef::MakeModifierInstance() const
+{
+	return new MetaRunModifier(*this);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void MetaRunModifierDef::GetDescription(std::string& outStr) const
+{
+	float baseMultiplier = 1.f + m_baseValue;
+	outStr += StringUtils::StringF("Base: %.2fx\nPer Level: +%.2fx\n", baseMultiplier, m_valuePerLevel);
+
+	if (m_maxLevel > 1)
+	{
+		outStr += StringUtils::StringF("Max Level: %d", m_maxLevel);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+MetaRunModifier::MetaRunModifier(MetaRunModifierDef const& def) : RunModifier(def)
+{
+	
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float MetaRunModifier::GetValue() const
+{
+	MetaRunModifierDef const& def = GetDef();
+	return def.m_baseValue + (def.m_valuePerLevel * static_cast<float>(m_level - 1));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void MetaRunModifier::Apply(SystemContext const& context) const
+{
+	SCRunData& scRunData = context.GetSingleton<SCRunData>();
+	RunData& runData = *scRunData.m_data;
+
+	runData.m_needsModifierRecalculation = true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void MetaRunModifier::ApplyToRunData(RunData& runData) const
+{
+	MetaRunModifierDef const& def = GetDef();
+
+	if (def.m_metaAttribute == MetaAttribute::Exp)
+	{
+		runData.m_experienceMultiplier += GetValue();
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void MetaRunModifier::GetDescription(std::string& outStr) const
+{
+	MetaRunModifierDef const& def = GetDef();
+
+	if (m_def.m_maxLevel > 1)
+	{
+		float currentMultiplier = 1.f + GetValue();
+		float nextMultiplier = currentMultiplier + def.m_valuePerLevel;
+		outStr += StringUtils::StringF("Current: %.2fx\nNext: %.2fx\nLevel: %d/%d\n", currentMultiplier, nextMultiplier, m_level, def.m_maxLevel);
+	}
+	else
+	{
+		float currentMultiplier = 1.f + def.m_baseValue;
+		outStr += StringUtils::StringF("Multiplier (additive): %.2fx\n", currentMultiplier);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+MetaRunModifierDef const& MetaRunModifier::GetDef() const
+{
+	return static_cast<MetaRunModifierDef const&>(m_def);
 }
 
 

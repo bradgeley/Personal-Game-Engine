@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
+#include <cstdint>
+
 
 
 struct IntVec2;
@@ -116,6 +118,7 @@ namespace MathUtils
 	float	LogF(float val);
 	float	ExpF(float val);
 	int		FloorF(float val);
+	int64_t	Floor(double val);
 	int		CeilingF(float val);
 	int		RoundF(float val);
 	float	SqrtF(float val);

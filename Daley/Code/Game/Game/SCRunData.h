@@ -59,6 +59,8 @@ public:
 	uint32_t	m_seed					= 0; // Mission seed = seed + missionIndex
 	int			m_missionIndex			= 0;
 	uint64_t 	m_experience			= 0;
+	float		m_fractionalExperience	= 0.f; // overflow exp from multiplier increases
+	float		m_experienceMultiplier	= 1.f;
 	float		m_startingGold			= StaticGameSettings::s_baseGold;
 	float		m_creditLimit			= StaticGameSettings::s_baseCreditLimit;
 	float		m_savingsInterestRate	= StaticGameSettings::s_baseSavingsInterestRate;

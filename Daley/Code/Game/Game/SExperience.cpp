@@ -5,6 +5,7 @@
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -31,11 +32,24 @@ void SExperience::Shutdown() const
 void GrantExpInternal(RunData& runData, uint64_t exp)
 {
 	int levelBefore = RunData::GetLevelData(runData.m_experience).m_level;
-	runData.m_experience += exp;
+
+	double totalExp = static_cast<double>(exp) * static_cast<double>(runData.m_experienceMultiplier);
+	uint64_t wholeExp = static_cast<uint64_t>(totalExp);
+	double remainder = totalExp - static_cast<double>(wholeExp);
+
+	runData.m_experience += wholeExp;
+	runData.m_fractionalExperience += static_cast<float>(remainder);
+	if (runData.m_fractionalExperience >= 1.f)
+	{
+		runData.m_experience++;
+		runData.m_fractionalExperience -= 1.f;
+	}
+
 	if (runData.m_experience > StaticGameSettings::s_maximumExperience)
 	{
 		runData.m_experience = StaticGameSettings::s_maximumExperience;
 	}
+
 	int levelAfter = RunData::GetLevelData(runData.m_experience).m_level;
 
 	int levelsGained = levelAfter - levelBefore;

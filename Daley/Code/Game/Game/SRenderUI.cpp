@@ -17,6 +17,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderUI::Startup()
 {
+	AddReadDependencies<CAbility, CPlaceable, CTransform>();
 	AddReadDependencies<SCInputSystem, SCRunData, SCWorld>();
 	AddWriteDependencies<SCRenderer>();
 
@@ -86,6 +87,22 @@ void SRenderUI::Run(SystemContext const& context) const
 			VertexUtils::AddVertsForAABB2(untexturedVerts, scWorld.GetTileBounds(tileCoords), tileTint);
 			return true;
 		});
+	}
+	else if (scInput.m_towerUnderCursor != EntityID::Invalid)
+	{
+		// Render info about tower under cursor
+
+		CPlaceable const* placeable = context.GetComponentConst<CPlaceable>(scInput.m_towerUnderCursor);
+		CAbility const* abilityComp = context.GetComponentConst<CAbility>(scInput.m_towerUnderCursor);
+		CTransform const* transform = context.GetComponentConst<CTransform>(scInput.m_towerUnderCursor);
+
+		if (placeable && abilityComp && transform)
+		{
+			for (Ability* const& ability : abilityComp->m_abilities)
+			{
+				ability->AddDebugVerts(untexturedVerts, *placeable, transform->m_pos);
+			}
+		}
 	}
 
 	renderer.BindTexture();
