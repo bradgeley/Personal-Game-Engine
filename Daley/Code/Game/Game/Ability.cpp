@@ -161,7 +161,7 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, int
                 float range = collision.m_radius + maxRange; // Add target's radius to the range
                 float rangeSquared = range * range;
                 float distSquared = MathUtils::GetDistanceSquared2D(transform.m_pos, m_cachedLocation);
-                if (distSquared > rangeSquared || distSquared < rangeSquared)
+                if (distSquared > rangeSquared)
                 {
                     continue;
                 }
@@ -198,7 +198,7 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, int
                 float range = collision.m_radius + maxRange; // Add target's radius to the range
 				float rangeSquared = range * range;
 				float distSquared = MathUtils::GetDistanceSquared2D(transform.m_pos, m_cachedLocation);
-				if (distSquared > rangeSquared || distSquared < rangeSquared)
+				if (distSquared > rangeSquared)
 				{
 					continue;
 				}
@@ -1580,6 +1580,37 @@ HitPayload AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool AoEHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+
+    bool applied = false;
+
+    if (def.m_abilityAttribute == TowerAbilityAttribute::Range)
+    {
+        // For Passive Aoe abilities, range == AoE
+        m_aoeEffectComp.m_radiusMultiplier += modifier.GetValue();
+        applied = true;
+    }
+
+    if (def.m_abilityAttribute == TowerAbilityAttribute::AoE)
+    {
+        // For Passive Aoe abilities, range == AoE
+        m_targetingComp.m_rangeMultiplier += modifier.GetValue();
+        applied = true;
+    }
+
+	applied |= m_cooldownComp.ApplyModifier(modifier);
+	applied |= m_targetingComp.ApplyModifier(modifier);
+	applied |= m_critComp.ApplyModifier(modifier);
+	applied |= m_aoeHitComp.ApplyModifier(modifier);
+	applied |= m_aoeEffectComp.ApplyModifier(modifier);
+    return applied;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def) : Ability(def)
 {
 	m_targetingComp = def.m_targetingDef.has_value() ? *def.m_targetingDef : AbilityAoETargetingComponent();
@@ -2069,4 +2100,17 @@ HitPayload LaserAbility::RollDamageAndEffects(float deltaSeconds) const
     result.m_slowDuration = m_onHitComp.m_slowOnHit.GetDuration();
     result *= deltaSeconds;
 	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool LaserAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+{
+	bool didApply = false;
+	didApply |= m_targetingComp.ApplyModifier(modifier);
+	didApply |= m_onHitComp.ApplyModifier(modifier);
+	didApply |= m_chainComp.ApplyModifier(modifier);
+	didApply |= m_multishotComp.ApplyModifier(modifier);
+    return didApply;
 }

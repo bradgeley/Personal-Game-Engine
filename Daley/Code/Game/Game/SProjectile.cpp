@@ -87,6 +87,8 @@ void SProjectile::Run(SystemContext const& context) const
 		float distSquaredToTarget = toTarget.GetLengthSquared();
 		if (distSquaredToTarget <= moveDistThisFrame * moveDistThisFrame)
 		{
+			transform.m_pos = proj.m_targetPos.value();
+
 			// Projectile hit target
 			EntityID nextTarget = GetNextValidProjTarget(proj, context);
 			if (nextTarget == EntityID::Invalid)
@@ -188,6 +190,7 @@ void SProjectile::Run(SystemContext const& context) const
 
 			continue;
 		}
+
 		Vec2 moveThisFrame = toTarget.GetNormalized() * proj.m_projSpeed * moveTimeThisFrame;
 		transform.m_pos += moveThisFrame;
 		transform.m_orientation = toTarget.GetAngleDegrees();

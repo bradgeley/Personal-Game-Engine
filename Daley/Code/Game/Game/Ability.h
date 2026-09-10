@@ -567,6 +567,8 @@ public:
 
 	virtual HitPayload RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
+	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
+
 public:
 
 	AbilityCooldownComponent		m_cooldownComp;
@@ -647,6 +649,8 @@ public:
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	HitPayload RollDamageAndEffects(float deltaSeconds) const;
+
+	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
 
 public:
 

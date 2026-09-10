@@ -86,16 +86,16 @@
   <!-- ==================================================================================================================== -->
   <!-- Attacks -->
 
-  <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="100">
+  <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="50">
     <Cooldown cooldown="0.33"></Cooldown>
     <Targeting maxRange="15"></Targeting>
     <Crit critChance="0.1"></Crit>
     <OnHit>
-      <Damage minDamage="20" maxDamage="30"></Damage>
+      <Damage minDamage="1" maxDamage="75"></Damage>
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <ProjectileHitAbilityDef name="ChocolateAttack" projectileDef="ChocolateProj" projSpeed="50">
+  <ProjectileHitAbilityDef name="ChocolateAttack" projectileDef="ChocolateProj" projSpeed="30">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="12"></Targeting>
     <Crit critChance="0.05"></Crit>
@@ -107,7 +107,7 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <ProjectileHitAbilityDef name="PistachioAttack" projectileDef="PistachioProj" projSpeed="50">
+  <ProjectileHitAbilityDef name="PistachioAttack" projectileDef="PistachioProj" projSpeed="40">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="12"></Targeting>
     <OnHit>
@@ -118,25 +118,11 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <ProjectileHitAbilityDef name="MintAttack" projectileDef="MintProj" projSpeed="50">
-    <Cooldown cooldown="2"></Cooldown>
-    <Targeting maxRange="12"></Targeting>
-    <OnHit>
-      <AoEHit radius="2">
-        <Slow duration="0.5"></Slow>
-      </AoEHit>
-    </OnHit>
-  </ProjectileHitAbilityDef>
-
   <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="StrawberryProj" projSpeed="100">
     <Cooldown cooldown="1.5"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <OnHit>
       <Burn burn="100"></Burn>
-      <!--<AoEEffect duration="0.25" radius="0.5">
-        <Burn burn="100"></Burn>
-        <Render tint="255,0,0,25"></Render>
-      </AoEEffect>-->
       <AoEHit radius="0.5">
         <Burn burn="50"></Burn>
       </AoEHit>
@@ -164,13 +150,41 @@
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
-  <PassiveAoEAbilityDef name="MintAoEAttack">
+  <PassiveAoEAbilityDef name="MintAttack">
     <Targeting maxRange="5"></Targeting>
     <AoEEffect radius="5">
       <Poison poison="0.25"></Poison>
       <Slow duration="1"></Slow>
-      <Render tint="173,235,179,25"></Render>
+      <Render tint="173,235,179,25"></Render>uu
     </AoEEffect>
   </PassiveAoEAbilityDef>
+
+  <AoEHitAbilityDef name="CoconutAttack">
+    <Cooldown cooldown="5"></Cooldown>
+    <Targeting maxRange="6"></Targeting>
+    <Crit critChange="0.1"></Crit>
+    <AoEHit radius="6">
+      <Damage minDamage="100" maxDamage="200"></Damage>
+      <Slow duration="1"></Slow>
+    </AoEHit>
+  </AoEHitAbilityDef>
+
+  <LaserAbilityDef name="UbeAttack">
+    <Targeting maxRange="8"></Targeting>
+    <Render tint="174,153,245, 100" depth="0.05"></Render>
+    <Chain maxChains="1" chainDistance="2" chainPayloadMulti="0.5"></Chain>
+    <OnHit>
+      <!-- per second -->
+      <Damage damage="50"></Damage>
+      <Burn burn="10"></Burn>
+      <Poison poison="2"></Poison>
+      <AoEEffect radius="0.5" duration="0">
+        <Damage damage="20"></Damage>
+        <Burn burn="5"></Burn>
+        <Poison poison="1"></Poison>
+        <Render tint="174,153,245, 100" depth="0.95"></Render>
+      </AoEEffect>
+    </OnHit>
+  </LaserAbilityDef>
 
 </AbilityDefs>
