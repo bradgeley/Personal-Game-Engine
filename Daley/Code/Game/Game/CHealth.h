@@ -69,4 +69,5 @@ public:
     float m_currentPoison   = 0.f;
 
     uint8_t m_healthFlags   = false;
+    uint32_t m_lastHitBy    = 0; // id of the last aoe effect that processed this health component
 };

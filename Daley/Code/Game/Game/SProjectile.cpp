@@ -121,6 +121,10 @@ void SProjectile::Run(SystemContext const& context) const
 					HitPayload aoeTargetPayload = proj.GetAoeTargetPayload();
 					if (aoeTargetPayload.HasValue())
 					{
+						// This id helps avoid double hitting ai that are hashed into multiple buckets
+						static uint32_t aoeHitId = 0;
+						aoeHitId++;
+
 						world.ForEachPathTileOverlappingCircle(transform.m_pos, splashRadius, [&](IntVec2 const& worldCoords)
 						{
 							int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
@@ -138,14 +142,22 @@ void SProjectile::Run(SystemContext const& context) const
 								if (aoeTargetPayload.IsRelevantToHealth())
 								{
 									CHealth& targetHealth = healthStorage[entityID];
-									targetHealth.TakePayload(aoeTargetPayload);
+									if (targetHealth.m_lastHitBy != aoeHitId)
+									{
+										targetHealth.TakePayload(aoeTargetPayload);
+										targetHealth.m_lastHitBy = aoeHitId;
+									}
 								}
 
 								if (aoeTargetPayload.IsRelevantToTime())
 								{
 									CTime& targetTime = timeStorage[entityID];
-									targetTime.m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
-									targetTime.m_remainingHasteDuration += aoeTargetPayload.m_hasteDuration;
+									if (targetTime.m_lastHitBy != aoeHitId)
+									{
+										targetTime.m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
+										targetTime.m_remainingHasteDuration += aoeTargetPayload.m_hasteDuration;
+										targetTime.m_lastHitBy = aoeHitId;
+									}
 								}
 							}
 							return true;

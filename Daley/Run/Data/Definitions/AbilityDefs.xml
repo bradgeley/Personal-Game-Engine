@@ -111,6 +111,7 @@
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="12"></Targeting>
     <OnHit>
+      <Poison poison="10"></Poison>
       <AoEHit radius="3">
         <Poison poison="5"></Poison>
       </AoEHit>

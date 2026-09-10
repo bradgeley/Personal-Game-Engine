@@ -23,4 +23,6 @@ public:
 
 	float m_remainingSlowDuration = 0.f;
 	float m_remainingHasteDuration = 0.f;
+
+	uint32_t m_lastHitBy = 0;
 };

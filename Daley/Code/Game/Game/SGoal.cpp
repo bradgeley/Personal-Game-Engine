@@ -81,7 +81,7 @@ float SGoal::GetDamageToPlayerByTags(CTags const& tags)
 	}
 	else if (tags.HasTag("boss"))
 	{
-		damage += 25.f;
+		damage += 999.f;
 	}
 	if (tags.HasTag("magic"))
 	{
