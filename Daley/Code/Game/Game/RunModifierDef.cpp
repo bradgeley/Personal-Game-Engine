@@ -7,6 +7,7 @@
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -296,12 +297,55 @@ RunModifier* TowerAbilityRunModifierDef::MakeModifierInstance() const
 //----------------------------------------------------------------------------------------------------------------------
 void TowerAbilityRunModifierDef::GetDescription(std::string& outStr) const
 {
-	float baseMultiplier = 1.f + m_valueBase;
-	outStr += StringUtils::StringF("Base: %.2fx\nPer Level: +%.2fx\n", baseMultiplier, m_valueIncreasePerLevel);
+	float baseMultiplier = m_valueBase;
+
+	if (ShouldAddOneToMultiplier())
+	{
+		baseMultiplier += 1.f;
+	}
+
+	std::string format;
+	if (IsIntegerAttribute())
+	{
+		format = "Base: %.0fx\nPer Level: +%.0fx\n";
+	}
+	else
+	{
+		format = "Base: %.2fx\nPer Level: +%.2fx\n";
+	}
+
+	outStr += StringUtils::StringF(format.c_str(), baseMultiplier, m_valueIncreasePerLevel);
 	if (m_maxLevel > 1)
 	{
 		outStr += StringUtils::StringF("Max Level: %d", m_maxLevel);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool TowerAbilityRunModifierDef::ShouldAddOneToMultiplier() const
+{
+	if (m_abilityAttribute == TowerAbilityAttribute::Multishot ||
+		m_abilityAttribute == TowerAbilityAttribute::NumChains)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool TowerAbilityRunModifierDef::IsIntegerAttribute() const
+{
+	if (m_abilityAttribute == TowerAbilityAttribute::Multishot ||
+		m_abilityAttribute == TowerAbilityAttribute::NumChains)
+	{
+		return true;
+	}
+	return false;
 }
 
 

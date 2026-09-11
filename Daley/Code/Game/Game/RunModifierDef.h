@@ -129,6 +129,9 @@ public:
 
 	virtual void GetDescription(std::string& outStr) const override;
 
+	bool ShouldAddOneToMultiplier() const;
+	bool IsIntegerAttribute() const;
+
 public:
 
 	// Linear increase per level of one attribute
