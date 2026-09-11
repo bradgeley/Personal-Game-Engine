@@ -57,17 +57,17 @@ void RunState::Enter(NamedProperties const& props)
 	// Forest Biome first
 	m_runData.m_missionGenData[0] = { "forest" };
 	m_runData.m_missionGenData[1] = { "forestOpen" };
-	m_runData.m_missionGenData[2] = { "forestCross" };
+	m_runData.m_missionGenData[2] = { "forestHatch" };
 
 	// Then Desert
 	m_runData.m_missionGenData[3] = { "desert" };
-	m_runData.m_missionGenData[4] = { "desert" };
-	m_runData.m_missionGenData[5] = { "desertCross" };
+	m_runData.m_missionGenData[4] = { "desertOpen" };
+	m_runData.m_missionGenData[5] = { "desertHatch" };
 
 	// Then River
 	m_runData.m_missionGenData[6] = { "river" };
-	m_runData.m_missionGenData[7] = { "river" };
-	m_runData.m_missionGenData[8] = { "riverCross" };
+	m_runData.m_missionGenData[7] = { "riverDouble" };
+	m_runData.m_missionGenData[8] = { "riverHatch" };
 
 	NamedProperties transitionProps;
 	transitionProps.Set<Name>("state", "TowerDefense");
