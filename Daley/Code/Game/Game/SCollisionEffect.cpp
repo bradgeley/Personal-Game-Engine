@@ -37,8 +37,8 @@ void SCollisionEffect::Run(SystemContext const& context) const
 	
     for (OverlapInfo const& overlap : scCollision.m_frameOverlaps)
     {
-		EntityID const& entityA = overlap.m_entityA;
-		EntityID const& entityB = overlap.m_entityB;
+		EntityID const& entityA = overlap.GetEntityA();
+		EntityID const& entityB = overlap.GetEntityB();
 
 		if (!context.IsValid(entityA) || !context.IsValid(entityB))
 		{

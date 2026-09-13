@@ -8,15 +8,16 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct OverlapInfo
 {
-	OverlapInfo(EntityID entityA, EntityID entityB) : m_entityA(entityA), m_entityB(entityB) {}
+	OverlapInfo(EntityID entityA, EntityID entityB);
 
-	EntityID m_entityA;
-	EntityID m_entityB;
+	EntityID GetEntityA() const { return EntityID(static_cast<uint32_t>(m_key >> 32)); }
+	EntityID GetEntityB() const { return EntityID(static_cast<uint32_t>(m_key & 0xFFFFFFFF)); }
+
+	uint64_t m_key = 0;
 
 	bool operator==(OverlapInfo const& other) const
 	{
-		return (m_entityA == other.m_entityA && m_entityB == other.m_entityB) ||
-			(m_entityA == other.m_entityB && m_entityB == other.m_entityA);
+		return m_key == other.m_key;
 	}
 };
 
@@ -28,8 +29,6 @@ struct std::hash<OverlapInfo>
 {
 	size_t operator()(const OverlapInfo& info) const noexcept
 	{
-		size_t hashA = std::hash<EntityID>{}(info.m_entityA);
-		size_t hashB = std::hash<EntityID>{}(info.m_entityB);
-		return hashA ^ (hashB << 1);
+		return static_cast<size_t>(info.m_key);
 	}
 };

@@ -144,10 +144,10 @@ void SProjectile::Run(SystemContext const& context) const
 								if (aoeTargetPayload.IsRelevantToHealth())
 								{
 									CHealth& targetHealth = healthStorage[entityID];
-									if (targetHealth.m_lastHitBy != aoeHitId)
+									if (targetHealth.m_lastProcessedBy != aoeHitId)
 									{
 										targetHealth.TakePayload(aoeTargetPayload);
-										targetHealth.m_lastHitBy = aoeHitId;
+										targetHealth.m_lastProcessedBy = aoeHitId;
 									}
 								}
 

@@ -19,6 +19,7 @@ void SDebugCommands::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies, "duration", DevConsoleArgType::Float);
 	DevConsoleUtils::AddDevConsoleCommand("God", &SDebugCommands::God, "duration", DevConsoleArgType::Float);
 	DevConsoleUtils::AddDevConsoleCommand("UnlockAllMods", &SDebugCommands::UnlockAllMods);
+	DevConsoleUtils::AddDevConsoleCommand("Unlock", &SDebugCommands::Unlock, "name", DevConsoleArgType::Name);
 
 	m_ignoreRun = true;
 }
@@ -34,6 +35,7 @@ void SDebugCommands::Shutdown() const
 	DevConsoleUtils::RemoveDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies);
 	DevConsoleUtils::RemoveDevConsoleCommand("God", &SDebugCommands::God);
 	DevConsoleUtils::RemoveDevConsoleCommand("UnlockAllMods", &SDebugCommands::UnlockAllMods);
+	DevConsoleUtils::RemoveDevConsoleCommand("Unlock", &SDebugCommands::Unlock);
 }
 
 
@@ -158,6 +160,56 @@ bool SDebugCommands::UnlockAllMods(NamedProperties&)
 	for (auto& mod : runData.m_data->m_runModifierPool.m_runModifierDefs)
 	{
 		if (mod->m_name == Name::Invalid)
+		{
+			continue;
+		}
+
+		bool alreadyUnlocked = false;
+		for (auto& activeMod : runData.m_data->m_activeRunModifiers)
+		{
+			if (activeMod->m_def.m_name == mod->m_name)
+			{
+				activeMod->m_level = mod->m_maxLevel;
+				alreadyUnlocked = true;
+				break;
+			}
+		}
+
+		if (!alreadyUnlocked)
+		{
+			RunModifier* newMod = mod->MakeModifierInstance();
+			newMod->m_level = mod->m_maxLevel;
+			runData.m_data->m_activeRunModifiers.push_back(newMod);
+		}
+	}
+
+	runData.m_data->m_needsModifierRecalculation = true;
+
+	for (auto it = g_ecs->IterateAll<CAbility>(); it.IsValid(); ++it)
+	{
+		CAbility& ability = abilityStorage[it];
+		for (auto& abilityInstance : ability.m_abilities)
+		{
+			abilityInstance->m_needsRebuild = true;
+		}
+	}
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::Unlock(NamedProperties& args)
+{
+	Name modName = args.Get("name", Name::Invalid);
+
+	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
+	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
+
+	for (auto& mod : runData.m_data->m_runModifierPool.m_runModifierDefs)
+	{
+		if (mod->m_name != modName || mod->m_name == Name::Invalid)
 		{
 			continue;
 		}

@@ -96,6 +96,47 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool IsActiveModRequirementMet(Name requirement, std::vector<RunModifier*> const& activeModifiers)
+{
+	if (requirement == Name::Invalid)
+	{
+		return true;
+	}
+	for (RunModifier const* activeModifier : activeModifiers)
+	{
+		if (activeModifier->m_def.m_name == requirement)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool RunModifierDef::AreRequirementsMet(RunData const& runData) const
+{
+	ExperienceLevelData levelData = runData.GetLevelData(runData.m_experience);
+	if (m_levelRequirement > levelData.m_level)
+	{
+		return false;
+	}
+
+	for (Name requirement : m_requirements)
+	{
+		if (!IsActiveModRequirementMet(requirement, runData.m_activeRunModifiers))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 RunModifier::RunModifier(RunModifierDef const& def) : m_def(def)
 {
 
@@ -124,7 +165,7 @@ void RunModifier::ApplyToRunData(RunData&) const
 TowerUnlockRunModifierDef::TowerUnlockRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
 {
 	m_towerName = XmlUtils::ParseXmlAttribute(modElement, "name", Name::Invalid);
-	m_defaultKey = XmlUtils::ParseXmlAttribute(modElement, "defaultKey", m_defaultKey);
+	m_forcedKey = XmlUtils::ParseXmlAttribute(modElement, "forcedKey", m_forcedKey);
 	m_baseCost = XmlUtils::ParseXmlAttribute(modElement, "baseCost", m_baseCost);
 }
 
@@ -151,6 +192,33 @@ void TowerUnlockRunModifierDef::GetDescription(std::string& outStr) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool TowerUnlockRunModifierDef::AreRequirementsMet(RunData const& runData) const
+{
+	if (!RunModifierDef::AreRequirementsMet(runData))
+	{
+		return false;
+	}
+
+	int numFlavors = 0;
+	for (PlaceableTower const& placeableTower : runData.m_placeableTowers)
+	{
+		if (placeableTower.m_towerName != Name::Invalid)
+		{
+			numFlavors++;
+		}
+	}
+
+	if (numFlavors >= runData.m_maxFlavors)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TowerUnlockRunModifier::TowerUnlockRunModifier(TowerUnlockRunModifierDef const& def) : RunModifier(def)
 {
 
@@ -172,13 +240,15 @@ void TowerUnlockRunModifier::ApplyToRunData(RunData& runData) const
 {
 	TowerUnlockRunModifierDef const& def = GetDef();
 
-	for (PlaceableTower& placeableTower : runData.m_placeableTowers)
+	for (int placeableIndex = 0; placeableIndex < runData.m_placeableTowers.size(); ++placeableIndex)
 	{
+		PlaceableTower& placeableTower = runData.m_placeableTowers[placeableIndex];
+
 		if (placeableTower.m_towerName == Name::Invalid)
 		{
 			// Reached an invalid slot before finding the tower, so we cannot already place this tower, add.
 			placeableTower.m_towerName = def.m_towerName;
-			placeableTower.m_hotkey = def.m_defaultKey;
+			placeableTower.m_hotkey = runData.m_towerPlacementKeyBindings[placeableIndex];
 			placeableTower.m_cost = def.m_baseCost;
 			return;
 		}

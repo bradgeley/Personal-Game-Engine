@@ -23,7 +23,7 @@ public:
 public:
 
 	// Background Music
-	float m_bgmVolume = 0.02f;
+	float m_bgmVolume = 0.f;
 	SoundID m_bgmSoundID;
 
 private:

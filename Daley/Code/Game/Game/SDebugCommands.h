@@ -25,4 +25,5 @@ protected:
 	static bool SlowAllEnemies(NamedProperties& args);
 	static bool God(NamedProperties& args);
 	static bool UnlockAllMods(NamedProperties& args);
+	static bool Unlock(NamedProperties& args);
 };

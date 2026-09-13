@@ -41,6 +41,7 @@ public:
 	static RunModifierDef const* MakeFromXml(XmlElement const& modElement);
 	virtual RunModifier* MakeModifierInstance() const = 0;
 	virtual void GetDescription(std::string& outStr) const = 0;
+	virtual bool AreRequirementsMet(RunData const& runData) const;
 
 public:
 
@@ -91,11 +92,13 @@ public:
 
 	virtual void GetDescription(std::string& outStr) const override;
 
+	virtual bool AreRequirementsMet(RunData const& runData) const override;
+
 public:
 
 	// Allows placement of this tower
 	Name m_towerName = Name::Invalid;
-	char m_defaultKey = '1';
+	char m_forcedKey = 0;
 	float m_baseCost = 1.f;
 };
 

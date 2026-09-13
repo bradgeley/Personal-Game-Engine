@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -327,6 +327,8 @@
     <ClCompile Include="Game\MapGeneratorComponent.cpp" />
     <ClCompile Include="Game\MapGeneratorComponentDef.cpp" />
     <ClCompile Include="Game\MapGeneratorDef.cpp" />
+    <ClCompile Include="Game\ModeSelectState.cpp" />
+    <ClCompile Include="Game\OverlapInfo.cpp" />
     <ClCompile Include="Game\RunModifierDef.cpp" />
     <ClCompile Include="Game\RunModifierPool.cpp" />
     <ClCompile Include="Game\RunState.cpp" />
@@ -423,6 +425,7 @@
     <ClInclude Include="Game\MapGeneratorComponent.h" />
     <ClInclude Include="Game\MapGeneratorComponentDef.h" />
     <ClInclude Include="Game\MapGeneratorDef.h" />
+    <ClInclude Include="Game\ModeSelectState.h" />
     <ClInclude Include="Game\OverlapInfo.h" />
     <ClInclude Include="Game\RunModifierDef.h" />
     <ClInclude Include="Game\RunModifierPool.h" />

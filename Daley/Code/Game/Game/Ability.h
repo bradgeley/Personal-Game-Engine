@@ -9,6 +9,7 @@
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/Rgba8.h"
+#include <optional>
 #include <set>
 #include <vector>
 
@@ -99,7 +100,6 @@ public:
 	float m_maxRange = 0.f;
 	float m_rangeMultiplier = 1.f;
 
-	uint8_t m_abilityTargetFlags = 0;
 	AbilityTargetingMode m_targetingMode = AbilityTargetingMode::ClosestToGoal;
 
 	uint8_t m_needsCacheUpdate = 1;
@@ -121,7 +121,7 @@ public:
 
 public:
 
-	std::set<EntityID> m_targets;
+	std::vector<EntityID> m_targets;
 };
 
 
@@ -363,6 +363,8 @@ public:
 
 	Rgba8 m_tint = Rgba8::White;
 	float m_depth = 0.f;
+	float m_renderDuration = -1.f;
+	float m_renderDurationRemaining = -1.f;
 };
 
 
@@ -391,6 +393,7 @@ public:
 	AbilityBurnComponent m_burnOnHit;
 	AbilitySlowComponent m_slowOnHit;
 	AbilityHasteComponent m_hasteOnHit;
+	std::optional<AbilityRenderComponent> m_renderComp;
 };
 
 
@@ -560,6 +563,7 @@ public:
 	explicit AoEHitAbility(AoEHitAbilityDef const& def);
 
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
+	virtual void Render(SystemContext const& context, Vec2 const& location) const override;
 	virtual Ability* DeepCopy() const override;
 	virtual void CopyTransientDataTo(Ability& other) const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const override;
@@ -591,17 +595,18 @@ public:
 	virtual void Shutdown(SystemContext const& context) override;
 
 	virtual void Update(SystemContext const& context, Vec2 const& location, float timeDilation) override;
+	virtual void Render(SystemContext const& context, Vec2 const& location) const override;
 	virtual Ability* DeepCopy() const override;
 	virtual void CopyTransientDataTo(Ability& other) const override;
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
+	virtual HitPayload GetDotPayload(float deltaSeconds) const;
+
 	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
 
 public:
 
-	EntityID m_activeAoEEffect = EntityID::Invalid;
-	bool m_needsEffectRespawn = true;
 	AbilityAoETargetingComponent	m_targetingComp;
 	AbilityAoEEffectComponent		m_aoeEffectComp;
 };

@@ -178,26 +178,6 @@ AbilityTargetingComponentDef::AbilityTargetingComponentDef(void const* xmlElemen
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_minRange = XmlUtils::ParseXmlAttribute(elem, "minRange", m_minRange);
 	m_maxRange = XmlUtils::ParseXmlAttribute(elem, "maxRange", m_maxRange);
-	std::string targets = XmlUtils::ParseXmlAttribute(elem, "targets", "Enemies");
-
-	Strings targetTokens = StringUtils::SplitStringOnDelimiter(targets, ',');
-
-	for (std::string const& targetString : targetTokens)
-	{
-        Name targetName = Name(targetString);
-		if (targetName == "Enemies")
-		{
-            m_abilityTargetFlags |= (uint8_t) AbilityTargetFlags::Enemy;
-		}
-		else if (targetName == "Towers")
-		{
-			m_abilityTargetFlags |= (uint8_t) AbilityTargetFlags::Tower;
-		}
-		else
-		{
-			m_abilityTargetFlags = 0;
-		}
-	}
 }
 
 
@@ -315,6 +295,10 @@ AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
 	if (XmlElement const* hasteElem = elem.FirstChildElement("Haste"))
 	{
 		m_hasteOnHit.emplace(hasteElem);
+	}
+	if (XmlElement const* renderElem = elem.FirstChildElement("Render"))
+	{
+		m_renderDef.emplace(renderElem);
 	}
 }
 
@@ -538,6 +522,7 @@ AbilityRenderComponentDef::AbilityRenderComponentDef(void const* xmlElement)
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_tint = XmlUtils::ParseXmlAttribute(elem, "tint", m_tint);
 	m_depth = XmlUtils::ParseXmlAttribute(elem, "depth", StaticGameSettings::s_defaultCollisionEffectDepth);
+	m_renderDuration = XmlUtils::ParseXmlAttribute(elem, "duration", m_renderDuration);
 }
 
 

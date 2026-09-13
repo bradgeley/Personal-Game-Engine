@@ -166,6 +166,7 @@
     <AoEHit radius="6">
       <Damage minDamage="100" maxDamage="200"></Damage>
       <Slow duration="1"></Slow>
+      <Render tint="255,255,255,50" depth="0.04" duration="0.2"></Render>
     </AoEHit>
   </AoEHitAbilityDef>
 

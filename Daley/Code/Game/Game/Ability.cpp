@@ -3,6 +3,7 @@
 #include "AbilityDef.h"
 #include "CProjectile.h"
 #include "CTime.h"
+#include "DiscShaderCPU.h"
 #include "EntityDef.h"
 #include "SCCollision.h"
 #include "SCFlowField.h"
@@ -16,6 +17,7 @@
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Renderer/Renderer.h"
+#include "Engine/Renderer/InstanceBuffer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
 
@@ -26,7 +28,6 @@ AbilityTargetingComponent::AbilityTargetingComponent(AbilityTargetingComponentDe
 {
     m_minRange = def.m_minRange;
 	m_maxRange = def.m_maxRange;
-	m_abilityTargetFlags = def.m_abilityTargetFlags;
 }
 
 
@@ -66,23 +67,11 @@ void AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
 		float minRange = GetMinRange();
 		float maxRange = GetMaxRange();
 
-        // Note: Tower case covers Tower+Enemy case, but Enemy case does not. So we check tower first.
-        if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Tower)
+        world.ForEachPathTileInRange(location, minRange, maxRange, [&](IntVec2 const& worldCoords)
         {
-            world.ForEachPlayableTileOverlappingCircle(location, maxRange, [&](IntVec2 const& worldCoords)
-            {
-                m_cachedTilesInRange.push_back(worldCoords);
-                return true;
-            });
-        }
-        else if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Enemy)
-        {
-            world.ForEachPathTileInRange(location, minRange, maxRange, [&](IntVec2 const& worldCoords)
-            {
-                m_cachedTilesInRange.push_back(worldCoords);
-                return true;
-            });
-        }
+            m_cachedTilesInRange.push_back(worldCoords);
+            return true;
+        });
 
         if (m_targetingMode == AbilityTargetingMode::ClosestToGoal)
         {
@@ -131,85 +120,56 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, int
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 	SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
 	CollisionLayer const& enemyLayer = scCollision.GetCollisionLayer(CollisionChannel::Enemy);
-	CollisionLayer const& buildingLayer = scCollision.GetCollisionLayer(CollisionChannel::Building);
-	auto& healthStorage = context.GetArrayStorageConst<CHealth>();
+	auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& transformStorage = context.GetArrayStorageConst<CTransform>();
 	auto& collisionStorage = context.GetArrayStorageConst<CCollision>();
-	BitMask healthBit = context.GetComponentBitMask<CHealth>();
 
 	float maxRange = GetMaxRange();
 
     m_targets.clear();
 
+    static uint32_t aoeTargetingId = 0;
+    aoeTargetingId++;
+
     for (IntVec2 const& cachedPathTile : m_cachedTilesInRange)
     {
         int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
 
-        if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Enemy)
+        CollisionBucket const& tileBucket = enemyLayer[tileIndex];
+
+        for (EntityID entityID : tileBucket)
         {
-            CollisionBucket const& tileBucket = enemyLayer[tileIndex];
+            CHealth& healthComp = healthStorage[entityID];
+			if (healthComp.m_lastProcessedBy == aoeTargetingId)
+			{
+                // This targeting component has already processed this entity, skip
+				continue;
+			}
 
-            for (EntityID entityID : tileBucket)
+			healthComp.m_lastProcessedBy = aoeTargetingId;
+
+            if (!healthComp.GetIsTargetable() || healthComp.GetHealthReachedZero())
             {
-                if (m_targets.find(entityID) != m_targets.end())
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                CTransform const& transform = transformStorage[entityID];
-                CCollision const& collision = collisionStorage[entityID];
-                float range = collision.m_radius + maxRange; // Add target's radius to the range
-                float rangeSquared = range * range;
-                float distSquared = MathUtils::GetDistanceSquared2D(transform.m_pos, m_cachedLocation);
-                if (distSquared > rangeSquared)
-                {
-                    continue;
-                }
+            CTransform const& transform = transformStorage[entityID];
+            CCollision const& collision = collisionStorage[entityID];
+            float range = collision.m_radius + maxRange; // Add target's radius to the range
+            float rangeSquared = range * range;
+            float distSquared = MathUtils::GetDistanceSquared2D(transform.m_pos, m_cachedLocation);
+            if (distSquared > rangeSquared)
+            {
+                continue;
+            }
 
-                if (context.HasComponents(entityID, healthBit))
-                {
-                    CHealth const& healthComp = healthStorage[entityID];
-                    if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
-                    {
-                        m_targets.insert(entityID);
+            m_targets.push_back(entityID);
 
-                        if (maxTargets > 0 && m_targets.size() >= maxTargets)
-                        {
-                            return true;
-                        }
-                    }
-                }
+            if (maxTargets > 0 && m_targets.size() >= maxTargets)
+            {
+                return true;
             }
         }
-
-		if (m_abilityTargetFlags & (uint8_t) AbilityTargetFlags::Tower)
-		{
-			CollisionBucket const& tileBucket = buildingLayer[tileIndex];
-
-			for (EntityID entityID : tileBucket)
-			{
-				if (m_targets.find(entityID) != m_targets.end())
-				{
-					continue;
-				}
-
-				CTransform const& transform = transformStorage[entityID];
-				CCollision const& collision = collisionStorage[entityID];
-                float range = collision.m_radius + maxRange; // Add target's radius to the range
-				float rangeSquared = range * range;
-				float distSquared = MathUtils::GetDistanceSquared2D(transform.m_pos, m_cachedLocation);
-				if (distSquared > rangeSquared)
-				{
-					continue;
-				}
-
-				m_targets.insert(entityID);
-				if (maxTargets > 0 && m_targets.size() >= maxTargets)
-				{
-					return true;
-				}
-			}
-		}
     }
 
 	return !m_targets.empty();
@@ -865,6 +825,10 @@ AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& 
 	m_burnOnHit = def.m_burnOnHit.has_value() ? *def.m_burnOnHit : AbilityBurnComponent();
 	m_slowOnHit = def.m_slowOnHit.has_value() ? *def.m_slowOnHit : AbilitySlowComponent();
 	m_hasteOnHit = def.m_hasteOnHit.has_value() ? *def.m_hasteOnHit : AbilityHasteComponent();
+	if (def.m_renderDef.has_value())
+	{
+		m_renderComp = *def.m_renderDef;
+	}
 }
 
 
@@ -1384,6 +1348,11 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location, f
     float timeBetweenAttacks = m_cooldownComp.GetCooldown();
     timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
 
+    if (m_aoeHitComp.m_renderComp.has_value())
+    {
+		m_aoeHitComp.m_renderComp->m_renderDurationRemaining -= context.m_deltaSeconds;
+    }
+
     if (m_cooldownComp.m_accumulatedTime <= timeBetweenAttacks)
     {
         return;
@@ -1416,6 +1385,11 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location, f
     while (m_cooldownComp.m_accumulatedTime > timeBetweenAttacks)
     {
         m_cooldownComp.m_accumulatedTime -= timeBetweenAttacks;
+
+        if (m_aoeHitComp.m_renderComp.has_value())
+        {
+            m_aoeHitComp.m_renderComp->m_renderDurationRemaining = m_aoeHitComp.m_renderComp->m_renderDuration;
+        }
 
         if (m_aoeEffectComp.IsRelevant())
         {
@@ -1457,6 +1431,43 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location, f
             }
         }
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AoEHitAbility::Render(SystemContext const& context, Vec2 const& location) const
+{
+    if (!m_aoeHitComp.m_renderComp.has_value() || m_aoeHitComp.m_renderComp->m_renderDurationRemaining <= 0.f)
+	{
+		return;
+	}
+
+    SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+    Renderer& renderer = *scRenderer.GetRenderer();
+
+    InstanceBuffer& discIBO = *renderer.GetInstanceBuffer(scRenderer.m_discInstanceBuffer);
+
+	float alphaT = m_aoeHitComp.m_renderComp->m_renderDurationRemaining / m_aoeHitComp.m_renderComp->m_renderDuration;
+    float alpha;
+    if (alphaT < 0.5f)
+    {
+        // Ramp up alpha to max
+		alpha = MathUtils::RangeMapClamped(alphaT, 0.f, 0.5f, 0.f, m_aoeHitComp.m_renderComp->m_tint.a);
+    }
+    else
+    {
+        // Ramp down to 0
+        alpha = MathUtils::RangeMapClamped(alphaT, 0.5f, 1.f, m_aoeHitComp.m_renderComp->m_tint.a, 0.f);
+    }
+
+    DiscRenderInstance discInstance;
+    discInstance.m_position = Vec3(location, m_aoeHitComp.m_renderComp->m_depth);
+	discInstance.m_radius = (1.f - alphaT) * m_targetingComp.GetMaxRange(); // Make it look like an explosion expanding outwards
+    discInstance.m_tint = m_aoeHitComp.m_renderComp->m_tint;
+    discInstance.m_tint.a = static_cast<uint8_t>(alpha);
+
+    discIBO.AddInstance(discInstance);
 }
 
 
@@ -1620,13 +1631,9 @@ PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def) : Ability(
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::Shutdown(SystemContext const& context)
+void PassiveAoEAbility::Shutdown(SystemContext const&)
 {
-	if (m_activeAoEEffect != EntityID::Invalid)
-	{
-		context.DestroyEntity(m_activeAoEEffect);
-		m_activeAoEEffect = EntityID::Invalid;
-	}
+
 }
 
 
@@ -1637,49 +1644,53 @@ void PassiveAoEAbility::Update(SystemContext const& context, Vec2 const& locatio
     ASSERT_OR_DIE(m_abilityDef, "PassiveAoEAbility::Update - m_abilityDef is null.");
 
     // Write Dependencies
-	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
+	auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& timeStorage = context.GetArrayStorage<CTime>();
 
-	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
+    HitPayload const& payload = GetDotPayload(context.m_deltaSeconds * timeDilation);
+    if (!payload.HasValue())
+    {
+        return;
+    }
 
-	float maxRange = m_targetingComp.GetMaxRange();
-
-	if (m_needsEffectRespawn)
+    m_targetingComp.UpdateCachedTiles(context, location);
+	if (!m_targetingComp.FindTargets(context))
 	{
-		m_needsEffectRespawn = false;
-		if (context.IsValid(m_activeAoEEffect))
-		{
-			context.DestroyEntity(m_activeAoEEffect);
-			m_activeAoEEffect = EntityID::Invalid;
-		}
+		return;
 	}
 
-    if (!context.IsValid(m_activeAoEEffect))
+    for (EntityID entityID : m_targetingComp.m_targets)
     {
-        SpawnInfo aoeEffectSpawnInfo;
-        aoeEffectSpawnInfo.m_spawnPos = location;
-        aoeEffectSpawnInfo.m_spawnLifetime = -1.f; // Infinite bc this is a passive ability
-        aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(m_aoeEffectComp.m_aoeEffectDefName);
-        aoeEffectSpawnInfo.m_spawnScale = maxRange;
-
-        m_activeAoEEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
-
-        if (context.IsValid(m_activeAoEEffect))
+        if (payload.IsRelevantToHealth())
         {
-            // Pass along damage, color, to aoe effect
-            if (context.HasComponents(m_activeAoEEffect, collisionEffectBit))
-            {
-				CCollisionEffect& aoeEffectComp = collisionEffectStorage[m_activeAoEEffect];
-				aoeEffectComp.InitializeFromAoEEffect(m_aoeEffectComp);
-            }
-		}
-    }
+            CHealth& healthComp = healthStorage[entityID];
+            healthComp.TakePayload(payload);
+        }
 
-    if (context.IsValid(m_activeAoEEffect))
-    {
-        CTime& aoeEffectTimeComp = timeStorage[m_activeAoEEffect];
-        aoeEffectTimeComp.m_clock.SetTimeDilation(timeDilation);
+        if (payload.IsRelevantToTime())
+        {
+            CTime& timeComp = timeStorage[entityID];
+            timeComp.m_remainingSlowDuration += payload.m_slowDuration;
+            timeComp.m_remainingHasteDuration += payload.m_hasteDuration;
+        }
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PassiveAoEAbility::Render(SystemContext const& context, Vec2 const& location) const
+{
+	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+
+    InstanceBuffer& discIBO = *renderer.GetInstanceBuffer(scRenderer.m_discInstanceBuffer);
+
+    DiscRenderInstance discInstance;
+    discInstance.m_position = Vec3(location, m_aoeEffectComp.m_renderComp.m_depth);
+    discInstance.m_radius = m_targetingComp.GetMaxRange();
+	discInstance.m_tint = m_aoeEffectComp.m_renderComp.m_tint;
+    discIBO.AddInstance(discInstance);
 }
 
 
@@ -1731,6 +1742,22 @@ void PassiveAoEAbility::AppendDebugString(EntityDebugContext& debugContext) cons
 
 
 //----------------------------------------------------------------------------------------------------------------------
+HitPayload PassiveAoEAbility::GetDotPayload(float deltaSeconds) const
+{
+	HitPayload payload;
+
+	payload.m_damage = m_aoeEffectComp.m_damagePerSecond.GetMaxDamage() * deltaSeconds;
+	payload.m_burn = m_aoeEffectComp.m_burnPerSecond.GetBurn() * deltaSeconds;
+	payload.m_poison = m_aoeEffectComp.m_poisonPerSecond.GetPoison() * deltaSeconds;
+	payload.m_slowDuration = m_aoeEffectComp.m_slowPerSecond.GetDuration() * deltaSeconds;
+	payload.m_hasteDuration = m_aoeEffectComp.m_hastePerSecond.GetDuration() * deltaSeconds;
+    
+    return payload;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool PassiveAoEAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
 {
     TowerAbilityRunModifierDef const& def = modifier.GetDef();
@@ -1754,7 +1781,6 @@ bool PassiveAoEAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
 	applied |= m_targetingComp.ApplyModifier(modifier);
     applied |= m_aoeEffectComp.ApplyModifier(modifier);
 
-    m_needsEffectRespawn = applied;
     return applied;
 }
 
@@ -1909,6 +1935,7 @@ AbilityRenderComponent::AbilityRenderComponent(AbilityRenderComponentDef const& 
 {
     m_tint = def.m_tint;
 	m_depth = def.m_depth;
+	m_renderDuration = def.m_renderDuration;
 }
 
 

@@ -37,7 +37,6 @@ struct AbilityTargetingComponentDef
 {
 	explicit AbilityTargetingComponentDef(void const* xmlElement);
 
-	uint8_t m_abilityTargetFlags = 0; // Targets enemies, towers, or both
 	float m_minRange = 0.f;
 	float m_maxRange = 0.f;
 };
@@ -136,6 +135,7 @@ struct AbilityRenderComponentDef
 
 	Rgba8 m_tint = Rgba8::White;
 	float m_depth = 0.f;
+	float m_renderDuration = -1.f;
 };
 
 
@@ -151,6 +151,7 @@ struct AbilityAoEHitComponentDef
 	std::optional<AbilityBurnComponentDef>		m_burnOnHit;
 	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
 	std::optional<AbilityHasteComponentDef>		m_hasteOnHit;
+	std::optional<AbilityRenderComponentDef>	m_renderDef;
 };
 
 

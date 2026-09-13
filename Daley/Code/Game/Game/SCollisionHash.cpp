@@ -1,4 +1,4 @@
-﻿// Bradley Christensen - 2022-2026
+// Bradley Christensen - 2022-2026
 #include "SCollisionHash.h"
 #include "CollisionProfile.h"
 #include "CCollision.h"

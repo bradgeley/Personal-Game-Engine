@@ -56,25 +56,6 @@ ExperienceLevelData RunData::GetLevelData(uint64_t experience)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool IsRequirementMet(Name requirement, std::vector<RunModifier*> const& activeModifiers)
-{
-	if (requirement == Name::Invalid)
-	{
-		return true;
-	}
-	for (RunModifier const* activeModifier : activeModifiers)
-	{
-		if (activeModifier->m_def.m_name == requirement)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void RunData::GenerateModifierChoices()
 {
 	std::vector<RunModifierDef const*> const& allRunModifiers = m_runModifierPool.m_runModifierDefs;
@@ -92,22 +73,7 @@ void RunData::GenerateModifierChoices()
 	float combinedWeight = 0.f;
 	for (RunModifierDef const* runModifierDef : allRunModifiers)
 	{
-		if (runModifierDef->m_levelRequirement > levelData.m_level)
-		{
-			continue;
-		}
-
-		bool requirementsMet = true;
-		for (Name requirement : runModifierDef->m_requirements)
-		{
-			if (!IsRequirementMet(requirement, m_activeRunModifiers))
-			{
-				requirementsMet = false;
-				break;
-			}
-		}
-
-		if (!requirementsMet)
+		if (!runModifierDef->AreRequirementsMet(*this))
 		{
 			continue;
 		}

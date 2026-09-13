@@ -7,7 +7,6 @@
 
 
 
-constexpr int MAX_PURCHASEABLE_TOWERS = 10;
 constexpr int MAX_MODIFIER_CHOICES = 3;
 
 
@@ -69,6 +68,7 @@ public:
 	float		m_interestTimerSeconds	= StaticGameSettings::s_baseInterestTimerSeconds;
 	float		m_healthRegen			= StaticGameSettings::s_basePlayerHealthRegen;
 	float		m_currentTimeDilation	= 1.f;
+	int			m_maxFlavors = StaticGameSettings::s_baseMaxFlavors;
 	
 	float		m_gold							= StaticGameSettings::s_baseGold;
 	float		m_interestTimerSecondsRemaining	= StaticGameSettings::s_baseInterestTimerSeconds;
@@ -79,7 +79,10 @@ public:
 	float		m_sellRefundRate		= StaticGameSettings::s_baseSellRefundRate;
 	float 		m_goldGainMultiplier	= 1.f;
 
-	std::array<PlaceableTower, MAX_PURCHASEABLE_TOWERS> m_placeableTowers;
+	// +1 is for walls, bc they are not a flavor. Start with wall unlocked always.
+	std::array<PlaceableTower, StaticGameSettings::s_baseMaxFlavors + 1> m_placeableTowers = { "Wall1x1", 'T', 5.f };
+	std::array<uint8_t, StaticGameSettings::s_baseMaxFlavors + 1> m_towerPlacementKeyBindings = { 'T', 'Q', 'W', 'E', 'R' }; // todo: move to some kind of user settings, out of run data
+
 	std::array<MissionGenData, StaticGameSettings::s_numMissionsForVictory> m_missionGenData;
 
 	std::vector<RunModifier*> m_activeRunModifiers;
