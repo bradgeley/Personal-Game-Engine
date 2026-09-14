@@ -147,6 +147,7 @@ void RunData::PrepareForMissionStart()
 	m_health = StaticGameSettings::s_basePlayerHealth;
 	m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
 	m_numSoldTowers = 0;
+	m_needsModifierRecalculation = true;
 
 	for (PlaceableTower& tower : m_placeableTowers)
 	{

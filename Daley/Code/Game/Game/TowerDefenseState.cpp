@@ -321,10 +321,7 @@ bool TowerDefenseState::Restart(NamedProperties&)
 
 	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
-	runData.m_health = runData.m_maxHealth;
-	runData.m_gold = StaticGameSettings::s_baseGold;
-	runData.m_interestTimerSecondsRemaining = runData.m_interestTimerSeconds;
-    runData.m_needsModifierRecalculation = true;
+    runData.PrepareForMissionStart();
 
     // Maybe later we have to regenerate the whole map
     for (auto it = g_ecs->IterateAll<CTags>(); it.IsValid(); ++it)
@@ -345,7 +342,6 @@ bool TowerDefenseState::Restart(NamedProperties&)
 	SCEventSystem& scEventSystem = g_ecs->GetSingleton<SCEventSystem>();
 	EventSystem& eventSystem = *scEventSystem.GetEventSystem();
 	eventSystem.FireEvent("StartWaves");
-    
 
     return false;
 }
