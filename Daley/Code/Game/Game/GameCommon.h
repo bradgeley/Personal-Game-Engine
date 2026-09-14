@@ -100,6 +100,7 @@ namespace StaticGameSettings
 	static constexpr float s_baseDebtInterestRate			= 0.5f;
 	static constexpr float s_baseInterestTimerSeconds		= 30.f;
 	static constexpr float s_baseSellRefundRate				= 0.5f;
+	static constexpr float s_baseCostRampPerTower			= 1.1f;
 	static constexpr int   s_baseSellMaximum				= 5;
 	static constexpr int   s_baseMaxFlavors					= 4;
 

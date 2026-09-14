@@ -7,6 +7,10 @@
 
 
 
+struct TowerPlacementRequest;
+
+
+
 constexpr int MAX_MODIFIER_CHOICES = 3;
 
 
@@ -62,6 +66,7 @@ public:
 
 	void GenerateModifierChoices();
 	void ResetModifiableAttributes();
+	void OnTowerPlacementSuccess(TowerPlacementRequest const& placementInfo);
 
 	// Data that carries over from mission to mission
 	uint32_t	m_seed					= 0; // Mission seed = seed + missionIndex
@@ -78,7 +83,8 @@ public:
 	float		m_interestTimerSeconds	= StaticGameSettings::s_baseInterestTimerSeconds;
 	float		m_healthRegen			= StaticGameSettings::s_basePlayerHealthRegen;
 	float		m_currentTimeDilation	= 1.f;
-	int			m_maxFlavors = StaticGameSettings::s_baseMaxFlavors;
+	int			m_maxFlavors			= StaticGameSettings::s_baseMaxFlavors;
+	float		m_costRampPerTower		= StaticGameSettings::s_baseCostRampPerTower;
 	
 	float		m_gold							= StaticGameSettings::s_baseGold;
 	float		m_interestTimerSecondsRemaining	= StaticGameSettings::s_baseInterestTimerSeconds;

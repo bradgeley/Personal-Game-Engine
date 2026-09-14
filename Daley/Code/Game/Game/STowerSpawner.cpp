@@ -112,6 +112,7 @@ void STowerSpawner::Run(SystemContext const& context) const
 				CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(tower);
 				placeableComp.m_botLeftTile = placementInfo.m_botLeftTileCoords;
 				placeableComp.m_costOfPurchase = placementInfo.m_cost;
+                runData.OnTowerPlacementSuccess(placementInfo);
             }
 
 			runData.m_gold -= placementInfo.m_cost;

@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "SCRunData.h"
+#include "TowerPlacementRequest.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Math/MathUtils.h"
 #include "Engine/Math/Noise.h"
@@ -135,4 +136,18 @@ void RunData::ResetModifiableAttributes()
 	m_sellRefundRate = StaticGameSettings::s_baseSellRefundRate;
 	m_creditLimit = StaticGameSettings::s_baseCreditLimit;
 	m_debtInterestRate = StaticGameSettings::s_baseDebtInterestRate;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunData::OnTowerPlacementSuccess(TowerPlacementRequest const& placementInfo)
+{
+	for (PlaceableTower& tower : m_placeableTowers)
+	{
+		if (tower.m_towerName == placementInfo.m_towerName)
+		{
+			tower.m_cost *= m_costRampPerTower;
+		}
+	}
 }
