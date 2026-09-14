@@ -95,10 +95,7 @@ void TowerDefenseState::StartGame(NamedProperties const& inProps)
     scRunData.m_data = inProps.Get<RunData*>("runData", nullptr);
 
 	RunData& runData = *scRunData.m_data;
-	runData.m_gold = StaticGameSettings::s_baseGold * scRunData.m_data->m_goldGainMultiplier;
-	runData.m_health = StaticGameSettings::s_basePlayerHealth;
-	runData.m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
-	runData.m_numSoldTowers = 0;
+    runData.PrepareForMissionStart();
 
 	int numWaves = StaticGameSettings::s_numWavesInFirstMission + runData.m_missionIndex * StaticGameSettings::s_numWavesIncreasePerMission;
     uint32_t seed = runData.m_seed + static_cast<uint32_t>(runData.m_missionIndex);

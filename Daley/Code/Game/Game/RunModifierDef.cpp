@@ -251,6 +251,7 @@ void TowerUnlockRunModifier::ApplyToRunData(RunData& runData) const
 			// Reached an invalid slot before finding the tower, so we cannot already place this tower, add.
 			placeableTower.m_towerName = def.m_towerName;
 			placeableTower.m_hotkey = runData.m_towerPlacementKeyBindings[placeableIndex];
+			placeableTower.m_baseCost = def.m_baseCost;
 			placeableTower.m_cost = def.m_baseCost;
 			return;
 		}

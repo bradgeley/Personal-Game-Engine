@@ -29,6 +29,7 @@ struct PlaceableTower
 {
 	Name  m_towerName = Name::Invalid;
 	char  m_hotkey = '0';
+	float m_baseCost = 0.f;
 	float m_cost = 0.f;
 };
 
@@ -66,6 +67,7 @@ public:
 
 	void GenerateModifierChoices();
 	void ResetModifiableAttributes();
+	void PrepareForMissionStart();
 	void OnTowerPlacementSuccess(TowerPlacementRequest const& placementInfo);
 
 	// Data that carries over from mission to mission

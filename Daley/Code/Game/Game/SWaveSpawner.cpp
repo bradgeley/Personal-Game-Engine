@@ -25,7 +25,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SWaveSpawner::Startup()
 {
-	AddReadDependencies<CTags, SCWorld>();
+	AddReadDependencies<SCWorld>();
 	AddWriteDependencies<SCWaves, SCEntityFactory, SCRandomNumberGenerator>();
 
 	m_runWhilePaused = false;
@@ -52,7 +52,6 @@ void SWaveSpawner::Run(SystemContext const& context) const
 {
 	// Read Dependencies
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
-	auto const& tagStorage = context.GetArrayStorageConst<CTags>();
 
 	// Write Dependencies
 	SCWaves& waves = context.GetSingleton<SCWaves>();

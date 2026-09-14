@@ -141,6 +141,22 @@ void RunData::ResetModifiableAttributes()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void RunData::PrepareForMissionStart()
+{
+	m_gold = StaticGameSettings::s_baseGold * m_goldGainMultiplier;
+	m_health = StaticGameSettings::s_basePlayerHealth;
+	m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
+	m_numSoldTowers = 0;
+
+	for (PlaceableTower& tower : m_placeableTowers)
+	{
+		tower.m_cost = tower.m_baseCost;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void RunData::OnTowerPlacementSuccess(TowerPlacementRequest const& placementInfo)
 {
 	for (PlaceableTower& tower : m_placeableTowers)
