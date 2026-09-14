@@ -553,11 +553,11 @@ GroupIter AdminSystem::IterateAll() const
 
 	result.m_groupMask = GetComponentBitMask<CTypes...>();
 
-	result.m_currentIndex = GetNextEntityIndexWithGroup(result.m_groupMask, 0, MAX_ENTITIES - 1);
+	result.m_currentIndex = GetNextEntityIndexWithGroup(result.m_groupMask, 0, m_highWatermarkEntityID);
 
 	if (m_highWatermarkEntityID < result.m_endIndex)
 	{
-		result.m_endIndex = g_ecs->m_highWatermarkEntityID;
+		result.m_endIndex =	m_highWatermarkEntityID;
 	}
 
 	return result;
@@ -573,7 +573,7 @@ GroupIter AdminSystem::Iterate(SystemContext const& context) const
 
 	if (m_highWatermarkEntityID < result.m_endIndex)
 	{
-		result.m_endIndex = g_ecs->m_highWatermarkEntityID;
+		result.m_endIndex = m_highWatermarkEntityID;
 	}
 
 	result.m_groupMask = GetComponentBitMask<CTypes...>();
@@ -646,7 +646,7 @@ int AdminSystem::Count() const
 	BitMask groupMask = GetComponentBitMask<CTypes...>();
 
 	int result = 0;
-	for (int i = 0; i < MAX_ENTITIES; i++)
+	for (int i = 0; i <= m_highWatermarkEntityID; i++)
 	{
 		if (m_entities.Get(i))
 		{

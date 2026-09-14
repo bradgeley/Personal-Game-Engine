@@ -499,7 +499,7 @@ EntityID AdminSystem::CreateEntityInPlace(int entityID)
 //----------------------------------------------------------------------------------------------------------------------
 void AdminSystem::DestroyAllEntities()
 {
-	for (int i = 0; i < MAX_ENTITIES; ++i)
+	for (int i = 0; i <= m_highWatermarkEntityID; ++i)
 	{
 		DestroyEntity(EntityID(i, m_entityGeneration[i]));
 	}
