@@ -333,10 +333,12 @@ bool TowerDefenseState::Restart(NamedProperties&)
 			removalRequest.m_towerEntityID = it.GetEntityID();
 			factory.m_towerRemovals.push_back(removalRequest);
         }
-        else if (tags.HasTag("enemy"))
-        {
-            factory.m_entitiesToDestroy.push_back(it.GetEntityID());
-        }
+    }
+
+    // Destroy all enemies
+    for (auto it = g_ecs->IterateAll<CDeath>(); it.IsValid(); ++it)
+    {
+        factory.m_entitiesToDestroy.push_back(it.GetEntityID());
     }
 
 	SCEventSystem& scEventSystem = g_ecs->GetSingleton<SCEventSystem>();

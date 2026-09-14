@@ -89,7 +89,7 @@
   <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="50">
     <Cooldown cooldown="0.33"></Cooldown>
     <Targeting maxRange="15"></Targeting>
-    <Crit critChance="0.1"></Crit>
+    <Crit critChance="0.1" critMulti=".5"></Crit>
     <OnHit>
       <Damage minDamage="1" maxDamage="75"></Damage>
     </OnHit>
@@ -98,11 +98,11 @@
   <ProjectileHitAbilityDef name="ChocolateAttack" projectileDef="ChocolateProj" projSpeed="30">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="12"></Targeting>
-    <Crit critChance="0.05"></Crit>
+    <Crit critChance="0.1" critMulti=".5"></Crit>
     <OnHit>
-      <Damage minDamage="40" maxDamage="80"></Damage>
-      <AoEHit radius="4">
-        <Damage damage="60"></Damage>
+      <Damage minDamage="100" maxDamage="150"></Damage>
+      <AoEHit radius="5">
+        <Damage damage="100"></Damage>
       </AoEHit>
     </OnHit>
   </ProjectileHitAbilityDef>

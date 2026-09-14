@@ -61,8 +61,8 @@ void SetupEndless(RunData& runData)
 
 	runData.m_mode = GameMode::Endless;
 
-	runData.m_missionGenData[0] = { mapGeneratorDef->m_name };
-
+	//runData.m_missionGenData[0] = { mapGeneratorDef->m_name };
+	runData.m_missionGenData[0] = { "forest" };
 }
 
 
