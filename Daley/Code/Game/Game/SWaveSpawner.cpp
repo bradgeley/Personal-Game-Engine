@@ -147,15 +147,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 		}
 	}
 
-	waves.m_remainingEnemies = 0;
-	for (auto it = context.Iterate<CTags>(); it.IsValid(); ++it)
-	{
-		CTags const& tags = tagStorage[it];
-		if (tags.HasTag("enemy"))
-		{
-			waves.m_remainingEnemies++;
-		}
-	}
+	waves.m_remainingEnemies = context.CountComponents<CDeath>(); // Death component is unique to enemies
 
 	if (waves.m_activeStreams.size() == 0 && waves.m_currentWaveIndex == waves.m_waves.size() && waves.m_remainingEnemies == 0)
 	{
@@ -196,12 +188,30 @@ bool SWaveSpawner::GenerateWaves(NamedProperties& args)
 {
 	uint32_t seed = args.Get<uint32_t>("seed", 0);
 	int numWaves = args.Get<int>("numWaves", 0);
+	GameMode mode = args.Get<GameMode>("mode", GameMode::Journey);
 
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
 	SCRunData const& scRunData = g_ecs->GetSingleton<SCRunData>();
 	RunData const& runData = *scRunData.m_data;
 
-	GenerateWaves(waves, runData, seed, numWaves);
+	if (mode == GameMode::Journey)
+	{
+		MissionGenData const& missionGenData = runData.m_missionGenData[runData.m_missionIndex];
+
+		MapGeneratorDef const* mapGenDef = MapGeneratorDef::GetMapGeneratorDef(missionGenData.m_mapName);
+		ASSERT_OR_DIE(mapGenDef != nullptr, StringUtils::StringF("GenerateWaves: Invalid map generator name: %s", missionGenData.m_mapName.ToCStr()).c_str());
+
+		BiomeDef const* biomeDef = BiomeDef::GetBiomeDef(mapGenDef->m_biome);
+		ASSERT_OR_DIE(biomeDef != nullptr, StringUtils::StringF("GenerateWaves: Invalid biome name: %s", mapGenDef->m_biome.ToCStr()).c_str());
+
+		LevelWaveGenDef const& waveGenData = biomeDef->m_waveGenDef;
+
+		GenerateWaves(waves, waveGenData, runData, seed, numWaves);
+	}
+	else
+	{
+		GenerateEndlessWaves(waves, runData, seed);
+	}
 
 	return false;
 }
@@ -286,21 +296,13 @@ static Name GetRandomEnemyWithTags(std::vector<Name> const& tags, RandomNumberGe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SWaveSpawner::GenerateWaves(SCWaves& waves, RunData const& runData, int seed, int numWaves)
+void SWaveSpawner::GenerateWaves(SCWaves& waves, LevelWaveGenDef const& def, RunData const& runData, int seed, int numWaves)
 {
 	ScopedTimer t("GenerateWaves");
 
 	RandomNumberGenerator rng(static_cast<size_t>(seed));
 
-	MissionGenData const& missionGenData = runData.m_missionGenData[runData.m_missionIndex];
-
-	MapGeneratorDef const* mapGenDef = MapGeneratorDef::GetMapGeneratorDef(missionGenData.m_mapName);
-	ASSERT_OR_DIE(mapGenDef != nullptr, StringUtils::StringF("GenerateWaves: Invalid map generator name: %s", missionGenData.m_mapName.ToCStr()).c_str());
-
-	BiomeDef const* biomeDef = BiomeDef::GetBiomeDef(mapGenDef->m_biome);
-	ASSERT_OR_DIE(biomeDef != nullptr, StringUtils::StringF("GenerateWaves: Invalid biome name: %s", mapGenDef->m_biome.ToCStr()).c_str());
-
-	waves.m_waveGenDef = biomeDef->m_waveGenDef;
+	waves.m_waveGenDef = def;
 	waves.m_waves.clear();
 
 	// Apply modifiers
@@ -400,4 +402,77 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, RunData const& runData, int see
 
 		numEntitiesMultiplier += waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave;
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SWaveSpawner::GenerateEndlessWaves(SCWaves& waves, RunData const& runData, int seed)
+{
+	LevelWaveGenDef waveGenDef;
+
+	std::vector<Name> bossNames;
+	EntityDef::GetAllEntityDefsWithTags({ "boss" }, bossNames);
+
+	int maxEndlessWaves = 1000;
+	int bossWaveInterval = 10;
+
+	// First waves fixed to avoid bad RNG
+
+	FixedWaveStreamDef firstWave;
+	firstWave.m_entityName = GetRandomEnemyWithTags({ "small" }, *g_rng);
+	firstWave.m_numEntities = 20;
+	firstWave.m_overTimeSeconds = 20.f;
+	firstWave.m_waveIndex = 0;
+	waveGenDef.m_fixedWaves.push_back(firstWave);
+
+	FixedWaveStreamDef secondWave;
+	secondWave.m_entityName = GetRandomEnemyWithTags({ "small" }, *g_rng);
+	secondWave.m_numEntities = 30;
+	secondWave.m_overTimeSeconds = 20.f;
+	secondWave.m_waveIndex = 1;
+	waveGenDef.m_fixedWaves.push_back(secondWave);
+
+	FixedWaveStreamDef thirdWave;
+	thirdWave.m_entityName = GetRandomEnemyWithTags({ "small" }, *g_rng);
+	thirdWave.m_numEntities = 50;
+	thirdWave.m_overTimeSeconds = 20.f;
+	thirdWave.m_waveIndex = 2;
+	waveGenDef.m_fixedWaves.push_back(thirdWave);
+
+	// Bosses
+	for (int i = bossWaveInterval - 1; i < maxEndlessWaves; i += bossWaveInterval)
+	{
+		FixedWaveStreamDef bossWave;
+		bossWave.m_entityName = bossNames[Noise::GetRandomIntInRange(0, (int) bossNames.size() - 1, i, seed)];
+		bossWave.m_numEntities = 1;
+		bossWave.m_overTimeSeconds = 20.f;
+		bossWave.m_waveIndex = i;
+		waveGenDef.m_fixedWaves.push_back(bossWave);
+	}
+
+	// Random Waves
+
+	RandomWaveStreamDef smallWave;
+	smallWave.m_enemyTags = { "small" };
+	smallWave.m_minNumEntities = 30;
+	smallWave.m_maxNumEntities = 40;
+	smallWave.m_overTimeSeconds = 20.f;
+	waveGenDef.m_randomWaves.push_back(smallWave);
+
+	RandomWaveStreamDef mediumWave;
+	mediumWave.m_enemyTags = { "medium" };
+	mediumWave.m_minNumEntities = 20;
+	mediumWave.m_maxNumEntities = 30;
+	mediumWave.m_overTimeSeconds = 20.f;
+	waveGenDef.m_randomWaves.push_back(mediumWave);
+
+	RandomWaveStreamDef largeWave;
+	largeWave.m_enemyTags = { "large" };
+	largeWave.m_minNumEntities = 10;
+	largeWave.m_maxNumEntities = 20;
+	largeWave.m_overTimeSeconds = 20.f;
+	waveGenDef.m_randomWaves.push_back(largeWave);
+
+	GenerateWaves(waves, waveGenDef, runData, seed, maxEndlessWaves);
 }

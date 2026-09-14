@@ -378,3 +378,15 @@ float Noise::GetPerlinNoise2D_01(float x, float y, float scale, unsigned int num
 	float noise = GetPerlinNoise2D(x, y, scale, numOctaves, octavePersistence, octaveScale, renormalize, seed);
 	return noise * 0.5f + 0.5f;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int Noise::GetRandomIntInRange(int minInclusive, int maxInclusive, int x, int seed)
+{
+	uint32_t noise = GetRawNoise1D(x, seed);
+	uint32_t range = static_cast<uint32_t>(maxInclusive - minInclusive + 1);
+	uint32_t valueInRange = noise % range;
+
+	return static_cast<int>(valueInRange) + minInclusive;
+}

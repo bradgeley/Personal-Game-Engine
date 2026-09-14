@@ -1,13 +1,11 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SWorld.h"
-#include "BiomeDef.h"
 #include "MapGeneratorDef.h"
 #include "MapGenerator.h"
 #include "SCEntityFactory.h"
 #include "SCFlowField.h"
 #include "SCRunData.h"
 #include "SCWorld.h"
-#include "TileDef.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/AdminSystem.h"
@@ -17,12 +15,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SWorld::Startup()
 {
-	TileDef::LoadFromXML();
-	BiomeDef::LoadFromXML();
-	MapGeneratorDef::LoadFromXML();
-
 	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "mapGenName", DevConsoleArgType::Name, "seed", DevConsoleArgType::UInt);
-
 
 	SCRunData const& scRunData = g_ecs->GetSingleton<SCRunData>();
 	RunData const& runData = *scRunData.m_data;
@@ -41,10 +34,6 @@ void SWorld::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SWorld::Shutdown() const
 {
-	MapGeneratorDef::Shutdown();
-	BiomeDef::Shutdown();
-	TileDef::Shutdown();
-
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
 	scWorld.Shutdown();
 

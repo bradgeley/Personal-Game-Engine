@@ -1,12 +1,14 @@
 // Bradley Christensen - 2022-2026
 #include "RunState.h"
+#include "BiomeDef.h"
+#include "TileDef.h"
+#include "MapGeneratorDef.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Assets/AssetManager.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Events/EventSystem.h"
-#include "Engine/Input/InputSystem.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
@@ -29,9 +31,52 @@ RunState::RunState()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SetupJourney(RunData& runData)
+{
+	runData.m_mode = GameMode::Journey;
+
+	// Forest Biome first
+	runData.m_missionGenData[0] = { "forest" };
+	runData.m_missionGenData[1] = { "forestOpen" };
+	runData.m_missionGenData[2] = { "forestHatch" };
+
+	// Then Desert
+	runData.m_missionGenData[3] = { "desert" };
+	runData.m_missionGenData[4] = { "desertOpen" };
+	runData.m_missionGenData[5] = { "desertHatch" };
+
+	// Then River
+	runData.m_missionGenData[6] = { "river" };
+	runData.m_missionGenData[7] = { "riverDouble" };
+	runData.m_missionGenData[8] = { "riverHatch" };
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SetupEndless(RunData& runData)
+{
+	MapGeneratorDef const* mapGeneratorDef = MapGeneratorDef::GetRandom(runData.m_seed);
+	ASSERT_OR_DIE(mapGeneratorDef != nullptr, "SetupEndless() - No MapGeneratorDefs available for endless mode.");
+
+	runData.m_mode = GameMode::Endless;
+
+	runData.m_missionGenData[0] = { mapGeneratorDef->m_name };
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void RunState::Enter(NamedProperties const& props)
 {
 	GameState::Enter(props);
+
+	TileDef::LoadFromXML();
+	BiomeDef::LoadFromXML();
+	MapGeneratorDef::LoadFromXML();
+
+	Name mode = props.Get<Name>("mode", Name::Invalid);
 
 	g_eventSystem->SubscribeMethod("MissionOver", this, &RunState::MissionOver);
 
@@ -54,20 +99,14 @@ void RunState::Enter(NamedProperties const& props)
 
 	m_runData.m_seed = g_rng->Rand();
 
-	// Forest Biome first
-	m_runData.m_missionGenData[0] = { "forest" };
-	m_runData.m_missionGenData[1] = { "forestOpen" };
-	m_runData.m_missionGenData[2] = { "forestHatch" };
-
-	// Then Desert
-	m_runData.m_missionGenData[3] = { "desert" };
-	m_runData.m_missionGenData[4] = { "desertOpen" };
-	m_runData.m_missionGenData[5] = { "desertHatch" };
-
-	// Then River
-	m_runData.m_missionGenData[6] = { "river" };
-	m_runData.m_missionGenData[7] = { "riverDouble" };
-	m_runData.m_missionGenData[8] = { "riverHatch" };
+	if (mode == "Endless")
+	{
+		SetupEndless(m_runData);
+	}
+	else // Journey
+	{
+		SetupJourney(m_runData);
+	}
 
 	NamedProperties transitionProps;
 	transitionProps.Set<Name>("state", "TowerDefense");
@@ -80,7 +119,9 @@ void RunState::Enter(NamedProperties const& props)
 //----------------------------------------------------------------------------------------------------------------------
 void RunState::Exit(NamedProperties const& props)
 {
-	GameState::Exit(props);
+	MapGeneratorDef::Shutdown();
+	BiomeDef::Shutdown();
+	TileDef::Shutdown();
 
 	g_eventSystem->UnsubscribeMethod("MissionOver", this, &RunState::MissionOver);
 
@@ -88,6 +129,8 @@ void RunState::Exit(NamedProperties const& props)
 	g_renderer->ReleaseVertexBuffer(m_textVerts);
 
 	m_runData.Shutdown();
+
+	GameState::Exit(props);
 }
 
 
@@ -144,7 +187,7 @@ bool RunState::MissionOver(NamedProperties&)
 	else
 	{
 		m_runData.m_missionIndex++;
-		if (m_runData.m_missionIndex == StaticGameSettings::s_numMissionsForVictory)
+		if (m_runData.m_missionIndex == StaticGameSettings::s_numMissionsForVictory || m_runData.m_missionGenData[m_runData.m_missionIndex].m_mapName == Name::Invalid)
 		{
 			NamedProperties changeStateProps;
 			changeStateProps.Set<Name>("state", "GameOver");

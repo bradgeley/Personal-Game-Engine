@@ -295,7 +295,6 @@
     <ClCompile Include="Game\SRenderModSelection.cpp">
       <Filter>ECS\Systems\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\ModeSelectState.cpp" />
     <ClCompile Include="Game\OverlapInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -671,7 +670,6 @@
     <ClInclude Include="Game\SRenderModSelection.h">
       <Filter>ECS\Systems\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Game\ModeSelectState.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">

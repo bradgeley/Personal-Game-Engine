@@ -4,6 +4,7 @@
 #include "MapGeneratorComponentDef.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
+#include "Engine/Math/Noise.h"
 
 
 
@@ -116,4 +117,19 @@ MapGeneratorDef const* MapGeneratorDef::GetMapGeneratorDef(Name name)
 		}
 	}
 	return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+MapGeneratorDef const* MapGeneratorDef::GetRandom(int seed)
+{
+	if (s_mapGeneratorDefs.empty())
+	{
+		return nullptr;
+	}
+
+	int randomInt = Noise::GetRandomIntInRange(0, static_cast<int>(s_mapGeneratorDefs.size()) - 1, 0, seed);
+
+	return &s_mapGeneratorDefs[randomInt];
 }

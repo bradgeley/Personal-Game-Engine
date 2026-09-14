@@ -199,6 +199,7 @@ bool TowerUnlockRunModifierDef::AreRequirementsMet(RunData const& runData) const
 		return false;
 	}
 
+	int numStartingTowers = 1; // Wall1x1
 	int numFlavors = 0;
 	for (PlaceableTower const& placeableTower : runData.m_placeableTowers)
 	{
@@ -208,7 +209,8 @@ bool TowerUnlockRunModifierDef::AreRequirementsMet(RunData const& runData) const
 		}
 	}
 
-	if (numFlavors >= runData.m_maxFlavors)
+	int maxNumPlaceables = (runData.m_maxFlavors + numStartingTowers);
+	if (numFlavors >= maxNumPlaceables)
 	{
 		return false;
 	}

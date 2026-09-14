@@ -12,6 +12,15 @@ constexpr int MAX_MODIFIER_CHOICES = 3;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class GameMode
+{
+	Endless,
+	Journey
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct PlaceableTower
 {
 	Name  m_towerName = Name::Invalid;
@@ -56,6 +65,7 @@ public:
 
 	// Data that carries over from mission to mission
 	uint32_t	m_seed					= 0; // Mission seed = seed + missionIndex
+	GameMode    m_mode					= GameMode::Journey;
 	int			m_missionIndex			= 0;
 	uint64_t 	m_experience			= 0;
 	float		m_fractionalExperience	= 0.f; // overflow exp from multiplier increases

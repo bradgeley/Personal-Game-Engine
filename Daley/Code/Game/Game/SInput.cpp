@@ -70,10 +70,28 @@ void SInput::Run(SystemContext const& context) const
 	scInput.m_mouseTileCoords = world.GetTileCoordsAtWorldPosClamped(scInput.m_mouseWorldLocation);
 	scInput.m_mouseIntersectionCoords = world.GetTileIntersectionCoordsAtWorldPos(scInput.m_mouseWorldLocation);
 
+	// Game speed up/slow down
+	if (inputSystem.WasKeyJustPressed(KeyCode::Plus))
+	{
+		runData.m_currentTimeDilation *= 2.f;
+		if (runData.m_currentTimeDilation > StaticGameSettings::s_maxTimeDilation)
+		{
+			runData.m_currentTimeDilation = StaticGameSettings::s_maxTimeDilation;
+		}
+	}
+	else if (inputSystem.WasKeyJustPressed(KeyCode::Minus))
+	{
+		runData.m_currentTimeDilation *= 0.5f;
+		if (runData.m_currentTimeDilation < StaticGameSettings::s_minTimeDilation)
+		{
+			runData.m_currentTimeDilation = StaticGameSettings::s_minTimeDilation;
+		}
+	}
+
 	// Run Modifier input
 	if (runData.m_numModifierChoicesRemaining > 0)
 	{
-		// Don't allow input, to force player to choose an option.
+		// Don't allow most input, to force player to choose an option.
 		return;
 	}
 
@@ -98,24 +116,6 @@ void SInput::Run(SystemContext const& context) const
 			eventSystem.FireEvent("MissionOver", changeStateProps);
 		}
 		return;
-	}
-
-	// Game speed up/slow down
-	if (inputSystem.WasKeyJustPressed(KeyCode::Plus))
-	{
-		runData.m_currentTimeDilation *= 2.f;
-		if (runData.m_currentTimeDilation > StaticGameSettings::s_maxTimeDilation)
-		{
-			runData.m_currentTimeDilation = StaticGameSettings::s_maxTimeDilation;
-		}
-	}
-	else if (inputSystem.WasKeyJustPressed(KeyCode::Minus))
-	{
-		runData.m_currentTimeDilation *= 0.5f;
-		if (runData.m_currentTimeDilation < StaticGameSettings::s_minTimeDilation)
-		{
-			runData.m_currentTimeDilation = StaticGameSettings::s_minTimeDilation;
-		}
 	}
 
 	bool isPaused = gameState.IsPaused();

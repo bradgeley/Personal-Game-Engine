@@ -5,6 +5,7 @@
 
 
 class SCWaves;
+struct LevelWaveGenDef;
 struct NamedProperties;
 struct RunData;
 struct Wave;
@@ -30,5 +31,6 @@ public:
 public:
 
     static void StartWave(SCWaves& waves, Wave& wave);
-	static void GenerateWaves(SCWaves& waves, RunData const& runData, int seed, int numWaves);
+	static void GenerateWaves(SCWaves& waves, LevelWaveGenDef const& def, RunData const& runData, int seed, int numWaves);
+    static void GenerateEndlessWaves(SCWaves& waves, RunData const& runData, int seed);
 };

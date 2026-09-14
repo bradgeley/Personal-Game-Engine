@@ -129,6 +129,9 @@ public:
     float GetRealTimeDeltaSeconds() const;
     float GetRealTimeSeconds() const;
 
+	template<typename...CType>
+	int CountComponents() const;
+
 protected:
 
     friend class SystemScheduler;
@@ -364,4 +367,13 @@ template <typename CType>
 bool SystemContext::HasComponent(EntityID entityID) const
 {
     return g_ecs->HasComponent<CType>(entityID);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename ...CType>
+inline int SystemContext::CountComponents() const
+{
+	return g_ecs->Count<CType...>();
 }

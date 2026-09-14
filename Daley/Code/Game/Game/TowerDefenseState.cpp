@@ -108,6 +108,7 @@ void TowerDefenseState::StartGame(NamedProperties const& inProps)
     NamedProperties props;
     props.Set<uint32_t>("seed", seed);
 	props.Set<int>("numWaves", numWaves);
+	props.Set<GameMode>("mode", runData.m_mode);
 	g_eventSystem->FireEvent("GenerateWaves", props);
 
 	g_eventSystem->FireEvent("StartWaves", props);

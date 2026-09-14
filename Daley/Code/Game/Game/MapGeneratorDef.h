@@ -29,6 +29,7 @@ public:
 	static void LoadFromXML();
 	static void Shutdown();
 	static MapGeneratorDef const* GetMapGeneratorDef(Name name);
+	static MapGeneratorDef const* GetRandom(int seed);
 
 private:
 

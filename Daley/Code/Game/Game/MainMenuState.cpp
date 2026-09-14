@@ -52,7 +52,7 @@ void MainMenuState::Enter(NamedProperties const& props)
 	{
 		constexpr float bottomTextPadding = 50.f;
 		font->AddVertsForAlignedText2D(textVBO, cameraBounds.GetCenter(), Vec2::ZeroVector, 100.f, "Main Menu", Rgba8::AliceBlue);
-		font->AddVertsForAlignedText2D(textVBO, cameraBounds.GetBottomCenter() + Vec2(0.f, bottomTextPadding), Vec2(0.f, 1.f), 50.f, "Press Space to Start Run\nPress ESC to quit", Rgba8::Yellow);
+		font->AddVertsForAlignedText2D(textVBO, cameraBounds.GetBottomCenter() + Vec2(0.f, bottomTextPadding), Vec2(0.f, 1.f), 50.f, "Press Space to Start Journey\nPress Enter to Start Endless Mode\nPress ESC to quit", Rgba8::Yellow);
 	}
 }
 
@@ -79,6 +79,14 @@ void MainMenuState::Update(float)
 	else if (g_input->WasKeyJustPressed(KeyCode::Space))
 	{
 		NamedProperties props;
+		props.Set<Name>("mode", "Journey");
+		props.Set<Name>("state", "Run");
+		g_eventSystem->FireEvent("ChangeState", props);
+	}
+	else if (g_input->WasKeyJustPressed(KeyCode::Enter))
+	{
+		NamedProperties props;
+		props.Set<Name>("mode", "Endless");
 		props.Set<Name>("state", "Run");
 		g_eventSystem->FireEvent("ChangeState", props);
 	}

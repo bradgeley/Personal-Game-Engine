@@ -327,7 +327,6 @@
     <ClCompile Include="Game\MapGeneratorComponent.cpp" />
     <ClCompile Include="Game\MapGeneratorComponentDef.cpp" />
     <ClCompile Include="Game\MapGeneratorDef.cpp" />
-    <ClCompile Include="Game\ModeSelectState.cpp" />
     <ClCompile Include="Game\OverlapInfo.cpp" />
     <ClCompile Include="Game\RunModifierDef.cpp" />
     <ClCompile Include="Game\RunModifierPool.cpp" />
@@ -425,7 +424,6 @@
     <ClInclude Include="Game\MapGeneratorComponent.h" />
     <ClInclude Include="Game\MapGeneratorComponentDef.h" />
     <ClInclude Include="Game\MapGeneratorDef.h" />
-    <ClInclude Include="Game\ModeSelectState.h" />
     <ClInclude Include="Game\OverlapInfo.h" />
     <ClInclude Include="Game\RunModifierDef.h" />
     <ClInclude Include="Game\RunModifierPool.h" />
