@@ -1,0 +1,47 @@
+<!--Bradley Christensen - 2022-2026-->
+
+
+
+<FlavorDefs>
+
+  <FlavorDef name="Vanilla" abilities="VanillaAttack" desc="Quickly fires single target projectiles">
+    <DisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
+  </FlavorDef>
+
+  <FlavorDef name="Chocolate" abilities="ChocolateAttack" desc="Fires projectile that deal splash damage">
+    <DisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
+  </FlavorDef>
+
+  <FlavorDef name="Strawberry" abilities="StrawberryAttack" desc="Fires burning projectiles that splash">
+    <DisplayData displayName="Strawberry" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,80,83"></DisplayData>
+  </FlavorDef>
+
+  <FlavorDef name="Orange Sorbet" abilities="OrangeSorbetAttack" desc="Burns nearby enemies">
+    <DisplayData displayName="Orange Sorbet" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,165,0"></DisplayData>
+  </FlavorDef>
+
+  <FlavorDef name="Pistachio" abilities="PistachioAttack" desc="Fires poisonous projectiles that splash">
+    <DisplayData displayName="Pistachio" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="147,197,114"></DisplayData>
+  </FlavorDef>
+
+  <FlavorDef name="Coconut" abilities="CoconutAttack" desc="Periodically deal area damage and slow">
+    <DisplayData displayName="Coconut" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250"></DisplayData>
+  </FlavorDef>
+
+  <FlavorDef name="Ube" abilities="UbeAttack" desc="Fires a laser that deals damage, burn, and poison">
+    <DisplayData displayName="Ube" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
+  </FlavorDef>
+
+  <FlavorDef name="Mint" abilities="MintAttack" desc="Poisons and slows nearby enemies">
+    <DisplayData displayName="Mint" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
+  </FlavorDef>
+
+  <FlavorDef name="Coffee" abilities="CoffeeAttack" desc="Hastes adjacent towers">
+    <DisplayData displayName="Coffee" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="165,130,90"></DisplayData>
+  </FlavorDef>
+
+  <FlavorDef name="Rainbow" abilities="Rainbow_ProjHitAbility,Rainbow_AoEHitAbility,Rainbow_PassiveAoEAbility,Rainbow_LaserAbility" desc="Destroy">
+    <DisplayData displayName="Rainbow" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,0,255"></DisplayData>
+  </FlavorDef>
+  
+</FlavorDefs>

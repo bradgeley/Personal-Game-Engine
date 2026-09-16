@@ -6,7 +6,7 @@
   <!-- ==================================================================================================================== -->
   <!-- Test Attacks -->
 
-  <ProjectileHitAbilityDef name="Rainbow_ProjHitAbility" projectileDef="Rainbow_Proj" projSpeed="100">
+  <ProjectileHitAbilityDef name="Rainbow_ProjHitAbility" projectileDef="TowerProj" projSpeed="100">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="15"></Targeting>
     <Crit critChance="0.5"></Crit>
@@ -86,7 +86,7 @@
   <!-- ==================================================================================================================== -->
   <!-- Attacks -->
 
-  <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="VanillaProj" projSpeed="50">
+  <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="TowerProj" projSpeed="50">
     <Cooldown cooldown="0.33"></Cooldown>
     <Targeting maxRange="15"></Targeting>
     <Crit critChance="0.1" critMulti=".5"></Crit>
@@ -95,7 +95,7 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <ProjectileHitAbilityDef name="ChocolateAttack" projectileDef="ChocolateProj" projSpeed="30">
+  <ProjectileHitAbilityDef name="ChocolateAttack" projectileDef="TowerProj" projSpeed="30">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="12"></Targeting>
     <Crit critChance="0.1" critMulti=".5"></Crit>
@@ -107,7 +107,7 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <ProjectileHitAbilityDef name="PistachioAttack" projectileDef="PistachioProj" projSpeed="30">
+  <ProjectileHitAbilityDef name="PistachioAttack" projectileDef="TowerProj" projSpeed="30">
     <Cooldown cooldown="2"></Cooldown>
     <Targeting maxRange="12"></Targeting>
     <OnHit>
@@ -118,7 +118,7 @@
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="StrawberryProj" projSpeed="30">
+  <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="TowerProj" projSpeed="30">
     <Cooldown cooldown="1.5"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <OnHit>

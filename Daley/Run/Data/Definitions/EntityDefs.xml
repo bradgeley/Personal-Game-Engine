@@ -189,90 +189,10 @@
   </EntityDef>
 
   <!-- ==================================================================================================================== -->
-  <!-- Test Towers -->
-  
-  <EntityDef name = "Rainbow">
-    <Ability>
-      <Ability name="Rainbow_ProjHitAbility"></Ability>
-      <Ability name="Rainbow_AoEHitAbility"></Ability>
-      <Ability name="Rainbow_PassiveAoEAbility"></Ability>
-      <Ability name="Rainbow_LaserAbility"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="3,3" onPath="true"></Placeable>
-    <Render scale="3" tint="255,0,255"></Render>
-    <Tags tags="tower"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Rainbow_ProjHit">
-    <Ability>
-      <Ability name="Rainbow_ProjHitAbility"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
-    <Render scale="2" tint="255,0,255"></Render>
-    <Tags tags="tower"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Rainbow_Proj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj"></Animation>
-    <Projectile></Projectile>
-    <Render scale="0.66" rotateSprite="true" tint="255,0,255"></Render>
-    <Tags tags="projectile"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Rainbow_AoEHit">
-    <Ability>
-      <Ability name="Rainbow_AoEHitAbility"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
-    <Render scale="2" tint="255,0,255"></Render>
-    <Tags tags="tower"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Rainbow_PassiveAoE">
-    <Ability>
-      <Ability name="Rainbow_PassiveAoEAbility"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
-    <Render scale="2" tint="255,0,255"></Render>
-    <Tags tags="tower"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Rainbow_Laser">
-    <Ability>
-      <Ability name="Rainbow_LaserAbility"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2"></Placeable>
-    <Render scale="2" tint="255,0,255"></Render>
-    <Tags tags="tower"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <!-- ==================================================================================================================== -->
   <!-- Towers -->
 
   <EntityDef name = "Wall1x1">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="wall" static="true"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="wall"></Animation>
     <Placeable dims="1,1" onPath="true"></Placeable>
     <Render scale="1" tint="255,255,255"></Render>
     <Tags tags="tower"></Tags>
@@ -281,7 +201,7 @@
   </EntityDef>
 
   <EntityDef name = "Wall2x2">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="wall" static="true"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="wall"></Animation>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="255,255,255"></Render>
     <Tags tags="tower"></Tags>
@@ -290,7 +210,7 @@
   </EntityDef>
 
   <EntityDef name = "Tree1x1">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="tree" static="true"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="tree"></Animation>
     <Placeable dims="1,1" onPath="true"></Placeable>
     <Render scale="1" tint="0,200,0"></Render>
     <Tags tags="obstacle"></Tags>
@@ -299,7 +219,7 @@
   </EntityDef>
 
   <EntityDef name = "Tree2x2">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="tree" static="true"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="tree"></Animation>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="0,200,0"></Render>
     <Tags tags="obstacle"></Tags>
@@ -308,7 +228,7 @@
   </EntityDef>
 
   <EntityDef name = "Cactus2x2">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="cactus" static="true"></Animation>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="cactus"></Animation>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="0,140,0"></Render>
     <Tags tags="obstacle"></Tags>
@@ -316,179 +236,22 @@
     <Transform></Transform>
   </EntityDef>
 
-  <EntityDef name = "Vanilla">
-    <Ability>
-      <Ability name="VanillaAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
+  <EntityDef name="Tower2x2">
+    <Ability></Ability>
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop"></Animation>
     <Collision radius="1" type="building"></Collision>
     <Placeable dims="2,2" onPath="true"></Placeable>
     <Render scale="2" tint="243,229,171"></Render>
-    <Tags tags="tower,vanilla"></Tags>
+    <Tags tags="tower"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>
 
-  <EntityDef name = "VanillaProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
+  <EntityDef name = "TowerProj">
+    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
-    <Render scale="0.66" rotateSprite="true" tint="243,229,171"></Render>
-    <Tags tags="projectile,vanilla"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Chocolate">
-    <Ability>
-      <Ability name="ChocolateAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2" onPath="true"></Placeable>
-    <Render scale="2" tint="112,66,20"></Render>
-    <Tags tags="tower,chocolate"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "ChocolateProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
-    <Projectile></Projectile>
-    <Render scale="1.5" rotateSprite="true" tint="112,66,20"></Render>
-    <Tags tags="projectile,chocolate"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Strawberry">
-    <Ability>
-      <Ability name="StrawberryAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2" onPath="true"></Placeable>
-    <Render scale="2" tint="250,80,83"></Render>
-    <Tags tags="tower,strawberry"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "StrawberryProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
-    <Projectile></Projectile>
-    <Render scale="1.5" rotateSprite="true" tint="250,80,83"></Render>
-    <Tags tags="projectile,strawberry"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Neopolitan">
-    <Ability>
-      <Ability name="VanillaAttack"></Ability>
-      <Ability name="ChocolateAttack"></Ability>
-      <Ability name="StrawberryAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
-    <Collision radius="1.5" type="building"></Collision>
-    <Placeable dims="3,3" onPath="true"></Placeable>
-    <Render scale="3" tint="250,250,250"></Render>
-    <Tags tags="tower,vanilla,chocolate,strawberry"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Pistachio">
-    <Ability>
-      <Ability name="PistachioAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2" onPath="true"></Placeable>
-    <Render scale="2" tint="147,197,114"></Render>
-    <Tags tags="tower,pistachio"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "PistachioProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
-    <Projectile></Projectile>
-    <Render scale="1.5" rotateSprite="true" tint="147,197,114"></Render>
-    <Tags tags="projectile,pistachio"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Mint">
-    <Ability>
-      <Ability name="MintAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2" onPath="true"></Placeable>
-    <Render scale="2" tint="173,235,179"></Render>
-    <Tags tags="tower,mint"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "MintProj">
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj" static="true"></Animation>
-    <Projectile></Projectile>
-    <Render scale="1.5" rotateSprite="true" tint="173,235,179"></Render>
-    <Tags tags="projectile,mint"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Coffee">
-    <Ability>
-      <Ability name="CoffeeAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2" onPath="true"></Placeable>
-    <Render scale="2" tint="165, 130, 90"></Render>
-    <Tags tags="tower,coffee"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "OrangeSorbet">
-    <Ability>
-      <Ability name="OrangeSorbetAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2" onPath="true"></Placeable>
-    <Render scale="2" tint="255,165,0"></Render>
-    <Tags tags="tower,orangeSorbet"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Coconut">
-    <Ability>
-      <Ability name="CoconutAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2" onPath="true"></Placeable>
-    <Render scale="2" tint="250,250,250"></Render>
-    <Tags tags="tower,coconut"></Tags>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name = "Ube">
-    <Ability>
-      <Ability name="UbeAttack"></Ability>
-    </Ability>
-    <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamScoop" static="true"></Animation>
-    <Collision radius="1" type="building"></Collision>
-    <Placeable dims="2,2" onPath="true"></Placeable>
-    <Render scale="2" tint="174,153,245"></Render>
-    <Tags tags="tower,ube"></Tags>
+    <Render scale="0.66" rotateSprite="true"></Render>
+    <Tags tags="projectile"></Tags>
     <Time></Time>
     <Transform></Transform>
   </EntityDef>

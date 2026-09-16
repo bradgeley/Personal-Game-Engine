@@ -1,7 +1,7 @@
 
 
 
-<GridSpriteSheet name="Towers" texture="Data/SpriteSheets/Towers.png" layout="6,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Towers" texture="Data/SpriteSheets/Towers.png" layout="11,1" edgePadding="0,0" innerPadding="0,0">
 
     <!-- Tower Flavors -->
     <SpriteAnimation name="iceCreamScoop" frames="0"></SpriteAnimation>
@@ -9,6 +9,13 @@
     <SpriteAnimation name="Bush" frames="2"></SpriteAnimation>
     <SpriteAnimation name="Tree" frames="3"></SpriteAnimation>
     <SpriteAnimation name="Wall" frames="4"></SpriteAnimation>
+  
     <SpriteAnimation name="Cactus" frames="5"></SpriteAnimation>
+    <SpriteAnimation name="doubleSwirl_1" frames="6"></SpriteAnimation>
+    <SpriteAnimation name="doubleSwirl_2" frames="7"></SpriteAnimation>
+    <SpriteAnimation name="tripleSwirl_1" frames="8"></SpriteAnimation>
+    <SpriteAnimation name="tripleSwirl_2" frames="9"></SpriteAnimation>
+  
+    <SpriteAnimation name="tripleSwirl_3" frames="10"></SpriteAnimation>
 
   </GridSpriteSheet>

@@ -416,6 +416,8 @@ void SWaveSpawner::GenerateEndlessWaves(SCWaves& waves, RunData const& runData, 
 	int maxEndlessWaves = 1000;
 	int bossWaveInterval = 10;
 
+	waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave = 0.5f; // 50% more enemies per wave
+
 	// First waves fixed to avoid bad RNG
 
 	FixedWaveStreamDef firstWave;
