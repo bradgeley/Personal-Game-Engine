@@ -296,6 +296,9 @@
       <Filter>ECS\Systems\UI</Filter>
     </ClCompile>
     <ClCompile Include="Game\OverlapInfo.cpp" />
+    <ClCompile Include="Game\FlavorDef.cpp">
+      <Filter>Definitions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -670,6 +673,9 @@
     <ClInclude Include="Game\SRenderModSelection.h">
       <Filter>ECS\Systems\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Game\FlavorDef.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -831,6 +837,9 @@
       <Filter>Data\SpriteSheets</Filter>
     </Xml>
     <Xml Include="..\..\Run\Data\Definitions\RunModifierPool.xml">
+      <Filter>Data\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\FlavorDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>

@@ -39,7 +39,7 @@ struct LaserAbilityDef;
 struct PassiveAoEAbilityDef;
 struct ProjectileHitAbilityDef;
 struct SystemContext;
-struct TowerAbilityRunModifier;
+struct FlavorAbilityRunModifier;
 struct Vec2;
 class RandomNumberGenerator;
 class VertexBuffer;
@@ -64,7 +64,7 @@ public:
 
 	float GetCooldown() const;
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -88,7 +88,7 @@ public:
 	float GetMinRange() const { return m_minRange; } // Min range not affected by multipliers
 	float GetMaxRange() const { return m_maxRange * m_rangeMultiplier; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void UpdateCachedTiles(SystemContext const& context, Vec2 const& location);
 
@@ -170,7 +170,7 @@ public:
 
 	bool CanCrit() const { return m_critChance > 0.f; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -195,7 +195,7 @@ public:
 	float GetMinDamage() const { return m_minDamage * m_damageMultiplier; }
 	float GetMaxDamage() const { return m_maxDamage * m_damageMultiplier; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -220,7 +220,7 @@ public:
 
 	float GetBurn() const { return m_burn * m_burnMultiplier; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -244,7 +244,7 @@ public:
 
 	float GetPoison() const { return m_poison * m_poisonMultiplier; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -268,7 +268,7 @@ public:
 
 	float GetDuration() const { return m_duration * m_durationMultiplier; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -292,7 +292,7 @@ public:
 
 	float GetDuration() const { return m_duration * m_durationMultiplier; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -314,7 +314,7 @@ public:
 
 	bool IsRelevant() const { return m_maxChains > 0; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -338,7 +338,7 @@ public:
 
 	bool IsRelevant() const { return m_additionalTargets > 0; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -380,7 +380,7 @@ public:
 	bool IsRelevant() const;
 	float GetRadius() const { return m_radius * m_radiusMultiplier; }
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -412,7 +412,7 @@ public:
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 public:
 
@@ -443,7 +443,7 @@ public:
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 public:
 
@@ -510,7 +510,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier);
+	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 public:
 
@@ -537,7 +537,7 @@ public:
 
 	RolledOnHitComponent RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
-	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
+	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
 
 public:
 
@@ -571,7 +571,7 @@ public:
 
 	virtual HitPayload RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
-	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
+	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
 
 public:
 
@@ -603,7 +603,7 @@ public:
 
 	virtual HitPayload GetDotPayload(float deltaSeconds) const;
 
-	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
+	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
 
 public:
 
@@ -627,7 +627,7 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
-	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
+	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
 
 public:
 
@@ -655,7 +655,7 @@ public:
 
 	HitPayload RollDamageAndEffects(float deltaSeconds) const;
 
-	virtual bool ApplyModifier(TowerAbilityRunModifier const& modifier) override;
+	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
 
 public:
 

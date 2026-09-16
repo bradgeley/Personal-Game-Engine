@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "RunState.h"
 #include "BiomeDef.h"
+#include "FlavorDef.h"
 #include "TileDef.h"
 #include "MapGeneratorDef.h"
 #include "Engine/Assets/Font.h"
@@ -18,6 +19,7 @@
 
 
 
+//----------------------------------------------------------------------------------------------------------------------
 static constexpr char const* MAIN_MENU_FONT_NAME = "Data/Fonts/Gypsy.fnt";
 
 
@@ -34,6 +36,8 @@ RunState::RunState()
 void SetupJourney(RunData& runData)
 {
 	runData.m_mode = GameMode::Journey;
+
+	// Todo: make a file for journey
 
 	// Forest Biome first
 	runData.m_missionGenData[0] = { "forest" };
@@ -72,6 +76,7 @@ void RunState::Enter(NamedProperties const& props)
 {
 	GameState::Enter(props);
 
+	FlavorDef::LoadFromXML();
 	TileDef::LoadFromXML();
 	BiomeDef::LoadFromXML();
 	MapGeneratorDef::LoadFromXML();
@@ -122,6 +127,7 @@ void RunState::Exit(NamedProperties const& props)
 	MapGeneratorDef::Shutdown();
 	BiomeDef::Shutdown();
 	TileDef::Shutdown();
+	FlavorDef::Shutdown();
 
 	g_eventSystem->UnsubscribeMethod("MissionOver", this, &RunState::MissionOver);
 

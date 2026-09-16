@@ -82,11 +82,11 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct TowerUnlockRunModifierDef : public RunModifierDef
+struct FlavorUnlockRunModifierDef : public RunModifierDef
 {
 public:
 
-	TowerUnlockRunModifierDef(XmlElement const& modElement);
+	FlavorUnlockRunModifierDef(XmlElement const& modElement);
 
 	virtual RunModifier* MakeModifierInstance() const override;
 
@@ -105,28 +105,28 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct TowerUnlockRunModifier : public RunModifier
+struct FlavorUnlockRunModifier : public RunModifier
 {
 public:
 
-	TowerUnlockRunModifier(TowerUnlockRunModifierDef const& def);
+	FlavorUnlockRunModifier(FlavorUnlockRunModifierDef const& def);
 
 	virtual void Apply(SystemContext const& context) const override;
 	virtual void ApplyToRunData(RunData& runData) const override;
 
 	virtual void GetDescription(std::string& outStr) const override;
 
-	TowerUnlockRunModifierDef const& GetDef() const;
+	FlavorUnlockRunModifierDef const& GetDef() const;
 };
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct TowerAbilityRunModifierDef : public RunModifierDef
+struct FlavorAbilityRunModifierDef : public RunModifierDef
 {
 public:
 
-	TowerAbilityRunModifierDef(XmlElement const& modElement);
+	FlavorAbilityRunModifierDef(XmlElement const& modElement);
 
 	virtual RunModifier* MakeModifierInstance() const override;
 
@@ -147,11 +147,11 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct TowerAbilityRunModifier : public RunModifier
+struct FlavorAbilityRunModifier : public RunModifier
 {
 public:
 
-	TowerAbilityRunModifier(TowerAbilityRunModifierDef const& def);
+	FlavorAbilityRunModifier(FlavorAbilityRunModifierDef const& def);
 
 	float GetValue() const;
 
@@ -160,7 +160,7 @@ public:
 
 	virtual void GetDescription(std::string& outStr) const override;
 
-	TowerAbilityRunModifierDef const& GetDef() const;
+	FlavorAbilityRunModifierDef const& GetDef() const;
 };
 
 

@@ -303,11 +303,11 @@ bool STowerSpawner::FillMapWithTower(NamedProperties& properties)
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
-	Name towerName = properties.Get<Name>("tower", Name("Vanilla"));
+	Name towerFlavorName = properties.Get<Name>("tower", Name("Vanilla"));
 
 	world.ForEachVisibleTile([&](IntVec2 const& worldCoords, int)
 	{
-		TowerPlacementRequest placementInfo = SInput::MakeTowerPlacementRequest(towerName, world.GetTileBounds(worldCoords).GetCenter(), world);
+		TowerPlacementRequest placementInfo = SInput::MakeTowerPlacementRequest(towerFlavorName, world.GetTileBounds(worldCoords).GetCenter(), world);
         placementInfo.m_isGenerated = true;
         factory.m_towerPlacements.push_back(placementInfo);
 		return true; // keep iterating

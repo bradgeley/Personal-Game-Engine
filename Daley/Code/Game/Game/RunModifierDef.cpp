@@ -72,13 +72,13 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 {
 	Name modTypeName = Name(modElement.Name());
 
-	if (modTypeName == "TowerUnlockRunModifier")
+	if (modTypeName == "FlavorUnlockRunModifier")
 	{
-		return new TowerUnlockRunModifierDef(modElement);
+		return new FlavorUnlockRunModifierDef(modElement);
 	}
-	else if (modTypeName == "TowerAbilityRunModifier")
+	else if (modTypeName == "FlavorAbilityRunModifier")
 	{
-		return new TowerAbilityRunModifierDef(modElement);
+		return new FlavorAbilityRunModifierDef(modElement);
 	}
 	else if (modTypeName == "EconomyRunModifier")
 	{
@@ -162,7 +162,7 @@ void RunModifier::ApplyToRunData(RunData&) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerUnlockRunModifierDef::TowerUnlockRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
+FlavorUnlockRunModifierDef::FlavorUnlockRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
 {
 	m_towerName = XmlUtils::ParseXmlAttribute(modElement, "name", Name::Invalid);
 	m_forcedKey = XmlUtils::ParseXmlAttribute(modElement, "forcedKey", m_forcedKey);
@@ -172,15 +172,15 @@ TowerUnlockRunModifierDef::TowerUnlockRunModifierDef(XmlElement const& modElemen
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RunModifier* TowerUnlockRunModifierDef::MakeModifierInstance() const
+RunModifier* FlavorUnlockRunModifierDef::MakeModifierInstance() const
 {
-	return new TowerUnlockRunModifier(*this);
+	return new FlavorUnlockRunModifier(*this);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerUnlockRunModifierDef::GetDescription(std::string& outStr) const
+void FlavorUnlockRunModifierDef::GetDescription(std::string& outStr) const
 {
 	outStr += StringUtils::StringF("Gold Cost: %.2f\n", m_baseCost);
 	if (m_description != Name::Invalid)
@@ -192,7 +192,7 @@ void TowerUnlockRunModifierDef::GetDescription(std::string& outStr) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool TowerUnlockRunModifierDef::AreRequirementsMet(RunData const& runData) const
+bool FlavorUnlockRunModifierDef::AreRequirementsMet(RunData const& runData) const
 {
 	if (!RunModifierDef::AreRequirementsMet(runData))
 	{
@@ -221,7 +221,7 @@ bool TowerUnlockRunModifierDef::AreRequirementsMet(RunData const& runData) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerUnlockRunModifier::TowerUnlockRunModifier(TowerUnlockRunModifierDef const& def) : RunModifier(def)
+FlavorUnlockRunModifier::FlavorUnlockRunModifier(FlavorUnlockRunModifierDef const& def) : RunModifier(def)
 {
 
 }
@@ -229,7 +229,7 @@ TowerUnlockRunModifier::TowerUnlockRunModifier(TowerUnlockRunModifierDef const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerUnlockRunModifier::Apply(SystemContext const& context) const
+void FlavorUnlockRunModifier::Apply(SystemContext const& context) const
 {
 	RunData& runData = *context.GetSingleton<SCRunData>().m_data;
 	ApplyToRunData(runData);
@@ -238,9 +238,9 @@ void TowerUnlockRunModifier::Apply(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerUnlockRunModifier::ApplyToRunData(RunData& runData) const
+void FlavorUnlockRunModifier::ApplyToRunData(RunData& runData) const
 {
-	TowerUnlockRunModifierDef const& def = GetDef();
+	FlavorUnlockRunModifierDef const& def = GetDef();
 
 	for (int placeableIndex = 0; placeableIndex < runData.m_placeableTowers.size(); ++placeableIndex)
 	{
@@ -266,7 +266,7 @@ void TowerUnlockRunModifier::ApplyToRunData(RunData& runData) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerUnlockRunModifier::GetDescription(std::string& outStr) const
+void FlavorUnlockRunModifier::GetDescription(std::string& outStr) const
 {
 	outStr += StringUtils::StringF("Tower Name: %s\nGold Cost: %.2f\n", GetDef().m_towerName.ToCStr(), GetDef().m_baseCost);
 }
@@ -274,15 +274,15 @@ void TowerUnlockRunModifier::GetDescription(std::string& outStr) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerUnlockRunModifierDef const& TowerUnlockRunModifier::GetDef() const
+FlavorUnlockRunModifierDef const& FlavorUnlockRunModifier::GetDef() const
 {
-	return static_cast<TowerUnlockRunModifierDef const&>(m_def);
+	return static_cast<FlavorUnlockRunModifierDef const&>(m_def);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerAbilityRunModifierDef::TowerAbilityRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
+FlavorAbilityRunModifierDef::FlavorAbilityRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
 {
 	m_valueBase = XmlUtils::ParseXmlAttribute(modElement, "base", m_valueBase);
 	m_valueIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "perLevel", m_valueIncreasePerLevel);
@@ -360,15 +360,15 @@ TowerAbilityRunModifierDef::TowerAbilityRunModifierDef(XmlElement const& modElem
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RunModifier* TowerAbilityRunModifierDef::MakeModifierInstance() const
+RunModifier* FlavorAbilityRunModifierDef::MakeModifierInstance() const
 {
-	return new TowerAbilityRunModifier(*this);
+	return new FlavorAbilityRunModifier(*this);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerAbilityRunModifierDef::GetDescription(std::string& outStr) const
+void FlavorAbilityRunModifierDef::GetDescription(std::string& outStr) const
 {
 	float baseMultiplier = m_valueBase;
 
@@ -397,7 +397,7 @@ void TowerAbilityRunModifierDef::GetDescription(std::string& outStr) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool TowerAbilityRunModifierDef::ShouldAddOneToMultiplier() const
+bool FlavorAbilityRunModifierDef::ShouldAddOneToMultiplier() const
 {
 	if (m_abilityAttribute == TowerAbilityAttribute::Multishot ||
 		m_abilityAttribute == TowerAbilityAttribute::NumChains)
@@ -411,7 +411,7 @@ bool TowerAbilityRunModifierDef::ShouldAddOneToMultiplier() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool TowerAbilityRunModifierDef::IsIntegerAttribute() const
+bool FlavorAbilityRunModifierDef::IsIntegerAttribute() const
 {
 	if (m_abilityAttribute == TowerAbilityAttribute::Multishot ||
 		m_abilityAttribute == TowerAbilityAttribute::NumChains)
@@ -424,7 +424,7 @@ bool TowerAbilityRunModifierDef::IsIntegerAttribute() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerAbilityRunModifier::TowerAbilityRunModifier(TowerAbilityRunModifierDef const& def) : RunModifier(def)
+FlavorAbilityRunModifier::FlavorAbilityRunModifier(FlavorAbilityRunModifierDef const& def) : RunModifier(def)
 {
 
 }
@@ -432,16 +432,16 @@ TowerAbilityRunModifier::TowerAbilityRunModifier(TowerAbilityRunModifierDef cons
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float TowerAbilityRunModifier::GetValue() const
+float FlavorAbilityRunModifier::GetValue() const
 {
-	TowerAbilityRunModifierDef const& def = GetDef();
+	FlavorAbilityRunModifierDef const& def = GetDef();
 	return def.m_valueBase + (def.m_valueIncreasePerLevel * static_cast<float>(m_level - 1));
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerAbilityRunModifier::Apply(SystemContext const& context) const
+void FlavorAbilityRunModifier::Apply(SystemContext const& context) const
 {
 	auto& abilityStorage = context.GetMapStorage<CAbility>();
 	auto const& tagStorage = context.GetArrayStorageConst<CTags>();
@@ -478,7 +478,7 @@ void TowerAbilityRunModifier::Apply(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerAbilityRunModifier::ApplyToAbility(Ability& ability, CTags const& tags) const
+void FlavorAbilityRunModifier::ApplyToAbility(Ability& ability, CTags const& tags) const
 {
 	for (auto& tag : GetDef().m_tagRequirements)
 	{
@@ -494,7 +494,7 @@ void TowerAbilityRunModifier::ApplyToAbility(Ability& ability, CTags const& tags
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void TowerAbilityRunModifier::GetDescription(std::string& outStr) const
+void FlavorAbilityRunModifier::GetDescription(std::string& outStr) const
 {
 	if (m_def.m_maxLevel > 1)
 	{
@@ -512,9 +512,9 @@ void TowerAbilityRunModifier::GetDescription(std::string& outStr) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerAbilityRunModifierDef const& TowerAbilityRunModifier::GetDef() const
+FlavorAbilityRunModifierDef const& FlavorAbilityRunModifier::GetDef() const
 {
-	return static_cast<TowerAbilityRunModifierDef const&>(m_def);
+	return static_cast<FlavorAbilityRunModifierDef const&>(m_def);
 }
 
 

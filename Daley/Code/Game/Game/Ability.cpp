@@ -33,9 +33,9 @@ AbilityTargetingComponent::AbilityTargetingComponent(AbilityTargetingComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityTargetingComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityTargetingComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+	FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 	if (def.m_abilityAttribute == TowerAbilityAttribute::Range)
 	{
 		m_rangeMultiplier += modifier.GetValue();
@@ -357,9 +357,9 @@ float AbilityCooldownComponent::GetCooldown() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityCooldownComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityCooldownComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+	FlavorAbilityRunModifierDef const& def = modifier.GetDef();
     if (def.m_abilityAttribute == TowerAbilityAttribute::AttackSpeed)
     {
 		m_attackSpeedIncrease += modifier.GetValue();
@@ -390,9 +390,9 @@ AbilityCritComponent::AbilityCritComponent(AbilityCritComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityCritComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityCritComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+	FlavorAbilityRunModifierDef const& def = modifier.GetDef();
     if (def.m_abilityAttribute == TowerAbilityAttribute::CritChance)
     {
 		m_critChance += modifier.GetValue();
@@ -431,9 +431,9 @@ AbilityDamageComponent::AbilityDamageComponent(AbilityDamageComponentDef const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityDamageComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityDamageComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
 	if (def.m_abilityAttribute == TowerAbilityAttribute::Damage)
 	{
@@ -476,9 +476,9 @@ AbilityBurnComponent::AbilityBurnComponent(AbilityBurnComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityBurnComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityBurnComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
     if (def.m_abilityAttribute == TowerAbilityAttribute::Burn)
     {
@@ -512,9 +512,9 @@ AbilityPoisonComponent::AbilityPoisonComponent(AbilityPoisonComponentDef const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityPoisonComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityPoisonComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
     if (def.m_abilityAttribute == TowerAbilityAttribute::Poison)
     {
@@ -548,9 +548,9 @@ AbilitySlowComponent::AbilitySlowComponent(AbilitySlowComponentDef const& def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilitySlowComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilitySlowComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
     if (def.m_abilityAttribute == TowerAbilityAttribute::Slow)
     {
@@ -584,9 +584,9 @@ AbilityHasteComponent::AbilityHasteComponent(AbilityHasteComponentDef const& def
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityHasteComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityHasteComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
 	if (def.m_abilityAttribute == TowerAbilityAttribute::Haste)
 	{
@@ -623,9 +623,9 @@ AbilityChainComponent::AbilityChainComponent(AbilityChainComponentDef const& def
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityChainComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityChainComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
 	if (def.m_abilityAttribute == TowerAbilityAttribute::NumChains)
 	{
@@ -665,9 +665,9 @@ AbilityMultishotComponent::AbilityMultishotComponent(AbilityMultishotComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityMultishotComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityMultishotComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+	FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
 	if (def.m_abilityAttribute == TowerAbilityAttribute::Multishot)
 	{
@@ -758,7 +758,7 @@ void AbilityOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityOnHitComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityOnHitComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
 	bool applied = false;
 	applied |= m_damageOnHit.ApplyModifier(modifier);
@@ -850,9 +850,9 @@ bool AbilityAoEHitComponent::IsRelevant() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityAoEHitComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityAoEHitComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-	TowerAbilityRunModifierDef const& def = modifier.GetDef();
+	FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
     bool applied = false;
     if (def.m_abilityAttribute == TowerAbilityAttribute::AoE)
@@ -1012,7 +1012,7 @@ void AbilityAoEEffectComponent::AppendDebugString(EntityDebugContext& debugConte
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityAoEEffectComponent::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AbilityAoEEffectComponent::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
 	bool applied = false;
 	if (modifier.GetDef().m_abilityAttribute == TowerAbilityAttribute::AoE)
@@ -1064,7 +1064,7 @@ void Ability::AppendDebugString(EntityDebugContext& debugContext) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool Ability::ApplyModifier(TowerAbilityRunModifier const&)
+bool Ability::ApplyModifier(FlavorAbilityRunModifier const&)
 {
     return false;
 }
@@ -1308,7 +1308,7 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(RandomNumberGene
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool ProjectileHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool ProjectileHitAbility::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
     bool applied = false;
     applied |= m_cooldownComp.ApplyModifier(modifier);
@@ -1591,9 +1591,9 @@ HitPayload AoEHitAbility::RollDamageAndEffects(RandomNumberGenerator& rng) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AoEHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AoEHitAbility::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
     bool applied = false;
 
@@ -1758,9 +1758,9 @@ HitPayload PassiveAoEAbility::GetDotPayload(float deltaSeconds) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool PassiveAoEAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool PassiveAoEAbility::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
-    TowerAbilityRunModifierDef const& def = modifier.GetDef();
+    FlavorAbilityRunModifierDef const& def = modifier.GetDef();
 
     bool applied = false;
 
@@ -1918,7 +1918,7 @@ void AdjacentHitAbility::AppendDebugString(EntityDebugContext& debugContext) con
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AdjacentHitAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool AdjacentHitAbility::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
 	m_cooldownComp.ApplyModifier(modifier);
 	m_hasteOnHit.ApplyModifier(modifier);
@@ -2146,7 +2146,7 @@ HitPayload LaserAbility::RollDamageAndEffects(float deltaSeconds) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool LaserAbility::ApplyModifier(TowerAbilityRunModifier const& modifier)
+bool LaserAbility::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 {
 	bool didApply = false;
 
