@@ -10,7 +10,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Collision radius="0.5" singleHash="true" type="enemy" ></Collision>
-    <Death baseGoldReward="1" baseExpReward="4"></Death>
+    <Death baseGoldReward="1" baseExpReward="1"></Death>
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="3" pathOnly="true"></Movement>
@@ -24,7 +24,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Collision radius="1" singleHash="false" type="enemy"></Collision>
-    <Death baseGoldReward="2" baseExpReward="20"></Death>
+    <Death baseGoldReward="2" baseExpReward="2"></Death>
     <Health maxHealth="1000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1.5" pathOnly="true"></Movement>
@@ -38,7 +38,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
-    <Death baseGoldReward="4" baseExpReward="50"></Death>
+    <Death baseGoldReward="4" baseExpReward="5"></Death>
     <Health maxHealth="2000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1" pathOnly="true"></Movement>
@@ -52,7 +52,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
-    <Death baseGoldReward="10" baseExpReward="200"></Death>
+    <Death baseGoldReward="10" baseExpReward="100"></Death>
     <Health maxHealth="50000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.75" pathOnly="true"></Movement>
@@ -66,7 +66,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Scorpion.xml"></Animation>
     <Collision radius="0.5" singleHash="true" type="enemy" ></Collision>
-    <Death baseGoldReward="1" baseExpReward="8"></Death>
+    <Death baseGoldReward="1" baseExpReward="1"></Death>
     <Health maxHealth="150" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="2.6" pathOnly="true"></Movement>
@@ -80,7 +80,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Scorpion.xml"></Animation>
     <Collision radius="1" singleHash="false" type="enemy"></Collision>
-    <Death baseGoldReward="2" baseExpReward="40"></Death>
+    <Death baseGoldReward="2" baseExpReward="2"></Death>
     <Health maxHealth="1400" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1.35" pathOnly="true"></Movement>
@@ -94,7 +94,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Scorpion.xml"></Animation>
     <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
-    <Death baseGoldReward="4" baseExpReward="100"></Death>
+    <Death baseGoldReward="4" baseExpReward="5"></Death>
     <Health maxHealth="3000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.9" pathOnly="true"></Movement>
@@ -108,7 +108,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Scorpion.xml"></Animation>
     <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
-    <Death baseGoldReward="10" baseExpReward="400"></Death>
+    <Death baseGoldReward="10" baseExpReward="100"></Death>
     <Health maxHealth="75000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.68" pathOnly="true"></Movement>
@@ -122,7 +122,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/WaterBug.xml"></Animation>
     <Collision radius="0.5" singleHash="true" type="enemy" ></Collision>
-    <Death baseGoldReward="1" baseExpReward="8"></Death>
+    <Death baseGoldReward="1" baseExpReward="1"></Death>
     <Health maxHealth="220" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="2.2" pathOnly="true"></Movement>
@@ -136,7 +136,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/WaterBug.xml"></Animation>
     <Collision radius="1" singleHash="false" type="enemy"></Collision>
-    <Death baseGoldReward="2" baseExpReward="8"></Death>
+    <Death baseGoldReward="2" baseExpReward="2"></Death>
     <Health maxHealth="1900" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1.2" pathOnly="true"></Movement>
@@ -150,7 +150,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/WaterBug.xml"></Animation>
     <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
-    <Death baseGoldReward="4" baseExpReward="200"></Death>
+    <Death baseGoldReward="4" baseExpReward="5"></Death>
     <Health maxHealth="4200" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.8" pathOnly="true"></Movement>
@@ -164,7 +164,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/WaterBug.xml"></Animation>
     <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
-    <Death baseGoldReward="10" baseExpReward="800"></Death>
+    <Death baseGoldReward="10" baseExpReward="100"></Death>
     <Health maxHealth="110000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.6" pathOnly="true"></Movement>
@@ -178,7 +178,7 @@
     <AIController></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
     <Collision radius="1" type="enemy"></Collision>
-    <Death baseGoldReward="1" baseExpReward="4"></Death>
+    <Death baseGoldReward="1" baseExpReward="2"></Death>
     <Health maxHealth="300" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1" pathOnly="true"></Movement>

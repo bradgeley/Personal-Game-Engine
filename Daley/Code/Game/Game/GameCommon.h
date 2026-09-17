@@ -88,9 +88,11 @@ namespace StaticGameSettings
 	static constexpr float s_magicEnemyHealthMultiplier		= 1.5f;
 	static constexpr float s_magicEnemySizeMultiplier		= 1.1f;
 	static constexpr float s_magicEnemySpeedMultiplier		= 0.9f;
+	static constexpr float s_magicEnemyExpMultiplier		= 3.f;
 	static constexpr float s_rareEnemyHealthMultiplier		= 5.f;
 	static constexpr float s_rareEnemySizeMultiplier		= 1.25f;
 	static constexpr float s_rareEnemySpeedMultiplier		= 0.75f;
+	static constexpr float s_rareEnemyExpMultiplier			= 5.f;
 
 	static constexpr float s_basePlayerHealth				= 100.f;
 	static constexpr float s_basePlayerHealthRegen			= 0.1f;

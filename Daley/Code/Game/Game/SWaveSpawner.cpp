@@ -122,7 +122,8 @@ void SWaveSpawner::Run(SystemContext const& context) const
 					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_rareEnemyHealthMultiplier;
 					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier * StaticGameSettings::s_rareEnemySpeedMultiplier;
 					spawnInfo.m_spawnScale = StaticGameSettings::s_rareEnemySizeMultiplier;
-					spawnInfo.m_spawnTags[0] = "rare";
+					spawnInfo.m_spawnExpMultiplier = StaticGameSettings::s_rareEnemyExpMultiplier;
+					spawnInfo.AddSpawnTag("rare");
 				}
 				else if (rarityRoll < magicEnemyChance)
 				{
@@ -130,7 +131,8 @@ void SWaveSpawner::Run(SystemContext const& context) const
 					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_magicEnemyHealthMultiplier;
 					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier * StaticGameSettings::s_magicEnemySpeedMultiplier;
 					spawnInfo.m_spawnScale = StaticGameSettings::s_magicEnemySizeMultiplier;
-					spawnInfo.m_spawnTags[0] = "magic";
+					spawnInfo.m_spawnExpMultiplier = StaticGameSettings::s_magicEnemyExpMultiplier;
+					spawnInfo.AddSpawnTag("magic");
 				}
 			}
 

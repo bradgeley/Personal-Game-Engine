@@ -115,32 +115,44 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
         transform->m_orientation = spawnInfo.m_spawnOrientation;
     }
 
-    if (CCollision* collision = context.GetComponentUnsafe<CCollision>(id))
+    if (spawnInfo.m_spawnScale != 1.f)
     {
-        collision->m_radius *= spawnInfo.m_spawnScale;
-		collision->m_offset *= spawnInfo.m_spawnScale;
+        if (CCollision* collision = context.GetComponentUnsafe<CCollision>(id))
+        {
+            collision->m_radius *= spawnInfo.m_spawnScale;
+            collision->m_offset *= spawnInfo.m_spawnScale;
+        }
     }
 
-    if (CRender* render = context.GetComponentUnsafe<CRender>(id))
+    if (spawnInfo.m_spawnScale != 1.f || spawnInfo.m_outlineTint != Rgba8::TransparentWhite)
     {
-        render->m_renderRadius *= spawnInfo.m_spawnScale;
-		render->m_outlineTint = spawnInfo.m_outlineTint;
+        if (CRender* render = context.GetComponentUnsafe<CRender>(id))
+        {
+            render->m_renderRadius *= spawnInfo.m_spawnScale;
+            render->m_outlineTint = spawnInfo.m_outlineTint;
+        }
     }
 
-    if (CHealth* health = context.GetComponentUnsafe<CHealth>(id))
+    if (spawnInfo.m_spawnHealthMultiplier != 1.f)
     {
-        health->m_maxHealth *= spawnInfo.m_spawnHealthMultiplier;
-        health->m_currentHealth *= spawnInfo.m_spawnHealthMultiplier;
-	}
+        if (CHealth* health = context.GetComponentUnsafe<CHealth>(id))
+        {
+            health->m_maxHealth *= spawnInfo.m_spawnHealthMultiplier;
+            health->m_currentHealth *= spawnInfo.m_spawnHealthMultiplier;
+        }
+    }
 
-    if (CMovement* movement = context.GetComponentUnsafe<CMovement>(id))
+    if (spawnInfo.m_spawnSpeedMultiplier != 1.f)
     {
-        movement->m_movementSpeedMultiplier = spawnInfo.m_spawnSpeedMultiplier;
-	}
+        if (CMovement* movement = context.GetComponentUnsafe<CMovement>(id))
+        {
+            movement->m_movementSpeedMultiplier = spawnInfo.m_spawnSpeedMultiplier;
+        }
+    }
 
-    CLifetime* lifetime = context.GetComponentUnsafe<CLifetime>(id);
     if (spawnInfo.m_spawnLifetime >= 0.f)
     {
+        CLifetime* lifetime = context.GetComponentUnsafe<CLifetime>(id);
         if (!lifetime)
         {
 			lifetime = context.AddComponentUnsafe<CLifetime>(id);
@@ -150,22 +162,35 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
         lifetime->m_lifetimeRemaining = spawnInfo.m_spawnLifetime;
     }
 
-    CTags* tags = context.GetComponentUnsafe<CTags>(id);
-    for (int i = 0; i < (int) spawnInfo.m_spawnTags.size(); ++i)
+    if (spawnInfo.m_spawnExpMultiplier != 1.f)
     {
-		Name tag = spawnInfo.m_spawnTags[i];
-		if (tag == Name::Invalid)
-		{
-            break;
-		}
+        CDeath* death = context.GetComponent<CDeath>(id);
+        if (death)
+        {
+            death->m_expReward *= spawnInfo.m_spawnExpMultiplier;
+        }
+    }
 
+    if (spawnInfo.m_numSpawnTags > 0)
+    {
+        CTags* tags = context.GetComponentUnsafe<CTags>(id);
         if (!tags)
         {
-			tags = context.AddComponentUnsafe<CTags>(id);
+            tags = context.AddComponentUnsafe<CTags>(id);
         }
 
-        tags->AddTag(tag);
+        for (int i = 0; i < (int) spawnInfo.m_numSpawnTags; ++i)
+        {
+            Name tag = spawnInfo.m_spawnTags[i];
+            if (tag == Name::Invalid)
+            {
+                break;
+            }
+
+            tags->AddTag(tag);
+        }
     }
+
 
     return id;
 }

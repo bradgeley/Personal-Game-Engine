@@ -295,11 +295,18 @@
     <ClCompile Include="Game\SRenderModSelection.cpp">
       <Filter>ECS\Systems\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\OverlapInfo.cpp" />
     <ClCompile Include="Game\FlavorDef.cpp">
       <Filter>Definitions</Filter>
     </ClCompile>
-    <ClCompile Include="Game\TowerPlacementRequest.cpp" />
+    <ClCompile Include="Game\SpawnInfo.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\OverlapInfo.cpp">
+      <Filter>Game\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\TowerPlacementRequest.cpp">
+      <Filter>Game\Gameplay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">

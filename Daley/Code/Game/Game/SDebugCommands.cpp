@@ -75,7 +75,7 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 				spawnInfo.m_spawnHealthMultiplier = StaticGameSettings::s_rareEnemyHealthMultiplier;
 				spawnInfo.m_spawnSpeedMultiplier = StaticGameSettings::s_rareEnemySpeedMultiplier;
 				spawnInfo.m_spawnScale = StaticGameSettings::s_rareEnemySizeMultiplier;
-				spawnInfo.m_spawnTags[0] = "rare";
+				spawnInfo.AddSpawnTag("rare");
 			}
 			else if (rarityRoll < StaticGameSettings::s_baseMagicEnemyChance)
 			{
@@ -83,7 +83,7 @@ bool SDebugCommands::Spawn(NamedProperties& args)
 				spawnInfo.m_spawnHealthMultiplier = StaticGameSettings::s_magicEnemyHealthMultiplier;
 				spawnInfo.m_spawnSpeedMultiplier = StaticGameSettings::s_magicEnemySpeedMultiplier;
 				spawnInfo.m_spawnScale = StaticGameSettings::s_magicEnemySizeMultiplier;
-				spawnInfo.m_spawnTags[0] = "magic";
+				spawnInfo.AddSpawnTag("magic");
 			}
 		}
 

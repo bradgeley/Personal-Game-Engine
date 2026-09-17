@@ -15,7 +15,7 @@ void SExperience::Startup()
 	AddReadDependencies<CDeath>();
 	AddWriteDependencies<SCRunData>();
 
-	DevConsoleUtils::AddDevConsoleCommand("GrantExp", &SExperience::GrantExp, "exp", DevConsoleArgType::UInt);
+	DevConsoleUtils::AddDevConsoleCommand("GrantExp", &SExperience::GrantExp, "exp", DevConsoleArgType::Float);
 }
 
 
@@ -29,11 +29,11 @@ void SExperience::Shutdown() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void GrantExpInternal(RunData& runData, uint64_t exp)
+void GrantExpInternal(RunData& runData, double exp)
 {
 	int levelBefore = RunData::GetLevelData(runData.m_experience).m_level;
 
-	double totalExp = static_cast<double>(exp) * static_cast<double>(runData.m_experienceMultiplier);
+	double totalExp = exp * static_cast<double>(runData.m_experienceMultiplier);
 	uint64_t wholeExp = static_cast<uint64_t>(totalExp);
 	double remainder = totalExp - static_cast<double>(wholeExp);
 
@@ -74,7 +74,7 @@ void SExperience::Run(SystemContext const& context) const
 		CDeath const& death = deathComponents[it];
 		if (death.GetDiedThisFrame())
 		{
-			GrantExpInternal(runData, static_cast<uint64_t>(death.m_expReward));
+			GrantExpInternal(runData, static_cast<double>(death.m_expReward));
 		}
 	}
 }
@@ -86,9 +86,9 @@ bool SExperience::GrantExp(NamedProperties& params)
 {
 	SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
 	RunData& runData = *scRunData.m_data;
-	uint32_t exp = params.Get<uint32_t>("exp", 0);
+	float exp = params.Get<float>("exp", 0.0f);
 
-	GrantExpInternal(runData, static_cast<uint64_t>(exp));
+	GrantExpInternal(runData, static_cast<double>(exp));
 
 	return false;
 }
