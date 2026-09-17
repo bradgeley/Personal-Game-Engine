@@ -97,7 +97,7 @@ public:
 public:
 
 	// Allows placement of this tower
-	Name m_towerName = Name::Invalid;
+	Name m_flavorName = Name::Invalid;
 	char m_forcedKey = 0;
 	float m_baseCost = 1.f;
 };

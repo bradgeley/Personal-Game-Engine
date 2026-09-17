@@ -226,7 +226,7 @@ bool SWaveSpawner::StressTest(NamedProperties& args)
 	if (fillMapTower != Name::Invalid)
 	{
 		NamedProperties fillMapArgs;
-		fillMapArgs.Set("tower", fillMapTower);
+		fillMapArgs.Set("flavor", fillMapTower);
 		g_eventSystem->FireEvent("FillMap", fillMapArgs);
 	}
 

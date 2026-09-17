@@ -323,7 +323,7 @@ bool TowerDefenseState::Restart(NamedProperties&)
 
     runData.PrepareForMissionStart();
 
-    // Maybe later we have to regenerate the whole map
+    // Maybe later we have to regenerate the whole map, if we allow player to sell Trees still since they could restart and sell all trees on map
     for (auto it = g_ecs->IterateAll<CTags>(); it.IsValid(); ++it)
     {
 		CTags const& tags = *g_ecs->GetComponent<CTags>(it);

@@ -11,7 +11,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 struct TowerPlacementRequest
 {
-	Name m_towerName = "Chocolate";
+	Name m_towerEntityName = "Tower2x2"; // Only type of tower for now
+	Name m_flavorName = Name::Invalid;
 	bool m_isGenerated = false;
 
 	// Placement Info
@@ -29,8 +30,20 @@ struct TowerPlacementRequest
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct TowerSwirlRequest
+{
+	EntityID m_towerEntityID	= EntityID::Invalid;
+	Name m_flavor				= Name::Invalid;
+	float m_cost				= 0.f;
+	bool m_canAfford			= true;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct TowerRemovalRequest
 {
 	EntityID m_towerEntityID = EntityID::Invalid;
+	Vec2 m_worldPos = Vec2::ZeroVector;
 	bool m_isSell = false;
 };

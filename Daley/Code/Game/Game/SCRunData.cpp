@@ -162,7 +162,7 @@ void RunData::OnTowerPlacementSuccess(TowerPlacementRequest const& placementInfo
 {
 	for (PlaceableTower& tower : m_placeableTowers)
 	{
-		if (tower.m_towerName == placementInfo.m_towerName)
+		if (tower.m_towerName == placementInfo.m_towerEntityName && tower.m_flavorName == placementInfo.m_flavorName)
 		{
 			tower.m_cost *= m_costRampPerTower;
 		}

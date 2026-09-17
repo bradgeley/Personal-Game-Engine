@@ -151,7 +151,7 @@ void SInput::Run(SystemContext const& context) const
 	{
 		PlaceableTower const& placeableTower = runData.m_placeableTowers[scInput.m_towerPlacementIndex];
 		bool canAfford = SInput::CanAffordTower(placeableTower, runData);
-		scInput.m_towerPlacementRequest = SInput::MakeTowerPlacementRequest(placeableTower.m_towerName, scInput.m_mouseWorldLocation, world, false, placeableTower.m_cost, canAfford);
+		scInput.m_towerPlacementRequest = SInput::MakeTowerPlacementRequest(placeableTower.m_towerName, placeableTower.m_flavorName, scInput.m_mouseWorldLocation, world, false, placeableTower.m_cost, canAfford);
 	}
 	else
 	{
@@ -219,21 +219,7 @@ void SInput::Run(SystemContext const& context) const
 	// Sell
 	if (inputSystem.WasKeyJustPressed('S') && scInput.m_towerUnderCursor != EntityID::Invalid)
 	{
-		if (runData.m_numSoldTowers < runData.m_maxSellsPerMission)
-		{
-			factory.m_towerRemovals.push_back(TowerRemovalRequest{ scInput.m_towerUnderCursor, true });
-			runData.m_numSoldTowers++;
-		}
-		else
-		{
-			FloatingTextInstance floatingTextInstance;
-			floatingTextInstance.m_lifetimeSeconds = 2.f;
-			floatingTextInstance.m_pos = scInput.m_mouseWorldLocation;
-			floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
-			floatingTextInstance.m_text = "Sell limit reached!";
-			floatingTextInstance.m_tint = Rgba8::Red;
-			floatingText.m_floatingTextInstances.push_back(floatingTextInstance);
-		}
+		factory.m_towerRemovals.push_back(TowerRemovalRequest{ scInput.m_towerUnderCursor, scInput.m_mouseWorldLocation, true });
 	}
 }
 
@@ -248,15 +234,16 @@ bool SInput::CanAffordTower(PlaceableTower const& tower, RunData const& runData)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPlacementRequest SInput::MakeTowerPlacementRequest(Name towerDefName, Vec2 const& worldPos, SCWorld const& world, bool isGenerated /*= false*/, float cost /*= 0.f*/, bool canAfford /*= true*/)
+TowerPlacementRequest SInput::MakeTowerPlacementRequest(Name towerEntityName, Name flavorName, Vec2 const& worldPos, SCWorld const& world, bool isGenerated /*= false*/, float cost /*= 0.f*/, bool canAfford /*= true*/)
 {
 	TowerPlacementRequest info;
-	info.m_towerName = towerDefName;
+	info.m_towerEntityName = towerEntityName;
+	info.m_flavorName = flavorName; // Not all towers have flavors
 	info.m_isGenerated = isGenerated;
 	info.m_cost = cost;
 	info.m_canAfford = canAfford;
 
-	EntityDef const* def = EntityDef::GetEntityDef(towerDefName);
+	EntityDef const* def = EntityDef::GetEntityDef(towerEntityName);
 	ASSERT_OR_DIE(def != nullptr, "MakeTowerPlacementRequest: Invalid tower name for placement");
 	ASSERT_OR_DIE(def->m_placeable.has_value(), "MakeTowerPlacementRequest: Tower entity def does not have a CPlaceable component");
 

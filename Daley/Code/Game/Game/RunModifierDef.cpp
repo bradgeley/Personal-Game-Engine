@@ -164,7 +164,7 @@ void RunModifier::ApplyToRunData(RunData&) const
 //----------------------------------------------------------------------------------------------------------------------
 FlavorUnlockRunModifierDef::FlavorUnlockRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
 {
-	m_towerName = XmlUtils::ParseXmlAttribute(modElement, "name", Name::Invalid);
+	m_flavorName = XmlUtils::ParseXmlAttribute(modElement, "name", Name::Invalid);
 	m_forcedKey = XmlUtils::ParseXmlAttribute(modElement, "forcedKey", m_forcedKey);
 	m_baseCost = XmlUtils::ParseXmlAttribute(modElement, "baseCost", m_baseCost);
 }
@@ -249,13 +249,14 @@ void FlavorUnlockRunModifier::ApplyToRunData(RunData& runData) const
 		if (placeableTower.m_towerName == Name::Invalid)
 		{
 			// Reached an invalid slot before finding the tower, so we cannot already place this tower, add.
-			placeableTower.m_towerName = def.m_towerName;
+			placeableTower.m_towerName = "Tower2x2";
+			placeableTower.m_flavorName = def.m_flavorName;
 			placeableTower.m_hotkey = runData.m_towerPlacementKeyBindings[placeableIndex];
 			placeableTower.m_baseCost = def.m_baseCost;
 			placeableTower.m_cost = def.m_baseCost;
 			return;
 		}
-		else if (placeableTower.m_towerName == def.m_towerName)
+		else if (placeableTower.m_flavorName == def.m_flavorName && placeableTower.m_towerName == "Tower2x2")
 		{
 			// Already can place this tower
 			return;
@@ -268,7 +269,7 @@ void FlavorUnlockRunModifier::ApplyToRunData(RunData& runData) const
 //----------------------------------------------------------------------------------------------------------------------
 void FlavorUnlockRunModifier::GetDescription(std::string& outStr) const
 {
-	outStr += StringUtils::StringF("Tower Name: %s\nGold Cost: %.2f\n", GetDef().m_towerName.ToCStr(), GetDef().m_baseCost);
+	outStr += StringUtils::StringF("Tower Name: %s\nGold Cost: %.2f\n", GetDef().m_flavorName.ToCStr(), GetDef().m_baseCost);
 }
 
 

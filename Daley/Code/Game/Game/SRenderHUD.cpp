@@ -132,7 +132,11 @@ void SRenderHUD::Run(SystemContext const& context) const
 		std::string placeableTowerText = "Placeable Towers";
 		for (auto& placeTower : runData.m_placeableTowers)
 		{
-			if (placeTower.m_towerName != Name::Invalid)
+			if (placeTower.m_flavorName != Name::Invalid)
+			{
+				placeableTowerText += StringUtils::StringF("\n(%c) - %s : %.0f gold", placeTower.m_hotkey, placeTower.m_flavorName.ToCStr(), placeTower.m_cost);
+			}
+			else if (placeTower.m_towerName != Name::Invalid)
 			{
 				placeableTowerText += StringUtils::StringF("\n(%c) - %s : %.0f gold", placeTower.m_hotkey, placeTower.m_towerName.ToCStr(), placeTower.m_cost);
 			}

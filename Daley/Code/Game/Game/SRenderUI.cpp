@@ -1,10 +1,14 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SRenderUI.h"
+#include "AbilityDef.h"
 #include "EntityDef.h"
+#include "FlavorDef.h"
 #include "CPlaceable.h"
 #include "SCRenderer.h"
 #include "SCInputSystem.h"
 #include "SCWorld.h"
+#include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Renderer/Renderer.h"
@@ -58,25 +62,53 @@ void SRenderUI::Run(SystemContext const& context) const
 	if (scInput.m_towerPlacementIndex != -1)
 	{
 		TowerPlacementRequest const& placementInfo = scInput.m_towerPlacementRequest;
-		EntityDef const* def = EntityDef::GetEntityDef(placementInfo.m_towerName);
+
+		EntityDef const* def = EntityDef::GetEntityDef(placementInfo.m_towerEntityName);
 		CPlaceable const& placeable = def->m_placeable.value();
-		CTags const& tags = def->m_tags.has_value() ? *def->m_tags : CTags();
+		CTags tagsCopy = def->m_tags.has_value() ? *def->m_tags : CTags();
+
+		std::vector<Ability*> abilities;
+		CPlaceable placeableCopy = placeable;
+		placeableCopy.m_botLeftTile = scInput.m_towerPlacementRequest.m_botLeftTileCoords;
 
 		if (def->m_ability.has_value())
 		{
-			CAbility copy(def->m_ability.value());
-			CPlaceable placeableCopy = placeable;
-			placeableCopy.m_botLeftTile = scInput.m_towerPlacementRequest.m_botLeftTileCoords;
-
-			for (auto& ability : copy.m_abilities)
+			for (Ability* ability : def->m_ability->m_abilities)
 			{
-				for (auto& modifier : scRunData.m_data->m_activeRunModifiers)
-				{
-					modifier->ApplyToAbility(*ability, tags);
-				}
-				// Render range indicators for abilities when in placement mode
-				ability->AddDebugVerts(untexturedVerts, placeableCopy, placementInfo.m_worldPos);
+				abilities.push_back(ability->DeepCopy());
 			}
+		}
+
+		if (placementInfo.m_flavorName != Name::Invalid)
+		{
+			tagsCopy.AddTag(placementInfo.m_flavorName);
+			FlavorDef const* flavorDef = FlavorDef::GetFlavorDef(placementInfo.m_flavorName);
+			ASSERT_OR_DIE(flavorDef, StringUtils::StringF("SRenderUI::Run: FlavorDef not found for flavor: %s", placementInfo.m_flavorName.ToCStr()).c_str());
+			for (Name ability : flavorDef->m_abilities)
+			{
+				if (ability == Name::Invalid)
+				{
+					continue;
+				}
+				AbilityDef const* abilityDef = AbilityDef::GetAbilityDef(ability);
+				abilities.push_back(abilityDef->MakeAbilityInstance());
+			}
+		}
+
+		for (auto& ability : abilities)
+		{
+			for (auto& modifier : scRunData.m_data->m_activeRunModifiers)
+			{
+				modifier->ApplyToAbility(*ability, tagsCopy);
+			}
+			// Render range indicators for abilities when in placement mode, with all mods applied for accurate range
+			ability->AddDebugVerts(untexturedVerts, placeableCopy, placementInfo.m_worldPos);
+		}
+
+		for (auto& ability : abilities)
+		{
+			ability->Shutdown(context);
+			delete ability;
 		}
 
 		scWorld.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& tileCoords)

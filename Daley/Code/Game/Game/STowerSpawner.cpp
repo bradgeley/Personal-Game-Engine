@@ -1,7 +1,9 @@
 // Bradley Christensen - 2022-2026
 #include "STowerSpawner.h"
+#include "AbilityDef.h"
 #include "CAbility.h"
 #include "EntityDef.h"
+#include "FlavorDef.h"
 #include "SCEntityFactory.h"
 #include "SCFloatingText.h"
 #include "SCRunData.h"
@@ -18,11 +20,16 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool AddFlavorToTower(EntityID entity, Name flavorName, SystemContext const& context);
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void STowerSpawner::Startup()
 {
 	AddWriteAllDependencies(); // Spawns towers..
 
-    DevConsoleUtils::AddDevConsoleCommand("FillMap", STowerSpawner::FillMapWithTower, "tower", DevConsoleArgType::Name);
+    DevConsoleUtils::AddDevConsoleCommand("FillMap", STowerSpawner::FillMapWithTower, "flavor", DevConsoleArgType::Name);
 }
 
 
@@ -49,10 +56,46 @@ void STowerSpawner::Run(SystemContext const& context) const
 	SCRunData& scRunData = context.GetSingleton<SCRunData>();
 	RunData& runData = *scRunData.m_data;
 
+    // Tower Removal
+
     for (TowerRemovalRequest const& removalRequest : factory.m_towerRemovals)
     {
 		CTransform const& transform = transformStorage[removalRequest.m_towerEntityID];
 		CPlaceable const& placeable = placeableStorage[removalRequest.m_towerEntityID];
+
+		if (!context.IsValid(removalRequest.m_towerEntityID))
+		{
+			continue;
+		}
+
+        if (CTags const* tags = context.GetComponent<CTags>(removalRequest.m_towerEntityID))
+        {
+            if (tags->HasTag("Obstacle"))
+            {
+				FloatingTextInstance floatingTextInstance;
+				floatingTextInstance.m_lifetimeSeconds = 2.f;
+				floatingTextInstance.m_pos = removalRequest.m_worldPos;
+				floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+				floatingTextInstance.m_text = "Cannot sell obstacles!";
+				floatingTextInstance.m_tint = Rgba8::Red;
+				scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+                continue;
+            }
+        }
+
+        if (runData.m_numSoldTowers == runData.m_maxSellsPerMission)
+        {
+            FloatingTextInstance floatingTextInstance;
+            floatingTextInstance.m_lifetimeSeconds = 2.f;
+            floatingTextInstance.m_pos = removalRequest.m_worldPos;
+            floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+            floatingTextInstance.m_text = "Sell limit reached!";
+            floatingTextInstance.m_tint = Rgba8::Red;
+            scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+            continue;
+        }
+
+        runData.m_numSoldTowers++;
 
 		AABB2 towerBounds = AABB2(transform.m_pos, static_cast<float>(placeable.m_dims.x) * 0.5f, static_cast<float>(placeable.m_dims.y) * 0.5f);
 		towerBounds.Squeeze(0.1f);
@@ -94,6 +137,9 @@ void STowerSpawner::Run(SystemContext const& context) const
 
 	factory.m_towerRemovals.clear();
 
+
+    // Tower Placement
+
     for (TowerPlacementRequest const& placementInfo : factory.m_towerPlacements)
     {
         TowerPlacementResult result = CanPlaceTower(placementInfo, world);
@@ -103,12 +149,16 @@ void STowerSpawner::Run(SystemContext const& context) const
 
             SpawnInfo spawnInfo;
             spawnInfo.m_spawnPos = placementInfo.m_worldPos;
-            spawnInfo.m_def = EntityDef::GetEntityDef(placementInfo.m_towerName);
+            spawnInfo.m_def = EntityDef::GetEntityDef(placementInfo.m_towerEntityName);
             EntityID tower = SEntityFactory::SpawnEntity(context, spawnInfo);
 
             if (context.IsValid(tower))
             {
                 // Pass data to tower
+                if (placementInfo.m_flavorName != Name::Invalid)
+                {
+                    AddFlavorToTower(tower, placementInfo.m_flavorName, context);
+                }
 				CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(tower);
 				placeableComp.m_botLeftTile = placementInfo.m_botLeftTileCoords;
 				placeableComp.m_costOfPurchase = placementInfo.m_cost;
@@ -298,16 +348,68 @@ bool STowerSpawner::WillChangePathSolidness(TowerPlacementRequest const& placeme
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool AddFlavorToTower(EntityID tower, Name flavorName, SystemContext const& context)
+{
+	FlavorDef const* flavorDef = FlavorDef::GetFlavorDef(flavorName);
+	ASSERT_OR_DIE(flavorDef, StringUtils::StringF("AddFlavorToTower: FlavorDef not found for flavor: %s", flavorName.ToCStr()).c_str());
+
+	ASSERT_OR_DIE(context.IsValid(tower), StringUtils::StringF("AddFlavorToTower: Invalid tower entity: %u", tower).c_str());
+
+	CTags* tags = context.GetComponent<CTags>(tower);
+	ASSERT_OR_DIE(tags, StringUtils::StringF("AddFlavorToTower: CTags component not found for tower entity: %u", tower).c_str());
+
+	tags->AddTag(flavorName);
+
+	CAbility* abilityComp = context.GetComponent<CAbility>(tower);
+	ASSERT_OR_DIE(abilityComp, StringUtils::StringF("AddFlavorToTower: CAbility component not found for tower entity: %u", tower).c_str());
+
+    // Handle abilieies
+	for (auto& ability : flavorDef->m_abilities)
+	{
+		if (ability == Name::Invalid)
+		{
+            continue;
+		}
+
+        AbilityDef const* abilityDef = AbilityDef::GetAbilityDef(ability);
+		ASSERT_OR_DIE(abilityDef, StringUtils::StringF("AddFlavorToTower: AbilityDef not found for ability: %s", ability.ToCStr()).c_str());
+
+		Ability* abilityInstance = abilityDef->MakeAbilityInstance();
+		ASSERT_OR_DIE(abilityInstance, StringUtils::StringF("AddFlavorToTower: Failed to create Ability instance for ability: %s", ability.ToCStr()).c_str());
+
+		abilityComp->m_abilities.push_back(abilityInstance);
+	}
+
+    // Handle cosmetics
+
+	CAnimation* animComp = context.GetComponent<CAnimation>(tower);
+	ASSERT_OR_DIE(animComp, StringUtils::StringF("AddFlavorToTower: CAnimation component not found for tower entity: %u", tower).c_str());
+
+	animComp->m_spriteSheetName = flavorDef->m_spriteSheetName;
+	animComp->m_defaultAnimationName = flavorDef->m_animName;
+
+	CRender* renderComp = context.GetComponent<CRender>(tower);
+	ASSERT_OR_DIE(renderComp, StringUtils::StringF("AddFlavorToTower: CRender component not found for tower entity: %u", tower).c_str());
+
+	renderComp->m_baseTint = flavorDef->m_tint;
+	renderComp->m_tint = flavorDef->m_tint;
+
+	return true;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool STowerSpawner::FillMapWithTower(NamedProperties& properties)
 {
 	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	SCEntityFactory& factory = g_ecs->GetSingleton<SCEntityFactory>();
 
-	Name towerFlavorName = properties.Get<Name>("tower", Name("Vanilla"));
+	Name towerEntityName = "Tower2x2"; // todo:
+	Name towerFlavorName = properties.Get<Name>("flavor", Name("Vanilla"));
 
 	world.ForEachVisibleTile([&](IntVec2 const& worldCoords, int)
 	{
-		TowerPlacementRequest placementInfo = SInput::MakeTowerPlacementRequest(towerFlavorName, world.GetTileBounds(worldCoords).GetCenter(), world);
+		TowerPlacementRequest placementInfo = SInput::MakeTowerPlacementRequest(towerEntityName, towerFlavorName, world.GetTileBounds(worldCoords).GetCenter(), world, true);
         placementInfo.m_isGenerated = true;
         factory.m_towerPlacements.push_back(placementInfo);
 		return true; // keep iterating

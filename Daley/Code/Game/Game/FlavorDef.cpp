@@ -21,6 +21,7 @@ FlavorDef::FlavorDef(XmlElement const* flavorDefXmlElement)
 	Strings abilityNames = StringUtils::SplitStringOnDelimiter(abilitiesString, ',');
 	ASSERT_OR_DIE(abilityNames.size() <= MAX_FLAVOR_ABILITIES, StringUtils::StringF("FlavorDef \"%s\" has too many abilities. Max is %d", m_name.ToCStr(), MAX_FLAVOR_ABILITIES).c_str());
 	
+	m_abilities.fill(Name::Invalid);
 	for (size_t i = 0; i < abilityNames.size() && i < MAX_FLAVOR_ABILITIES; ++i)
 	{
 		m_abilities[i] = Name(abilityNames[i]);
@@ -73,22 +74,6 @@ FlavorDef const* FlavorDef::GetFlavorDef(Name name)
 	{
 		FlavorDef const* def = &s_flavorDefs[i];
 		if (def->m_name == name)
-		{
-			return def;
-		}
-	}
-	return nullptr;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-FlavorDef const* FlavorDef::GetFlavorDef(Name flavorName)
-{
-	for (size_t i = 0; i < s_flavorDefs.size(); i++)
-	{
-		FlavorDef const* def = &s_flavorDefs[i];
-		if (def->m_name == flavorName)
 		{
 			return def;
 		}

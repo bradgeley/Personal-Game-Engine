@@ -16,7 +16,7 @@
     <DisplayData displayName="Strawberry" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,80,83" desc="Fires burning projectiles that splash"></DisplayData>
   </FlavorDef>
 
-  <FlavorDef name="Orange Sorbet" abilities="OrangeSorbetAttack">
+  <FlavorDef name="OrangeSorbet" abilities="OrangeSorbetAttack">
     <DisplayData displayName="Orange Sorbet" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,165,0" desc="Burns nearby enemies"></DisplayData>
   </FlavorDef>
 
