@@ -92,6 +92,9 @@
     <Crit critChance="0.1" critMulti=".5"></Crit>
     <OnHit>
       <Damage minDamage="1" maxDamage="75"></Damage>
+	<AoEHit radius="0.5">
+		<Damage minDamage="1" maxDamage="15"></Damage>
+	</AoEHit>
     </OnHit>
   </ProjectileHitAbilityDef>
 
@@ -123,7 +126,7 @@
     <Targeting maxRange="10"></Targeting>
     <OnHit>
       <Burn burn="100"></Burn>
-      <AoEHit radius="0.5">
+      <AoEHit radius="2">
         <Burn burn="50"></Burn>
       </AoEHit>
     </OnHit>

@@ -18,28 +18,28 @@
       <DisplayData displayName="Strawberry" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,80,83"></DisplayData>
     </FlavorUnlockRunModifier>
 
-    <FlavorUnlockRunModifier name="OrangeSorbet" baseCost="50" levelRequirement="0" weight="1" desc="Burn, AoE">
-      <DisplayData displayName="Orange Sorbet" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,165,0"></DisplayData>
-    </FlavorUnlockRunModifier>
+	<FlavorUnlockRunModifier name="Pistachio" baseCost="30" levelRequirement="0" weight="1" desc="Poison, Projectile, AoE">
+		<DisplayData displayName="Pistachio" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="147,197,114"></DisplayData>
+	</FlavorUnlockRunModifier>
 
-    <FlavorUnlockRunModifier name="Pistachio" baseCost="30" levelRequirement="0" weight="1" desc="Poison, Projectile, AoE">
-      <DisplayData displayName="Pistachio" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="147,197,114"></DisplayData>
-    </FlavorUnlockRunModifier>
+	<FlavorUnlockRunModifier name="OrangeSorbet" baseCost="40" levelRequirement="0" weight="1" desc="Burn, AoE">
+		<DisplayData displayName="Orange Sorbet" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,165,0"></DisplayData>
+	</FlavorUnlockRunModifier>
 
     <FlavorUnlockRunModifier name="Coconut" baseCost="40" levelRequirement="0" weight="1" desc="AoE, Slow">
       <DisplayData displayName="Coconut" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250"></DisplayData>
     </FlavorUnlockRunModifier>
 
-    <FlavorUnlockRunModifier name="Ube" baseCost="40" levelRequirement="0" weight="1" desc="Laser, Burn, Poison, Chain">
+    <FlavorUnlockRunModifier name="Ube" baseCost="50" levelRequirement="0" weight="1" desc="Laser, Burn, Poison, Chain">
       <DisplayData displayName="Ube" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
     </FlavorUnlockRunModifier>
   
     <!-- Level 5 -->
-    <FlavorUnlockRunModifier name="Mint" baseCost="50" levelRequirement="5" weight="0.5" desc="Poison, Slow, AoE">
+    <FlavorUnlockRunModifier name="Mint" baseCost="100" levelRequirement="5" weight="0.5" desc="Poison, Slow, AoE">
       <DisplayData displayName="Mint" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
     </FlavorUnlockRunModifier>
     
-    <FlavorUnlockRunModifier name="Coffee" baseCost="70" levelRequirement="5" weight="0.5" desc="Haste, AoE">
+    <FlavorUnlockRunModifier name="Coffee" baseCost="100" levelRequirement="5" weight="0.5" desc="Haste, AoE">
       <DisplayData displayName="Coffee" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="165, 130, 90"></DisplayData>
     </FlavorUnlockRunModifier>
   
