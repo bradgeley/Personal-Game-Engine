@@ -1110,6 +1110,9 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
 	auto& projectileStorage = context.GetMapStorage<CProjectile>();
     RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
 
+    CRender& ownerRenderComp = *context.GetComponentUnsafe<CRender>(m_owner);
+	Rgba8 const& ownerTint = ownerRenderComp.m_tint;
+
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
     m_targetingComp.UpdateCachedTiles(context, location);
 
@@ -1129,6 +1132,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
     SpawnInfo spawnInfo;
     spawnInfo.m_spawnPos = location;
     spawnInfo.m_def = projDef;
+    spawnInfo.m_baseTint = ownerTint;
 
     // Shoot at targets
     while (m_cooldownComp.m_accumulatedTime > timeBetweenAttacks)
@@ -1146,7 +1150,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
             }
 
             // Copy ability data to proj, snapshotted with damage and effects already rolled.
-            ASSERT_OR_DIE(context.HasComponent<CProjectile>(projectileID), "ProjectileHitAbility::Update - spawned projectile is missing CProjectile component.");
+            ASSERT_OR_DIE(context.HasComponentUnsafe<CProjectile>(projectileID), "ProjectileHitAbility::Update - spawned projectile is missing CProjectile component.");
             CProjectile& projComp = projectileStorage[projectileID];
 
             // copy targets from target chain to proj
@@ -2040,6 +2044,8 @@ void LaserAbility::Update(SystemContext const& context, Vec2 const& location, fl
 //----------------------------------------------------------------------------------------------------------------------
 void LaserAbility::Render(SystemContext const& context, Vec2 const& location) const
 {
+    // TODO: Add to a vbo and render all lasers at once, to improve laser spam perf
+
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
 	Renderer& renderer = *scRenderer.GetRenderer();
 
@@ -2058,7 +2064,7 @@ void LaserAbility::Render(SystemContext const& context, Vec2 const& location) co
                 continue;
             }
 
-            if (CTransform const* transform = context.GetComponent<CTransform>(target))
+            if (CTransform const* transform = context.GetComponentUnsafe<CTransform>(target))
             {
                 VertexUtils::AddVertsForLine2D(vbo, currentChainStartLocation, transform->m_pos, 0.25f, m_renderComp.m_tint, m_renderComp.m_depth);
                 currentChainStartLocation = transform->m_pos;

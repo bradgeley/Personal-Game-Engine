@@ -4,6 +4,7 @@
 #include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/Rgba8.h"
 #include <array>
+#include <optional>
 
 
 
@@ -28,6 +29,7 @@ struct SpawnInfo
 	float m_spawnHealthMultiplier	= 1.f;
 	float m_spawnSpeedMultiplier	= 1.f;
 	float m_spawnExpMultiplier		= 1.f;
+	std::optional<Rgba8> m_baseTint;
 	Rgba8 m_outlineTint				= Rgba8::TransparentWhite;
 	int m_numSpawnTags				= 0;
 	std::array<Name, MAX_SPAWN_TAGS> m_spawnTags = { Name::Invalid };

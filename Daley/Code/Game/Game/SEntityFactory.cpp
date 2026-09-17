@@ -124,12 +124,18 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
         }
     }
 
-    if (spawnInfo.m_spawnScale != 1.f || spawnInfo.m_outlineTint != Rgba8::TransparentWhite)
+	bool hasBaseTintOverride = spawnInfo.m_baseTint.has_value();
+    if (spawnInfo.m_spawnScale != 1.f || spawnInfo.m_outlineTint != Rgba8::TransparentWhite || hasBaseTintOverride)
     {
         if (CRender* render = context.GetComponentUnsafe<CRender>(id))
         {
             render->m_renderRadius *= spawnInfo.m_spawnScale;
             render->m_outlineTint = spawnInfo.m_outlineTint;
+            if (hasBaseTintOverride)
+            {
+                render->m_baseTint = *spawnInfo.m_baseTint;
+				render->m_tint = *spawnInfo.m_baseTint;
+            }
         }
     }
 
@@ -164,7 +170,7 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
 
     if (spawnInfo.m_spawnExpMultiplier != 1.f)
     {
-        CDeath* death = context.GetComponent<CDeath>(id);
+        CDeath* death = context.GetComponentUnsafe<CDeath>(id);
         if (death)
         {
             death->m_expReward *= spawnInfo.m_spawnExpMultiplier;

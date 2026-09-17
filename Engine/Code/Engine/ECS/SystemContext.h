@@ -116,6 +116,9 @@ public:
 	template <typename CType>
 	bool HasComponent(EntityID entityID) const;
 
+	template <typename CType>
+	bool HasComponentUnsafe(EntityID entityID) const;
+
     //----------------------------------------------------------------------------------------------------------------------
     // ACCESS
     //
@@ -367,6 +370,15 @@ template <typename CType>
 bool SystemContext::HasComponent(EntityID entityID) const
 {
     return g_ecs->HasComponent<CType>(entityID);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+template<typename CType>
+inline bool SystemContext::HasComponentUnsafe(EntityID entityID) const
+{
+    return g_ecs->HasComponentUnsafe<CType>(entityID);
 }
 
 

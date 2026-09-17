@@ -7,7 +7,6 @@
 #include "SCCamera.h"
 #include "SCEntityFactory.h"
 #include "SCEventSystem.h"
-#include "SCFloatingText.h"
 #include "SCGameState.h"
 #include "SCInputSystem.h"
 #include "SCRunData.h"
@@ -50,7 +49,6 @@ void SInput::Run(SystemContext const& context) const
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
 	SCRunData& scRunData = context.GetSingleton<SCRunData>();
 	RunData& runData = *scRunData.m_data;
-	SCFloatingText& floatingText = context.GetSingleton<SCFloatingText>();
 	SCGameState& game = context.GetSingleton<SCGameState>();
 
 	Window const& window = *scWindow.GetWindow();
