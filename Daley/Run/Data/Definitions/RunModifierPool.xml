@@ -152,15 +152,16 @@
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </FlavorAbilityRunModifier>
 
+    <!-- Level 10 -->
+    <FlavorAbilityRunModifier name="VanillaChain" type="chain" tagRequirement="Vanilla" base="1" perLevel="1" weight="0.1" levelRequirement="10" maxLevel="1">
+      <DisplayData displayName="Vanilla Chain" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
+      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Chain"></DisplayData>
+    </FlavorAbilityRunModifier>
+
     <!-- Level 50 -->
     <FlavorAbilityRunModifier name="VanillaMultiShot" type="multiShot" tagRequirement="Vanilla" base="1" perLevel="1" weight="0.1" levelRequirement="50" maxLevel="1">
       <DisplayData displayName="Vanilla Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="multiShot"></DisplayData>
-    </FlavorAbilityRunModifier>
-
-    <FlavorAbilityRunModifier name="VanillaChain" type="chain" tagRequirement="Vanilla" base="1" perLevel="1" weight="0.1" levelRequirement="50" maxLevel="1">
-      <DisplayData displayName="Vanilla Chain" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Chain"></DisplayData>
     </FlavorAbilityRunModifier>
   
   </RunModifierPool>
