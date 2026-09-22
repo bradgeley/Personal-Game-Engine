@@ -49,6 +49,8 @@ namespace StringUtils
     IntVec2 StringToIntVec2(std::string const& intVec2AsString);
     Strings CSVToStrings(std::string const& stringsAsString);
 
+	std::string Rgba8ToString(Rgba8 const& rgba8);
+
 
 
     //----------------------------------------------------------------------------------------------------------------------

@@ -402,6 +402,22 @@ Strings StringUtils::CSVToStrings(std::string const& stringsAsString)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+std::string StringUtils::Rgba8ToString(Rgba8 const& rgba8)
+{
+    std::string result;
+	result += std::to_string(static_cast<int>(rgba8.r));
+	result += ",";
+	result += std::to_string(static_cast<int>(rgba8.g));
+	result += ",";
+	result += std::to_string(static_cast<int>(rgba8.b));
+    result += ",";
+	result += std::to_string(static_cast<int>(rgba8.a));
+    return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool StringUtils::DoesStringContainChar(std::string const& string, uint8_t character)
 {
     for (char const& c : string)

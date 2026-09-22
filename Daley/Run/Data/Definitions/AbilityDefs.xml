@@ -92,9 +92,9 @@
     <Crit critChance="0.1" critMulti=".5"></Crit>
     <OnHit>
       <Damage minDamage="1" maxDamage="75"></Damage>
-	<AoEHit radius="0.5">
-		<Damage minDamage="1" maxDamage="15"></Damage>
-	</AoEHit>
+	  <AoEHit radius="0.5">
+		  <Damage minDamage="1" maxDamage="15"></Damage>
+	  </AoEHit>
     </OnHit>
   </ProjectileHitAbilityDef>
 
@@ -164,10 +164,10 @@
 
   <AoEHitAbilityDef name="CoconutAttack">
     <Cooldown cooldown="5"></Cooldown>
-    <Targeting maxRange="6"></Targeting>
-    <Crit critChange="0.1"></Crit>
+    <Targeting maxRange="8"></Targeting>
+    <Crit critChance="0.1" critMulti="0.5"></Crit>
     <AoEHit radius="6">
-      <Damage minDamage="100" maxDamage="200"></Damage>
+      <Damage minDamage="400" maxDamage="800"></Damage>
       <Slow duration="1"></Slow>
       <Render tint="255,255,255,50" depth="0.04" duration="0.2"></Render>
     </AoEHit>
