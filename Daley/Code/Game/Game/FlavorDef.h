@@ -22,6 +22,7 @@ public:
 	static void LoadFromXML();
 	static void Shutdown();
 	static FlavorDef const* GetFlavorDef(Name name);
+	static std::vector<FlavorDef> const& GetAllFlavorDefs();
 
 private:
 

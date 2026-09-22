@@ -204,6 +204,7 @@ public:
 	virtual ~AbilityDef() = default;
 	AbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const = 0;
+	virtual AbilityDef* Copy() const = 0;
 	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) = 0;
 
 public:
@@ -214,6 +215,7 @@ public:
 	static AbilityDef const* GetAbilityDef(uint8_t id);
 	static AbilityDef const* GetAbilityDef(Name name);
 	static int GetAbilityDefID(Name name);
+	static std::vector<AbilityDef*> const& GetAllAbilityDefs();
 
 private:
 
@@ -233,6 +235,7 @@ public:
 
 	explicit ProjectileHitAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual AbilityDef* Copy() const override;
 	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
@@ -257,6 +260,7 @@ public:
 
 	explicit AoEHitAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual AbilityDef* Copy() const override;
 	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
@@ -277,6 +281,7 @@ public:
 
 	explicit PassiveAoEAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual AbilityDef* Copy() const override;
 	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
@@ -294,6 +299,7 @@ public:
 
 	explicit AdjacentHitAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual AbilityDef* Copy() const override;
 	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
@@ -311,6 +317,7 @@ public:
 
 	explicit LaserAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual AbilityDef* Copy() const override;
 	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:

@@ -90,6 +90,7 @@ void RunState::Enter(NamedProperties const& props)
 	Name mode = props.Get<Name>("mode", Name::Invalid);
 
 	g_eventSystem->SubscribeMethod("MissionOver", this, &RunState::MissionOver);
+	DevConsoleUtils::AddDevConsoleCommand("GenerateFlavorCombinations", &RunState::GenerateFlavorCombinations, "filename", DevConsoleArgType::Name);
 	DevConsoleUtils::AddDevConsoleCommand("SaveAbilityDefs", &RunState::SaveAbilityDefsToXML, "filename", DevConsoleArgType::Name);
 
 	m_untexturedVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -138,6 +139,7 @@ void RunState::Exit(NamedProperties const& props)
 	AbilityDef::Shutdown();
 
 	g_eventSystem->UnsubscribeMethod("MissionOver", this, &RunState::MissionOver);
+	DevConsoleUtils::RemoveDevConsoleCommand("GenerateFlavorCombinations", &RunState::GenerateFlavorCombinations);
 	DevConsoleUtils::RemoveDevConsoleCommand("SaveAbilityDefs", &RunState::SaveAbilityDefsToXML);
 
 	g_renderer->ReleaseVertexBuffer(m_untexturedVerts);
@@ -233,6 +235,80 @@ bool RunState::SaveAbilityDefsToXML(NamedProperties& props)
 
 	std::string filepath = "Data/Definitions/" + filename.ToString() + ".xml";
 	AbilityDef::SaveToXML(filepath);
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool RunState::GenerateFlavorCombinations(NamedProperties& props)
+{
+	Name filename = props.Get<Name>("filename", Name("FlavorCombinationAbilityDefs"));
+
+	std::string filepath = "Data/Definitions/" + filename.ToString() + ".xml";
+
+	XmlDocument doc;
+
+	XmlElement* rootElem = doc.NewElement("AbilityDefs");
+	doc.InsertFirstChild(rootElem);
+
+	std::vector<FlavorDef> const& allFlavorDefs = FlavorDef::GetAllFlavorDefs();
+
+	// Double combinations
+	for (size_t base = 0; base < allFlavorDefs.size(); ++base)
+	{
+		for (size_t swirl = 0; swirl < allFlavorDefs.size(); ++swirl)
+		{
+			if (swirl == base)
+			{
+				continue;
+			}
+
+			FlavorDef const& baseFlavor = allFlavorDefs[base];
+			FlavorDef const& swirlFlavor = allFlavorDefs[swirl];
+
+			AbilityDef const* mainAbility = AbilityDef::GetAbilityDef(baseFlavor.m_abilities[0]);
+			AbilityDef* copy = mainAbility->Copy();
+			copy->m_name = StringUtils::StringF("Generated_%s_%s", baseFlavor.m_name.ToCStr(), swirlFlavor.m_name.ToCStr());
+			copy->WriteToXmlDoc(&doc, rootElem);
+
+			delete copy;
+		}
+	}
+
+	// Triple combinations
+	for (size_t base = 0; base < allFlavorDefs.size(); ++base)
+	{
+		for (size_t swirlA = 0; swirlA < allFlavorDefs.size(); ++swirlA)
+		{
+			if (swirlA == base)
+			{
+				continue;
+			}
+	
+			for (size_t swirlB = swirlA + 1; swirlB < allFlavorDefs.size(); ++swirlB)
+			{
+				if (swirlB == base)
+				{
+					continue;
+				}
+	
+				FlavorDef const& baseFlavor = allFlavorDefs[base];
+				FlavorDef const& swirl1 = allFlavorDefs[swirlA];
+				FlavorDef const& swirl2 = allFlavorDefs[swirlB];
+
+				AbilityDef const* mainAbility = AbilityDef::GetAbilityDef(baseFlavor.m_abilities[0]);
+				AbilityDef* copy = mainAbility->Copy();
+				copy->m_name = StringUtils::StringF("Generated_%s_%s_%s", baseFlavor.m_name.ToCStr(), swirl1.m_name.ToCStr(), swirl2.m_name.ToCStr());
+				copy->WriteToXmlDoc(&doc, rootElem);
+
+				delete copy;
+			}
+		}
+	}
+
+	doc.SaveFile(filepath.c_str());
 
 	return false;
 }

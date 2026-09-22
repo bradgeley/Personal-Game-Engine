@@ -80,3 +80,11 @@ FlavorDef const* FlavorDef::GetFlavorDef(Name name)
 	}
 	return nullptr;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+std::vector<FlavorDef> const& FlavorDef::GetAllFlavorDefs()
+{
+	return s_flavorDefs;
+}

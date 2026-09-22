@@ -181,6 +181,14 @@ int AbilityDef::GetAbilityDefID(Name name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+std::vector<AbilityDef*> const& AbilityDef::GetAllAbilityDefs()
+{
+	return s_abilityDefs;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityCooldownComponentDef::AbilityCooldownComponentDef(void const* xmlElement)
 {
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
@@ -757,6 +765,14 @@ Ability* ProjectileHitAbilityDef::MakeAbilityInstance() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AbilityDef* ProjectileHitAbilityDef::Copy() const
+{
+    return new ProjectileHitAbilityDef(*this);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void ProjectileHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
 {
     ASSERT_OR_DIE(xmlDoc != nullptr, "ProjectileHitAbilityDef::WriteToXmlDoc - xmlDoc is null.");
@@ -848,6 +864,14 @@ Ability* AoEHitAbilityDef::MakeAbilityInstance() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AbilityDef* AoEHitAbilityDef::Copy() const
+{
+    return new AoEHitAbilityDef(*this);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AoEHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
 {
     ASSERT_OR_DIE(xmlDoc != nullptr, "AoEHitAbilityDef::WriteToXmlDoc - xmlDoc is null.");
@@ -911,6 +935,14 @@ Ability* PassiveAoEAbilityDef::MakeAbilityInstance() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+AbilityDef* PassiveAoEAbilityDef::Copy() const
+{
+    return new PassiveAoEAbilityDef(*this);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void PassiveAoEAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
 {
     ASSERT_OR_DIE(xmlDoc != nullptr, "PassiveAoEAbilityDef::WriteToXmlDoc - xmlDoc is null.");
@@ -960,6 +992,14 @@ AdjacentHitAbilityDef::AdjacentHitAbilityDef(void const* xmlElement) : AbilityDe
 Ability* AdjacentHitAbilityDef::MakeAbilityInstance() const
 {
 	return new AdjacentHitAbility(*this);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityDef* AdjacentHitAbilityDef::Copy() const
+{
+    return new AdjacentHitAbilityDef(*this);
 }
 
 
@@ -1052,6 +1092,14 @@ Ability* LaserAbilityDef::MakeAbilityInstance() const
 {
     LaserAbility* ability = new LaserAbility(*this);
 	return ability;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityDef* LaserAbilityDef::Copy() const
+{
+    return new LaserAbilityDef(*this);
 }
 
 
