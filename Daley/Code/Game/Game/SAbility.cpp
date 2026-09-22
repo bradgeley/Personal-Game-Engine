@@ -14,8 +14,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SAbility::Startup()
 {
-	AbilityDef::LoadFromXML();
-
 	AddWriteAllDependencies(); // Abilities spawn things
 
 	m_runWhilePaused = true;
@@ -26,7 +24,6 @@ void SAbility::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAbility::Shutdown() const
 {
-	AbilityDef::Shutdown();
 }
 
 

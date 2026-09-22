@@ -25,6 +25,7 @@ public:
 	virtual void Render() const override;
 
 	bool MissionOver(NamedProperties& props);
+	static bool SaveAbilityDefsToXML(NamedProperties& props);
 
 public:
 

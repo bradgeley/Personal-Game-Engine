@@ -11,21 +11,20 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-const char* s_abilityDefsFilePath = "Data/Definitions/AbilityDefs.xml";
 const char* s_defaultAoEEffectName = "AoEEffect";
 std::vector<AbilityDef*> AbilityDef::s_abilityDefs;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityDef::LoadFromXML()
+void AbilityDef::LoadFromXML(Name filepath)
 {
     XmlDocument doc;
-    doc.LoadFile(s_abilityDefsFilePath);
+    doc.LoadFile(filepath.ToCStr());
     auto root = doc.RootElement();
     if (!root)
     {
-		DevConsoleUtils::LogError("AbilityDef::LoadFromXml - Could not load file: %s", s_abilityDefsFilePath);
+		DevConsoleUtils::LogError("AbilityDef::LoadFromXml - Could not load file: %s", filepath.ToCStr());
         return;
     }
 
@@ -111,6 +110,24 @@ void AbilityDef::LoadFromXML()
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityDef::SaveToXML(Name filepath)
+{
+    XmlDocument doc;
+
+	XmlElement* rootElem = doc.NewElement("AbilityDefs");
+	doc.InsertFirstChild(rootElem);
+
+	for (AbilityDef* def : s_abilityDefs)
+	{
+		def->WriteToXmlDoc(&doc, rootElem);
+	}
+
+	doc.SaveFile(filepath.ToCStr());
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AbilityDef::Shutdown()
 {
     for (AbilityDef* def : s_abilityDefs)
@@ -173,6 +190,22 @@ AbilityCooldownComponentDef::AbilityCooldownComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityCooldownComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+	ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityCooldownComponentDef::WriteToXmlDoc - xmlDoc is null.");
+	ASSERT_OR_DIE(parentElem != nullptr, "AbilityCooldownComponentDef::WriteToXmlDoc - parentElem is null.");
+
+	XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+	XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+	XmlElement* cooldownElem = doc.NewElement("Cooldown");
+	cooldownElem->SetAttribute("cooldown", m_cooldownSeconds);
+	abilityElem.InsertEndChild(cooldownElem);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityTargetingComponentDef::AbilityTargetingComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
@@ -183,11 +216,57 @@ AbilityTargetingComponentDef::AbilityTargetingComponentDef(void const* xmlElemen
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityTargetingComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityTargetingComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityTargetingComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+	XmlElement* targetingElem = doc.NewElement("Targeting");
+    if (m_minRange != 0.f)
+    {
+        targetingElem->SetAttribute("minRange", m_minRange);
+    }
+	if (m_maxRange != 0.f)
+	{
+		targetingElem->SetAttribute("maxRange", m_maxRange);
+	}
+	abilityElem.InsertEndChild(targetingElem);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityCritComponentDef::AbilityCritComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
     m_critChance = XmlUtils::ParseXmlAttribute(elem, "critChance", m_critChance);
 	m_critMulti = XmlUtils::ParseXmlAttribute(elem, "critMulti", m_critMulti);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityCritComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityCritComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityCritComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+	XmlElement* critElem = doc.NewElement("Crit");
+    if (m_critChance != 0.f)
+    {
+        critElem->SetAttribute("critChance", m_critChance);
+    }
+	if (m_critMulti != 0.f)
+	{
+		critElem->SetAttribute("critMulti", m_critMulti);
+	}
+	abilityElem.InsertEndChild(critElem);
 }
 
 
@@ -213,10 +292,49 @@ AbilityDamageComponentDef::AbilityDamageComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityDamageComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityDamageComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityDamageComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+	XmlElement* damageElem = doc.NewElement("Damage");
+    if (m_minDamage != 0.f)
+    {
+        damageElem->SetAttribute("minDamage", m_minDamage);
+    }
+	if (m_maxDamage != 0.f)
+	{
+		damageElem->SetAttribute("maxDamage", m_maxDamage);
+	}
+	abilityElem.InsertEndChild(damageElem);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityBurnComponentDef::AbilityBurnComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_burn = XmlUtils::ParseXmlAttribute(elem, "burn", m_burn);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityBurnComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityBurnComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityBurnComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+    XmlElement* burnElem = doc.NewElement("Burn");
+    burnElem->SetAttribute("burn", m_burn);
+    abilityElem.InsertEndChild(burnElem);
 }
 
 
@@ -231,6 +349,22 @@ AbilityPoisonComponentDef::AbilityPoisonComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityPoisonComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityPoisonComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityPoisonComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+    XmlElement* poisonElem = doc.NewElement("Poison");
+    poisonElem->SetAttribute("poison", m_poison);
+    abilityElem.InsertEndChild(poisonElem);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilitySlowComponentDef::AbilitySlowComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
@@ -240,10 +374,42 @@ AbilitySlowComponentDef::AbilitySlowComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilitySlowComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilitySlowComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilitySlowComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+    XmlElement* slowElem = doc.NewElement("Slow");
+    slowElem->SetAttribute("duration", m_duration);
+    abilityElem.InsertEndChild(slowElem);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityHasteComponentDef::AbilityHasteComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
     m_duration = XmlUtils::ParseXmlAttribute(elem, "duration", m_duration);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityHasteComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityHasteComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityHasteComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+    XmlElement* hasteElem = doc.NewElement("Haste");
+    hasteElem->SetAttribute("duration", m_duration);
+    abilityElem.InsertEndChild(hasteElem);
 }
 
 
@@ -263,10 +429,60 @@ AbilityChainComponentDef::AbilityChainComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityChainComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+	ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityChainComponentDef::WriteToXmlDoc - xmlDoc is null.");
+	ASSERT_OR_DIE(parentElem != nullptr, "AbilityChainComponentDef::WriteToXmlDoc - parentElem is null.");
+
+	XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+	XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+    XmlElement* chainElem = doc.NewElement("Chain");
+    if (m_chainChance != 1.f)
+    {
+		chainElem->SetAttribute("chainChance", m_chainChance);
+    }
+    if (m_chainDistance != 3.f)
+    {
+		chainElem->SetAttribute("chainDistance", m_chainDistance);
+    }
+	if (m_chainPayloadMulti != 1.f)
+	{
+		chainElem->SetAttribute("chainPayloadMulti", m_chainPayloadMulti);
+	}
+	if (m_maxChains != 0)
+	{
+		chainElem->SetAttribute("maxChains", m_maxChains);
+	}
+	abilityElem.InsertEndChild(chainElem);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityMultishotComponentDef::AbilityMultishotComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_additionalTargets = XmlUtils::ParseXmlAttribute(elem, "additionalTargets", m_additionalTargets);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityMultishotComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityMultishotComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityMultishotComponentDef::WriteToXmlDoc - parentElem is null.");
+
+	XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+	XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+    XmlElement* multishotElem = doc.NewElement("Multishot");
+    if (m_additionalTargets != 0)
+    {
+		multishotElem->SetAttribute("additionalTargets", m_additionalTargets);
+	}
+	abilityElem.InsertEndChild(multishotElem);
 }
 
 
@@ -299,6 +515,47 @@ AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
 	if (XmlElement const* renderElem = elem.FirstChildElement("Render"))
 	{
 		m_renderDef.emplace(renderElem);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityAoEHitComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityAoEHitComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityAoEHitComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+	XmlElement* aoeHitElem = doc.NewElement("AoEHit");
+	aoeHitElem->SetAttribute("radius", m_radius);
+	abilityElem.InsertEndChild(aoeHitElem);
+
+	if (m_damageOnHit.has_value())
+	{
+		m_damageOnHit->WriteToXmlDoc(xmlDoc, aoeHitElem);
+	}
+	if (m_poisonOnHit.has_value())
+	{
+		m_poisonOnHit->WriteToXmlDoc(xmlDoc, aoeHitElem);
+	}
+	if (m_burnOnHit.has_value())
+	{
+		m_burnOnHit->WriteToXmlDoc(xmlDoc, aoeHitElem);
+	}
+	if (m_slowOnHit.has_value())
+	{
+		m_slowOnHit->WriteToXmlDoc(xmlDoc, aoeHitElem);
+	}
+	if (m_hasteOnHit.has_value())
+	{
+		m_hasteOnHit->WriteToXmlDoc(xmlDoc, aoeHitElem);
+	}   
+	if (m_renderDef.has_value())
+	{
+		m_renderDef->WriteToXmlDoc(xmlDoc, aoeHitElem);
 	}
 }
 
@@ -341,6 +598,49 @@ AbilityAoEEffectComponentDef::AbilityAoEEffectComponentDef(void const* xmlElemen
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AbilityAoEEffectComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityAoEEffectComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityAoEEffectComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+	XmlElement* aoeEffectElem = doc.NewElement("AoEEffect");
+	aoeEffectElem->SetAttribute("name", m_aoeEffectDefName.ToCStr());
+	aoeEffectElem->SetAttribute("radius", m_radius);
+	aoeEffectElem->SetAttribute("duration", m_durationSeconds);
+    abilityElem.InsertEndChild(aoeEffectElem);
+
+	if (m_damagePerSecond.has_value())
+	{
+		m_damagePerSecond->WriteToXmlDoc(xmlDoc, aoeEffectElem);
+	}
+	if (m_poisonPerSecond.has_value())
+	{
+		m_poisonPerSecond->WriteToXmlDoc(xmlDoc, aoeEffectElem);
+	}
+	if (m_burnPerSecond.has_value())
+	{
+		m_burnPerSecond->WriteToXmlDoc(xmlDoc, aoeEffectElem);
+	}
+	if (m_slowPerSecond.has_value())
+	{
+		m_slowPerSecond->WriteToXmlDoc(xmlDoc, aoeEffectElem);
+	}
+	if (m_hastePerSecond.has_value())
+	{
+		m_hastePerSecond->WriteToXmlDoc(xmlDoc, aoeEffectElem);
+	}
+	if (m_renderDef.has_value())
+	{
+		m_renderDef->WriteToXmlDoc(xmlDoc, aoeEffectElem);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityOnHitComponentDef::AbilityOnHitComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
@@ -368,6 +668,46 @@ AbilityOnHitComponentDef::AbilityOnHitComponentDef(void const* xmlElement)
     {
         m_slowOnHit.emplace(slowElem);
     }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityOnHitComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityOnHitComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityOnHitComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+    XmlElement* onHitElem = doc.NewElement("OnHit");
+    abilityElem.InsertEndChild(onHitElem);
+
+    if (m_damageOnHit.has_value())
+    {
+        m_damageOnHit->WriteToXmlDoc(xmlDoc, onHitElem);
+    }
+    if (m_poisonOnHit.has_value())
+    {
+        m_poisonOnHit->WriteToXmlDoc(xmlDoc, onHitElem);
+    }
+    if (m_burnOnHit.has_value())
+    {
+        m_burnOnHit->WriteToXmlDoc(xmlDoc, onHitElem);
+    }
+    if (m_slowOnHit.has_value())
+    {
+        m_slowOnHit->WriteToXmlDoc(xmlDoc, onHitElem);
+    }
+	if (m_aoeHitOnHit.has_value())
+	{
+		m_aoeHitOnHit->WriteToXmlDoc(xmlDoc, onHitElem);
+	}
+	if (m_aoeEffectOnHit.has_value())
+	{
+		m_aoeEffectOnHit->WriteToXmlDoc(xmlDoc, onHitElem);
+	}
 }
 
 
@@ -412,6 +752,50 @@ Ability* ProjectileHitAbilityDef::MakeAbilityInstance() const
 {
     ProjectileHitAbility* ability = new ProjectileHitAbility(*this);
     return ability;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void ProjectileHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "ProjectileHitAbilityDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(rootElement != nullptr, "ProjectileHitAbilityDef::WriteToXmlDoc - rootElement is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& rootElem = *static_cast<XmlElement*>(rootElement);
+
+    // Ability
+	XmlElement* parentElem = doc.NewElement("ProjectileHitAbilityDef");
+	parentElem->SetAttribute("name", m_name.ToCStr());
+	parentElem->SetAttribute("projectileDef", m_projectileDefName.ToCStr());
+	parentElem->SetAttribute("projSpeed", m_projSpeed);
+    rootElem.InsertEndChild(parentElem);
+
+	if (m_cooldownDef.has_value())
+	{
+		m_cooldownDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_targetingDef.has_value())
+	{
+		m_targetingDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_critDef.has_value())
+	{
+		m_critDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_chainDef.has_value())
+	{
+		m_chainDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_multishotDef.has_value())
+	{
+		m_multishotDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_onHitDef.has_value())
+	{
+		m_onHitDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
 }
 
 
@@ -464,6 +848,44 @@ Ability* AoEHitAbilityDef::MakeAbilityInstance() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AoEHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AoEHitAbilityDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(rootElement != nullptr, "AoEHitAbilityDef::WriteToXmlDoc - rootElement is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& rootElem = *static_cast<XmlElement*>(rootElement);
+
+	// Ability
+	XmlElement* parentElem = doc.NewElement("AoEHitAbilityDef");
+	parentElem->SetAttribute("name", m_name.ToCStr());
+	rootElem.InsertEndChild(parentElem);
+
+	if (m_cooldownDef.has_value())
+	{
+		m_cooldownDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_targetingDef.has_value())
+	{
+		m_targetingDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_critDef.has_value())
+	{
+		m_critDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_aoeHitDef.has_value())
+	{
+		m_aoeHitDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_aoeEffectDef.has_value())
+	{
+		m_aoeEffectDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 PassiveAoEAbilityDef::PassiveAoEAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
@@ -484,6 +906,32 @@ Ability* PassiveAoEAbilityDef::MakeAbilityInstance() const
 {
     PassiveAoEAbility* ability = new PassiveAoEAbility(*this);
 	return ability;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PassiveAoEAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "PassiveAoEAbilityDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(rootElement != nullptr, "PassiveAoEAbilityDef::WriteToXmlDoc - rootElement is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& rootElem = *static_cast<XmlElement*>(rootElement);
+
+	// Ability
+	XmlElement* parentElem = doc.NewElement("PassiveAoEAbilityDef");
+	parentElem->SetAttribute("name", m_name.ToCStr());
+	rootElem.InsertEndChild(parentElem);
+
+	if (m_targetingDef.has_value())
+	{
+		m_targetingDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_aoeEffectDef.has_value())
+	{
+		m_aoeEffectDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
 }
 
 
@@ -517,12 +965,56 @@ Ability* AdjacentHitAbilityDef::MakeAbilityInstance() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void AdjacentHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AdjacentHitAbilityDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(rootElement != nullptr, "AdjacentHitAbilityDef::WriteToXmlDoc - rootElement is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& rootElem = *static_cast<XmlElement*>(rootElement);
+
+	// Ability
+	XmlElement* parentElem = doc.NewElement("AdjacentHitAbilityDef");
+	parentElem->SetAttribute("name", m_name.ToCStr());
+	rootElem.InsertEndChild(parentElem);
+
+	if (m_cooldownDef.has_value())
+	{
+		m_cooldownDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_hasteOnHit.has_value())
+	{
+		m_hasteOnHit->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 AbilityRenderComponentDef::AbilityRenderComponentDef(void const* xmlElement)
 {
     XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_tint = XmlUtils::ParseXmlAttribute(elem, "tint", m_tint);
 	m_depth = XmlUtils::ParseXmlAttribute(elem, "depth", StaticGameSettings::s_defaultCollisionEffectDepth);
 	m_renderDuration = XmlUtils::ParseXmlAttribute(elem, "duration", m_renderDuration);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityRenderComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityRenderComponentDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(parentElem != nullptr, "AbilityRenderComponentDef::WriteToXmlDoc - parentElem is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
+
+    XmlElement* renderElem = doc.NewElement("Render");
+    renderElem->SetAttribute("tint", StringUtils::Rgba8ToString(m_tint).c_str());
+    renderElem->SetAttribute("depth", m_depth);
+    renderElem->SetAttribute("duration", m_renderDuration);
+    abilityElem.InsertEndChild(renderElem);
 }
 
 
@@ -560,4 +1052,42 @@ Ability* LaserAbilityDef::MakeAbilityInstance() const
 {
     LaserAbility* ability = new LaserAbility(*this);
 	return ability;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void LaserAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
+{
+    ASSERT_OR_DIE(xmlDoc != nullptr, "LaserAbilityDef::WriteToXmlDoc - xmlDoc is null.");
+    ASSERT_OR_DIE(rootElement != nullptr, "LaserAbilityDef::WriteToXmlDoc - rootElement is null.");
+
+    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
+    XmlElement& rootElem = *static_cast<XmlElement*>(rootElement);
+
+	// Ability
+	XmlElement* parentElem = doc.NewElement("LaserAbilityDef");
+	parentElem->SetAttribute("name", m_name.ToCStr());
+	rootElem.InsertEndChild(parentElem);
+
+	if (m_targetingDef.has_value())
+	{
+		m_targetingDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_onHitDef.has_value())
+	{
+		m_onHitDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_renderDef.has_value())
+	{
+		m_renderDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_chainDef.has_value())
+	{
+		m_chainDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
+	if (m_multishotDef.has_value())
+	{
+		m_multishotDef->WriteToXmlDoc(xmlDoc, parentElem);
+	}
 }

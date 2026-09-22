@@ -16,18 +16,9 @@ class Ability;
 struct AbilityCooldownComponentDef
 {
 	explicit AbilityCooldownComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_cooldownSeconds = 0.f;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-enum class AbilityTargetFlags : uint8_t
-{
-	None,
-	Enemy	= 1 << 0,
-	Tower	= 1 << 1,
 };
 
 
@@ -36,6 +27,7 @@ enum class AbilityTargetFlags : uint8_t
 struct AbilityTargetingComponentDef
 {
 	explicit AbilityTargetingComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_minRange = 0.f;
 	float m_maxRange = 0.f;
@@ -47,6 +39,7 @@ struct AbilityTargetingComponentDef
 struct AbilityCritComponentDef
 {
 	explicit AbilityCritComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_critChance = 0.f;
 	float m_critMulti = 0.f;
@@ -58,6 +51,7 @@ struct AbilityCritComponentDef
 struct AbilityDamageComponentDef
 {
 	explicit AbilityDamageComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_minDamage = 0.f;
 	float m_maxDamage = 0.f;
@@ -69,6 +63,7 @@ struct AbilityDamageComponentDef
 struct AbilityBurnComponentDef
 {
 	explicit AbilityBurnComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_burn = 0.f;
 };
@@ -79,6 +74,7 @@ struct AbilityBurnComponentDef
 struct AbilityPoisonComponentDef
 {
 	explicit AbilityPoisonComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_poison = 0.f;
 };
@@ -89,6 +85,7 @@ struct AbilityPoisonComponentDef
 struct AbilitySlowComponentDef
 {
 	explicit AbilitySlowComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_duration = 0.f;
 };
@@ -99,6 +96,7 @@ struct AbilitySlowComponentDef
 struct AbilityHasteComponentDef
 {
 	explicit AbilityHasteComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_duration = 0.f;
 };
@@ -109,6 +107,7 @@ struct AbilityHasteComponentDef
 struct AbilityChainComponentDef
 {
 	explicit AbilityChainComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float	m_chainChance = 1.f;
 	float	m_chainDistance = 3.f;
@@ -122,8 +121,9 @@ struct AbilityChainComponentDef
 struct AbilityMultishotComponentDef
 {
 	explicit AbilityMultishotComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
-	int	m_additionalTargets = 1;
+	int	m_additionalTargets = 0;
 };
 
 
@@ -132,6 +132,7 @@ struct AbilityMultishotComponentDef
 struct AbilityRenderComponentDef
 {
 	explicit AbilityRenderComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	Rgba8 m_tint = Rgba8::White;
 	float m_depth = 0.f;
@@ -144,6 +145,7 @@ struct AbilityRenderComponentDef
 struct AbilityAoEHitComponentDef
 {
 	explicit AbilityAoEHitComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_radius = 0.f;
 	std::optional<AbilityDamageComponentDef>	m_damageOnHit;
@@ -161,6 +163,7 @@ struct AbilityAoEHitComponentDef
 struct AbilityAoEEffectComponentDef
 {
 	explicit AbilityAoEEffectComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	Name m_aoeEffectDefName	= Name::Invalid;
 	float m_radius = 0.f;
@@ -181,13 +184,14 @@ struct AbilityAoEEffectComponentDef
 struct AbilityOnHitComponentDef
 {
 	explicit AbilityOnHitComponentDef(void const* xmlElement);
+	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	std::optional<AbilityDamageComponentDef>	m_damageOnHit;
 	std::optional<AbilityPoisonComponentDef>	m_poisonOnHit;
 	std::optional<AbilityBurnComponentDef>		m_burnOnHit;
+	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
 	std::optional<AbilityAoEHitComponentDef>	m_aoeHitOnHit;
 	std::optional<AbilityAoEEffectComponentDef>	m_aoeEffectOnHit;
-	std::optional<AbilitySlowComponentDef>		m_slowOnHit;
 };
 
 
@@ -200,10 +204,12 @@ public:
 	virtual ~AbilityDef() = default;
 	AbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const = 0;
+	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) = 0;
 
 public:
 
-	static void LoadFromXML();
+	static void LoadFromXML(Name filepath);
+	static void SaveToXML(Name filepath);
 	static void Shutdown();
 	static AbilityDef const* GetAbilityDef(uint8_t id);
 	static AbilityDef const* GetAbilityDef(Name name);
@@ -227,6 +233,7 @@ public:
 
 	explicit ProjectileHitAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
 
@@ -236,9 +243,9 @@ public:
 	std::optional<AbilityCooldownComponentDef>		m_cooldownDef;
 	std::optional<AbilityTargetingComponentDef>		m_targetingDef;
 	std::optional<AbilityCritComponentDef>			m_critDef;
-	std::optional<AbilityOnHitComponentDef>			m_onHitDef;
 	std::optional<AbilityChainComponentDef>			m_chainDef;
 	std::optional<AbilityMultishotComponentDef>		m_multishotDef;
+	std::optional<AbilityOnHitComponentDef>			m_onHitDef;
 };
 
 
@@ -250,6 +257,7 @@ public:
 
 	explicit AoEHitAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
 
@@ -269,6 +277,7 @@ public:
 
 	explicit PassiveAoEAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
 
@@ -285,6 +294,7 @@ public:
 
 	explicit AdjacentHitAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
 
@@ -301,6 +311,7 @@ public:
 
 	explicit LaserAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
+	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
 

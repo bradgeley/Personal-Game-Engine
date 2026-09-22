@@ -24,7 +24,7 @@ public:
 	bool IsPaused() const;
 	void TogglePaused();
 	void Pop();
-	void RequestStateChange(Name toState);
+	void RequestStateChange(Name toState, bool wipe);
 
 	bool TimeDilation(NamedProperties& args);
 	bool TogglePausedEvent(NamedProperties& args);

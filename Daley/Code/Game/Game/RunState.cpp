@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "RunState.h"
+#include "AbilityDef.h"
 #include "BiomeDef.h"
 #include "FlavorDef.h"
 #include "TileDef.h"
@@ -9,6 +10,7 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/NamedProperties.h"
+#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Renderer/Renderer.h"
@@ -21,6 +23,8 @@
 
 //----------------------------------------------------------------------------------------------------------------------
 static constexpr char const* MAIN_MENU_FONT_NAME = "Data/Fonts/Gypsy.fnt";
+const char* s_abilityDefsFilePath = "Data/Definitions/AbilityDefs.xml";
+const char* s_flavorCombinationAbilityDefsFilePath = "Data/Definitions/FlavorCombinationAbilityDefs.xml";
 
 
 
@@ -76,6 +80,8 @@ void RunState::Enter(NamedProperties const& props)
 {
 	GameState::Enter(props);
 
+	AbilityDef::LoadFromXML(s_abilityDefsFilePath);
+	AbilityDef::LoadFromXML(s_flavorCombinationAbilityDefsFilePath);
 	FlavorDef::LoadFromXML();
 	TileDef::LoadFromXML();
 	BiomeDef::LoadFromXML();
@@ -84,6 +90,7 @@ void RunState::Enter(NamedProperties const& props)
 	Name mode = props.Get<Name>("mode", Name::Invalid);
 
 	g_eventSystem->SubscribeMethod("MissionOver", this, &RunState::MissionOver);
+	DevConsoleUtils::AddDevConsoleCommand("SaveAbilityDefs", &RunState::SaveAbilityDefsToXML, "filename", DevConsoleArgType::Name);
 
 	m_untexturedVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 	m_textVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -128,8 +135,10 @@ void RunState::Exit(NamedProperties const& props)
 	BiomeDef::Shutdown();
 	TileDef::Shutdown();
 	FlavorDef::Shutdown();
+	AbilityDef::Shutdown();
 
 	g_eventSystem->UnsubscribeMethod("MissionOver", this, &RunState::MissionOver);
+	DevConsoleUtils::RemoveDevConsoleCommand("SaveAbilityDefs", &RunState::SaveAbilityDefsToXML);
 
 	g_renderer->ReleaseVertexBuffer(m_untexturedVerts);
 	g_renderer->ReleaseVertexBuffer(m_textVerts);
@@ -211,6 +220,19 @@ bool RunState::MissionOver(NamedProperties&)
 			g_eventSystem->FireEvent("PushState", transitionProps);
 		}
 	}
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool RunState::SaveAbilityDefsToXML(NamedProperties& props)
+{
+	Name filename = props.Get<Name>("filename", Name("AbilitiesSaved"));
+
+	std::string filepath = "Data/Definitions/" + filename.ToString() + ".xml";
+	AbilityDef::SaveToXML(filepath);
 
 	return false;
 }

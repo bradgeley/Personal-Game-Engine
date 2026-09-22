@@ -60,10 +60,11 @@ void GameState::Pop()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void GameState::RequestStateChange(Name toState)
+void GameState::RequestStateChange(Name toState, bool wipe)
 {
     NamedProperties props;
     props.Set<Name>("state", toState);
+    props.Set<bool>("wipe", wipe);
     g_eventSystem->FireEvent("ChangeState", props);
 }
 

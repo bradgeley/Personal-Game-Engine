@@ -189,7 +189,7 @@ void SInput::Run(SystemContext const& context) const
 			}
 			else
 			{
-				gameState.RequestStateChange("MainMenu");
+				gameState.RequestStateChange("MainMenu", true);
 			}
 		}
 	}
