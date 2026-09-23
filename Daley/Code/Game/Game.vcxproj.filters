@@ -157,9 +157,6 @@
     <ClCompile Include="Game\SWaveSpawner.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Ability.cpp">
-      <Filter>Game\Gameplay</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SAbility.cpp">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClCompile>
@@ -324,6 +321,9 @@
     </ClCompile>
     <ClCompile Include="Game\ProjectileHitAbilityDef.cpp">
       <Filter>Definitions\AbilityDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Ability.cpp">
+      <Filter>Game\Abilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -531,9 +531,6 @@
     <ClInclude Include="Game\SWaveSpawner.h">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Ability.h">
-      <Filter>Game\Gameplay</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SAbility.h">
       <Filter>ECS\Systems\Gameplay</Filter>
     </ClInclude>
@@ -720,6 +717,9 @@
     <ClInclude Include="Game\ProjectileHitAbilityDef.h">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Ability.h">
+      <Filter>Game\Abilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -815,6 +815,9 @@
     <Filter Include="Definitions\AbilityDefs">
       <UniqueIdentifier>{a9886b05-a87d-41dc-9e2d-db6e555588c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Abilities">
+      <UniqueIdentifier>{a288bd6c-111d-444a-978f-874a27145589}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml">
@@ -887,6 +890,9 @@
       <Filter>Data\Definitions</Filter>
     </Xml>
     <Xml Include="..\..\Run\Data\Definitions\FlavorDefs.xml">
+      <Filter>Data\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\FlavorCombinationAbilityDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>

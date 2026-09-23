@@ -117,6 +117,9 @@ namespace StaticGameSettings
 	static constexpr int   s_numWavesIncreasePerMission		= 2;
 	static constexpr float s_enemyHealthIncreasePerMission	= 0.1f;
 
+	static constexpr float s_maxTowerAttacksPerSecond		= 10.f;
+	static constexpr float s_minTowerAttackCooldown			= 1.f / s_maxTowerAttacksPerSecond;
+
 	static constexpr float s_minTimeDilation				= 0.125f / 16.f;
 	static constexpr float s_maxTimeDilation				= 32.f;
 

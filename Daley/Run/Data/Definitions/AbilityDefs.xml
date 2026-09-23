@@ -86,15 +86,26 @@
   <!-- ==================================================================================================================== -->
   <!-- Attacks -->
 
+  <AoEHitAbilityDef name="CoconutAttack">
+    <Cooldown cooldown="5"></Cooldown>
+    <Targeting maxRange="8"></Targeting>
+    <Crit critChance="0.1" critMulti="0.5"></Crit>
+    <AoEHit radius="6">
+      <Damage minDamage="400" maxDamage="800"></Damage>
+      <Slow duration="2.5"></Slow>
+      <Render tint="255,255,255,50" depth="0.04" duration="0.2"></Render>
+    </AoEHit>
+  </AoEHitAbilityDef>
+
   <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="TowerProj" projSpeed="50">
     <Cooldown cooldown="0.33"></Cooldown>
     <Targeting maxRange="15"></Targeting>
     <Crit critChance="0.1" critMulti=".5"></Crit>
     <OnHit>
       <Damage minDamage="1" maxDamage="75"></Damage>
-	  <AoEHit radius="0.5">
-		  <Damage minDamage="1" maxDamage="15"></Damage>
-	  </AoEHit>
+	    <AoEHit radius="0.5">
+		    <Damage minDamage="1" maxDamage="15"></Damage>
+	    </AoEHit>
     </OnHit>
   </ProjectileHitAbilityDef>
 
@@ -161,17 +172,6 @@
       <Render tint="173,235,179,25"></Render>uu
     </AoEEffect>
   </PassiveAoEAbilityDef>
-
-  <AoEHitAbilityDef name="CoconutAttack">
-    <Cooldown cooldown="5"></Cooldown>
-    <Targeting maxRange="8"></Targeting>
-    <Crit critChance="0.1" critMulti="0.5"></Crit>
-    <AoEHit radius="6">
-      <Damage minDamage="400" maxDamage="800"></Damage>
-      <Slow duration="1"></Slow>
-      <Render tint="255,255,255,50" depth="0.04" duration="0.2"></Render>
-    </AoEHit>
-  </AoEHitAbilityDef>
 
   <LaserAbilityDef name="UbeAttack">
     <Targeting maxRange="8"></Targeting>

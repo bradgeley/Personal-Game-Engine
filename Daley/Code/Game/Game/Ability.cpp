@@ -1098,11 +1098,8 @@ void ProjectileHitAbility::Update(SystemContext const& context, Vec2 const& loca
     float deltaSeconds = context.m_deltaSeconds * timeDilation;
     m_cooldownComp.m_accumulatedTime += deltaSeconds;
 
-    constexpr float maxAttacksPerSecond = 1000.f;
-    constexpr float minTimeBetweenAttacks = 1.f / maxAttacksPerSecond;
-
     float timeBetweenAttacks = m_cooldownComp.GetCooldown();
-    timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
+    timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, StaticGameSettings::s_minTowerAttackCooldown);
 
     if (m_cooldownComp.m_accumulatedTime <= timeBetweenAttacks)
     {
@@ -1349,11 +1346,8 @@ void AoEHitAbility::Update(SystemContext const& context, Vec2 const& location, f
 	float deltaSeconds = context.m_deltaSeconds * timeDilation;
     m_cooldownComp.m_accumulatedTime += deltaSeconds;
 
-    constexpr float maxAttacksPerSecond = 1000.f;
-    constexpr float minTimeBetweenAttacks = 1.f / maxAttacksPerSecond;
-
     float timeBetweenAttacks = m_cooldownComp.GetCooldown();
-    timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
+    timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, StaticGameSettings::s_minTowerAttackCooldown);
 
     if (m_aoeHitComp.m_renderComp.has_value())
     {
@@ -1810,11 +1804,8 @@ void AdjacentHitAbility::Update(SystemContext const& context, Vec2 const&, float
     float deltaSeconds = context.m_deltaSeconds * timeDilation;
     m_cooldownComp.m_accumulatedTime += deltaSeconds;
 
-    constexpr float maxAttacksPerSecond = 1000.f;
-    constexpr float minTimeBetweenAttacks = 1.f / maxAttacksPerSecond;
-
     float timeBetweenAttacks = m_cooldownComp.GetCooldown();
-    timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, minTimeBetweenAttacks);
+    timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, StaticGameSettings::s_minTowerAttackCooldown);
 
     if (m_cooldownComp.m_accumulatedTime <= timeBetweenAttacks)
     {

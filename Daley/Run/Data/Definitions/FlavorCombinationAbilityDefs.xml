@@ -289,65 +289,65 @@
     </ProjectileHitAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Vanilla_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Chocolate_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Strawberry_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Pistachio_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coconut_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Ube_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Mint_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coffee_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Rainbow_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <ProjectileHitAbilityDef name="Pistachio_Vanilla_g" projectileDef="TowerProj" projSpeed="30">
@@ -441,32 +441,33 @@
         </OnHit>
     </ProjectileHitAbilityDef>
     <AoEHitAbilityDef name="Coconut_Vanilla_g">
-        <Cooldown cooldown="5"/>
-        <Targeting maxRange="8"/>
+        <Cooldown cooldown="2.665"/>
+        <Targeting maxRange="6"/>
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
-            <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Damage minDamage="318.15427" maxDamage="550.94873"/>
+            <Slow duration="0.66624999"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
     <AoEHitAbilityDef name="Coconut_Chocolate_g">
-        <Cooldown cooldown="5"/>
-        <Targeting maxRange="8"/>
+        <Cooldown cooldown="3.5"/>
+        <Targeting maxRange="6"/>
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
-            <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Damage minDamage="470.25861" maxDamage="668.49139"/>
+            <Slow duration="0.875"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
     <AoEHitAbilityDef name="Coconut_Strawberry_g">
-        <Cooldown cooldown="5"/>
-        <Targeting maxRange="8"/>
-        <Crit critChance="0.1" critMulti="0.5"/>
+        <Cooldown cooldown="3.25"/>
+        <Targeting maxRange="6"/>
+        <Crit critChance="0.050000001" critMulti="0.25"/>
         <AoEHit radius="6">
-            <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Damage minDamage="130" maxDamage="260"/>
+            <Burn burn="275"/>
+            <Slow duration="0.8125"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -476,17 +477,18 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
     <AoEHitAbilityDef name="Coconut_Pistachio_g">
-        <Cooldown cooldown="5"/>
-        <Targeting maxRange="8"/>
-        <Crit critChance="0.1" critMulti="0.5"/>
+        <Cooldown cooldown="3.5"/>
+        <Targeting maxRange="6"/>
+        <Crit critChance="0.050000001" critMulti="0.25"/>
         <AoEHit radius="6">
-            <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Damage minDamage="140" maxDamage="280"/>
+            <Poison poison="21.25"/>
+            <Slow duration="0.875"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -496,7 +498,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -506,7 +508,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -516,19 +518,27 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
     <AoEHitAbilityDef name="Coconut_Rainbow_g">
-        <Cooldown cooldown="5"/>
-        <Targeting maxRange="8"/>
-        <Crit critChance="0.1" critMulti="0.5"/>
+        <Cooldown cooldown="3.5"/>
+        <Targeting maxRange="6"/>
+        <Crit critChance="0.30000001" critMulti="0.25"/>
         <AoEHit radius="6">
-            <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Damage minDamage="146.875" maxDamage="291.25"/>
+            <Poison poison="11.25"/>
+            <Burn burn="11.25"/>
+            <Slow duration="4.25"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
+        <AoEEffect name="AoEEffect" radius="1" duration="0.5">
+            <Damage minDamage="8.75" maxDamage="8.75"/>
+            <Poison poison="8.75"/>
+            <Burn burn="8.75"/>
+            <Slow duration="0.875"/>
+        </AoEEffect>
     </AoEHitAbilityDef>
     <LaserAbilityDef name="Ube_Vanilla_g">
         <Targeting maxRange="8"/>
@@ -536,8 +546,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Chocolate_g">
@@ -546,8 +557,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Strawberry_g">
@@ -556,8 +568,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_OrangeSorbet_g">
@@ -566,8 +579,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Pistachio_g">
@@ -576,8 +590,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coconut_g">
@@ -586,8 +601,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Mint_g">
@@ -596,8 +612,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coffee_g">
@@ -606,8 +623,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Rainbow_g">
@@ -616,80 +634,81 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Vanilla_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Chocolate_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Strawberry_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_OrangeSorbet_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Pistachio_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coconut_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Ube_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coffee_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Rainbow_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <AdjacentHitAbilityDef name="Coffee_Vanilla_g">
@@ -750,7 +769,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -776,7 +795,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -802,7 +821,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -828,7 +847,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -854,7 +873,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -880,7 +899,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -906,7 +925,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -932,7 +951,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -958,7 +977,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -2116,254 +2135,254 @@
     </ProjectileHitAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Chocolate_Vanilla_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Strawberry_Vanilla_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Pistachio_Vanilla_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coconut_Vanilla_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Ube_Vanilla_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Mint_Vanilla_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coffee_Vanilla_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Rainbow_Vanilla_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Chocolate_Strawberry_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Chocolate_Pistachio_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Chocolate_Coconut_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Chocolate_Ube_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Chocolate_Mint_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Chocolate_Coffee_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Chocolate_Rainbow_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Pistachio_Strawberry_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coconut_Strawberry_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Strawberry_Ube_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Mint_Strawberry_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coffee_Strawberry_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Rainbow_Strawberry_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coconut_Pistachio_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Pistachio_Ube_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Mint_Pistachio_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coffee_Pistachio_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Pistachio_Rainbow_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coconut_Ube_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coconut_Mint_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coconut_Coffee_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coconut_Rainbow_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Mint_Ube_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coffee_Ube_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Rainbow_Ube_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coffee_Mint_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Mint_Rainbow_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="OrangeSorbet_Coffee_Rainbow_g">
         <Targeting maxRange="6"/>
-        <AoEEffect name="AoEEffect" radius="6" duration="-1">
+        <AoEEffect name="AoEEffect" radius="6">
             <Burn burn="25"/>
-            <Render tint="255,165,0,25" depth="0.94999999" duration="-1"/>
+            <Render tint="255,165,0,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <ProjectileHitAbilityDef name="Pistachio_Chocolate_Vanilla_g" projectileDef="TowerProj" projSpeed="30">
@@ -2732,7 +2751,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2742,7 +2761,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2752,7 +2771,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2762,7 +2781,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2772,7 +2791,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2782,7 +2801,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2792,7 +2811,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2802,7 +2821,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2812,7 +2831,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2822,7 +2841,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2832,7 +2851,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2842,7 +2861,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2852,7 +2871,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2862,7 +2881,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2872,7 +2891,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2882,7 +2901,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2892,7 +2911,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2902,7 +2921,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2912,7 +2931,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2922,7 +2941,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2932,7 +2951,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2942,7 +2961,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2952,7 +2971,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2962,7 +2981,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2972,7 +2991,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2982,7 +3001,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -2992,7 +3011,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3002,7 +3021,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3012,7 +3031,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3022,7 +3041,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3032,7 +3051,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3042,7 +3061,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3052,7 +3071,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3062,7 +3081,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3072,7 +3091,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3082,7 +3101,7 @@
         <Crit critChance="0.1" critMulti="0.5"/>
         <AoEHit radius="6">
             <Damage minDamage="400" maxDamage="800"/>
-            <Slow duration="1"/>
+            <Slow duration="2.5"/>
             <Render tint="255,255,255,50" depth="0.039999999" duration="0.2"/>
         </AoEHit>
     </AoEHitAbilityDef>
@@ -3092,8 +3111,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Strawberry_Vanilla_g">
@@ -3102,8 +3122,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_OrangeSorbet_Vanilla_g">
@@ -3112,8 +3133,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Pistachio_Vanilla_g">
@@ -3122,8 +3144,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coconut_Vanilla_g">
@@ -3132,8 +3155,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Mint_Vanilla_g">
@@ -3142,8 +3166,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coffee_Vanilla_g">
@@ -3152,8 +3177,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Rainbow_Vanilla_g">
@@ -3162,8 +3188,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Chocolate_Strawberry_g">
@@ -3172,8 +3199,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Chocolate_OrangeSorbet_g">
@@ -3182,8 +3210,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Chocolate_Pistachio_g">
@@ -3192,8 +3221,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Chocolate_Coconut_g">
@@ -3202,8 +3232,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Chocolate_Mint_g">
@@ -3212,8 +3243,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Chocolate_Coffee_g">
@@ -3222,8 +3254,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Chocolate_Rainbow_g">
@@ -3232,8 +3265,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_OrangeSorbet_Strawberry_g">
@@ -3242,8 +3276,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Pistachio_Strawberry_g">
@@ -3252,8 +3287,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coconut_Strawberry_g">
@@ -3262,8 +3298,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Mint_Strawberry_g">
@@ -3272,8 +3309,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coffee_Strawberry_g">
@@ -3282,8 +3320,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Rainbow_Strawberry_g">
@@ -3292,8 +3331,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_OrangeSorbet_Pistachio_g">
@@ -3302,8 +3342,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coconut_OrangeSorbet_g">
@@ -3312,8 +3353,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Mint_OrangeSorbet_g">
@@ -3322,8 +3364,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coffee_OrangeSorbet_g">
@@ -3332,8 +3375,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_OrangeSorbet_Rainbow_g">
@@ -3342,8 +3386,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coconut_Pistachio_g">
@@ -3352,8 +3397,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Mint_Pistachio_g">
@@ -3362,8 +3408,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coffee_Pistachio_g">
@@ -3372,8 +3419,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Pistachio_Rainbow_g">
@@ -3382,8 +3430,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coconut_Mint_g">
@@ -3392,8 +3441,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coconut_Coffee_g">
@@ -3402,8 +3452,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coconut_Rainbow_g">
@@ -3412,8 +3463,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coffee_Mint_g">
@@ -3422,8 +3474,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Mint_Rainbow_g">
@@ -3432,8 +3485,9 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <LaserAbilityDef name="Ube_Coffee_Rainbow_g">
@@ -3442,296 +3496,297 @@
             <Damage minDamage="100" maxDamage="100"/>
             <Poison poison="10"/>
             <Burn burn="50"/>
+            <AoEHit/>
         </OnHit>
-        <Render tint="174,153,245,100" depth="0.050000001" duration="-1"/>
+        <Render tint="174,153,245,100" depth="0.050000001"/>
         <Chain chainDistance="2" chainPayloadMulti="0.5" maxChains="1"/>
     </LaserAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Chocolate_Vanilla_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Strawberry_Vanilla_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_OrangeSorbet_Vanilla_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Pistachio_Vanilla_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coconut_Vanilla_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Ube_Vanilla_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coffee_Vanilla_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Rainbow_Vanilla_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Chocolate_Strawberry_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Chocolate_OrangeSorbet_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Chocolate_Pistachio_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Chocolate_Coconut_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Chocolate_Ube_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Chocolate_Coffee_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Chocolate_Rainbow_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_OrangeSorbet_Strawberry_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Pistachio_Strawberry_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coconut_Strawberry_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Strawberry_Ube_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coffee_Strawberry_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Rainbow_Strawberry_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_OrangeSorbet_Pistachio_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coconut_OrangeSorbet_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_OrangeSorbet_Ube_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coffee_OrangeSorbet_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_OrangeSorbet_Rainbow_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coconut_Pistachio_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Pistachio_Ube_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coffee_Pistachio_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Pistachio_Rainbow_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coconut_Ube_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coconut_Coffee_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coconut_Rainbow_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coffee_Ube_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Rainbow_Ube_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <PassiveAoEAbilityDef name="Mint_Coffee_Rainbow_g">
         <Targeting maxRange="5"/>
-        <AoEEffect name="AoEEffect" radius="5" duration="-1">
+        <AoEEffect name="AoEEffect" radius="5">
             <Poison poison="0.25"/>
             <Slow duration="1"/>
-            <Render tint="173,235,179,25" depth="0.94999999" duration="-1"/>
+            <Render tint="173,235,179,25" depth="0.94999999"/>
         </AoEEffect>
     </PassiveAoEAbilityDef>
     <AdjacentHitAbilityDef name="Coffee_Chocolate_Vanilla_g">
@@ -3900,7 +3955,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -3926,7 +3981,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -3952,7 +4007,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -3978,7 +4033,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4004,7 +4059,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4030,7 +4085,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4056,7 +4111,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4082,7 +4137,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4108,7 +4163,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4134,7 +4189,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4160,7 +4215,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4186,7 +4241,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4212,7 +4267,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4238,7 +4293,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4264,7 +4319,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4290,7 +4345,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4316,7 +4371,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4342,7 +4397,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4368,7 +4423,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4394,7 +4449,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4420,7 +4475,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4446,7 +4501,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4472,7 +4527,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4498,7 +4553,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4524,7 +4579,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4550,7 +4605,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4576,7 +4631,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4602,7 +4657,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4628,7 +4683,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4654,7 +4709,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4680,7 +4735,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4706,7 +4761,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4732,7 +4787,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4758,7 +4813,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4784,7 +4839,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>
@@ -4810,7 +4865,7 @@
                 <Poison poison="10"/>
                 <Burn burn="10"/>
                 <Slow duration="1"/>
-                <Render tint="255,0,255,25" depth="0.94999999" duration="-1"/>
+                <Render tint="255,0,255,25" depth="0.94999999"/>
             </AoEEffect>
         </OnHit>
     </ProjectileHitAbilityDef>

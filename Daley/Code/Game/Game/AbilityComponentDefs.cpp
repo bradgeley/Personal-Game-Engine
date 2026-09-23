@@ -525,6 +525,11 @@ AbilityAoEEffectComponentDef::AbilityAoEEffectComponentDef(void const* xmlElemen
 void AbilityAoEEffectComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 {
 	static AbilityAoEEffectComponentDef defaultValues;
+	if (m_aoeEffectDefName == Name::Invalid || (m_aoeEffectDefName == defaultValues.m_aoeEffectDefName 
+		&& m_radius == defaultValues.m_radius && m_durationSeconds == defaultValues.m_durationSeconds))
+	{
+		return;
+	}
 
 	ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityAoEEffectComponentDef::WriteToXmlDoc - xmlDoc is null.");
 	ASSERT_OR_DIE(parentElem != nullptr, "AbilityAoEEffectComponentDef::WriteToXmlDoc - parentElem is null.");

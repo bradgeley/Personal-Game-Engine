@@ -50,6 +50,8 @@ struct AbilityDamageComponentDef
 	explicit AbilityDamageComponentDef(void const* xmlElement);
 	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
+	float GetAverageDamage() const { return (m_minDamage + m_maxDamage) * 0.5f; }
+
 	float m_minDamage = 0.f;
 	float m_maxDamage = 0.f;
 };

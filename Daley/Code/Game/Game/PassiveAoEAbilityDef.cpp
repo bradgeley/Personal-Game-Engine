@@ -1,6 +1,10 @@
 // Bradley Christensen - 2022-2026
 #include "PassiveAoEAbilityDef.h"
 #include "Ability.h"
+#include "AdjacentHitAbilityDef.h"
+#include "AoEHitAbilityDef.h"
+#include "LaserAbilityDef.h"
+#include "ProjectileHitAbilityDef.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/XmlUtils.h"
 

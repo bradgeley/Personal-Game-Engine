@@ -539,6 +539,7 @@
   <ItemGroup>
     <Xml Include="..\..\Run\Data\Definitions\BiomeDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
+    <Xml Include="..\..\Run\Data\Definitions\FlavorCombinationAbilityDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\FlavorDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\MapGeneratorDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\RunModifierPool.xml" />
