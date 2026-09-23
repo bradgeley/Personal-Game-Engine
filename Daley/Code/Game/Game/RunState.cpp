@@ -269,11 +269,22 @@ bool RunState::GenerateFlavorCombinations(NamedProperties& props)
 			FlavorDef const& swirlFlavor = allFlavorDefs[swirl];
 
 			AbilityDef const* mainAbility = AbilityDef::GetAbilityDef(baseFlavor.m_abilities[0]);
-			AbilityDef* copy = mainAbility->Copy();
-			copy->m_name = StringUtils::StringF("Generated_%s_%s", baseFlavor.m_name.ToCStr(), swirlFlavor.m_name.ToCStr());
-			copy->WriteToXmlDoc(&doc, rootElem);
+			ASSERT_OR_DIE(mainAbility != nullptr, StringUtils::StringF("Failed to get ability \"%s\" for flavor combination generation.", baseFlavor.m_abilities[0].ToCStr()).c_str());
 
-			delete copy;
+			// Combined ability uses the main ability of the base flavor
+			AbilityDef* combinedAbility = mainAbility->Copy();
+			ASSERT_OR_DIE(combinedAbility != nullptr, StringUtils::StringF("Failed to copy ability \"%s\" for flavor combination generation.", mainAbility->m_name.ToCStr()).c_str());
+
+			combinedAbility->m_name = StringUtils::StringF("%s_%s_g", baseFlavor.m_name.ToCStr(), swirlFlavor.m_name.ToCStr());
+
+			AbilityDef const* swirlAbility = AbilityDef::GetAbilityDef(swirlFlavor.m_abilities[0]);
+			ASSERT_OR_DIE(swirlAbility != nullptr, StringUtils::StringF("Failed to get ability \"%s\" for flavor combination generation.", swirlFlavor.m_abilities[0].ToCStr()).c_str());
+
+			swirlAbility->SwirlInto(*combinedAbility);
+
+			combinedAbility->WriteToXmlDoc(&doc, rootElem); 
+
+			delete combinedAbility;
 		}
 	}
 
@@ -295,12 +306,19 @@ bool RunState::GenerateFlavorCombinations(NamedProperties& props)
 				}
 	
 				FlavorDef const& baseFlavor = allFlavorDefs[base];
-				FlavorDef const& swirl1 = allFlavorDefs[swirlA];
-				FlavorDef const& swirl2 = allFlavorDefs[swirlB];
+				FlavorDef const* swirl1 = &allFlavorDefs[swirlA];
+				FlavorDef const* swirl2 = &allFlavorDefs[swirlB];
+
+				// Alphebetize swirl names for consistent ability naming
+				if (swirl1->m_name.ToString() > swirl2->m_name.ToString())
+				{
+					swirl1 = &allFlavorDefs[swirlB];
+					swirl2 = &allFlavorDefs[swirlA];
+				}
 
 				AbilityDef const* mainAbility = AbilityDef::GetAbilityDef(baseFlavor.m_abilities[0]);
 				AbilityDef* copy = mainAbility->Copy();
-				copy->m_name = StringUtils::StringF("Generated_%s_%s_%s", baseFlavor.m_name.ToCStr(), swirl1.m_name.ToCStr(), swirl2.m_name.ToCStr());
+				copy->m_name = StringUtils::StringF("%s_%s_%s_g", baseFlavor.m_name.ToCStr(), swirl1->m_name.ToCStr(), swirl2->m_name.ToCStr());
 				copy->WriteToXmlDoc(&doc, rootElem);
 
 				delete copy;

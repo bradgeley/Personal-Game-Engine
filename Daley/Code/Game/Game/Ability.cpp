@@ -1,10 +1,16 @@
 // Bradley Christensen - 2022-2026
 #include "Ability.h"
+#include "AbilityComponentDefs.h"
 #include "AbilityDef.h"
+#include "AdjacentHitAbilityDef.h"
+#include "AoEHitAbilityDef.h"
 #include "CProjectile.h"
 #include "CTime.h"
 #include "DiscShaderCPU.h"
 #include "EntityDef.h"
+#include "LaserAbilityDef.h"
+#include "PassiveAoEAbilityDef.h"
+#include "ProjectileHitAbilityDef.h"
 #include "SCCollision.h"
 #include "SCFlowField.h"
 #include "SCWorld.h"
@@ -696,12 +702,12 @@ void AbilityMultishotComponent::AppendDebugString(EntityDebugContext& debugConte
 //----------------------------------------------------------------------------------------------------------------------
 AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def)
 {
-    m_damageOnHit       = def.m_damageOnHit.has_value() ? *def.m_damageOnHit : AbilityDamageComponent();
-	m_poisonOnHit       = def.m_poisonOnHit.has_value() ? *def.m_poisonOnHit : AbilityPoisonComponent();
-	m_burnOnHit         = def.m_burnOnHit.has_value() ? *def.m_burnOnHit : AbilityBurnComponent();
-	m_aoeHitOnHit       = def.m_aoeHitOnHit.has_value() ? *def.m_aoeHitOnHit : AbilityAoEHitComponent();
-	m_aoeEffectOnHit    = def.m_aoeEffectOnHit.has_value() ? *def.m_aoeEffectOnHit : AbilityAoEEffectComponent();
-	m_slowOnHit         = def.m_slowOnHit.has_value() ? *def.m_slowOnHit : AbilitySlowComponent();
+    m_damageOnHit = def.m_damageOnHit;
+	m_poisonOnHit = def.m_poisonOnHit;
+	m_burnOnHit = def.m_burnOnHit;
+	m_aoeHitOnHit = def.m_aoeHitOnHit;
+	m_aoeEffectOnHit = def.m_aoeEffectOnHit;
+	m_slowOnHit = def.m_slowOnHit;
 }
 
 
@@ -820,15 +826,12 @@ void RolledOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) c
 AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def)
 {
     m_radius = def.m_radius;
-    m_damageOnHit = def.m_damageOnHit.has_value() ? *def.m_damageOnHit : AbilityDamageComponent();
-    m_poisonOnHit = def.m_poisonOnHit.has_value() ? *def.m_poisonOnHit : AbilityPoisonComponent();
-	m_burnOnHit = def.m_burnOnHit.has_value() ? *def.m_burnOnHit : AbilityBurnComponent();
-	m_slowOnHit = def.m_slowOnHit.has_value() ? *def.m_slowOnHit : AbilitySlowComponent();
-	m_hasteOnHit = def.m_hasteOnHit.has_value() ? *def.m_hasteOnHit : AbilityHasteComponent();
-	if (def.m_renderDef.has_value())
-	{
-		m_renderComp = *def.m_renderDef;
-	}
+    m_damageOnHit = def.m_damageOnHit;
+    m_poisonOnHit = def.m_poisonOnHit;
+	m_burnOnHit = def.m_burnOnHit;
+	m_slowOnHit = def.m_slowOnHit;
+	m_hasteOnHit = def.m_hasteOnHit;
+	m_renderComp = def.m_renderDef;
 }
 
 
@@ -929,12 +932,12 @@ AbilityAoEEffectComponent::AbilityAoEEffectComponent(AbilityAoEEffectComponentDe
     m_aoeEffectDefName = def.m_aoeEffectDefName;
     m_radius = def.m_radius;
     m_durationSeconds = def.m_durationSeconds;
-    m_damagePerSecond = def.m_damagePerSecond.has_value() ? *def.m_damagePerSecond : AbilityDamageComponent();
-    m_poisonPerSecond = def.m_poisonPerSecond.has_value() ? *def.m_poisonPerSecond : AbilityPoisonComponent();
-	m_burnPerSecond = def.m_burnPerSecond.has_value() ? *def.m_burnPerSecond : AbilityBurnComponent();
-	m_slowPerSecond = def.m_slowPerSecond.has_value() ? *def.m_slowPerSecond : AbilitySlowComponent();
-	m_hastePerSecond = def.m_hastePerSecond.has_value() ? *def.m_hastePerSecond : AbilityHasteComponent();
-	m_renderComp = def.m_renderDef.has_value() ? *def.m_renderDef : AbilityRenderComponent();
+    m_damagePerSecond = def.m_damagePerSecond;
+    m_poisonPerSecond = def.m_poisonPerSecond;
+	m_burnPerSecond = def.m_burnPerSecond;
+	m_slowPerSecond = def.m_slowPerSecond;
+	m_hastePerSecond = def.m_hastePerSecond;
+	m_renderComp = def.m_renderDef;
 }
 
 
@@ -1077,12 +1080,12 @@ ProjectileHitAbility::ProjectileHitAbility(ProjectileHitAbilityDef const& def) :
     m_projectileDefName = def.m_projectileDefName;
     m_projSpeed = def.m_projSpeed;
 
-    m_cooldownComp = def.m_cooldownDef.has_value() ? *def.m_cooldownDef : AbilityCooldownComponent();
-    m_targetingComp = def.m_targetingDef.has_value() ? *def.m_targetingDef : AbilityPrecisionTargetingComponent();
-    m_critComp = def.m_critDef.has_value() ? *def.m_critDef : AbilityCritComponent();
-    m_onHitComp = def.m_onHitDef.has_value() ? *def.m_onHitDef : AbilityOnHitComponent();
-    m_chainComp = def.m_chainDef.has_value() ? *def.m_chainDef : AbilityChainComponent();
-    m_multishotComp = def.m_multishotDef.has_value() ? *def.m_multishotDef : AbilityMultishotComponent();
+    m_cooldownComp = def.m_cooldownDef;
+    m_targetingComp = def.m_targetingDef;
+    m_critComp = def.m_critDef;
+    m_onHitComp = def.m_onHitDef;
+    m_chainComp = def.m_chainDef;
+    m_multishotComp = def.m_multishotDef;
 };
 
 
@@ -1329,11 +1332,11 @@ bool ProjectileHitAbility::ApplyModifier(FlavorAbilityRunModifier const& modifie
 //----------------------------------------------------------------------------------------------------------------------
 AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def) : Ability(def)
 {
-	m_cooldownComp = def.m_cooldownDef.has_value() ? AbilityCooldownComponent(def.m_cooldownDef.value()) : AbilityCooldownComponent();
-	m_targetingComp = def.m_targetingDef.has_value() ? AbilityAoETargetingComponent(def.m_targetingDef.value()) : AbilityAoETargetingComponent();
-	m_critComp = def.m_critDef.has_value() ? AbilityCritComponent(def.m_critDef.value()) : AbilityCritComponent();
-	m_aoeHitComp = def.m_aoeHitDef.has_value() ? AbilityAoEHitComponent(def.m_aoeHitDef.value()) : AbilityAoEHitComponent();
-	m_aoeEffectComp = def.m_aoeEffectDef.has_value() ? AbilityAoEEffectComponent(def.m_aoeEffectDef.value()) : AbilityAoEEffectComponent();
+	m_cooldownComp = def.m_cooldownDef;
+	m_targetingComp = def.m_targetingDef;
+	m_critComp = def.m_critDef;
+	m_aoeHitComp = def.m_aoeHitDef;
+	m_aoeEffectComp = def.m_aoeEffectDef;
 }
 
 
@@ -1628,8 +1631,8 @@ bool AoEHitAbility::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 //----------------------------------------------------------------------------------------------------------------------
 PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def) : Ability(def)
 {
-	m_targetingComp = def.m_targetingDef.has_value() ? *def.m_targetingDef : AbilityAoETargetingComponent();
-	m_aoeEffectComp = def.m_aoeEffectDef.has_value() ? *def.m_aoeEffectDef : AbilityAoEEffectComponent();
+	m_targetingComp = def.m_targetingDef;
+	m_aoeEffectComp = def.m_aoeEffectDef;
 }
 
 
@@ -1793,8 +1796,8 @@ bool PassiveAoEAbility::ApplyModifier(FlavorAbilityRunModifier const& modifier)
 //----------------------------------------------------------------------------------------------------------------------
 AdjacentHitAbility::AdjacentHitAbility(AdjacentHitAbilityDef const& def) : Ability(def)
 {
-	m_cooldownComp = def.m_cooldownDef.has_value() ? *def.m_cooldownDef : AbilityCooldownComponent();
-	m_hasteOnHit = def.m_hasteOnHit.has_value() ? *def.m_hasteOnHit : AbilityHasteComponent();
+	m_cooldownComp = def.m_cooldownDef;
+	m_hasteOnHit = def.m_hasteOnHit;
 }
 
 
@@ -1947,11 +1950,11 @@ AbilityRenderComponent::AbilityRenderComponent(AbilityRenderComponentDef const& 
 //----------------------------------------------------------------------------------------------------------------------
 LaserAbility::LaserAbility(LaserAbilityDef const& def) : Ability(def)
 {
-    m_targetingComp = def.m_targetingDef.has_value() ? *def.m_targetingDef : AbilityPrecisionTargetingComponent();
-	m_onHitComp = def.m_onHitDef.has_value() ? *def.m_onHitDef : AbilityOnHitComponent();
-	m_renderComp = def.m_renderDef.has_value() ? *def.m_renderDef : AbilityRenderComponent();
-	m_chainComp = def.m_chainDef.has_value() ? *def.m_chainDef : AbilityChainComponent();
-	m_multishotComp = def.m_multishotDef.has_value() ? *def.m_multishotDef : AbilityMultishotComponent();
+    m_targetingComp = def.m_targetingDef;
+	m_onHitComp = def.m_onHitDef;
+	m_renderComp = def.m_renderDef;
+	m_chainComp = def.m_chainDef;
+	m_multishotComp = def.m_multishotDef;
 }
 
 
