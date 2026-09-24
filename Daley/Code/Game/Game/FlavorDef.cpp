@@ -26,6 +26,12 @@ FlavorDef::FlavorDef(XmlElement const* flavorDefXmlElement)
 	{
 		m_abilities[i] = Name(abilityNames[i]);
 	}
+
+	// Attributes
+	if (XmlElement const* attributesElement = flavorDefXmlElement->FirstChildElement("Attributes"))
+	{
+		m_attributes = AbilityAttributes(attributesElement);
+	}
 	
 	// Display Data
 	if (XmlElement const* displayDataElement = flavorDefXmlElement->FirstChildElement("DisplayData"))

@@ -29,18 +29,13 @@ void SAbility::Shutdown() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Ability* RebuildAbility(Ability* ability, CTags const& tags, SystemContext const& context, EntityID owner)
+Ability* RebuildAbility(Ability* ability, SystemContext const& context, EntityID owner)
 {
 	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
-	RunData const& runData = *scRunData.m_data;
+	//RunData const& runData = *scRunData.m_data;
 
 	Ability* newAbility = ability->m_abilityDef->MakeAbilityInstance();
 	newAbility->Initialize(context, owner);
-
-	for (RunModifier const* mod : runData.m_activeRunModifiers)
-	{
-		mod->ApplyToAbility(*newAbility, tags);
-	}
 
 	ability->CopyTransientDataTo(*newAbility);
 
@@ -60,7 +55,7 @@ void SAbility::Run(SystemContext const& context) const
 	// Read Dependencies
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();
 	auto& timeStorage = context.GetArrayStorageConst<CTime>();
-	auto& tagsStorage = context.GetArrayStorageConst<CTags>();
+	//auto& tagsStorage = context.GetArrayStorageConst<CTags>();
 
 	// Write Dependencies
 	auto& abilityStorage = context.GetMapStorage<CAbility>();
@@ -69,7 +64,7 @@ void SAbility::Run(SystemContext const& context) const
 	for (auto it = context.Iterate<CAbility, CTags, CTime, CTransform>(); it.IsValid(); ++it)
 	{
 		CAbility& ability = abilityStorage[it];
-		CTags const& tags = tagsStorage[it];
+		//CTags const& tags = tagsStorage[it];
 		CTime const& time = timeStorage[it];
 		CTransform const& transform = transStorage[it];
 
@@ -79,7 +74,7 @@ void SAbility::Run(SystemContext const& context) const
 		{
 			if (abilityInstance->m_needsRebuild)
 			{
-				abilityInstance = RebuildAbility(abilityInstance, tags, context, it.GetEntityID());
+				abilityInstance = RebuildAbility(abilityInstance, context, it.GetEntityID());
 			}
 		}
 

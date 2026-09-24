@@ -325,6 +325,12 @@
     <ClCompile Include="Game\Ability.cpp">
       <Filter>Game\Abilities</Filter>
     </ClCompile>
+    <ClCompile Include="Game\AbilityAttributes.cpp">
+      <Filter>Definitions\AbilityDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AbilityBuff.cpp">
+      <Filter>Definitions\AbilityDefs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -719,6 +725,12 @@
     </ClInclude>
     <ClInclude Include="Game\Ability.h">
       <Filter>Game\Abilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AbilityAttributes.h">
+      <Filter>Definitions\AbilityDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AbilityBuff.h">
+      <Filter>Definitions\AbilityDefs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

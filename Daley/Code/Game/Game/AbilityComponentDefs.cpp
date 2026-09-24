@@ -122,174 +122,55 @@ void AbilityCritComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityDamageComponentDef::AbilityDamageComponentDef(void const* xmlElement)
+AbilityScalingComponentDef::AbilityScalingComponentDef(void const* xmlElement)
 {
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-	float damage = XmlUtils::ParseXmlAttribute(elem, "damage", 0.f);
-
-	if (damage == 0.f)
-	{
-		m_minDamage = XmlUtils::ParseXmlAttribute(elem, "minDamage", m_minDamage);
-		m_maxDamage = XmlUtils::ParseXmlAttribute(elem, "maxDamage", m_maxDamage);
-	}
-	else
-	{
-		m_minDamage = damage;
-		m_maxDamage = damage;
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void AbilityDamageComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
-{
-	static AbilityDamageComponentDef defaultValues;
-	if (m_minDamage == defaultValues.m_minDamage && m_maxDamage == defaultValues.m_maxDamage)
-	{
-		return;
-	}
-
-	ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityDamageComponentDef::WriteToXmlDoc - xmlDoc is null.");
-	ASSERT_OR_DIE(parentElem != nullptr, "AbilityDamageComponentDef::WriteToXmlDoc - parentElem is null.");
-
-	XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
-	XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
-
-	XmlElement* damageElem = doc.NewElement("Damage");
-	if (m_minDamage != defaultValues.m_minDamage)
-	{
-		damageElem->SetAttribute("minDamage", m_minDamage);
-	}
-	if (m_maxDamage != defaultValues.m_maxDamage)
-	{
-		damageElem->SetAttribute("maxDamage", m_maxDamage);
-	}
-	abilityElem.InsertEndChild(damageElem);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-AbilityBurnComponentDef::AbilityBurnComponentDef(void const* xmlElement)
-{
-	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_physical = XmlUtils::ParseXmlAttribute(elem, "physical", m_physical);
 	m_burn = XmlUtils::ParseXmlAttribute(elem, "burn", m_burn);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void AbilityBurnComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
-{
-	static AbilityBurnComponentDef defaultValues;
-	if (m_burn == defaultValues.m_burn)
-	{
-		return;
-	}
-
-	ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityBurnComponentDef::WriteToXmlDoc - xmlDoc is null.");
-	ASSERT_OR_DIE(parentElem != nullptr, "AbilityBurnComponentDef::WriteToXmlDoc - parentElem is null.");
-
-	XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
-	XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
-
-	XmlElement* burnElem = doc.NewElement("Burn");
-	burnElem->SetAttribute("burn", m_burn);
-	abilityElem.InsertEndChild(burnElem);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-AbilityPoisonComponentDef::AbilityPoisonComponentDef(void const* xmlElement)
-{
-	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_poison = XmlUtils::ParseXmlAttribute(elem, "poison", m_poison);
+	m_slow = XmlUtils::ParseXmlAttribute(elem, "slow", m_slow);
+	m_haste = XmlUtils::ParseXmlAttribute(elem, "haste", m_haste);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityPoisonComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
+void AbilityScalingComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 {
-	static AbilityPoisonComponentDef defaultValues;
-	if (m_poison == defaultValues.m_poison)
+	static AbilityScalingComponentDef defaultValues;
+	if (m_physical == defaultValues.m_physical && m_burn == defaultValues.m_burn && m_poison == defaultValues.m_poison && m_slow == defaultValues.m_slow && m_haste == defaultValues.m_haste)
 	{
 		return;
 	}
 
-	ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityPoisonComponentDef::WriteToXmlDoc - xmlDoc is null.");
-	ASSERT_OR_DIE(parentElem != nullptr, "AbilityPoisonComponentDef::WriteToXmlDoc - parentElem is null.");
+	ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityScalingComponentDef::WriteToXmlDoc - xmlDoc is null.");
+	ASSERT_OR_DIE(parentElem != nullptr, "AbilityScalingComponentDef::WriteToXmlDoc - parentElem is null.");
 
 	XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
 	XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
 
-	XmlElement* poisonElem = doc.NewElement("Poison");
-	poisonElem->SetAttribute("poison", m_poison);
-	abilityElem.InsertEndChild(poisonElem);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-AbilitySlowComponentDef::AbilitySlowComponentDef(void const* xmlElement)
-{
-	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-	m_duration = XmlUtils::ParseXmlAttribute(elem, "duration", m_duration);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void AbilitySlowComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
-{
-	static AbilitySlowComponentDef defaultValues;
-	if (m_duration == defaultValues.m_duration)
+	XmlElement* scalingElem = doc.NewElement("Scaling");
+	if (m_physical != defaultValues.m_physical)
 	{
-		return;
+		scalingElem->SetAttribute("physical", m_physical);
 	}
-
-	ASSERT_OR_DIE(xmlDoc != nullptr, "AbilitySlowComponentDef::WriteToXmlDoc - xmlDoc is null.");
-	ASSERT_OR_DIE(parentElem != nullptr, "AbilitySlowComponentDef::WriteToXmlDoc - parentElem is null.");
-
-	XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
-	XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
-
-	XmlElement* slowElem = doc.NewElement("Slow");
-	slowElem->SetAttribute("duration", m_duration);
-	abilityElem.InsertEndChild(slowElem);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-AbilityHasteComponentDef::AbilityHasteComponentDef(void const* xmlElement)
-{
-	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-	m_duration = XmlUtils::ParseXmlAttribute(elem, "duration", m_duration);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void AbilityHasteComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
-{
-	static AbilityHasteComponentDef defaultValues;
-	if (m_duration == defaultValues.m_duration)
+	if (m_burn != defaultValues.m_burn)
 	{
-		return;
+		scalingElem->SetAttribute("burn", m_burn);
 	}
-
-	ASSERT_OR_DIE(xmlDoc != nullptr, "AbilityHasteComponentDef::WriteToXmlDoc - xmlDoc is null.");
-	ASSERT_OR_DIE(parentElem != nullptr, "AbilityHasteComponentDef::WriteToXmlDoc - parentElem is null.");
-
-	XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
-	XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
-
-	XmlElement* hasteElem = doc.NewElement("Haste");
-	hasteElem->SetAttribute("duration", m_duration);
-	abilityElem.InsertEndChild(hasteElem);
+	if (m_poison != defaultValues.m_poison)
+	{
+		scalingElem->SetAttribute("poison", m_poison);
+	}
+	if (m_slow != defaultValues.m_slow)
+	{
+		scalingElem->SetAttribute("slow", m_slow);
+	}
+	if (m_haste != defaultValues.m_haste)
+	{
+		scalingElem->SetAttribute("haste", m_haste);
+	}
+	abilityElem.InsertEndChild(scalingElem);
 }
 
 
@@ -429,25 +310,9 @@ AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
 
-	if (XmlElement const* damageElem = elem.FirstChildElement("Damage"))
+	if (XmlElement const* scaling = elem.FirstChildElement("Scaling"))
 	{
-		m_damageOnHit = AbilityDamageComponentDef(damageElem);
-	}
-	if (XmlElement const* poisonElem = elem.FirstChildElement("Poison"))
-	{
-		m_poisonOnHit = AbilityPoisonComponentDef(poisonElem);
-	}
-	if (XmlElement const* burnElem = elem.FirstChildElement("Burn"))
-	{
-		m_burnOnHit = AbilityBurnComponentDef(burnElem);
-	}
-	if (XmlElement const* slowElem = elem.FirstChildElement("Slow"))
-	{
-		m_slowOnHit = AbilitySlowComponentDef(slowElem);
-	}
-	if (XmlElement const* hasteElem = elem.FirstChildElement("Haste"))
-	{
-		m_hasteOnHit = AbilityHasteComponentDef(hasteElem);
+		m_scaling = AbilityScalingComponentDef(scaling);
 	}
 	if (XmlElement const* renderElem = elem.FirstChildElement("Render"))
 	{
@@ -475,11 +340,7 @@ void AbilityAoEHitComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 	}
 	abilityElem.InsertEndChild(aoeHitElem);
 
-	m_damageOnHit.WriteToXmlDoc(xmlDoc, aoeHitElem);
-	m_poisonOnHit.WriteToXmlDoc(xmlDoc, aoeHitElem);
-	m_burnOnHit.WriteToXmlDoc(xmlDoc, aoeHitElem);
-	m_slowOnHit.WriteToXmlDoc(xmlDoc, aoeHitElem);
-	m_hasteOnHit.WriteToXmlDoc(xmlDoc, aoeHitElem);
+	m_scaling.WriteToXmlDoc(xmlDoc, aoeHitElem);
 	m_renderDef.WriteToXmlDoc(xmlDoc, aoeHitElem);
 }
 
@@ -493,25 +354,9 @@ AbilityAoEEffectComponentDef::AbilityAoEEffectComponentDef(void const* xmlElemen
 	m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
 	m_durationSeconds = XmlUtils::ParseXmlAttribute(elem, "duration", m_durationSeconds);
 
-	if (XmlElement const* damageElem = elem.FirstChildElement("Damage"))
+	if (XmlElement const* scaling = elem.FirstChildElement("Scaling"))
 	{
-		m_damagePerSecond = AbilityDamageComponentDef(damageElem);
-	}
-	if (XmlElement const* poisonElem = elem.FirstChildElement("Poison"))
-	{
-		m_poisonPerSecond = AbilityPoisonComponentDef(poisonElem);
-	}
-	if (XmlElement const* burnElem = elem.FirstChildElement("Burn"))
-	{
-		m_burnPerSecond = AbilityBurnComponentDef(burnElem);
-	}
-	if (XmlElement const* slowElem = elem.FirstChildElement("Slow"))
-	{
-		m_slowPerSecond = AbilitySlowComponentDef(slowElem);
-	}
-	if (XmlElement const* hasteElem = elem.FirstChildElement("Haste"))
-	{
-		m_hastePerSecond = AbilityHasteComponentDef(hasteElem);
+		m_scaling = AbilityScalingComponentDef(scaling);
 	}
 	if (XmlElement const* renderElem = elem.FirstChildElement("Render"))
 	{
@@ -549,11 +394,7 @@ void AbilityAoEEffectComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 	}
 	abilityElem.InsertEndChild(aoeEffectElem);
 
-	m_damagePerSecond.WriteToXmlDoc(xmlDoc, aoeEffectElem);
-	m_poisonPerSecond.WriteToXmlDoc(xmlDoc, aoeEffectElem);
-	m_burnPerSecond.WriteToXmlDoc(xmlDoc, aoeEffectElem);
-	m_slowPerSecond.WriteToXmlDoc(xmlDoc, aoeEffectElem);
-	m_hastePerSecond.WriteToXmlDoc(xmlDoc, aoeEffectElem);
+	m_scaling.WriteToXmlDoc(xmlDoc, aoeEffectElem);
 	m_renderDef.WriteToXmlDoc(xmlDoc, aoeEffectElem);
 }
 
@@ -563,17 +404,9 @@ void AbilityAoEEffectComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 AbilityOnHitComponentDef::AbilityOnHitComponentDef(void const* xmlElement)
 {
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-	if (XmlElement const* damageElem = elem.FirstChildElement("Damage"))
+	if (XmlElement const* scaling = elem.FirstChildElement("Scaling"))
 	{
-		m_damageOnHit = AbilityDamageComponentDef(damageElem);
-	}
-	if (XmlElement const* poisonElem = elem.FirstChildElement("Poison"))
-	{
-		m_poisonOnHit = AbilityPoisonComponentDef(poisonElem);
-	}
-	if (XmlElement const* burnElem = elem.FirstChildElement("Burn"))
-	{
-		m_burnOnHit = AbilityBurnComponentDef(burnElem);
+		m_scaling = AbilityScalingComponentDef(scaling);
 	}
 	if (XmlElement const* aoeHitElem = elem.FirstChildElement("AoEHit"))
 	{
@@ -582,10 +415,6 @@ AbilityOnHitComponentDef::AbilityOnHitComponentDef(void const* xmlElement)
 	if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoEEffect"))
 	{
 		m_aoeEffectOnHit = AbilityAoEEffectComponentDef(aoeEffectElem);
-	}
-	if (XmlElement const* slowElem = elem.FirstChildElement("Slow"))
-	{
-		m_slowOnHit = AbilitySlowComponentDef(slowElem);
 	}
 }
 
@@ -603,10 +432,7 @@ void AbilityOnHitComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 	XmlElement* onHitElem = doc.NewElement("OnHit");
 	abilityElem.InsertEndChild(onHitElem);
 
-	m_damageOnHit.WriteToXmlDoc(xmlDoc, onHitElem);
-	m_poisonOnHit.WriteToXmlDoc(xmlDoc, onHitElem);
-	m_burnOnHit.WriteToXmlDoc(xmlDoc, onHitElem);
-	m_slowOnHit.WriteToXmlDoc(xmlDoc, onHitElem);
+	m_scaling.WriteToXmlDoc(xmlDoc, onHitElem);
 	m_aoeHitOnHit.WriteToXmlDoc(xmlDoc, onHitElem);
 	m_aoeEffectOnHit.WriteToXmlDoc(xmlDoc, onHitElem);
 }

@@ -12,9 +12,9 @@ void HitPayload::AppendDebugString(EntityDebugContext& debugContext) const
 	{
 		debugContext.m_debugString += "Critical Hit!\n";
 	}
-	if (m_damage > 0.f)
+	if (m_physical > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF("Damage: %.2f\n", m_damage);
+		debugContext.m_debugString += StringUtils::StringF("Damage: %.2f\n", m_physical);
 	}
 	if (m_burn > 0.f)
 	{

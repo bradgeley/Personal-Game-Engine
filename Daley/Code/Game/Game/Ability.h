@@ -17,18 +17,14 @@
 
 struct AbilityAoEEffectComponentDef;
 struct AbilityAoEHitComponentDef;
-struct AbilityBurnComponentDef;
 struct AbilityChainComponentDef;
 struct AbilityCooldownComponentDef;
 struct AbilityCritComponentDef;
-struct AbilityDamageComponentDef;
+struct AbilityScalingComponentDef;
 struct AbilityDef;
-struct AbilityHasteComponentDef;
 struct AbilityMultishotComponentDef;
 struct AbilityOnHitComponentDef;
-struct AbilityPoisonComponentDef;
 struct AbilityRenderComponentDef;
-struct AbilitySlowComponentDef;
 struct AbilityTargetingComponentDef;
 struct AdjacentHitAbilityDef;
 struct AoEHitAbilityDef;
@@ -64,15 +60,12 @@ public:
 
 	float GetCooldown() const;
 
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
-
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_cooldownSeconds = 0.f;
 	float m_accumulatedTime = 0.f;
-	float m_attackSpeedIncrease = 0.f;
 };
 
 
@@ -85,10 +78,8 @@ public:
 	AbilityTargetingComponent() = default;
 	AbilityTargetingComponent(AbilityTargetingComponentDef const& def);
 
-	float GetMinRange() const { return m_minRange; } // Min range not affected by multipliers
-	float GetMaxRange() const { return m_maxRange * m_rangeMultiplier; }
-
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
+	float GetMinRange() const { return m_minRange; }
+	float GetMaxRange() const { return m_maxRange; }
 
 	void UpdateCachedTiles(SystemContext const& context, Vec2 const& location);
 
@@ -98,7 +89,6 @@ public:
 
 	float m_minRange = 0.f;
 	float m_maxRange = 0.f;
-	float m_rangeMultiplier = 1.f;
 
 	AbilityTargetingMode m_targetingMode = AbilityTargetingMode::ClosestToGoal;
 
@@ -170,8 +160,6 @@ public:
 
 	bool CanCrit() const { return m_critChance > 0.f; }
 
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
-
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
@@ -183,125 +171,25 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityDamageComponent
+struct AbilityScalingComponent
 {
 public:
 
-	AbilityDamageComponent() = default;
-	AbilityDamageComponent(AbilityDamageComponentDef const& def);
+	AbilityScalingComponent() = default;
+	AbilityScalingComponent(AbilityScalingComponentDef const& def);
 
-	bool IsRelevant() const { return GetMaxDamage() > 0.f; }
-
-	float GetMinDamage() const { return m_minDamage * m_damageMultiplier; }
-	float GetMaxDamage() const { return m_maxDamage * m_damageMultiplier; }
-
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
+	bool IsRelevant() const { return m_physical > 0.f || m_burn > 0.f || m_poison > 0.f || m_slow > 0.f || m_haste > 0.f; }
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
-	float m_minDamage = 0.f;
-	float m_maxDamage = 0.f;
-	float m_damageMultiplier = 1.f;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilityBurnComponent
-{
-public:
-
-	AbilityBurnComponent() = default;
-	AbilityBurnComponent(AbilityBurnComponentDef const& def);
-
-	bool IsRelevant() const { return GetBurn() > 0.f; }
-
-	float GetBurn() const { return m_burn * m_burnMultiplier; }
-
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
-
-	void AppendDebugString(EntityDebugContext& debugContext) const;
-
-public:
-
+	float m_physical = 0.f;
 	float m_burn = 0.f;
-	float m_burnMultiplier = 1.f;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilityPoisonComponent
-{
-public:
-
-	AbilityPoisonComponent() = default;
-	AbilityPoisonComponent(AbilityPoisonComponentDef const& def);
-
-	bool IsRelevant() const { return GetPoison() > 0.f; }
-
-	float GetPoison() const { return m_poison * m_poisonMultiplier; }
-
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
-
-	void AppendDebugString(EntityDebugContext& debugContext) const;
-
-public:
-
 	float m_poison = 0.f;
-	float m_poisonMultiplier = 1.f;
+	float m_slow = 0.f;
+	float m_haste = 0.f;
 };
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilitySlowComponent
-{
-public:
-
-	AbilitySlowComponent() = default;
-	AbilitySlowComponent(AbilitySlowComponentDef const& def);
-
-	bool IsRelevant() const { return GetDuration() > 0.f; }
-
-	float GetDuration() const { return m_duration * m_durationMultiplier; }
-
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
-
-	void AppendDebugString(EntityDebugContext& debugContext) const;
-
-public:
-
-	float m_duration = 0.f;
-	float m_durationMultiplier = 1.f;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilityHasteComponent
-{
-public:
-
-	AbilityHasteComponent() = default;
-	AbilityHasteComponent(AbilityHasteComponentDef const& def);
-
-	bool IsRelevant() const { return GetDuration() > 0.f; }
-
-	float GetDuration() const { return m_duration * m_durationMultiplier; }
-
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
-
-	void AppendDebugString(EntityDebugContext& debugContext) const;
-
-public:
-
-	float m_duration = 0.f;
-	float m_durationMultiplier = 1.f;
-};
-
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -313,8 +201,6 @@ public:
 	AbilityChainComponent(AbilityChainComponentDef const& def);
 
 	bool IsRelevant() const { return m_maxChains > 0; }
-
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -337,8 +223,6 @@ public:
 	AbilityMultishotComponent(AbilityMultishotComponentDef const& def);
 
 	bool IsRelevant() const { return m_additionalTargets > 0; }
-
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -378,21 +262,13 @@ public:
 	AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def);
 
 	bool IsRelevant() const;
-	float GetRadius() const { return m_radius * m_radiusMultiplier; }
-
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
 	float m_radius = 0.f;
-	float m_radiusMultiplier = 1.f;
-	AbilityDamageComponent m_damageOnHit;
-	AbilityPoisonComponent m_poisonOnHit;
-	AbilityBurnComponent m_burnOnHit;
-	AbilitySlowComponent m_slowOnHit;
-	AbilityHasteComponent m_hasteOnHit;
+	AbilityScalingComponent m_scaling;
 	std::optional<AbilityRenderComponent> m_renderComp;
 };
 
@@ -412,8 +288,6 @@ public:
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
-
 public:
 
 	Name m_aoeEffectDefName = Name::Invalid;
@@ -421,11 +295,7 @@ public:
 	float m_radiusMultiplier = 1.f;
 	float m_durationSeconds = 0.f;
 	float m_durationMultiplier = 1.f;
-	AbilityDamageComponent	m_damagePerSecond;
-	AbilityPoisonComponent	m_poisonPerSecond;
-	AbilityBurnComponent	m_burnPerSecond;
-	AbilitySlowComponent	m_slowPerSecond;
-	AbilityHasteComponent	m_hastePerSecond;	
+	AbilityScalingComponent	m_scaling;
 	AbilityRenderComponent	m_renderComp;
 };
 
@@ -443,16 +313,11 @@ public:
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
-
 public:
 
-	AbilityDamageComponent		m_damageOnHit;
-	AbilityPoisonComponent		m_poisonOnHit;
-	AbilityBurnComponent		m_burnOnHit;
+	AbilityScalingComponent		m_scaling;
 	AbilityAoEHitComponent		m_aoeHitOnHit;
 	AbilityAoEEffectComponent	m_aoeEffectOnHit;
-	AbilitySlowComponent		m_slowOnHit;
 };
 
 
@@ -510,8 +375,6 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier);
-
 public:
 
 	bool m_needsRebuild = true;
@@ -537,8 +400,6 @@ public:
 
 	RolledOnHitComponent RollDamageAndEffects(RandomNumberGenerator& rng) const;
 
-	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
-
 public:
 
 	Name m_projectileDefName = Name::Invalid;
@@ -547,9 +408,9 @@ public:
 	AbilityCooldownComponent m_cooldownComp;
 	AbilityPrecisionTargetingComponent m_targetingComp;
 	AbilityCritComponent m_critComp;
-	AbilityOnHitComponent m_onHitComp;
 	AbilityChainComponent m_chainComp;
 	AbilityMultishotComponent m_multishotComp;
+	AbilityOnHitComponent m_onHitComp;
 };
 
 
@@ -570,8 +431,6 @@ public:
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	virtual HitPayload RollDamageAndEffects(RandomNumberGenerator& rng) const;
-
-	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
 
 public:
 
@@ -603,8 +462,6 @@ public:
 
 	virtual HitPayload GetDotPayload(float deltaSeconds) const;
 
-	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
-
 public:
 
 	AbilityAoETargetingComponent	m_targetingComp;
@@ -627,13 +484,11 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
-	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
-
 public:
 
 	AbilityCooldownComponent			m_cooldownComp;
 	AbilityAdjacentTargetingComponent	m_targetingComp;
-	AbilityHasteComponent				m_hasteOnHit;
+	AbilityScalingComponent				m_scaling;
 };
 
 
@@ -654,8 +509,6 @@ public:
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 	HitPayload RollDamageAndEffects(float deltaSeconds) const;
-
-	virtual bool ApplyModifier(FlavorAbilityRunModifier const& modifier) override;
 
 public:
 

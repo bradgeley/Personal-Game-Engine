@@ -97,10 +97,6 @@ void SRenderUI::Run(SystemContext const& context) const
 
 		for (auto& ability : abilities)
 		{
-			for (auto& modifier : scRunData.m_data->m_activeRunModifiers)
-			{
-				modifier->ApplyToAbility(*ability, tagsCopy);
-			}
 			// Render range indicators for abilities when in placement mode, with all mods applied for accurate range
 			ability->AddDebugVerts(untexturedVerts, placeableCopy, placementInfo.m_worldPos);
 		}

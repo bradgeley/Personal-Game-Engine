@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "AbilityAttributes.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Renderer/Rgba8.h"
 #include <array>
@@ -32,6 +33,7 @@ public:
 
 	Name		m_name				= "Unnamed FlavorDef";
 	std::array<Name, MAX_FLAVOR_ABILITIES> m_abilities;
+	AbilityAttributes m_attributes;
 
 	// Display Data
 	Name		m_displayName		= "Unnamed FlavorDef";

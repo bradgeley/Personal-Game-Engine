@@ -25,6 +25,6 @@ public:
 public:
 
 	AbilityCooldownComponentDef	m_cooldownDef;
-	AbilityHasteComponentDef	m_hasteOnHit;
+	AbilityScalingComponentDef	m_scaling;
 	// todo: damage/burn/poison buffs on hit
 };

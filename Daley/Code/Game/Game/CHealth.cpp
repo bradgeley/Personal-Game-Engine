@@ -47,7 +47,7 @@ void CHealth::TakePayload(HitPayload const& payload)
 	m_currentBurn += payload.m_burn;
 	m_currentPoison += payload.m_poison;
 
-	TakeDamage(payload.m_damage);
+	TakeDamage(payload.m_physical);
 }
 
 

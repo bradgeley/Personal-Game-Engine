@@ -50,6 +50,8 @@ CAbility::CAbility(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 CAbility::CAbility(CAbility const& copyFrom)
 {
+	m_attributes = copyFrom.m_attributes;
+
 	m_abilities.reserve(copyFrom.m_abilities.size());
 
 	for (auto& ability : copyFrom.m_abilities)

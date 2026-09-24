@@ -294,11 +294,13 @@
     <ClCompile Include="Framework\WASM\WebApplication.cpp" />
     <ClCompile Include="Framework\Windows\Main_Windows.cpp" />
     <ClCompile Include="Game\Ability.cpp" />
+    <ClCompile Include="Game\AbilityAttributes.cpp" />
     <ClCompile Include="Game\AbilityComponentDefs.cpp" />
     <ClCompile Include="Game\AbilityDef.cpp" />
     <ClCompile Include="Game\AdjacentHitAbilityDef.cpp" />
     <ClCompile Include="Game\AoEHitAbilityDef.cpp" />
     <ClCompile Include="Game\BiomeDef.cpp" />
+    <ClCompile Include="Game\AbilityBuff.cpp" />
     <ClCompile Include="Game\CAbility.cpp" />
     <ClCompile Include="Game\CAIController.cpp" />
     <ClCompile Include="Game\CAnimation.cpp" />
@@ -403,6 +405,7 @@
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
     <ClInclude Include="Framework\WASM\WebApplication.h" />
     <ClInclude Include="Game\Ability.h" />
+    <ClInclude Include="Game\AbilityAttributes.h" />
     <ClInclude Include="Game\AbilityComponentDefs.h" />
     <ClInclude Include="Game\AbilityDef.h" />
     <ClInclude Include="Game\AdjacentHitAbilityDef.h" />
@@ -411,6 +414,7 @@
     <ClInclude Include="Game\AllSystems.h" />
     <ClInclude Include="Game\AoEHitAbilityDef.h" />
     <ClInclude Include="Game\BiomeDef.h" />
+    <ClInclude Include="Game\AbilityBuff.h" />
     <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />

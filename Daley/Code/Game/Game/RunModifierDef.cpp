@@ -145,7 +145,7 @@ RunModifier::RunModifier(RunModifierDef const& def) : m_def(def)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RunModifier::ApplyToAbility(Ability&, CTags const&) const
+void RunModifier::ApplyToAbility(CAbility&, CTags const&) const
 {
 	// Empty Base
 }
@@ -285,67 +285,18 @@ FlavorUnlockRunModifierDef const& FlavorUnlockRunModifier::GetDef() const
 //----------------------------------------------------------------------------------------------------------------------
 FlavorAbilityRunModifierDef::FlavorAbilityRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
 {
-	m_valueBase = XmlUtils::ParseXmlAttribute(modElement, "base", m_valueBase);
-	m_valueIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "perLevel", m_valueIncreasePerLevel);
+	if (XmlElement const* baseAttributesElem = modElement.FirstChildElement("Attributes"))
+	{
+		m_modifiers = AbilityAttributes(baseAttributesElem);
+	}
+
+	if (XmlElement const* perLevelAttributesElem = modElement.FirstChildElement("AttributesPerLevel"))
+	{
+		m_modifiersPerLevel = AbilityAttributes(perLevelAttributesElem);
+	}
 
 	std::string payloadTypesString = XmlUtils::ParseXmlAttribute(modElement, "type", "");
 	Strings payloadTypeStrings = StringUtils::SplitStringOnDelimiter(payloadTypesString, ',');
-
-	for (std::string const& payloadTypeString : payloadTypeStrings)
-	{
-		if (Name(payloadTypeString) == "Damage")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::Damage;
-		}
-		else if (Name(payloadTypeString) == "Slow")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::Slow;
-		}
-		else if (Name(payloadTypeString) == "Burn")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::Burn;
-		}
-		else if (Name(payloadTypeString) == "Poison")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::Poison;
-		}
-		else if (Name(payloadTypeString) == "Haste")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::Haste;
-		}
-		else if (Name(payloadTypeString) == "AttackSpeed")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::AttackSpeed;
-		}
-		else if (Name(payloadTypeString) == "CritChance")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::CritChance;
-		}
-		else if (Name(payloadTypeString) == "CritDamage")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::CritDamage;
-		}
-		else if (Name(payloadTypeString) == "AoE")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::AoE;
-		}
-		else if (Name(payloadTypeString) == "MultiShot")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::Multishot;
-		}
-		else if (Name(payloadTypeString) == "Chain")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::NumChains;
-		}
-		else if (Name(payloadTypeString) == "Range")
-		{
-			m_abilityAttribute = TowerAbilityAttribute::Range;
-		}
-		else
-		{
-			ASSERT_OR_DIE(false, StringUtils::StringF("Unknown payload damage type: %s", payloadTypeString.c_str()));
-		}
-	}
 
 	std::string tagRequirementsString = XmlUtils::ParseXmlAttribute(modElement, "tagRequirement", "");
 	Strings tagRequirementStrings = StringUtils::SplitStringOnDelimiter(tagRequirementsString, ',');
@@ -371,55 +322,24 @@ RunModifier* FlavorAbilityRunModifierDef::MakeModifierInstance() const
 //----------------------------------------------------------------------------------------------------------------------
 void FlavorAbilityRunModifierDef::GetDescription(std::string& outStr) const
 {
-	float baseMultiplier = m_valueBase;
-
-	if (ShouldAddOneToMultiplier())
-	{
-		baseMultiplier += 1.f;
-	}
-
 	std::string format;
-	if (IsIntegerAttribute())
+	format = "Base: %.0fx\nPer Level: +%.0fx\n";
+
+	for (int i = 0; i < (int) EAbilityAttribute::Count; ++i)
 	{
-		format = "Base: %.0fx\nPer Level: +%.0fx\n";
-	}
-	else
-	{
-		format = "Base: %.2fx\nPer Level: +%.2fx\n";
+		float baseMultiplier = 1.f + m_modifiers.m_values[i];
+		float perLevelMultiplier = m_modifiersPerLevel.m_values[i];
+		if (baseMultiplier != 1.f || perLevelMultiplier != 0.f)
+		{
+			outStr += StringUtils::StringF("%s: ", AbilityAttributes::GetAttributeNames()[i].ToCStr());
+			outStr += StringUtils::StringF(format.c_str(), baseMultiplier, perLevelMultiplier);
+		}
 	}
 
-	outStr += StringUtils::StringF(format.c_str(), baseMultiplier, m_valueIncreasePerLevel);
 	if (m_maxLevel > 1)
 	{
 		outStr += StringUtils::StringF("Max Level: %d", m_maxLevel);
 	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool FlavorAbilityRunModifierDef::ShouldAddOneToMultiplier() const
-{
-	if (m_abilityAttribute == TowerAbilityAttribute::Multishot ||
-		m_abilityAttribute == TowerAbilityAttribute::NumChains)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool FlavorAbilityRunModifierDef::IsIntegerAttribute() const
-{
-	if (m_abilityAttribute == TowerAbilityAttribute::Multishot ||
-		m_abilityAttribute == TowerAbilityAttribute::NumChains)
-	{
-		return true;
-	}
-	return false;
 }
 
 
@@ -433,10 +353,10 @@ FlavorAbilityRunModifier::FlavorAbilityRunModifier(FlavorAbilityRunModifierDef c
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float FlavorAbilityRunModifier::GetValue() const
+AbilityAttributes FlavorAbilityRunModifier::GetValue() const
 {
 	FlavorAbilityRunModifierDef const& def = GetDef();
-	return def.m_valueBase + (def.m_valueIncreasePerLevel * static_cast<float>(m_level - 1));
+	return def.m_modifiers + (def.m_modifiersPerLevel * static_cast<float>(m_level - 1));
 }
 
 
@@ -479,9 +399,11 @@ void FlavorAbilityRunModifier::Apply(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void FlavorAbilityRunModifier::ApplyToAbility(Ability& ability, CTags const& tags) const
+void FlavorAbilityRunModifier::ApplyToAbility(CAbility& ability, CTags const& tags) const
 {
-	for (auto& tag : GetDef().m_tagRequirements)
+	auto& def = GetDef();
+
+	for (auto& tag : def.m_tagRequirements)
 	{
 		if (!tags.HasTag(tag))
 		{
@@ -489,7 +411,9 @@ void FlavorAbilityRunModifier::ApplyToAbility(Ability& ability, CTags const& tag
 		}
 	}
 
-	ability.ApplyModifier(*this);
+	AbilityAttributes valuesToAdd = def.m_modifiers + (def.m_modifiersPerLevel * static_cast<float>(m_level - 1));
+
+	ability.m_attributes += def.m_modifiers + (def.m_modifiersPerLevel * static_cast<float>(m_level - 1));
 }
 
 
@@ -499,14 +423,11 @@ void FlavorAbilityRunModifier::GetDescription(std::string& outStr) const
 {
 	if (m_def.m_maxLevel > 1)
 	{
-		float currentMultiplier = 1.f + GetValue();
-		float nextMultiplier = currentMultiplier + GetDef().m_valueIncreasePerLevel;
-		outStr += StringUtils::StringF("Current: %.2fx\nNext: %.2fx\nLevel: %d/%d\n", currentMultiplier, nextMultiplier, m_level, m_def.m_maxLevel);
+		//outStr += StringUtils::StringF("Current: %.2fx\nNext: %.2fx\nLevel: %d/%d\n", currentMultiplier, nextMultiplier, m_level, m_def.m_maxLevel);
 	}
 	else
 	{
-		float currentMultiplier = 1.f + GetDef().m_valueBase;
-		outStr += StringUtils::StringF("Multiplier (additive): %.2fx\n", currentMultiplier);
+		//outStr += StringUtils::StringF("Multiplier (additive): %.2fx\n", currentMultiplier);
 	}
 }
 

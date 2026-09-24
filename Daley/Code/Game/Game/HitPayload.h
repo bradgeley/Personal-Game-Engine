@@ -10,12 +10,12 @@ struct EntityDebugContext;
 //----------------------------------------------------------------------------------------------------------------------
 struct HitPayload
 {
-	bool HasValue() const { return m_damage != 0.f || m_burn != 0.f || m_poison != 0.f || m_slowDuration != 0.f || m_hasteDuration != 0.f; }
-	bool IsRelevantToHealth() const { return m_damage != 0.f || m_burn != 0.f || m_poison != 0.f; }
+	bool HasValue() const { return m_physical != 0.f || m_burn != 0.f || m_poison != 0.f || m_slowDuration != 0.f || m_hasteDuration != 0.f; }
+	bool IsRelevantToHealth() const { return m_physical != 0.f || m_burn != 0.f || m_poison != 0.f; }
 	bool IsRelevantToTime() const { return m_slowDuration != 0.f || m_hasteDuration != 0.f; }
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	float m_damage = 0.f;
+	float m_physical = 0.f;
 	float m_burn = 0.f;
 	float m_poison = 0.f;
 	float m_slowDuration = 0.f;
@@ -24,7 +24,7 @@ struct HitPayload
 
 	void operator+=(HitPayload const& other)
 	{
-		m_damage += other.m_damage;
+		m_physical += other.m_physical;
 		m_burn += other.m_burn;
 		m_poison += other.m_poison;
 		m_slowDuration += other.m_slowDuration;
@@ -34,7 +34,7 @@ struct HitPayload
 
 	void operator*=(float multiplier)
 	{
-		m_damage *= multiplier;
+		m_physical *= multiplier;
 		m_burn *= multiplier;
 		m_poison *= multiplier;
 		m_slowDuration *= multiplier;

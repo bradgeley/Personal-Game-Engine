@@ -18,9 +18,9 @@ AdjacentHitAbilityDef::AdjacentHitAbilityDef(void const* xmlElement) : AbilityDe
 
     // targeting component is implicit, no data in it anyway
 
-	if (XmlElement const* hasteElem = elem.FirstChildElement("Haste"))
+	if (XmlElement const* scalingElem = elem.FirstChildElement("Scaling"))
 	{
-		m_hasteOnHit = AbilityHasteComponentDef(hasteElem);
+		m_scaling = AbilityScalingComponentDef(scalingElem);
 	}
 }
 
@@ -57,7 +57,7 @@ void AdjacentHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
 	rootElem.InsertEndChild(parentElem);
 
 	m_cooldownDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_hasteOnHit.WriteToXmlDoc(xmlDoc, parentElem);
+	m_scaling.WriteToXmlDoc(xmlDoc, parentElem);
 }
 
 

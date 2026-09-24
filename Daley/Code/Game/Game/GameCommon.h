@@ -38,26 +38,6 @@ enum class EDirection : int
 
 
 //----------------------------------------------------------------------------------------------------------------------
-enum class TowerAbilityAttribute : uint32_t
-{
-	Invalid	= 0,
-	Damage,
-	Burn,
-	Poison,
-	Slow,
-	Haste,
-	AttackSpeed,
-	CritChance,
-	CritDamage,
-	AoE,
-	Multishot,
-	NumChains,
-	Range,
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 enum class MetaAttribute : uint32_t
 {
 	Invalid = 0,

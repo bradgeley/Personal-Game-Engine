@@ -13,21 +13,12 @@
     <Chain maxChains="3"></Chain>
     <Multishot additionalTargets="3"></Multishot>
     <OnHit>
-      <Damage minDamage="5" maxDamage="10"></Damage>
-      <Burn burn="10"></Burn>
-      <Poison poison="10"></Poison>
-      <Slow duration="1"></Slow>
-      <AoEHit radius="2">
-        <Damage damage="1"></Damage>
-        <Burn burn="1"></Burn>
-        <Poison poison="1"></Poison>
-        <Slow duration="1"></Slow>
+      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+      <AoEHit radius="2" enabled="true">
+        <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
       </AoEHit>
-      <AoEEffect radius="2" duration="2">
-        <Damage damage="10"></Damage>
-        <Burn burn="10"></Burn>
-        <Poison poison="10"></Poison>
-        <Slow duration="1"></Slow>
+      <AoEEffect radius="2" duration="2" enabled="true">
+        <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
         <Render tint="255,0,255,25"></Render>
       </AoEEffect>
     </OnHit>
@@ -37,28 +28,15 @@
     <Cooldown cooldown="3"></Cooldown>
     <Targeting maxRange="10"></Targeting>
     <Crit critChance="0.5"></Crit>
-    <AoEHit>
-      <Damage damage="10"></Damage>
-      <Burn burn="10"></Burn>
-      <Poison poison="10"></Poison>
-      <Slow duration="2"></Slow>
-    </AoEHit>
-    <AoEEffect duration="0.25">
-      <Damage damage="10"></Damage>
-      <Burn burn="10"></Burn>
-      <Poison poison="10"></Poison>
-      <Slow duration="1"></Slow>
+    <AoEHit radius="2" ratio="1" variance="0.1" enabled="true"></AoEHit>
+    <AoEEffect duration="0.25" ratio="1" enabled="true">
       <Render tint="255,0,255,25"></Render>
     </AoEEffect> 
   </AoEHitAbilityDef>
 
   <PassiveAoEAbilityDef name="Rainbow_PassiveAoEAbility">
     <Targeting maxRange="3"></Targeting>
-    <AoEEffect>
-      <Damage damage="10"></Damage>
-      <Burn burn="10"></Burn>
-      <Poison poison="10"></Poison>
-      <Slow duration="1"></Slow>
+    <AoEEffect ratio="1" enabled="true">
       <Render tint="255,0,255,25"></Render>
     </AoEEffect>
   </PassiveAoEAbilityDef>
@@ -68,16 +46,8 @@
     <Render tint="255,0,255, 100" depth="0.05"></Render>
     <Chain maxChains="3" chainDistance="2" chainPayloadMulti="0.5"></Chain>
     <Multishot additionalTargets="3"></Multishot>
-    <OnHit> <!-- per second -->
-      <Damage damage="100"></Damage>
-      <Burn burn="100"></Burn>
-      <Poison poison="100"></Poison>
-      <Slow duration="1"></Slow>
-      <AoEEffect radius="0.5" duration="0">
-        <Damage damage="2"></Damage>
-        <Burn burn="2"></Burn>
-        <Poison poison="2"></Poison>
-        <Slow duration="1"></Slow>
+    <OnHit ratio="1"> <!-- per second -->
+      <AoEEffect radius="0.5" duration="0" ratio="1" enabled="true">
         <Render tint="255,0,255, 100" depth="0.95"></Render>
       </AoEEffect>
     </OnHit>
@@ -86,59 +56,62 @@
   <!-- ==================================================================================================================== -->
   <!-- Attacks -->
 
-  <AoEHitAbilityDef name="CoconutAttack">
-    <Cooldown cooldown="5"></Cooldown>
-    <Targeting maxRange="8"></Targeting>
-    <Crit critChance="0.1" critMulti="0.5"></Crit>
-    <AoEHit radius="6">
-      <Damage minDamage="400" maxDamage="800"></Damage>
-      <Slow duration="2.5"></Slow>
-      <Render tint="255,255,255,50" depth="0.04" duration="0.2"></Render>
-    </AoEHit>
-  </AoEHitAbilityDef>
-
   <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="TowerProj" projSpeed="50">
-    <Cooldown cooldown="0.33"></Cooldown>
-    <Targeting maxRange="15"></Targeting>
-    <Crit critChance="0.1" critMulti=".5"></Crit>
+    <Cooldown cooldown="0.5"/>
+    <Targeting maxRange="15"/>
+    <Crit critChance="0.1" critMulti=".5"/>
     <OnHit>
-      <Damage minDamage="1" maxDamage="75"></Damage>
-	    <AoEHit radius="0.5">
-		    <Damage minDamage="1" maxDamage="15"></Damage>
-	    </AoEHit>
+      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+      <Splash radius="0.5" enabled="false">
+        <Scaling physical="0.5" burn="0.5" poison="0.5" slow="0.125"/>
+      </Splash>
+      <AoEEffect radius="0.5" duration="0.5" enabled="false">
+        <Scaling physical="0.25" burn="0.25" poison="0.25" slow="0.125"/>
+      </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
 
   <ProjectileHitAbilityDef name="ChocolateAttack" projectileDef="TowerProj" projSpeed="30">
-    <Cooldown cooldown="2"></Cooldown>
-    <Targeting maxRange="12"></Targeting>
-    <Crit critChance="0.1" critMulti=".5"></Crit>
+    <Cooldown cooldown="2"/>
+    <Targeting maxRange="12"/>
+    <Crit critChance="0.1" critMulti=".5"/>
     <OnHit>
-      <Damage minDamage="100" maxDamage="150"></Damage>
       <AoEHit radius="5">
-        <Damage damage="100"></Damage>
+        <Damage damage="1" maxDamage="2"/>
       </AoEHit>
     </OnHit>
   </ProjectileHitAbilityDef>
 
+  <AoEHitAbilityDef name="CoconutAttack">
+    <Cooldown cooldown="5"/>
+    <Targeting maxRange="8"/>
+    <Crit critChance="0.1" critMulti="0.5"></Crit>
+    <AoEHit ratio="6" variance="2" enabled="true">
+      <Render tint="255,255,255,50" depth="0.04" duration="0.2"/>
+    </AoEHit>
+    <AoEEffect ratio="1" enabled="false">
+      <Render tint="255,255,255,50" depth="0.04"/>
+    </AoEEffect>
+  </AoEHitAbilityDef>
+
   <ProjectileHitAbilityDef name="PistachioAttack" projectileDef="TowerProj" projSpeed="30">
-    <Cooldown cooldown="2"></Cooldown>
-    <Targeting maxRange="12"></Targeting>
+    <Cooldown cooldown="2"/>
+    <Targeting maxRange="12"/>
     <OnHit>
-      <Poison poison="10"></Poison>
+      <Poison poison="1"/>
       <AoEHit radius="3">
-        <Poison poison="5"></Poison>
+        <Poison poison="1"/>
       </AoEHit>
     </OnHit>
   </ProjectileHitAbilityDef>
 
   <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="TowerProj" projSpeed="30">
-    <Cooldown cooldown="1.5"></Cooldown>
-    <Targeting maxRange="10"></Targeting>
+    <Cooldown cooldown="1.5"/>
+    <Targeting maxRange="10"/>
     <OnHit>
-      <Burn burn="100"></Burn>
+      <Burn burn="100"/>
       <AoEHit radius="2">
-        <Burn burn="50"></Burn>
+        <Burn burn="50"/>
       </AoEHit>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -169,7 +142,7 @@
     <AoEEffect radius="5">
       <Poison poison="0.25"></Poison>
       <Slow duration="1"></Slow>
-      <Render tint="173,235,179,25"></Render>uu
+      <Render tint="173,235,179,25"></Render>
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
@@ -179,9 +152,9 @@
     <Chain maxChains="1" chainDistance="2" chainPayloadMulti="0.5"></Chain>
     <OnHit>
       <!-- per second -->
-      <Damage damage="100"></Damage>
-      <Burn burn="50"></Burn>
-      <Poison poison="10"></Poison>
+      <Damage damage="1"></Damage>
+      <Burn burn="1"></Burn>
+      <Poison poison="1"></Poison>
     </OnHit>
   </LaserAbilityDef>
 

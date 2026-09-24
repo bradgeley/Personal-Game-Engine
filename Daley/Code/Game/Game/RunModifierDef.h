@@ -1,14 +1,15 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "AbilityAttributes.h"
+#include "GameCommon.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Core/XmlUtils.h"
-#include "GameCommon.h"
 #include <array>
 #include <string>
 
 
 
-class Ability;
+struct CAbility;
 struct CTags;
 struct RunData;
 struct RunModifier;
@@ -68,7 +69,7 @@ public:
 	virtual ~RunModifier() = default;
 
 	virtual void Apply(SystemContext const& context) const = 0;
-	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const;
+	virtual void ApplyToAbility(CAbility& ability, CTags const& tags) const;
 	virtual void ApplyToRunData(RunData& runData) const;
 
 	virtual void GetDescription(std::string& outStr) const = 0;
@@ -132,15 +133,11 @@ public:
 
 	virtual void GetDescription(std::string& outStr) const override;
 
-	bool ShouldAddOneToMultiplier() const;
-	bool IsIntegerAttribute() const;
-
 public:
 
 	// Linear increase per level of one attribute
-	TowerAbilityAttribute m_abilityAttribute = TowerAbilityAttribute::Invalid;
-	float m_valueBase = 1.f;
-	float m_valueIncreasePerLevel = 1.f;
+	AbilityAttributes m_modifiers;
+	AbilityAttributes m_modifiersPerLevel;
 	std::array<Name, s_maxRequirements> m_tagRequirements; // this modifier applies to towers with these tags
 };
 
@@ -153,10 +150,10 @@ public:
 
 	FlavorAbilityRunModifier(FlavorAbilityRunModifierDef const& def);
 
-	float GetValue() const;
+	AbilityAttributes GetValue() const;
 
 	virtual void Apply(SystemContext const& context) const override;
-	virtual void ApplyToAbility(Ability& ability, CTags const& tags) const override;
+	virtual void ApplyToAbility(CAbility& ability, CTags const& tags) const override;
 
 	virtual void GetDescription(std::string& outStr) const override;
 

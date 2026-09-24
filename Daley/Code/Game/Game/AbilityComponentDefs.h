@@ -44,64 +44,17 @@ struct AbilityCritComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityDamageComponentDef
+struct AbilityScalingComponentDef
 {
-	AbilityDamageComponentDef() = default;
-	explicit AbilityDamageComponentDef(void const* xmlElement);
+	AbilityScalingComponentDef() = default;
+	explicit AbilityScalingComponentDef(void const* xmlElement);
 	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
-	float GetAverageDamage() const { return (m_minDamage + m_maxDamage) * 0.5f; }
-
-	float m_minDamage = 0.f;
-	float m_maxDamage = 0.f;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilityBurnComponentDef
-{
-	AbilityBurnComponentDef() = default;
-	explicit AbilityBurnComponentDef(void const* xmlElement);
-	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
-
-	float m_burn = 0.f;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilityPoisonComponentDef
-{
-	AbilityPoisonComponentDef() = default;
-	explicit AbilityPoisonComponentDef(void const* xmlElement);
-	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
-
-	float m_poison = 0.f;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilitySlowComponentDef
-{
-	AbilitySlowComponentDef() = default;
-	explicit AbilitySlowComponentDef(void const* xmlElement);
-	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
-
-	float m_duration = 0.f;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilityHasteComponentDef
-{
-	AbilityHasteComponentDef() = default;
-	explicit AbilityHasteComponentDef(void const* xmlElement);
-	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
-
-	float m_duration = 0.f;
+	float m_physical	= 0.f;
+	float m_burn		= 0.f;
+	float m_poison		= 0.f;
+	float m_slow		= 0.f;
+	float m_haste		= 0.f;
 };
 
 
@@ -113,10 +66,10 @@ struct AbilityChainComponentDef
 	explicit AbilityChainComponentDef(void const* xmlElement);
 	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
+	int		m_maxChains = 0;
 	float	m_chainChance = 1.f;
 	float	m_chainDistance = 3.f;
 	float	m_chainPayloadMulti = 1.f;
-	int		m_maxChains = 0;
 };
 
 
@@ -155,11 +108,7 @@ struct AbilityAoEHitComponentDef
 	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
 	float m_radius = 0.f;
-	AbilityDamageComponentDef	m_damageOnHit;
-	AbilityPoisonComponentDef	m_poisonOnHit;
-	AbilityBurnComponentDef		m_burnOnHit;
-	AbilitySlowComponentDef		m_slowOnHit;
-	AbilityHasteComponentDef	m_hasteOnHit;
+	AbilityScalingComponentDef	m_scaling;
 	AbilityRenderComponentDef	m_renderDef;
 };
 
@@ -175,11 +124,7 @@ struct AbilityAoEEffectComponentDef
 	Name m_aoeEffectDefName	= Name::Invalid;
 	float m_radius = 0.f;
 	float m_durationSeconds = -1.f; // negative == infinite
-	AbilityDamageComponentDef	m_damagePerSecond;
-	AbilityPoisonComponentDef	m_poisonPerSecond;
-	AbilityBurnComponentDef		m_burnPerSecond;
-	AbilitySlowComponentDef		m_slowPerSecond;
-	AbilityHasteComponentDef	m_hastePerSecond;
+	AbilityScalingComponentDef	m_scaling;
 	AbilityRenderComponentDef	m_renderDef;
 };
 
@@ -192,10 +137,7 @@ struct AbilityOnHitComponentDef
 	explicit AbilityOnHitComponentDef(void const* xmlElement);
 	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
-	AbilityDamageComponentDef		m_damageOnHit;
-	AbilityPoisonComponentDef		m_poisonOnHit;
-	AbilityBurnComponentDef			m_burnOnHit;
-	AbilitySlowComponentDef			m_slowOnHit;
+	AbilityScalingComponentDef		m_scaling;
 	AbilityAoEHitComponentDef		m_aoeHitOnHit;
 	AbilityAoEEffectComponentDef	m_aoeEffectOnHit;
 };
