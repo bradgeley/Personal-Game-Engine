@@ -52,7 +52,6 @@ void SRenderUI::Run(SystemContext const& context) const
 	// Read Dependencies
 	SCInputSystem const& scInput = context.GetSingletonConst<SCInputSystem>();
 	SCWorld const& scWorld = context.GetSingletonConst<SCWorld>();
-	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
 	
 	// Write Dependencies
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();

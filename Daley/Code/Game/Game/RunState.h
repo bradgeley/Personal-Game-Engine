@@ -26,7 +26,6 @@ public:
 
 	bool MissionOver(NamedProperties& props);
 	static bool SaveAbilityDefsToXML(NamedProperties& props);
-	static bool GenerateFlavorCombinations(NamedProperties& props);
 
 public:
 

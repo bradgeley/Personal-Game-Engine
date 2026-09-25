@@ -16,5 +16,6 @@ public:
     std::vector<EntityID> m_entitiesToDestroy;
 
 	std::vector<TowerPlacementRequest> m_towerPlacements;	// Managed by STowerSpawner
+	std::vector<TowerSwirlRequest> m_towerSwirls;			// Managed by STowerSpawner
 	std::vector<TowerRemovalRequest> m_towerRemovals;		// Managed by STowerSpawner
 };

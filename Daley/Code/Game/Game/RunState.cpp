@@ -24,7 +24,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 static constexpr char const* MAIN_MENU_FONT_NAME = "Data/Fonts/Gypsy.fnt";
 const char* s_abilityDefsFilePath = "Data/Definitions/AbilityDefs.xml";
-const char* s_flavorCombinationAbilityDefsFilePath = "Data/Definitions/FlavorCombinationAbilityDefs.xml";
 
 
 
@@ -81,7 +80,6 @@ void RunState::Enter(NamedProperties const& props)
 	GameState::Enter(props);
 
 	AbilityDef::LoadFromXML(s_abilityDefsFilePath);
-	AbilityDef::LoadFromXML(s_flavorCombinationAbilityDefsFilePath);
 	FlavorDef::LoadFromXML();
 	TileDef::LoadFromXML();
 	BiomeDef::LoadFromXML();
@@ -90,7 +88,6 @@ void RunState::Enter(NamedProperties const& props)
 	Name mode = props.Get<Name>("mode", Name::Invalid);
 
 	g_eventSystem->SubscribeMethod("MissionOver", this, &RunState::MissionOver);
-	DevConsoleUtils::AddDevConsoleCommand("GenerateFlavorCombinations", &RunState::GenerateFlavorCombinations, "filename", DevConsoleArgType::Name);
 	DevConsoleUtils::AddDevConsoleCommand("SaveAbilityDefs", &RunState::SaveAbilityDefsToXML, "filename", DevConsoleArgType::Name);
 
 	m_untexturedVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -139,7 +136,6 @@ void RunState::Exit(NamedProperties const& props)
 	AbilityDef::Shutdown();
 
 	g_eventSystem->UnsubscribeMethod("MissionOver", this, &RunState::MissionOver);
-	DevConsoleUtils::RemoveDevConsoleCommand("GenerateFlavorCombinations", &RunState::GenerateFlavorCombinations);
 	DevConsoleUtils::RemoveDevConsoleCommand("SaveAbilityDefs", &RunState::SaveAbilityDefsToXML);
 
 	g_renderer->ReleaseVertexBuffer(m_untexturedVerts);
@@ -235,96 +231,6 @@ bool RunState::SaveAbilityDefsToXML(NamedProperties& props)
 
 	std::string filepath = "Data/Definitions/" + filename.ToString() + ".xml";
 	AbilityDef::SaveToXML(filepath);
-
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool RunState::GenerateFlavorCombinations(NamedProperties& props)
-{
-	Name filename = props.Get<Name>("filename", Name("FlavorCombinationAbilityDefs"));
-
-	std::string filepath = "Data/Definitions/" + filename.ToString() + ".xml";
-
-	XmlDocument doc;
-
-	XmlElement* rootElem = doc.NewElement("AbilityDefs");
-	doc.InsertFirstChild(rootElem);
-
-	std::vector<FlavorDef> const& allFlavorDefs = FlavorDef::GetAllFlavorDefs();
-
-	// Double combinations
-	for (size_t base = 0; base < allFlavorDefs.size(); ++base)
-	{
-		for (size_t swirl = 0; swirl < allFlavorDefs.size(); ++swirl)
-		{
-			if (swirl == base)
-			{
-				continue;
-			}
-
-			FlavorDef const& baseFlavor = allFlavorDefs[base];
-			FlavorDef const& swirlFlavor = allFlavorDefs[swirl];
-
-			AbilityDef const* mainAbility = AbilityDef::GetAbilityDef(baseFlavor.m_abilities[0]);
-			ASSERT_OR_DIE(mainAbility != nullptr, StringUtils::StringF("Failed to get ability \"%s\" for flavor combination generation.", baseFlavor.m_abilities[0].ToCStr()).c_str());
-
-			// Combined ability uses the main ability of the base flavor
-			AbilityDef* combinedAbility = mainAbility->Copy();
-			ASSERT_OR_DIE(combinedAbility != nullptr, StringUtils::StringF("Failed to copy ability \"%s\" for flavor combination generation.", mainAbility->m_name.ToCStr()).c_str());
-
-			combinedAbility->m_name = StringUtils::StringF("%s_%s_g", baseFlavor.m_name.ToCStr(), swirlFlavor.m_name.ToCStr());
-
-			AbilityDef const* swirlAbility = AbilityDef::GetAbilityDef(swirlFlavor.m_abilities[0]);
-			ASSERT_OR_DIE(swirlAbility != nullptr, StringUtils::StringF("Failed to get ability \"%s\" for flavor combination generation.", swirlFlavor.m_abilities[0].ToCStr()).c_str());
-
-			combinedAbility->WriteToXmlDoc(&doc, rootElem); 
-
-			delete combinedAbility;
-		}
-	}
-
-	// Triple combinations
-	for (size_t base = 0; base < allFlavorDefs.size(); ++base)
-	{
-		for (size_t swirlA = 0; swirlA < allFlavorDefs.size(); ++swirlA)
-		{
-			if (swirlA == base)
-			{
-				continue;
-			}
-	
-			for (size_t swirlB = swirlA + 1; swirlB < allFlavorDefs.size(); ++swirlB)
-			{
-				if (swirlB == base)
-				{
-					continue;
-				}
-	
-				FlavorDef const& baseFlavor = allFlavorDefs[base];
-				FlavorDef const* swirl1 = &allFlavorDefs[swirlA];
-				FlavorDef const* swirl2 = &allFlavorDefs[swirlB];
-
-				// Alphebetize swirl names for consistent ability naming
-				if (swirl1->m_name.ToString() > swirl2->m_name.ToString())
-				{
-					swirl1 = &allFlavorDefs[swirlB];
-					swirl2 = &allFlavorDefs[swirlA];
-				}
-
-				AbilityDef const* mainAbility = AbilityDef::GetAbilityDef(baseFlavor.m_abilities[0]);
-				AbilityDef* copy = mainAbility->Copy();
-				copy->m_name = StringUtils::StringF("%s_%s_%s_g", baseFlavor.m_name.ToCStr(), swirl1->m_name.ToCStr(), swirl2->m_name.ToCStr());
-				copy->WriteToXmlDoc(&doc, rootElem);
-
-				delete copy;
-			}
-		}
-	}
-
-	doc.SaveFile(filepath.c_str());
 
 	return false;
 }

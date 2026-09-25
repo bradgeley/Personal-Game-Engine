@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "GameCommon.h"
 #include "Engine/ECS/EntityID.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Core/TagQuery.h"
@@ -34,8 +35,9 @@ struct TowerSwirlRequest
 {
 	EntityID m_towerEntityID	= EntityID::Invalid;
 	Name m_flavor				= Name::Invalid;
-	float m_cost				= 0.f;
+	float m_cost				= StaticGameSettings::s_baseSwirlCost;
 	bool m_canAfford			= true;
+	Vec2 m_worldPos				= Vec2::ZeroVector;
 };
 
 

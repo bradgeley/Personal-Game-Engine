@@ -7,6 +7,7 @@
 struct NamedProperties;
 struct SCEntityFactory;
 struct TowerPlacementRequest;
+struct TowerSwirlRequest;
 class SCWorld;
 
 
@@ -24,6 +25,19 @@ enum class TowerPlacementResult
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class TowerSwirlResult
+{
+    Success,
+    Invalid,
+    TowerAtSwirlLimit,
+    CannotAfford,
+    AlreadyHasFlavor,
+    PlaceableCannotSwirl, // For when trying to swirl a wall1x1 into a tower, for example
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 class STowerSpawner : public System
 {
 public:
@@ -34,6 +48,7 @@ public:
     void Run(SystemContext const& context) const override;
 
     TowerPlacementResult CanPlaceTower(TowerPlacementRequest const& info, SCWorld const& world) const;
+	TowerSwirlResult CanSwirl(TowerSwirlRequest const& info, SystemContext const& context) const;
     bool PlaceTowerInWorld(TowerPlacementRequest const& placementInfo, SCWorld& world) const;
 	bool WillChangePathSolidness(TowerPlacementRequest const& placementInfo, SCWorld const& world) const;
 

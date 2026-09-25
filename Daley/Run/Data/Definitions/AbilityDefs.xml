@@ -82,12 +82,12 @@
     <Targeting maxRange="12"/>
     <Crit critChance="0.1" critMulti=".5"/>
     <OnHit>
-      <Scaling physical="1" burn="0" poison="0" slow="0"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
       <AoEHit radius="5">
-        <Scaling physical="1" burn="0" poison="0" slow="0"/>
+        <Scaling physical="1" burn="1" poison="1" slow="1"/>
       </AoEHit>
       <AoEEffect radius="5">
-        <Scaling physical="0" burn="0" poison="0" slow="0"/>
+        <Scaling physical="1" burn="1" poison="1" slow="1"/>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -96,12 +96,12 @@
     <Cooldown cooldown="2"/>
     <Targeting maxRange="12"/>
     <OnHit>
-      <Scaling physical="0" burn="0" poison="1" slow="0"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
       <AoEHit radius="3">
-        <Scaling physical="0" burn="0" poison="1" slow="0"/>
+        <Scaling physical="1" burn="1" poison="1" slow="1"/>
       </AoEHit>
       <AoEEffect radius="3">
-        <Scaling physical="0" burn="0" poison="0" slow="0"/>
+        <Scaling physical="1" burn="1" poison="1" slow="1"/>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -110,12 +110,12 @@
     <Cooldown cooldown="1.5"/>
     <Targeting maxRange="10"/>
     <OnHit>
-      <Scaling physical="0" burn="1" poison="0" slow="0"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
       <AoEHit radius="2">
-        <Scaling physical="0" burn="0.5" poison="0" slow="0"/>
+        <Scaling physical="1" burn="1" poison="1" slow="1"/>
       </AoEHit>
       <AoEEffect radius="2">
-        <Scaling physical="0" burn="0" poison="0" slow="0"/>
+        <Scaling physical="1" burn="1" poison="1" slow="1"/>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -128,11 +128,11 @@
     <Targeting maxRange="8"/>
     <Crit critChance="0.1" critMulti="0.5"/>
     <AoEHit radius="8">
-      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
       <Render tint="255,255,255,50" depth="0.04" duration="0.2"/>
     </AoEHit>
     <AoEEffect radius="8">
-      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
       <Render tint="255,255,255,50" depth="0.04"/>
     </AoEEffect>
   </AoEHitAbilityDef>
@@ -142,10 +142,10 @@
     <Targeting maxRange="5"/>
     <Crit critChance="0" critMulti="0"/>
     <AoEHit>
-      <Scaling physical="0" burn="1" poison="0" slow="0"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
     </AoEHit>
     <AoEEffect radius="5">
-      <Scaling physical="0" burn="0" poison="0" slow="0"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
     </AoEEffect>
   </AoEHitAbilityDef>
 
@@ -163,7 +163,7 @@
   <PassiveAoEAbilityDef name="MintAttack">
     <Targeting maxRange="5"/>
     <AoEEffect radius="5">
-      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
       <Render tint="173,235,179,25"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>
@@ -171,7 +171,7 @@
   <PassiveAoEAbilityDef name="OrangeSorbetAttack">
     <Targeting maxRange="6"/>
     <AoEEffect radius="6">
-      <Scaling physical="0" burn="1" poison="0" slow="0"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
       <Render tint="255,165,0,25"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>
@@ -184,9 +184,9 @@
     <Render tint="174,153,245,100" depth="0.05"/>
     <Chain maxChains="1" chainDistance="2" chainPayloadMulti="0.5"/>
     <OnHit>
-      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+      <Scaling physical="1" burn="1" poison="1" slow="1"/>
       <AoEHit radius="0.5">
-        <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+        <Scaling physical="1" burn="1" poison="1" slow="1"/>
         <Render tint="174,153,245,100" depth="0.95"/>
       </AoEHit>
     </OnHit>

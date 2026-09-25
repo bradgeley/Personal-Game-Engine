@@ -56,6 +56,9 @@ void SInput::Run(SystemContext const& context) const
 	InputSystem const& inputSystem = *scInput.GetInputSystem();
 	GameState& gameState = *game.m_gameState;
 
+	scInput.m_towerSwirlRequest = TowerSwirlRequest();
+	scInput.m_towerPlacementRequest = TowerPlacementRequest();
+
 	if (!window.HasFocus())
 	{
 		return;
@@ -148,19 +151,31 @@ void SInput::Run(SystemContext const& context) const
 	if (scInput.m_towerPlacementIndex != -1)
 	{
 		PlaceableTower const& placeableTower = runData.m_placeableTowers[scInput.m_towerPlacementIndex];
-		bool canAfford = SInput::CanAffordTower(placeableTower, runData);
-		scInput.m_towerPlacementRequest = SInput::MakeTowerPlacementRequest(placeableTower.m_towerName, placeableTower.m_flavorName, scInput.m_mouseWorldLocation, world, false, placeableTower.m_cost, canAfford);
-	}
-	else
-	{
-		scInput.m_towerPlacementRequest = TowerPlacementRequest();
+
+		if (scInput.m_towerUnderCursor == EntityID::Invalid)
+		{
+			bool canAfford = SInput::CanAffordTower(placeableTower, runData);
+			scInput.m_towerPlacementRequest = SInput::MakeTowerPlacementRequest(placeableTower.m_towerName, placeableTower.m_flavorName, scInput.m_mouseWorldLocation, world, false, placeableTower.m_cost, canAfford);
+		}
+		else // Swirl if possible
+		{
+			bool canAfford = SInput::CanAffordSwirl(placeableTower, runData);
+			scInput.m_towerSwirlRequest = SInput::MakeTowerSwirlRequest(scInput.m_towerUnderCursor, placeableTower.m_flavorName, scInput.m_mouseWorldLocation, placeableTower.m_cost, canAfford);
+		}
 	}
 
 	if (scInput.m_towerPlacementIndex != -1)
 	{
 		if (inputSystem.WasMouseButtonJustPressed(0))
 		{
-			factory.m_towerPlacements.push_back(scInput.m_towerPlacementRequest);
+			if (scInput.m_towerUnderCursor == EntityID::Invalid)
+			{
+				factory.m_towerPlacements.push_back(scInput.m_towerPlacementRequest);
+			}
+			else
+			{
+				factory.m_towerSwirls.push_back(scInput.m_towerSwirlRequest);
+			}
 			if (!inputSystem.IsKeyDown(KeyCode::Shift))
 			{
 				scInput.m_towerPlacementIndex = -1;
@@ -232,6 +247,14 @@ bool SInput::CanAffordTower(PlaceableTower const& tower, RunData const& runData)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SInput::CanAffordSwirl(PlaceableTower const& tower, RunData const& runData)
+{
+	return runData.m_gold + runData.m_creditLimit >= tower.m_cost + StaticGameSettings::s_baseSwirlCost;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 TowerPlacementRequest SInput::MakeTowerPlacementRequest(Name towerEntityName, Name flavorName, Vec2 const& worldPos, SCWorld const& world, bool isGenerated /*= false*/, float cost /*= 0.f*/, bool canAfford /*= true*/)
 {
 	TowerPlacementRequest info;
@@ -258,4 +281,18 @@ TowerPlacementRequest SInput::MakeTowerPlacementRequest(Name towerEntityName, Na
 	info.m_worldPos = world.GetWorldPosAtTileIntersectionCoords(botLeftIntersection) + halfDims;
 
 	return info;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+TowerSwirlRequest SInput::MakeTowerSwirlRequest(EntityID towerEntityID, Name flavorName, Vec2 const& worldPos, float cost, bool canAfford)
+{
+	TowerSwirlRequest request;
+	request.m_towerEntityID = towerEntityID;
+	request.m_flavor = flavorName;
+	request.m_worldPos = worldPos;
+	request.m_cost = cost;
+	request.m_canAfford = canAfford;
+	return request;
 }

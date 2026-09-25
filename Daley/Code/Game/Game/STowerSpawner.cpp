@@ -21,7 +21,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AddFlavorToTower(EntityID entity, Name flavorName, SystemContext const& context);
+bool AddFlavorToTower(EntityID entity, Name flavorName, bool isBaseFlavor, SystemContext const& context);
 
 
 
@@ -138,6 +138,53 @@ void STowerSpawner::Run(SystemContext const& context) const
 
 	factory.m_towerRemovals.clear();
 
+    // Swirls
+
+    for (TowerSwirlRequest const& swirlRequest : factory.m_towerSwirls)
+    {
+		TowerSwirlResult result = CanSwirl(swirlRequest, context);
+
+        if (result != TowerSwirlResult::Success)
+        {
+            // floating text
+            FloatingTextInstance floatingTextInstance;
+            floatingTextInstance.m_pos = swirlRequest.m_worldPos;
+            floatingTextInstance.m_lifetimeSeconds = 2.f;
+            floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+            floatingTextInstance.m_scale = 1.f;
+            floatingTextInstance.m_tint = Rgba8::Red;
+
+            if (result == TowerSwirlResult::Invalid)
+            {
+                floatingTextInstance.m_text = "Invalid!";
+            }
+            else if (result == TowerSwirlResult::TowerAtSwirlLimit)
+            {
+                floatingTextInstance.m_text = "At swirl limit!";
+            }
+            else if (result == TowerSwirlResult::CannotAfford)
+            {
+                floatingTextInstance.m_text = "Cannot Afford!";
+            }
+            else if (result == TowerSwirlResult::AlreadyHasFlavor)
+            {
+                floatingTextInstance.m_text = "Already has flavor!";
+            }
+			else if (result == TowerSwirlResult::PlaceableCannotSwirl)
+			{
+				floatingTextInstance.m_text = "Cannot swirl that!";
+			}
+
+            scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+            continue;
+        }
+
+        // SwirlTower
+        AddFlavorToTower(swirlRequest.m_towerEntityID, swirlRequest.m_flavor, false, context);
+    }
+
+	factory.m_towerSwirls.clear();
+
 
     // Tower Placement
 
@@ -158,7 +205,7 @@ void STowerSpawner::Run(SystemContext const& context) const
                 // Pass data to tower
                 if (placementInfo.m_flavorName != Name::Invalid)
                 {
-                    AddFlavorToTower(tower, placementInfo.m_flavorName, context);
+                    AddFlavorToTower(tower, placementInfo.m_flavorName, true, context);
                 }
 				CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(tower);
 				placeableComp.m_botLeftTile = placementInfo.m_botLeftTileCoords;
@@ -301,6 +348,58 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& i
 
 
 //----------------------------------------------------------------------------------------------------------------------
+TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& info, SystemContext const& context) const
+{
+    if (!context.IsValid(info.m_towerEntityID) || info.m_flavor == Name::Invalid)
+    {
+		return TowerSwirlResult::Invalid;
+    }
+
+    std::vector<FlavorDef> const& allFlavors = FlavorDef::GetAllFlavorDefs();
+
+    bool flavorIsValid = false;
+    for (FlavorDef const& flavor : allFlavors)
+    {
+		if (flavor.m_name == info.m_flavor)
+		{
+			flavorIsValid = true;
+			break;
+		}
+    }
+
+    if (!flavorIsValid)
+    {
+        // Catches Wall1x1 swirls, or other invalid flavors
+		return TowerSwirlResult::PlaceableCannotSwirl;
+    }
+
+    CTags const& tags = *context.GetComponent<CTags>(info.m_towerEntityID);
+
+    if (tags.HasTag(info.m_flavor))
+    {
+		return TowerSwirlResult::AlreadyHasFlavor;
+    }
+
+	int numFlavors = 0;
+    for (FlavorDef const& flavor : allFlavors)
+    {
+		if (tags.HasTag(flavor.m_name))
+		{
+			numFlavors++;
+		}
+    }
+
+	if (numFlavors == StaticGameSettings::s_maxFlavorsInOneTower)
+	{
+		return TowerSwirlResult::TowerAtSwirlLimit;
+	}
+
+    return TowerSwirlResult::Success;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& placementInfo, SCWorld& world) const
 {
     if (world.DoTilesInRegionMatchQuery(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, placementInfo.m_tileTagQuery))
@@ -349,7 +448,7 @@ bool STowerSpawner::WillChangePathSolidness(TowerPlacementRequest const& placeme
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AddFlavorToTower(EntityID tower, Name flavorName, SystemContext const& context)
+bool AddFlavorToTower(EntityID tower, Name flavorName, bool isBaseFlavor, SystemContext const& context)
 {
 	FlavorDef const* flavorDef = FlavorDef::GetFlavorDef(flavorName);
 	ASSERT_OR_DIE(flavorDef, StringUtils::StringF("AddFlavorToTower: FlavorDef not found for flavor: %s", flavorName.ToCStr()).c_str());
@@ -371,36 +470,41 @@ bool AddFlavorToTower(EntityID tower, Name flavorName, SystemContext const& cont
 	abilityComp->m_abilityFlags.m_flags |= flavorDef->m_abilityFlags.m_flags;
 
     // Handle abilities
-	for (auto& ability : flavorDef->m_abilities)
-	{
-		if (ability == Name::Invalid)
-		{
-            continue;
-		}
+    if (isBaseFlavor)
+    {
+        for (auto& ability : flavorDef->m_abilities)
+        {
+            if (ability == Name::Invalid)
+            {
+                continue;
+            }
 
-        AbilityDef const* abilityDef = AbilityDef::GetAbilityDef(ability);
-		ASSERT_OR_DIE(abilityDef, StringUtils::StringF("AddFlavorToTower: AbilityDef not found for ability: %s", ability.ToCStr()).c_str());
+            AbilityDef const* abilityDef = AbilityDef::GetAbilityDef(ability);
+            ASSERT_OR_DIE(abilityDef, StringUtils::StringF("AddFlavorToTower: AbilityDef not found for ability: %s", ability.ToCStr()).c_str());
 
-		Ability* abilityInstance = abilityDef->MakeAbilityInstance();
-		abilityInstance->Initialize(context, tower);
-		ASSERT_OR_DIE(abilityInstance, StringUtils::StringF("AddFlavorToTower: Failed to create Ability instance for ability: %s", ability.ToCStr()).c_str());
+            Ability* abilityInstance = abilityDef->MakeAbilityInstance();
+            abilityInstance->Initialize(context, tower);
+            ASSERT_OR_DIE(abilityInstance, StringUtils::StringF("AddFlavorToTower: Failed to create Ability instance for ability: %s", ability.ToCStr()).c_str());
 
-		abilityComp->m_abilities.push_back(abilityInstance);
-	}
+            abilityComp->m_abilities.push_back(abilityInstance);
+        }
 
-    // Handle cosmetics
+        // Handle cosmetics
 
-	CAnimation* animComp = context.GetComponent<CAnimation>(tower);
-	ASSERT_OR_DIE(animComp, StringUtils::StringF("AddFlavorToTower: CAnimation component not found for tower entity: %u", tower).c_str());
+        CAnimation* animComp = context.GetComponent<CAnimation>(tower);
+        ASSERT_OR_DIE(animComp, StringUtils::StringF("AddFlavorToTower: CAnimation component not found for tower entity: %u", tower).c_str());
 
-	animComp->m_spriteSheetName = flavorDef->m_spriteSheetName;
-	animComp->m_defaultAnimationName = flavorDef->m_animName;
+        animComp->m_spriteSheetName = flavorDef->m_spriteSheetName;
+        animComp->m_defaultAnimationName = flavorDef->m_animName;
 
-	CRender* renderComp = context.GetComponent<CRender>(tower);
-	ASSERT_OR_DIE(renderComp, StringUtils::StringF("AddFlavorToTower: CRender component not found for tower entity: %u", tower).c_str());
+        CRender* renderComp = context.GetComponent<CRender>(tower);
+        ASSERT_OR_DIE(renderComp, StringUtils::StringF("AddFlavorToTower: CRender component not found for tower entity: %u", tower).c_str());
 
-	renderComp->m_baseTint = flavorDef->m_tint;
-	renderComp->m_tint = flavorDef->m_tint;
+        renderComp->m_baseTint = flavorDef->m_tint;
+        renderComp->m_tint = flavorDef->m_tint;
+    }
+
+    // Todo: handle swirl cosmetics
 
 	return true;
 }

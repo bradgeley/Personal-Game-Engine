@@ -37,14 +37,11 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
 
 	SCWorld& world = context.GetSingleton<SCWorld>();
     auto& enemyLayer = context.GetSingletonConst<SCCollision>().GetCollisionLayer(CollisionChannel::Enemy);
-    BitMask healthBit = context.GetComponentBitMask<CHealth>();
-    BitMask timeBit = context.GetComponentBitMask<CTime>();
 
 	auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& timeStorage = context.GetArrayStorage<CTime>();
 	auto& transformStorage = context.GetArrayStorage<CTransform>();
 	auto& collisionStorage = context.GetArrayStorage<CCollision>();
-	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
      
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
     m_targetingComp.UpdateCachedTiles(context, ability, location);
@@ -152,7 +149,7 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void LaserAbility::Render(SystemContext const& context, CAbility const& ability, Vec2 const& location) const
+void LaserAbility::Render(SystemContext const& context, CAbility const&, Vec2 const& location) const
 {
     // TODO: Add to a vbo and render all lasers at once, to improve laser spam perf
 

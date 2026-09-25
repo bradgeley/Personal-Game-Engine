@@ -30,6 +30,7 @@ public:
 
 	int m_towerPlacementIndex = -1;	// Index into SCEntityFactory::m_towerPlacements
 	TowerPlacementRequest m_towerPlacementRequest;
+	TowerSwirlRequest m_towerSwirlRequest;
 
 private:
 
