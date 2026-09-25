@@ -2,6 +2,7 @@
 #include "CAbility.h"
 #include "Ability.h"
 #include "AbilityDef.h"
+#include "EntityDebugContext.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 
@@ -15,6 +16,24 @@ CAbility::~CAbility()
 		delete ability;
 	}
 	m_abilities.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CAbility::AppendDebugString(EntityDebugContext& debugContext) const
+{
+	m_attributes.AppendDebugString(debugContext);
+	m_abilityFlags.AppendDebugString(debugContext);
+
+	for (auto& ability : m_abilities)
+	{
+		ability->AppendDebugString(debugContext);
+		if (m_abilities.size() > 1)
+		{
+			debugContext.m_debugString += "-----------------------------------\n";
+		}
+	}
 }
 
 

@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SDebugOverlay.h"
 #include "CAbility.h"
+#include "Ability.h"
 #include "CCollision.h"
 #include "CEntityName.h"
 #include "CHealth.h"
@@ -188,14 +189,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				if (context.HasComponent<CAbility>(it.GetEntityID()))
 				{
 					CAbility const& abilityComp = abilityStorage[it];
-					for (auto& ability : abilityComp.m_abilities)
-					{
-						ability->AppendDebugString(debugContext);
-						if (abilityComp.m_abilities.size() > 1)
-						{
-							debugContext.m_debugString += "-----------------------------------\n";
-						}
-					}
+					abilityComp.AppendDebugString(debugContext);
 				}
 
 				if (context.HasComponent<CHealth>(it.GetEntityID()))

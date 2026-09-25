@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SRenderUI.h"
+#include "Ability.h"
 #include "AbilityDef.h"
 #include "EntityDef.h"
 #include "FlavorDef.h"
@@ -98,7 +99,7 @@ void SRenderUI::Run(SystemContext const& context) const
 		for (auto& ability : abilities)
 		{
 			// Render range indicators for abilities when in placement mode, with all mods applied for accurate range
-			ability->AddDebugVerts(untexturedVerts, placeableCopy, placementInfo.m_worldPos);
+			ability->AddDebugVerts(untexturedVerts, placeableCopy, CAbility(), placementInfo.m_worldPos);
 		}
 
 		for (auto& ability : abilities)
@@ -128,7 +129,7 @@ void SRenderUI::Run(SystemContext const& context) const
 		{
 			for (Ability* const& ability : abilityComp->m_abilities)
 			{
-				ability->AddDebugVerts(untexturedVerts, *placeable, transform->m_pos);
+				ability->AddDebugVerts(untexturedVerts, *placeable, *abilityComp, transform->m_pos);
 			}
 		}
 	}

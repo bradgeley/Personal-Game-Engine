@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "AdjacentHitAbilityDef.h"
 #include "Ability.h"
+#include "AdjacentHitAbility.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/XmlUtils.h"
 
@@ -58,57 +59,4 @@ void AdjacentHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
 
 	m_cooldownDef.WriteToXmlDoc(xmlDoc, parentElem);
 	m_scaling.WriteToXmlDoc(xmlDoc, parentElem);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void AdjacentHitAbilityDef::SwirlInto(AbilityDef& other) const
-{
-	other.ReceiveSwirl(*this);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool AdjacentHitAbilityDef::ReceiveSwirl(ProjectileHitAbilityDef const&)
-{
-	// Empty, adjacent hit abilities don't receive swirls yet
-
-	// Todo: If swirling vanilla into coffee, add a damage buff to nearby towers in addition to the haste,
-	// same with other damage types
-
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool AdjacentHitAbilityDef::ReceiveSwirl(AoEHitAbilityDef const& other)
-{
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool AdjacentHitAbilityDef::ReceiveSwirl(PassiveAoEAbilityDef const& other)
-{
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool AdjacentHitAbilityDef::ReceiveSwirl(LaserAbilityDef const& other)
-{
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool AdjacentHitAbilityDef::ReceiveSwirl(AdjacentHitAbilityDef const& other)
-{
-	return false;
 }

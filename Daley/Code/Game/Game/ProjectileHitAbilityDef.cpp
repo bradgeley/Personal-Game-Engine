@@ -1,10 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "ProjectileHitAbilityDef.h"
 #include "Ability.h"
-#include "AdjacentHitAbilityDef.h"
-#include "AoEHitAbilityDef.h"
-#include "LaserAbilityDef.h"
-#include "PassiveAoEAbilityDef.h"
+#include "ProjectileHitAbility.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/XmlUtils.h"
 
@@ -84,52 +81,4 @@ void ProjectileHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
 	m_chainDef.WriteToXmlDoc(xmlDoc, parentElem);
 	m_multishotDef.WriteToXmlDoc(xmlDoc, parentElem);
 	m_onHitDef.WriteToXmlDoc(xmlDoc, parentElem);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbilityDef::SwirlInto(AbilityDef& other) const
-{
-    other.ReceiveSwirl(*this);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool ProjectileHitAbilityDef::ReceiveSwirl(ProjectileHitAbilityDef const& other)
-{
-    return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool ProjectileHitAbilityDef::ReceiveSwirl(AoEHitAbilityDef const& other)
-{
-    return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool ProjectileHitAbilityDef::ReceiveSwirl(PassiveAoEAbilityDef const& other)
-{
-    return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool ProjectileHitAbilityDef::ReceiveSwirl(LaserAbilityDef const& other)
-{
-    return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool ProjectileHitAbilityDef::ReceiveSwirl(AdjacentHitAbilityDef const& other)
-{
-    return false;
 }

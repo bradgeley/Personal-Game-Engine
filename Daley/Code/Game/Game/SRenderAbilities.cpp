@@ -40,7 +40,7 @@ void SRenderAbilities::Run(SystemContext const& context) const
 
 		for (Ability* abilityInstance : ability.m_abilities)
 		{
-			abilityInstance->Render(context, transform.m_pos);
+			abilityInstance->Render(context, ability, transform.m_pos);
 		}
 	}
 }

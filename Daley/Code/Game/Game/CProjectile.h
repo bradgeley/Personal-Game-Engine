@@ -1,7 +1,8 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "Ability.h"
+#include "AbilityComponents.h"
 #include "HitPayload.h"
+#include "GameCommon.h"
 #include "Engine/ECS/EntityID.h"
 #include "Engine/Math/Vec2.h"
 #include <optional>

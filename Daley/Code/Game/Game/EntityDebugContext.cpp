@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "EntityDebugContext.h"
+#include "CAbility.h"
 #include "CTime.h"
 #include "Engine/ECS/SystemContext.h"
 
@@ -15,4 +16,6 @@ EntityDebugContext::EntityDebugContext(EntityID eid, SystemContext const& contex
 		m_isHasted = time->IsHasted();
 		m_entityTimeDilation = time->m_clock.GetTimeDilationF();
 	}
+
+	m_abilityComp = context.GetComponentConst<CAbility>(eid);
 }

@@ -31,13 +31,6 @@ public:
 	virtual AbilityDef* Copy() const = 0;
 	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) = 0;
 
-	virtual void SwirlInto(AbilityDef& other) const = 0;
-	virtual bool ReceiveSwirl(ProjectileHitAbilityDef const& other) = 0;
-	virtual bool ReceiveSwirl(AoEHitAbilityDef const& other) = 0;
-	virtual bool ReceiveSwirl(PassiveAoEAbilityDef const& other) = 0;
-	virtual bool ReceiveSwirl(LaserAbilityDef const& other) = 0;
-	virtual bool ReceiveSwirl(AdjacentHitAbilityDef const& other) = 0;
-
 public:
 
 	static void LoadFromXML(Name filepath);

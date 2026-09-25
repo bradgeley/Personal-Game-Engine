@@ -280,8 +280,6 @@ bool RunState::GenerateFlavorCombinations(NamedProperties& props)
 			AbilityDef const* swirlAbility = AbilityDef::GetAbilityDef(swirlFlavor.m_abilities[0]);
 			ASSERT_OR_DIE(swirlAbility != nullptr, StringUtils::StringF("Failed to get ability \"%s\" for flavor combination generation.", swirlFlavor.m_abilities[0].ToCStr()).c_str());
 
-			swirlAbility->SwirlInto(*combinedAbility);
-
 			combinedAbility->WriteToXmlDoc(&doc, rootElem); 
 
 			delete combinedAbility;

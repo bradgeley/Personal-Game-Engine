@@ -5,6 +5,10 @@
 
 
 
+struct EntityDebugContext;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 // All ability attributes default to 0 (for now)
 // 
@@ -22,18 +26,18 @@ enum class EAbilityAttribute
     SlowDuration,
     HasteDuration,
 
-    // Modifiers
-    AttackSpeed,
-    Range,
-    AreaOfEffect,
-    AreaDamage,
-    ProjectileSpeed,
-    CritChance,
-    CritMulti,
-    ChainCount,
-    ChainChance,
-    ChainDistance,
-    MultishotCount,
+	// Modifiers (Add: Additive, Multi: Multiplicative)
+    AttackSpeed_Multi,
+    Range_Multi,
+    AreaOfEffect_Multi,
+    AreaDamage_Mulit,
+    ProjectileSpeed_Multi,
+    CritChance_Add,
+    CritMulti_Multi,
+    ChainCount_Add,
+    ChainChance_Add,
+    ChainDistance_Multi,
+    MultishotCount_Add,
 
     Count
 };
@@ -45,6 +49,10 @@ struct AbilityAttributes
 {
     AbilityAttributes();
     explicit AbilityAttributes(void const* xmlElement);
+
+	float GetValue(EAbilityAttribute attribute) const;
+
+	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 	void operator+=(AbilityAttributes const& other);
 	AbilityAttributes operator+(AbilityAttributes const& other) const;

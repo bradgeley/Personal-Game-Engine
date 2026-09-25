@@ -296,8 +296,12 @@
     <ClCompile Include="Game\Ability.cpp" />
     <ClCompile Include="Game\AbilityAttributes.cpp" />
     <ClCompile Include="Game\AbilityComponentDefs.cpp" />
+    <ClCompile Include="Game\AbilityComponents.cpp" />
     <ClCompile Include="Game\AbilityDef.cpp" />
+    <ClCompile Include="Game\AbilityFlags.cpp" />
+    <ClCompile Include="Game\AdjacentHitAbility.cpp" />
     <ClCompile Include="Game\AdjacentHitAbilityDef.cpp" />
+    <ClCompile Include="Game\AoEHitAbility.cpp" />
     <ClCompile Include="Game\AoEHitAbilityDef.cpp" />
     <ClCompile Include="Game\BiomeDef.cpp" />
     <ClCompile Include="Game\AbilityBuff.cpp" />
@@ -328,6 +332,7 @@
     <ClCompile Include="Game\GameOverState.cpp" />
     <ClCompile Include="Game\GameState.cpp" />
     <ClCompile Include="Game\HitPayload.cpp" />
+    <ClCompile Include="Game\LaserAbility.cpp" />
     <ClCompile Include="Game\LaserAbilityDef.cpp" />
     <ClCompile Include="Game\MainMenuState.cpp" />
     <ClCompile Include="Game\MapGenerator.cpp" />
@@ -335,7 +340,9 @@
     <ClCompile Include="Game\MapGeneratorComponentDef.cpp" />
     <ClCompile Include="Game\MapGeneratorDef.cpp" />
     <ClCompile Include="Game\OverlapInfo.cpp" />
+    <ClCompile Include="Game\PassiveAoEAbility.cpp" />
     <ClCompile Include="Game\PassiveAoEAbilityDef.cpp" />
+    <ClCompile Include="Game\ProjectileHitAbility.cpp" />
     <ClCompile Include="Game\ProjectileHitAbilityDef.cpp" />
     <ClCompile Include="Game\RunModifierDef.cpp" />
     <ClCompile Include="Game\RunModifierPool.cpp" />
@@ -407,11 +414,15 @@
     <ClInclude Include="Game\Ability.h" />
     <ClInclude Include="Game\AbilityAttributes.h" />
     <ClInclude Include="Game\AbilityComponentDefs.h" />
+    <ClInclude Include="Game\AbilityComponents.h" />
     <ClInclude Include="Game\AbilityDef.h" />
+    <ClInclude Include="Game\AbilityFlags.h" />
+    <ClInclude Include="Game\AdjacentHitAbility.h" />
     <ClInclude Include="Game\AdjacentHitAbilityDef.h" />
     <ClInclude Include="Game\AllComponents.h" />
     <ClInclude Include="Game\AllSingletonComponents.h" />
     <ClInclude Include="Game\AllSystems.h" />
+    <ClInclude Include="Game\AoEHitAbility.h" />
     <ClInclude Include="Game\AoEHitAbilityDef.h" />
     <ClInclude Include="Game\BiomeDef.h" />
     <ClInclude Include="Game\AbilityBuff.h" />
@@ -436,6 +447,7 @@
     <ClInclude Include="Game\GameState.h" />
     <ClInclude Include="Game\HealthBarShaderCPU.h" />
     <ClInclude Include="Game\HitPayload.h" />
+    <ClInclude Include="Game\LaserAbility.h" />
     <ClInclude Include="Game\LaserAbilityDef.h" />
     <ClInclude Include="Game\MainMenuState.h" />
     <ClInclude Include="Game\MapGenerator.h" />
@@ -443,7 +455,9 @@
     <ClInclude Include="Game\MapGeneratorComponentDef.h" />
     <ClInclude Include="Game\MapGeneratorDef.h" />
     <ClInclude Include="Game\OverlapInfo.h" />
+    <ClInclude Include="Game\PassiveAoEAbility.h" />
     <ClInclude Include="Game\PassiveAoEAbilityDef.h" />
+    <ClInclude Include="Game\ProjectileHitAbility.h" />
     <ClInclude Include="Game\ProjectileHitAbilityDef.h" />
     <ClInclude Include="Game\RunModifierDef.h" />
     <ClInclude Include="Game\RunModifierPool.h" />

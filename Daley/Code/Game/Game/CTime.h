@@ -5,6 +5,10 @@
 
 
 
+struct HitPayload;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 struct CTime
 {
@@ -14,6 +18,7 @@ public:
 
 	bool IsSlowed() const;
 	bool IsHasted() const;
+	void TakePayload(HitPayload const& payload);
 
 	void AppendDebugString(std::string& out_string) const;
 

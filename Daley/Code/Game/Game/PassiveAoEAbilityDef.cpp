@@ -1,10 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "PassiveAoEAbilityDef.h"
 #include "Ability.h"
-#include "AdjacentHitAbilityDef.h"
-#include "AoEHitAbilityDef.h"
-#include "LaserAbilityDef.h"
-#include "ProjectileHitAbilityDef.h"
+#include "PassiveAoEAbility.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/XmlUtils.h"
 
@@ -59,52 +56,4 @@ void PassiveAoEAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
 
 	m_targetingDef.WriteToXmlDoc(xmlDoc, parentElem);
 	m_aoeEffectDef.WriteToXmlDoc(xmlDoc, parentElem);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbilityDef::SwirlInto(AbilityDef& other) const
-{
-	other.ReceiveSwirl(*this);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool PassiveAoEAbilityDef::ReceiveSwirl(ProjectileHitAbilityDef const& other)
-{
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool PassiveAoEAbilityDef::ReceiveSwirl(AoEHitAbilityDef const& other)
-{
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool PassiveAoEAbilityDef::ReceiveSwirl(PassiveAoEAbilityDef const& other)
-{
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool PassiveAoEAbilityDef::ReceiveSwirl(LaserAbilityDef const& other)
-{
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool PassiveAoEAbilityDef::ReceiveSwirl(AdjacentHitAbilityDef const& other)
-{
-	return false;
 }

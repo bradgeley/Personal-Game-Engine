@@ -1,12 +1,10 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SAbility.h"
 #include "Ability.h"
-#include "AbilityDef.h"
 #include "CAbility.h"
 #include "CTags.h"
 #include "CTime.h"
 #include "CTransform.h"
-#include "SCRunData.h"
 #include "Engine/ECS/SystemContext.h"
 
 
@@ -24,27 +22,6 @@ void SAbility::Startup()
 //----------------------------------------------------------------------------------------------------------------------
 void SAbility::Shutdown() const
 {
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-Ability* RebuildAbility(Ability* ability, SystemContext const& context, EntityID owner)
-{
-	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
-	//RunData const& runData = *scRunData.m_data;
-
-	Ability* newAbility = ability->m_abilityDef->MakeAbilityInstance();
-	newAbility->Initialize(context, owner);
-
-	ability->CopyTransientDataTo(*newAbility);
-
-	ability->Shutdown(context);
-	delete ability;
-	ability = nullptr;
-
-	newAbility->m_needsRebuild = false;
-	return newAbility;
 }
 
 
@@ -70,12 +47,9 @@ void SAbility::Run(SystemContext const& context) const
 
 		float timeDilation = time.m_clock.GetTimeDilationF();
 
-		for (Ability*& abilityInstance : ability.m_abilities)
+		if (ability.m_needsAttributeRebuild)
 		{
-			if (abilityInstance->m_needsRebuild)
-			{
-				abilityInstance = RebuildAbility(abilityInstance, context, it.GetEntityID());
-			}
+			//ability.RebuildAttributes(context);
 		}
 
 		if (context.m_deltaSeconds <= 0.f)
@@ -85,7 +59,7 @@ void SAbility::Run(SystemContext const& context) const
 
 		for (Ability* abilityInstance : ability.m_abilities)
 		{
-			abilityInstance->Update(context, transform.m_pos, timeDilation);
+			abilityInstance->Update(context, ability, transform.m_pos, timeDilation);
 		}
 	}
 }

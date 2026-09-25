@@ -322,14 +322,35 @@
     <ClCompile Include="Game\ProjectileHitAbilityDef.cpp">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Ability.cpp">
-      <Filter>Game\Abilities</Filter>
-    </ClCompile>
     <ClCompile Include="Game\AbilityAttributes.cpp">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClCompile>
     <ClCompile Include="Game\AbilityBuff.cpp">
       <Filter>Definitions\AbilityDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Ability.cpp">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AbilityComponents.cpp">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\ProjectileHitAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AoEHitAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\PassiveAoEAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AdjacentHitAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\LaserAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AbilityFlags.cpp">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -723,14 +744,35 @@
     <ClInclude Include="Game\ProjectileHitAbilityDef.h">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Ability.h">
-      <Filter>Game\Abilities</Filter>
-    </ClInclude>
     <ClInclude Include="Game\AbilityAttributes.h">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClInclude>
     <ClInclude Include="Game\AbilityBuff.h">
       <Filter>Definitions\AbilityDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Ability.h">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AbilityComponents.h">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\ProjectileHitAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AoEHitAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PassiveAoEAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AdjacentHitAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\LaserAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AbilityFlags.h">
+      <Filter>Definitions\AbilityDefs\Ability</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -827,8 +869,8 @@
     <Filter Include="Definitions\AbilityDefs">
       <UniqueIdentifier>{a9886b05-a87d-41dc-9e2d-db6e555588c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Abilities">
-      <UniqueIdentifier>{a288bd6c-111d-444a-978f-874a27145589}</UniqueIdentifier>
+    <Filter Include="Definitions\AbilityDefs\Ability">
+      <UniqueIdentifier>{e98cb851-6305-433d-92f0-24708918ddde}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

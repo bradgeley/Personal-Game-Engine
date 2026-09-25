@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "STowerSpawner.h"
+#include "Ability.h"
 #include "AbilityDef.h"
 #include "CAbility.h"
 #include "EntityDef.h"
@@ -363,7 +364,13 @@ bool AddFlavorToTower(EntityID tower, Name flavorName, SystemContext const& cont
 	CAbility* abilityComp = context.GetComponent<CAbility>(tower);
 	ASSERT_OR_DIE(abilityComp, StringUtils::StringF("AddFlavorToTower: CAbility component not found for tower entity: %u", tower).c_str());
 
-    // Handle abilieies
+    // Handle attributes
+	abilityComp->m_attributes += flavorDef->m_attributes;
+
+    // Flags
+	abilityComp->m_abilityFlags.m_flags |= flavorDef->m_abilityFlags.m_flags;
+
+    // Handle abilities
 	for (auto& ability : flavorDef->m_abilities)
 	{
 		if (ability == Name::Invalid)
@@ -375,6 +382,7 @@ bool AddFlavorToTower(EntityID tower, Name flavorName, SystemContext const& cont
 		ASSERT_OR_DIE(abilityDef, StringUtils::StringF("AddFlavorToTower: AbilityDef not found for ability: %s", ability.ToCStr()).c_str());
 
 		Ability* abilityInstance = abilityDef->MakeAbilityInstance();
+		abilityInstance->Initialize(context, tower);
 		ASSERT_OR_DIE(abilityInstance, StringUtils::StringF("AddFlavorToTower: Failed to create Ability instance for ability: %s", ability.ToCStr()).c_str());
 
 		abilityComp->m_abilities.push_back(abilityInstance);

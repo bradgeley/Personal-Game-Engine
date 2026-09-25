@@ -251,7 +251,7 @@ void SDebugRender::Run(SystemContext const& context) const
 
 			for (Ability const* ability : abilityComponent.m_abilities)
             {
-				ability->AddDebugVerts(untexturedVerts, placeable, transform.m_pos);
+				ability->AddDebugVerts(untexturedVerts, placeable, abilityComponent, transform.m_pos);
             }
         }
 	}

@@ -24,7 +24,6 @@ struct AbilityTargetingComponentDef
 	explicit AbilityTargetingComponentDef(void const* xmlElement);
 	void WriteToXmlDoc(void* xmlDoc, void* parentElem);
 
-	float m_minRange = 0.f;
 	float m_maxRange = 0.f;
 };
 

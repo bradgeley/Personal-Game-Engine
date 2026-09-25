@@ -15,13 +15,6 @@ public:
 	virtual AbilityDef* Copy() const override;
 	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
-	virtual void SwirlInto(AbilityDef& other) const override;
-	virtual bool ReceiveSwirl(ProjectileHitAbilityDef const& other) override;
-	virtual bool ReceiveSwirl(AoEHitAbilityDef const& other) override;
-	virtual bool ReceiveSwirl(PassiveAoEAbilityDef const& other) override;
-	virtual bool ReceiveSwirl(LaserAbilityDef const& other) override;
-	virtual bool ReceiveSwirl(AdjacentHitAbilityDef const& other) override;
-
 public:
 
 	AbilityCooldownComponentDef		m_cooldownDef;

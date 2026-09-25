@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #include "CTime.h"
+#include "HitPayload.h"
 #include "Engine/Core/StringUtils.h"
 
 
@@ -17,6 +18,16 @@ bool CTime::IsHasted() const
 {
 	return m_remainingHasteDuration > 0.f;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CTime::TakePayload(HitPayload const& payload)
+{
+	m_remainingSlowDuration += payload.m_slowDuration;
+	m_remainingHasteDuration += payload.m_hasteDuration;
+}
+
 
 
 //----------------------------------------------------------------------------------------------------------------------

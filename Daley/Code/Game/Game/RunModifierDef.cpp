@@ -1,13 +1,11 @@
 // Bradley Christensen - 2022-2026
 #include "RunModifierDef.h"
-#include "Ability.h"
 #include "CAbility.h"
 #include "CTags.h"
 #include "SCRunData.h"
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/ErrorUtils.h"
-#include "Engine/Math/MathUtils.h"
 
 
 
@@ -388,11 +386,7 @@ void FlavorAbilityRunModifier::Apply(SystemContext const& context) const
 		}
 
 		CAbility& abilityComponent = abilityStorage[it];
-
-		for (Ability*& ability : abilityComponent.m_abilities)
-		{
-			ability->m_needsRebuild = true;
-		}
+		abilityComponent.m_needsAttributeRebuild = true;
 	}
 }
 

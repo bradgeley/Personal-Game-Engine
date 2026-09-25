@@ -5,6 +5,7 @@
 
 
 
+struct CAbility;
 struct SystemContext;
 
 
@@ -17,6 +18,7 @@ struct EntityDebugContext
 {
 	EntityDebugContext(EntityID eid, SystemContext const& context);
 
+	CAbility const* m_abilityComp = nullptr;
 	std::string m_debugString;
 	float m_entityTimeDilation = 1.f;
 	bool m_isHasted = false;

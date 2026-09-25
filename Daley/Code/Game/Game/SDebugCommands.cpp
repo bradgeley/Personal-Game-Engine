@@ -155,7 +155,6 @@ bool SDebugCommands::God(NamedProperties&)
 bool SDebugCommands::UnlockAllMods(NamedProperties&)
 {
 	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
-	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
 
 	for (auto& mod : runData.m_data->m_runModifierPool.m_runModifierDefs)
 	{
@@ -185,15 +184,6 @@ bool SDebugCommands::UnlockAllMods(NamedProperties&)
 
 	runData.m_data->m_needsModifierRecalculation = true;
 
-	for (auto it = g_ecs->IterateAll<CAbility>(); it.IsValid(); ++it)
-	{
-		CAbility& ability = abilityStorage[it];
-		for (auto& abilityInstance : ability.m_abilities)
-		{
-			abilityInstance->m_needsRebuild = true;
-		}
-	}
-
 	return false;
 }
 
@@ -205,7 +195,6 @@ bool SDebugCommands::Unlock(NamedProperties& args)
 	Name modName = args.Get("name", Name::Invalid);
 
 	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
-	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
 
 	for (auto& mod : runData.m_data->m_runModifierPool.m_runModifierDefs)
 	{
@@ -234,15 +223,6 @@ bool SDebugCommands::Unlock(NamedProperties& args)
 	}
 
 	runData.m_data->m_needsModifierRecalculation = true;
-
-	for (auto it = g_ecs->IterateAll<CAbility>(); it.IsValid(); ++it)
-	{
-		CAbility& ability = abilityStorage[it];
-		for (auto& abilityInstance : ability.m_abilities)
-		{
-			abilityInstance->m_needsRebuild = true;
-		}
-	}
 
 	return false;
 }

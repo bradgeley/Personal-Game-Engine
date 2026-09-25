@@ -6,6 +6,7 @@
 
 
 struct AbilityAoEEffectComponent;
+struct RolledAoEEffectComponent;
 
 
 
@@ -16,18 +17,13 @@ public:
 
 	CCollisionEffect() = default;
 
-	void InitializeFromAoEEffect(AbilityAoEEffectComponent const& aoeEffectComp);
+	void Initialize(RolledAoEEffectComponent const& aoeEffectComp);
 
 	HitPayload GetWhileOverlappingPayload(float deltaSeconds) const;
 
 public:
 
-	// While overlapping effects
-	float m_damagePerSecond		= 0.f;
-	float m_burnPerSecond		= 0.f;
-	float m_poisonPerSecond		= 0.f;
-	float m_slowPerSecond		= 0.f;
-	float m_hastePerSecond		 = 0.f;
+	HitPayload m_payloadPerSecond;
 
 	// Rendering (uses radius and position from Collision Component)
 	Rgba8 m_tint				= Rgba8::TransparentWhite;

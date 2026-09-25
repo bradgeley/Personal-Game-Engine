@@ -19,10 +19,10 @@ FlavorDef::FlavorDef(XmlElement const* flavorDefXmlElement)
 	// Abilities
 	std::string abilitiesString = XmlUtils::ParseXmlAttribute(*flavorDefXmlElement, "abilities", "");
 	Strings abilityNames = StringUtils::SplitStringOnDelimiter(abilitiesString, ',');
-	ASSERT_OR_DIE(abilityNames.size() <= MAX_FLAVOR_ABILITIES, StringUtils::StringF("FlavorDef \"%s\" has too many abilities. Max is %d", m_name.ToCStr(), MAX_FLAVOR_ABILITIES).c_str());
+	ASSERT_OR_DIE(abilityNames.size() <= s_maxAbilities, StringUtils::StringF("FlavorDef \"%s\" has too many abilities. Max is %d", m_name.ToCStr(), s_maxAbilities).c_str());
 	
 	m_abilities.fill(Name::Invalid);
-	for (size_t i = 0; i < abilityNames.size() && i < MAX_FLAVOR_ABILITIES; ++i)
+	for (size_t i = 0; i < abilityNames.size() && i < s_maxAbilities; ++i)
 	{
 		m_abilities[i] = Name(abilityNames[i]);
 	}
@@ -31,6 +31,12 @@ FlavorDef::FlavorDef(XmlElement const* flavorDefXmlElement)
 	if (XmlElement const* attributesElement = flavorDefXmlElement->FirstChildElement("Attributes"))
 	{
 		m_attributes = AbilityAttributes(attributesElement);
+	}
+
+	// Ability Flags
+	if (XmlElement const* flagsElement = flavorDefXmlElement->FirstChildElement("AbilityFlags"))
+	{
+		m_abilityFlags = AbilityFlags(flagsElement);
 	}
 	
 	// Display Data

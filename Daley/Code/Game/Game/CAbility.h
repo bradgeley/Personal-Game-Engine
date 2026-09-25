@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
 #include "AbilityAttributes.h"
+#include "AbilityFlags.h"
 #include <vector>
 
 
@@ -8,6 +9,7 @@
 class Ability;
 struct AbilityDef;
 struct AbilityBuff;
+struct EntityDebugContext;
 
 
 
@@ -24,12 +26,17 @@ public:
     CAbility(CAbility&& moveFrom) noexcept;
     ~CAbility();
 
+	void AppendDebugString(EntityDebugContext& debugContext) const;
+
     CAbility& operator=(CAbility const& copyFrom);
     CAbility& operator=(CAbility&& moveFrom) noexcept;
     
 public:
     
+	bool m_needsAttributeRebuild = true;
+
     AbilityAttributes m_attributes;
-	std::vector<AbilityBuff*> m_activeBuffs;
+    AbilityFlags m_abilityFlags;
+	std::vector<AbilityBuff*> m_activeBuffs; // todo
 	std::vector<Ability*> m_abilities;
 };

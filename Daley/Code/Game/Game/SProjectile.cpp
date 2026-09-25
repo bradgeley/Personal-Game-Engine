@@ -109,8 +109,7 @@ void SProjectile::Run(SystemContext const& context) const
 					if (mainTargetPayload.IsRelevantToTime())
 					{
 						CTime& targetTime = timeStorage[target];
-						targetTime.m_remainingSlowDuration += mainTargetPayload.m_slowDuration;
-						targetTime.m_remainingHasteDuration += mainTargetPayload.m_hasteDuration;
+						targetTime.TakePayload(mainTargetPayload);
 					}
 				}
 
@@ -156,8 +155,7 @@ void SProjectile::Run(SystemContext const& context) const
 									CTime& targetTime = timeStorage[entityID];
 									if (targetTime.m_lastHitBy != aoeHitId)
 									{
-										targetTime.m_remainingSlowDuration += aoeTargetPayload.m_slowDuration;
-										targetTime.m_remainingHasteDuration += aoeTargetPayload.m_hasteDuration;
+										targetTime.TakePayload(aoeTargetPayload);
 										targetTime.m_lastHitBy = aoeHitId;
 									}
 								}
@@ -174,8 +172,8 @@ void SProjectile::Run(SystemContext const& context) const
 					ASSERT_OR_DIE(aoeEffectSpawnInfo.m_def != nullptr, StringUtils::StringF("EntityDef not found for name: %s", proj.m_onHitComp.m_aoeEffectOnHit.m_aoeEffectDefName.ToCStr()));
 					aoeEffectSpawnInfo.m_spawnPos = proj.m_targetPos.value();
 					aoeEffectSpawnInfo.m_spawnOrientation = 0.f;
-					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp.m_aoeEffectOnHit.GetDuration();
-					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp.m_aoeEffectOnHit.GetRadius();
+					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp.m_aoeEffectOnHit.m_durationSeconds;
+					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp.m_aoeEffectOnHit.m_radius;
 
 					EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 					if (context.IsValid(aoeEffect))
@@ -183,7 +181,7 @@ void SProjectile::Run(SystemContext const& context) const
 						// Pass along damage, color, to aoe effect
 						ASSERT_OR_DIE(context.HasComponentsUnsafe(aoeEffect.GetIndex(), collisionEffectBit), "Spawned aoe effect does not have CCollisionEffect component.");
 						CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
-						aoeEffectComp.InitializeFromAoEEffect(proj.m_onHitComp.m_aoeEffectOnHit);
+						aoeEffectComp.Initialize(proj.m_onHitComp.m_aoeEffectOnHit);
 					}
 				}
 			}

@@ -7,65 +7,71 @@
   <!-- Test Attacks -->
 
   <ProjectileHitAbilityDef name="Rainbow_ProjHitAbility" projectileDef="TowerProj" projSpeed="100">
-    <Cooldown cooldown="2"></Cooldown>
-    <Targeting maxRange="15"></Targeting>
-    <Crit critChance="0.5"></Crit>
-    <Chain maxChains="3"></Chain>
-    <Multishot additionalTargets="3"></Multishot>
+    <Cooldown cooldown="2"/>
+    <Targeting maxRange="15"/>
+    <Crit critChance="0.5" critMulti="0.5"/>
+    <Chain maxChains="3"/>
+    <Multishot additionalTargets="3"/>
     <OnHit>
       <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
-      <AoEHit radius="2" enabled="true">
+      <AoEHit radius="2">
         <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
       </AoEHit>
-      <AoEEffect radius="2" duration="2" enabled="true">
+      <AoEEffect radius="2" duration="2">
         <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
-        <Render tint="255,0,255,25"></Render>
+        <Render tint="255,0,255,25"/>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
 
   <AoEHitAbilityDef name="Rainbow_AoEHitAbility">
-    <Cooldown cooldown="3"></Cooldown>
-    <Targeting maxRange="10"></Targeting>
-    <Crit critChance="0.5"></Crit>
-    <AoEHit radius="2" ratio="1" variance="0.1" enabled="true"></AoEHit>
-    <AoEEffect duration="0.25" ratio="1" enabled="true">
-      <Render tint="255,0,255,25"></Render>
-    </AoEEffect> 
+    <Cooldown cooldown="3"/>
+    <Targeting maxRange="10"/>
+    <Crit critChance="0.5" critMulti="0.5"/>
+    <AoEHit radius="2" ratio="1" variance="0.1">
+      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+    </AoEHit>
+    <AoEEffect duration="0.25">
+      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+      <Render tint="255,0,255,25"/>
+    </AoEEffect>
   </AoEHitAbilityDef>
 
   <PassiveAoEAbilityDef name="Rainbow_PassiveAoEAbility">
-    <Targeting maxRange="3"></Targeting>
-    <AoEEffect ratio="1" enabled="true">
+    <Targeting maxRange="3"/>
+    <AoEEffect>
+      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
       <Render tint="255,0,255,25"></Render>
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
   <LaserAbilityDef name="Rainbow_LaserAbility">
-    <Targeting maxRange="15"></Targeting>
-    <Render tint="255,0,255, 100" depth="0.05"></Render>
-    <Chain maxChains="3" chainDistance="2" chainPayloadMulti="0.5"></Chain>
-    <Multishot additionalTargets="3"></Multishot>
-    <OnHit ratio="1"> <!-- per second -->
-      <AoEEffect radius="0.5" duration="0" ratio="1" enabled="true">
-        <Render tint="255,0,255, 100" depth="0.95"></Render>
+    <Targeting maxRange="15"/>
+    <Render tint="255,0,255, 100" depth="0.05"/>
+    <Chain maxChains="3" chainDistance="2" chainPayloadMulti="0.5"/>
+    <Multishot additionalTargets="3"/>
+    <OnHit>
+      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+      <AoEEffect radius="0.5">
+        <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+        <Render tint="255,0,255, 100" depth="0.95"/>
       </AoEEffect>
     </OnHit>
   </LaserAbilityDef>
 
   <!-- ==================================================================================================================== -->
-  <!-- Attacks -->
+  <!-- Projectile Attacks -->
 
   <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="TowerProj" projSpeed="50">
     <Cooldown cooldown="0.5"/>
     <Targeting maxRange="15"/>
-    <Crit critChance="0.1" critMulti=".5"/>
+    <Crit critChance="0.1" critMulti="0.5"/>
     <OnHit>
       <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
-      <Splash radius="0.5" enabled="false">
+      <AoEHit radius="0.5">
         <Scaling physical="0.5" burn="0.5" poison="0.5" slow="0.125"/>
-      </Splash>
-      <AoEEffect radius="0.5" duration="0.5" enabled="false">
+      </AoEHit>
+      <AoEEffect radius="0.5" duration="0.5">
         <Scaling physical="0.25" burn="0.25" poison="0.25" slow="0.125"/>
       </AoEEffect>
     </OnHit>
@@ -76,32 +82,27 @@
     <Targeting maxRange="12"/>
     <Crit critChance="0.1" critMulti=".5"/>
     <OnHit>
+      <Scaling physical="1" burn="0" poison="0" slow="0"/>
       <AoEHit radius="5">
-        <Damage damage="1" maxDamage="2"/>
+        <Scaling physical="1" burn="0" poison="0" slow="0"/>
       </AoEHit>
+      <AoEEffect radius="5">
+        <Scaling physical="0" burn="0" poison="0" slow="0"/>
+      </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
-
-  <AoEHitAbilityDef name="CoconutAttack">
-    <Cooldown cooldown="5"/>
-    <Targeting maxRange="8"/>
-    <Crit critChance="0.1" critMulti="0.5"></Crit>
-    <AoEHit ratio="6" variance="2" enabled="true">
-      <Render tint="255,255,255,50" depth="0.04" duration="0.2"/>
-    </AoEHit>
-    <AoEEffect ratio="1" enabled="false">
-      <Render tint="255,255,255,50" depth="0.04"/>
-    </AoEEffect>
-  </AoEHitAbilityDef>
 
   <ProjectileHitAbilityDef name="PistachioAttack" projectileDef="TowerProj" projSpeed="30">
     <Cooldown cooldown="2"/>
     <Targeting maxRange="12"/>
     <OnHit>
-      <Poison poison="1"/>
+      <Scaling physical="0" burn="0" poison="1" slow="0"/>
       <AoEHit radius="3">
-        <Poison poison="1"/>
+        <Scaling physical="0" burn="0" poison="1" slow="0"/>
       </AoEHit>
+      <AoEEffect radius="3">
+        <Scaling physical="0" burn="0" poison="0" slow="0"/>
+      </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
 
@@ -109,52 +110,85 @@
     <Cooldown cooldown="1.5"/>
     <Targeting maxRange="10"/>
     <OnHit>
-      <Burn burn="100"/>
+      <Scaling physical="0" burn="1" poison="0" slow="0"/>
       <AoEHit radius="2">
-        <Burn burn="50"/>
+        <Scaling physical="0" burn="0.5" poison="0" slow="0"/>
       </AoEHit>
+      <AoEEffect radius="2">
+        <Scaling physical="0" burn="0" poison="0" slow="0"/>
+      </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
 
-  <AoEHitAbilityDef name="RasberrySorbetAttack">
-    <Cooldown cooldown="2"></Cooldown>
-    <Targeting maxRange="5"></Targeting>
-    <AoEHit>
-      <Burn burn="20"></Burn>
+  <!-- ==================================================================================================================== -->
+  <!-- AoEHit Attacks -->
+  
+  <AoEHitAbilityDef name="CoconutAttack">
+    <Cooldown cooldown="5"/>
+    <Targeting maxRange="8"/>
+    <Crit critChance="0.1" critMulti="0.5"/>
+    <AoEHit radius="8">
+      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+      <Render tint="255,255,255,50" depth="0.04" duration="0.2"/>
     </AoEHit>
+    <AoEEffect radius="8">
+      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+      <Render tint="255,255,255,50" depth="0.04"/>
+    </AoEEffect>
   </AoEHitAbilityDef>
 
+  <AoEHitAbilityDef name="RasberrySorbetAttack">
+    <Cooldown cooldown="2"/>
+    <Targeting maxRange="5"/>
+    <Crit critChance="0" critMulti="0"/>
+    <AoEHit>
+      <Scaling physical="0" burn="1" poison="0" slow="0"/>
+    </AoEHit>
+    <AoEEffect radius="5">
+      <Scaling physical="0" burn="0" poison="0" slow="0"/>
+    </AoEEffect>
+  </AoEHitAbilityDef>
+
+  <!-- ==================================================================================================================== -->
+  <!-- AdjacentHit Attacks -->
+  
   <AdjacentHitAbilityDef name="CoffeeAttack">
-    <Cooldown cooldown="2"></Cooldown>
-    <Haste duration="1"></Haste>
+    <Cooldown cooldown="2"/>
+    <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
   </AdjacentHitAbilityDef>
 
-  <PassiveAoEAbilityDef name="OrangeSorbetAttack">
-    <Targeting maxRange="6"></Targeting>
-    <AoEEffect radius="6">
-      <Burn burn="25"></Burn>
-      <Render tint="255,165,0,25"></Render>
+  <!-- ==================================================================================================================== -->
+  <!-- Passive AoE Attacks -->
+  
+  <PassiveAoEAbilityDef name="MintAttack">
+    <Targeting maxRange="5"/>
+    <AoEEffect radius="5">
+      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+      <Render tint="173,235,179,25"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
-  <PassiveAoEAbilityDef name="MintAttack">
-    <Targeting maxRange="5"></Targeting>
-    <AoEEffect radius="5">
-      <Poison poison="0.25"></Poison>
-      <Slow duration="1"></Slow>
-      <Render tint="173,235,179,25"></Render>
+  <PassiveAoEAbilityDef name="OrangeSorbetAttack">
+    <Targeting maxRange="6"/>
+    <AoEEffect radius="6">
+      <Scaling physical="0" burn="1" poison="0" slow="0"/>
+      <Render tint="255,165,0,25"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>
+
+  <!-- ==================================================================================================================== -->
+  <!-- Laser Attacks -->
 
   <LaserAbilityDef name="UbeAttack">
-    <Targeting maxRange="8"></Targeting>
-    <Render tint="174,153,245, 100" depth="0.05"></Render>
-    <Chain maxChains="1" chainDistance="2" chainPayloadMulti="0.5"></Chain>
+    <Targeting maxRange="8"/>
+    <Render tint="174,153,245,100" depth="0.05"/>
+    <Chain maxChains="1" chainDistance="2" chainPayloadMulti="0.5"/>
     <OnHit>
-      <!-- per second -->
-      <Damage damage="1"></Damage>
-      <Burn burn="1"></Burn>
-      <Poison poison="1"></Poison>
+      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+      <AoEHit radius="0.5">
+        <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
+        <Render tint="174,153,245,100" depth="0.95"/>
+      </AoEHit>
     </OnHit>
   </LaserAbilityDef>
 

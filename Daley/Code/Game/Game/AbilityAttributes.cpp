@@ -1,5 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "AbilityAttributes.h"
+#include "EntityDebugContext.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
 
 
@@ -22,17 +24,44 @@ AbilityAttributes::AbilityAttributes(void const* xmlElement)
 	m_values[(int) EAbilityAttribute::Poison] = XmlUtils::ParseXmlAttribute(elem, "poison", 0.f);
 	m_values[(int) EAbilityAttribute::SlowDuration] = XmlUtils::ParseXmlAttribute(elem, "slow", 0.f);
 	m_values[(int) EAbilityAttribute::HasteDuration] = XmlUtils::ParseXmlAttribute(elem, "haste", 0.f);
-	m_values[(int) EAbilityAttribute::AttackSpeed] = XmlUtils::ParseXmlAttribute(elem, "attackSpeed", 0.f);
-	m_values[(int) EAbilityAttribute::Range] = XmlUtils::ParseXmlAttribute(elem, "range", 0.f);
-	m_values[(int) EAbilityAttribute::AreaOfEffect] = XmlUtils::ParseXmlAttribute(elem, "aoe", 0.f);
-	m_values[(int) EAbilityAttribute::AreaDamage] = XmlUtils::ParseXmlAttribute(elem, "areaDamage", 0.f);
-	m_values[(int) EAbilityAttribute::ProjectileSpeed] = XmlUtils::ParseXmlAttribute(elem, "projectileSpeed", 0.f);
-	m_values[(int) EAbilityAttribute::CritChance] = XmlUtils::ParseXmlAttribute(elem, "critChance", 0.f);
-	m_values[(int) EAbilityAttribute::CritMulti] = XmlUtils::ParseXmlAttribute(elem, "critMulti", 0.f);
-	m_values[(int) EAbilityAttribute::ChainCount] = XmlUtils::ParseXmlAttribute(elem, "numChains", 0.f);
-	m_values[(int) EAbilityAttribute::ChainChance] = XmlUtils::ParseXmlAttribute(elem, "chainChance", 0.f);
-	m_values[(int) EAbilityAttribute::ChainDistance] = XmlUtils::ParseXmlAttribute(elem, "chainDistance", 0.f);
-	m_values[(int) EAbilityAttribute::MultishotCount] = XmlUtils::ParseXmlAttribute(elem, "multishotCount", 0.f);
+	m_values[(int) EAbilityAttribute::AttackSpeed_Multi] = XmlUtils::ParseXmlAttribute(elem, "attackSpeed", 0.f);
+	m_values[(int) EAbilityAttribute::Range_Multi] = XmlUtils::ParseXmlAttribute(elem, "range", 0.f);
+	m_values[(int) EAbilityAttribute::AreaOfEffect_Multi] = XmlUtils::ParseXmlAttribute(elem, "aoe", 0.f);
+	m_values[(int) EAbilityAttribute::AreaDamage_Mulit] = XmlUtils::ParseXmlAttribute(elem, "areaDamage", 0.f);
+	m_values[(int) EAbilityAttribute::ProjectileSpeed_Multi] = XmlUtils::ParseXmlAttribute(elem, "projectileSpeed", 0.f);
+	m_values[(int) EAbilityAttribute::CritChance_Add] = XmlUtils::ParseXmlAttribute(elem, "critChance", 0.f);
+	m_values[(int) EAbilityAttribute::CritMulti_Multi] = XmlUtils::ParseXmlAttribute(elem, "critMulti", 0.f);
+	m_values[(int) EAbilityAttribute::ChainCount_Add] = XmlUtils::ParseXmlAttribute(elem, "numChains", 0.f);
+	m_values[(int) EAbilityAttribute::ChainChance_Add] = XmlUtils::ParseXmlAttribute(elem, "chainChance", 0.f);
+	m_values[(int) EAbilityAttribute::ChainDistance_Multi] = XmlUtils::ParseXmlAttribute(elem, "chainDistance", 0.f);
+	m_values[(int) EAbilityAttribute::MultishotCount_Add] = XmlUtils::ParseXmlAttribute(elem, "multishotCount", 0.f);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float AbilityAttributes::GetValue(EAbilityAttribute attribute) const
+{
+	return m_values[(int) attribute];
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityAttributes::AppendDebugString(EntityDebugContext& debugContext) const
+{
+	auto const& attributeNames = GetAttributeNames();
+
+	debugContext.m_debugString += StringUtils::StringF("---Ability Attributes---\n");
+
+	for (int i = 0; i < (int) EAbilityAttribute::Count; i++)
+	{
+		if (m_values[i] == 0.f)
+		{
+			continue;
+		}
+		debugContext.m_debugString += attributeNames[i].ToString() + ": " + std::to_string(m_values[i]) + "\n";
+	}
 }
 
 

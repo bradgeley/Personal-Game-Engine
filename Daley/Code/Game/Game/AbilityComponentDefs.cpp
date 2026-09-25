@@ -47,7 +47,6 @@ void AbilityCooldownComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 AbilityTargetingComponentDef::AbilityTargetingComponentDef(void const* xmlElement)
 {
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-	m_minRange = XmlUtils::ParseXmlAttribute(elem, "minRange", m_minRange);
 	m_maxRange = XmlUtils::ParseXmlAttribute(elem, "maxRange", m_maxRange);
 }
 
@@ -57,7 +56,7 @@ AbilityTargetingComponentDef::AbilityTargetingComponentDef(void const* xmlElemen
 void AbilityTargetingComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 {
 	static AbilityTargetingComponentDef defaultValues;
-	if (m_minRange == defaultValues.m_minRange && m_maxRange == defaultValues.m_maxRange)
+	if (m_maxRange == defaultValues.m_maxRange)
 	{
 		return;
 	}
@@ -69,10 +68,6 @@ void AbilityTargetingComponentDef::WriteToXmlDoc(void* xmlDoc, void* parentElem)
 	XmlElement& abilityElem = *static_cast<XmlElement*>(parentElem);
 
 	XmlElement* targetingElem = doc.NewElement("Targeting");
-	if (m_minRange != defaultValues.m_minRange)
-	{
-		targetingElem->SetAttribute("minRange", m_minRange);
-	}
 	if (m_maxRange != defaultValues.m_maxRange)
 	{
 		targetingElem->SetAttribute("maxRange", m_maxRange);
