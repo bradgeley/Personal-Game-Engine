@@ -21,8 +21,6 @@ public:
 	PassiveAoEAbility() = default;
 	explicit PassiveAoEAbility(PassiveAoEAbilityDef const& def);
 
-	virtual void Shutdown(SystemContext const& context) override;
-
 	virtual void Update(SystemContext const& context, CAbility const& ability, Vec2 const& location, float timeDilation) override;
 	virtual void Render(SystemContext const& context, CAbility const& ability, Vec2 const& location) const override;
 	virtual Ability* DeepCopy() const override;

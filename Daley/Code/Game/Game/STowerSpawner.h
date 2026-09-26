@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "Engine/ECS/System.h"
+#include "TowerPlacementRequest.h"
 
 
 
@@ -47,10 +48,14 @@ public:
     void Shutdown() const override;
     void Run(SystemContext const& context) const override;
 
-    TowerPlacementResult CanPlaceTower(TowerPlacementRequest const& info, SCWorld const& world) const;
-	TowerSwirlResult CanSwirl(TowerSwirlRequest const& info, SystemContext const& context) const;
-    bool PlaceTowerInWorld(TowerPlacementRequest const& placementInfo, SCWorld& world) const;
-	bool WillChangePathSolidness(TowerPlacementRequest const& placementInfo, SCWorld const& world) const;
+    TowerPlacementResult CanPlaceTower(TowerPlacementRequest const& request, SCWorld const& world) const;
+	TowerSwirlResult CanSwirl(TowerSwirlRequest const& request, SystemContext const& context) const;
+    bool PlaceTowerInWorld(TowerPlacementRequest const& request, SCWorld& world) const;
+	bool WillChangePathSolidness(TowerPlacementRequest const& request, SCWorld const& world) const;
+
+	bool ProcessTowerPlacementRequest(TowerPlacementRequest const& request, SystemContext const& context) const;
+	bool ProcessTowerSwirlRequest(TowerSwirlRequest const& request, SystemContext const& context) const;
+	bool ProcessTowerRemovalRequest(TowerRemovalRequest const& request, SystemContext const& context) const;
 
     static bool FillMapWithTower(NamedProperties& properties);
 };

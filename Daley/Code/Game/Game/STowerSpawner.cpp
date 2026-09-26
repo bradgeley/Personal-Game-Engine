@@ -47,93 +47,16 @@ void STowerSpawner::Shutdown() const
 void STowerSpawner::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	auto const& placeableStorage = context.GetMapStorageConst<CPlaceable>();
-	auto const& transformStorage = context.GetArrayStorageConst<CTransform>();
 
 	// Write Dependencies
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
-    SCWorld& world = context.GetSingleton<SCWorld>();
-	SCFloatingText& scFloatingText = context.GetSingleton<SCFloatingText>();
 	SCRunData& scRunData = context.GetSingleton<SCRunData>();
-	RunData& runData = *scRunData.m_data;
 
     // Tower Removal
 
     for (TowerRemovalRequest const& removalRequest : factory.m_towerRemovals)
     {
-		CTransform const& transform = transformStorage[removalRequest.m_towerEntityID];
-		CPlaceable const& placeable = placeableStorage[removalRequest.m_towerEntityID];
-
-		if (!context.IsValid(removalRequest.m_towerEntityID))
-		{
-			continue;
-		}
-
-        if (CTags const* tags = context.GetComponent<CTags>(removalRequest.m_towerEntityID))
-        {
-            if (tags->HasTag("Obstacle"))
-            {
-				FloatingTextInstance floatingTextInstance;
-				floatingTextInstance.m_lifetimeSeconds = 2.f;
-				floatingTextInstance.m_pos = removalRequest.m_worldPos;
-				floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
-				floatingTextInstance.m_text = "Cannot sell obstacles!";
-				floatingTextInstance.m_tint = Rgba8::Red;
-				scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
-                continue;
-            }
-        }
-
-        if (runData.m_numSoldTowers == runData.m_maxSellsPerMission)
-        {
-            FloatingTextInstance floatingTextInstance;
-            floatingTextInstance.m_lifetimeSeconds = 2.f;
-            floatingTextInstance.m_pos = removalRequest.m_worldPos;
-            floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
-            floatingTextInstance.m_text = "Sell limit reached!";
-            floatingTextInstance.m_tint = Rgba8::Red;
-            scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
-            continue;
-        }
-
-        runData.m_numSoldTowers++;
-
-		AABB2 towerBounds = AABB2(transform.m_pos, static_cast<float>(placeable.m_dims.x) * 0.5f, static_cast<float>(placeable.m_dims.y) * 0.5f);
-		towerBounds.Squeeze(0.1f);
-
-		world.ForEachPlayableTileOverlappingAABB(towerBounds, [&](IntVec2 const& worldCoords)
-		{
-			Tile tile = world.m_tiles.Get(worldCoords);
-			tile.SetIsSolid(false);
-			world.SetTile(worldCoords, tile);
-            return true;
-		});
-
-        if (removalRequest.m_isSell)
-        {
-            float refund = placeable.m_costOfPurchase * runData.m_sellRefundRate;
-			runData.m_gold += refund;
-
-            FloatingTextInstance floatingTextInstance;
-            floatingTextInstance.m_lifetimeSeconds = 2.f;
-            floatingTextInstance.m_pos = transform.m_pos;
-            floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
-            floatingTextInstance.m_text = StringUtils::StringF("+$%.1f (%i remaining)", refund, runData.m_maxSellsPerMission - runData.m_numSoldTowers);
-            floatingTextInstance.m_tint = Rgba8::Green;
-            floatingTextInstance.m_scale = 1.5f;
-            scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
-        }
-
-		CAbility* abilityComp = context.GetComponent<CAbility>(removalRequest.m_towerEntityID);
-        if (abilityComp)
-        {
-            for (Ability* ability : abilityComp->m_abilities)
-            {
-				ability->Shutdown(context);
-            }
-        }
-
-		context.DestroyEntity(removalRequest.m_towerEntityID);
+		ProcessTowerRemovalRequest(removalRequest, context);
     }
 
 	factory.m_towerRemovals.clear();
@@ -142,45 +65,7 @@ void STowerSpawner::Run(SystemContext const& context) const
 
     for (TowerSwirlRequest const& swirlRequest : factory.m_towerSwirls)
     {
-		TowerSwirlResult result = CanSwirl(swirlRequest, context);
-
-        if (result != TowerSwirlResult::Success)
-        {
-            // floating text
-            FloatingTextInstance floatingTextInstance;
-            floatingTextInstance.m_pos = swirlRequest.m_worldPos;
-            floatingTextInstance.m_lifetimeSeconds = 2.f;
-            floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
-            floatingTextInstance.m_scale = 1.f;
-            floatingTextInstance.m_tint = Rgba8::Red;
-
-            if (result == TowerSwirlResult::Invalid)
-            {
-                floatingTextInstance.m_text = "Invalid!";
-            }
-            else if (result == TowerSwirlResult::TowerAtSwirlLimit)
-            {
-                floatingTextInstance.m_text = "At swirl limit!";
-            }
-            else if (result == TowerSwirlResult::CannotAfford)
-            {
-                floatingTextInstance.m_text = "Cannot Afford!";
-            }
-            else if (result == TowerSwirlResult::AlreadyHasFlavor)
-            {
-                floatingTextInstance.m_text = "Already has flavor!";
-            }
-			else if (result == TowerSwirlResult::PlaceableCannotSwirl)
-			{
-				floatingTextInstance.m_text = "Cannot swirl that!";
-			}
-
-            scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
-            continue;
-        }
-
-        // SwirlTower
-        AddFlavorToTower(swirlRequest.m_towerEntityID, swirlRequest.m_flavor, false, context);
+		ProcessTowerSwirlRequest(swirlRequest, context);
     }
 
 	factory.m_towerSwirls.clear();
@@ -190,59 +75,7 @@ void STowerSpawner::Run(SystemContext const& context) const
 
     for (TowerPlacementRequest const& placementInfo : factory.m_towerPlacements)
     {
-        TowerPlacementResult result = CanPlaceTower(placementInfo, world);
-        if (result == TowerPlacementResult::Success)
-        {
-            PlaceTowerInWorld(placementInfo, world);
-
-            SpawnInfo spawnInfo;
-            spawnInfo.m_spawnPos = placementInfo.m_worldPos;
-            spawnInfo.m_def = EntityDef::GetEntityDef(placementInfo.m_towerEntityName);
-            EntityID tower = SEntityFactory::SpawnEntity(context, spawnInfo);
-
-            if (context.IsValid(tower))
-            {
-                // Pass data to tower
-                if (placementInfo.m_flavorName != Name::Invalid)
-                {
-                    AddFlavorToTower(tower, placementInfo.m_flavorName, true, context);
-                }
-				CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(tower);
-				placeableComp.m_botLeftTile = placementInfo.m_botLeftTileCoords;
-				placeableComp.m_costOfPurchase = placementInfo.m_cost;
-                runData.OnTowerPlacementSuccess(placementInfo);
-            }
-
-			runData.m_gold -= placementInfo.m_cost;
-        }
-        else if (!placementInfo.m_isGenerated)
-        {
-            FloatingTextInstance floatingTextInstance;
-            floatingTextInstance.m_pos = placementInfo.m_worldPos;
-            floatingTextInstance.m_lifetimeSeconds = 2.f;
-            floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
-            floatingTextInstance.m_scale = 1.f;
-            floatingTextInstance.m_tint = Rgba8::Red;
-
-			if (result == TowerPlacementResult::Blocked)
-			{
-				floatingTextInstance.m_text = "Blocked!";
-			}
-			else if (result == TowerPlacementResult::BlocksPath)
-			{
-				floatingTextInstance.m_text = "Cannot block path!";
-			}
-			else if (result == TowerPlacementResult::CannotAfford)
-			{
-				floatingTextInstance.m_text = "Cannot Afford!";
-			}
-			else if (result == TowerPlacementResult::OffVisibleMap)
-			{
-				floatingTextInstance.m_text = "Cannot build there!";
-			}
-
-            scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
-        }
+		ProcessTowerPlacementRequest(placementInfo, context);
     }
 
 	factory.m_towerPlacements.clear();
@@ -251,17 +84,17 @@ void STowerSpawner::Run(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& info, SCWorld const& world) const
+TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& request, SCWorld const& world) const
 {
-	if (info.m_canAfford == false)
+	if (request.m_canAfford == false)
 	{
 		return TowerPlacementResult::CannotAfford;
 	}
 
     IntVec2 tileCoords;
-	for (tileCoords.x = info.m_botLeftTileCoords.x; tileCoords.x <= info.m_topRightTileCoords.x; ++tileCoords.x)
+	for (tileCoords.x = request.m_botLeftTileCoords.x; tileCoords.x <= request.m_topRightTileCoords.x; ++tileCoords.x)
 	{
-		for (tileCoords.y = info.m_botLeftTileCoords.y; tileCoords.y <= info.m_topRightTileCoords.y; ++tileCoords.y)
+		for (tileCoords.y = request.m_botLeftTileCoords.y; tileCoords.y <= request.m_topRightTileCoords.y; ++tileCoords.y)
 		{
 			if (!world.IsTileVisible(tileCoords))
 			{
@@ -273,14 +106,14 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& i
     SCWorld copy;
 	copy.m_cachedSpawnLocations = world.m_cachedSpawnLocations;
 	copy.m_tiles = world.m_tiles;
-    if (!info.m_isGenerated)
+    if (!request.m_isGenerated)
     {
         copy.m_numEnemiesInTile = world.m_numEnemiesInTile;
     }
 
     copy.m_solidnessOfPathTileChanged = false;
 
-    if (!PlaceTowerInWorld(info, copy))
+    if (!PlaceTowerInWorld(request, copy))
     {
         return TowerPlacementResult::Blocked;
     }
@@ -328,7 +161,7 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& i
             return true;
         }
 
-        int numEnemies = info.m_isGenerated ? 0 : copy.m_numEnemiesInTile.Get(tileCoords);
+        int numEnemies = request.m_isGenerated ? 0 : copy.m_numEnemiesInTile.Get(tileCoords);
         if (numEnemies > 0)
         {
 		    float distanceToTileWithEnemy = proxyWorldFlowField.GetDistanceAtTileCoords(tileCoords);
@@ -348,9 +181,14 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& i
 
 
 //----------------------------------------------------------------------------------------------------------------------
-TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& info, SystemContext const& context) const
+TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& request, SystemContext const& context) const
 {
-    if (!context.IsValid(info.m_towerEntityID) || info.m_flavor == Name::Invalid)
+    if (request.m_canAfford == false)
+    {
+        return TowerSwirlResult::CannotAfford;
+    }
+
+    if (!context.IsValid(request.m_towerEntityID) || request.m_flavor == Name::Invalid)
     {
 		return TowerSwirlResult::Invalid;
     }
@@ -360,7 +198,7 @@ TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& info, SystemCo
     bool flavorIsValid = false;
     for (FlavorDef const& flavor : allFlavors)
     {
-		if (flavor.m_name == info.m_flavor)
+		if (flavor.m_name == request.m_flavor)
 		{
 			flavorIsValid = true;
 			break;
@@ -373,9 +211,9 @@ TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& info, SystemCo
 		return TowerSwirlResult::PlaceableCannotSwirl;
     }
 
-    CTags const& tags = *context.GetComponent<CTags>(info.m_towerEntityID);
+    CTags const& tags = *context.GetComponent<CTags>(request.m_towerEntityID);
 
-    if (tags.HasTag(info.m_flavor))
+    if (tags.HasTag(request.m_flavor))
     {
 		return TowerSwirlResult::AlreadyHasFlavor;
     }
@@ -400,11 +238,11 @@ TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& info, SystemCo
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& placementInfo, SCWorld& world) const
+bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& request, SCWorld& world) const
 {
-    if (world.DoTilesInRegionMatchQuery(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, placementInfo.m_tileTagQuery))
+    if (world.DoTilesInRegionMatchQuery(request.m_botLeftTileCoords, request.m_topRightTileCoords, request.m_tileTagQuery))
     {
-        world.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
+        world.ForEachPlayableTileInRegion(request.m_botLeftTileCoords, request.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
         {
             Tile tile = world.m_tiles.Get(worldCoords);
 			tile.SetIsSolid(true);
@@ -421,16 +259,16 @@ bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& placementInfo
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool STowerSpawner::WillChangePathSolidness(TowerPlacementRequest const& placementInfo, SCWorld const& world) const
+bool STowerSpawner::WillChangePathSolidness(TowerPlacementRequest const& request, SCWorld const& world) const
 {
-	bool isValidPlacement = world.DoTilesInRegionMatchQuery(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, placementInfo.m_tileTagQuery);
+	bool isValidPlacement = world.DoTilesInRegionMatchQuery(request.m_botLeftTileCoords, request.m_topRightTileCoords, request.m_tileTagQuery);
 	if (!isValidPlacement)
     {
         return false;
     }
 
 	bool willChangePathSolidness = false;
-    world.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
+    world.ForEachPlayableTileInRegion(request.m_botLeftTileCoords, request.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
     {
         // m_solidnessOfPathTileChanged |= (tile.IsPath() != existingTile.IsPath()) || (tile.IsPath() && tile.IsSolid() != existingTile.IsSolid());
         Tile const& tile = world.m_tiles.Get(worldCoords);
@@ -443,6 +281,207 @@ bool STowerSpawner::WillChangePathSolidness(TowerPlacementRequest const& placeme
     });
 
     return willChangePathSolidness;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool STowerSpawner::ProcessTowerPlacementRequest(TowerPlacementRequest const& request, SystemContext const& context) const
+{
+    SCWorld& world = context.GetSingleton<SCWorld>();
+    SCFloatingText& scFloatingText = context.GetSingleton<SCFloatingText>();
+    SCRunData& scRunData = context.GetSingleton<SCRunData>();
+    RunData& runData = *scRunData.m_data;
+
+    TowerPlacementResult result = CanPlaceTower(request, world);
+    if (result == TowerPlacementResult::Success)
+    {
+        PlaceTowerInWorld(request, world);
+
+        SpawnInfo spawnInfo;
+        spawnInfo.m_spawnPos = request.m_worldPos;
+        spawnInfo.m_def = EntityDef::GetEntityDef(request.m_towerEntityName);
+        EntityID tower = SEntityFactory::SpawnEntity(context, spawnInfo);
+
+        if (context.IsValid(tower))
+        {
+            // Pass data to tower
+            if (request.m_flavorName != Name::Invalid)
+            {
+                AddFlavorToTower(tower, request.m_flavorName, true, context);
+            }
+            CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(tower);
+            placeableComp.m_botLeftTile = request.m_botLeftTileCoords;
+            placeableComp.m_costOfPurchase = request.m_cost;
+            runData.OnTowerPlacementSuccess(request);
+        }
+
+        runData.m_gold -= request.m_cost;
+    }
+    else if (!request.m_isGenerated)
+    {
+        FloatingTextInstance floatingTextInstance;
+        floatingTextInstance.m_pos = request.m_worldPos;
+        floatingTextInstance.m_lifetimeSeconds = 2.f;
+        floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+        floatingTextInstance.m_scale = 1.f;
+        floatingTextInstance.m_tint = Rgba8::Red;
+
+        if (result == TowerPlacementResult::Blocked)
+        {
+            floatingTextInstance.m_text = "Blocked!";
+        }
+        else if (result == TowerPlacementResult::BlocksPath)
+        {
+            floatingTextInstance.m_text = "Cannot block path!";
+        }
+        else if (result == TowerPlacementResult::CannotAfford)
+        {
+            floatingTextInstance.m_text = "Cannot Afford!";
+        }
+        else if (result == TowerPlacementResult::OffVisibleMap)
+        {
+            floatingTextInstance.m_text = "Cannot build there!";
+        }
+
+        scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+        return false;
+    }
+    return true;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool STowerSpawner::ProcessTowerSwirlRequest(TowerSwirlRequest const& request, SystemContext const& context) const
+{
+    SCFloatingText& scFloatingText = context.GetSingleton<SCFloatingText>();
+
+    TowerSwirlResult result = CanSwirl(request, context);
+
+    if (result != TowerSwirlResult::Success)
+    {
+        // floating text
+        FloatingTextInstance floatingTextInstance;
+        floatingTextInstance.m_pos = request.m_worldPos;
+        floatingTextInstance.m_lifetimeSeconds = 2.f;
+        floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+        floatingTextInstance.m_scale = 1.f;
+        floatingTextInstance.m_tint = Rgba8::Red;
+
+        if (result == TowerSwirlResult::Invalid)
+        {
+            floatingTextInstance.m_text = "Invalid!";
+        }
+        else if (result == TowerSwirlResult::TowerAtSwirlLimit)
+        {
+            floatingTextInstance.m_text = "At swirl limit!";
+        }
+        else if (result == TowerSwirlResult::CannotAfford)
+        {
+            floatingTextInstance.m_text = "Cannot Afford!";
+        }
+        else if (result == TowerSwirlResult::AlreadyHasFlavor)
+        {
+            floatingTextInstance.m_text = "Already has flavor!";
+        }
+        else if (result == TowerSwirlResult::PlaceableCannotSwirl)
+        {
+            floatingTextInstance.m_text = "Cannot swirl that!";
+        }
+
+        scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+        return false;
+    }
+
+    // SwirlTower
+    AddFlavorToTower(request.m_towerEntityID, request.m_flavor, false, context);
+
+    // Add swirl cost to tower
+	CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(request.m_towerEntityID);
+	placeableComp.m_costOfPurchase += request.m_cost;
+    return true;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool STowerSpawner::ProcessTowerRemovalRequest(TowerRemovalRequest const& request, SystemContext const& context) const
+{
+    // Read Dependencies
+    auto const& placeableStorage = context.GetMapStorageConst<CPlaceable>();
+    auto const& transformStorage = context.GetArrayStorageConst<CTransform>();
+
+    // Write Dependencies
+    SCWorld& world = context.GetSingleton<SCWorld>();
+    SCFloatingText& scFloatingText = context.GetSingleton<SCFloatingText>();
+    SCRunData& scRunData = context.GetSingleton<SCRunData>();
+    RunData& runData = *scRunData.m_data;
+
+    CTransform const& transform = transformStorage[request.m_towerEntityID];
+    CPlaceable const& placeable = placeableStorage[request.m_towerEntityID];
+
+    if (!context.IsValid(request.m_towerEntityID))
+    {
+        return false;
+    }
+
+    if (CTags const* tags = context.GetComponent<CTags>(request.m_towerEntityID))
+    {
+        if (tags->HasTag("Obstacle"))
+        {
+            FloatingTextInstance floatingTextInstance;
+            floatingTextInstance.m_lifetimeSeconds = 2.f;
+            floatingTextInstance.m_pos = request.m_worldPos;
+            floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+            floatingTextInstance.m_text = "Cannot sell obstacles!";
+            floatingTextInstance.m_tint = Rgba8::Red;
+            scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+            return false;
+        }
+    }
+
+    if (runData.m_numSoldTowers == runData.m_maxSellsPerMission)
+    {
+        FloatingTextInstance floatingTextInstance;
+        floatingTextInstance.m_lifetimeSeconds = 2.f;
+        floatingTextInstance.m_pos = request.m_worldPos;
+        floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+        floatingTextInstance.m_text = "Sell limit reached!";
+        floatingTextInstance.m_tint = Rgba8::Red;
+        scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+        return false;
+    }
+
+    runData.m_numSoldTowers++;
+
+    AABB2 towerBounds = AABB2(transform.m_pos, static_cast<float>(placeable.m_dims.x) * 0.5f, static_cast<float>(placeable.m_dims.y) * 0.5f);
+    towerBounds.Squeeze(0.1f);
+
+    world.ForEachPlayableTileOverlappingAABB(towerBounds, [&](IntVec2 const& worldCoords)
+    {
+        Tile tile = world.m_tiles.Get(worldCoords);
+        tile.SetIsSolid(false);
+        world.SetTile(worldCoords, tile);
+        return true;
+    });
+
+    if (request.m_isSell)
+    {
+        float refund = placeable.m_costOfPurchase * runData.m_sellRefundRate;
+        runData.m_gold += refund;
+
+        FloatingTextInstance floatingTextInstance;
+        floatingTextInstance.m_lifetimeSeconds = 2.f;
+        floatingTextInstance.m_pos = transform.m_pos;
+        floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+        floatingTextInstance.m_text = StringUtils::StringF("+$%.1f (%i remaining)", refund, runData.m_maxSellsPerMission - runData.m_numSoldTowers);
+        floatingTextInstance.m_tint = Rgba8::Green;
+        floatingTextInstance.m_scale = 1.5f;
+        scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+    }
+
+    context.DestroyEntity(request.m_towerEntityID);
+    return true;
 }
 
 

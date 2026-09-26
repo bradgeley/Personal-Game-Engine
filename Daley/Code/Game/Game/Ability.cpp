@@ -30,14 +30,6 @@ void Ability::Initialize(SystemContext const& context, EntityID ownerEntityID)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Ability::Shutdown(SystemContext const&)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void Ability::Render(SystemContext const&, CAbility const&, Vec2 const&) const
 {
 

@@ -42,6 +42,13 @@ void AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
 		m_needsCacheUpdate = 1;
     }
 
+	float maxRange = GetMaxRange(ability);
+	if (maxRange != m_cachedMaxRange)
+	{
+        m_needsCacheUpdate = 1;
+		m_cachedMaxRange = maxRange;
+	}
+
     if (m_needsCacheUpdate)
     {
         SCWorld const& world = context.GetSingletonConst<SCWorld>();

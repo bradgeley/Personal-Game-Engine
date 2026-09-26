@@ -51,7 +51,6 @@ void SRenderUI::Run(SystemContext const& context) const
 {
 	// Read Dependencies
 	SCInputSystem const& scInput = context.GetSingletonConst<SCInputSystem>();
-	SCWorld const& scWorld = context.GetSingletonConst<SCWorld>();
 	
 	// Write Dependencies
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
@@ -61,60 +60,14 @@ void SRenderUI::Run(SystemContext const& context) const
 
 	if (scInput.m_towerPlacementIndex != -1)
 	{
-		TowerPlacementRequest const& placementInfo = scInput.m_towerPlacementRequest;
-
-		EntityDef const* def = EntityDef::GetEntityDef(placementInfo.m_towerEntityName);
-		CPlaceable const& placeable = def->m_placeable.value();
-		CTags tagsCopy = def->m_tags.has_value() ? *def->m_tags : CTags();
-
-		std::vector<Ability*> abilities;
-		CPlaceable placeableCopy = placeable;
-		placeableCopy.m_botLeftTile = scInput.m_towerPlacementRequest.m_botLeftTileCoords;
-
-		if (def->m_ability.has_value())
+		if (scInput.m_towerUnderCursor != EntityID::Invalid)
 		{
-			for (Ability* ability : def->m_ability->m_abilities)
-			{
-				abilities.push_back(ability->DeepCopy());
-			}
+			RenderSwirlPreview(context, scInput.m_towerSwirlRequest);
 		}
-
-		if (placementInfo.m_flavorName != Name::Invalid)
+		else
 		{
-			tagsCopy.AddTag(placementInfo.m_flavorName);
-			FlavorDef const* flavorDef = FlavorDef::GetFlavorDef(placementInfo.m_flavorName);
-			ASSERT_OR_DIE(flavorDef, StringUtils::StringF("SRenderUI::Run: FlavorDef not found for flavor: %s", placementInfo.m_flavorName.ToCStr()).c_str());
-			for (Name ability : flavorDef->m_abilities)
-			{
-				if (ability == Name::Invalid)
-				{
-					continue;
-				}
-				AbilityDef const* abilityDef = AbilityDef::GetAbilityDef(ability);
-				abilities.push_back(abilityDef->MakeAbilityInstance());
-			}
+			RenderTowerPlacementPreview(context, scInput.m_towerPlacementRequest);
 		}
-
-		for (auto& ability : abilities)
-		{
-			// Render range indicators for abilities when in placement mode, with all mods applied for accurate range
-			ability->AddDebugVerts(untexturedVerts, placeableCopy, CAbility(), placementInfo.m_worldPos);
-		}
-
-		for (auto& ability : abilities)
-		{
-			ability->Shutdown(context);
-			delete ability;
-		}
-
-		scWorld.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& tileCoords)
-		{
-			bool isTileValid = scWorld.DoesTileMatchTagQuery(tileCoords, placeable.m_tileTagQuery);
-			Rgba8 tileTint = isTileValid ? Rgba8(0, 255, 0, 127) : Rgba8(255, 0, 0, 127);
-			tileTint = placementInfo.m_canAfford ? tileTint : Rgba8(255, 255, 0, 127); // Orange if can't afford
-			VertexUtils::AddVertsForAABB2(untexturedVerts, scWorld.GetTileBounds(tileCoords), tileTint);
-			return true;
-		});
 	}
 	else if (scInput.m_towerUnderCursor != EntityID::Invalid)
 	{
@@ -136,4 +89,94 @@ void SRenderUI::Run(SystemContext const& context) const
 	renderer.BindTexture();
 	renderer.BindShader();
 	renderer.DrawVertexBuffer(scRenderer.m_immediateVBO);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SRenderUI::RenderTowerPlacementPreview(SystemContext const& context, TowerPlacementRequest const& placementInfo) const
+{
+	// Read Dependencies
+	SCInputSystem const& scInput = context.GetSingletonConst<SCInputSystem>();
+	SCWorld const& scWorld = context.GetSingletonConst<SCWorld>();
+
+	// Write Dependencies
+	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+	VertexBuffer& untexturedVerts = *renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
+
+	EntityDef const* def = EntityDef::GetEntityDef(placementInfo.m_towerEntityName);
+	CPlaceable const& placeable = def->m_placeable.value();
+	CTags tagsCopy = def->m_tags.has_value() ? *def->m_tags : CTags();
+
+	CPlaceable placeableCopy = placeable;
+	placeableCopy.m_botLeftTile = scInput.m_towerPlacementRequest.m_botLeftTileCoords;
+
+	CAbility tempAbilityComp;
+	if (def->m_ability.has_value())
+	{
+		for (Ability* ability : def->m_ability->m_abilities)
+		{
+			tempAbilityComp.m_abilities.push_back(ability->DeepCopy());
+		}
+	}
+
+	if (placementInfo.m_flavorName != Name::Invalid)
+	{
+		tagsCopy.AddTag(placementInfo.m_flavorName);
+		FlavorDef const* flavorDef = FlavorDef::GetFlavorDef(placementInfo.m_flavorName);
+		ASSERT_OR_DIE(flavorDef, StringUtils::StringF("SRenderUI::Run: FlavorDef not found for flavor: %s", placementInfo.m_flavorName.ToCStr()).c_str());
+		for (Name ability : flavorDef->m_abilities)
+		{
+			if (ability == Name::Invalid)
+			{
+				continue;
+			}
+			AbilityDef const* abilityDef = AbilityDef::GetAbilityDef(ability);
+			tempAbilityComp.m_abilities.push_back(abilityDef->MakeAbilityInstance());
+		}
+
+		tempAbilityComp.m_attributes += flavorDef->m_attributes;
+	}
+
+
+	for (auto& ability : tempAbilityComp.m_abilities)
+	{
+		// Render range indicators for abilities when in placement mode, with all mods applied for accurate range
+		ability->AddDebugVerts(untexturedVerts, placeableCopy, tempAbilityComp, placementInfo.m_worldPos);
+	}
+
+	scWorld.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& tileCoords)
+	{
+		bool isTileValid = scWorld.DoesTileMatchTagQuery(tileCoords, placeable.m_tileTagQuery);
+		Rgba8 tileTint = isTileValid ? Rgba8(0, 255, 0, 127) : Rgba8(255, 0, 0, 127);
+		tileTint = placementInfo.m_canAfford ? tileTint : Rgba8(255, 255, 0, 127); // Orange if can't afford
+		VertexUtils::AddVertsForAABB2(untexturedVerts, scWorld.GetTileBounds(tileCoords), tileTint);
+		return true;
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SRenderUI::RenderSwirlPreview(SystemContext const& context, TowerSwirlRequest const& placementInfo) const
+{
+	// Read Dependencies
+	SCInputSystem const& scInput = context.GetSingletonConst<SCInputSystem>();
+	SCWorld const& scWorld = context.GetSingletonConst<SCWorld>();
+
+	// Write Dependencies
+	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+	VertexBuffer& untexturedVerts = *renderer.GetVertexBuffer(scRenderer.m_immediateVBO);
+
+	CPlaceable const* placeable = context.GetComponentConst<CPlaceable>(scInput.m_towerUnderCursor);
+
+	scWorld.ForEachPlayableTileInRegion(placeable->m_botLeftTile, placeable->m_botLeftTile + placeable->m_dims + IntVec2(-1, -1), [&](IntVec2 const& tileCoords)
+	{
+		Rgba8 tileTint = Rgba8(0, 255, 0, 127);
+		tileTint = placementInfo.m_canAfford ? tileTint : Rgba8(255, 255, 0, 127); // Orange if can't afford
+		VertexUtils::AddVertsForAABB2(untexturedVerts, scWorld.GetTileBounds(tileCoords), tileTint);
+		return true;
+	});
 }

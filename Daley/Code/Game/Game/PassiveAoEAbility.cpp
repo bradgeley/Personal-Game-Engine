@@ -23,14 +23,6 @@ PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def) : Ability(
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::Shutdown(SystemContext const&)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void PassiveAoEAbility::Update(SystemContext const& context, CAbility const& ability, Vec2 const& location, float timeDilation)
 {
     ASSERT_OR_DIE(m_abilityDef, "PassiveAoEAbility::Update - m_abilityDef is null.");

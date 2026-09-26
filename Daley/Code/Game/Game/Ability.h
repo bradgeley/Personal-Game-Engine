@@ -23,7 +23,6 @@ public:
 	virtual ~Ability() = default;
 
 	virtual void Initialize(SystemContext const& context, EntityID ownerEntityID);
-	virtual void Shutdown(SystemContext const& context);
 
 	virtual void Update(SystemContext const& context, CAbility const& ability, Vec2 const& location, float timeDilation = 1.f) = 0;
 	virtual void Render(SystemContext const& context, CAbility const& ability, Vec2 const& location) const;
