@@ -24,6 +24,9 @@ typedef tinyxml2::XMLError		XmlError;
 //
 namespace XmlUtils
 {
+	// Case insensitive way to find attribute
+	XmlAttribute const* FindAttribute(XmlElement const& element, Name attributeName);
+
 	std::string ParseXmlAttribute(XmlElement const& element, char const* attributeName, char const* defaultValue);
 	std::string ParseXmlAttribute(XmlElement const& element, char const* attributeName, std::string const& defaultValue);
 	Name ParseXmlAttribute(XmlElement const& element, char const* attributeName, Name defaultValue);

@@ -5,7 +5,7 @@
 <FlavorDefs>
 
   <FlavorDef name="Vanilla" abilities="VanillaAttack">
-    <Attributes physical="100" critChance="0.1" critMulti="0.5" range="0.1"/>
+    <Attributes physical="50" critChance="0.1" critMulti="0.5" range="0.1"/>
     <AbilityFlags flags="Hit"/>
     <DisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171" desc="Quickly fires single target projectiles"></DisplayData>
   </FlavorDef>

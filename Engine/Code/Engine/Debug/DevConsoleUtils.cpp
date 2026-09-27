@@ -10,7 +10,7 @@ void DevConsoleUtils::Log(Rgba8 tint, char const* line)
 {
 	if (g_devConsole)
 	{
-		g_devConsole->AddLine(std::string(line), tint);
+		g_devConsole->AddMultiLine(std::string(line), tint);
 	}
 }
 
@@ -21,7 +21,7 @@ void DevConsoleUtils::LogSuccess(char const* line)
 {
 	if (g_devConsole)
 	{
-		g_devConsole->AddLine(std::string(line), g_devConsole->GetConfig().m_successTint);
+		g_devConsole->AddMultiLine(std::string(line), g_devConsole->GetConfig().m_successTint);
 	}
 }
 
@@ -32,7 +32,7 @@ void DevConsoleUtils::LogWarning(char const* line)
 {
 	if (g_devConsole)
 	{
-		g_devConsole->AddLine(std::string(line), g_devConsole->GetConfig().m_warningTint);
+		g_devConsole->AddMultiLine(std::string(line), g_devConsole->GetConfig().m_warningTint);
 	}
 }
 
@@ -43,7 +43,7 @@ void DevConsoleUtils::LogError(char const* line)
 {
 	if (g_devConsole)
 	{
-		g_devConsole->AddLine(std::string(line), g_devConsole->GetConfig().m_errorTint);
+		g_devConsole->AddMultiLine(std::string(line), g_devConsole->GetConfig().m_errorTint);
 	}
 }
 

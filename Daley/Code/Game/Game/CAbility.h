@@ -2,6 +2,7 @@
 #pragma once
 #include "AbilityAttributes.h"
 #include "AbilityFlags.h"
+#include "Engine/ECS/EntityID.h"
 #include <vector>
 
 
@@ -10,6 +11,7 @@ class Ability;
 struct AbilityDef;
 struct AbilityBuff;
 struct EntityDebugContext;
+struct SystemContext;
 
 
 
@@ -25,6 +27,8 @@ public:
     explicit CAbility(CAbility const& copyFrom);
     CAbility(CAbility&& moveFrom) noexcept;
     ~CAbility();
+
+	void RebuildAttributes(SystemContext const& context, EntityID entityID);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 

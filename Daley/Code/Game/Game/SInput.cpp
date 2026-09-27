@@ -249,7 +249,7 @@ bool SInput::CanAffordTower(PlaceableTower const& tower, RunData const& runData)
 //----------------------------------------------------------------------------------------------------------------------
 bool SInput::CanAffordSwirl(PlaceableTower const& tower, RunData const& runData)
 {
-	return runData.m_gold + runData.m_creditLimit >= tower.m_cost + StaticGameSettings::s_baseSwirlCost;
+	return (runData.m_gold + runData.m_creditLimit) >= (tower.m_cost + StaticGameSettings::s_baseSwirlCost);
 }
 
 
@@ -288,11 +288,13 @@ TowerPlacementRequest SInput::MakeTowerPlacementRequest(Name towerEntityName, Na
 //----------------------------------------------------------------------------------------------------------------------
 TowerSwirlRequest SInput::MakeTowerSwirlRequest(EntityID towerEntityID, Name flavorName, Vec2 const& worldPos, float cost, bool canAfford)
 {
+	float totalCost = StaticGameSettings::s_baseSwirlCost + cost;
+
 	TowerSwirlRequest request;
 	request.m_towerEntityID = towerEntityID;
 	request.m_flavor = flavorName;
 	request.m_worldPos = worldPos;
-	request.m_cost = cost;
+	request.m_cost = totalCost;
 	request.m_canAfford = canAfford;
 	return request;
 }

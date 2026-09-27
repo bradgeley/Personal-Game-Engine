@@ -266,6 +266,7 @@ void DevConsole::AddLine(std::string const& line, Rgba8 const& tint)
 {
     DevConsoleLine devConsoleLine(line, tint);
     std::unique_lock lock(m_devConsoleMutex);
+
     m_log.AddLine(devConsoleLine);
 }
 
@@ -275,16 +276,16 @@ void DevConsole::AddLine(std::string const& line, Rgba8 const& tint)
 void DevConsole::AddMultiLine(std::string const& line, Rgba8 const& tint)
 {
     Strings lines = StringUtils::SplitStringOnDelimiter(line, '\n');
-    
-    for (auto& splitLine : lines)
+
+    std::unique_lock lock(m_devConsoleMutex);
+
+    for (std::string const& splitLine : lines)
     {
         if (splitLine == "")
         {
             continue;
         }
         DevConsoleLine devConsoleLine(splitLine, tint);
-    
-        std::unique_lock lock(m_devConsoleMutex);
         m_log.AddLine(devConsoleLine);
     }
 }
@@ -303,6 +304,7 @@ void DevConsole::AddBackgroundImage(TextureID backgroundImage)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info)
 {
+    std::unique_lock lock(m_devConsoleMutex);
     m_commandInfos.emplace_back(info);
 }
 
@@ -311,6 +313,7 @@ void DevConsole::AddDevConsoleCommandInfo(DevConsoleCommandInfo const& info)
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::AddDevConsoleCommandInfo(Name eventName, Name argName, DevConsoleArgType argType)
 {
+    std::unique_lock lock(m_devConsoleMutex);
     m_commandInfos.emplace_back(eventName, argName, argType);
 }
 
@@ -319,6 +322,8 @@ void DevConsole::AddDevConsoleCommandInfo(Name eventName, Name argName, DevConso
 //----------------------------------------------------------------------------------------------------------------------
 void DevConsole::RemoveDevConsoleCommandInfo(Name commandName)
 {
+    std::unique_lock lock(m_devConsoleMutex);
+
     for (auto it = m_commandInfos.begin(); it != m_commandInfos.end();)
     {
         DevConsoleCommandInfo& commandInfo = *it;
@@ -661,7 +666,7 @@ bool DevConsole::OnCommandEnteredEvent(NamedProperties& args)
 
     if (!g_eventSystem->IsEventBound(eventName))
     {
-        g_devConsole->LogWarning("No events bound to that command.");
+        LogWarning("No events bound to that command.");
         return true;
     }
 

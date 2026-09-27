@@ -24,10 +24,17 @@ AbilityAttributes::AbilityAttributes(void const* xmlElement)
 	m_values[(int) EAbilityAttribute::Poison] = XmlUtils::ParseXmlAttribute(elem, "poison", 0.f);
 	m_values[(int) EAbilityAttribute::SlowDuration] = XmlUtils::ParseXmlAttribute(elem, "slow", 0.f);
 	m_values[(int) EAbilityAttribute::HasteDuration] = XmlUtils::ParseXmlAttribute(elem, "haste", 0.f);
+
+	m_values[(int) EAbilityAttribute::Physical_Multi] = XmlUtils::ParseXmlAttribute(elem, "physicalMulti", 0.f);
+	m_values[(int) EAbilityAttribute::Burn_Multi] = XmlUtils::ParseXmlAttribute(elem, "burnMulti", 0.f);
+	m_values[(int) EAbilityAttribute::Poison_Multi] = XmlUtils::ParseXmlAttribute(elem, "poisonMulti", 0.f);
+	m_values[(int) EAbilityAttribute::Slow_Multi] = XmlUtils::ParseXmlAttribute(elem, "slowMulti", 0.f);
+	m_values[(int) EAbilityAttribute::Haste_Multi] = XmlUtils::ParseXmlAttribute(elem, "hasteMulti", 0.f);
+
 	m_values[(int) EAbilityAttribute::AttackSpeed_Multi] = XmlUtils::ParseXmlAttribute(elem, "attackSpeed", 0.f);
 	m_values[(int) EAbilityAttribute::Range_Multi] = XmlUtils::ParseXmlAttribute(elem, "range", 0.f);
 	m_values[(int) EAbilityAttribute::AreaOfEffect_Multi] = XmlUtils::ParseXmlAttribute(elem, "aoe", 0.f);
-	m_values[(int) EAbilityAttribute::AreaDamage_Mulit] = XmlUtils::ParseXmlAttribute(elem, "areaDamage", 0.f);
+	m_values[(int) EAbilityAttribute::AreaDamage_Multi] = XmlUtils::ParseXmlAttribute(elem, "areaDamage", 0.f);
 	m_values[(int) EAbilityAttribute::ProjectileSpeed_Multi] = XmlUtils::ParseXmlAttribute(elem, "projectileSpeed", 0.f);
 	m_values[(int) EAbilityAttribute::CritChance_Add] = XmlUtils::ParseXmlAttribute(elem, "critChance", 0.f);
 	m_values[(int) EAbilityAttribute::CritMulti_Multi] = XmlUtils::ParseXmlAttribute(elem, "critMulti", 0.f);
@@ -108,19 +115,26 @@ std::array<Name, (int) EAbilityAttribute::Count> const& AbilityAttributes::GetAt
 		Name("Physical"),
 		Name("Burn"),
 		Name("Poison"),
-		Name("Slow Duration"),
-		Name("Haste Duration"),
-		Name("Attack Speed"),
+		Name("SlowDuration"),
+		Name("HasteDuration"),
+
+		Name("PhysicalMulti"),
+		Name("BurnMulti"),
+		Name("PoisonMulti"),
+		Name("SlowMulti"),
+		Name("HasteMulti"),
+
+		Name("AttackSpeed"),
 		Name("Range"),
-		Name("Area of Effect"),
-		Name("Area Damage"),
-		Name("Projectile Speed"),
-		Name("Crit Chance"),
-		Name("Crit Multi"),
-		Name("Chain Count"),
-		Name("Chain Chance"),
-		Name("Chain Distance"),
-		Name("Multishot Count")
+		Name("AreaofEffect"),
+		Name("AreaDamage"),
+		Name("ProjectileSpeed"),
+		Name("CritChance"),
+		Name("CritMulti"),
+		Name("ChainCount"),
+		Name("ChainChance"),
+		Name("ChainDistance"),
+		Name("MultishotCount")
 	};
 	return s_names;
 }

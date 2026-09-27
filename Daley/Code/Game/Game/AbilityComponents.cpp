@@ -58,8 +58,6 @@ void AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
 
         m_cachedTilesInRange.clear();
 
-		float maxRange = GetMaxRange(ability);
-
         world.ForEachPathTileInRange(location, 0.f, maxRange, [&](IntVec2 const& worldCoords)
         {
             m_cachedTilesInRange.push_back(worldCoords);

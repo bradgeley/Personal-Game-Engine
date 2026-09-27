@@ -4,6 +4,7 @@
 #include "GameCommon.h"
 #include "SCEntityFactory.h"
 #include "Engine/Core/NamedProperties.h"
+#include "Engine/Core/NameTable.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/AdminSystem.h"
 #include "Engine/Math/MathUtils.h"
@@ -20,6 +21,7 @@ void SDebugCommands::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("God", &SDebugCommands::God, "duration", DevConsoleArgType::Float);
 	DevConsoleUtils::AddDevConsoleCommand("UnlockAllMods", &SDebugCommands::UnlockAllMods);
 	DevConsoleUtils::AddDevConsoleCommand("Unlock", &SDebugCommands::Unlock, "name", DevConsoleArgType::Name);
+	DevConsoleUtils::AddDevConsoleCommand("DumpNameTable", &SDebugCommands::DumpNameTable);
 
 	m_ignoreRun = true;
 }
@@ -36,6 +38,7 @@ void SDebugCommands::Shutdown() const
 	DevConsoleUtils::RemoveDevConsoleCommand("God", &SDebugCommands::God);
 	DevConsoleUtils::RemoveDevConsoleCommand("UnlockAllMods", &SDebugCommands::UnlockAllMods);
 	DevConsoleUtils::RemoveDevConsoleCommand("Unlock", &SDebugCommands::Unlock);
+	DevConsoleUtils::RemoveDevConsoleCommand("DumpNameTable", &SDebugCommands::DumpNameTable);
 }
 
 
@@ -223,6 +226,19 @@ bool SDebugCommands::Unlock(NamedProperties& args)
 	}
 
 	runData.m_data->m_needsModifierRecalculation = true;
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::DumpNameTable(NamedProperties& args)
+{
+	std::string debugString;
+	g_nameTable->AppendDebugString(debugString);
+
+	DevConsoleUtils::Log(Rgba8::AliceBlue, debugString.c_str());
 
 	return false;
 }

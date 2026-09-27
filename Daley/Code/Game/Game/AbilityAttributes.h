@@ -26,11 +26,17 @@ enum class EAbilityAttribute
     SlowDuration,
     HasteDuration,
 
+    Physical_Multi,
+    Burn_Multi,
+    Poison_Multi,
+    Slow_Multi,
+    Haste_Multi,
+
 	// Modifiers (Add: Additive, Multi: Multiplicative)
     AttackSpeed_Multi,
     Range_Multi,
     AreaOfEffect_Multi,
-    AreaDamage_Mulit,
+    AreaDamage_Multi,
     ProjectileSpeed_Multi,
     CritChance_Add,
     CritMulti_Multi,

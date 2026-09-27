@@ -27,6 +27,8 @@ public:
 	void Startup();
 	void Shutdown();
 
+	void AppendDebugString(std::string& out) const;
+
 protected:
 
 	std::mutex m_lookupTableMutex;

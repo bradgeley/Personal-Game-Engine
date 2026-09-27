@@ -26,4 +26,5 @@ protected:
 	static bool God(NamedProperties& args);
 	static bool UnlockAllMods(NamedProperties& args);
 	static bool Unlock(NamedProperties& args);
+	static bool DumpNameTable(NamedProperties& args);
 };

@@ -99,6 +99,7 @@ void SRenderUI::RenderTowerPlacementPreview(SystemContext const& context, TowerP
 	// Read Dependencies
 	SCInputSystem const& scInput = context.GetSingletonConst<SCInputSystem>();
 	SCWorld const& scWorld = context.GetSingletonConst<SCWorld>();
+	RunData const& runData = *context.GetSingletonConst<SCRunData>().m_data;
 
 	// Write Dependencies
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
@@ -139,6 +140,10 @@ void SRenderUI::RenderTowerPlacementPreview(SystemContext const& context, TowerP
 		tempAbilityComp.m_attributes += flavorDef->m_attributes;
 	}
 
+	for (auto& mod : runData.m_activeRunModifiers)
+	{
+		mod->ApplyToAbility(tempAbilityComp, tagsCopy);
+	}
 
 	for (auto& ability : tempAbilityComp.m_abilities)
 	{

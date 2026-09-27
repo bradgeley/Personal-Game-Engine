@@ -356,6 +356,7 @@ bool STowerSpawner::ProcessTowerPlacementRequest(TowerPlacementRequest const& re
 bool STowerSpawner::ProcessTowerSwirlRequest(TowerSwirlRequest const& request, SystemContext const& context) const
 {
     SCFloatingText& scFloatingText = context.GetSingleton<SCFloatingText>();
+	RunData& runData = *context.GetSingleton<SCRunData>().m_data;
 
     TowerSwirlResult result = CanSwirl(request, context);
 
@@ -396,6 +397,9 @@ bool STowerSpawner::ProcessTowerSwirlRequest(TowerSwirlRequest const& request, S
 
     // SwirlTower
     AddFlavorToTower(request.m_towerEntityID, request.m_flavor, false, context);
+
+	// Subtract swirl cost from player
+	runData.m_gold -= request.m_cost;
 
     // Add swirl cost to tower
 	CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(request.m_towerEntityID);

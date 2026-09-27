@@ -25,3 +25,15 @@ void NameTable::Shutdown()
 	m_nameTable.clear();
 	m_lookupTable.clear();
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void NameTable::AppendDebugString(std::string& out) const
+{
+	for (auto& [name, id] : m_lookupTable)
+	{
+		out += StringUtils::StringF("%s -> %u\n", name.c_str(), id);
+	}
+	out += StringUtils::StringF("Total Names: %zu\n", m_lookupTable.size());
+}

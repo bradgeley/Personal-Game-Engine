@@ -6,9 +6,24 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+XmlAttribute const* XmlUtils::FindAttribute(XmlElement const& element, Name attributeName)
+{
+    for (XmlAttribute const* a = element.FirstAttribute(); a; a = a->Next())
+    {
+        if (Name(a->Name()) == attributeName)
+        {
+            return a;
+        }
+    }
+    return nullptr;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 std::string XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, char const*	defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         return attrib->Value();
     }
@@ -20,7 +35,7 @@ std::string XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* a
 //----------------------------------------------------------------------------------------------------------------------
 std::string XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, std::string const& defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         return std::string(attrib->Value());
     }
@@ -32,7 +47,7 @@ std::string XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* a
 //----------------------------------------------------------------------------------------------------------------------
 Name XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, Name defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         return Name(attrib->Value());
     }
@@ -44,7 +59,7 @@ Name XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribut
 //----------------------------------------------------------------------------------------------------------------------
 float XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, float defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         return attrib->FloatValue();
     }
@@ -56,7 +71,7 @@ float XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribu
 //----------------------------------------------------------------------------------------------------------------------
 bool XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, bool defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         return attrib->BoolValue();
     }
@@ -68,7 +83,7 @@ bool XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribut
 //----------------------------------------------------------------------------------------------------------------------
 int XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, int defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         return attrib->IntValue();
     }
@@ -80,7 +95,7 @@ int XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribute
 //----------------------------------------------------------------------------------------------------------------------
 char XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, char defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         std::string value = attrib->Value();
         if (value.length() == 0)
@@ -102,7 +117,7 @@ char XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribut
 //----------------------------------------------------------------------------------------------------------------------
 uint8_t XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, uint8_t defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         int intVal = attrib->IntValue();
         if (intVal < 0)
@@ -119,7 +134,7 @@ uint8_t XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attri
 //----------------------------------------------------------------------------------------------------------------------
 Vec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, Vec2 const& defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         std::string value = attrib->Value();
         auto strings = StringUtils::SplitStringOnDelimiter(value, ',');
@@ -141,7 +156,7 @@ Vec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attribut
 //----------------------------------------------------------------------------------------------------------------------
 IntVec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, IntVec2 const& defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         std::string value = attrib->Value();
         auto strings = StringUtils::SplitStringOnDelimiter(value, ',');
@@ -163,7 +178,7 @@ IntVec2 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attri
 //----------------------------------------------------------------------------------------------------------------------
 Rgba8 XmlUtils::ParseXmlAttribute(XmlElement const& element, char const* attributeName, Rgba8 const& defaultValue)
 {
-    if (XmlAttribute const* attrib = element.FindAttribute(attributeName))
+    if (XmlAttribute const* attrib = FindAttribute(element, Name(attributeName)))
     {
         std::string value = attrib->Value();
         Strings strings = StringUtils::SplitStringOnDelimiter(value, ',');

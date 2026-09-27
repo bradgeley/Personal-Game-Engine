@@ -2,9 +2,14 @@
 #include "CAbility.h"
 #include "Ability.h"
 #include "AbilityDef.h"
+#include "CTags.h"
+#include "FlavorDef.h"
+#include "RunModifierDef.h"
+#include "SCRunData.h"
 #include "EntityDebugContext.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 
@@ -16,6 +21,38 @@ CAbility::~CAbility()
 		delete ability;
 	}
 	m_abilities.clear();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CAbility::RebuildAttributes(SystemContext const& context, EntityID entityID)
+{
+	if (!context.IsValid(entityID))
+	{
+		return;
+	}
+
+	auto const& flavorDefs = FlavorDef::GetAllFlavorDefs();
+	CTags const& tags = *context.GetComponent<CTags>(entityID);
+	RunData const& runData = *context.GetSingletonConst<SCRunData>().m_data;
+
+	m_attributes = AbilityAttributes(); // Reset attributes
+
+	for (auto const& flavorDef : flavorDefs)
+	{
+		if (tags.HasTag(flavorDef.m_name))
+		{
+			m_attributes += flavorDef.m_attributes;
+		}
+	}
+
+	for (auto const* modifier : runData.m_activeRunModifiers)
+	{
+		modifier->ApplyToAbility(*this, tags);
+	}
+
+	m_needsAttributeRebuild = false;
 }
 
 
