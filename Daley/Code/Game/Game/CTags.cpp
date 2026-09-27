@@ -113,9 +113,9 @@ int CTags::GetNumFlavorTags() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::array<FlavorDef const*, 3> CTags::GetFlavorDefs() const
+std::array<FlavorDef const*, StaticGameSettings::s_maxFlavorsInOneTower> CTags::GetFlavorDefs() const
 {
-	std::array<FlavorDef const*, 3> result;
+	std::array<FlavorDef const*, StaticGameSettings::s_maxFlavorsInOneTower> result;
 	result.fill(nullptr);
 
 	int resultIndex = 0;

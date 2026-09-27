@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
+#include "GameCommon.h"
 #include "Engine/Core/Name.h"
 #include <string>
 #include <array>
@@ -30,7 +31,7 @@ public:
 
 	// Utility funcs
 	int GetNumFlavorTags() const;
-	std::array<FlavorDef const*, 3> GetFlavorDefs() const;
+	std::array<FlavorDef const*, StaticGameSettings::s_maxFlavorsInOneTower> GetFlavorDefs() const;
 
 	void AppendDebugString(std::string& out) const;
 

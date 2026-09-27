@@ -2,6 +2,7 @@
 #include "ProjectileHitAbility.h"
 #include "CProjectile.h"
 #include "EntityDef.h"
+#include "FlavorDef.h"
 #include "ProjectileHitAbilityDef.h"
 #include "SEntityFactory.h"
 #include "Engine/Core/ErrorUtils.h"
@@ -48,10 +49,16 @@ void ProjectileHitAbility::Update(SystemContext const& context, CAbility const& 
 
 	// Write Dependencies
 	auto& projectileStorage = context.GetMapStorage<CProjectile>();
+	auto& animStorage = context.GetArrayStorage<CAnimation>();
+	auto& tagStorage = context.GetArrayStorage<CTags>();
     RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
 
     CRender& ownerRenderComp = *context.GetComponentUnsafe<CRender>(m_owner);
 	Rgba8 const& ownerTint = ownerRenderComp.m_tint;
+
+    CTags const& ownerTags = tagStorage[m_owner];
+	auto const ownerFlavors = ownerTags.GetFlavorDefs();
+	int numOwnerFlavors = ownerTags.GetNumFlavorTags();
 
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
     m_targetingComp.UpdateCachedTiles(context, ability, location);
@@ -107,6 +114,21 @@ void ProjectileHitAbility::Update(SystemContext const& context, CAbility const& 
             projComp.m_accumulatedTime += m_cooldownComp.m_accumulatedTime;
             projComp.m_projSpeed = m_projSpeed * timeDilation;
             projComp.m_onHitComp = RollDamageAndEffects(ability, rng);
+
+			CTags& projTags = tagStorage[projectileID];
+			for (auto& flavor : ownerFlavors)
+			{
+				if (flavor != nullptr)
+				{
+					projTags.AddTag(flavor->m_name);
+				}
+			}
+            
+            if (numOwnerFlavors > 1)
+            {
+                CAnimation& projAnimComp = animStorage[projectileID];
+				projAnimComp.m_renderStyle = SpriteRenderStyle::Swirl;
+            }
         }
     }
 }
