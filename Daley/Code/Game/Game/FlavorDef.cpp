@@ -63,7 +63,10 @@ void FlavorDef::LoadFromXML()
 
 		while (flavorDefElement)
 		{
-			s_flavorDefs.emplace_back(flavorDefElement);
+			FlavorDef flavorDef(flavorDefElement);
+			flavorDef.m_flavorIndex = static_cast<int>(s_flavorDefs.size());
+
+			s_flavorDefs.push_back(flavorDef);
 			flavorDefElement = flavorDefElement->NextSiblingElement();
 		}
 	}

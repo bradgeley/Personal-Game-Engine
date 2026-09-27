@@ -246,6 +246,7 @@ void TowerDefenseState::ConfigureECS()
     g_ecs->RegisterSystem<SRenderWorld>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SVisualEffects>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderSwirls>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderAbilities>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderCollisionEffects>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderDiscs>((int) FramePhase::Render);

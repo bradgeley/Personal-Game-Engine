@@ -65,16 +65,18 @@ DXGI_FORMAT GetD3D11Format(InputLayoutAttributeFormat format)
 {
 	switch (format)
 	{
-	case InputLayoutAttributeFormat::Float1:   return DXGI_FORMAT_R32_FLOAT;
-	case InputLayoutAttributeFormat::Float2:   return DXGI_FORMAT_R32G32_FLOAT;
-	case InputLayoutAttributeFormat::Float3:   return DXGI_FORMAT_R32G32B32_FLOAT;
-	case InputLayoutAttributeFormat::Float4:   return DXGI_FORMAT_R32G32B32A32_FLOAT;
-	case InputLayoutAttributeFormat::Rgba8:    return DXGI_FORMAT_R8G8B8A8_UNORM;
-	case InputLayoutAttributeFormat::Uint1:    return DXGI_FORMAT_R32_UINT;
-	case InputLayoutAttributeFormat::Uint2:    return DXGI_FORMAT_R32G32_UINT;
-	case InputLayoutAttributeFormat::Uint3:    return DXGI_FORMAT_R32G32B32_UINT;
-	case InputLayoutAttributeFormat::Uint4:    return DXGI_FORMAT_R32G32B32A32_UINT;
-	case InputLayoutAttributeFormat::R8_UNORM: return DXGI_FORMAT_R8_UNORM;
+	case InputLayoutAttributeFormat::Float1:		return DXGI_FORMAT_R32_FLOAT;
+	case InputLayoutAttributeFormat::Float2:		return DXGI_FORMAT_R32G32_FLOAT;
+	case InputLayoutAttributeFormat::Float3:		return DXGI_FORMAT_R32G32B32_FLOAT;
+	case InputLayoutAttributeFormat::Float4:		return DXGI_FORMAT_R32G32B32A32_FLOAT;
+	case InputLayoutAttributeFormat::Rgba8:			return DXGI_FORMAT_R8G8B8A8_UNORM;
+	case InputLayoutAttributeFormat::Uint1:			return DXGI_FORMAT_R32_UINT;
+	case InputLayoutAttributeFormat::Uint2:			return DXGI_FORMAT_R32G32_UINT;
+	case InputLayoutAttributeFormat::Uint3:			return DXGI_FORMAT_R32G32B32_UINT;
+	case InputLayoutAttributeFormat::Uint4:			return DXGI_FORMAT_R32G32B32A32_UINT;
+	case InputLayoutAttributeFormat::R8_UNORM:		return DXGI_FORMAT_R8_UNORM;
+	case InputLayoutAttributeFormat::R8_UINT:		return DXGI_FORMAT_R8_UINT;
+	case InputLayoutAttributeFormat::R8G8B8A8_UINT: return DXGI_FORMAT_R8G8B8A8_UINT;
 	default:              
 		ERROR_AND_DIE("Unsupported InputLayoutAttributeFormat");
 		//return DXGI_FORMAT_UNKNOWN;

@@ -25,6 +25,7 @@ public:
 public:
 
     static bool StartWaves(NamedProperties& args);
+    static bool StopWaves(NamedProperties& args);
     static bool GenerateWaves(NamedProperties& args);
 	static bool StressTest(NamedProperties& args);
 

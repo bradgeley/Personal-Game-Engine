@@ -177,6 +177,8 @@ void SRenderUI::RenderSwirlPreview(SystemContext const& context, TowerSwirlReque
 
 	CPlaceable const* placeable = context.GetComponentConst<CPlaceable>(scInput.m_towerUnderCursor);
 
+	// Todo: render red if the swirl will fail
+
 	scWorld.ForEachPlayableTileInRegion(placeable->m_botLeftTile, placeable->m_botLeftTile + placeable->m_dims + IntVec2(-1, -1), [&](IntVec2 const& tileCoords)
 	{
 		Rgba8 tileTint = Rgba8(0, 255, 0, 127);

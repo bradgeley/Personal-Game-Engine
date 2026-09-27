@@ -20,6 +20,8 @@ enum class InputLayoutAttributeFormat
     Uint4,
     Rgba8,
     R8_UNORM,
+    R8_UINT,
+    R8G8B8A8_UINT,
 
     Count,
     Invalid,
@@ -40,6 +42,8 @@ static std::string s_inputLayoutAttributeFormatNames[] =
     "Uint4",
 	"Rgba8", // R8G8B8A8_UNORM
 	"R8_UNORM",
+	"R8_UINT",
+    "R8G8B8A8_UINT",
 
     "COUNT",
     "INVALID",

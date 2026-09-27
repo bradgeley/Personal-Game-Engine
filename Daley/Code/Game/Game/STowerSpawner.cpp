@@ -50,7 +50,6 @@ void STowerSpawner::Run(SystemContext const& context) const
 
 	// Write Dependencies
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
-	SCRunData& scRunData = context.GetSingleton<SCRunData>();
 
     // Tower Removal
 
@@ -502,6 +501,12 @@ bool AddFlavorToTower(EntityID tower, Name flavorName, bool isBaseFlavor, System
 	ASSERT_OR_DIE(tags, StringUtils::StringF("AddFlavorToTower: CTags component not found for tower entity: %u", tower).c_str());
 
 	tags->AddTag(flavorName);
+
+    if (!isBaseFlavor)
+    {
+        CAnimation* animComp = context.GetComponent<CAnimation>(tower);
+        animComp->m_renderStyle = SpriteRenderStyle::Swirl;
+    }
 
 	CAbility* abilityComp = context.GetComponent<CAbility>(tower);
 	ASSERT_OR_DIE(abilityComp, StringUtils::StringF("AddFlavorToTower: CAbility component not found for tower entity: %u", tower).c_str());

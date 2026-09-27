@@ -20,6 +20,7 @@ public:
 	Rgba8(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
 
     void GetAsFloats(float* out_fourFloats) const;
+    void GetRgbAsFloats(float* out_threeFloats) const;
     uint32_t GetAsUint32() const;
 
     bool operator==(Rgba8 const& other) const;

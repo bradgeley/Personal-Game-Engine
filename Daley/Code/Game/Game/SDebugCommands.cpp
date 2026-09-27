@@ -18,6 +18,8 @@ void SDebugCommands::Startup()
 	DevConsoleUtils::AddDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
 	DevConsoleUtils::AddDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity, "name", DevConsoleArgType::String);
 	DevConsoleUtils::AddDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies, "duration", DevConsoleArgType::Float);
+	DevConsoleUtils::AddDevConsoleCommand("KillAll", &SDebugCommands::KillAll);
+	DevConsoleUtils::AddDevConsoleCommand("DestroyAllEntities", &SDebugCommands::DestroyAllEntities);
 	DevConsoleUtils::AddDevConsoleCommand("God", &SDebugCommands::God, "duration", DevConsoleArgType::Float);
 	DevConsoleUtils::AddDevConsoleCommand("UnlockAllMods", &SDebugCommands::UnlockAllMods);
 	DevConsoleUtils::AddDevConsoleCommand("Unlock", &SDebugCommands::Unlock, "name", DevConsoleArgType::Name);
@@ -35,6 +37,8 @@ void SDebugCommands::Shutdown() const
 	DevConsoleUtils::RemoveDevConsoleCommand("DumpEntityDebug", &SDebugCommands::DumpEntityDebug);
 	DevConsoleUtils::RemoveDevConsoleCommand("SetDebugPlacementEntity", &SDebugCommands::SetDebugPlacementEntity);
 	DevConsoleUtils::RemoveDevConsoleCommand("SlowAllEnemies", &SDebugCommands::SlowAllEnemies);
+	DevConsoleUtils::RemoveDevConsoleCommand("KillAll", &SDebugCommands::KillAll);
+	DevConsoleUtils::RemoveDevConsoleCommand("DestroyAllEntities", &SDebugCommands::DestroyAllEntities);
 	DevConsoleUtils::RemoveDevConsoleCommand("God", &SDebugCommands::God);
 	DevConsoleUtils::RemoveDevConsoleCommand("UnlockAllMods", &SDebugCommands::UnlockAllMods);
 	DevConsoleUtils::RemoveDevConsoleCommand("Unlock", &SDebugCommands::Unlock);
@@ -145,6 +149,29 @@ bool SDebugCommands::SlowAllEnemies(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::KillAll(NamedProperties&)
+{
+	for (auto it = g_ecs->IterateAll<CHealth>(); it.IsValid(); ++it)
+	{
+		CHealth& health = g_ecs->GetArrayStorage<CHealth>()[it];
+		health.m_currentHealth = -1'000'000.f;
+	}
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SDebugCommands::DestroyAllEntities(NamedProperties& args)
+{
+	g_ecs->DestroyAllEntities();
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool SDebugCommands::God(NamedProperties&)
 {
 	SCDebug& scDebug = g_ecs->GetSingleton<SCDebug>();
@@ -233,7 +260,7 @@ bool SDebugCommands::Unlock(NamedProperties& args)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugCommands::DumpNameTable(NamedProperties& args)
+bool SDebugCommands::DumpNameTable(NamedProperties&)
 {
 	std::string debugString;
 	g_nameTable->AppendDebugString(debugString);

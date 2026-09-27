@@ -29,6 +29,7 @@ private:
 public:
 
 	Name m_name	= "Unnamed FlavorDef";
+	int m_flavorIndex = -1;
 	std::array<Name, s_maxAbilities> m_abilities;
 	AbilityAttributes m_attributes;
 	AbilityFlags m_abilityFlags;

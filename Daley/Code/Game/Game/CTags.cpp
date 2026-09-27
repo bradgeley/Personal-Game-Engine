@@ -1,5 +1,6 @@
-﻿// Bradley Christensen - 2022-2026
+// Bradley Christensen - 2022-2026
 #include "CTags.h"
+#include "FlavorDef.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
@@ -89,6 +90,46 @@ int CTags::FindTag(Name const& tag) const
 		}
 	}
 	return -1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int CTags::GetNumFlavorTags() const
+{
+	auto const& allFlavorDefs = FlavorDef::GetAllFlavorDefs();
+
+	int result = 0;
+	for (auto const& flavorDef : allFlavorDefs)
+	{
+		if (HasTag(flavorDef.m_name))
+		{
+			result++;
+		}
+	}
+	return result;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+std::array<FlavorDef const*, 3> CTags::GetFlavorDefs() const
+{
+	std::array<FlavorDef const*, 3> result;
+	result.fill(nullptr);
+
+	int resultIndex = 0;
+	for (Name const& tag : m_tags)
+	{
+		FlavorDef const* flavorDef = FlavorDef::GetFlavorDef(tag);
+		if (flavorDef != nullptr)
+		{
+			result[resultIndex] = flavorDef;
+			resultIndex++;
+		}
+	}
+
+	return result;
 }
 
 

@@ -95,10 +95,10 @@ void SRenderEntities::Run(SystemContext const& context) const
         }
 
         CAnimation const& anim = animStorage[it];
-        if (anim.m_gridSpriteSheet == AssetID::Invalid || !anim.m_animInstance.IsValid())
-        {
-            continue;
-        }
+		if (anim.m_renderStyle != SpriteRenderStyle::Sprite || anim.m_gridSpriteSheet == AssetID::Invalid || !anim.m_animInstance.IsValid())
+		{
+			continue;
+		}
 
         GridSpriteSheet const* spriteSheet = assetManager.Get<GridSpriteSheet>(anim.m_gridSpriteSheet);
         if (!spriteSheet)

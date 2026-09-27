@@ -352,6 +352,9 @@
     <ClCompile Include="Game\AbilityFlags.cpp">
       <Filter>Definitions\AbilityDefs\Ability</Filter>
     </ClCompile>
+    <ClCompile Include="Game\SRenderSwirls.cpp">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\EngineBuildPreferences.h">
@@ -774,6 +777,12 @@
     <ClInclude Include="Game\AbilityFlags.h">
       <Filter>Definitions\AbilityDefs\Ability</Filter>
     </ClInclude>
+    <ClInclude Include="Game\SwirlShaderCPU.h">
+      <Filter>Data\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\SRenderSwirls.h">
+      <Filter>ECS\Systems\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -949,6 +958,9 @@
     <Xml Include="..\..\Run\Data\Definitions\FlavorCombinationAbilityDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
+    <Xml Include="..\..\Run\Data\Shaders\SwirlShader.xml">
+      <Filter>Data\Shaders</Filter>
+    </Xml>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Run\Data\Shaders\SpriteShader.hlsl">
@@ -969,5 +981,10 @@
     <FxCompile Include="..\..\Run\Data\Shaders\DiscShader.hlsl">
       <Filter>Data\Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Run\Data\Shaders\SwirlShader.hlsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -379,6 +379,7 @@
     <ClCompile Include="Game\SRenderHUD.cpp" />
     <ClCompile Include="Game\SRenderModSelection.cpp" />
     <ClCompile Include="Game\SRenderPopupOverlay.cpp" />
+    <ClCompile Include="Game\SRenderSwirls.cpp" />
     <ClCompile Include="Game\SRenderUI.cpp" />
     <ClCompile Include="Game\SRunModifier.cpp" />
     <ClCompile Include="Game\SSaveLoad.cpp" />
@@ -517,6 +518,7 @@
     <ClInclude Include="Game\SRenderHUD.h" />
     <ClInclude Include="Game\SRenderModSelection.h" />
     <ClInclude Include="Game\SRenderPopupOverlay.h" />
+    <ClInclude Include="Game\SRenderSwirls.h" />
     <ClInclude Include="Game\SRenderUI.h" />
     <ClInclude Include="Game\SRunModifier.h" />
     <ClInclude Include="Game\SSaveLoad.h" />
@@ -538,6 +540,7 @@
     <ClInclude Include="Game\SRenderEntities.h" />
     <ClInclude Include="Game\SRenderWorld.h" />
     <ClInclude Include="Game\SWaveSpawner.h" />
+    <ClInclude Include="Game\SwirlShaderCPU.h" />
     <ClInclude Include="Game\SWorld.h" />
     <ClInclude Include="Game\SWorldTime.h" />
     <ClInclude Include="Game\Tile.h" />
@@ -568,6 +571,7 @@
     <Xml Include="..\..\Run\Data\Shaders\DiscShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\HealthBarShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\SpriteShader.xml" />
+    <Xml Include="..\..\Run\Data\Shaders\SwirlShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\AoEEffect.xml" />
@@ -607,6 +611,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='FastBreak|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <None Include="..\..\Run\Data\Shaders\SwirlShader.hlsl">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </None>
     <FxCompile Include="..\..\Run\Data\Shaders\WorldShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='FastBreak|x64'">true</ExcludedFromBuild>

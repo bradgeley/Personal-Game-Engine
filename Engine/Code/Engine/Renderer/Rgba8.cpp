@@ -109,6 +109,16 @@ void Rgba8::GetAsFloats(float* out_fourFloats) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Rgba8::GetRgbAsFloats(float* out_threeFloats) const
+{
+	out_threeFloats[0] = static_cast<float>(r) / 255.f;
+	out_threeFloats[1] = static_cast<float>(g) / 255.f;
+	out_threeFloats[2] = static_cast<float>(b) / 255.f;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 uint32_t Rgba8::GetAsUint32() const
 {
     void* addressOfR = (void*) &r;

@@ -18,6 +18,15 @@ struct PlayAnimationRequest
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class SpriteRenderStyle
+{
+	Sprite,
+	Swirl,
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 struct CAnimation
 {
 public:
@@ -29,6 +38,8 @@ public:
 	bool PlayAnimation(PlayAnimationRequest const& request, bool force = false);
 
 public:
+
+	SpriteRenderStyle m_renderStyle = SpriteRenderStyle::Sprite;
 
 	PlayAnimationRequest m_pendingAnimRequest;			// Queued animation
 

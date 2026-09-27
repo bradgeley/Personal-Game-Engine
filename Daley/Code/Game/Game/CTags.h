@@ -6,6 +6,10 @@
 
 
 
+struct FlavorDef;
+
+
+
 //----------------------------------------------------------------------------------------------------------------------
 constexpr int MAX_TAGS = 8;
 
@@ -23,6 +27,10 @@ public:
 	bool RemoveTag(Name const& tag);
 	bool HasTag(Name const& tag) const;
 	int FindTag(Name const& tag) const; // returns the index of the tag
+
+	// Utility funcs
+	int GetNumFlavorTags() const;
+	std::array<FlavorDef const*, 3> GetFlavorDefs() const;
 
 	void AppendDebugString(std::string& out) const;
 

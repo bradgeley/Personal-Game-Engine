@@ -31,6 +31,7 @@ void SWaveSpawner::Startup()
 	m_runWhilePaused = false;
 
 	DevConsoleUtils::AddDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
+	DevConsoleUtils::AddDevConsoleCommand("StopWaves", SWaveSpawner::StopWaves);
 	DevConsoleUtils::AddDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves, "seed", DevConsoleArgType::Int, "numWaves", DevConsoleArgType::Int);
 	DevConsoleUtils::AddDevConsoleCommand("StressTest", SWaveSpawner::StressTest, "fillMapTower", DevConsoleArgType::Name);
 }
@@ -41,6 +42,7 @@ void SWaveSpawner::Startup()
 void SWaveSpawner::Shutdown() const
 {
 	DevConsoleUtils::RemoveDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
+	DevConsoleUtils::RemoveDevConsoleCommand("StopWaves", SWaveSpawner::StopWaves);
 	DevConsoleUtils::RemoveDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves);
 	DevConsoleUtils::RemoveDevConsoleCommand("StressTest", SWaveSpawner::StressTest);
 }
@@ -178,6 +180,19 @@ bool SWaveSpawner::StartWaves(NamedProperties&)
 	waves.m_waveTimer.ForceComplete(); // First wave starts immediately
 
 	ASSERT_OR_DIE(waves.m_waveTimer.IsComplete(), "Timer did not complete.");
+
+	return false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SWaveSpawner::StopWaves(NamedProperties&)
+{
+	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
+
+	waves.m_activeStreams.clear();
+	waves.m_wavesStarted = false;
 
 	return false;
 }

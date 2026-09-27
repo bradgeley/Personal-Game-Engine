@@ -22,6 +22,7 @@ public:
 public:
 
 	AssetID m_spriteShaderAsset						= AssetID::Invalid;				// Owned by SRenderEntities
+	AssetID m_swirlShaderAsset						= AssetID::Invalid;				// Owned by SRenderSwirls
 	AssetID m_worldShaderAsset						= AssetID::Invalid;				// Owned by SRenderWorld
 	AssetID m_healthBarShaderAsset					= AssetID::Invalid;				// Owned by SRenderUI
 	AssetID m_discShaderAsset						= AssetID::Invalid;				// Owned by SRenderDiscs
@@ -29,6 +30,7 @@ public:
 	AssetID m_statusEffectsSpriteSheet				= AssetID::Invalid;				// Owned by SVisualEffects
 
 	ConstantBufferID m_spriteSheetConstantsBuffer	= RendererUtils::InvalidID;		// Owned by SRenderEntities
+	ConstantBufferID m_flavorConstantsBuffer		= RendererUtils::InvalidID;		// Owned by SRenderSwirls
 	ConstantBufferID m_lightingConstantsBuffer		= RendererUtils::InvalidID;		// Owned by SLighting
 	ConstantBufferID m_staticWorldConstantsBuffer	= RendererUtils::InvalidID;		// Owned by SRenderWorld
 	ConstantBufferID m_healthBarConstantsBuffer		= RendererUtils::InvalidID;		// Owned by SRenderUI
@@ -37,6 +39,7 @@ public:
 	InstanceBufferID m_healthBarInstanceBuffer		= RendererUtils::InvalidID;		// Owned by SRenderUI
 	InstanceBufferID m_iconsInstanceBuffer			= RendererUtils::InvalidID;		// Owned by SRenderUI
 	InstanceBufferID m_discInstanceBuffer			= RendererUtils::InvalidID;		// Owned by SRenderDiscs
+	InstanceBufferID m_swirlInstanceBuffer			= RendererUtils::InvalidID;		// Owned by SRenderSwirls
 
 	VertexBufferID m_immediateVBO					= RendererUtils::InvalidID;		// Owned by SRenderUI
 

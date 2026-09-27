@@ -1,0 +1,22 @@
+
+
+
+<Shader name="SpriteShader" source="Data/Shaders/SwirlShader.hlsl" pixel="PixelMain" vertex="VertexMain">
+  <InputLayout>
+    <!--Instance Data-->
+    <InputLayoutAttribute semantic="INSTANCEPOSITION" semanticIndex="0" format="float3" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INSTANCEROTATION" semanticIndex="0" format="float1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    
+    <InputLayoutAttribute semantic="INSTANCETINT" semanticIndex="0" format="Rgba8" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INSTANCEOUTLINETINT" semanticIndex="0" format="Rgba8" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    
+    <InputLayoutAttribute semantic="INSTANCEDIMS" semanticIndex="0" format="float2" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INDEX" semanticIndex="0" format="uint1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="INDOORLIGHT" semanticIndex="0" format="R8_UNORM" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="OUTDOORLIGHT" semanticIndex="0" format="R8_UNORM" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="NUMFLAVORS" semanticIndex="0" format="R8_UINT" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="NUMSWIRLS" semanticIndex="0" format="R8_UINT" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="SWIRLROTATION" semanticIndex="0" format="float1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="FLAVORINDICES" semanticIndex="0" format="R8G8B8A8_UINT" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+  </InputLayout>
+</Shader>

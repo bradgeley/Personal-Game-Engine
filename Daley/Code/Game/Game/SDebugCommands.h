@@ -23,8 +23,10 @@ protected:
     static bool DumpEntityDebug(NamedProperties& args);
     static bool SetDebugPlacementEntity(NamedProperties& args);
 	static bool SlowAllEnemies(NamedProperties& args);
+	static bool KillAll(NamedProperties& args);
+	static bool DestroyAllEntities(NamedProperties& args);
 	static bool God(NamedProperties& args);
-	static bool UnlockAllMods(NamedProperties& args);
+	static bool UnlockAllMods(NamedProperties& args); 
 	static bool Unlock(NamedProperties& args);
 	static bool DumpNameTable(NamedProperties& args);
 };

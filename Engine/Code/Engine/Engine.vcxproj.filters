@@ -304,6 +304,7 @@
     <ClCompile Include="Assets\Font.cpp">
       <Filter>Assets\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Math\Vec4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Multithreading\Job.h">
@@ -660,6 +661,7 @@
     <ClInclude Include="Assets\Font.h">
       <Filter>Assets\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Math\Vec4.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Multithreading">
