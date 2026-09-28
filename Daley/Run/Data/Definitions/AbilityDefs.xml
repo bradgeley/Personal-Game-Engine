@@ -73,6 +73,7 @@
       </AoEHit>
       <AoEEffect radius="0.5" duration="0.5">
         <Scaling physical="0.25" burn="0.25" poison="0.25" slow="0.125"/>
+        <Render depth="0.95"/>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -88,6 +89,7 @@
       </AoEHit>
       <AoEEffect radius="1" duration="0.5">
         <Scaling physical="1" burn="1" poison="1" slow="1"/>
+        <Render depth="0.95"/>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -102,6 +104,7 @@
       </AoEHit>
       <AoEEffect radius="3" duration="0.5">
         <Scaling physical="1" burn="1" poison="1" slow="1"/>
+        <Render depth="0.95"/>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -116,6 +119,7 @@
       </AoEHit>
       <AoEEffect radius="2" duration="0.5">
         <Scaling physical="1" burn="1" poison="1" slow="1"/>
+        <Render depth="0.95"/>
       </AoEEffect>
     </OnHit>
   </ProjectileHitAbilityDef>
@@ -166,7 +170,7 @@
     <Targeting maxRange="5"/>
     <AoEEffect radius="5">
       <Scaling physical="1" burn="1" poison="1" slow="1"/>
-      <Render tint="173,235,179,25"/>
+      <Render depth="0.95"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
@@ -174,7 +178,7 @@
     <Targeting maxRange="6"/>
     <AoEEffect radius="6">
       <Scaling physical="1" burn="1" poison="1" slow="1"/>
-      <Render tint="255,165,0,25"/>
+      <Render depth="0.95"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
@@ -189,7 +193,7 @@
       <Scaling physical="1" burn="1" poison="1" slow="1"/>
       <AoEHit radius="0.5">
         <Scaling physical="1" burn="1" poison="1" slow="1"/>
-        <Render tint="174,153,245,100" depth="0.95"/>
+        <Render depth="0.95"/>
       </AoEHit>
     </OnHit>
   </LaserAbilityDef>
