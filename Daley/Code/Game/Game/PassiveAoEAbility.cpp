@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "PassiveAoEAbility.h"
 #include "CHealth.h"
+#include "CTags.h"
 #include "CTime.h"
 #include "SCRenderer.h"
 #include "DiscShaderCPU.h"
@@ -65,6 +66,9 @@ void PassiveAoEAbility::Update(SystemContext const& context, CAbility const& abi
 //----------------------------------------------------------------------------------------------------------------------
 void PassiveAoEAbility::Render(SystemContext const& context, CAbility const& ability, Vec2 const& location) const
 {
+	CTags const& ownerTags = *context.GetComponentUnsafe<CTags>(m_owner);
+	Rgba8 flavorTint = ownerTags.GetFlavorTint();
+
 	SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
 	Renderer& renderer = *scRenderer.GetRenderer();
 
@@ -73,7 +77,8 @@ void PassiveAoEAbility::Render(SystemContext const& context, CAbility const& abi
     DiscRenderInstance discInstance;
     discInstance.m_position = Vec3(location, m_aoeEffectComp.m_renderComp.m_depth);
     discInstance.m_radius = m_targetingComp.GetMaxRange(ability);
-	discInstance.m_tint = m_aoeEffectComp.m_renderComp.m_tint;
+	discInstance.m_tint = flavorTint;
+    discInstance.m_tint.a = 25;
     discIBO.AddInstance(discInstance);
 }
 

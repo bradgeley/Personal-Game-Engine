@@ -7,13 +7,13 @@
   <FlavorDef name="Vanilla" abilities="VanillaAttack">
     <Attributes physical="50" critChance="0.1" critMulti="0.5" range="0.1"/>
     <AbilityFlags flags="Hit"/>
-    <DisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171" desc="Quickly fires single target projectiles"></DisplayData>
+    <DisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171" desc="Quickly fires physical projectiles"></DisplayData>
   </FlavorDef>
 
   <FlavorDef name="Chocolate" abilities="ChocolateAttack">
     <Attributes physical="100" aoe="0.5"/>
     <AbilityFlags flags="splash"/>
-    <DisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20" desc="Fires projectiles that deal splash damage"></DisplayData>
+    <DisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20" desc="Fires physical projectiles that splash "></DisplayData>
   </FlavorDef>
 
   <FlavorDef name="Strawberry" abilities="StrawberryAttack">
@@ -43,7 +43,7 @@
   <FlavorDef name="Ube" abilities="UbeAttack">
     <Attributes physical="30" burn="20" poison="10" numChains="1"/>
     <AbilityFlags flags="Hit"/>
-    <DisplayData displayName="Ube" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245" desc="Fires a laser that deals damage, burn, and poison"></DisplayData>
+    <DisplayData displayName="Ube" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245" desc="Laser that deals physical, burn, and poison"></DisplayData>
   </FlavorDef>
 
   <FlavorDef name="Mint" abilities="MintAttack">

@@ -2,6 +2,7 @@
 #include "RunModifierDef.h"
 #include "CAbility.h"
 #include "CTags.h"
+#include "FlavorDef.h"
 #include "SCRunData.h"
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Core/StringUtils.h"
@@ -24,7 +25,6 @@ RunModifierDisplayData::RunModifierDisplayData(XmlElement const& element)
 RunModifierDef::RunModifierDef(XmlElement const& modElement)
 {
 	m_name = XmlUtils::ParseXmlAttribute(modElement, "name", m_name);
-	m_description = XmlUtils::ParseXmlAttribute(modElement, "desc", m_description);
 	m_levelRequirement = XmlUtils::ParseXmlAttribute(modElement, "levelRequirement", m_levelRequirement);
 	m_weight = XmlUtils::ParseXmlAttribute(modElement, "weight", m_weight);
 	m_maxLevel = XmlUtils::ParseXmlAttribute(modElement, "maxLevel", m_maxLevel);
@@ -181,9 +181,11 @@ RunModifier* FlavorUnlockRunModifierDef::MakeModifierInstance() const
 void FlavorUnlockRunModifierDef::GetDescription(std::string& outStr) const
 {
 	outStr += StringUtils::StringF("Gold Cost: %.2f\n", m_baseCost);
-	if (m_description != Name::Invalid)
+
+	FlavorDef const* flavorDef = FlavorDef::GetFlavorDef(m_flavorName);
+	if (flavorDef)
 	{
-		outStr += StringUtils::StringF("%s\n", m_description.ToCStr());
+		outStr += StringUtils::StringF("%s\n", flavorDef->m_desc.c_str());
 	}
 }
 

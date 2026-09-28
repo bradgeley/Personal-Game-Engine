@@ -175,7 +175,7 @@
   </EntityDef>
 
   <EntityDef name = "pig">
-    <AIController></AIController>
+    <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
     <Collision radius="1" type="enemy"></Collision>
     <Death baseGoldReward="1" baseExpReward="2"></Death>
