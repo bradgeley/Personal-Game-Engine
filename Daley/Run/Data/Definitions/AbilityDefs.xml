@@ -129,23 +129,25 @@
     <Crit critChance="0.1" critMulti="0.5"/>
     <AoEHit radius="8">
       <Scaling physical="1" burn="1" poison="1" slow="1"/>
-      <Render tint="255,255,255,50" depth="0.04" duration="0.2"/>
+      <Render depth="0.95" duration="0.2"/>
     </AoEHit>
     <AoEEffect radius="8" duration="2">
       <Scaling physical="1" burn="1" poison="1" slow="1"/>
-      <Render tint="255,255,255,50" depth="0.04"/>
+      <Render depth="0.95"/>
     </AoEEffect>
   </AoEHitAbilityDef>
 
-  <AoEHitAbilityDef name="RasberrySorbetAttack">
+  <AoEHitAbilityDef name="RaspberrySorbetAttack">
     <Cooldown cooldown="2"/>
     <Targeting maxRange="5"/>
     <Crit critChance="0" critMulti="0"/>
-    <AoEHit>
+    <AoEHit radius="5">
       <Scaling physical="1" burn="1" poison="1" slow="1"/>
+      <Render depth="0.95" duration="0.2"/>
     </AoEHit>
     <AoEEffect radius="5" duration="0.5">
       <Scaling physical="1" burn="1" poison="1" slow="1"/>
+      <Render depth="0.95"/>
     </AoEEffect>
   </AoEHitAbilityDef>
 

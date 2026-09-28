@@ -28,7 +28,7 @@ AbilityTargetingComponent::AbilityTargetingComponent(AbilityTargetingComponentDe
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityTargetingComponent::GetMaxRange(CAbility const& ability) const
 {
-	float rangeModifier = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Range_Multi);
+	float rangeModifier = 1.f + ability.m_attributes.GetValue(AbilityAttribute::Range_Multi);
     return m_maxRange * rangeModifier;
 }
 
@@ -101,8 +101,8 @@ AbilityAoETargetingComponent::AbilityAoETargetingComponent(AbilityTargetingCompo
 float AbilityAoETargetingComponent::GetMaxRange(CAbility const& ability) const
 {
     float rangeModifier = 1.f;
-    rangeModifier += ability.m_attributes.GetValue(EAbilityAttribute::Range_Multi);
-    rangeModifier += ability.m_attributes.GetValue(EAbilityAttribute::AreaOfEffect_Multi);
+    rangeModifier += ability.m_attributes.GetValue(AbilityAttribute::Range_Multi);
+    rangeModifier += ability.m_attributes.GetValue(AbilityAttribute::AreaOfEffect_Multi);
     return m_maxRange * rangeModifier;
 }
 
@@ -343,7 +343,7 @@ AbilityCooldownComponent::AbilityCooldownComponent(AbilityCooldownComponentDef c
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityCooldownComponent::GetCooldown(CAbility const& ability) const
 {
-	float attackSpeedModifier = ability.m_attributes.GetValue(EAbilityAttribute::AttackSpeed_Multi);
+	float attackSpeedModifier = ability.m_attributes.GetValue(AbilityAttribute::AttackSpeed_Multi);
 	float attackSpeed = 1.f + attackSpeedModifier;
     return m_cooldownSeconds * (1.f / attackSpeed);
 }
@@ -373,7 +373,7 @@ AbilityCritComponent::AbilityCritComponent(AbilityCritComponentDef const& def)
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityCritComponent::GetCritChance(CAbility const& ability) const
 {
-	return m_critChance + ability.m_attributes.GetValue(EAbilityAttribute::CritChance_Add);
+	return m_critChance + ability.m_attributes.GetValue(AbilityAttribute::CritChance_Add);
 }
 
 
@@ -383,7 +383,7 @@ float AbilityCritComponent::GetCritMultiplier(CAbility const& ability) const
 {
     float critMultiplier = StaticGameSettings::s_baseCritMultiplier;
 	critMultiplier += m_critMulti;
-	critMultiplier += ability.m_attributes.GetValue(EAbilityAttribute::CritMulti_Multi);
+	critMultiplier += ability.m_attributes.GetValue(AbilityAttribute::CritMulti_Multi);
 	return critMultiplier;
 }
 
@@ -419,11 +419,11 @@ HitPayload AbilityScalingComponent::CalculateHitPayload(CAbility const& ability,
 {
     HitPayload result;
 	result.m_didCrit = didCrit;
-    result.m_physical       = ability.m_attributes.GetValue(EAbilityAttribute::Physical)        * GetPhysicalScaling(ability);
-    result.m_burn           = ability.m_attributes.GetValue(EAbilityAttribute::Burn)            * GetBurnScaling(ability);
-    result.m_poison         = ability.m_attributes.GetValue(EAbilityAttribute::Poison)          * GetPoisonScaling(ability);
-    result.m_slowDuration   = ability.m_attributes.GetValue(EAbilityAttribute::SlowDuration)    * GetSlowScaling(ability);
-    result.m_hasteDuration  = ability.m_attributes.GetValue(EAbilityAttribute::HasteDuration)   * GetHasteScaling(ability);
+    result.m_physical       = ability.m_attributes.GetValue(AbilityAttribute::Physical)        * GetPhysicalScaling(ability);
+    result.m_burn           = ability.m_attributes.GetValue(AbilityAttribute::Burn)            * GetBurnScaling(ability);
+    result.m_poison         = ability.m_attributes.GetValue(AbilityAttribute::Poison)          * GetPoisonScaling(ability);
+    result.m_slowDuration   = ability.m_attributes.GetValue(AbilityAttribute::SlowDuration)    * GetSlowScaling(ability);
+    result.m_hasteDuration  = ability.m_attributes.GetValue(AbilityAttribute::HasteDuration)   * GetHasteScaling(ability);
 
     if (didCrit)
     {
@@ -451,7 +451,7 @@ HitPayload AbilityScalingComponent::CalculateDotPayload(CAbility const& ability,
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityScalingComponent::GetPhysicalScaling(CAbility const& ability) const
 {
-    float physMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Physical_Multi);
+    float physMulti = 1.f + ability.m_attributes.GetValue(AbilityAttribute::Physical_Multi);
     float physScaling = m_physical * physMulti;
     return physScaling;
 }
@@ -461,7 +461,7 @@ float AbilityScalingComponent::GetPhysicalScaling(CAbility const& ability) const
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityScalingComponent::GetBurnScaling(CAbility const& ability) const
 {
-    float burnMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Burn_Multi);
+    float burnMulti = 1.f + ability.m_attributes.GetValue(AbilityAttribute::Burn_Multi);
     float burnScaling = m_burn * burnMulti;
     return burnScaling;
 }
@@ -471,7 +471,7 @@ float AbilityScalingComponent::GetBurnScaling(CAbility const& ability) const
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityScalingComponent::GetPoisonScaling(CAbility const& ability) const
 {
-    float poisonMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Poison_Multi);
+    float poisonMulti = 1.f + ability.m_attributes.GetValue(AbilityAttribute::Poison_Multi);
     float poisonScaling = m_poison * poisonMulti;
     return poisonScaling;
 }
@@ -481,7 +481,7 @@ float AbilityScalingComponent::GetPoisonScaling(CAbility const& ability) const
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityScalingComponent::GetSlowScaling(CAbility const& ability) const
 {
-    float slowMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Slow_Multi);
+    float slowMulti = 1.f + ability.m_attributes.GetValue(AbilityAttribute::Slow_Multi);
     float slowScaling = m_slow * slowMulti;
     return slowScaling;
 }
@@ -491,7 +491,7 @@ float AbilityScalingComponent::GetSlowScaling(CAbility const& ability) const
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityScalingComponent::GetHasteScaling(CAbility const& ability) const
 {
-    float hasteMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Haste_Multi);
+    float hasteMulti = 1.f + ability.m_attributes.GetValue(AbilityAttribute::Haste_Multi);
     float hasteScaling = m_haste * hasteMulti;
     return hasteScaling;
 }
@@ -551,7 +551,7 @@ AbilityChainComponent::AbilityChainComponent(AbilityChainComponentDef const& def
 //----------------------------------------------------------------------------------------------------------------------
 int AbilityChainComponent::GetMaxChains(CAbility const& ability) const
 {
-	return m_maxChains + static_cast<int>(ability.m_attributes.GetValue(EAbilityAttribute::ChainCount_Add));
+	return m_maxChains + static_cast<int>(ability.m_attributes.GetValue(AbilityAttribute::ChainCount_Add));
 }
 
 
@@ -559,7 +559,7 @@ int AbilityChainComponent::GetMaxChains(CAbility const& ability) const
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityChainComponent::GetChainDistance(CAbility const& ability) const
 {
-	return m_chainDistance + ability.m_attributes.GetValue(EAbilityAttribute::ChainDistance_Multi);
+	return m_chainDistance + ability.m_attributes.GetValue(AbilityAttribute::ChainDistance_Multi);
 }
 
 
@@ -575,7 +575,7 @@ float AbilityChainComponent::GetChainPayloadMulti(CAbility const&) const
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityChainComponent::GetChainChance(CAbility const& ability) const
 {
-	return m_chainChance + ability.m_attributes.GetValue(EAbilityAttribute::ChainChance_Add);
+	return m_chainChance + ability.m_attributes.GetValue(AbilityAttribute::ChainChance_Add);
 }
 
 
@@ -604,7 +604,7 @@ AbilityMultishotComponent::AbilityMultishotComponent(AbilityMultishotComponentDe
 //----------------------------------------------------------------------------------------------------------------------
 int AbilityMultishotComponent::GetAdditionalTargets(CAbility const& ability) const
 {
-    return m_additionalTargets + static_cast<int>(ability.m_attributes.GetValue(EAbilityAttribute::MultishotCount_Add));
+    return m_additionalTargets + static_cast<int>(ability.m_attributes.GetValue(AbilityAttribute::MultishotCount_Add));
 }
 
 
@@ -690,7 +690,7 @@ bool AbilityAoEHitComponent::IsRelevant() const
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityAoEHitComponent::GetRadius(CAbility const& ability) const
 {
-	float areaModifier = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::AreaOfEffect_Multi);
+	float areaModifier = 1.f + ability.m_attributes.GetValue(AbilityAttribute::AreaOfEffect_Multi);
 	return m_radius * areaModifier;
 }
 
@@ -783,7 +783,7 @@ bool AbilityAoEEffectComponent::IsRelevant() const
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityAoEEffectComponent::GetRadius(CAbility const& ability) const
 {
-    float areaModifier = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::AreaOfEffect_Multi);
+    float areaModifier = 1.f + ability.m_attributes.GetValue(AbilityAttribute::AreaOfEffect_Multi);
     return m_radius * areaModifier;
 }
 

@@ -13,11 +13,10 @@ public:
 	explicit AdjacentHitAbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const override;
 	virtual AbilityDef* Copy() const override;
-	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) override;
 
 public:
 
 	AbilityCooldownComponentDef	m_cooldownDef;
 	AbilityScalingComponentDef	m_scaling;
-	// todo: damage/burn/poison buffs on hit
+	// todo: physical/burn/poison buffs on hit
 };

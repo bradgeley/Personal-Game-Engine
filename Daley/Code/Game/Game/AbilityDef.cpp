@@ -109,24 +109,6 @@ void AbilityDef::LoadFromXML(Name filepath)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityDef::SaveToXML(Name filepath)
-{
-    XmlDocument doc;
-
-	XmlElement* rootElem = doc.NewElement("AbilityDefs");
-	doc.InsertFirstChild(rootElem);
-
-	for (AbilityDef* def : s_abilityDefs)
-	{
-		def->WriteToXmlDoc(&doc, rootElem);
-	}
-
-	doc.SaveFile(filepath.ToCStr());
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 void AbilityDef::Shutdown()
 {
     for (AbilityDef* def : s_abilityDefs)

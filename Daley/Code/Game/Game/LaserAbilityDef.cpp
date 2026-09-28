@@ -49,26 +49,3 @@ AbilityDef* LaserAbilityDef::Copy() const
 {
     return new LaserAbilityDef(*this);
 }
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void LaserAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
-{
-    ASSERT_OR_DIE(xmlDoc != nullptr, "LaserAbilityDef::WriteToXmlDoc - xmlDoc is null.");
-    ASSERT_OR_DIE(rootElement != nullptr, "LaserAbilityDef::WriteToXmlDoc - rootElement is null.");
-
-    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
-    XmlElement& rootElem = *static_cast<XmlElement*>(rootElement);
-
-	// Ability
-	XmlElement* parentElem = doc.NewElement("LaserAbilityDef");
-	parentElem->SetAttribute("name", m_name.ToCStr());
-	rootElem.InsertEndChild(parentElem);
-
-	m_targetingDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_onHitDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_renderDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_chainDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_multishotDef.WriteToXmlDoc(xmlDoc, parentElem);
-}

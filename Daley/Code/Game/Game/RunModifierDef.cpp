@@ -322,18 +322,17 @@ RunModifier* FlavorAbilityRunModifierDef::MakeModifierInstance() const
 //----------------------------------------------------------------------------------------------------------------------
 void FlavorAbilityRunModifierDef::GetDescription(std::string& outStr) const
 {
-	std::string format;
-	format = "Base: %.0fx\nPer Level: +%.0fx\n";
-
-	for (int i = 0; i < (int) EAbilityAttribute::Count; ++i)
+	for (int attributeIndex = 0; attributeIndex < (int) AbilityAttribute::Count; ++attributeIndex)
 	{
-		float baseMultiplier = 1.f + m_modifiers.m_values[i];
-		float perLevelMultiplier = m_modifiersPerLevel.m_values[i];
-		if (baseMultiplier != 1.f || perLevelMultiplier != 0.f)
+		float firstValue = m_modifiers.m_values[attributeIndex];
+		if (firstValue == 0.f)
 		{
-			outStr += StringUtils::StringF("%s: ", AbilityAttributes::GetAttributeNames()[i].ToCStr());
-			outStr += StringUtils::StringF(format.c_str(), baseMultiplier, perLevelMultiplier);
+			continue;
 		}
+
+		std::string formattedValue = AbilityAttributes::FormatAttribute((AbilityAttribute) attributeIndex, firstValue);
+
+		outStr += StringUtils::StringF("Value: %s\n", formattedValue.c_str());
 	}
 
 	if (m_maxLevel > 1)
@@ -417,13 +416,22 @@ void FlavorAbilityRunModifier::ApplyToAbility(CAbility& ability, CTags const& ta
 //----------------------------------------------------------------------------------------------------------------------
 void FlavorAbilityRunModifier::GetDescription(std::string& outStr) const
 {
-	if (m_def.m_maxLevel > 1)
+	AbilityAttributes currentValues = GetValue();
+	AbilityAttributes nextValues = GetDef().m_modifiers + (GetDef().m_modifiersPerLevel * static_cast<float>(m_level));
+
+	for (int attributeIndex = 0; attributeIndex < (int) AbilityAttribute::Count; ++attributeIndex)
 	{
-		//outStr += StringUtils::StringF("Current: %.2fx\nNext: %.2fx\nLevel: %d/%d\n", currentMultiplier, nextMultiplier, m_level, m_def.m_maxLevel);
-	}
-	else
-	{
-		//outStr += StringUtils::StringF("Multiplier (additive): %.2fx\n", currentMultiplier);
+		float currentValue = currentValues.m_values[attributeIndex];
+		float nextValue = nextValues.m_values[attributeIndex];
+		if (currentValue == 0.f && nextValue == 0.f || nextValue == currentValue)
+		{
+			continue;
+		}
+
+		std::string currentFormatted = AbilityAttributes::FormatAttribute((AbilityAttribute) attributeIndex, currentValue);
+		std::string nextFormatted = AbilityAttributes::FormatAttribute((AbilityAttribute) attributeIndex, nextValue);
+
+		outStr += StringUtils::StringF("Current: %s\nNext: %s\n", currentFormatted.c_str(), nextFormatted.c_str());
 	}
 }
 

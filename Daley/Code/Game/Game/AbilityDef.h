@@ -29,12 +29,10 @@ public:
 	explicit AbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const = 0;
 	virtual AbilityDef* Copy() const = 0;
-	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) = 0;
 
 public:
 
 	static void LoadFromXML(Name filepath);
-	static void SaveToXML(Name filepath);
 	static void Shutdown();
 	static AbilityDef const* GetAbilityDef(uint8_t id);
 	static AbilityDef const* GetAbilityDef(Name name);

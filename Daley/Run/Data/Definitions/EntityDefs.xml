@@ -178,7 +178,7 @@
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
     <Collision radius="1" type="enemy"></Collision>
-    <Death baseGoldReward="1" baseExpReward="2"></Death>
+    <Death baseGoldReward="1" baseExpReward="2" corpseDurationSeconds="1.5"></Death>
     <Health maxHealth="300" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1" pathOnly="true"></Movement>

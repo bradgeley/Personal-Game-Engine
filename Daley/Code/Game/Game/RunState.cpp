@@ -88,7 +88,6 @@ void RunState::Enter(NamedProperties const& props)
 	Name mode = props.Get<Name>("mode", Name::Invalid);
 
 	g_eventSystem->SubscribeMethod("MissionOver", this, &RunState::MissionOver);
-	DevConsoleUtils::AddDevConsoleCommand("SaveAbilityDefs", &RunState::SaveAbilityDefsToXML, "filename", DevConsoleArgType::Name);
 
 	m_untexturedVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
 	m_textVerts = g_renderer->MakeVertexBuffer<Vertex_PCU>();
@@ -136,7 +135,6 @@ void RunState::Exit(NamedProperties const& props)
 	AbilityDef::Shutdown();
 
 	g_eventSystem->UnsubscribeMethod("MissionOver", this, &RunState::MissionOver);
-	DevConsoleUtils::RemoveDevConsoleCommand("SaveAbilityDefs", &RunState::SaveAbilityDefsToXML);
 
 	g_renderer->ReleaseVertexBuffer(m_untexturedVerts);
 	g_renderer->ReleaseVertexBuffer(m_textVerts);
@@ -218,19 +216,6 @@ bool RunState::MissionOver(NamedProperties&)
 			g_eventSystem->FireEvent("PushState", transitionProps);
 		}
 	}
-
-	return false;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool RunState::SaveAbilityDefsToXML(NamedProperties& props)
-{
-	Name filename = props.Get<Name>("filename", Name("AbilitiesSaved"));
-
-	std::string filepath = "Data/Definitions/" + filename.ToString() + ".xml";
-	AbilityDef::SaveToXML(filepath);
 
 	return false;
 }

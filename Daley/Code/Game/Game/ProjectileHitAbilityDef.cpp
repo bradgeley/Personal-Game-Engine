@@ -56,29 +56,3 @@ AbilityDef* ProjectileHitAbilityDef::Copy() const
 {
     return new ProjectileHitAbilityDef(*this);
 }
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
-{
-    ASSERT_OR_DIE(xmlDoc != nullptr, "ProjectileHitAbilityDef::WriteToXmlDoc - xmlDoc is null.");
-    ASSERT_OR_DIE(rootElement != nullptr, "ProjectileHitAbilityDef::WriteToXmlDoc - rootElement is null.");
-
-    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
-    XmlElement& rootElem = *static_cast<XmlElement*>(rootElement);
-
-    // Ability
-	XmlElement* parentElem = doc.NewElement("ProjectileHitAbilityDef");
-	parentElem->SetAttribute("name", m_name.ToCStr());
-	parentElem->SetAttribute("projectileDef", m_projectileDefName.ToCStr());
-	parentElem->SetAttribute("projSpeed", m_projSpeed);
-    rootElem.InsertEndChild(parentElem);
-
-	m_cooldownDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_targetingDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_critDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_chainDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_multishotDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_onHitDef.WriteToXmlDoc(xmlDoc, parentElem);
-}

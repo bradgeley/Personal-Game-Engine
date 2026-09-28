@@ -40,23 +40,3 @@ AbilityDef* AdjacentHitAbilityDef::Copy() const
 {
     return new AdjacentHitAbilityDef(*this);
 }
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void AdjacentHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
-{
-    ASSERT_OR_DIE(xmlDoc != nullptr, "AdjacentHitAbilityDef::WriteToXmlDoc - xmlDoc is null.");
-    ASSERT_OR_DIE(rootElement != nullptr, "AdjacentHitAbilityDef::WriteToXmlDoc - rootElement is null.");
-
-    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
-    XmlElement& rootElem = *static_cast<XmlElement*>(rootElement);
-
-	// Ability
-	XmlElement* parentElem = doc.NewElement("AdjacentHitAbilityDef");
-	parentElem->SetAttribute("name", m_name.ToCStr());
-	rootElem.InsertEndChild(parentElem);
-
-	m_cooldownDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_scaling.WriteToXmlDoc(xmlDoc, parentElem);
-}

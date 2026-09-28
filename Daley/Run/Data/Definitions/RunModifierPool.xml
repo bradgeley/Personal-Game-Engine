@@ -26,6 +26,10 @@
       <DisplayData displayName="Orange Sorbet" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,165,0"></DisplayData>
     </FlavorUnlockRunModifier>
 
+    <FlavorUnlockRunModifier name="RaspberrySorbet" baseCost="40" levelRequirement="0" weight="1">
+      <DisplayData displayName="Raspberry Sorbet" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="227,11,93"></DisplayData>
+    </FlavorUnlockRunModifier>
+
     <FlavorUnlockRunModifier name="Coconut" baseCost="40" levelRequirement="0" weight="1">
       <DisplayData displayName="Coconut" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250"></DisplayData>
     </FlavorUnlockRunModifier>
@@ -49,10 +53,10 @@
   <RunModifierPool name="Generic">
 
     <!-- Level 2 -->
-    <FlavorAbilityRunModifier name="GenericDamage" type="physicalMulti" weight="0.5" levelRequirement="2" maxLevel="5">
+    <FlavorAbilityRunModifier name="GenericPhysical" type="physicalMulti" weight="0.5" levelRequirement="2" maxLevel="5">
       <Attributes physicalMulti="0.15"/>
       <AttributesPerLevel physicalMulti="0.1"/>
-      <DisplayData displayName="Damage" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+      <DisplayData displayName="Physical" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <FlavorAbilityRunModifier name="GenericPoison" type="poisonMulti" weight="0.5" levelRequirement="2" maxLevel="5">
@@ -86,7 +90,7 @@
       <DisplayData displayName="Crit Chance" spriteSheet="Data/SpriteSheets/Icons.xml" anim="CritChance"></DisplayData>
     </FlavorAbilityRunModifier>
 
-    <FlavorAbilityRunModifier name="GenericCritDamage" type="critMulti" weight="0.5" levelRequirement="10" maxLevel="5">
+    <FlavorAbilityRunModifier name="GenericCritMulti" type="critMulti" weight="0.5" levelRequirement="10" maxLevel="5">
       <Attributes critMulti="0.05"/>
       <AttributesPerLevel critMulti="0.05"/>
       <DisplayData displayName="Crit Multiplier" spriteSheet="Data/SpriteSheets/Icons.xml" anim="CritDamage"></DisplayData>
@@ -112,10 +116,10 @@
     </FlavorAbilityRunModifier>
 
     <!-- Level 25 -->
-    <FlavorAbilityRunModifier name="GenericDamage2" type="physicalMulti" weight="0.5" levelRequirement="25" maxLevel="4">
+    <FlavorAbilityRunModifier name="GenericPhysical2" type="physicalMulti" weight="0.5" levelRequirement="25" maxLevel="4">
       <Attributes physicalMulti="0.25"/>
       <AttributesPerLevel physicalMulti="0.25"/>
-      <DisplayData displayName="Extra Damage" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+      <DisplayData displayName="Extra Physical" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <FlavorAbilityRunModifier name="GenericPoison2" type="poisonMulti" weight="0.5" levelRequirement="25" maxLevel="4">
@@ -131,10 +135,10 @@
     </FlavorAbilityRunModifier>
 
     <!-- Level 50 -->
-    <FlavorAbilityRunModifier name="GenericDamage3" type="physicalMulti" weight="0.25" levelRequirement="50" maxLevel="3">
+    <FlavorAbilityRunModifier name="GenericPhysical3" type="physicalMulti" weight="0.25" levelRequirement="50" maxLevel="3">
       <Attributes physicalMulti="0.3"/>
       <AttributesPerLevel physicalMulti="0.3"/>
-      <DisplayData displayName="Huge Damage" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+      <DisplayData displayName="Huge Physical" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <FlavorAbilityRunModifier name="GenericPoison3" type="poisonMulti" weight="0.25" levelRequirement="50" maxLevel="3">
@@ -150,10 +154,10 @@
     </FlavorAbilityRunModifier>
 
     <!-- Level 75 -->
-    <FlavorAbilityRunModifier name="GenericDamage4" type="physicalMulti" weight="0.1" levelRequirement="75" maxLevel="2">
+    <FlavorAbilityRunModifier name="GenericPhysical4" type="physicalMulti" weight="0.1" levelRequirement="75" maxLevel="2">
       <Attributes physicalMulti="0.5"/>
       <AttributesPerLevel physicalMulti="0.5"/>
-      <DisplayData displayName="Massive Damage" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
+      <DisplayData displayName="Massive Physical" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <FlavorAbilityRunModifier name="GenericPoison4" type="poisonMulti" weight="0.1" levelRequirement="75" maxLevel="2">
@@ -174,10 +178,10 @@
   <RunModifierPool name="Vanilla" requirements="Vanilla">
 
     <!-- Level 1 -->
-    <FlavorAbilityRunModifier name="VanillaDamage" type="physicalMulti" tagRequirement="Vanilla" weight="1" levelRequirement="1" maxLevel="3">
+    <FlavorAbilityRunModifier name="VanillaPhysical" type="physicalMulti" tagRequirement="Vanilla" weight="1" levelRequirement="1" maxLevel="3">
       <Attributes physicalMulti="0.2"/>
       <AttributesPerLevel physicalMulti="0.2"/>
-      <DisplayData displayName="Vanilla Damage" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
+      <DisplayData displayName="Vanilla Physical" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Damage"></DisplayData>
     </FlavorAbilityRunModifier>
 
@@ -187,13 +191,6 @@
       <AttributesPerLevel attackSpeed="0.2"/>
       <DisplayData displayName="Vanilla Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
-    </FlavorAbilityRunModifier>
-
-    <FlavorAbilityRunModifier name="VanillaRange" type="range" tagRequirement="Vanilla" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes range="0.2"/>
-      <AttributesPerLevel range="0.2"/>
-      <DisplayData displayName="Vanilla Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <!-- Level 10 -->
@@ -218,10 +215,10 @@
   <RunModifierPool name="Chocolate" requirements="Chocolate">
 
     <!-- Level 1 -->
-    <FlavorAbilityRunModifier name="ChocolateDamage" type="physicalMulti" tagRequirement="Chocolate" weight="1" levelRequirement="1" maxLevel="3">
+    <FlavorAbilityRunModifier name="ChocolatePhysical" type="physicalMulti" tagRequirement="Chocolate" weight="1" levelRequirement="1" maxLevel="3">
       <Attributes physicalMulti="0.2"/>
       <AttributesPerLevel physicalMulti="0.2"/>
-      <DisplayData displayName="Chocolate Damage" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
+      <DisplayData displayName="Chocolate Physical" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Damage"></DisplayData>
     </FlavorAbilityRunModifier>
 
@@ -231,13 +228,6 @@
       <AttributesPerLevel attackSpeed="0.2"/>
       <DisplayData displayName="Chocolate Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
-    </FlavorAbilityRunModifier>
-
-    <FlavorAbilityRunModifier name="ChocolateRange" type="range" tagRequirement="Chocolate" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes range="0.2"/>
-      <AttributesPerLevel range="0.2"/>
-      <DisplayData displayName="Chocolate Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <!-- Level 50 -->
@@ -276,13 +266,6 @@
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
     </FlavorAbilityRunModifier>
 
-    <FlavorAbilityRunModifier name="StrawberryRange" type="range" tagRequirement="Strawberry" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes range="0.2"/>
-      <AttributesPerLevel range="0.2"/>
-      <DisplayData displayName="Strawberry Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
-    </FlavorAbilityRunModifier>
-
     <!-- Level 50 -->
     <FlavorAbilityRunModifier name="StrawberryMultiShot" type="multishotCount" tagRequirement="Strawberry" weight="1" levelRequirement="50" maxLevel="1">
       <Attributes multishotCount="1"/>
@@ -312,14 +295,6 @@
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Poison"></DisplayData>
     </FlavorAbilityRunModifier>
 
-    <!-- Level 5 -->
-    <FlavorAbilityRunModifier name="MintRange" type="range" tagRequirement="Mint" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes range="0.2"/>
-      <AttributesPerLevel range="0.2"/>
-      <DisplayData displayName="Mint Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
-    </FlavorAbilityRunModifier>
-
   </RunModifierPool>
 
   <!-- Orange Sorbet Tower Mods -->
@@ -331,14 +306,6 @@
       <AttributesPerLevel burnMulti="0.2"/>
       <DisplayData displayName="Orange Sorbet Burn" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,165,0"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Burn"></DisplayData>
-    </FlavorAbilityRunModifier>
-
-    <!-- Level 5 -->
-    <FlavorAbilityRunModifier name="OrangeSorbetRange" type="range" tagRequirement="OrangeSorbet" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes range="0.2"/>
-      <AttributesPerLevel range="0.2"/>
-      <DisplayData displayName="Orange Sorbet Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,165,0"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </FlavorAbilityRunModifier>
 
   </RunModifierPool>
@@ -383,13 +350,6 @@
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
     </FlavorAbilityRunModifier>
 
-    <FlavorAbilityRunModifier name="PistachioRange" type="range" tagRequirement="Pistachio" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes range="0.2"/>
-      <AttributesPerLevel range="0.2"/>
-      <DisplayData displayName="Pistachio Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="147,197,114"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
-    </FlavorAbilityRunModifier>
-
     <!-- Level 50 -->
     <FlavorAbilityRunModifier name="PistachioMultiShot" type="multishotCount" tagRequirement="Pistachio" weight="1" levelRequirement="50" maxLevel="1">
       <Attributes multishotCount="1"/>
@@ -411,10 +371,10 @@
   <RunModifierPool name="Coconut" requirements="Coconut">
 
     <!-- Level 1 -->
-    <FlavorAbilityRunModifier name="CoconutDamage" type="physicalMulti" tagRequirement="Coconut" weight="1" levelRequirement="1" maxLevel="3">
+    <FlavorAbilityRunModifier name="CoconutPhysical" type="physicalMulti" tagRequirement="Coconut" weight="1" levelRequirement="1" maxLevel="3">
       <Attributes physicalMulti="0.2"/>
       <AttributesPerLevel physicalMulti="0.2"/>
-      <DisplayData displayName="Coconut Damage" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250"></DisplayData>
+      <DisplayData displayName="Coconut Physical" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Damage"></DisplayData>
     </FlavorAbilityRunModifier>
 
@@ -423,13 +383,6 @@
       <AttributesPerLevel attackSpeed="0.2"/>
       <DisplayData displayName="Coconut Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
-    </FlavorAbilityRunModifier>
-
-    <FlavorAbilityRunModifier name="CoconutRange" type="range" tagRequirement="Coconut" weight="1" levelRequirement="1" maxLevel="3">
-      <Attributes range="0.2"/>
-      <AttributesPerLevel range="0.2"/>
-      <DisplayData displayName="Coconut Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <!-- Level 5 -->
@@ -446,10 +399,10 @@
   <RunModifierPool name="Ube" requirements="Ube">
 
     <!-- Level 1 -->
-    <FlavorAbilityRunModifier name="UbeDamage" type="physicalMulti" tagRequirement="Ube" weight="1" levelRequirement="1" maxLevel="3">
+    <FlavorAbilityRunModifier name="UbePhysical" type="physicalMulti" tagRequirement="Ube" weight="1" levelRequirement="1" maxLevel="3">
       <Attributes physicalMulti="0.25"/>
       <AttributesPerLevel physicalMulti="0.25"/>
-      <DisplayData displayName="Ube Damage" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
+      <DisplayData displayName="Ube Physical" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Damage"></DisplayData>
     </FlavorAbilityRunModifier>
 
@@ -468,13 +421,6 @@
     </FlavorAbilityRunModifier>
 
     <!-- Level 5 -->
-
-    <FlavorAbilityRunModifier name="UbeRange" type="range" tagRequirement="Ube" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes range="0.2"/>
-      <AttributesPerLevel range="0.2"/>
-      <DisplayData displayName="Ube Range" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
-      <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
-    </FlavorAbilityRunModifier>
 
     <FlavorAbilityRunModifier name="UbeAttackSpeed" type="attackSpeed" tagRequirement="Ube" weight="1" levelRequirement="5" maxLevel="3">
       <Attributes attackSpeed="0.2"/>

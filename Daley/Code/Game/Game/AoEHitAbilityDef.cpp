@@ -50,26 +50,3 @@ AbilityDef* AoEHitAbilityDef::Copy() const
 {
     return new AoEHitAbilityDef(*this);
 }
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void AoEHitAbilityDef::WriteToXmlDoc(void* xmlDoc, void* rootElement)
-{
-    ASSERT_OR_DIE(xmlDoc != nullptr, "AoEHitAbilityDef::WriteToXmlDoc - xmlDoc is null.");
-    ASSERT_OR_DIE(rootElement != nullptr, "AoEHitAbilityDef::WriteToXmlDoc - rootElement is null.");
-
-    XmlDocument& doc = *static_cast<XmlDocument*>(xmlDoc);
-    XmlElement& rootElem = *static_cast<XmlElement*>(rootElement);
-
-	// Ability
-	XmlElement* parentElem = doc.NewElement("AoEHitAbilityDef");
-	parentElem->SetAttribute("name", m_name.ToCStr());
-	rootElem.InsertEndChild(parentElem);
-
-	m_cooldownDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_targetingDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_critDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_aoeHitDef.WriteToXmlDoc(xmlDoc, parentElem);
-	m_aoeEffectDef.WriteToXmlDoc(xmlDoc, parentElem);
-}

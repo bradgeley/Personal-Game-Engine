@@ -152,17 +152,19 @@ void AoEHitAbility::Render(SystemContext const& context, CAbility const& ability
 
     InstanceBuffer& discIBO = *renderer.GetInstanceBuffer(scRenderer.m_discInstanceBuffer);
 
+    constexpr float maxAlpha = 50;
+
 	float alphaT = m_aoeHitComp.m_renderComp->m_renderDurationRemaining / m_aoeHitComp.m_renderComp->m_renderDuration;
     float alpha;
     if (alphaT < 0.5f)
     {
         // Ramp up alpha to max
-		alpha = MathUtils::RangeMapClamped(alphaT, 0.f, 0.5f, 0.f, m_aoeHitComp.m_renderComp->m_tint.a);
+		alpha = MathUtils::RangeMapClamped(alphaT, 0.f, 0.5f, 0.f, maxAlpha);
     }
     else
     {
         // Ramp down to 0
-        alpha = MathUtils::RangeMapClamped(alphaT, 0.5f, 1.f, m_aoeHitComp.m_renderComp->m_tint.a, 0.f);
+        alpha = MathUtils::RangeMapClamped(alphaT, 0.5f, 1.f, maxAlpha, 0.f);
     }
 
     DiscRenderInstance discInstance;
