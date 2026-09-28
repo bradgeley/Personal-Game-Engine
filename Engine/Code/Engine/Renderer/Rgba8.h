@@ -32,6 +32,7 @@ public:
     
     static Rgba8 Lerp(Rgba8 const& start, Rgba8 const& end, float t);
     static Rgba8 Blend(Rgba8 const& a, Rgba8 const& b);
+    static Rgba8 Blend(Rgba8 const* start, int num);
     
 public:
     

@@ -181,3 +181,22 @@ Rgba8 Rgba8::Blend(Rgba8 const& a, Rgba8 const& b)
     result.a = (uint8_t) (float)((a.a + b.a) * 0.5f);
     return result;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Rgba8 Rgba8::Blend(Rgba8 const* start, int num)
+{
+	float numf = static_cast<float>(num);
+	float r = 0.f, g = 0.f, b = 0.f, a = 0.f;
+
+	for (int i = 0; i < num; ++i)
+	{
+		r += start[i].r;
+		g += start[i].g;
+		b += start[i].b;
+		a += start[i].a;
+	}
+
+    return Rgba8(static_cast<uint8_t>(r / numf), static_cast<uint8_t>(g / numf), static_cast<uint8_t>(b / numf), static_cast<uint8_t>(a / numf));
+}

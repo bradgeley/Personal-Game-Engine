@@ -163,7 +163,7 @@ bool SDebugCommands::KillAll(NamedProperties&)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool SDebugCommands::DestroyAllEntities(NamedProperties& args)
+bool SDebugCommands::DestroyAllEntities(NamedProperties&)
 {
 	g_ecs->DestroyAllEntities();
 	return false;

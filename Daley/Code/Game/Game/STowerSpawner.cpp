@@ -295,27 +295,31 @@ bool STowerSpawner::ProcessTowerPlacementRequest(TowerPlacementRequest const& re
     TowerPlacementResult result = CanPlaceTower(request, world);
     if (result == TowerPlacementResult::Success)
     {
-        PlaceTowerInWorld(request, world);
+        if (!PlaceTowerInWorld(request, world))
+        {
+            return false;
+        }
 
         SpawnInfo spawnInfo;
         spawnInfo.m_spawnPos = request.m_worldPos;
         spawnInfo.m_def = EntityDef::GetEntityDef(request.m_towerEntityName);
         EntityID tower = SEntityFactory::SpawnEntity(context, spawnInfo);
 
-        if (context.IsValid(tower))
+        if (!context.IsValid(tower))
         {
-            // Pass data to tower
-            if (request.m_flavorName != Name::Invalid)
-            {
-                AddFlavorToTower(tower, request.m_flavorName, true, context);
-            }
-            CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(tower);
-            placeableComp.m_botLeftTile = request.m_botLeftTileCoords;
-            placeableComp.m_costOfPurchase = request.m_cost;
-            runData.OnTowerPlacementSuccess(request);
+            return false;
         }
 
-        runData.m_gold -= request.m_cost;
+        // Pass data to tower
+        if (request.m_flavorName != Name::Invalid)
+        {
+            AddFlavorToTower(tower, request.m_flavorName, true, context);
+        }
+        CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(tower);
+        placeableComp.m_botLeftTile = request.m_botLeftTileCoords;
+        placeableComp.m_costOfPurchase = request.m_cost;
+
+        runData.OnTowerPlacementSuccess(request);
     }
     else if (!request.m_isGenerated)
     {
@@ -398,7 +402,7 @@ bool STowerSpawner::ProcessTowerSwirlRequest(TowerSwirlRequest const& request, S
     AddFlavorToTower(request.m_towerEntityID, request.m_flavor, false, context);
 
 	// Subtract swirl cost from player
-	runData.m_gold -= request.m_cost;
+    runData.OnSwirlSuccess(request);
 
     // Add swirl cost to tower
 	CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(request.m_towerEntityID);

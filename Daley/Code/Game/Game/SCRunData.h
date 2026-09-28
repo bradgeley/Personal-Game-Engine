@@ -8,6 +8,7 @@
 
 
 struct TowerPlacementRequest;
+struct TowerSwirlRequest;
 
 
 
@@ -69,7 +70,8 @@ public:
 	void GenerateModifierChoices();
 	void ResetModifiableAttributes();
 	void PrepareForMissionStart();
-	void OnTowerPlacementSuccess(TowerPlacementRequest const& placementInfo);
+	void OnTowerPlacementSuccess(TowerPlacementRequest const& request);
+	void OnSwirlSuccess(TowerSwirlRequest const& request);
 
 	// Data that carries over from mission to mission
 	uint32_t	m_seed					= 0; // Mission seed = seed + missionIndex

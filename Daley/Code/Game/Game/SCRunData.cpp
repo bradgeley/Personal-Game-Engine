@@ -158,11 +158,29 @@ void RunData::PrepareForMissionStart()
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RunData::OnTowerPlacementSuccess(TowerPlacementRequest const& placementInfo)
+void RunData::OnTowerPlacementSuccess(TowerPlacementRequest const& request)
 {
+	m_gold -= request.m_cost;
+
 	for (PlaceableTower& tower : m_placeableTowers)
 	{
-		if (tower.m_towerName == placementInfo.m_towerEntityName && tower.m_flavorName == placementInfo.m_flavorName)
+		if (tower.m_towerName == request.m_towerEntityName && tower.m_flavorName == request.m_flavorName)
+		{
+			tower.m_cost *= m_costRampPerTower;
+		}
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunData::OnSwirlSuccess(TowerSwirlRequest const& request)
+{
+	m_gold -= request.m_cost;
+
+	for (PlaceableTower& tower : m_placeableTowers)
+	{
+		if (tower.m_flavorName == request.m_flavor)
 		{
 			tower.m_cost *= m_costRampPerTower;
 		}
