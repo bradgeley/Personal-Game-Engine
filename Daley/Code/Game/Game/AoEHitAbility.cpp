@@ -80,8 +80,8 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
     {
         m_cooldownComp.m_accumulatedTime -= timeBetweenAttacks;
 
-        RolledOnHitComponent const& result = RollDamageAndEffects(ability, rng);
-        if (!result.IsRelevant())
+        RolledOnHitComponent rolledHit = RollDamageAndEffects(ability, rng);
+        if (!rolledHit.IsRelevant())
         {
             continue;
         }
@@ -91,9 +91,9 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
             m_aoeHitComp.m_renderComp->m_renderDurationRemaining = m_aoeHitComp.m_renderComp->m_renderDuration;
         }
 
-        if (result.m_aoeHitOnHit.IsRelevant())
+        if (rolledHit.m_aoeHitOnHit.IsRelevant())
         {
-			HitPayload const& aoePayload = result.m_aoeHitOnHit.m_payload;
+			HitPayload const& aoePayload = rolledHit.m_aoeHitOnHit.m_payload;
             for (EntityID entityID : m_targetingComp.m_targets)
             {
                 if (aoePayload.IsRelevantToHealth())
@@ -110,14 +110,13 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
             }
         }
 
-        if (result.m_aoeEffectOnHit.IsRelevant())
+        if (rolledHit.m_aoeEffectOnHit.IsRelevant())
         {
             SpawnInfo aoeEffectSpawnInfo;
             aoeEffectSpawnInfo.m_spawnPos = location;
-            aoeEffectSpawnInfo.m_spawnLifetime = result.m_aoeEffectOnHit.m_durationSeconds;
-            aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(result.m_aoeEffectOnHit.m_aoeEffectDefName);
+            aoeEffectSpawnInfo.m_spawnLifetime = rolledHit.m_aoeEffectOnHit.m_durationSeconds;
+            aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(rolledHit.m_aoeEffectOnHit.m_aoeEffectDefName);
             aoeEffectSpawnInfo.m_spawnScale = maxRange; // Initial radius is assumed to be 1
-			aoeEffectSpawnInfo.m_baseTint = flavorTint;
 
             EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 
@@ -125,7 +124,11 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
             if (context.HasComponents(aoeEffect, collisionEffectBit))
             {
                 CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
-                aoeEffectComp.Initialize(result.m_aoeEffectOnHit);
+
+                rolledHit.m_aoeEffectOnHit.m_renderComp.m_tint = flavorTint;
+                rolledHit.m_aoeEffectOnHit.m_renderComp.m_tint.a = 25;
+
+                aoeEffectComp.Initialize(rolledHit.m_aoeEffectOnHit);
             }
 		}
     }
