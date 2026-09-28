@@ -419,11 +419,11 @@ HitPayload AbilityScalingComponent::CalculateHitPayload(CAbility const& ability,
 {
     HitPayload result;
 	result.m_didCrit = didCrit;
-    result.m_physical = ability.m_attributes.GetValue(EAbilityAttribute::Physical) * m_physical;
-    result.m_burn = ability.m_attributes.GetValue(EAbilityAttribute::Burn) * m_burn;
-    result.m_poison = ability.m_attributes.GetValue(EAbilityAttribute::Poison) * m_poison;
-    result.m_slowDuration = ability.m_attributes.GetValue(EAbilityAttribute::SlowDuration) * m_slow;
-    result.m_hasteDuration = ability.m_attributes.GetValue(EAbilityAttribute::HasteDuration) * m_haste;
+    result.m_physical       = ability.m_attributes.GetValue(EAbilityAttribute::Physical)        * GetPhysicalScaling(ability);
+    result.m_burn           = ability.m_attributes.GetValue(EAbilityAttribute::Burn)            * GetBurnScaling(ability);
+    result.m_poison         = ability.m_attributes.GetValue(EAbilityAttribute::Poison)          * GetPoisonScaling(ability);
+    result.m_slowDuration   = ability.m_attributes.GetValue(EAbilityAttribute::SlowDuration)    * GetSlowScaling(ability);
+    result.m_hasteDuration  = ability.m_attributes.GetValue(EAbilityAttribute::HasteDuration)   * GetHasteScaling(ability);
 
     if (didCrit)
     {
@@ -449,6 +449,56 @@ HitPayload AbilityScalingComponent::CalculateDotPayload(CAbility const& ability,
 
 
 //----------------------------------------------------------------------------------------------------------------------
+float AbilityScalingComponent::GetPhysicalScaling(CAbility const& ability) const
+{
+    float physMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Physical_Multi);
+    float physScaling = m_physical * physMulti;
+    return physScaling;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float AbilityScalingComponent::GetBurnScaling(CAbility const& ability) const
+{
+    float burnMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Burn_Multi);
+    float burnScaling = m_burn * burnMulti;
+    return burnScaling;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float AbilityScalingComponent::GetPoisonScaling(CAbility const& ability) const
+{
+    float poisonMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Poison_Multi);
+    float poisonScaling = m_poison * poisonMulti;
+    return poisonScaling;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float AbilityScalingComponent::GetSlowScaling(CAbility const& ability) const
+{
+    float slowMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Slow_Multi);
+    float slowScaling = m_slow * slowMulti;
+    return slowScaling;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float AbilityScalingComponent::GetHasteScaling(CAbility const& ability) const
+{
+    float hasteMulti = 1.f + ability.m_attributes.GetValue(EAbilityAttribute::Haste_Multi);
+    float hasteScaling = m_haste * hasteMulti;
+    return hasteScaling;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void AbilityScalingComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
 	if (!IsRelevant())
@@ -456,25 +506,31 @@ void AbilityScalingComponent::AppendDebugString(EntityDebugContext& debugContext
 		return;
 	}
 
-    if (m_physical > 0.f)
+	float physScaling = GetPhysicalScaling(*debugContext.m_abilityComp);
+	float burnScaling = GetBurnScaling(*debugContext.m_abilityComp);
+	float poisonScaling = GetPoisonScaling(*debugContext.m_abilityComp);
+	float slowScaling = GetSlowScaling(*debugContext.m_abilityComp);
+	float hasteScaling = GetHasteScaling(*debugContext.m_abilityComp);
+
+    if (physScaling > 0.f)
     {
-		debugContext.m_debugString += StringUtils::StringF("Phys (%.2f) ", m_physical);
+		debugContext.m_debugString += StringUtils::StringF("Phys (%.2f) ", physScaling);
     }
-	if (m_burn > 0.f)
+	if (burnScaling > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF("Burn (%.2f) ", m_burn);
+		debugContext.m_debugString += StringUtils::StringF("Burn (%.2f) ", burnScaling);
 	}
-	if (m_poison > 0.f)
+	if (poisonScaling > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF("Poison (%.2f) ", m_poison);
+        debugContext.m_debugString += StringUtils::StringF("Poison (%.2f) ", poisonScaling);
 	}
-	if (m_slow > 0.f)
+	if (slowScaling > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF("Slow (%.2f) ", m_slow);
+		debugContext.m_debugString += StringUtils::StringF("Slow (%.2f) ", slowScaling);
 	}
-	if (m_haste > 0.f)
+	if (hasteScaling > 0.f)
 	{
-		debugContext.m_debugString += StringUtils::StringF("Haste (%.2f) ", m_haste);
+		debugContext.m_debugString += StringUtils::StringF("Haste (%.2f) ", hasteScaling);
 	}
 	debugContext.m_debugString += '\n';
 }

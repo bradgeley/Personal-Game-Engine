@@ -173,6 +173,12 @@ public:
 	HitPayload CalculateHitPayload(CAbility const& ability, bool didCrit = false, float critMultiplier = 1.f) const;
 	HitPayload CalculateDotPayload(CAbility const& ability, float deltaSeconds) const;
 
+	float GetPhysicalScaling(CAbility const& ability) const;
+	float GetBurnScaling(CAbility const& ability) const;
+	float GetPoisonScaling(CAbility const& ability) const;
+	float GetSlowScaling(CAbility const& ability) const;
+	float GetHasteScaling(CAbility const& ability) const;
+
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
