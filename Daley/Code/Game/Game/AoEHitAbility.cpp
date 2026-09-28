@@ -57,9 +57,12 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
 	// CAbility (bc this is an ability in a CAbility that can update itself)
 	// Spawn Entities (All)
 
-	BitMask healthBit = context.GetComponentBitMask<CHealth>();
-	BitMask timeBit = context.GetComponentBitMask<CTime>();
 	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
+
+	CTags const& ownerTags = *context.GetComponentUnsafe<CTags>(m_owner);
+    Rgba8 flavorTint = ownerTags.GetFlavorTint();
+    //auto const& ownerFlavors = ownerTags.GetFlavorDefs();
+    //int numOwnerFlavors = ownerTags.GetNumFlavorTags();
 
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
 	m_targetingComp.UpdateCachedTiles(context, ability, location);
@@ -93,13 +96,13 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
 			HitPayload const& aoePayload = result.m_aoeHitOnHit.m_payload;
             for (EntityID entityID : m_targetingComp.m_targets)
             {
-                if (aoePayload.IsRelevantToHealth() && context.HasComponents(entityID, healthBit))
+                if (aoePayload.IsRelevantToHealth())
                 {
                     CHealth& healthComp = healthStorage[entityID];
                     healthComp.TakePayload(aoePayload);
                 }
 
-                if (aoePayload.IsRelevantToTime() && context.HasComponents(entityID, timeBit))
+                if (aoePayload.IsRelevantToTime())
                 {
                     CTime& timeComp = timeStorage[entityID];
                     timeComp.TakePayload(aoePayload);
@@ -114,6 +117,7 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
             aoeEffectSpawnInfo.m_spawnLifetime = result.m_aoeEffectOnHit.m_durationSeconds;
             aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(result.m_aoeEffectOnHit.m_aoeEffectDefName);
             aoeEffectSpawnInfo.m_spawnScale = maxRange; // Initial radius is assumed to be 1
+			aoeEffectSpawnInfo.m_baseTint = flavorTint;
 
             EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
 
@@ -137,6 +141,9 @@ void AoEHitAbility::Render(SystemContext const& context, CAbility const& ability
 		return;
 	}
 
+	CTags const& ownerTags = *context.GetComponentUnsafe<CTags>(m_owner);
+	Rgba8 flavorTint = ownerTags.GetFlavorTint();
+
     SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
     Renderer& renderer = *scRenderer.GetRenderer();
 
@@ -158,7 +165,7 @@ void AoEHitAbility::Render(SystemContext const& context, CAbility const& ability
     DiscRenderInstance discInstance;
     discInstance.m_position = Vec3(location, m_aoeHitComp.m_renderComp->m_depth);
 	discInstance.m_radius = (1.f - alphaT) * m_targetingComp.GetMaxRange(ability); // Make it look like an explosion expanding outwards
-    discInstance.m_tint = m_aoeHitComp.m_renderComp->m_tint;
+    discInstance.m_tint = flavorTint;
     discInstance.m_tint.a = static_cast<uint8_t>(alpha);
 
     discIBO.AddInstance(discInstance);

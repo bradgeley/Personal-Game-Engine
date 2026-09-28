@@ -34,7 +34,7 @@ struct CHealth
 public:
 
     CHealth() = default;
-    CHealth(void const* xmlElement);
+    explicit CHealth(void const* xmlElement);
 
     void TakeDamage(float damage);
     void TakePayload(HitPayload const& payload);

@@ -22,7 +22,7 @@ struct CCollision
 public:
 
     CCollision() = default;
-    CCollision(void const* xmlElement);
+	explicit CCollision(void const* xmlElement);
 
 	bool IsCollisionEnabled() const;
     bool GetIsSingleHash() const;

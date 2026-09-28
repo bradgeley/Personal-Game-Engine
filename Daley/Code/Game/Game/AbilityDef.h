@@ -26,7 +26,7 @@ struct AbilityDef
 public:
 
 	virtual ~AbilityDef() = default;
-	AbilityDef(void const* xmlElement);
+	explicit AbilityDef(void const* xmlElement);
 	virtual Ability* MakeAbilityInstance() const = 0;
 	virtual AbilityDef* Copy() const = 0;
 	virtual void WriteToXmlDoc(void* xmlDoc, void* rootElement) = 0;

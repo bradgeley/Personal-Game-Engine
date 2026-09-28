@@ -2,6 +2,7 @@
 #pragma once
 #include "GameCommon.h"
 #include "Engine/Core/Name.h"
+#include "Engine/Renderer/Rgba8.h"
 #include <string>
 #include <array>
 
@@ -22,7 +23,7 @@ struct CTags
 public:
 
     CTags() = default;
-    CTags(void const* xmlElement);
+    explicit CTags(void const* xmlElement);
 
 	bool AddTag(Name const& tag);
 	bool RemoveTag(Name const& tag);
@@ -32,6 +33,7 @@ public:
 	// Utility funcs
 	int GetNumFlavorTags() const;
 	std::array<FlavorDef const*, StaticGameSettings::s_maxFlavorsInOneTower> GetFlavorDefs() const;
+	Rgba8 GetFlavorTint() const;
 
 	void AppendDebugString(std::string& out) const;
 

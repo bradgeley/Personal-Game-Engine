@@ -54,27 +54,9 @@ void ProjectileHitAbility::Update(SystemContext const& context, CAbility const& 
     RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
 
     CTags const& ownerTags = tagStorage[m_owner];
-	auto const ownerFlavors = ownerTags.GetFlavorDefs();
+	Rgba8 flavorTint = ownerTags.GetFlavorTint();
+	auto const& ownerFlavors = ownerTags.GetFlavorDefs();
 	int numOwnerFlavors = ownerTags.GetNumFlavorTags();
-
-    Rgba8 ownerColor;
-    if (numOwnerFlavors > 1)
-    {
-        Rgba8 flavorTints[StaticGameSettings::s_maxFlavorsInOneTower] = {};
-        for (int flavorIndex = 0; flavorIndex < numOwnerFlavors; ++flavorIndex)
-        {
-            if (ownerFlavors[flavorIndex])
-            {
-                flavorTints[flavorIndex] = ownerFlavors[flavorIndex]->m_tint;
-            }
-        }
-
-        ownerColor = Rgba8::Blend(flavorTints, numOwnerFlavors);
-    }
-    else 
-    {
-        ownerColor = ownerFlavors[0]->m_tint;
-    }
 
     // Cache tiles in range as optimization, so we never search non path tiles that are out of range
     m_targetingComp.UpdateCachedTiles(context, ability, location);
@@ -97,7 +79,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, CAbility const& 
     SpawnInfo spawnInfo;
     spawnInfo.m_spawnPos = location;
     spawnInfo.m_def = projDef;
-    spawnInfo.m_baseTint = ownerColor;
+    spawnInfo.m_baseTint = flavorTint;
 
     // Shoot at targets
     while (m_cooldownComp.m_accumulatedTime > timeBetweenAttacks)
@@ -130,7 +112,7 @@ void ProjectileHitAbility::Update(SystemContext const& context, CAbility const& 
             projComp.m_accumulatedTime += m_cooldownComp.m_accumulatedTime;
             projComp.m_projSpeed = m_projSpeed * timeDilation;
             projComp.m_onHitComp = RollDamageAndEffects(ability, rng);
-			projComp.m_onHitComp.m_aoeEffectOnHit.m_renderComp.m_tint = ownerColor;
+			projComp.m_onHitComp.m_aoeEffectOnHit.m_renderComp.m_tint = flavorTint;
 			projComp.m_onHitComp.m_aoeEffectOnHit.m_renderComp.m_tint.a = 50;
 
 			CTags& projTags = tagStorage[projectileID];

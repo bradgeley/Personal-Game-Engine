@@ -11,7 +11,7 @@ struct CPlaceable
 public:
 
     CPlaceable() = default;
-    CPlaceable(void const* xmlElement);
+	explicit CPlaceable(void const* xmlElement);
 
 public:
 

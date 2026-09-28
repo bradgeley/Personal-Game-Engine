@@ -20,7 +20,7 @@ struct CDeath
 public:
 
     CDeath() = default;
-    CDeath(void const* xmlElement);
+	explicit CDeath(void const* xmlElement);
 
 	bool GetIsDead() const;
 	bool GetDiedThisFrame() const;

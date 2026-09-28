@@ -38,7 +38,7 @@ struct CRender
 public:
 
     CRender() = default;
-    CRender(void const* xmlElement);
+    explicit CRender(void const* xmlElement);
 
     Vec2 GetRenderPosition() const;
     float GetRenderOrientation() const;

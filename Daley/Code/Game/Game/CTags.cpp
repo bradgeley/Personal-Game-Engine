@@ -135,6 +135,41 @@ std::array<FlavorDef const*, StaticGameSettings::s_maxFlavorsInOneTower> CTags::
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Rgba8 CTags::GetFlavorTint() const
+{
+	auto const& ownerFlavors = GetFlavorDefs();
+	if (ownerFlavors.empty())
+	{
+		return Rgba8::White;
+	}
+
+	int numFlavors = GetNumFlavorTags();
+
+	Rgba8 ownerColor;
+	if (numFlavors > 1)
+	{
+		Rgba8 flavorTints[StaticGameSettings::s_maxFlavorsInOneTower] = {};
+		for (int flavorIndex = 0; flavorIndex < numFlavors; ++flavorIndex)
+		{
+			if (ownerFlavors[flavorIndex])
+			{
+				flavorTints[flavorIndex] = ownerFlavors[flavorIndex]->m_tint;
+			}
+		}
+
+		ownerColor = Rgba8::Blend(flavorTints, numFlavors);
+	}
+	else
+	{
+		ownerColor = ownerFlavors[0]->m_tint;
+	}
+
+	return ownerColor;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void CTags::AppendDebugString(std::string& out) const
 {
 	bool hasTag = false;

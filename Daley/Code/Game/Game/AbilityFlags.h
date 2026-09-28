@@ -30,7 +30,7 @@ enum class AbilityFlag : uint8_t
 struct AbilityFlags
 {
 	AbilityFlags() = default;
-	AbilityFlags(void const* xmlElement);
+	explicit AbilityFlags(void const* xmlElement);
 
 	bool HasFlag(AbilityFlag flag) const;
 

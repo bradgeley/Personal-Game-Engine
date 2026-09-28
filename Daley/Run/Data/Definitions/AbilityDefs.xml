@@ -153,8 +153,8 @@
   <!-- AdjacentHit Attacks -->
   
   <AdjacentHitAbilityDef name="CoffeeAttack">
-    <Cooldown cooldown="2"/>
-    <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+    <Cooldown cooldown="3"/>
+    <Scaling physical="1" burn="1" poison="1" haste="1"/>
   </AdjacentHitAbilityDef>
 
   <!-- ==================================================================================================================== -->

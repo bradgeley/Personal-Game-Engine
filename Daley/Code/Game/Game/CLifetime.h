@@ -9,7 +9,7 @@ struct CLifetime
 public:
 
     CLifetime() = default;
-    CLifetime(void const* xmlElement);
+	explicit CLifetime(void const* xmlElement);
 
 	void SetLifetime(float lifetime);
 

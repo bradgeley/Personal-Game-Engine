@@ -18,7 +18,7 @@ struct CAIController
 public:
 
     CAIController() = default;
-    CAIController(void const* xmlElement);
+    explicit CAIController(void const* xmlElement);
 
     bool GetIsMovementWiggly() const;
     void SetIsMovementWiggly(bool isWiggly);

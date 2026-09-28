@@ -19,7 +19,7 @@ struct CProjectile
 public:
 
     CProjectile() = default;
-    CProjectile(void const* xmlElement);
+    explicit CProjectile(void const* xmlElement);
 
     EntityID GetTarget() const { return m_targets[m_currentTargetIndex]; }
     bool NextTarget();

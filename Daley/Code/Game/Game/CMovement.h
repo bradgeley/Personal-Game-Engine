@@ -25,7 +25,7 @@ struct CMovement
 public:
 
     CMovement() = default;
-    CMovement(void const* xmlElement);
+    explicit CMovement(void const* xmlElement);
 
     void AppendDebugString(EntityDebugContext& context) const;
 
