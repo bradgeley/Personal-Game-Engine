@@ -165,6 +165,31 @@ void SRenderHUD::Run(SystemContext const& context) const
 	}
 	//------------------------------------------------------
 
+	//------------------------------------------------------
+	// Bottom Center HUD
+	//
+	{
+		if (runData.m_numModifierChoicesRemaining > 0)
+		{
+			std::string bottomCenterHUDText = StringUtils::StringF("%i modifier choice(s) remaining", runData.m_numModifierChoicesRemaining);
+			std::string bottomCenterLabelText = "(M)";
+			Vec2 bottomCenterHUDTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, bottomCenterHUDText);
+			AABB2 bottomCenterHUDBounds = AABB2(Vec2(cameraBounds.GetCenter().x - bottomCenterHUDTextDims.x / 2.f, 0.f), Vec2(cameraBounds.GetCenter().x + bottomCenterHUDTextDims.x / 2.f, bottomCenterHUDTextDims.y));
+			bottomCenterHUDBounds.mins -= Vec2(hudPadding * 2.f, 0.f);
+			bottomCenterHUDBounds.maxs += Vec2(hudPadding, hudPadding);
+			bottomCenterHUDBounds.mins.x -= font->GetTextDims(hudTextSize, hudLineSpacing, bottomCenterLabelText).x;
+			VertexUtils::AddVertsForAABB2(untexturedVerts, bottomCenterHUDBounds, Rgba8(0, 0, 0, 128));
+			Rgba8 textColor = Rgba8::White;
+			float t = static_cast<float>(context.GetRealTimeSeconds());
+			float sinT = MathUtils::SinDegrees(360.f * t);
+			float rangeMappedSinT = MathUtils::RangeMap(sinT, -1.f, 1.f, 0.5f, 1.f);
+			textColor.a = static_cast<unsigned char>(rangeMappedSinT * 255.f);
+			font->AddVertsForAlignedText2D(textVerts, bottomCenterHUDBounds.GetCenter() + Vec2(hudPadding, 0.f), Vec2(0.f, 0.f), hudTextSize, bottomCenterHUDText, textColor, hudLineSpacing);
+			font->AddVertsForAlignedText2D(textVerts, bottomCenterHUDBounds.GetCenterLeft() + Vec2(hudPadding * 0.5f, 0.f), Vec2(1.f, 0.f), hudTextSize, bottomCenterLabelText, Rgba8::White, hudLineSpacing);
+		}
+	}
+	//------------------------------------------------------
+
 	renderer.BeginCamera(&camera.m_uiCamera);
 
 	renderer.BindTexture();

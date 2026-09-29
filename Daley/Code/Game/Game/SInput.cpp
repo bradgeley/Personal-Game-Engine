@@ -28,6 +28,20 @@
 void SInput::Startup()
 {
 	AddWriteAllDependencies();
+
+	SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
+	RunData& runData = *scRunData.m_data;
+
+	SCGameState& game = g_ecs->GetSingleton<SCGameState>();
+	GameState& gameState = *game.m_gameState;
+
+	if (runData.m_wantsModifierChoice)
+	{
+		if (!game.m_gameState->IsPaused())
+		{
+			game.m_gameState->TogglePaused();
+		}
+	}
 }
 
 
@@ -50,11 +64,11 @@ void SInput::Run(SystemContext const& context) const
 	SCRunData& scRunData = context.GetSingleton<SCRunData>();
 	RunData& runData = *scRunData.m_data;
 	SCGameState& game = context.GetSingleton<SCGameState>();
+	GameState& gameState = *game.m_gameState;
 
 	Window const& window = *scWindow.GetWindow();
 	EventSystem& eventSystem = *scEventSystem.GetEventSystem();
 	InputSystem const& inputSystem = *scInput.GetInputSystem();
-	GameState& gameState = *game.m_gameState;
 
 	scInput.m_towerSwirlRequest = TowerSwirlRequest();
 	scInput.m_towerPlacementRequest = TowerPlacementRequest();
@@ -89,8 +103,21 @@ void SInput::Run(SystemContext const& context) const
 		}
 	}
 
+	if (inputSystem.WasKeyJustPressed('M') && runData.m_numModifierChoicesRemaining > 0)
+	{
+		runData.m_wantsModifierChoice = !runData.m_wantsModifierChoice;
+		if (runData.m_wantsModifierChoice && !gameState.IsPaused())
+		{
+			gameState.TogglePaused();
+		}
+		if (!runData.m_wantsModifierChoice && gameState.IsPaused())
+		{
+			gameState.TogglePaused();
+		}
+	}
+
 	// Run Modifier input
-	if (runData.m_numModifierChoicesRemaining > 0)
+	if (runData.m_wantsModifierChoice)
 	{
 		// Don't allow most input, to force player to choose an option.
 		return;

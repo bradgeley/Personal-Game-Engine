@@ -148,6 +148,7 @@ void RunData::PrepareForMissionStart()
 	m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
 	m_numSoldTowers = 0;
 	m_needsModifierRecalculation = true;
+	m_wantsModifierChoice = true;
 
 	for (PlaceableTower& tower : m_placeableTowers)
 	{

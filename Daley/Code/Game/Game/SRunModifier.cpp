@@ -42,6 +42,11 @@ void SRunModifier::Run(SystemContext const& context) const
 
 	if (runData.m_numModifierChoicesRemaining == 0)
 	{
+		runData.m_wantsModifierChoice = false;
+	}
+
+	if (!runData.m_wantsModifierChoice)
+	{
 		return;
 	}
 

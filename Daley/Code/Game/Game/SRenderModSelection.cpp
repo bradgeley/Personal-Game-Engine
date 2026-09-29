@@ -58,13 +58,13 @@ void SRenderModSelection::Run(SystemContext const& context) const
 	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
 	RunData const& runData = *scRunData.m_data;
 
-	SCAssetManager& scAssetManager = context.GetSingleton<SCAssetManager>();
-	AssetManager& assetManager = *scAssetManager.GetAssetManager();
-
-	if (runData.m_numActiveModifierChoices == 0)
+	if (!runData.m_wantsModifierChoice)
 	{
 		return;
 	}
+
+	SCAssetManager& scAssetManager = context.GetSingleton<SCAssetManager>();
+	AssetManager& assetManager = *scAssetManager.GetAssetManager();
 
 	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
 	

@@ -115,6 +115,7 @@ public:
 	std::array<RunModifierDef const*, MAX_MODIFIER_CHOICES> m_modifierChoices;
 
 	// Transient Data
+	bool m_wantsModifierChoice = true;
 	bool m_needsModifierRecalculation = true;
 };
 

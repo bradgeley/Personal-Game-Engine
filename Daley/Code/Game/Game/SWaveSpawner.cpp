@@ -138,7 +138,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 				}
 			}
 
-			spawnInfo.m_spawnPos = world.GetRandomSpawnLocation_SeededNoise(stream.m_numSpawned, stream.m_entityStream.m_id, rng);
+			spawnInfo.m_spawnPos = world.GetRandomSpawnLocation_SeededNoise(stream.m_numSpawned, stream.m_entityStream.m_id + 1, rng);
 			factory.m_entitiesToSpawn.push_back(spawnInfo);
 			stream.m_numSpawned++;
 		}
