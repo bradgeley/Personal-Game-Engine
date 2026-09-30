@@ -32,7 +32,7 @@ public:
 
 	// Utility funcs
 	int GetNumFlavorTags() const;
-	std::array<FlavorDef const*, StaticGameSettings::s_maxFlavorsInOneTower> GetFlavorDefs() const;
+	std::array<FlavorDef const*, StaticGameSettings::s_absoluteSwirlLimit> GetFlavorDefs() const;
 	Rgba8 GetFlavorTint() const;
 
 	void AppendDebugString(std::string& out) const;

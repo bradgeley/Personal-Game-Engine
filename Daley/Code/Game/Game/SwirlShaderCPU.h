@@ -31,7 +31,7 @@ struct SwirlInstance
 	uint8_t		m_numFlavors;		// NUMFLAVORS			(1 byte)
 	uint8_t		m_numSwirls;		// NUMSWIRLS			(1 byte) // number of times that each flavor shows up in the swirl
 	float		m_swirlRotation;	// SWIRLROTATION		(4 bytes) // Total rotation of the swirl
-	uint8_t		m_flavorIndices[StaticGameSettings::s_maxFlavorsInOneTower];	// FLAVORINDICES		(3-4? bytes)
+	uint8_t		m_flavorIndices[StaticGameSettings::s_absoluteSwirlLimit];	// FLAVORINDICES		(3-4? bytes)
 	//------------------------------------------------------
 };
 

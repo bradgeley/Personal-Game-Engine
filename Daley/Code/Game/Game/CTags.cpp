@@ -113,9 +113,9 @@ int CTags::GetNumFlavorTags() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-std::array<FlavorDef const*, StaticGameSettings::s_maxFlavorsInOneTower> CTags::GetFlavorDefs() const
+std::array<FlavorDef const*, StaticGameSettings::s_absoluteSwirlLimit> CTags::GetFlavorDefs() const
 {
-	std::array<FlavorDef const*, StaticGameSettings::s_maxFlavorsInOneTower> result;
+	std::array<FlavorDef const*, StaticGameSettings::s_absoluteSwirlLimit> result;
 	result.fill(nullptr);
 
 	int resultIndex = 0;
@@ -148,7 +148,7 @@ Rgba8 CTags::GetFlavorTint() const
 	Rgba8 ownerColor;
 	if (numFlavors > 1)
 	{
-		Rgba8 flavorTints[StaticGameSettings::s_maxFlavorsInOneTower] = {};
+		Rgba8 flavorTints[StaticGameSettings::s_absoluteSwirlLimit] = {};
 		for (int flavorIndex = 0; flavorIndex < numFlavors; ++flavorIndex)
 		{
 			if (ownerFlavors[flavorIndex])

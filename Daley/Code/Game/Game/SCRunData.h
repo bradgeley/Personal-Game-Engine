@@ -88,7 +88,8 @@ public:
 	float		m_interestTimerSeconds	= StaticGameSettings::s_baseInterestTimerSeconds;
 	float		m_healthRegen			= StaticGameSettings::s_basePlayerHealthRegen;
 	float		m_currentTimeDilation	= 1.f;
-	int			m_maxFlavors			= StaticGameSettings::s_baseMaxFlavors;
+	int			m_maxFlavors			= StaticGameSettings::s_flavorUnlockLimit;
+	int			m_swirlLimit			= StaticGameSettings::s_baseSwirlLimit;
 	float		m_costRampPerTower		= StaticGameSettings::s_baseCostRampPerTower;
 	
 	float		m_gold							= StaticGameSettings::s_baseGold;
@@ -101,8 +102,8 @@ public:
 	float 		m_goldGainMultiplier	= 1.f;
 
 	// +1 is for walls, bc they are not a flavor. Start with wall unlocked always.
-	std::array<PlaceableTower, StaticGameSettings::s_baseMaxFlavors + 1> m_placeableTowers = { "Wall1x1", Name::Invalid, 'T', 5.f, 5.f };
-	std::array<uint8_t, StaticGameSettings::s_baseMaxFlavors + 1> m_towerPlacementKeyBindings = { 'T', 'Q', 'W', 'E', 'R' }; // todo: move to some kind of user settings, out of run data
+	std::array<PlaceableTower, StaticGameSettings::s_flavorUnlockLimit + 1> m_placeableTowers = { "Wall1x1", Name::Invalid, 'T', 5.f, 5.f };
+	std::array<uint8_t, StaticGameSettings::s_flavorUnlockLimit + 1> m_towerPlacementKeyBindings = { 'T', 'Q', 'W', 'E', 'R' }; // todo: move to some kind of user settings, out of run data
 
 	std::array<MissionGenData, StaticGameSettings::s_numMissionsForVictory> m_missionGenData;
 

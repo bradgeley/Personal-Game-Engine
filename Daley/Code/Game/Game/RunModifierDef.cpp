@@ -7,6 +7,7 @@
 #include "Engine/ECS/SystemContext.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Math/MathUtils.h"
 
 
 
@@ -452,13 +453,14 @@ MetaRunModifierDef::MetaRunModifierDef(XmlElement const& modElement) : RunModifi
 	m_valuePerLevel = XmlUtils::ParseXmlAttribute(modElement, "perLevel", m_valuePerLevel);
 
 	Name metaTypeName = Name(XmlUtils::ParseXmlAttribute(modElement, "type", ""));
-	if (metaTypeName == "Exp")
+
+	for (int metaAttributeIndex = 0; metaAttributeIndex < (int) s_metaAttributeEnumStrings.size(); ++metaAttributeIndex)
 	{
-		m_metaAttribute = MetaAttribute::Exp;
-	}
-	else
-	{
-		ASSERT_OR_DIE(false, StringUtils::StringF("Unknown MetaRunModifier type: %s", metaTypeName.ToString().c_str()));
+		if (metaTypeName == Name(s_metaAttributeEnumStrings[metaAttributeIndex]))
+		{
+			m_metaAttribute = static_cast<MetaAttribute>(metaAttributeIndex);
+			return;
+		}
 	}
 }
 
@@ -522,6 +524,15 @@ void MetaRunModifier::ApplyToRunData(RunData& runData) const
 	if (def.m_metaAttribute == MetaAttribute::Exp)
 	{
 		runData.m_experienceMultiplier += GetValue();
+	}
+	else if (def.m_metaAttribute == MetaAttribute::SwirlLimit)
+	{
+		runData.m_swirlLimit += static_cast<int>(GetValue());
+		runData.m_swirlLimit = MathUtils::Clamp(runData.m_swirlLimit, 1, StaticGameSettings::s_absoluteSwirlLimit);
+	}
+	else
+	{
+		ERROR_AND_DIE(StringUtils::StringF("Unknown MetaRunModifierDef meta attribute: %s", s_metaAttributeEnumStrings[(int) def.m_metaAttribute].c_str()));
 	}
 }
 

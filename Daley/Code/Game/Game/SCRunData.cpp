@@ -136,6 +136,7 @@ void RunData::ResetModifiableAttributes()
 	m_sellRefundRate = StaticGameSettings::s_baseSellRefundRate;
 	m_creditLimit = StaticGameSettings::s_baseCreditLimit;
 	m_debtInterestRate = StaticGameSettings::s_baseDebtInterestRate;
+	m_swirlLimit = StaticGameSettings::s_baseSwirlLimit;
 }
 
 

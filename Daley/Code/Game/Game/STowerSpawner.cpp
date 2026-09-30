@@ -226,7 +226,8 @@ TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& request, Syste
 		}
     }
 
-	if (numFlavors == StaticGameSettings::s_maxFlavorsInOneTower)
+	RunData const& runData = *context.GetSingleton<SCRunData>().m_data;
+    if (numFlavors >= runData.m_swirlLimit)
 	{
 		return TowerSwirlResult::TowerAtSwirlLimit;
 	}

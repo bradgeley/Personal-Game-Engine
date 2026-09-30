@@ -1,7 +1,7 @@
 
 
 
-<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="14,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="16,1" edgePadding="0,0" innerPadding="0,0">
   
     <SpriteAnimation name="Slow" frames="0"></SpriteAnimation>
     <SpriteAnimation name="Void" frames="1"></SpriteAnimation>
@@ -17,5 +17,7 @@
     <SpriteAnimation name="CritChance" frames="11"></SpriteAnimation>
     <SpriteAnimation name="Exp" frames="12"></SpriteAnimation>
     <SpriteAnimation name="AttackSpeed" frames="13"></SpriteAnimation>
+    <SpriteAnimation name="Swirl2" frames="14"></SpriteAnimation>
+    <SpriteAnimation name="Swirl3" frames="15"></SpriteAnimation>
   
 </GridSpriteSheet>

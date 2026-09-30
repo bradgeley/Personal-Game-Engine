@@ -173,7 +173,7 @@ void SRenderSwirls::Run(SystemContext const& context) const
         }
 
 		auto const& flavorDefs = tags.GetFlavorDefs();
-		for (int i = 0; i < StaticGameSettings::s_maxFlavorsInOneTower; ++i)
+		for (int i = 0; i < StaticGameSettings::s_absoluteSwirlLimit; ++i)
 		{
             if (flavorDefs[i])
             {
