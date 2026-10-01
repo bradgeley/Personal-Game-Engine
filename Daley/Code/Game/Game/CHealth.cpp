@@ -30,7 +30,9 @@ CHealth::CHealth(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 void CHealth::TakeDamage(float damage)
 {
-	m_currentHealth -= damage;
+	float effectiveDamage = damage * m_damageTakenMultiplier;
+
+	m_currentHealth -= effectiveDamage;
 
 	if (m_currentHealth <= 0.f)
 	{
@@ -46,6 +48,7 @@ void CHealth::TakePayload(HitPayload const& payload)
 {
 	m_currentBurn += payload.m_burn;
 	m_currentPoison += payload.m_poison;
+	m_currentVulnerability += payload.m_vulnerability;
 
 	TakeDamage(payload.m_physical);
 }
@@ -83,6 +86,15 @@ float CHealth::GetPoisonSaturation() const
 {
 	float saturation = (m_currentPoison - m_healthRegen) / (0.25f * m_currentHealth);
 	saturation = MathUtils::Clamp(saturation, 0.f, 1.f);
+	return saturation;
+} 
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float CHealth::GetVulnerabilitySaturation() const
+{
+	float saturation = MathUtils::RangeMapClamped(m_damageTakenMultiplier, 1.f, 2.f, 0.f, 1.f);
 	return saturation;
 }
 
@@ -226,5 +238,9 @@ void CHealth::AppendDebugString(EntityDebugContext& context) const
 	if (m_currentPoison > 0.f)
 	{
 		context.m_debugString += StringUtils::StringF("Poison: %.1f\n", m_currentPoison);
+	}
+	if (m_currentVulnerability > 0.f)
+	{
+		context.m_debugString += StringUtils::StringF("Vuln: %.1f (x%.2f)\n", m_currentVulnerability, m_damageTakenMultiplier);
 	}
 }

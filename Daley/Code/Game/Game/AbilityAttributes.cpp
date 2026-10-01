@@ -24,12 +24,14 @@ AbilityAttributes::AbilityAttributes(void const* xmlElement)
 	m_values[(int) AbilityAttribute::Physical] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Physical].ToCStr(), 0.f);
 	m_values[(int) AbilityAttribute::Burn] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Burn].ToCStr(), 0.f);
 	m_values[(int) AbilityAttribute::Poison] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Poison].ToCStr(), 0.f);
+	m_values[(int) AbilityAttribute::Vulnerability] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Vulnerability].ToCStr(), 0.f);
 	m_values[(int) AbilityAttribute::SlowDuration] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::SlowDuration].ToCStr(), 0.f);
 	m_values[(int) AbilityAttribute::HasteDuration] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::HasteDuration].ToCStr(), 0.f);
 
 	m_values[(int) AbilityAttribute::Physical_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Physical_Multi].ToCStr(), 0.f);
 	m_values[(int) AbilityAttribute::Burn_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Burn_Multi].ToCStr(), 0.f);
 	m_values[(int) AbilityAttribute::Poison_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Poison_Multi].ToCStr(), 0.f);
+	m_values[(int) AbilityAttribute::Vulnerability_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Vulnerability_Multi].ToCStr(), 0.f);
 	m_values[(int) AbilityAttribute::Slow_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Slow_Multi].ToCStr(), 0.f);
 	m_values[(int) AbilityAttribute::Haste_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Haste_Multi].ToCStr(), 0.f);
 
@@ -117,12 +119,14 @@ std::array<Name, (int) AbilityAttribute::Count> const& AbilityAttributes::GetAtt
 		Name("Physical"),
 		Name("Burn"),
 		Name("Poison"),
+		Name("Vulnerability"),
 		Name("Slow"),
 		Name("Haste"),
 
 		Name("PhysicalMulti"),
 		Name("BurnMulti"),
 		Name("PoisonMulti"),
+		Name("VulnerabilityMulti"),
 		Name("SlowMulti"),
 		Name("HasteMulti"),
 
@@ -148,28 +152,31 @@ AbilityAttributeDisplayInfo const& AbilityAttributes::GetAttributeDisplayInfo(Ab
 {
 	static std::array<AbilityAttributeDisplayInfo, (int) AbilityAttribute::Count> s_infos =
 	{
-		AbilityAttributeDisplayInfo{Name("Physical"),				AttributeDisplayType::FlatValue,			"+%d"},
-		AbilityAttributeDisplayInfo{Name("Burn"),					AttributeDisplayType::FlatValue,			"+%d"},
-		AbilityAttributeDisplayInfo{Name("Poison"),					AttributeDisplayType::FlatValue,			"+%d"},
-		AbilityAttributeDisplayInfo{Name("Slow Duration"),			AttributeDisplayType::Seconds,			   "+%ds"},
-		AbilityAttributeDisplayInfo{Name("Haste Duration"),			AttributeDisplayType::Seconds,			   "+%ds"},
-		AbilityAttributeDisplayInfo{Name("Physical Multiplier"),	AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Burn Multiplier"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Poison Multiplier"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Slow Multiplier"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Haste Multiplier"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Physical"),					AttributeDisplayType::FlatValue,			"+%d"},
+		AbilityAttributeDisplayInfo{Name("Burn"),						AttributeDisplayType::FlatValue,			"+%d"},
+		AbilityAttributeDisplayInfo{Name("Poison"),						AttributeDisplayType::FlatValue,			"+%d"},
+		AbilityAttributeDisplayInfo{Name("Vulnerability"),				AttributeDisplayType::FlatValue,			"+%d"},
+		AbilityAttributeDisplayInfo{Name("Slow Duration"),				AttributeDisplayType::Seconds,			   "+%ds"},
+		AbilityAttributeDisplayInfo{Name("Haste Duration"),				AttributeDisplayType::Seconds,			   "+%ds"},
 
-		AbilityAttributeDisplayInfo{Name("Attack Speed"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Range"),					AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Area of Effect"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Area Damage"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Projectile Speed"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Crit Chance"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Crit Multiplier"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Chain Count"),			AttributeDisplayType::FlatSigned,			"+%d"},
-		AbilityAttributeDisplayInfo{Name("Chain Chance"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Chain Distance"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Multishot Count"),		AttributeDisplayType::FlatSigned,			"+%d"}
+		AbilityAttributeDisplayInfo{Name("Physical Multiplier"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Burn Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Poison Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Vulnerability Multiplier"),	AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Slow Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Haste Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+
+		AbilityAttributeDisplayInfo{Name("Attack Speed"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Range"),						AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Area of Effect"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Area Damage"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Projectile Speed"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Crit Chance"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Crit Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Chain Count"),				AttributeDisplayType::FlatSigned,			"+%d"},
+		AbilityAttributeDisplayInfo{Name("Chain Chance"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Chain Distance"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AbilityAttributeDisplayInfo{Name("Multishot Count"),			AttributeDisplayType::FlatSigned,			"+%d"}
 	};
 
 

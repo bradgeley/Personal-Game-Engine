@@ -45,11 +45,12 @@ struct AbilityScalingComponentDef
 	AbilityScalingComponentDef() = default;
 	explicit AbilityScalingComponentDef(void const* xmlElement);
 
-	float m_physical	= 0.f;
-	float m_burn		= 0.f;
-	float m_poison		= 0.f;
-	float m_slow		= 0.f;
-	float m_haste		= 0.f;
+	float m_physical		= 0.f;
+	float m_burn			= 0.f;
+	float m_poison			= 0.f;
+	float m_vulnerability	= 0.f;
+	float m_slow			= 0.f;
+	float m_haste			= 0.f;
 };
 
 

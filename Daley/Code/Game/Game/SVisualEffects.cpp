@@ -79,6 +79,12 @@ void SVisualEffects::Run(SystemContext const& context) const
 
         CHealth const& health = healthStorage[it];
 
+		float vulnerabilitySaturation = health.GetVulnerabilitySaturation();
+        if (vulnerabilitySaturation > 0.05f)
+        {
+            render.m_outlineTint = Rgba8::Purple;
+        }
+
         // Tint the entity green based on poison
         float poisonSaturation = health.GetPoisonSaturation();
         render.m_tint = Rgba8::Lerp(render.m_baseTint, Rgba8::Green, poisonSaturation);

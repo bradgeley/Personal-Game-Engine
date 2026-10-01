@@ -10,14 +10,15 @@ struct EntityDebugContext;
 //----------------------------------------------------------------------------------------------------------------------
 struct HitPayload
 {
-	bool HasValue() const { return m_physical != 0.f || m_burn != 0.f || m_poison != 0.f || m_slowDuration != 0.f || m_hasteDuration != 0.f; }
-	bool IsRelevantToHealth() const { return m_physical != 0.f || m_burn != 0.f || m_poison != 0.f; }
+	bool HasValue() const { return m_physical != 0.f || m_burn != 0.f || m_poison != 0.f || m_vulnerability != 0.f || m_slowDuration != 0.f || m_hasteDuration != 0.f; }
+	bool IsRelevantToHealth() const { return m_physical != 0.f || m_burn != 0.f || m_poison != 0.f || m_vulnerability != 0.f; }
 	bool IsRelevantToTime() const { return m_slowDuration != 0.f || m_hasteDuration != 0.f; }
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 	float m_physical = 0.f;
 	float m_burn = 0.f;
 	float m_poison = 0.f;
+	float m_vulnerability = 0.f;
 	float m_slowDuration = 0.f;
 	float m_hasteDuration = 0.f;
 	bool m_didCrit = false;
@@ -27,6 +28,7 @@ struct HitPayload
 		m_physical += other.m_physical;
 		m_burn += other.m_burn;
 		m_poison += other.m_poison;
+		m_vulnerability += other.m_vulnerability;
 		m_slowDuration += other.m_slowDuration;
 		m_hasteDuration += other.m_hasteDuration;
 		m_didCrit = m_didCrit || other.m_didCrit;
@@ -37,6 +39,7 @@ struct HitPayload
 		m_physical *= multiplier;
 		m_burn *= multiplier;
 		m_poison *= multiplier;
+		m_vulnerability *= multiplier;
 		m_slowDuration *= multiplier;
 		m_hasteDuration *= multiplier;
 	}

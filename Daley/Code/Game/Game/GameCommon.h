@@ -56,6 +56,7 @@ namespace StaticGameSettings
     static constexpr float s_burnDecayedValueAfterOneSecond	= 0.85f;
 	static constexpr double s_slowStatusTimeDilation		= 0.5;
 	static constexpr double s_hasteStatusTimeDilation		= 1.5;
+	static constexpr double s_vulnerabilityExponent			= 0.55;
     static constexpr float s_defaultCollisionEffectDepth	= 0.95f;
 
 	static constexpr float s_baseCritMultiplier				= 2.f;
@@ -93,7 +94,7 @@ namespace StaticGameSettings
 	static constexpr int   s_absoluteSwirlLimit				= 3; // max flavors that can ever be put into 1 tower
 
 	static constexpr double s_baseLevelExpRequirement		= 100.0;
-	static constexpr double s_expRequirementExponent		= 1.1;
+	static constexpr double s_expRequirementExponent		= 1.2;
 	static constexpr int    s_maxLevel						= 100;
 
 	static constexpr int   s_numMissionsForVictory			= 9;

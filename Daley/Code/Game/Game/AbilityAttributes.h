@@ -24,12 +24,14 @@ enum class AbilityAttribute : uint32_t
     Physical,
     Burn,
     Poison,
+    Vulnerability,
     SlowDuration,
     HasteDuration,
 
     Physical_Multi,
     Burn_Multi,
     Poison_Multi,
+    Vulnerability_Multi,
     Slow_Multi,
     Haste_Multi,
 

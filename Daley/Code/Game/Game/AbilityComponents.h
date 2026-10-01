@@ -176,6 +176,7 @@ public:
 	float GetPhysicalScaling(CAbility const& ability) const;
 	float GetBurnScaling(CAbility const& ability) const;
 	float GetPoisonScaling(CAbility const& ability) const;
+	float GetVulnerabilityScaling(CAbility const& ability) const;
 	float GetSlowScaling(CAbility const& ability) const;
 	float GetHasteScaling(CAbility const& ability) const;
 
@@ -187,6 +188,7 @@ public:
 	float m_physical = 0.f;
 	float m_burn = 0.f;
 	float m_poison = 0.f;
+	float m_vulnerability = 0.f;
 	float m_slow = 0.f;
 	float m_haste = 0.f;
 };

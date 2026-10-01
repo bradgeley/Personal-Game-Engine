@@ -24,6 +24,10 @@ void HitPayload::AppendDebugString(EntityDebugContext& debugContext) const
 	{
 		debugContext.m_debugString += StringUtils::StringF("Poison: %.2f\n", m_poison);
 	}
+	if (m_vulnerability > 0.f)
+	{
+		debugContext.m_debugString += StringUtils::StringF("Vuln: %.2f\n", m_vulnerability);
+	}
 	if (m_slowDuration > 0.f)
 	{
 		debugContext.m_debugString += StringUtils::StringF("Slow Duration: %.2f\n", m_slowDuration);

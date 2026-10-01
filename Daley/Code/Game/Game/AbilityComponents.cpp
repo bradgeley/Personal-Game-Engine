@@ -408,6 +408,7 @@ AbilityScalingComponent::AbilityScalingComponent(AbilityScalingComponentDef cons
     m_physical = def.m_physical;
 	m_burn = def.m_burn;
 	m_poison = def.m_poison;
+    m_vulnerability = def.m_vulnerability;
 	m_slow = def.m_slow;
 	m_haste = def.m_haste;
 }
@@ -418,18 +419,20 @@ AbilityScalingComponent::AbilityScalingComponent(AbilityScalingComponentDef cons
 HitPayload AbilityScalingComponent::CalculateHitPayload(CAbility const& ability, bool didCrit, float critMultiplier) const
 {
     HitPayload result;
-	result.m_didCrit = didCrit;
+	result.m_didCrit        = didCrit;
     result.m_physical       = ability.m_attributes.GetValue(AbilityAttribute::Physical)        * GetPhysicalScaling(ability);
     result.m_burn           = ability.m_attributes.GetValue(AbilityAttribute::Burn)            * GetBurnScaling(ability);
     result.m_poison         = ability.m_attributes.GetValue(AbilityAttribute::Poison)          * GetPoisonScaling(ability);
+    result.m_vulnerability  = ability.m_attributes.GetValue(AbilityAttribute::Vulnerability)   * GetVulnerabilityScaling(ability);
     result.m_slowDuration   = ability.m_attributes.GetValue(AbilityAttribute::SlowDuration)    * GetSlowScaling(ability);
     result.m_hasteDuration  = ability.m_attributes.GetValue(AbilityAttribute::HasteDuration)   * GetHasteScaling(ability);
 
     if (didCrit)
     {
         result.m_physical *= critMultiplier;
-        result.m_burn *= critMultiplier;
-        result.m_poison *= critMultiplier;
+        result.m_burn *= critMultiplier;            // todo: gate behind a special run modifier
+        result.m_poison *= critMultiplier;          // todo: gate behind a special run modifier
+        result.m_vulnerability *= critMultiplier;   // todo: gate behind a special run modifier
     }
 
     return result;
@@ -474,6 +477,16 @@ float AbilityScalingComponent::GetPoisonScaling(CAbility const& ability) const
     float poisonMulti = 1.f + ability.m_attributes.GetValue(AbilityAttribute::Poison_Multi);
     float poisonScaling = m_poison * poisonMulti;
     return poisonScaling;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float AbilityScalingComponent::GetVulnerabilityScaling(CAbility const& ability) const
+{
+	float vulnerabilityMulti = 1.f + ability.m_attributes.GetValue(AbilityAttribute::Vulnerability_Multi);
+	float vulnerabilityScaling = m_vulnerability * vulnerabilityMulti;
+	return vulnerabilityScaling;
 }
 
 

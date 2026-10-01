@@ -13,12 +13,12 @@
     <Chain maxChains="3"/>
     <Multishot additionalTargets="3"/>
     <OnHit>
-      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+      <Scaling physical="1" burn="1" poison="1" vulnerability="1" slow="1" haste="1"/>
       <AoEHit radius="2">
-        <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+        <Scaling physical="1" burn="1" poison="1" vulnerability="1" slow="1" haste="1"/>
       </AoEHit>
       <AoEEffect radius="2" duration="0.5">
-        <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+        <Scaling physical="1" burn="1" poison="1" vulnerability="1" slow="1" haste="1"/>
         <Render tint="255,0,255,25"/>
       </AoEEffect>
     </OnHit>
@@ -29,10 +29,10 @@
     <Targeting maxRange="10"/>
     <Crit critChance="0.5" critMulti="0.5"/>
     <AoEHit radius="2" ratio="1" variance="0.1">
-      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+      <Scaling physical="1" burn="1" poison="1" vulnerability="1" slow="1" haste="1"/>
     </AoEHit>
     <AoEEffect duration="0.25">
-      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+      <Scaling physical="1" burn="1" poison="1" vulnerability="1" slow="1" haste="1"/>
       <Render tint="255,0,255,25"/>
     </AoEEffect>
   </AoEHitAbilityDef>
@@ -40,7 +40,7 @@
   <PassiveAoEAbilityDef name="Rainbow_PassiveAoEAbility">
     <Targeting maxRange="3"/>
     <AoEEffect>
-      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+      <Scaling physical="1" burn="1" poison="1" vulnerability="1" slow="1" haste="1"/>
       <Render tint="255,0,255,25"></Render>
     </AoEEffect>
   </PassiveAoEAbilityDef>
@@ -51,9 +51,9 @@
     <Chain maxChains="3" chainDistance="2" chainPayloadMulti="0.5"/>
     <Multishot additionalTargets="3"/>
     <OnHit>
-      <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+      <Scaling physical="1" burn="1" poison="1" vulnerability="1" slow="1" haste="1"/>
       <AoEHit radius="0.5">
-        <Scaling physical="1" burn="1" poison="1" slow="1" haste="1"/>
+        <Scaling physical="1" burn="1" poison="1" vulnerability="1" slow="1" haste="1"/>
         <Render tint="255,0,255, 100" depth="0.95"/>
       </AoEHit>
     </OnHit>
@@ -65,14 +65,13 @@
   <ProjectileHitAbilityDef name="VanillaAttack" projectileDef="TowerProj" projSpeed="50">
     <Cooldown cooldown="0.5"/>
     <Targeting maxRange="15"/>
-    <Crit critChance="0.1" critMulti="0.5"/>
     <OnHit>
-      <Scaling physical="1" burn="1" poison="1" slow="0.25"/>
-      <AoEHit radius="0.5">
-        <Scaling physical="0.5" burn="0.5" poison="0.5" slow="0.125"/>
+      <Scaling physical="0.5" burn="0.25" poison="0.125" vulnerability="0.5" slow="1"/>
+      <AoEHit radius="1">
+        <Scaling physical="0.25" burn="0.125" poison="0.075" vulnerability="0.25" slow="0.25"/>
       </AoEHit>
       <AoEEffect radius="0.5" duration="0.5">
-        <Scaling physical="0.25" burn="0.25" poison="0.25" slow="0.125"/>
+        <Scaling physical="0.25" burn="0.125" poison="0.075" vulnerability="0.125" slow="0.25"/>
         <Render depth="0.95"/>
       </AoEEffect>
     </OnHit>
@@ -81,14 +80,28 @@
   <ProjectileHitAbilityDef name="ChocolateAttack" projectileDef="TowerProj" projSpeed="30">
     <Cooldown cooldown="2"/>
     <Targeting maxRange="12"/>
-    <Crit critChance="0.1" critMulti=".5"/>
     <OnHit>
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
+      <Scaling physical="2" burn="1" poison="0.5" vulnerability="2" slow="1"/>
       <AoEHit radius="5">
-        <Scaling physical="1" burn="1" poison="1" slow="1"/>
+        <Scaling physical="2" burn="1" poison="0.5" vulnerability="1" slow="0.5"/>
+      </AoEHit>
+      <AoEEffect radius="2.5" duration="0.5">
+        <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="0.5" slow="0.5"/>
+        <Render depth="0.95"/>
+      </AoEEffect>
+    </OnHit>
+  </ProjectileHitAbilityDef>
+
+  <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="TowerProj" projSpeed="30">
+    <Cooldown cooldown="1"/>
+    <Targeting maxRange="10"/>
+    <OnHit>
+      <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="1" slow="1"/>
+      <AoEHit radius="2">
+        <Scaling physical="0.5" burn="0.25" poison="0.125" vulnerability="0.5" slow="0.5"/>
       </AoEHit>
       <AoEEffect radius="1" duration="0.5">
-        <Scaling physical="1" burn="1" poison="1" slow="1"/>
+        <Scaling physical="0.25" burn="0.125" poison="0.075" vulnerability="0.25" slow="0.25"/>
         <Render depth="0.95"/>
       </AoEEffect>
     </OnHit>
@@ -98,27 +111,12 @@
     <Cooldown cooldown="2"/>
     <Targeting maxRange="12"/>
     <OnHit>
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
+      <Scaling physical="2" burn="1" poison="0.5" vulnerability="2" slow="1"/>
       <AoEHit radius="3">
-        <Scaling physical="1" burn="1" poison="1" slow="1"/>
+        <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="1" slow="0.5"/>
       </AoEHit>
-      <AoEEffect radius="3" duration="0.5">
-        <Scaling physical="1" burn="1" poison="1" slow="1"/>
-        <Render depth="0.95"/>
-      </AoEEffect>
-    </OnHit>
-  </ProjectileHitAbilityDef>
-
-  <ProjectileHitAbilityDef name="StrawberryAttack" projectileDef="TowerProj" projSpeed="30">
-    <Cooldown cooldown="1.5"/>
-    <Targeting maxRange="10"/>
-    <OnHit>
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
-      <AoEHit radius="2">
-        <Scaling physical="1" burn="1" poison="1" slow="1"/>
-      </AoEHit>
-      <AoEEffect radius="2" duration="0.5">
-        <Scaling physical="1" burn="1" poison="1" slow="1"/>
+      <AoEEffect radius="1.5" duration="0.5">
+        <Scaling physical="0.5" burn="0.25" poison="0.125" vulnerability="0.5" slow="0.25"/>
         <Render depth="0.95"/>
       </AoEEffect>
     </OnHit>
@@ -131,12 +129,12 @@
     <Cooldown cooldown="5"/>
     <Targeting maxRange="8"/>
     <Crit critChance="0.1" critMulti="0.5"/>
-    <AoEHit radius="8">
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
+    <AoEHit radius="4">
+      <Scaling physical="5" burn="2.5" poison="1.25" vulnerability="5" slow="0.25"/>
       <Render depth="0.95" duration="0.2"/>
     </AoEHit>
-    <AoEEffect radius="8" duration="2">
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
+    <AoEEffect radius="2" duration="2">
+      <Scaling physical="2.5" burn="1.25" poison="0.625" vulnerability="2.5" slow="0.25"/>
       <Render depth="0.95"/>
     </AoEEffect>
   </AoEHitAbilityDef>
@@ -145,12 +143,12 @@
     <Cooldown cooldown="2"/>
     <Targeting maxRange="5"/>
     <Crit critChance="0" critMulti="0"/>
-    <AoEHit radius="5">
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
+    <AoEHit radius="4">
+      <Scaling physical="2" burn="1" poison="0.5" vulnerability="2" slow="1"/>
       <Render depth="0.95" duration="0.2"/>
     </AoEHit>
-    <AoEEffect radius="5" duration="0.5">
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
+    <AoEEffect radius="2" duration="0.5">
+      <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="1" slow="0.25"/>
       <Render depth="0.95"/>
     </AoEEffect>
   </AoEHitAbilityDef>
@@ -160,24 +158,24 @@
   
   <AdjacentHitAbilityDef name="CoffeeAttack">
     <Cooldown cooldown="3"/>
-    <Scaling physical="1" burn="1" poison="1" haste="1"/>
+    <Scaling physical="1" burn="0.5" poison="0.25" haste="1"/>
   </AdjacentHitAbilityDef>
 
   <!-- ==================================================================================================================== -->
   <!-- Passive AoE Attacks -->
   
   <PassiveAoEAbilityDef name="MintAttack">
-    <Targeting maxRange="5"/>
-    <AoEEffect radius="5">
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
+    <Targeting maxRange="4"/>
+    <AoEEffect radius="4">
+      <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="0.25" slow="1"/>
       <Render depth="0.95"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>
 
   <PassiveAoEAbilityDef name="OrangeSorbetAttack">
-    <Targeting maxRange="6"/>
-    <AoEEffect radius="6">
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
+    <Targeting maxRange="4"/>
+    <AoEEffect radius="4">
+      <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="0.25" slow="1"/>
       <Render depth="0.95"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>
@@ -190,9 +188,9 @@
     <Render tint="174,153,245,100" depth="0.05"/>
     <Chain maxChains="1" chainDistance="2" chainPayloadMulti="0.5"/>
     <OnHit>
-      <Scaling physical="1" burn="1" poison="1" slow="1"/>
-      <AoEHit radius="0.5">
-        <Scaling physical="1" burn="1" poison="1" slow="1"/>
+      <Scaling physical="2" burn="1" poison="0.5" vulnerability="2" slow="1"/>
+      <AoEHit radius="1">
+        <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="1" slow="1"/>
         <Render depth="0.95"/>
       </AoEHit>
     </OnHit>

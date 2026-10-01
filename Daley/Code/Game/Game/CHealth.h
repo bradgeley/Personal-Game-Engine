@@ -43,6 +43,7 @@ public:
 	float GetTotalBurnDamageRemaining() const;
     float GetBurnSaturation() const;
 	float GetPoisonSaturation() const;
+	float GetVulnerabilitySaturation() const;
 
     bool MatchesTagQuery(TagQuery const& query) const;
     bool GetHealthReachedZero() const;
@@ -61,13 +62,15 @@ public:
 
 public:
     
-	float m_maxHealth       = 100.f;
-    float m_healthRegen     = 0.f;
+	float m_maxHealth               = 100.f;
+    float m_healthRegen             = 0.f;
 
-	float m_currentHealth   = 100.f;
-    float m_currentBurn     = 0.f;
-    float m_currentPoison   = 0.f;
+	float m_currentHealth           = 100.f;
+    float m_currentBurn             = 0.f;
+    float m_currentPoison           = 0.f;
+    float m_currentVulnerability    = 0.f;
+	float m_damageTakenMultiplier   = 1.f; // Calculated as 1 + (vulnerability^X / 100) where X is vuln exponent
 
-    uint8_t m_healthFlags   = false;
-    uint32_t m_lastProcessedBy    = 0; // id of the last aoe effect that processed this health component
+    uint8_t m_healthFlags           = 0;
+    uint32_t m_lastProcessedBy      = 0; // id of the last aoe effect that processed this health component
 };
