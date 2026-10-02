@@ -56,7 +56,7 @@ namespace StaticGameSettings
     static constexpr float s_burnDecayedValueAfterOneSecond	= 0.85f;
 	static constexpr double s_slowStatusTimeDilation		= 0.5;
 	static constexpr double s_hasteStatusTimeDilation		= 1.5;
-	static constexpr double s_vulnerabilityExponent			= 0.55;
+	static constexpr double s_vulnerabilityExponent			= 0.5f;
     static constexpr float s_defaultCollisionEffectDepth	= 0.95f;
 
 	static constexpr float s_baseCritMultiplier				= 2.f;

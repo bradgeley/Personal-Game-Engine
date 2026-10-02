@@ -167,7 +167,7 @@
   <PassiveAoEAbilityDef name="MintAttack">
     <Targeting maxRange="4"/>
     <AoEEffect radius="4">
-      <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="0.25" slow="1"/>
+      <Scaling physical="0.5" burn="0.25" poison="0.125" vulnerability="0.125" slow="1"/>
       <Render depth="0.95"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>
@@ -175,7 +175,7 @@
   <PassiveAoEAbilityDef name="OrangeSorbetAttack">
     <Targeting maxRange="4"/>
     <AoEEffect radius="4">
-      <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="0.25" slow="1"/>
+      <Scaling physical="0.5" burn="0.25" poison="0.125" vulnerability="0.125" slow="1"/>
       <Render depth="0.95"/>
     </AoEEffect>
   </PassiveAoEAbilityDef>

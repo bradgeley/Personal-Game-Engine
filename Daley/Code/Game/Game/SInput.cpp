@@ -37,9 +37,9 @@ void SInput::Startup()
 
 	if (runData.m_wantsModifierChoice)
 	{
-		if (!game.m_gameState->IsPaused())
+		if (!gameState.IsPaused())
 		{
-			game.m_gameState->TogglePaused();
+			gameState.TogglePaused();
 		}
 	}
 }

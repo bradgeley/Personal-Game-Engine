@@ -53,7 +53,7 @@
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
     <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
     <Death baseGoldReward="10" baseExpReward="100"></Death>
-    <Health maxHealth="25000" healthRegen="1" isTargetable="true"></Health>
+    <Health maxHealth="5000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.75" pathOnly="true"></Movement>
     <Render scale="7.5" rotateSprite="true"></Render>
@@ -109,7 +109,7 @@
     <Animation spriteSheet="Data/SpriteSheets/Scorpion.xml"></Animation>
     <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
     <Death baseGoldReward="10" baseExpReward="100"></Death>
-    <Health maxHealth="37500" healthRegen="1" isTargetable="true"></Health>
+    <Health maxHealth="7500" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.68" pathOnly="true"></Movement>
     <Render scale="7.5" rotateSprite="true"></Render>
@@ -165,7 +165,7 @@
     <Animation spriteSheet="Data/SpriteSheets/WaterBug.xml"></Animation>
     <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
     <Death baseGoldReward="10" baseExpReward="100"></Death>
-    <Health maxHealth="55000" healthRegen="1" isTargetable="true"></Health>
+    <Health maxHealth="11000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.6" pathOnly="true"></Movement>
     <Render scale="7.5" rotateSprite="true"></Render>
