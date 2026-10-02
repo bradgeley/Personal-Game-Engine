@@ -11,7 +11,7 @@
   </FlavorDef>
 
   <FlavorDef name="Chocolate" abilities="ChocolateAttack">
-    <Attributes Physical="100" AreaOfEffect="0.5" CritChance="0.1" CritMulti="0.5"/>
+    <Attributes Physical="100" Vulnerability="5" AreaOfEffect="0.5" CritChance="0.1" CritMulti="0.5"/>
     <AbilityFlags flags="splash"/>
     <DisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20" desc="Fires physical projectiles that splash "></DisplayData>
   </FlavorDef>
@@ -41,13 +41,13 @@
   </FlavorDef>
 
   <FlavorDef name="Coconut" abilities="CoconutAttack">
-    <Attributes Physical="100" Slow="1" AreaOfEffect="0.25" CritChance="0.1" CritMulti="0.5"/>
+    <Attributes Physical="100" Vulnerability="5" Slow="1" AreaOfEffect="0.25" CritChance="0.1" CritMulti="0.5"/>
     <AbilityFlags flags="Splash"/>
     <DisplayData displayName="Coconut" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250" desc="Periodically deals physical and slows nearby enemies"></DisplayData>
   </FlavorDef>
 
   <FlavorDef name="Ube" abilities="UbeAttack">
-    <Attributes Physical="33" Burn="33" Poison="33" NumChains="1"/>
+    <Attributes Physical="33" Burn="33" Poison="33" Vulnerability="2.5" NumChains="1"/>
     <AbilityFlags flags="Hit"/>
     <DisplayData displayName="Ube" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245" desc="Laser that deals physical, burn, and poison"></DisplayData>
   </FlavorDef>
