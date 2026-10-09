@@ -175,7 +175,7 @@
     <ClCompile Include="Game\CCollisionEffect.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Game\CollisionProfile.cpp">
+    <ClCompile Include="Game\CollisionChannel.cpp">
       <Filter>Game\Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="Game\SCopyTransform.cpp">
@@ -582,7 +582,7 @@
     <ClInclude Include="Game\CCollisionEffect.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Game\CollisionProfile.h">
+    <ClInclude Include="Game\CollisionChannel.h">
       <Filter>Game\Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="Game\HealthBarShaderCPU.h">

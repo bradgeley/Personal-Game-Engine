@@ -2,10 +2,20 @@
 
 <RunModifierPools>
 
+  <!-- Automatic Unlocks -->
+  <AutoGrantedRunModifierPool name="AutoGranted">
+
+    
+  </AutoGrantedRunModifierPool> 
+
   <!-- Tower Unlocks -->
   <RunModifierPool name="Towers">
 
     <!-- Level 1 -->
+    <FlavorUnlockRunModifier name="RandomFlavor" baseCost="45" levelRequirement="0" weight="10">
+      <DisplayData displayName="Random Flavor" spriteSheet="Data/SpriteSheets/Icons.xml" anim="swirl3" tint="255,255,255"></DisplayData>
+    </FlavorUnlockRunModifier>
+    
     <FlavorUnlockRunModifier name="Vanilla" baseCost="60" levelRequirement="0" weight="1">
       <DisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
     </FlavorUnlockRunModifier>
@@ -444,7 +454,7 @@
     <MetaRunModifier name="ExpGain" type="exp" base="0.1" perLevel="0.1" weight="0.75" levelRequirement="5" maxLevel="2">
       <DisplayData displayName="Experience Gain" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Exp"></DisplayData>
     </MetaRunModifier>
-
+    
     <!-- Level 10 -->
     <MetaRunModifier name="SwirlLimit1" type="swirlLimit" base="1" perLevel="1" weight="3" levelRequirement="10" maxLevel="1">
       <DisplayData displayName="Swirl Limit 1" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Swirl2"></DisplayData>

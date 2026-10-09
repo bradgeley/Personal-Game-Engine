@@ -35,70 +35,70 @@ void SCollisionEffect::Run(SystemContext const& context) const
 	BitMask healthBit = context.GetComponentBitMask<CHealth>();
 	BitMask timeBit = context.GetComponentBitMask<CTime>();
 	
-    for (OverlapInfo const& overlap : scCollision.m_frameOverlaps)
-    {
-		EntityID const& entityA = overlap.GetEntityA();
-		EntityID const& entityB = overlap.GetEntityB();
-
-		if (!context.IsValid(entityA) || !context.IsValid(entityB))
-		{
-			continue;
-		}
-
-		if (context.HasComponentsUnsafe(entityA.GetIndex(), collisionBit))
-		{
-			CCollisionEffect const& aoeA = collisionEffectStorage[entityA];
-			CTime const& timeA = timeStorage[entityA];
-
-			float deltaSeconds = context.m_deltaSeconds * timeA.m_clock.GetTimeDilationF();
-			HitPayload payload = aoeA.GetWhileOverlappingPayload(deltaSeconds);
-
-			if (payload.IsRelevantToHealth())
-			{
-				if (context.HasComponentsUnsafe(entityB.GetIndex(), healthBit))
-				{
-					CHealth& healthB = healthStorage[entityB];
-					healthB.TakePayload(payload);
-				}
-			}
-
-			if (payload.IsRelevantToTime())
-			{
-				if (context.HasComponentsUnsafe(entityB.GetIndex(), timeBit))
-				{
-					CTime& timeB = timeStorage[entityB];
-					timeB.m_remainingSlowDuration += payload.m_slowDuration;
-					timeB.m_remainingHasteDuration += payload.m_hasteDuration;
-				}
-			}
-		}
-
-		if (context.HasComponentsUnsafe(entityB.GetIndex(), collisionBit))
-		{
-			CCollisionEffect const& aoeB = collisionEffectStorage[entityB];
-			CTime const& timeB = timeStorage[entityB];
-
-			float deltaSeconds = context.m_deltaSeconds * timeB.m_clock.GetTimeDilationF();
-			HitPayload payload = aoeB.GetWhileOverlappingPayload(deltaSeconds);
-
-			if (payload.IsRelevantToHealth())
-			{
-				if (context.HasComponentsUnsafe(entityA.GetIndex(), healthBit))
-				{
-					CHealth& healthA = healthStorage[entityA];
-					healthA.TakePayload(payload);
-				}
-			}
-
-			if (payload.IsRelevantToTime())
-			{
-				if (context.HasComponentsUnsafe(entityA.GetIndex(), timeBit))
-				{
-					CTime& timeA = timeStorage[entityA];
-					timeA.m_remainingSlowDuration += payload.m_slowDuration;
-					timeA.m_remainingHasteDuration += payload.m_hasteDuration;
-				}
-			}
-		}
-    }
+    //for (OverlapInfo const& overlap : scCollision.m_frameOverlaps)
+    //{
+	//	EntityID const& entityA = overlap.GetEntityA();
+	//	EntityID const& entityB = overlap.GetEntityB();
+	//
+	//	if (!context.IsValid(entityA) || !context.IsValid(entityB))
+	//	{
+	//		continue;
+	//	}
+	//
+	//	if (context.HasComponentsUnsafe(entityA.GetIndex(), collisionBit))
+	//	{
+	//		CCollisionEffect const& aoeA = collisionEffectStorage[entityA];
+	//		CTime const& timeA = timeStorage[entityA];
+	//
+	//		float deltaSeconds = context.m_deltaSeconds * timeA.m_clock.GetTimeDilationF();
+	//		HitPayload payload = aoeA.GetWhileOverlappingPayload(deltaSeconds);
+	//
+	//		if (payload.IsRelevantToHealth())
+	//		{
+	//			if (context.HasComponentsUnsafe(entityB.GetIndex(), healthBit))
+	//			{
+	//				CHealth& healthB = healthStorage[entityB];
+	//				healthB.TakePayload(payload);
+	//			}
+	//		}
+	//
+	//		if (payload.IsRelevantToTime())
+	//		{
+	//			if (context.HasComponentsUnsafe(entityB.GetIndex(), timeBit))
+	//			{
+	//				CTime& timeB = timeStorage[entityB];
+	//				timeB.m_remainingSlowDuration += payload.m_slowDuration;
+	//				timeB.m_remainingHasteDuration += payload.m_hasteDuration;
+	//			}
+	//		}
+	//	}
+	//
+	//	if (context.HasComponentsUnsafe(entityB.GetIndex(), collisionBit))
+	//	{
+	//		CCollisionEffect const& aoeB = collisionEffectStorage[entityB];
+	//		CTime const& timeB = timeStorage[entityB];
+	//
+	//		float deltaSeconds = context.m_deltaSeconds * timeB.m_clock.GetTimeDilationF();
+	//		HitPayload payload = aoeB.GetWhileOverlappingPayload(deltaSeconds);
+	//
+	//		if (payload.IsRelevantToHealth())
+	//		{
+	//			if (context.HasComponentsUnsafe(entityA.GetIndex(), healthBit))
+	//			{
+	//				CHealth& healthA = healthStorage[entityA];
+	//				healthA.TakePayload(payload);
+	//			}
+	//		}
+	//
+	//		if (payload.IsRelevantToTime())
+	//		{
+	//			if (context.HasComponentsUnsafe(entityA.GetIndex(), timeBit))
+	//			{
+	//				CTime& timeA = timeStorage[entityA];
+	//				timeA.m_remainingSlowDuration += payload.m_slowDuration;
+	//				timeA.m_remainingHasteDuration += payload.m_hasteDuration;
+	//			}
+	//		}
+	//	}
+    //}
 }

@@ -14,7 +14,7 @@
     <Health maxHealth="100" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="3" pathOnly="true"></Movement>
-    <Render scale="1.5" rotateSprite="true"></Render>
+    <Render scale="1" rotateSprite="true"></Render>
     <Tags tags="small,enemy,ant"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -23,12 +23,12 @@
   <EntityDef name = "mediumAnt">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
-    <Collision radius="1" singleHash="false" type="enemy"></Collision>
+    <Collision radius="0.75" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="2" baseExpReward="2"></Death>
     <Health maxHealth="500" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1.5" pathOnly="true"></Movement>
-    <Render scale="3" rotateSprite="true"></Render>
+    <Render scale="1.5" rotateSprite="true"></Render>
     <Tags tags="medium,enemy,ant"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -37,12 +37,12 @@
   <EntityDef name = "largeAnt">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
-    <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
+    <Collision radius="1" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="4" baseExpReward="5"></Death>
     <Health maxHealth="1000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1" pathOnly="true"></Movement>
-    <Render scale="4.5" rotateSprite="true"></Render>
+    <Render scale="2" rotateSprite="true"></Render>
     <Tags tags="large,enemy,ant"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -51,12 +51,12 @@
   <EntityDef name = "bossAnt">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/DarkAnt.xml"></Animation>
-    <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
+    <Collision radius="3" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="10" baseExpReward="100"></Death>
     <Health maxHealth="5000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.75" pathOnly="true"></Movement>
-    <Render scale="7.5" rotateSprite="true"></Render>
+    <Render scale="6" rotateSprite="true"></Render>
     <Tags tags="boss,enemy,ant"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -70,7 +70,7 @@
     <Health maxHealth="150" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="2.6" pathOnly="true"></Movement>
-    <Render scale="1.5" rotateSprite="true"></Render>
+    <Render scale="1" rotateSprite="true"></Render>
     <Tags tags="small,enemy,scorpion"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -79,12 +79,12 @@
   <EntityDef name = "mediumScorpion">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Scorpion.xml"></Animation>
-    <Collision radius="1" singleHash="false" type="enemy"></Collision>
+    <Collision radius="0.75" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="2" baseExpReward="2"></Death>
     <Health maxHealth="700" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1.35" pathOnly="true"></Movement>
-    <Render scale="3" rotateSprite="true"></Render>
+    <Render scale="1.5" rotateSprite="true"></Render>
     <Tags tags="medium,enemy,scorpion"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -93,12 +93,12 @@
   <EntityDef name = "largeScorpion">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Scorpion.xml"></Animation>
-    <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
+    <Collision radius="1" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="4" baseExpReward="5"></Death>
     <Health maxHealth="1500" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.9" pathOnly="true"></Movement>
-    <Render scale="4.5" rotateSprite="true"></Render>
+    <Render scale="2" rotateSprite="true"></Render>
     <Tags tags="large,enemy,scorpion"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -107,12 +107,12 @@
   <EntityDef name = "bossScorpion">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Scorpion.xml"></Animation>
-    <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
+    <Collision radius="3" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="10" baseExpReward="100"></Death>
     <Health maxHealth="7500" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.68" pathOnly="true"></Movement>
-    <Render scale="7.5" rotateSprite="true"></Render>
+    <Render scale="6" rotateSprite="true"></Render>
     <Tags tags="boss,enemy,scorpion"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -126,7 +126,7 @@
     <Health maxHealth="220" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="2.2" pathOnly="true"></Movement>
-    <Render scale="1.5" rotateSprite="true"></Render>
+    <Render scale="1" rotateSprite="true"></Render>
     <Tags tags="small,enemy,waterBug"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -135,12 +135,12 @@
   <EntityDef name = "mediumWaterBug">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/WaterBug.xml"></Animation>
-    <Collision radius="1" singleHash="false" type="enemy"></Collision>
+    <Collision radius="0.75" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="2" baseExpReward="2"></Death>
     <Health maxHealth="950" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1.2" pathOnly="true"></Movement>
-    <Render scale="3" rotateSprite="true"></Render>
+    <Render scale="1.5" rotateSprite="true"></Render>
     <Tags tags="medium,enemy,waterBug"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -149,12 +149,12 @@
   <EntityDef name = "largeWaterBug">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/WaterBug.xml"></Animation>
-    <Collision radius="1.5" singleHash="false" type="enemy"></Collision>
+    <Collision radius="1" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="4" baseExpReward="5"></Death>
     <Health maxHealth="2100" healthRegen="1" isTargetable="true"></Health>
-    <Lifetime></Lifetime>
+    <Lifetime></Lifetime> 
     <Movement moveSpeed="0.8" pathOnly="true"></Movement>
-    <Render scale="4.5" rotateSprite="true"></Render>
+    <Render scale="2" rotateSprite="true"></Render>
     <Tags tags="large,enemy,waterBug"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -163,12 +163,12 @@
   <EntityDef name = "bossWaterBug">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/WaterBug.xml"></Animation>
-    <Collision radius="2.5" singleHash="false" type="enemy"></Collision>
+    <Collision radius="3" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="10" baseExpReward="100"></Death>
     <Health maxHealth="11000" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="0.6" pathOnly="true"></Movement>
-    <Render scale="7.5" rotateSprite="true"></Render>
+    <Render scale="6" rotateSprite="true"></Render>
     <Tags tags="boss,enemy,waterBug"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -177,12 +177,12 @@
   <EntityDef name = "pig">
     <AIController isWiggly="true"></AIController>
     <Animation spriteSheet="Data/SpriteSheets/Pig.xml"></Animation>
-    <Collision radius="1" type="enemy"></Collision>
+    <Collision radius="0.75" singleHash="true" type="enemy"></Collision>
     <Death baseGoldReward="1" baseExpReward="2" corpseDurationSeconds="1.5"></Death>
     <Health maxHealth="300" healthRegen="1" isTargetable="true"></Health>
     <Lifetime></Lifetime>
     <Movement moveSpeed="1" pathOnly="true"></Movement>
-    <Render scale="2"></Render>
+    <Render scale="1.5"></Render>
     <Tags tags="medium,enemy,pig"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -262,14 +262,6 @@
   <EntityDef name="AoEEffect">
     <CollisionEffect></CollisionEffect>
     <Collision radius="1" type="GroundEffect"></Collision>
-    <Lifetime></Lifetime>
-    <Time></Time>
-    <Transform></Transform>
-  </EntityDef>
-
-  <EntityDef name="AoEPlayerBuff">
-    <CollisionEffect></CollisionEffect>
-    <Collision radius="1" type="PlayerBuff"></Collision>
     <Lifetime></Lifetime>
     <Time></Time>
     <Transform></Transform>

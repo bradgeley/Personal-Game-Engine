@@ -54,7 +54,7 @@ void SRenderCollisionEffects::Run(SystemContext const& context) const
 		CTransform const& transform = transStorage[it];
 
         Rgba8 tint = collisionEffect.m_tint;
-        Vec2 collisionPos = transform.m_pos + collision.m_offset;
+        Vec2 collisionPos = transform.m_pos;
 
 		DiscRenderInstance discInstance;
 		discInstance.m_position = Vec3(collisionPos, collisionEffect.m_depth);

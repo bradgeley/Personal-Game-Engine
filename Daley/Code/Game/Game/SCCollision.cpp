@@ -1,18 +1,43 @@
 // Bradley Christensen - 2022-2026
 #include "SCCollision.h"
 
- 
+
 
 //----------------------------------------------------------------------------------------------------------------------
-CollisionLayer& SCCollision::GetCollisionLayer(CollisionChannel channel)
+void SCCollision::ForEachEnemyInTile(int tileIndex, std::function<bool(EntityID)> const& callback) const
 {
-	return m_collisionLayers[static_cast<uint32_t>(channel)];
+	if (m_sortedEnemies.empty())
+	{
+		return;
+	}
+
+	if (m_enemyBucketIndices.empty())
+	{
+		return;
+	}
+
+	int startingIndex = m_enemyBucketIndices[tileIndex];
+	if (startingIndex == -1)
+	{
+		return;
+	}
+
+	int endingIndex = (tileIndex + 1 < (int) m_enemyBucketIndices.size()) ? m_enemyBucketIndices[tileIndex + 1] : (int) m_sortedEnemies.size();
+
+	for (int i = startingIndex; i < endingIndex; ++i)
+	{
+		EntityID entityID = m_sortedEnemies[i];
+		if (!callback(entityID))
+		{
+			break;
+		}
+	}
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-CollisionLayer const& SCCollision::GetCollisionLayer(CollisionChannel channel) const
+void SCCollision::ForEachBuildingInTile(int tileIndex, std::function<bool(EntityID)> const& callback) const
 {
-	return m_collisionLayers[static_cast<uint32_t>(channel)];
+	// Stub
 }

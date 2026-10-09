@@ -10,7 +10,7 @@ namespace StaticWorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Static Settings
     //
-    constexpr int   s_worldSizePowerOfTwo   = 7;        // In tiles
+    constexpr int   s_worldSizePowerOfTwo   = 8;        // In tiles
     constexpr float s_tileWidth             = 1.f;      // In world units
 
     constexpr int   s_numWorldEdgeTiles     = 4;        // Invisible tiles off the edge of world so entities may spawn in on the edges and walk into view. Each side of map has this many.
@@ -22,19 +22,17 @@ namespace StaticWorldSettings
     //----------------------------------------------------------------------------------------------------------------------
     // Static Collision Settings
     //
-    constexpr float   s_collisionEntityWallBuffer   = 0.01f;    // Minimum space between a wall and an entity after collision is resolved, in world units.
-    constexpr float   s_collisionHashWiggleRoom     = 0.01f;    // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
-    //constexpr float   s_collisionSingleHashRadiusThreshold = 0.5f;    // Setting to 0 can create issues with multiple collisions in the same frame, too big will cost more performance.
+    constexpr float s_collisionEntityWallBuffer   = 0.01f;    // Minimum space between a wall and an entity after collision is resolved, in world units.
 
     //----------------------------------------------------------------------------------------------------------------------
     // Static AI Settings
     //
-	constexpr float   s_pathTileSnapRadius = 3.f;     // If an entity is off the path and within this distance of a path tile, it will snap to the center of that tile.
+	constexpr float s_pathTileSnapRadius = 3.f;     // If an entity is off the path and within this distance of a path tile, it will snap to the center of that tile.
 
     //----------------------------------------------------------------------------------------------------------------------
     // Static Flow Settings
     //
-    constexpr float   s_maximumFlowDistance = 9999.f;    // Maximum value a tile can contain in the flow distance field
+    constexpr float s_maximumFlowDistance = 9999.f;    // Maximum value a tile can contain in the flow distance field
 
     //----------------------------------------------------------------------------------------------------------------------
     // Static Debug Settings

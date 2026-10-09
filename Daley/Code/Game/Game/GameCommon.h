@@ -94,7 +94,7 @@ namespace StaticGameSettings
 	static constexpr int   s_absoluteSwirlLimit				= 3; // max flavors that can ever be put into 1 tower
 
 	static constexpr double s_baseLevelExpRequirement		= 100.0;
-	static constexpr double s_expRequirementExponent		= 1.2;
+	static constexpr double s_expRequirementExponent		= 1.15;
 	static constexpr int    s_maxLevel						= 100;
 
 	static constexpr int   s_numMissionsForVictory			= 9;

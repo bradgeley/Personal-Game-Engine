@@ -31,6 +31,7 @@ public:
 
     void GenerateVBO(Renderer& renderer, AssetManager& assetManager);
     void GenerateLightmap(Renderer& renderer);
+	void OnMapGenerationComplete();
 
     void Shutdown();
 
@@ -54,6 +55,7 @@ public:
 	bool DoTilesInRegionMatchQuery(IntVec2 const& bottomLeftTileCoords, IntVec2 const& topRightTileCoords, TagQuery const& tagQuery) const;
 
     void CacheValidSpawnLocations();
+    void CacheVisiblePathTiles();
     Vec2 GetRandomSpawnLocation(RandomNumberGenerator& rng) const;
     Vec2 GetRandomSpawnLocation_SeededNoise(int pos, int seed, RandomNumberGenerator& rng) const;
 
@@ -119,6 +121,7 @@ public:
     std::vector<TowerPlacementRequest> m_generatedTowers;
 
 	std::vector<IntVec2> m_cachedSpawnLocations;
+	std::vector<int> m_cachedVisiblePathTiles;
 
 protected:
 

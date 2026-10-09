@@ -59,7 +59,6 @@ void SProjectile::Run(SystemContext const& context) const
 	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
 	// Spawn Entity (All)
 
-	CollisionLayer const& enemyLayer = scCollision.GetCollisionLayer(CollisionChannel::Enemy);
 	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
 
 	for (auto it = context.Iterate<CProjectile, CTransform>(); it.IsValid(); ++it)
@@ -122,44 +121,33 @@ void SProjectile::Run(SystemContext const& context) const
 					HitPayload aoeTargetPayload = proj.GetAoeTargetPayload();
 					if (aoeTargetPayload.HasValue())
 					{
-						// This id helps avoid double hitting ai that are hashed into multiple buckets
-						static uint32_t aoeHitId = 0;
-						aoeHitId++;
-
 						world.ForEachPathTileOverlappingCircle(transform.m_pos, splashRadius, [&](IntVec2 const& worldCoords)
 						{
 							int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
-							CollisionBucket const& enemyBucket = enemyLayer[tileIndex];
 
-							for (EntityID const& entityID : enemyBucket)
+							scCollision.ForEachEnemyInTile(tileIndex, [&](EntityID entityID)
 							{
 								Vec2 entityPos = transStorage[entityID].m_pos;
 								if (entityPos.GetDistanceSquaredTo(proj.m_targetPos.value()) > splashRadiusSquared)
 								{
 									// outside of splash radius
-									continue;
+									return true;
 								}
 
 								if (aoeTargetPayload.IsRelevantToHealth())
 								{
 									CHealth& targetHealth = healthStorage[entityID];
-									if (targetHealth.m_lastProcessedBy != aoeHitId)
-									{
-										targetHealth.TakePayload(aoeTargetPayload);
-										targetHealth.m_lastProcessedBy = aoeHitId;
-									}
+									targetHealth.TakePayload(aoeTargetPayload);
 								}
 
 								if (aoeTargetPayload.IsRelevantToTime())
 								{
 									CTime& targetTime = timeStorage[entityID];
-									if (targetTime.m_lastHitBy != aoeHitId)
-									{
-										targetTime.TakePayload(aoeTargetPayload);
-										targetTime.m_lastHitBy = aoeHitId;
-									}
+									targetTime.TakePayload(aoeTargetPayload);
 								}
-							}
+								return true;
+							});
+
 							return true;
 						});
 					}

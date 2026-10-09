@@ -4,6 +4,10 @@
 
 <FlavorDefs>
 
+  <FlavorDef name="RandomFlavor">
+    <DisplayData displayName="Random Flavor" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Swirl3" tint="255,255,255" desc="Picks a random flavor each placement"></DisplayData>
+  </FlavorDef>
+
   <FlavorDef name="Vanilla" abilities="VanillaAttack">
     <Attributes Physical="100" Vulnerability="10" CritChance="0.1" CritMulti="0.5" Range="0.1"/>
     <AbilityFlags flags="Hit"/>
@@ -12,7 +16,7 @@
 
   <FlavorDef name="Chocolate" abilities="ChocolateAttack">
     <Attributes Physical="100" Vulnerability="5" AreaOfEffect="0.5" CritChance="0.1" CritMulti="0.5"/>
-    <AbilityFlags flags="splash"/>
+    <AbilityFlags flags="splash,puddle"/>
     <DisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20" desc="Fires physical projectiles that splash "></DisplayData>
   </FlavorDef>
 
@@ -61,12 +65,6 @@
   <FlavorDef name="Coffee" abilities="CoffeeAttack">
     <Attributes Haste="1" AttackSpeed="0.5" Range="0.1" MultishotCount="1" ChainCount="1"/>
     <DisplayData displayName="Coffee" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="165,130,90" desc="Hastes adjacent towers"></DisplayData>
-  </FlavorDef>
-
-  <FlavorDef name="Rainbow" abilities="Rainbow_ProjHitAbility,Rainbow_AoEHitAbility,Rainbow_PassiveAoEAbility,Rainbow_LaserAbility">
-    <AbilityFlags flags="Hit,Splash,Puddle"/>
-    <Attributes Physical="100" Burn="66.6" Poison="33.3" Slow="1" Haste="1" Range="0.1" MultishotCount="1" ChainCount="1"/>
-    <DisplayData displayName="Rainbow" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,0,255" desc="Destroys nearby enemies"></DisplayData>
   </FlavorDef>
   
 </FlavorDefs>

@@ -36,7 +36,7 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
     }
 
 	SCWorld& world = context.GetSingleton<SCWorld>();
-    auto& enemyLayer = context.GetSingletonConst<SCCollision>().GetCollisionLayer(CollisionChannel::Enemy);
+    auto const& scCollision = context.GetSingletonConst<SCCollision>();
 
 	auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& timeStorage = context.GetArrayStorage<CTime>();
@@ -90,8 +90,6 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
 				timeComp.TakePayload(chainPayload);
             }
 
-            uint32_t splashCounter = Ability::GetNextSplashId();
-
             if (payload.m_aoeHitOnHit.IsRelevant())
             {
                 CTransform const& splashOrigin = transformStorage[target];
@@ -101,22 +99,13 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
                 {
                     int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
 
-                    CollisionBucket const& tileBucket = enemyLayer[tileIndex];
-
-                    for (EntityID splashEntityID : tileBucket)
+					scCollision.ForEachEnemyInTile(tileIndex, [&](EntityID splashEntityID)
                     {
                         CHealth& healthComp = healthStorage[splashEntityID];
-                        if (healthComp.m_lastProcessedBy == splashCounter)
-                        {
-                            // This targeting component has already processed this entity, skip
-                            continue;
-                        }
-
-                        healthComp.m_lastProcessedBy = splashCounter;
 
                         if (!healthComp.GetIsTargetable() || healthComp.GetHealthReachedZero())
                         {
-                            continue;
+                            return true;
                         }
 
                         CTransform const& transform = transformStorage[splashEntityID];
@@ -126,7 +115,7 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
                         float distSquared = MathUtils::GetDistanceSquared2D(transform.m_pos, splashOrigin.m_pos);
                         if (distSquared > rangeSquared)
                         {
-                            continue;
+                            return true;
                         }
 
 						if (payload.m_aoeHitOnHit.m_payload.IsRelevantToHealth())
@@ -138,7 +127,9 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
 							CTime& timeComp = timeStorage[splashEntityID];
 							timeComp.TakePayload(payload.m_aoeHitOnHit.m_payload);
 						}
-                    }
+                        return true;
+                    });
+
                     return true;
 				});
             }

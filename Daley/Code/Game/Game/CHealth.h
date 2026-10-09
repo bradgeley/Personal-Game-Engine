@@ -72,5 +72,4 @@ public:
 	float m_damageTakenMultiplier   = 1.f; // Calculated as 1 + (vulnerability^X / 100) where X is vuln exponent
 
     uint8_t m_healthFlags           = 0;
-    uint32_t m_lastProcessedBy      = 0; // id of the last aoe effect that processed this health component
 };

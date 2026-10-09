@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SWorld.h"
+#include "CCollision.h"
 #include "MapGeneratorDef.h"
 #include "MapGenerator.h"
 #include "SCEntityFactory.h"
@@ -9,12 +10,16 @@
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/AdminSystem.h"
+#include "Engine/ECS/SystemContext.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
 void SWorld::Startup()
 {
+	AddWriteDependencies<SCWorld>();
+	AddReadDependencies<CCollision>();
+
 	DevConsoleUtils::AddDevConsoleCommand("GenerateMap", &SWorld::GenerateMap, "mapGenName", DevConsoleArgType::Name, "seed", DevConsoleArgType::UInt);
 
 	SCRunData const& scRunData = g_ecs->GetSingleton<SCRunData>();
@@ -25,8 +30,33 @@ void SWorld::Startup()
 	props.Set<Name>("mapGenName", missionGenData.m_mapName);
 	props.Set<uint32_t>("seed", runData.m_seed + static_cast<uint32_t>(runData.m_missionIndex));
 	GenerateMap(props);
+}
 
-	m_ignoreRun = true;
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SWorld::Run(SystemContext const& context) const
+{
+	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
+	auto const& collisionStorage = context.GetArrayStorageConst<CCollision>();
+
+	// Update the enemy counts for each tile, for the tower placement system to use
+
+	scWorld.m_numEnemiesInTile.SetAll(0);
+
+	for (auto it = context.Iterate<CCollision>(); it.IsValid(); ++it)
+	{
+		CCollision const& collision = collisionStorage[it];
+		if (collision.m_spatialPartitionTileIndex == -1)
+		{
+			continue;
+		}
+
+		if (collision.m_collisionChannel == CollisionChannel::Enemy)
+		{
+			scWorld.m_numEnemiesInTile.GetRef(collision.m_spatialPartitionTileIndex) += 1;
+		}
+	}
 }
 
 

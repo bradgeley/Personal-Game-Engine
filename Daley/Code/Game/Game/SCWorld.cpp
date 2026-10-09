@@ -159,6 +159,15 @@ void SCWorld::GenerateLightmap(Renderer& renderer)
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SCWorld::OnMapGenerationComplete()
+{
+	CacheValidSpawnLocations();
+	CacheVisiblePathTiles();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SCWorld::Shutdown()
 {
 	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
@@ -330,6 +339,27 @@ void SCWorld::CacheValidSpawnLocations()
 			m_cachedSpawnLocations.push_back(tileCoords);
 		}
 		return true;
+	});
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SCWorld::CacheVisiblePathTiles()
+{
+	m_cachedVisiblePathTiles.clear();
+	m_cachedVisiblePathTiles.reserve(128);
+
+	ForEachVisibleTile([&](IntVec2 const& worldCoords, int)
+	{
+		int tileIndex = m_tiles.GetIndexForCoords(worldCoords);
+
+		if (IsTileOnPath(tileIndex))
+		{
+			m_cachedVisiblePathTiles.push_back(tileIndex);
+		}
+
+		return true; // keep iterating
 	});
 }
 

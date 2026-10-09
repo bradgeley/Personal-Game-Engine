@@ -101,10 +101,10 @@ bool MapGenerator::GenerateMap(SCWorld& world)
 		component->Generate(*this, world);
 	}
 
-	// Validate Map
+	// Cache Data
+	world.OnMapGenerationComplete();
 
-	// Cache spawn locations (for perf)
-	world.CacheValidSpawnLocations();
+	// Validate Map
 
 	return true;
 }

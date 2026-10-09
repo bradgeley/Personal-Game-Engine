@@ -33,7 +33,7 @@ public:
     bool GetMovedThisFrame() const;
 
 	void SetIsConstrainedToPath(bool isConstrainedToPath);
-    void SetMovedThisFrame(bool movedThisFrame);
+    void SetMovedThisFrame(bool movedThisFrame); // May not be accurate with fixed timestep
 
 public:
     

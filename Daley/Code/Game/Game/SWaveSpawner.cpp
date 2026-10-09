@@ -252,7 +252,7 @@ bool SWaveSpawner::StressTest(NamedProperties& args)
 	Wave wave;
 	WaveStream stream;
 	stream.m_entityName = Name("BossWaterBug");
-	stream.m_healthMultiplier = 100.f;
+	stream.m_healthMultiplier = 1'000'000.f;
 	stream.m_numEntities = 1'000'000;
 	stream.m_overTimeSeconds = 10'000.f;
 	stream.m_magicEnemyChance = 0.1f;

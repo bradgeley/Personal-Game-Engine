@@ -11,13 +11,11 @@ CCollision::CCollision(void const* xmlElement)
 
     m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
 
-	m_offset = XmlUtils::ParseXmlAttribute(elem, "offset", m_offset);
-
-	bool singleHash = XmlUtils::ParseXmlAttribute(elem, "singleHash", false);
-	SetIsSingleHash(singleHash);
+    // Everything forced single hash now, for perf to get MORE enemies
+	SetIsSingleHash(true);
 
 	Name collisionObjectType = XmlUtils::ParseXmlAttribute(elem, "type", Name());
-    m_collisionProfile = CollisionProfile::GetDefaultProfileByName(collisionObjectType);
+    m_collisionChannel = CollisionChannelUtils::GetCollisionChannelByName(collisionObjectType);
 }
 
 
@@ -31,17 +29,9 @@ bool CCollision::GetIsSingleHash() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CCollision::GetHasBeenHashed() const
-{
-	return (m_collisionFlags & (uint8_t) CollisionFlags::HasBeenHashed) != 0;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 bool CCollision::IsCollisionEnabled() const
 {
-	return ((m_collisionFlags & (uint8_t) CollisionFlags::Enabled) != 0) || (m_collisionProfile.m_objectChannel == CollisionChannel::NoCollision);
+	return ((m_collisionFlags & (uint8_t) CollisionFlags::Enabled) != 0) || (m_collisionChannel == CollisionChannel::NoCollision);
 }
 
 
@@ -72,19 +62,4 @@ void CCollision::SetIsSingleHash(bool singleHash)
     {
         m_collisionFlags &= ~((uint8_t) CollisionFlags::SingleHash);
     }
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void CCollision::SetHasBeenHashed(bool hasBeenHashed)
-{
-	if (hasBeenHashed)
-	{
-		m_collisionFlags |= (uint8_t) CollisionFlags::HasBeenHashed;
-	}
-	else
-	{
-		m_collisionFlags &= ~((uint8_t) CollisionFlags::HasBeenHashed);
-	}
 }

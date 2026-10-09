@@ -7,6 +7,7 @@
 #include "FlavorDef.h"
 #include "SCEntityFactory.h"
 #include "SCFloatingText.h"
+#include "SCRandomNumberGenerator.h"
 #include "SCRunData.h"
 #include "SCWorld.h"
 #include "SEntityFactory.h"
@@ -17,10 +18,12 @@
 #include "Engine/Core/NamedProperties.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/SystemContext.h"
+#include "Engine/Math/RandomNumberGenerator.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Name GetRandomFlavor(RandomNumberGenerator& rng, CTags const* excludedFlavors);
 bool AddFlavorToTower(EntityID entity, Name flavorName, bool isBaseFlavor, SystemContext const& context);
 
 
@@ -293,6 +296,9 @@ bool STowerSpawner::ProcessTowerPlacementRequest(TowerPlacementRequest const& re
     SCRunData& scRunData = context.GetSingleton<SCRunData>();
     RunData& runData = *scRunData.m_data;
 
+	SCRandomNumberGenerator& scRNG = context.GetSingleton<SCRandomNumberGenerator>();
+	RandomNumberGenerator& rng = *scRNG.GetRNG();
+
     TowerPlacementResult result = CanPlaceTower(request, world);
     if (result == TowerPlacementResult::Success)
     {
@@ -314,7 +320,12 @@ bool STowerSpawner::ProcessTowerPlacementRequest(TowerPlacementRequest const& re
         // Pass data to tower
         if (request.m_flavorName != Name::Invalid)
         {
-            AddFlavorToTower(tower, request.m_flavorName, true, context);
+			Name flavor = request.m_flavorName;
+			if (request.m_flavorName == Name("RandomFlavor"))
+			{
+				flavor = GetRandomFlavor(rng, context.GetComponentUnsafe<CTags>(tower));
+			}
+            AddFlavorToTower(tower, flavor, true, context);
         }
         CPlaceable& placeableComp = *context.GetComponent<CPlaceable>(tower);
         placeableComp.m_botLeftTile = request.m_botLeftTileCoords;
@@ -400,7 +411,13 @@ bool STowerSpawner::ProcessTowerSwirlRequest(TowerSwirlRequest const& request, S
     }
 
     // SwirlTower
-    AddFlavorToTower(request.m_towerEntityID, request.m_flavor, false, context);
+	Name flavor = request.m_flavor;
+    if (flavor == Name("RandomFlavor"))
+    {
+		RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
+		flavor = GetRandomFlavor(rng, context.GetComponentUnsafe<CTags>(request.m_towerEntityID));
+    }
+    AddFlavorToTower(request.m_towerEntityID, flavor, false, context);
 
 	// Subtract swirl cost from player
     runData.OnSwirlSuccess(request);
@@ -495,6 +512,31 @@ bool STowerSpawner::ProcessTowerRemovalRequest(TowerRemovalRequest const& reques
 
 
 //----------------------------------------------------------------------------------------------------------------------
+Name GetRandomFlavor(RandomNumberGenerator& rng, CTags const* excludedFlavors)
+{
+    std::vector<FlavorDef> const& allFlavors = FlavorDef::GetAllFlavorDefs();
+	std::vector<FlavorDef const*> validFlavors;
+
+	for (FlavorDef const& flavor : allFlavors)
+	{
+		if ((!excludedFlavors || !excludedFlavors->HasTag(flavor.m_name)) && flavor.m_name != "RandomFlavor")
+		{
+			validFlavors.push_back(&flavor);
+		}
+	}
+
+	if (!validFlavors.empty())
+	{
+		int randomIndex = rng.GetRandomIntInRange(0, (int) validFlavors.size() - 1);
+		return validFlavors[randomIndex]->m_name;
+	}
+
+	return Name::Invalid;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool AddFlavorToTower(EntityID tower, Name flavorName, bool isBaseFlavor, SystemContext const& context)
 {
 	FlavorDef const* flavorDef = FlavorDef::GetFlavorDef(flavorName);
@@ -503,7 +545,12 @@ bool AddFlavorToTower(EntityID tower, Name flavorName, bool isBaseFlavor, System
 	ASSERT_OR_DIE(context.IsValid(tower), StringUtils::StringF("AddFlavorToTower: Invalid tower entity: %u", tower).c_str());
 
 	CTags* tags = context.GetComponent<CTags>(tower);
-	ASSERT_OR_DIE(tags, StringUtils::StringF("AddFlavorToTower: CTags component not found for tower entity: %u", tower).c_str());
+    if (!tags)
+    {
+        return false; // not a tower?
+    }
+
+	//ASSERT_OR_DIE(tags, StringUtils::StringF("AddFlavorToTower: CTags component not found for tower entity: %u", tower).c_str());
 
 	tags->AddTag(flavorName);
 

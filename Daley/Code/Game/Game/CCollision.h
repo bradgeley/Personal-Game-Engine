@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "CollisionProfile.h"
-#include "Engine/Math/Vec2.h"
+#include "CollisionChannel.h"
 #include <cstdint>
 
 
@@ -11,7 +10,6 @@ enum class CollisionFlags : uint8_t
 {
 	Enabled         = 1 << 0,
 	SingleHash      = 1 << 1, // single tile spatial hash, for small entities
-	HasBeenHashed   = 1 << 2
 };
 
 
@@ -26,16 +24,14 @@ public:
 
 	bool IsCollisionEnabled() const;
     bool GetIsSingleHash() const;
-	bool GetHasBeenHashed() const;
 
 	void SetCollisionEnabled(bool enabled);
 	void SetIsSingleHash(bool singleHash);
-	void SetHasBeenHashed(bool hasBeenHashed);
     
 public:
 
     float				m_radius				= 0.f;
-	Vec2				m_offset				= Vec2::ZeroVector;
-	CollisionProfile	m_collisionProfile;
+	CollisionChannel	m_collisionChannel		= CollisionChannel::NoCollision;
     uint8_t				m_collisionFlags		= 1;
+	int					m_spatialPartitionTileIndex	= -1; // Which tile this entity is standing in
 };

@@ -120,7 +120,6 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
         if (CCollision* collision = context.GetComponentUnsafe<CCollision>(id))
         {
             collision->m_radius *= spawnInfo.m_spawnScale;
-            collision->m_offset *= spawnInfo.m_spawnScale;
         }
     }
 

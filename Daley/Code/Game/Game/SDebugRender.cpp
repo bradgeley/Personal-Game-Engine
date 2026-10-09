@@ -210,7 +210,7 @@ void SDebugRender::Run(SystemContext const& context) const
             CCollision const& collision = collStorage[it];
             CRender const& render       = renderStorage[it];
 
-            Vec2 collisionPos = transform.m_pos + collision.m_offset;
+            Vec2 collisionPos = transform.m_pos;
 
             VertexUtils::AddVertsForWireDisc2D(untexturedVerts, collisionPos, collision.m_radius, 0.05f, 8, Rgba8::Magenta);
             VertexUtils::AddVertsForWireDisc2D(untexturedVerts, render.GetRenderPosition(), render.m_renderRadius, 0.05f, 8, Rgba8::Cyan);
@@ -220,19 +220,18 @@ void SDebugRender::Run(SystemContext const& context) const
     // Render Collision Hash Data
     if (scDebug.m_debugRenderCollisionHash)
     {
-		for (int const& dirtyBucketIndex : scCollision.m_dirtyBuckets)
+		for (int tileIndex = 0; tileIndex < scCollision.m_enemyBucketIndices.size(); ++tileIndex)
 		{
-            int numEntitiesInBucket = 0;
-			for (CollisionLayer const& layer : scCollision.m_collisionLayers)
-			{
-				CollisionBucket const& bucket = layer[dirtyBucketIndex];
-				numEntitiesInBucket += static_cast<int>(bucket.size());
-			}
-			IntVec2 tileCoords = world.m_tiles.GetCoordsForIndex(dirtyBucketIndex);
+			int numEnemiesInBucket = world.m_numEnemiesInTile.Get(tileIndex);
+            if (numEnemiesInBucket == 0)
+            {
+                continue;
+            }
+			IntVec2 tileCoords = world.m_tiles.GetCoordsForIndex(tileIndex);
 			AABB2 tileBounds = world.GetTileBounds(tileCoords);
-			Rgba8 bucketTint = Rgba8::Lerp(Rgba8::Green, Rgba8::Red, MathUtils::RangeMapClamped((float) numEntitiesInBucket, 0.f, 10.f, 0.f, 1.f));
+			Rgba8 bucketTint = Rgba8::Lerp(Rgba8::Green, Rgba8::Red, MathUtils::RangeMapClamped((float) numEnemiesInBucket, 0.f, 10.f, 0.f, 1.f));
 			VertexUtils::AddVertsForAABB2(untexturedVerts, tileBounds, bucketTint);
-			std::string numEntitiesText = StringUtils::StringF("%i", numEntitiesInBucket);
+			std::string numEntitiesText = StringUtils::StringF("%i", numEnemiesInBucket);
 			font->AddVertsForAlignedText2D(defaultFontVerts, tileBounds.GetCenter(), Vec2::ZeroVector, 0.5f, numEntitiesText, Rgba8::White);
 		}
     }

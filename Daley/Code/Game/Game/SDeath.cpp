@@ -1,6 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SDeath.h"
 #include "CAnimation.h"
+#include "CCollision.h"
 #include "CDeath.h"
 #include "CHealth.h"
 #include "CLifetime.h"
@@ -13,7 +14,7 @@
 void SDeath::Startup()
 {
 	AddReadDependencies<CHealth>();
-	AddWriteDependencies<CAnimation, CDeath, CLifetime>();
+	AddWriteDependencies<CAnimation, CCollision, CDeath, CLifetime>();
 
 	int numThreads = (int) std::thread::hardware_concurrency();
 	if (numThreads > 1)
@@ -32,6 +33,7 @@ void SDeath::Run(SystemContext const& context) const
 
 	// Write Dependencies
 	auto& animStorage = context.GetArrayStorage<CAnimation>();
+	auto& collStorage = context.GetArrayStorage<CCollision>();
 	auto& deathStorage = context.GetArrayStorage<CDeath>();
 	auto& lifetimeStorage = context.GetArrayStorage<CLifetime>();
 
@@ -69,6 +71,10 @@ void SDeath::Run(SystemContext const& context) const
 			{
 				lifetime.SetLifetime(death.m_corpseDurationSeconds);
 			}
+
+			// Disable collision
+			CCollision& collision = collStorage[it];
+			collision.SetCollisionEnabled(false);
 		}
 		else
 		{

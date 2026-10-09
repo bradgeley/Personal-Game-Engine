@@ -31,9 +31,6 @@ public:
 	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, CAbility const& ability, Vec2 const& location) const = 0;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
-	static uint32_t GetNextSplashId() { return s_splashIdCounter++; }
-	static uint32_t s_splashIdCounter;
-
 public:
 
 	EntityID m_owner = EntityID::Invalid;
