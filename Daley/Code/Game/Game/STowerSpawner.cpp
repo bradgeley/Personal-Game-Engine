@@ -115,7 +115,7 @@ TowerPlacementResult STowerSpawner::CanPlaceTower(TowerPlacementRequest const& r
 
     copy.m_solidnessOfPathTileChanged = false;
 
-    if (!PlaceTowerInWorld(request, copy))
+    if (!OccupyTilesInWorld(request, copy))
     {
         return TowerPlacementResult::Blocked;
     }
@@ -241,7 +241,7 @@ TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& request, Syste
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& request, SCWorld& world) const
+bool STowerSpawner::OccupyTilesInWorld(TowerPlacementRequest const& request, SCWorld& world) const
 {
     if (world.DoTilesInRegionMatchQuery(request.m_botLeftTileCoords, request.m_topRightTileCoords, request.m_tileTagQuery))
     {
@@ -249,6 +249,7 @@ bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& request, SCWo
         {
             Tile tile = world.m_tiles.Get(worldCoords);
 			tile.SetIsSolid(true);
+            tile.SetIsOccupied(true);
 			world.SetTile(worldCoords, tile);
             return true; // keep iterating
         });
@@ -262,7 +263,7 @@ bool STowerSpawner::PlaceTowerInWorld(TowerPlacementRequest const& request, SCWo
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool STowerSpawner::WillChangePathSolidness(TowerPlacementRequest const& request, SCWorld const& world) const
+bool STowerSpawner::WillChangePath(TowerPlacementRequest const& request, SCWorld const& world) const
 {
 	bool isValidPlacement = world.DoTilesInRegionMatchQuery(request.m_botLeftTileCoords, request.m_topRightTileCoords, request.m_tileTagQuery);
 	if (!isValidPlacement)
@@ -275,10 +276,14 @@ bool STowerSpawner::WillChangePathSolidness(TowerPlacementRequest const& request
     {
         // m_solidnessOfPathTileChanged |= (tile.IsPath() != existingTile.IsPath()) || (tile.IsPath() && tile.IsSolid() != existingTile.IsSolid());
         Tile const& tile = world.m_tiles.Get(worldCoords);
-		if (tile.IsPath() && !tile.IsSolid())
+        if (!tile.IsPath())
+        {
+            return true;
+        }
+		if (!tile.IsSolid())
         {
             willChangePathSolidness = true;
-            return false; // stop iterating
+            return false; // at least 1 path tile will change so we can stop iterating
         }
         return true; // keep iterating
     });
@@ -299,10 +304,23 @@ bool STowerSpawner::ProcessTowerPlacementRequest(TowerPlacementRequest const& re
 	SCRandomNumberGenerator& scRNG = context.GetSingleton<SCRandomNumberGenerator>();
 	RandomNumberGenerator& rng = *scRNG.GetRNG();
 
+    if (context.NumEntities() == MAX_ENTITIES)
+    {
+        FloatingTextInstance floatingTextInstance;
+        floatingTextInstance.m_pos = request.m_worldPos;
+        floatingTextInstance.m_lifetimeSeconds = 2.f;
+        floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
+        floatingTextInstance.m_scale = 1.f;
+        floatingTextInstance.m_tint = Rgba8::Red;
+		floatingTextInstance.m_text = "Entity limit reached!";
+        scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);
+        return false;
+    }
+
     TowerPlacementResult result = CanPlaceTower(request, world);
     if (result == TowerPlacementResult::Success)
     {
-        if (!PlaceTowerInWorld(request, world))
+        if (!OccupyTilesInWorld(request, world))
         {
             return false;
         }
@@ -316,6 +334,12 @@ bool STowerSpawner::ProcessTowerPlacementRequest(TowerPlacementRequest const& re
         {
             return false;
         }
+
+        world.ForEachPlayableTileInRegion(request.m_botLeftTileCoords, request.m_topRightTileCoords, [&](IntVec2 const& worldCoords)
+        {
+			world.SetTileOccupant(worldCoords, tower);
+			return true; // keep iterating
+        });
 
         // Pass data to tower
         if (request.m_flavorName != Name::Invalid)
@@ -484,8 +508,10 @@ bool STowerSpawner::ProcessTowerRemovalRequest(TowerRemovalRequest const& reques
 
     world.ForEachPlayableTileOverlappingAABB(towerBounds, [&](IntVec2 const& worldCoords)
     {
+		world.SetTileOccupant(worldCoords, EntityID::Invalid);
         Tile tile = world.m_tiles.Get(worldCoords);
         tile.SetIsSolid(false);
+        tile.SetIsOccupied(false);
         world.SetTile(worldCoords, tile);
         return true;
     });

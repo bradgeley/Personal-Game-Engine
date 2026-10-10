@@ -109,14 +109,7 @@ void SDebugRender::Run(SystemContext const& context) const
         renderer.DrawVertexBuffer(world.m_debugVBO);
     }
 
-    if (scDebug.m_debugRenderEdges)
-    {
-        scCamera.m_worldCamera.SetOrthoBounds2D(world.GetPlayableWorldBounds());
-    }
-    else
-    {
-        scCamera.m_worldCamera.SetOrthoBounds2D(world.GetVisibleWorldBounds());
-    }
+    scCamera.m_clampVisionToVisibleWorld = !scDebug.m_debugRenderEdges;
 
     // Tile tags
     if (scDebug.m_debugTileTags != 0)
@@ -307,9 +300,9 @@ bool SDebugRender::DebugTileTags(NamedProperties& args)
 	{
 		fakeTile.SetIsSolid(!fakeTile.IsSolid());
 	}
-    else if (tag == "opaque")
+    else if (tag == "occupied")
 	{
-		fakeTile.SetIsOpaque(!fakeTile.IsOpaque());
+		fakeTile.SetIsOccupied(!fakeTile.IsOccupied());
 	}
     else if (tag == "goal")
     {

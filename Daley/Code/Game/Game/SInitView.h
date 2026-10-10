@@ -11,5 +11,6 @@ public:
 
     SInitView(Name name = "InitView", Rgba8 const& debugTint = Rgba8::LightBlue) : System(name, debugTint) {};
     void Startup() override;
+	void PreRun(SystemContext const& context) const override;
     void Run(SystemContext const& context) const override;
 };

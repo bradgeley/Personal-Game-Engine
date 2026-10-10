@@ -1,7 +1,7 @@
 ﻿// Bradley Christensen - 2022-2026
-#include "SRenderCollisionEffects.h"
+#include "SRenderPuddles.h"
 #include "CCollision.h"
-#include "CCollisionEffect.h"
+#include "CPuddle.h"
 #include "DiscShaderCPU.h"
 #include "CTransform.h"
 #include "SCRenderer.h"
@@ -12,16 +12,16 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SRenderCollisionEffects::Startup()
+void SRenderPuddles::Startup()
 {
     AddWriteDependencies<SCRenderer>();
-	AddReadDependencies<CCollisionEffect, CCollision, CTransform>();
+	AddReadDependencies<CPuddle, CCollision, CTransform>();
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SRenderCollisionEffects::Shutdown() const
+void SRenderPuddles::Shutdown() const
 {
 
 }
@@ -29,7 +29,7 @@ void SRenderCollisionEffects::Shutdown() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void SRenderCollisionEffects::Run(SystemContext const& context) const
+void SRenderPuddles::Run(SystemContext const& context) const
 {
 	// Write Dependencies
     SCRenderer& scRenderer = context.GetSingleton<SCRenderer>();
@@ -38,14 +38,14 @@ void SRenderCollisionEffects::Run(SystemContext const& context) const
 	// Read Dependencies
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();
 	auto& collisionStorage = context.GetArrayStorageConst<CCollision>();
-	auto& collisionEffectStorage = context.GetArrayStorageConst<CCollisionEffect>();
+	auto& puddleStorage = context.GetArrayStorageConst<CPuddle>();
 
 	InstanceBuffer& discIBO = *renderer.GetInstanceBuffer(scRenderer.m_discInstanceBuffer);
 
-	for (auto it = context.Iterate<CCollisionEffect, CCollision, CTransform>(); it.IsValid(); ++it)
+	for (auto it = context.Iterate<CPuddle, CCollision, CTransform>(); it.IsValid(); ++it)
 	{
-		CCollisionEffect const& collisionEffect = collisionEffectStorage[it];
-		if (collisionEffect.m_tint.a == 0)
+		CPuddle const& puddle = puddleStorage[it];
+		if (puddle.m_tint.a == 0)
 		{
 			continue;
 		}
@@ -53,13 +53,13 @@ void SRenderCollisionEffects::Run(SystemContext const& context) const
 		CCollision const& collision = collisionStorage[it];
 		CTransform const& transform = transStorage[it];
 
-        Rgba8 tint = collisionEffect.m_tint;
+        Rgba8 tint = puddle.m_tint;
         Vec2 collisionPos = transform.m_pos;
 
 		DiscRenderInstance discInstance;
-		discInstance.m_position = Vec3(collisionPos, collisionEffect.m_depth);
+		discInstance.m_position = Vec3(collisionPos, puddle.m_depth);
 		discInstance.m_radius = collision.m_radius;
-		discInstance.m_tint = collisionEffect.m_tint;
+		discInstance.m_tint = puddle.m_tint;
 		discIBO.AddInstance(discInstance);
 	}
 }

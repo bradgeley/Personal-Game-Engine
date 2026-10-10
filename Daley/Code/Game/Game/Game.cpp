@@ -113,7 +113,7 @@ void Game::ConfigureEngine(Engine* engine)
 
     RendererConfig rendererConfig;
 	rendererConfig.m_startupUserSettings.m_vsyncEnabled = false;
-	rendererConfig.m_startupUserSettings.m_msaaEnabled = true;
+	rendererConfig.m_startupUserSettings.m_msaaEnabled = false;
     g_renderer = RendererUtils::MakeRenderer(rendererConfig);
     engine->RegisterSubsystem(g_renderer);
 

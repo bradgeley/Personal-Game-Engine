@@ -112,8 +112,8 @@ void ProjectileHitAbility::Update(SystemContext const& context, CAbility const& 
             projComp.m_accumulatedTime += m_cooldownComp.m_accumulatedTime;
             projComp.m_projSpeed = m_projSpeed * timeDilation;
             projComp.m_onHitComp = RollDamageAndEffects(ability, rng);
-			projComp.m_onHitComp.m_aoeEffectOnHit.m_renderComp.m_tint = flavorTint;
-			projComp.m_onHitComp.m_aoeEffectOnHit.m_renderComp.m_tint.a = 50;
+			projComp.m_onHitComp.m_puddleOnHit.m_renderComp.m_tint = flavorTint;
+			projComp.m_onHitComp.m_puddleOnHit.m_renderComp.m_tint.a = 50;
 
 			CTags& projTags = tagStorage[projectileID];
 			for (auto& flavor : ownerFlavors)
@@ -204,14 +204,14 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(CAbility const& 
         rolledHitResult.m_payload = m_onHitComp.m_scaling.CalculateHitPayload(ability, didCrit, critMultiplier);
 	}  
 
-    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Splash) && m_onHitComp.m_aoeHitOnHit.IsRelevant())
+    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Splash) && m_onHitComp.m_splashOnHit.IsRelevant())
     {
-        rolledHitResult.m_aoeHitOnHit = m_onHitComp.m_aoeHitOnHit.CalculateSplashPayload(ability, didCrit, critMultiplier);
+        rolledHitResult.m_splashOnHit = m_onHitComp.m_splashOnHit.CalculateSplashPayload(ability, didCrit, critMultiplier);
     }
 
-    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Puddle) && m_onHitComp.m_aoeEffectOnHit.IsRelevant())
+    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Puddle) && m_onHitComp.m_puddleOnHit.IsRelevant())
     {
-		rolledHitResult.m_aoeEffectOnHit = m_onHitComp.m_aoeEffectOnHit.CalculatePuddlePayload(ability);
+		rolledHitResult.m_puddleOnHit = m_onHitComp.m_puddleOnHit.CalculatePuddlePayload(ability);
     }
 
 	return rolledHitResult;

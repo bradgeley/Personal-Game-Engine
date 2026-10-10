@@ -2,7 +2,6 @@
 #include "PassiveAoEAbilityDef.h"
 #include "Ability.h"
 #include "PassiveAoEAbility.h"
-#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/XmlUtils.h"
 
 
@@ -15,9 +14,9 @@ PassiveAoEAbilityDef::PassiveAoEAbilityDef(void const* xmlElement) : AbilityDef(
     {
         m_targetingDef = AbilityTargetingComponentDef(targetingElem);
 	}
-    if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoEEffect"))
+    if (XmlElement const* puddleElem = elem.FirstChildElement("Puddle"))
     {
-        m_aoeEffectDef = AbilityAoEEffectComponentDef(aoeEffectElem);
+        m_puddleDef = AbilityPuddleComponentDef(puddleElem);
 	}
 }
 

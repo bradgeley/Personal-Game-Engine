@@ -45,15 +45,15 @@ void Tile::SetIsSolid(bool isSolid)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Tile::SetIsOpaque(bool isOpaque)
+void Tile::SetIsOccupied(bool isOccupied)
 {
-    if (isOpaque)
+    if (isOccupied)
     {
-        m_tags |= static_cast<uint8_t>(TileTag::Opaque);
+        m_tags |= static_cast<uint8_t>(TileTag::Occupied);
     }
     else
     {
-        m_tags &= ~static_cast<uint8_t>(TileTag::Opaque);
+        m_tags &= ~static_cast<uint8_t>(TileTag::Occupied);
 	}
 }
 

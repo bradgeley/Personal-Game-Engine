@@ -27,12 +27,7 @@ void SCollisionHash::Startup()
 	AddWriteDependencies<CCollision, SCCollision>();
 
     m_runWhilePaused = false;
-
-    int numThreads = (int) std::thread::hardware_concurrency();
-    if (numThreads > 1)
-    {
-        m_systemSplittingNumJobs = numThreads - 1; // Leave one thread for the main thread to run other systems on
-    }
+    m_systemSplittingNumJobs = std::thread::hardware_concurrency() - 1;
 }
 
 
@@ -82,7 +77,6 @@ void SCollisionHash::PostRun(SystemContext const& context) const
     SCCollision& scCollision = context.GetSingleton<SCCollision>();
 
     // Read Dependencies
-    SCWorld const& world = context.GetSingletonConst<SCWorld>();
     auto const& collStorage = context.GetArrayStorageConst<CCollision>();
 
     // Create sorted entity list

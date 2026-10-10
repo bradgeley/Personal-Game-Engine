@@ -56,6 +56,7 @@ public:
     bool IsMouseButtonDown(int mouseButton) const;
     bool WasMouseButtonJustPressed(int mouseButton) const;
     bool WasMouseButtonJustReleased(int mouseButton) const;
+	bool IsMouseTouchingTopEdgeOfWindow() const;
     int GetMouseWheelChange() const;
     
     IntVec2	GetMouseClientPosition() const;

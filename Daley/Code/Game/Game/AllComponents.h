@@ -18,7 +18,6 @@
 // Components
 //
 #include "CAbility.h"
-#include "CCollisionEffect.h"
 #include "CAIController.h"
 #include "CAnimation.h"
 #include "CCollision.h"
@@ -29,6 +28,7 @@
 #include "CMovement.h"
 #include "CPlaceable.h"
 #include "CProjectile.h"
+#include "CPuddle.h"
 #include "CRender.h"
 #include "CTags.h"
 #include "CTime.h"

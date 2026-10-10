@@ -24,13 +24,13 @@ AoEHitAbilityDef::AoEHitAbilityDef(void const* xmlElement) : AbilityDef(xmlEleme
     {
         m_critDef = AbilityCritComponentDef(critElem);
     }
-    if (XmlElement const* aoeHitElem = elem.FirstChildElement("AoEHit"))
+    if (XmlElement const* aoeHitElem = elem.FirstChildElement("Splash"))
     {
-        m_aoeHitDef = AbilityAoEHitComponentDef(aoeHitElem);
+        m_splashDef = AbilitySplashComponentDef(aoeHitElem);
     }
-    if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoEEffect"))
+    if (XmlElement const* puddleElem = elem.FirstChildElement("Puddle"))
     {
-        m_aoeEffectDef = AbilityAoEEffectComponentDef(aoeEffectElem);
+        m_puddleDef = AbilityPuddleComponentDef(puddleElem);
 	}
 }
 

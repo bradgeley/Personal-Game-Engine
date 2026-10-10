@@ -75,7 +75,7 @@ EntityID SEntityFactory::CreateEntityFromDef(SystemContext const& context, Entit
     if (def->m_ai.has_value())                  context.AddComponentUnsafe<CAIController>(id, *def->m_ai);
     if (def->m_animation.has_value())           context.AddComponentUnsafe<CAnimation>(id, *def->m_animation);
     if (def->m_collision.has_value())           context.AddComponentUnsafe<CCollision>(id, *def->m_collision);
-    if (def->m_collisionEffect.has_value())     context.AddComponentUnsafe<CCollisionEffect>(id, *def->m_collisionEffect);
+    if (def->m_puddle.has_value())              context.AddComponentUnsafe<CPuddle>(id, *def->m_puddle);
     if (def->m_death.has_value())               context.AddComponentUnsafe<CDeath>(id, *def->m_death);
     if (def->m_health.has_value())              context.AddComponentUnsafe<CHealth>(id, *def->m_health);
     if (def->m_lifetime.has_value())            context.AddComponentUnsafe<CLifetime>(id, *def->m_lifetime);

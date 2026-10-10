@@ -22,8 +22,8 @@ AoEHitAbility::AoEHitAbility(AoEHitAbilityDef const& def) : Ability(def)
 	m_cooldownComp = def.m_cooldownDef;
 	m_targetingComp = def.m_targetingDef;
 	m_critComp = def.m_critDef;
-	m_aoeHitComp = def.m_aoeHitDef;
-	m_aoeEffectComp = def.m_aoeEffectDef;
+	m_splashComp = def.m_splashDef;
+	m_puddleComp = def.m_puddleDef;
 }
 
 
@@ -39,9 +39,9 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
     float timeBetweenAttacks = m_cooldownComp.GetCooldown(ability);
     timeBetweenAttacks = MathUtils::Max(timeBetweenAttacks, StaticGameSettings::s_minTowerAttackCooldown);
 
-    if (m_aoeHitComp.m_renderComp.has_value())
+    if (m_splashComp.m_renderComp.has_value())
     {
-		m_aoeHitComp.m_renderComp->m_renderDurationRemaining -= context.m_deltaSeconds;
+		m_splashComp.m_renderComp->m_renderDurationRemaining -= context.m_deltaSeconds;
     }
 
     if (m_cooldownComp.m_accumulatedTime <= timeBetweenAttacks)
@@ -52,12 +52,12 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
 	// Write Dependencies
     auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& timeStorage = context.GetArrayStorage<CTime>();
-	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
+	auto& puddleStorage = context.GetArrayStorage<CPuddle>();
     RandomNumberGenerator& rng = *context.GetSingleton<SCRandomNumberGenerator>().GetRNG();
 	// CAbility (bc this is an ability in a CAbility that can update itself)
 	// Spawn Entities (All)
 
-	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
+	BitMask puddleBit = context.GetComponentBitMask<CPuddle>();
 
 	CTags const& ownerTags = *context.GetComponentUnsafe<CTags>(m_owner);
     Rgba8 flavorTint = ownerTags.GetFlavorTint();
@@ -86,14 +86,14 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
             continue;
         }
 
-        if (m_aoeHitComp.m_renderComp.has_value())
+        if (m_splashComp.m_renderComp.has_value())
         {
-            m_aoeHitComp.m_renderComp->m_renderDurationRemaining = m_aoeHitComp.m_renderComp->m_renderDuration;
+            m_splashComp.m_renderComp->m_renderDurationRemaining = m_splashComp.m_renderComp->m_renderDuration;
         }
 
-        if (rolledHit.m_aoeHitOnHit.IsRelevant())
+        if (rolledHit.m_splashOnHit.IsRelevant())
         {
-			HitPayload const& aoePayload = rolledHit.m_aoeHitOnHit.m_payload;
+			HitPayload const& aoePayload = rolledHit.m_splashOnHit.m_payload;
             for (EntityID entityID : m_targetingComp.m_targets)
             {
                 if (aoePayload.IsRelevantToHealth())
@@ -110,26 +110,29 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
             }
         }
 
-        if (rolledHit.m_aoeEffectOnHit.IsRelevant())
+        if (rolledHit.m_puddleOnHit.IsRelevant())
         {
-            SpawnInfo aoeEffectSpawnInfo;
-            aoeEffectSpawnInfo.m_spawnPos = location;
-            aoeEffectSpawnInfo.m_spawnLifetime = rolledHit.m_aoeEffectOnHit.m_durationSeconds;
-            aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(rolledHit.m_aoeEffectOnHit.m_aoeEffectDefName);
-            aoeEffectSpawnInfo.m_spawnScale = maxRange; // Initial radius is assumed to be 1
+            SpawnInfo puddleSpawnInfo;
+            puddleSpawnInfo.m_spawnPos = location;
+            puddleSpawnInfo.m_spawnLifetime = rolledHit.m_puddleOnHit.m_durationSeconds;
+            puddleSpawnInfo.m_def = EntityDef::GetEntityDef(rolledHit.m_puddleOnHit.m_puddleDefName);
+            puddleSpawnInfo.m_spawnScale = maxRange; // Initial radius is assumed to be 1
 
-            EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
+            EntityID puddle = SEntityFactory::SpawnEntity(context, puddleSpawnInfo);
+			if (!context.IsValid(puddle))
+			{
+                continue; // at entity limit?
+			}
+
+			ASSERT_OR_DIE(context.HasComponents(puddle, puddleBit), "AoEHitAbility::Update - Spawned entity does not have CPuddle component.");
 
             // Pass along damage, color, to aoe effect
-            if (context.HasComponents(aoeEffect, collisionEffectBit))
-            {
-                CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
+            CPuddle& puddleComp = puddleStorage[puddle];
 
-                rolledHit.m_aoeEffectOnHit.m_renderComp.m_tint = flavorTint;
-                rolledHit.m_aoeEffectOnHit.m_renderComp.m_tint.a = 25;
+            rolledHit.m_puddleOnHit.m_renderComp.m_tint = flavorTint;
+            rolledHit.m_puddleOnHit.m_renderComp.m_tint.a = 25;
 
-                aoeEffectComp.Initialize(rolledHit.m_aoeEffectOnHit);
-            }
+            puddleComp.Initialize(rolledHit.m_puddleOnHit);
 		}
     }
 }
@@ -139,7 +142,7 @@ void AoEHitAbility::Update(SystemContext const& context, CAbility const& ability
 //----------------------------------------------------------------------------------------------------------------------
 void AoEHitAbility::Render(SystemContext const& context, CAbility const& ability, Vec2 const& location) const
 {
-    if (!m_aoeHitComp.m_renderComp.has_value() || m_aoeHitComp.m_renderComp->m_renderDurationRemaining <= 0.f)
+    if (!m_splashComp.m_renderComp.has_value() || m_splashComp.m_renderComp->m_renderDurationRemaining <= 0.f)
 	{
 		return;
 	}
@@ -154,7 +157,7 @@ void AoEHitAbility::Render(SystemContext const& context, CAbility const& ability
 
     constexpr float maxAlpha = 50;
 
-	float alphaT = m_aoeHitComp.m_renderComp->m_renderDurationRemaining / m_aoeHitComp.m_renderComp->m_renderDuration;
+	float alphaT = m_splashComp.m_renderComp->m_renderDurationRemaining / m_splashComp.m_renderComp->m_renderDuration;
     float alpha;
     if (alphaT < 0.5f)
     {
@@ -168,7 +171,7 @@ void AoEHitAbility::Render(SystemContext const& context, CAbility const& ability
     }
 
     DiscRenderInstance discInstance;
-    discInstance.m_position = Vec3(location, m_aoeHitComp.m_renderComp->m_depth);
+    discInstance.m_position = Vec3(location, m_splashComp.m_renderComp->m_depth);
 	discInstance.m_radius = (1.f - alphaT) * m_targetingComp.GetMaxRange(ability); // Make it look like an explosion expanding outwards
     discInstance.m_tint = flavorTint;
     discInstance.m_tint.a = static_cast<uint8_t>(alpha);
@@ -218,8 +221,8 @@ void AoEHitAbility::AppendDebugString(EntityDebugContext& debugContext) const
 	m_cooldownComp.AppendDebugString(debugContext);
 	m_targetingComp.AppendDebugString(debugContext);
 	m_critComp.AppendDebugString(debugContext);
-	m_aoeHitComp.AppendDebugString(debugContext);
-	m_aoeEffectComp.AppendDebugString(debugContext);
+	m_splashComp.AppendDebugString(debugContext);
+	m_puddleComp.AppendDebugString(debugContext);
 }
 
 
@@ -238,14 +241,14 @@ RolledOnHitComponent AoEHitAbility::RollDamageAndEffects(CAbility const& ability
         didCrit = critRoll < critChance;
     }
 
-    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Splash) && m_aoeHitComp.IsRelevant())
+    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Splash) && m_splashComp.IsRelevant())
     {
-        result.m_aoeHitOnHit = m_aoeHitComp.CalculateSplashPayload(ability, didCrit, critMultiplier);
+        result.m_splashOnHit = m_splashComp.CalculateSplashPayload(ability, didCrit, critMultiplier);
     }
 
-    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Puddle) && m_aoeEffectComp.IsRelevant())
+    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Puddle) && m_puddleComp.IsRelevant())
     {
-        result.m_aoeEffectOnHit = m_aoeEffectComp.CalculatePuddlePayload(ability);
+        result.m_puddleOnHit = m_puddleComp.CalculatePuddlePayload(ability);
     }
 
     return result;

@@ -90,10 +90,10 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
 				timeComp.TakePayload(chainPayload);
             }
 
-            if (payload.m_aoeHitOnHit.IsRelevant())
+            if (payload.m_splashOnHit.IsRelevant())
             {
                 CTransform const& splashOrigin = transformStorage[target];
-				float splashRadius = payload.m_aoeHitOnHit.m_radius;
+				float splashRadius = payload.m_splashOnHit.m_radius;
 
                 world.ForEachPathTileOverlappingCircle(splashOrigin.m_pos, splashRadius, [&](IntVec2 const& worldCoords)
                 {
@@ -118,14 +118,14 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
                             return true;
                         }
 
-						if (payload.m_aoeHitOnHit.m_payload.IsRelevantToHealth())
+						if (payload.m_splashOnHit.m_payload.IsRelevantToHealth())
 						{
-							healthComp.TakePayload(payload.m_aoeHitOnHit.m_payload);
+							healthComp.TakePayload(payload.m_splashOnHit.m_payload);
 						}
-						if (payload.m_aoeHitOnHit.m_payload.IsRelevantToTime())
+						if (payload.m_splashOnHit.m_payload.IsRelevantToTime())
 						{
 							CTime& timeComp = timeStorage[splashEntityID];
-							timeComp.TakePayload(payload.m_aoeHitOnHit.m_payload);
+							timeComp.TakePayload(payload.m_splashOnHit.m_payload);
 						}
                         return true;
                     });
@@ -233,9 +233,9 @@ RolledOnHitComponent LaserAbility::RollDamageAndEffects(CAbility const& ability,
     }
 
     bool canSplash = ability.m_abilityFlags.HasFlag(AbilityFlag::Splash) || ability.m_abilityFlags.HasFlag(AbilityFlag::Puddle);
-    if (canSplash && m_onHitComp.m_aoeHitOnHit.IsRelevant())
+    if (canSplash && m_onHitComp.m_splashOnHit.IsRelevant())
     {
-        rolledHitResult.m_aoeHitOnHit = m_onHitComp.m_aoeHitOnHit.CalculateDotPayload(ability, deltaSeconds);
+        rolledHitResult.m_splashOnHit = m_onHitComp.m_splashOnHit.CalculateDotPayload(ability, deltaSeconds);
     }
 
 	return rolledHitResult;

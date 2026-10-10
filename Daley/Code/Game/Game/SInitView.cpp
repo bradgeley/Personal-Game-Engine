@@ -17,6 +17,28 @@ void SInitView::Startup()
 {
     AddReadDependencies<SCCamera>();
     AddWriteDependencies<CRender, SCRenderer, SCWindow>();
+
+	m_systemSplittingNumJobs = std::thread::hardware_concurrency() - 1;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void SInitView::PreRun(SystemContext const& context) const
+{
+	// Read Dependencies
+	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
+
+	// Write Dependencies
+	Renderer& renderer = *context.GetSingleton<SCRenderer>().GetRenderer();
+	Window* window = context.GetSingleton<SCWindow>().GetWindow();
+
+	AABB2 cameraBounds = camera.m_worldCamera.GetTranslatedOrthoBounds2D();
+
+	//renderer.BeginWindowLetterboxed(window, StaticWorldSettings::s_visibleWorldAspect);
+	renderer.BeginWindow(window);
+	renderer.BeginCamera(&camera.m_worldCamera);
+	renderer.ClearScreen(Rgba8::LightGray);
 }
 
 
@@ -29,14 +51,8 @@ void SInitView::Run(SystemContext const& context) const
 
 	// Write Dependencies
 	auto& renderStorage = context.GetArrayStorage<CRender>();
-	Renderer& renderer = *context.GetSingleton<SCRenderer>().GetRenderer();
-	Window* window = context.GetSingleton<SCWindow>().GetWindow();
 
     AABB2 cameraBounds = camera.m_worldCamera.GetTranslatedOrthoBounds2D();
-
-	renderer.BeginWindowLetterboxed(window, StaticWorldSettings::s_visibleWorldAspect);
-    renderer.BeginCamera(&camera.m_worldCamera);
-    renderer.ClearScreen(Rgba8::LightGray);
 
     for (auto it = context.Iterate<CRender>(); it.IsValid(); ++it)
     {

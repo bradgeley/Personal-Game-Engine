@@ -33,11 +33,3 @@ void SCCollision::ForEachEnemyInTile(int tileIndex, std::function<bool(EntityID)
 		}
 	}
 }
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SCCollision::ForEachBuildingInTile(int tileIndex, std::function<bool(EntityID)> const& callback) const
-{
-	// Stub
-}

@@ -37,6 +37,6 @@ public:
 	AbilityCooldownComponent		m_cooldownComp;
 	AbilityAoETargetingComponent	m_targetingComp;
 	AbilityCritComponent			m_critComp;
-	AbilityAoEHitComponent			m_aoeHitComp;
-	AbilityAoEEffectComponent		m_aoeEffectComp;
+	AbilitySplashComponent			m_splashComp;
+	AbilityPuddleComponent			m_puddleComp;
 };

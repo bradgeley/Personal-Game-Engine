@@ -8,7 +8,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-const char* s_defaultAoEEffectName = "AoEEffect";
+const char* s_defaultPuddleName = "Puddle";
 
 
 
@@ -82,14 +82,14 @@ AbilityRenderComponentDef::AbilityRenderComponentDef(void const* xmlElement)
 {
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_tint = XmlUtils::ParseXmlAttribute(elem, "tint", m_tint);
-	m_depth = XmlUtils::ParseXmlAttribute(elem, "depth", StaticGameSettings::s_defaultCollisionEffectDepth);
+	m_depth = XmlUtils::ParseXmlAttribute(elem, "depth", StaticGameSettings::s_defaultPuddleRenderDepth);
 	m_renderDuration = XmlUtils::ParseXmlAttribute(elem, "duration", m_renderDuration);
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
+AbilitySplashComponentDef::AbilitySplashComponentDef(void const* xmlElement)
 {
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
 	m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
@@ -107,10 +107,10 @@ AbilityAoEHitComponentDef::AbilityAoEHitComponentDef(void const* xmlElement)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityAoEEffectComponentDef::AbilityAoEEffectComponentDef(void const* xmlElement)
+AbilityPuddleComponentDef::AbilityPuddleComponentDef(void const* xmlElement)
 {
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
-	m_aoeEffectDefName = XmlUtils::ParseXmlAttribute(elem, "name", Name(s_defaultAoEEffectName));
+	m_puddleDefName = XmlUtils::ParseXmlAttribute(elem, "name", Name(s_defaultPuddleName));
 	m_radius = XmlUtils::ParseXmlAttribute(elem, "radius", m_radius);
 	m_durationSeconds = XmlUtils::ParseXmlAttribute(elem, "duration", m_durationSeconds);
 
@@ -134,12 +134,12 @@ AbilityOnHitComponentDef::AbilityOnHitComponentDef(void const* xmlElement)
 	{
 		m_scaling = AbilityScalingComponentDef(scaling);
 	}
-	if (XmlElement const* aoeHitElem = elem.FirstChildElement("AoEHit"))
+	if (XmlElement const* splashElem = elem.FirstChildElement("Splash"))
 	{
-		m_aoeHitOnHit = AbilityAoEHitComponentDef(aoeHitElem);
+		m_splashOnHit = AbilitySplashComponentDef(splashElem);
 	}
-	if (XmlElement const* aoeEffectElem = elem.FirstChildElement("AoEEffect"))
+	if (XmlElement const* puddleElem = elem.FirstChildElement("Puddle"))
 	{
-		m_aoeEffectOnHit = AbilityAoEEffectComponentDef(aoeEffectElem);
+		m_puddleOnHit = AbilityPuddleComponentDef(puddleElem);
 	}
 }

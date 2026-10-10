@@ -16,7 +16,7 @@
 
   <FlavorDef name="Chocolate" abilities="ChocolateAttack">
     <Attributes Physical="100" Vulnerability="5" AreaOfEffect="0.5" CritChance="0.1" CritMulti="0.5"/>
-    <AbilityFlags flags="splash,puddle"/>
+    <AbilityFlags flags="splash"/>
     <DisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20" desc="Fires physical projectiles that splash "></DisplayData>
   </FlavorDef>
 
@@ -39,7 +39,7 @@
   </FlavorDef>
 
   <FlavorDef name="Pistachio" abilities="PistachioAttack">
-    <Attributes Poison="100" CritChance="0.1" CritMulti="0.5"/>
+    <Attributes Poison="25" CritChance="0.1" CritMulti="0.5"/>
     <AbilityFlags flags="Splash"/>
     <DisplayData displayName="Pistachio" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="147,197,114" desc="Fires poisonous projectiles that splash"></DisplayData>
   </FlavorDef>
@@ -51,13 +51,13 @@
   </FlavorDef>
 
   <FlavorDef name="Ube" abilities="UbeAttack">
-    <Attributes Physical="33" Burn="33" Poison="33" Vulnerability="2.5" NumChains="1"/>
+    <Attributes Physical="33" Burn="33" Poison="11" Vulnerability="2.5" NumChains="1"/>
     <AbilityFlags flags="Hit"/>
     <DisplayData displayName="Ube" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245" desc="Laser that deals physical, burn, and poison"></DisplayData>
   </FlavorDef>
 
   <FlavorDef name="Mint" abilities="MintAttack">
-    <Attributes Poison="100" Slow="1"/>
+    <Attributes Poison="25" Slow="1"/>
     <AbilityFlags flags="Puddle"/>
     <DisplayData displayName="Mint" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="173,235,179" desc="Poisons and slows nearby enemies"></DisplayData>
   </FlavorDef>

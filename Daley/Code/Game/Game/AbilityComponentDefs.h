@@ -94,10 +94,10 @@ struct AbilityRenderComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityAoEHitComponentDef
+struct AbilitySplashComponentDef
 {
-	AbilityAoEHitComponentDef() = default;
-	explicit AbilityAoEHitComponentDef(void const* xmlElement);
+	AbilitySplashComponentDef() = default;
+	explicit AbilitySplashComponentDef(void const* xmlElement);
 
 	float m_radius = 0.f;
 	AbilityScalingComponentDef	m_scaling;
@@ -107,12 +107,12 @@ struct AbilityAoEHitComponentDef
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityAoEEffectComponentDef
+struct AbilityPuddleComponentDef
 {
-	AbilityAoEEffectComponentDef() = default;
-	explicit AbilityAoEEffectComponentDef(void const* xmlElement);
+	AbilityPuddleComponentDef() = default;
+	explicit AbilityPuddleComponentDef(void const* xmlElement);
 
-	Name m_aoeEffectDefName	= Name::Invalid;
+	Name m_puddleDefName	= Name::Invalid;
 	float m_radius = 0.f;
 	float m_durationSeconds = -1.f; // negative == infinite
 	AbilityScalingComponentDef	m_scaling;
@@ -128,6 +128,6 @@ struct AbilityOnHitComponentDef
 	explicit AbilityOnHitComponentDef(void const* xmlElement);
 
 	AbilityScalingComponentDef		m_scaling;
-	AbilityAoEHitComponentDef		m_aoeHitOnHit;
-	AbilityAoEEffectComponentDef	m_aoeEffectOnHit;
+	AbilitySplashComponentDef		m_splashOnHit;
+	AbilityPuddleComponentDef		m_puddleOnHit;
 };

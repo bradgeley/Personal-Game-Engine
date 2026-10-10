@@ -34,7 +34,6 @@ public:
     std::optional<CAbility>             m_ability;
     std::optional<CAIController>        m_ai;
 	std::optional<CAnimation>           m_animation;
-    std::optional<CCollisionEffect>     m_collisionEffect;
 	std::optional<CCollision>           m_collision;
 	std::optional<CDeath>               m_death;
     std::optional<CHealth>              m_health;
@@ -42,6 +41,7 @@ public:
     std::optional<CMovement>            m_movement;
 	std::optional<CPlaceable>           m_placeable;
     std::optional<CProjectile>          m_proj;
+    std::optional<CPuddle>              m_puddle;
 	std::optional<CRender>              m_render;
     std::optional<CTime>                m_time;
     std::optional<CTransform>           m_transform;

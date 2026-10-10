@@ -154,13 +154,6 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
         m_collision.emplace(elem);
     }
 
-    // CCollisionEffect
-    elem = xmlElement->FirstChildElement("CollisionEffect");
-    if (elem)
-    {
-        m_collisionEffect.emplace();
-    }
-
     // CDeath
     elem = xmlElement->FirstChildElement("Death");
     if (elem)
@@ -201,6 +194,13 @@ EntityDef::EntityDef(XmlElement const* xmlElement)
     if (elem)
     {
         m_proj.emplace(elem);
+    }
+
+    // CPuddle
+    elem = xmlElement->FirstChildElement("Puddle");
+    if (elem)
+    {
+        m_puddle.emplace();
     }
 
     // CRender

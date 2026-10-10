@@ -14,7 +14,7 @@ namespace StaticWorldSettings
     constexpr float s_tileWidth             = 1.f;      // In world units
 
     constexpr int   s_numWorldEdgeTiles     = 4;        // Invisible tiles off the edge of world so entities may spawn in on the edges and walk into view. Each side of map has this many.
-    constexpr float s_visibleWorldAspect    = 2.f;      // Visible X tiles divided by visible Y tiles
+    constexpr float s_visibleWorldAspect    = 1.f;      // Visible X tiles divided by visible Y tiles
 
 	constexpr uint8_t s_maxOutdoorLighting  = 15;       // 4 bits (0-15)
 	constexpr uint8_t s_maxIndoorLighting   = 15;       // 4 bits (0-15)

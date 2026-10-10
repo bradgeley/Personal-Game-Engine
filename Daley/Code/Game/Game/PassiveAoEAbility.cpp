@@ -18,7 +18,7 @@
 PassiveAoEAbility::PassiveAoEAbility(PassiveAoEAbilityDef const& def) : Ability(def)
 {
 	m_targetingComp = def.m_targetingDef;
-	m_aoeEffectComp = def.m_aoeEffectDef;
+	m_puddleComp = def.m_puddleDef;
 }
 
 
@@ -33,7 +33,7 @@ void PassiveAoEAbility::Update(SystemContext const& context, CAbility const& abi
 	auto& timeStorage = context.GetArrayStorage<CTime>();
 
 	float deltaSeconds = context.m_deltaSeconds * timeDilation;
-	RolledAoEEffectComponent payload = m_aoeEffectComp.CalculateDotPayload(ability, deltaSeconds);
+	RolledPuddleComponent payload = m_puddleComp.CalculateDotPayload(ability, deltaSeconds);
     if (!payload.IsRelevant())
     {
         return;
@@ -75,7 +75,7 @@ void PassiveAoEAbility::Render(SystemContext const& context, CAbility const& abi
     InstanceBuffer& discIBO = *renderer.GetInstanceBuffer(scRenderer.m_discInstanceBuffer);
 
     DiscRenderInstance discInstance;
-    discInstance.m_position = Vec3(location, m_aoeEffectComp.m_renderComp.m_depth);
+    discInstance.m_position = Vec3(location, m_puddleComp.m_renderComp.m_depth);
     discInstance.m_radius = m_targetingComp.GetMaxRange(ability);
 	discInstance.m_tint = flavorTint;
     discInstance.m_tint.a = 25;
@@ -120,7 +120,7 @@ void PassiveAoEAbility::AppendDebugString(EntityDebugContext& debugContext) cons
     Ability::AppendDebugString(debugContext);
 
 	m_targetingComp.AppendDebugString(debugContext);
-    m_aoeEffectComp.AppendDebugString(debugContext);
+    m_puddleComp.AppendDebugString(debugContext);
 }
 
 
@@ -130,11 +130,11 @@ HitPayload PassiveAoEAbility::GetDotPayload(float deltaSeconds) const
 {
 	HitPayload payload;
 
-	payload.m_physical = m_aoeEffectComp.m_scaling.m_physical * deltaSeconds;
-	payload.m_burn = m_aoeEffectComp.m_scaling.m_burn * deltaSeconds;
-	payload.m_poison = m_aoeEffectComp.m_scaling.m_poison * deltaSeconds;
-	payload.m_slowDuration = m_aoeEffectComp.m_scaling.m_slow * deltaSeconds;
-	payload.m_hasteDuration = m_aoeEffectComp.m_scaling.m_haste * deltaSeconds;
+	payload.m_physical = m_puddleComp.m_scaling.m_physical * deltaSeconds;
+	payload.m_burn = m_puddleComp.m_scaling.m_burn * deltaSeconds;
+	payload.m_poison = m_puddleComp.m_scaling.m_poison * deltaSeconds;
+	payload.m_slowDuration = m_puddleComp.m_scaling.m_slow * deltaSeconds;
+	payload.m_hasteDuration = m_puddleComp.m_scaling.m_haste * deltaSeconds;
     
     return payload;
 }

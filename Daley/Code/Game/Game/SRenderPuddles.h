@@ -5,11 +5,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SRenderCollisionEffects : public System
+class SRenderPuddles : public System
 {
 public:
 
-    SRenderCollisionEffects(Name name = "RenderCollisionEffects", Rgba8 const& debugTint = Rgba8::LightOrange) : System(name, debugTint) {};
+    SRenderPuddles(Name name = "RenderPuddles", Rgba8 const& debugTint = Rgba8::LightOrange) : System(name, debugTint) {};
     void Startup() override;
     void Shutdown() const override;
     void Run(SystemContext const& context) const override;

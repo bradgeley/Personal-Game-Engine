@@ -57,7 +57,7 @@ namespace StaticGameSettings
 	static constexpr double s_slowStatusTimeDilation		= 0.5;
 	static constexpr double s_hasteStatusTimeDilation		= 1.5;
 	static constexpr double s_vulnerabilityExponent			= 0.5f;
-    static constexpr float s_defaultCollisionEffectDepth	= 0.95f;
+    static constexpr float s_defaultPuddleRenderDepth	= 0.95f;
 
 	static constexpr float s_baseCritMultiplier				= 2.f;
 	static constexpr float s_baseChainChance				= 1.f;
@@ -107,6 +107,12 @@ namespace StaticGameSettings
 
 	static constexpr float s_minTimeDilation				= 0.125f / 16.f;
 	static constexpr float s_maxTimeDilation				= 32.f;
+
+	static constexpr float s_minCameraHeight				= 10.f;
+	static constexpr float s_maxCameraHeight				= 1000.f;
+	static constexpr float s_cameraZoomRatioPerStep			= 0.2f;
+	static constexpr float s_baseCameraHeightInTiles		= 100.f;
+	static constexpr float s_cameraHeightRatioPanSpeed		= 0.5f; // If camera is 10 tiles high, pan speed is 5 tiles per second if this value is 0.5. That way panning gets faster the more zoomed out you are.
 
     // Derived
     extern float s_burnDecayK;

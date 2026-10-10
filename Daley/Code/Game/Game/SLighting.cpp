@@ -108,10 +108,10 @@ void SLighting::Run(SystemContext const& context) const
         uint8_t currentIndoorLighting = tile.GetIndoorLighting();
         uint8_t currentOutdoorLighting = tile.GetOutdoorLighting();
 
-        uint8_t innateOutdoorLight = tile.IsOpaque() ? 0 : StaticWorldSettings::s_maxOutdoorLighting; // All tiles that are not Opaque get full outdoor light (for now)
+        uint8_t innateOutdoorLight = tile.IsSolid() ? 0 : StaticWorldSettings::s_maxOutdoorLighting; // All tiles that are not Solid get full outdoor light (for now)
         uint8_t innateIndoorLight = tileDef.m_indoorLight;
 
-        uint8_t correctOutdoorLighting = innateOutdoorLight; // All tiles that are not Opaque get full outdoor light (for now)
+        uint8_t correctOutdoorLighting = innateOutdoorLight; // All tiles that are not Solid get full outdoor light (for now)
         uint8_t correctIndoorLighting = innateIndoorLight;
 
         bool lightingChanged = false;

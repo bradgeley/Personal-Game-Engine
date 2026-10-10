@@ -103,7 +103,7 @@ public:
 
 	// +1 is for walls, bc they are not a flavor. Start with wall unlocked always.
 	std::array<PlaceableTower, StaticGameSettings::s_flavorUnlockLimit + 1> m_placeableTowers = { "Wall1x1", Name::Invalid, 'T', 5.f, 5.f };
-	std::array<uint8_t, StaticGameSettings::s_flavorUnlockLimit + 1> m_towerPlacementKeyBindings = { 'T', 'Q', 'W', 'E', 'R' }; // todo: move to some kind of user settings, out of run data
+	std::array<uint8_t, StaticGameSettings::s_flavorUnlockLimit + 1> m_towerPlacementKeyBindings = { 'T', 'Q', 'E', 'R', 'Y' }; // todo: move to some kind of user settings, out of run data
 
 	std::array<MissionGenData, StaticGameSettings::s_numMissionsForVictory> m_missionGenData;
 

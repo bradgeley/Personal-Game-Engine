@@ -33,5 +33,5 @@ public:
 public:
 
 	AbilityAoETargetingComponent	m_targetingComp;
-	AbilityAoEEffectComponent		m_aoeEffectComp;
+	AbilityPuddleComponent			m_puddleComp;
 };

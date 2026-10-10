@@ -250,7 +250,7 @@
   <EntityDef name = "TowerProj">
     <Animation spriteSheet="Data/SpriteSheets/Towers.xml" defaultAnim="iceCreamProj"></Animation>
     <Projectile></Projectile>
-    <Render scale="0.66" rotateSprite="true"></Render>
+    <Render scale="1" rotateSprite="true"></Render>
     <Tags tags="projectile"></Tags>
     <Time></Time>
     <Transform></Transform>
@@ -259,9 +259,9 @@
   <!-- ==================================================================================================================== -->
   <!-- Effects -->
 
-  <EntityDef name="AoEEffect">
-    <CollisionEffect></CollisionEffect>
-    <Collision radius="1" type="GroundEffect"></Collision>
+  <EntityDef name="Puddle">
+    <Puddle></Puddle>
+    <Collision radius="1" type="Puddle"></Collision>
     <Lifetime></Lifetime>
     <Time></Time>
     <Transform></Transform>

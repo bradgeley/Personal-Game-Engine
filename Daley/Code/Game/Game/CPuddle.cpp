@@ -1,21 +1,21 @@
 // Bradley Christensen - 2022-2026
-#include "CCollisionEffect.h"
+#include "CPuddle.h"
 #include "AbilityComponents.h"
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CCollisionEffect::Initialize(RolledAoEEffectComponent const& aoeEffectComp)
+void CPuddle::Initialize(RolledPuddleComponent const& puddleComp)
 {
-	m_payloadPerSecond = aoeEffectComp.m_payload;
-	m_tint = aoeEffectComp.m_renderComp.m_tint;
-	m_depth = aoeEffectComp.m_renderComp.m_depth;
+	m_payloadPerSecond = puddleComp.m_payload;
+	m_tint = puddleComp.m_renderComp.m_tint;
+	m_depth = puddleComp.m_renderComp.m_depth;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-HitPayload CCollisionEffect::GetWhileOverlappingPayload(float deltaSeconds) const
+HitPayload CPuddle::GetWhileOverlappingPayload(float deltaSeconds) const
 {
 	HitPayload payload = m_payloadPerSecond;
 	payload *= deltaSeconds;

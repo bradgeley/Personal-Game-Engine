@@ -59,7 +59,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	Renderer& renderer = *context.GetSingleton<SCRenderer>().GetRenderer();
 
 	// Read Dependencies
-	SCCamera const& worldCamera = context.GetSingletonConst<SCCamera>();
+	SCCamera const& scCamera = context.GetSingletonConst<SCCamera>();
 	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
 	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
 	RunData const& runData = *scRunData.m_data;
@@ -74,7 +74,6 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	auto& projectileStorage = context.GetMapStorageConst<CProjectile>();
 	SCInputSystem const& scInput = context.GetSingletonConst<SCInputSystem>();
 	InputSystem const& input = *scInput.GetInputSystem();
-	Window const& window = *context.GetSingletonConst<SCWindow>().GetWindow();
 
 	BitMask collisionBit = context.GetComponentBitMask<CCollision>();
 
@@ -96,10 +95,8 @@ void SDebugOverlay::Run(SystemContext const& context) const
 		return;
 	}
 
-	Camera screenCamera;
-	IntVec2 resolution = window.GetRenderResolution();
-	AABB2 screenBounds = AABB2(0.f, 0.f, (float) resolution.x, (float) resolution.y);
-	screenCamera.SetOrthoBounds2D(screenBounds);
+	Camera const& screenCamera = scCamera.m_uiCamera;
+	AABB2 screenBounds = screenCamera.GetOrthoBounds2D();
 
 	// Add transparent black background
 	VertexUtils::AddVertsForAABB2(untexVerts, screenBounds, Rgba8(0, 0, 0, 120), AABB2::ZeroToOne);
@@ -181,7 +178,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 			if (scInput.m_mouseWorldLocation.GetDistanceSquaredTo(transform.m_pos) < (radius * radius))
 			{
 				CEntityName const& debug = debugStorage[it];
-				Vec2 screenPos = worldCamera.m_worldCamera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();
+				Vec2 screenPos = scCamera.m_worldCamera.WorldToScreenRelativeOrtho(transform.m_pos + Vec2(radius, radius)) * screenCamera.GetOrthoDimensions2D();
 				Vec2 cardMins = screenPos;
 
 				EntityDebugContext debugContext(it.GetEntityID(), context);

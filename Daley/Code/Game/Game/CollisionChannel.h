@@ -12,7 +12,7 @@ enum class CollisionChannel : uint8_t
 	Projectile			= 1,
 	Enemy				= 2,
 	Building			= 3,
-	GroundEffect		= 4,
+	Puddle		= 4,
 
 	Count				= 6,
 };

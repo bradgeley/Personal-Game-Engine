@@ -15,7 +15,7 @@ enum class TileTag : uint8_t
 	None			= 0,
 	Visible			= 1 << 0,
 	Solid			= 1 << 1,
-	Opaque			= 1 << 2,
+	Occupied		= 1 << 2,
 	IsGoal			= 1 << 3,
 	IsPath			= 1 << 4,
 	BlocksTowers	= 1 << 5,
@@ -35,7 +35,7 @@ public:
 
 	inline bool IsVisible()			const { return m_tags & static_cast<uint8_t>(TileTag::Visible); }
 	inline bool IsSolid()			const { return m_tags & static_cast<uint8_t>(TileTag::Solid); }
-	inline bool IsOpaque()			const { return m_tags & static_cast<uint8_t>(TileTag::Opaque); }
+	inline bool IsOccupied()		const { return m_tags & static_cast<uint8_t>(TileTag::Occupied); }
 	inline bool IsGoal()			const { return m_tags & static_cast<uint8_t>(TileTag::IsGoal); }
 	inline bool IsPath()			const { return m_tags & static_cast<uint8_t>(TileTag::IsPath); }
 	inline bool IsLightingDirty()   const { return m_tags & static_cast<uint8_t>(TileTag::Lighting_Dirty); }
@@ -54,7 +54,7 @@ public:
 
 	void SetIsVisible(bool isVisible);
 	void SetIsSolid(bool isSolid);
-	void SetIsOpaque(bool isOpaque);
+	void SetIsOccupied(bool isOccupied);
 	void SetIsGoal(bool isGoal);
 	void SetIsPath(bool isPath);
 	void SetLightingDirty(bool dirty);

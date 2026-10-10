@@ -19,6 +19,6 @@ public:
 	AbilityCooldownComponentDef		m_cooldownDef;
 	AbilityTargetingComponentDef	m_targetingDef;
 	AbilityCritComponentDef			m_critDef;
-	AbilityAoEHitComponentDef		m_aoeHitDef;
-	AbilityAoEEffectComponentDef	m_aoeEffectDef;
+	AbilitySplashComponentDef		m_splashDef;
+	AbilityPuddleComponentDef		m_puddleDef;
 };

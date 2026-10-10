@@ -309,7 +309,7 @@
     <ClCompile Include="Game\CAIController.cpp" />
     <ClCompile Include="Game\CAnimation.cpp" />
     <ClCompile Include="Game\CCollision.cpp" />
-    <ClCompile Include="Game\CCollisionEffect.cpp" />
+    <ClCompile Include="Game\CPuddle.cpp" />
     <ClCompile Include="Game\CDeath.cpp" />
     <ClCompile Include="Game\CEntityName.cpp" />
     <ClCompile Include="Game\CHealth.cpp" />
@@ -353,8 +353,7 @@
     <ClCompile Include="Game\SBackgroundMusic.cpp" />
     <ClCompile Include="Game\SCamera.cpp" />
     <ClCompile Include="Game\SCCollision.cpp" />
-    <ClCompile Include="Game\SCollision.cpp" />
-    <ClCompile Include="Game\SCollisionEffect.cpp" />
+    <ClCompile Include="Game\SPuddle.cpp" />
     <ClCompile Include="Game\SCollisionHash.cpp" />
     <ClCompile Include="Game\SCRunData.cpp" />
     <ClCompile Include="Game\SCurrency.cpp" />
@@ -374,7 +373,7 @@
     <ClCompile Include="Game\SpawnInfo.cpp" />
     <ClCompile Include="Game\SProjectile.cpp" />
     <ClCompile Include="Game\SRenderAbilities.cpp" />
-    <ClCompile Include="Game\SRenderCollisionEffects.cpp" />
+    <ClCompile Include="Game\SRenderPuddles.cpp" />
     <ClCompile Include="Game\SRenderDiscs.cpp" />
     <ClCompile Include="Game\SRenderHUD.cpp" />
     <ClCompile Include="Game\SRenderModSelection.cpp" />
@@ -430,7 +429,7 @@
     <ClInclude Include="Game\CAbility.h" />
     <ClInclude Include="Game\CAIController.h" />
     <ClInclude Include="Game\CAnimation.h" />
-    <ClInclude Include="Game\CCollisionEffect.h" />
+    <ClInclude Include="Game\CPuddle.h" />
     <ClInclude Include="Game\CDeath.h" />
     <ClInclude Include="Game\CEntityName.h" />
     <ClInclude Include="Game\CHealth.h" />
@@ -487,7 +486,7 @@
     <ClInclude Include="Game\SCGameState.h" />
     <ClInclude Include="Game\SCInputSystem.h" />
     <ClInclude Include="Game\SCLighting.h" />
-    <ClInclude Include="Game\SCollisionEffect.h" />
+    <ClInclude Include="Game\SPuddle.h" />
     <ClInclude Include="Game\SCRandomNumberGenerator.h" />
     <ClInclude Include="Game\SCRenderer.h" />
     <ClInclude Include="Game\SCRunData.h" />
@@ -495,7 +494,6 @@
     <ClInclude Include="Game\SCDebug.h" />
     <ClInclude Include="Game\SCEntityFactory.h" />
     <ClInclude Include="Game\SCFlowField.h" />
-    <ClInclude Include="Game\SCollision.h" />
     <ClInclude Include="Game\SCollisionHash.h" />
     <ClInclude Include="Game\SCurrency.h" />
     <ClInclude Include="Game\SCWaves.h" />
@@ -513,7 +511,7 @@
     <ClInclude Include="Game\SMovementAnimation.h" />
     <ClInclude Include="Game\SProjectile.h" />
     <ClInclude Include="Game\SRenderAbilities.h" />
-    <ClInclude Include="Game\SRenderCollisionEffects.h" />
+    <ClInclude Include="Game\SRenderPuddles.h" />
     <ClInclude Include="Game\SRenderDiscs.h" />
     <ClInclude Include="Game\SRenderHUD.h" />
     <ClInclude Include="Game\SRenderModSelection.h" />
@@ -574,7 +572,6 @@
     <Xml Include="..\..\Run\Data\Shaders\SwirlShader.xml" />
     <Xml Include="..\..\Run\Data\Shaders\WorldShader.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Ant.xml" />
-    <Xml Include="..\..\Run\Data\SpriteSheets\AoEEffect.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\DarkAnt.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\Scorpion.xml" />
     <Xml Include="..\..\Run\Data\SpriteSheets\StatusEffects.xml" />

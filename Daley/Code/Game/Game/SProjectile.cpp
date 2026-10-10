@@ -1,7 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "SProjectile.h"
-#include "CCollisionEffect.h"
 #include "CProjectile.h"
+#include "CPuddle.h"
 #include "CTransform.h"
 #include "CCollision.h"
 #include "CHealth.h"
@@ -56,10 +56,10 @@ void SProjectile::Run(SystemContext const& context) const
 	auto& projStorage = context.GetMapStorage<CProjectile>();
 	auto& transStorage = context.GetArrayStorage<CTransform>();
 	auto& timeStorage = context.GetArrayStorage<CTime>();
-	auto& collisionEffectStorage = context.GetArrayStorage<CCollisionEffect>();
+	auto& puddleStorage = context.GetArrayStorage<CPuddle>();
 	// Spawn Entity (All)
 
-	BitMask collisionEffectBit = context.GetComponentBitMask<CCollisionEffect>();
+	BitMask puddleBit = context.GetComponentBitMask<CPuddle>();
 
 	for (auto it = context.Iterate<CProjectile, CTransform>(); it.IsValid(); ++it)
 	{
@@ -74,15 +74,24 @@ void SProjectile::Run(SystemContext const& context) const
 				continue;
 			}
 		}
+		else
+		{
+			CTransform& targetTransform = transStorage[target];
+			proj.m_targetPos = targetTransform.m_pos;
+		}
 
 		CTransform& transform = transStorage[it];
-		CTransform& targetTransform = transStorage[target];
-		proj.m_targetPos = targetTransform.m_pos;
-
-		Vec2 toTarget = proj.m_targetPos.value() - transform.m_pos;
 		float moveTimeThisFrame = context.m_deltaSeconds + proj.m_accumulatedTime;
-		proj.m_accumulatedTime = 0.f;
 		float moveDistThisFrame = proj.m_projSpeed * moveTimeThisFrame;
+		Vec2 toTarget = proj.m_targetPos.value() - transform.m_pos;
+		Vec2 moveThisFrame = toTarget.GetNormalized() * proj.m_projSpeed * moveTimeThisFrame;
+		proj.m_accumulatedTime = 0.f;
+
+		// Perform proj movement
+		transform.m_pos += moveThisFrame;
+		transform.m_orientation = toTarget.GetAngleDegrees();
+
+		// Check if near destination
 		float distSquaredToTarget = toTarget.GetLengthSquared();
 		if (distSquaredToTarget <= moveDistThisFrame * moveDistThisFrame)
 		{
@@ -112,14 +121,14 @@ void SProjectile::Run(SystemContext const& context) const
 					}
 				}
 
-				if (proj.m_onHitComp.m_aoeHitOnHit.IsRelevant())
+				if (proj.m_onHitComp.m_splashOnHit.IsRelevant())
 				{
 					// Projectile is doing aoe damage around target
-					float const& splashRadius = proj.m_onHitComp.m_aoeHitOnHit.m_radius;
+					float const& splashRadius = proj.m_onHitComp.m_splashOnHit.m_radius;
 					float const& splashRadiusSquared = splashRadius * splashRadius;
 
-					HitPayload aoeTargetPayload = proj.GetAoeTargetPayload();
-					if (aoeTargetPayload.HasValue())
+					HitPayload splashPayload = proj.GetSplashPayload();
+					if (splashPayload.HasValue())
 					{
 						world.ForEachPathTileOverlappingCircle(transform.m_pos, splashRadius, [&](IntVec2 const& worldCoords)
 						{
@@ -127,6 +136,11 @@ void SProjectile::Run(SystemContext const& context) const
 
 							scCollision.ForEachEnemyInTile(tileIndex, [&](EntityID entityID)
 							{
+                                if (!context.IsValid(entityID))
+                                {
+                                    return true;
+                                }
+
 								Vec2 entityPos = transStorage[entityID].m_pos;
 								if (entityPos.GetDistanceSquaredTo(proj.m_targetPos.value()) > splashRadiusSquared)
 								{
@@ -134,16 +148,16 @@ void SProjectile::Run(SystemContext const& context) const
 									return true;
 								}
 
-								if (aoeTargetPayload.IsRelevantToHealth())
+								if (splashPayload.IsRelevantToHealth())
 								{
 									CHealth& targetHealth = healthStorage[entityID];
-									targetHealth.TakePayload(aoeTargetPayload);
+									targetHealth.TakePayload(splashPayload);
 								}
 
-								if (aoeTargetPayload.IsRelevantToTime())
+								if (splashPayload.IsRelevantToTime())
 								{
 									CTime& targetTime = timeStorage[entityID];
-									targetTime.TakePayload(aoeTargetPayload);
+									targetTime.TakePayload(splashPayload);
 								}
 								return true;
 							});
@@ -153,32 +167,26 @@ void SProjectile::Run(SystemContext const& context) const
 					}
 				}
 
-				if (proj.m_onHitComp.m_aoeEffectOnHit.IsRelevant())
+				if (proj.m_onHitComp.m_puddleOnHit.IsRelevant())
 				{
-					SpawnInfo aoeEffectSpawnInfo;
-					aoeEffectSpawnInfo.m_def = EntityDef::GetEntityDef(proj.m_onHitComp.m_aoeEffectOnHit.m_aoeEffectDefName);
-					ASSERT_OR_DIE(aoeEffectSpawnInfo.m_def != nullptr, StringUtils::StringF("EntityDef not found for name: %s", proj.m_onHitComp.m_aoeEffectOnHit.m_aoeEffectDefName.ToCStr()));
-					aoeEffectSpawnInfo.m_spawnPos = proj.m_targetPos.value();
-					aoeEffectSpawnInfo.m_spawnOrientation = 0.f;
-					aoeEffectSpawnInfo.m_spawnLifetime = proj.m_onHitComp.m_aoeEffectOnHit.m_durationSeconds;
-					aoeEffectSpawnInfo.m_spawnScale = proj.m_onHitComp.m_aoeEffectOnHit.m_radius;
+					SpawnInfo puddleSpawnInfo;
+					puddleSpawnInfo.m_def = EntityDef::GetEntityDef(proj.m_onHitComp.m_puddleOnHit.m_puddleDefName);
+					ASSERT_OR_DIE(puddleSpawnInfo.m_def != nullptr, StringUtils::StringF("EntityDef not found for name: %s", proj.m_onHitComp.m_puddleOnHit.m_puddleDefName.ToCStr()));
+					puddleSpawnInfo.m_spawnPos = proj.m_targetPos.value();
+					puddleSpawnInfo.m_spawnOrientation = 0.f;
+					puddleSpawnInfo.m_spawnLifetime = proj.m_onHitComp.m_puddleOnHit.m_durationSeconds;
+					puddleSpawnInfo.m_spawnScale = proj.m_onHitComp.m_puddleOnHit.m_radius;
 
-					EntityID aoeEffect = SEntityFactory::SpawnEntity(context, aoeEffectSpawnInfo);
-					if (context.IsValid(aoeEffect))
+					EntityID puddle = SEntityFactory::SpawnEntity(context, puddleSpawnInfo);
+					if (context.IsValid(puddle))
 					{
-						// Pass along damage, color, to aoe effect
-						ASSERT_OR_DIE(context.HasComponentsUnsafe(aoeEffect.GetIndex(), collisionEffectBit), "Spawned aoe effect does not have CCollisionEffect component.");
-						CCollisionEffect& aoeEffectComp = collisionEffectStorage[aoeEffect];
-						aoeEffectComp.Initialize(proj.m_onHitComp.m_aoeEffectOnHit);
+						// Pass along damage, color, to puddle effect
+						ASSERT_OR_DIE(context.HasComponentsUnsafe(puddle.GetIndex(), puddleBit), "Spawned puddle does not have CPuddle component.");
+						CPuddle& puddleComp = puddleStorage[puddle];
+						puddleComp.Initialize(proj.m_onHitComp.m_puddleOnHit);
 					}
 				}
 			}
-
-			continue;
 		}
-
-		Vec2 moveThisFrame = toTarget.GetNormalized() * proj.m_projSpeed * moveTimeThisFrame;
-		transform.m_pos += moveThisFrame;
-		transform.m_orientation = toTarget.GetAngleDegrees();
 	}
 }

@@ -5,11 +5,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
-class SCollision : public System
+class SPuddle : public System
 {
 public:
 
-    SCollision(Name name = "Collision", Rgba8 const& debugTint = Rgba8::Red) : System(name, debugTint) {};
+    SPuddle(Name name = "Puddle", Rgba8 const& debugTint = Rgba8::Yellow) : System(name, debugTint) {};
     virtual void Startup() override;
     virtual void Run(SystemContext const& context) const override;
 };

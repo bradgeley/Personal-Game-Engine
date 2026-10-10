@@ -95,6 +95,7 @@ bool MapGenerator::GenerateMap(SCWorld& world)
 	Tile backgroundTile = TileDef::GetDefaultTile(biomeDef->m_baseTile);
 	world.m_tiles.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), backgroundTile);
 	world.m_numEnemiesInTile.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), 0);
+	world.m_tileOccupancy.Initialize(IntVec2(StaticWorldSettings::s_numTilesInRow, StaticWorldSettings::s_numTilesInRow), EntityID::Invalid);
 
 	for (MapGeneratorComponent* component : m_components)
 	{

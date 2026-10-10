@@ -163,6 +163,8 @@ void SCWorld::OnMapGenerationComplete()
 {
 	CacheValidSpawnLocations();
 	CacheVisiblePathTiles();
+
+	m_tileOccupancy.SetAll(EntityID::Invalid);
 }
 
 
@@ -172,6 +174,12 @@ void SCWorld::Shutdown()
 {
 	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
 	Renderer* renderer = scRenderer.GetRenderer();
+
+	m_tileOccupancy.Clear();
+	m_cachedSpawnLocations.clear();
+	m_cachedVisiblePathTiles.clear();
+	m_generatedTowers.clear();
+	m_numEnemiesInTile.Clear();
 
 	m_tiles.Clear();	
 	renderer->ReleaseTexture(m_lightmap);
@@ -745,6 +753,43 @@ void SCWorld::ForEachCachedEdgePathTile(const std::function<bool(IntVec2 const&)
 			return;
 		}
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+EntityID SCWorld::GetTileOccupant(IntVec2 const& tileCoords) const
+{
+	if (m_tileOccupancy.IsValidCoords(tileCoords))
+	{
+		return m_tileOccupancy.Get(tileCoords);
+	}
+	return EntityID::Invalid;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool SCWorld::SetTileOccupant(IntVec2 const& tileCoords, EntityID entityID)
+{
+	if (m_tileOccupancy.IsValidCoords(tileCoords))
+	{
+		EntityID currentOccupant = m_tileOccupancy.Get(tileCoords);
+		if (currentOccupant == entityID)
+		{
+			return true;
+		}
+
+		if (currentOccupant != EntityID::Invalid && entityID != EntityID::Invalid)
+		{
+			ERROR_AND_DIE("SCWorld::SetTileOccupant - Attempting to set tile occupant for a tile that is already occupied by another entity.");
+			return false;
+		}
+
+		m_tileOccupancy.Set(tileCoords, entityID);
+		return true;
+	}
+	return false;
 }
 
 

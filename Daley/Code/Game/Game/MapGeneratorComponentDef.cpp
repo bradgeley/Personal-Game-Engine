@@ -56,9 +56,9 @@ TagQuery MakeTileTagQueryFromXmlElement(XmlElement const& xmlElement)
 			{
 				*tagQueryDataPtr |= (uint8_t) TileTag::Solid;
 			}
-			else if (Name(tagName) == "opaque")
+			else if (Name(tagName) == "occupied")
 			{
-				*tagQueryDataPtr |= (uint8_t) TileTag::Opaque;
+				*tagQueryDataPtr |= (uint8_t) TileTag::Occupied;
 			}
 			else if(Name(tagName) == "visible")
 			{

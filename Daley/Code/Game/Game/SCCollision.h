@@ -23,7 +23,6 @@ public:
 
 	// Return true to keep iterating
 	void ForEachEnemyInTile(int tileIndex, std::function<bool(EntityID)> const& callback) const;
-	void ForEachBuildingInTile(int tileIndex, std::function<bool(EntityID)> const& callback) const;
 
 public:
 

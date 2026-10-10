@@ -25,7 +25,7 @@ public:
     bool NextTarget();
 
 	HitPayload GetMainTargetPayload() const;
-    HitPayload GetAoeTargetPayload() const;
+    HitPayload GetSplashPayload() const;
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 

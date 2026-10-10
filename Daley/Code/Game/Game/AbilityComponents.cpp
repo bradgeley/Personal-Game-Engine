@@ -169,23 +169,20 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, CAb
 bool AbilityAdjacentTargetingComponent::FindTargets(SystemContext const& context, EntityID owner)
 {
     SCWorld const& world = context.GetSingletonConst<SCWorld>();
-    SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
 
     m_targets.clear();
 
 	CPlaceable const& placeableComp = *context.GetComponentConst<CPlaceable>(owner);
 
-    world.ForEachPlayableTileInRegion(placeableComp.m_botLeftTile, placeableComp.m_botLeftTile + placeableComp.m_dims - IntVec2::OneVector, [&](IntVec2 const& worldCoords)
+    IntVec2 botLeft = placeableComp.m_botLeftTile - IntVec2::OneVector;
+    IntVec2 topRight = placeableComp.m_botLeftTile + placeableComp.m_dims;
+    world.ForEachPlayableTileInRegion(botLeft, topRight, [&](IntVec2 const& worldCoords)
     {
-        int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
-        scCollision.ForEachBuildingInTile(tileIndex, [&](EntityID entityID)
+		EntityID occupant = world.GetTileOccupant(worldCoords);
+        if (occupant != EntityID::Invalid && occupant != owner)
         {
-            if (entityID != owner)
-            {
-                m_targets.insert(entityID);
-            }
-            return true;
-        });
+            m_targets.insert(occupant);
+        }
         return true;
     });
 
@@ -228,6 +225,10 @@ bool AbilityPrecisionTargetingComponent::FindTargets(SystemContext const& contex
 
             scCollision.ForEachEnemyInTile(tileIndex, [&](EntityID entityID)
             {
+                if (!context.IsValid(entityID))
+                {
+                    return true;
+                }
                 if (m_targetChains.Contains(entityID))
                 {
                     return true;
@@ -290,6 +291,10 @@ EntityID AbilityPrecisionTargetingComponent::FindChainTarget(SystemContext const
 
 		scCollision.ForEachEnemyInTile(tileIndex, [&](EntityID entityID)
 		{
+            if (!context.IsValid(entityID))
+            {
+                return true;
+            }
 			if (m_targetChains.Contains(entityID))
 			{
 				return true; // keep iterating
@@ -638,7 +643,7 @@ void AbilityRenderComponent::AppendDebugString(EntityDebugContext&) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool RolledAoEHitComponent::IsRelevant() const
+bool RolledSplashComponent::IsRelevant() const
 {
     return m_radius > 0.f && m_payload.HasValue();
 }
@@ -646,7 +651,7 @@ bool RolledAoEHitComponent::IsRelevant() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RolledAoEHitComponent::AppendDebugString(EntityDebugContext& debugContext) const
+void RolledSplashComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (!IsRelevant())
     {
@@ -659,7 +664,7 @@ void RolledAoEHitComponent::AppendDebugString(EntityDebugContext& debugContext) 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def)
+AbilitySplashComponent::AbilitySplashComponent(AbilitySplashComponentDef const& def)
 {
     m_radius = def.m_radius;
     m_scaling = def.m_scaling;
@@ -669,7 +674,7 @@ AbilityAoEHitComponent::AbilityAoEHitComponent(AbilityAoEHitComponentDef const& 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityAoEHitComponent::IsRelevant() const
+bool AbilitySplashComponent::IsRelevant() const
 {
 	float radius = m_radius;
 	bool hasRadius = radius > 0.f;
@@ -685,7 +690,7 @@ bool AbilityAoEHitComponent::IsRelevant() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float AbilityAoEHitComponent::GetRadius(CAbility const& ability) const
+float AbilitySplashComponent::GetRadius(CAbility const& ability) const
 {
 	float areaModifier = 1.f + ability.m_attributes.GetValue(AbilityAttribute::AreaOfEffect_Multi);
 	return m_radius * areaModifier;
@@ -694,9 +699,9 @@ float AbilityAoEHitComponent::GetRadius(CAbility const& ability) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RolledAoEHitComponent AbilityAoEHitComponent::CalculateSplashPayload(CAbility const& ability, bool didCrit, float critMultiplier) const
+RolledSplashComponent AbilitySplashComponent::CalculateSplashPayload(CAbility const& ability, bool didCrit, float critMultiplier) const
 {
-    RolledAoEHitComponent result;
+    RolledSplashComponent result;
 	result.m_radius = GetRadius(ability);
 	result.m_payload = m_scaling.CalculateHitPayload(ability, didCrit, critMultiplier);
     return result;
@@ -705,9 +710,9 @@ RolledAoEHitComponent AbilityAoEHitComponent::CalculateSplashPayload(CAbility co
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RolledAoEHitComponent AbilityAoEHitComponent::CalculateDotPayload(CAbility const& ability, float deltaSeconds) const
+RolledSplashComponent AbilitySplashComponent::CalculateDotPayload(CAbility const& ability, float deltaSeconds) const
 {
-    RolledAoEHitComponent result;
+    RolledSplashComponent result;
     result.m_radius = GetRadius(ability);
     result.m_payload = m_scaling.CalculateDotPayload(ability, deltaSeconds);
     return result;
@@ -716,7 +721,7 @@ RolledAoEHitComponent AbilityAoEHitComponent::CalculateDotPayload(CAbility const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityAoEHitComponent::AppendDebugString(EntityDebugContext& debugContext) const
+void AbilitySplashComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (!IsRelevant())
     {
@@ -736,7 +741,7 @@ void AbilityAoEHitComponent::AppendDebugString(EntityDebugContext& debugContext)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool RolledAoEEffectComponent::IsRelevant() const
+bool RolledPuddleComponent::IsRelevant() const
 {
 	return m_payload.HasValue() && m_radius > 0.f;
 }
@@ -744,7 +749,7 @@ bool RolledAoEEffectComponent::IsRelevant() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void RolledAoEEffectComponent::AppendDebugString(EntityDebugContext& debugContext) const
+void RolledPuddleComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
 	m_payload.AppendDebugString(debugContext);
 }
@@ -752,9 +757,9 @@ void RolledAoEEffectComponent::AppendDebugString(EntityDebugContext& debugContex
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityAoEEffectComponent::AbilityAoEEffectComponent(AbilityAoEEffectComponentDef const& def)
+AbilityPuddleComponent::AbilityPuddleComponent(AbilityPuddleComponentDef const& def)
 {
-    m_aoeEffectDefName = def.m_aoeEffectDefName;
+    m_puddleDefName = def.m_puddleDefName;
     m_radius = def.m_radius;
     m_durationSeconds = def.m_durationSeconds;
 	m_scaling = def.m_scaling;
@@ -764,9 +769,9 @@ AbilityAoEEffectComponent::AbilityAoEEffectComponent(AbilityAoEEffectComponentDe
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool AbilityAoEEffectComponent::IsRelevant() const
+bool AbilityPuddleComponent::IsRelevant() const
 {
-	if (m_aoeEffectDefName == Name::Invalid)
+	if (m_puddleDefName == Name::Invalid)
 	{
 		return false;
 	}
@@ -778,7 +783,7 @@ bool AbilityAoEEffectComponent::IsRelevant() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float AbilityAoEEffectComponent::GetRadius(CAbility const& ability) const
+float AbilityPuddleComponent::GetRadius(CAbility const& ability) const
 {
     float areaModifier = 1.f + ability.m_attributes.GetValue(AbilityAttribute::AreaOfEffect_Multi);
     return m_radius * areaModifier;
@@ -787,7 +792,7 @@ float AbilityAoEEffectComponent::GetRadius(CAbility const& ability) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float AbilityAoEEffectComponent::GetDuration(CAbility const&) const
+float AbilityPuddleComponent::GetDuration(CAbility const&) const
 {
     return m_durationSeconds;
 }
@@ -795,10 +800,10 @@ float AbilityAoEEffectComponent::GetDuration(CAbility const&) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RolledAoEEffectComponent AbilityAoEEffectComponent::CalculatePuddlePayload(CAbility const& ability) const
+RolledPuddleComponent AbilityPuddleComponent::CalculatePuddlePayload(CAbility const& ability) const
 {
-    RolledAoEEffectComponent result;
-    result.m_aoeEffectDefName = m_aoeEffectDefName;
+    RolledPuddleComponent result;
+    result.m_puddleDefName = m_puddleDefName;
     result.m_radius = GetRadius(ability);
     result.m_durationSeconds = GetDuration(ability);
     result.m_payload = m_scaling.CalculateHitPayload(ability);
@@ -809,10 +814,10 @@ RolledAoEEffectComponent AbilityAoEEffectComponent::CalculatePuddlePayload(CAbil
 
 
 //----------------------------------------------------------------------------------------------------------------------
-RolledAoEEffectComponent AbilityAoEEffectComponent::CalculateDotPayload(CAbility const& ability, float deltaSeconds) const
+RolledPuddleComponent AbilityPuddleComponent::CalculateDotPayload(CAbility const& ability, float deltaSeconds) const
 {
-    RolledAoEEffectComponent result;
-	result.m_aoeEffectDefName = m_aoeEffectDefName;
+    RolledPuddleComponent result;
+	result.m_puddleDefName = m_puddleDefName;
 	result.m_radius = GetRadius(ability);
 	result.m_durationSeconds = GetDuration(ability);
 	result.m_payload = m_scaling.CalculateDotPayload(ability, deltaSeconds);
@@ -823,7 +828,7 @@ RolledAoEEffectComponent AbilityAoEEffectComponent::CalculateDotPayload(CAbility
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AbilityAoEEffectComponent::AppendDebugString(EntityDebugContext& debugContext) const
+void AbilityPuddleComponent::AppendDebugString(EntityDebugContext& debugContext) const
 {
     if (!IsRelevant())
     {
@@ -848,7 +853,7 @@ void AbilityAoEEffectComponent::AppendDebugString(EntityDebugContext& debugConte
 //----------------------------------------------------------------------------------------------------------------------
 bool RolledOnHitComponent::IsRelevant() const
 {
-    return m_payload.HasValue() || m_aoeHitOnHit.IsRelevant() || m_aoeEffectOnHit.IsRelevant();
+    return m_payload.HasValue() || m_splashOnHit.IsRelevant() || m_puddleOnHit.IsRelevant();
 }
 
 
@@ -862,8 +867,8 @@ void RolledOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) c
     }
     debugContext.m_debugString += StringUtils::StringF("---Rolled On Hit---\n");
     m_payload.AppendDebugString(debugContext);
-    m_aoeHitOnHit.AppendDebugString(debugContext);
-    m_aoeEffectOnHit.AppendDebugString(debugContext);
+    m_splashOnHit.AppendDebugString(debugContext);
+    m_puddleOnHit.AppendDebugString(debugContext);
 }
 
 
@@ -873,8 +878,8 @@ void RolledOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) c
 AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def)
 {
     m_scaling = def.m_scaling;
-	m_aoeHitOnHit = def.m_aoeHitOnHit;
-	m_aoeEffectOnHit = def.m_aoeEffectOnHit;
+	m_splashOnHit = def.m_splashOnHit;
+	m_puddleOnHit = def.m_puddleOnHit;
 }
 
 
@@ -882,7 +887,7 @@ AbilityOnHitComponent::AbilityOnHitComponent(AbilityOnHitComponentDef const& def
 //----------------------------------------------------------------------------------------------------------------------
 bool AbilityOnHitComponent::IsRelevant() const
 {
-	bool hasPayload = m_scaling.IsRelevant() || m_aoeHitOnHit.IsRelevant() || m_aoeEffectOnHit.IsRelevant();
+	bool hasPayload = m_scaling.IsRelevant() || m_splashOnHit.IsRelevant() || m_puddleOnHit.IsRelevant();
     return hasPayload;
 }
 
@@ -898,6 +903,6 @@ void AbilityOnHitComponent::AppendDebugString(EntityDebugContext& debugContext) 
 
     debugContext.m_debugString += StringUtils::StringF("---Hit---\n");
 	m_scaling.AppendDebugString(debugContext);
-    m_aoeHitOnHit.AppendDebugString(debugContext);
-    m_aoeEffectOnHit.AppendDebugString(debugContext);
+    m_splashOnHit.AppendDebugString(debugContext);
+    m_puddleOnHit.AppendDebugString(debugContext);
 }

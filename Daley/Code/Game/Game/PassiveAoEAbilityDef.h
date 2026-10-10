@@ -17,5 +17,5 @@ public:
 public:
 
 	AbilityTargetingComponentDef	m_targetingDef;
-	AbilityAoEEffectComponentDef	m_aoeEffectDef;
+	AbilityPuddleComponentDef		m_puddleDef;
 };

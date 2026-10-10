@@ -50,8 +50,8 @@ public:
 
     TowerPlacementResult CanPlaceTower(TowerPlacementRequest const& request, SCWorld const& world) const;
 	TowerSwirlResult CanSwirl(TowerSwirlRequest const& request, SystemContext const& context) const;
-    bool PlaceTowerInWorld(TowerPlacementRequest const& request, SCWorld& world) const;
-	bool WillChangePathSolidness(TowerPlacementRequest const& request, SCWorld const& world) const;
+    bool OccupyTilesInWorld(TowerPlacementRequest const& request, SCWorld& world) const;
+	bool WillChangePath(TowerPlacementRequest const& request, SCWorld const& world) const;
 
 	bool ProcessTowerPlacementRequest(TowerPlacementRequest const& request, SystemContext const& context) const;
 	bool ProcessTowerSwirlRequest(TowerSwirlRequest const& request, SystemContext const& context) const;

@@ -64,9 +64,6 @@
     <ClCompile Include="Game\SAIController.cpp">
       <Filter>ECS\Systems\AI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SCollision.cpp">
-      <Filter>ECS\Systems\Collision</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SCollisionHash.cpp">
       <Filter>ECS\Systems\Collision</Filter>
     </ClCompile>
@@ -169,10 +166,10 @@
     <ClCompile Include="Game\SVisualEffects.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SCollisionEffect.cpp">
+    <ClCompile Include="Game\SPuddle.cpp">
       <Filter>ECS\Systems\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Game\CCollisionEffect.cpp">
+    <ClCompile Include="Game\CPuddle.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
     <ClCompile Include="Game\CollisionChannel.cpp">
@@ -190,7 +187,7 @@
     <ClCompile Include="Game\SRenderAbilities.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SRenderCollisionEffects.cpp">
+    <ClCompile Include="Game\SRenderPuddles.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Game\CPlaceable.cpp">
@@ -450,9 +447,6 @@
     <ClInclude Include="Game\SAIController.h">
       <Filter>ECS\Systems\AI</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SCollision.h">
-      <Filter>ECS\Systems\Collision</Filter>
-    </ClInclude>
     <ClInclude Include="Game\SCollisionHash.h">
       <Filter>ECS\Systems\Collision</Filter>
     </ClInclude>
@@ -576,10 +570,10 @@
     <ClInclude Include="Game\OverlapInfo.h">
       <Filter>Game\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SCollisionEffect.h">
+    <ClInclude Include="Game\SPuddle.h">
       <Filter>ECS\Systems\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Game\CCollisionEffect.h">
+    <ClInclude Include="Game\CPuddle.h">
       <Filter>ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="Game\CollisionChannel.h">
@@ -621,7 +615,7 @@
     <ClInclude Include="Game\SRenderAbilities.h">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SRenderCollisionEffects.h">
+    <ClInclude Include="Game\SRenderPuddles.h">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Game\CPlaceable.h">
@@ -915,9 +909,6 @@
     </Xml>
     <Xml Include="..\..\Run\Data\Definitions\AbilityDefs.xml">
       <Filter>Data\Definitions</Filter>
-    </Xml>
-    <Xml Include="..\..\Run\Data\SpriteSheets\AoEEffect.xml">
-      <Filter>Data\SpriteSheets</Filter>
     </Xml>
     <Xml Include="..\..\Run\Data\Shaders\HealthBarShader.xml">
       <Filter>Data\Shaders</Filter>

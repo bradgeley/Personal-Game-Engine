@@ -5,19 +5,19 @@
 
 
 
-struct AbilityAoEEffectComponent;
-struct RolledAoEEffectComponent;
+struct AbilityPuddleComponent;
+struct RolledPuddleComponent;
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct CCollisionEffect
+struct CPuddle
 {
 public:
 
-	CCollisionEffect() = default;
+	CPuddle() = default;
 
-	void Initialize(RolledAoEEffectComponent const& aoeEffectComp);
+	void Initialize(RolledPuddleComponent const& puddleComp);
 
 	HitPayload GetWhileOverlappingPayload(float deltaSeconds) const;
 

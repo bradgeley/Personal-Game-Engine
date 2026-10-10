@@ -32,10 +32,10 @@ public:
 	Name m_projectileDefName = Name::Invalid;
 	float m_projSpeed = 1.f;
 
-	AbilityCooldownComponent m_cooldownComp;
-	AbilityPrecisionTargetingComponent m_targetingComp;
-	AbilityCritComponent m_critComp;
-	AbilityChainComponent m_chainComp;
-	AbilityMultishotComponent m_multishotComp;
-	AbilityOnHitComponent m_onHitComp;
+	AbilityCooldownComponent			m_cooldownComp;
+	AbilityPrecisionTargetingComponent	m_targetingComp;
+	AbilityCritComponent				m_critComp;
+	AbilityChainComponent				m_chainComp;
+	AbilityMultishotComponent			m_multishotComp;
+	AbilityOnHitComponent				m_onHitComp;
 };

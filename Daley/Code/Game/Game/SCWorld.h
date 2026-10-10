@@ -25,6 +25,16 @@ struct TowerPlacementRequest;
 
 
 //----------------------------------------------------------------------------------------------------------------------
+struct PlacedTower
+{
+	EntityID    m_entityID      = EntityID::Invalid;
+    IntVec2     m_dims          = IntVec2::OneVector;
+    IntVec2     m_botLeftTile   = IntVec2::ZeroVector;
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 class SCWorld
 {
 public:
@@ -79,6 +89,9 @@ public:
     void ForEachPlayableEdgeTile(std::function<bool(IntVec2 const&)> const& func) const;
     void ForEachCachedEdgePathTile(std::function<bool(IntVec2 const&)> const& func) const;
 
+	EntityID GetTileOccupant(IntVec2 const& tileCoords) const;
+	bool SetTileOccupant(IntVec2 const& tileCoords, EntityID entityID);
+
 	bool IsPointInsideSolidTile(Vec2 const& worldPos) const;
     int GetTileIndexAtWorldPos(Vec2 const& worldPos) const;
     Tile const* GetTileAtWorldPos(Vec2 const& worldPos) const;
@@ -104,6 +117,7 @@ public:
 
     FastGrid<Tile, StaticWorldSettings::s_worldSizePowerOfTwo> m_tiles;
 	FastGrid<int, StaticWorldSettings::s_worldSizePowerOfTwo> m_numEnemiesInTile;
+	FastGrid<EntityID, StaticWorldSettings::s_worldSizePowerOfTwo> m_tileOccupancy;
 
     bool m_isLightingDirty                      = true;
     bool m_isVBODirty                           = true;

@@ -18,9 +18,9 @@ CollisionChannel CollisionChannelUtils::GetCollisionChannelByName(Name const& na
 	{
 		return CollisionChannel::Building;
 	}
-	else if (name == "groundeffect")
+	else if (name == "puddle")
 	{
-		return CollisionChannel::GroundEffect;
+		return CollisionChannel::Puddle;
 	}
 	else
 	{

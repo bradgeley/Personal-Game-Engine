@@ -35,9 +35,9 @@ HitPayload CProjectile::GetMainTargetPayload() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-HitPayload CProjectile::GetAoeTargetPayload() const
+HitPayload CProjectile::GetSplashPayload() const
 {
-	return m_onHitComp.m_aoeHitOnHit.m_payload;
+	return m_onHitComp.m_splashOnHit.m_payload;
 }
 
 

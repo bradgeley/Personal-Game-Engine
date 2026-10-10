@@ -17,8 +17,8 @@
 
 struct CAbility;
 struct CTime;
-struct AbilityAoEEffectComponentDef;
-struct AbilityAoEHitComponentDef;
+struct AbilityPuddleComponentDef;
+struct AbilitySplashComponentDef;
 struct AbilityChainComponentDef;
 struct AbilityCooldownComponentDef;
 struct AbilityCritComponentDef;
@@ -260,7 +260,7 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct RolledAoEHitComponent
+struct RolledSplashComponent
 {
 public:
 
@@ -277,17 +277,17 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityAoEHitComponent
+struct AbilitySplashComponent
 {
 public:
 
-	AbilityAoEHitComponent() = default;
-	AbilityAoEHitComponent(AbilityAoEHitComponentDef const& def);
+	AbilitySplashComponent() = default;
+	AbilitySplashComponent(AbilitySplashComponentDef const& def);
 
 	bool IsRelevant() const;
 	float GetRadius(CAbility const& ability) const;
-	RolledAoEHitComponent CalculateSplashPayload(CAbility const& ability, bool didCrit, float critMultiplier) const;
-	RolledAoEHitComponent CalculateDotPayload(CAbility const& ability, float deltaSeconds) const;
+	RolledSplashComponent CalculateSplashPayload(CAbility const& ability, bool didCrit, float critMultiplier) const;
+	RolledSplashComponent CalculateDotPayload(CAbility const& ability, float deltaSeconds) const;
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -301,7 +301,7 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct RolledAoEEffectComponent
+struct RolledPuddleComponent
 {
 public:
 
@@ -311,7 +311,7 @@ public:
 
 public:
 
-	Name m_aoeEffectDefName = Name::Invalid;
+	Name m_puddleDefName = Name::Invalid;
 	float m_radius = 0.f;
 	float m_durationSeconds = 0.f;
 	HitPayload m_payload;
@@ -321,24 +321,24 @@ public:
 
 
 //----------------------------------------------------------------------------------------------------------------------
-struct AbilityAoEEffectComponent
+struct AbilityPuddleComponent
 {
 public:
 
-	AbilityAoEEffectComponent() = default;
-	AbilityAoEEffectComponent(AbilityAoEEffectComponentDef const& def);
+	AbilityPuddleComponent() = default;
+	AbilityPuddleComponent(AbilityPuddleComponentDef const& def);
 
 	bool IsRelevant() const;
 	float GetRadius(CAbility const& ability) const;
 	float GetDuration(CAbility const& ability) const;
-	RolledAoEEffectComponent CalculatePuddlePayload(CAbility const& ability) const;
-	RolledAoEEffectComponent CalculateDotPayload(CAbility const& ability, float deltaSeconds) const;
+	RolledPuddleComponent CalculatePuddlePayload(CAbility const& ability) const;
+	RolledPuddleComponent CalculateDotPayload(CAbility const& ability, float deltaSeconds) const;
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:
 
-	Name m_aoeEffectDefName = Name::Invalid;
+	Name m_puddleDefName = Name::Invalid;
 	float m_radius = 0.f;
 	float m_durationSeconds = 0.f;
 	AbilityScalingComponent	m_scaling;
@@ -359,8 +359,8 @@ public:
 public:
 
 	HitPayload m_payload;
-	RolledAoEHitComponent m_aoeHitOnHit;
-	RolledAoEEffectComponent m_aoeEffectOnHit;
+	RolledSplashComponent	m_splashOnHit;
+	RolledPuddleComponent	m_puddleOnHit;
 };
 
 
@@ -380,6 +380,6 @@ public:
 public:
 
 	AbilityScalingComponent		m_scaling;
-	AbilityAoEHitComponent		m_aoeHitOnHit;
-	AbilityAoEEffectComponent	m_aoeEffectOnHit;
+	AbilitySplashComponent		m_splashOnHit;
+	AbilityPuddleComponent		m_puddleOnHit;
 };

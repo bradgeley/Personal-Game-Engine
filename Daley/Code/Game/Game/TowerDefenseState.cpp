@@ -144,7 +144,7 @@ void TowerDefenseState::ConfigureECS()
     g_ecs->RegisterComponentArray<CAIController>();
     g_ecs->RegisterComponentArray<CAnimation>();
     g_ecs->RegisterComponentArray<CCollision>();
-    g_ecs->RegisterComponentArray<CCollisionEffect>();
+    g_ecs->RegisterComponentArray<CPuddle>();
     g_ecs->RegisterComponentArray<CDeath>();
     g_ecs->RegisterComponentArray<CHealth>();
     g_ecs->RegisterComponentArray<CLifetime>();
@@ -225,8 +225,7 @@ void TowerDefenseState::ConfigureECS()
     g_ecs->RegisterSystem<SMovement>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SPhysics>((int) FramePhase::Physics);
     g_ecs->RegisterSystem<SCollisionHash>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SCollision>((int) FramePhase::Physics);
-    g_ecs->RegisterSystem<SCollisionEffect>((int) FramePhase::Physics);
+    g_ecs->RegisterSystem<SPuddle>((int) FramePhase::Physics);
 
     // Post-Physics
     g_ecs->RegisterSystem<SProjectile>((int) FramePhase::PostPhysics);
@@ -248,10 +247,9 @@ void TowerDefenseState::ConfigureECS()
     g_ecs->RegisterSystem<SRenderEntities>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderSwirls>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderAbilities>((int) FramePhase::Render);
-    g_ecs->RegisterSystem<SRenderCollisionEffects>((int) FramePhase::Render);
+    g_ecs->RegisterSystem<SRenderPuddles>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderDiscs>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderHealthBars>((int) FramePhase::Render);
-    //g_ecs->RegisterSystem<SRenderStatusIcons>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SFloatingText>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderUI>((int) FramePhase::Render);
     g_ecs->RegisterSystem<SRenderHUD>((int) FramePhase::Render);

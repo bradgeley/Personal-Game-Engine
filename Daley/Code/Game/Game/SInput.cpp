@@ -25,6 +25,11 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SInput::Startup()
 {
 	AddWriteAllDependencies();
@@ -50,7 +55,6 @@ void SInput::Startup()
 void SInput::Run(SystemContext const& context) const
 {
 	// Read Dependencies
-	SCCamera const& camera = context.GetSingletonConst<SCCamera>();
 	SCWindow const& scWindow = context.GetSingletonConst<SCWindow>();
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 	SCWaves const& waves = context.GetSingletonConst<SCWaves>();
@@ -58,6 +62,7 @@ void SInput::Run(SystemContext const& context) const
 	auto& transformStorage = context.GetArrayStorageConst<CTransform>();
 
 	// Write Dependencies
+	SCCamera& camera = context.GetSingleton<SCCamera>();
 	SCEventSystem& scEventSystem = context.GetSingleton<SCEventSystem>();
 	SCInputSystem& scInput = context.GetSingleton<SCInputSystem>();
 	SCEntityFactory& factory = context.GetSingleton<SCEntityFactory>();
@@ -78,8 +83,29 @@ void SInput::Run(SystemContext const& context) const
 		return;
 	}
 
+	// Update Camera Location
+	camera.m_frameZoomDelta = inputSystem.GetMouseWheelChange();
+	camera.m_framePanDirection = Vec2::ZeroVector;
+	camera.m_relativeZoomFocusPoint = inputSystem.GetMouseClientRelativePosition();
+	if (inputSystem.GetMouseClientRelativePosition().x < 0.05f || inputSystem.IsKeyDown(KeyCode::Left) || inputSystem.IsKeyDown('A'))
+	{
+		camera.m_framePanDirection.x = -1.f;
+	}
+	if (inputSystem.GetMouseClientRelativePosition().x > 0.95f || inputSystem.IsKeyDown(KeyCode::Right) || inputSystem.IsKeyDown('D'))
+	{
+		camera.m_framePanDirection.x = 1.f;
+	}
+	if (inputSystem.GetMouseClientRelativePosition().y < 0.05f || inputSystem.IsKeyDown(KeyCode::Down) || inputSystem.IsKeyDown('S'))
+	{
+		camera.m_framePanDirection.y = -1.f;
+	}
+	if (inputSystem.GetMouseClientRelativePosition().y > 0.95f || inputSystem.IsKeyDown(KeyCode::Up) || inputSystem.IsKeyDown('W'))
+	{
+		camera.m_framePanDirection.y = 1.f;
+	}
+
 	// Update mouse position
-	Vec2 relMousePos = inputSystem.GetMouseViewportRelativePosition(StaticWorldSettings::s_visibleWorldAspect);
+	Vec2 relMousePos = inputSystem.GetMouseClientRelativePosition();
 	scInput.m_mouseViewportRelativePos = relMousePos;
 	scInput.m_mouseWorldLocation = camera.m_worldCamera.ScreenToWorldOrtho(relMousePos);
 	scInput.m_mouseTileCoords = world.GetTileCoordsAtWorldPosClamped(scInput.m_mouseWorldLocation);

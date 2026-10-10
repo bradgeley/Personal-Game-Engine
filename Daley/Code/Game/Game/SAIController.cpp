@@ -19,12 +19,7 @@ void SAIController::Startup()
     AddWriteDependencies<CMovement>();
 
 	m_runWhilePaused = false;
-
-    int numThreads = (int) std::thread::hardware_concurrency();
-    if (numThreads > 1)
-    {
-        m_systemSplittingNumJobs = numThreads - 1; // Leave one thread for the main thread to run other systems on
-    }
+    m_systemSplittingNumJobs = std::thread::hardware_concurrency() - 1;
 }
 
 
