@@ -427,6 +427,8 @@ void SWaveSpawner::GenerateEndlessWaves(SCWaves& waves, RunData const& runData, 
 {
 	LevelWaveGenDef waveGenDef;
 
+	waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier = 2.f;
+
 	std::vector<Name> bossNames;
 	EntityDef::GetAllEntityDefsWithTags({ "boss" }, bossNames);
 

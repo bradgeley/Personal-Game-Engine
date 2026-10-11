@@ -283,7 +283,7 @@ void SInput::Run(SystemContext const& context) const
 	}
 
 	// Sell
-	if (inputSystem.WasKeyJustPressed('S') && scInput.m_towerUnderCursor != EntityID::Invalid)
+	if (inputSystem.WasKeyJustPressed('Z') && scInput.m_towerUnderCursor != EntityID::Invalid)
 	{
 		factory.m_towerRemovals.push_back(TowerRemovalRequest{ scInput.m_towerUnderCursor, scInput.m_mouseWorldLocation, true });
 	}

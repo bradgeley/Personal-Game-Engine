@@ -157,6 +157,6 @@ public:
 	LevelWaveGenDef m_waveGenDef;
 
 	// Generated Data
-	float m_secondsBetweenWaves = 30.f;
+	float m_secondsBetweenWaves = 15.f;
 	std::vector<Wave> m_waves;
 };
