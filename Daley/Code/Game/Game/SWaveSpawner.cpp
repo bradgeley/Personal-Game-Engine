@@ -32,7 +32,7 @@ void SWaveSpawner::Startup()
 
 	DevConsoleUtils::AddDevConsoleCommand("StartWaves", SWaveSpawner::StartWaves);
 	DevConsoleUtils::AddDevConsoleCommand("StopWaves", SWaveSpawner::StopWaves);
-	DevConsoleUtils::AddDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves, "seed", DevConsoleArgType::Int, "numWaves", DevConsoleArgType::Int);
+	DevConsoleUtils::AddDevConsoleCommand("GenerateWaves", SWaveSpawner::GenerateWaves, "seed", DevConsoleArgType::Int, "numWaves", DevConsoleArgType::Int, "biomeName", DevConsoleArgType::Name);
 	DevConsoleUtils::AddDevConsoleCommand("StressTest", SWaveSpawner::StressTest, "fillMapTower", DevConsoleArgType::Name);
 }
 
@@ -204,6 +204,7 @@ bool SWaveSpawner::GenerateWaves(NamedProperties& args)
 {
 	uint32_t seed = args.Get<uint32_t>("seed", 0);
 	int numWaves = args.Get<int>("numWaves", 0);
+	Name biomeName = args.Get<Name>("biomeName", Name("forest"));
 	GameMode mode = args.Get<GameMode>("mode", GameMode::Journey);
 
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
@@ -217,8 +218,8 @@ bool SWaveSpawner::GenerateWaves(NamedProperties& args)
 		MapGeneratorDef const* mapGenDef = MapGeneratorDef::GetMapGeneratorDef(missionGenData.m_mapName);
 		ASSERT_OR_DIE(mapGenDef != nullptr, StringUtils::StringF("GenerateWaves: Invalid map generator name: %s", missionGenData.m_mapName.ToCStr()).c_str());
 
-		BiomeDef const* biomeDef = BiomeDef::GetBiomeDef(mapGenDef->m_biome);
-		ASSERT_OR_DIE(biomeDef != nullptr, StringUtils::StringF("GenerateWaves: Invalid biome name: %s", mapGenDef->m_biome.ToCStr()).c_str());
+		BiomeDef const* biomeDef = BiomeDef::GetBiomeDef(biomeName);
+		ASSERT_OR_DIE(biomeDef != nullptr, StringUtils::StringF("GenerateWaves: Invalid biome name: %s", biomeName.ToCStr()).c_str());
 
 		LevelWaveGenDef const& waveGenData = biomeDef->m_waveGenDef;
 

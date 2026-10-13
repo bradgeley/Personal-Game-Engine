@@ -33,6 +33,7 @@ namespace DevConsoleUtils
 	void AddDevConsoleCommand(Name eventName, EventCallbackFunction function);
 	void AddDevConsoleCommand(Name eventName, EventCallbackFunction function, Name argName, DevConsoleArgType argType);
 	void AddDevConsoleCommand(Name eventName, EventCallbackFunction function, Name arg1Name, DevConsoleArgType arg1Type, Name arg2Name, DevConsoleArgType arg2Type);
+	void AddDevConsoleCommand(Name eventName, EventCallbackFunction function, Name arg1Name, DevConsoleArgType arg1Type, Name arg2Name, DevConsoleArgType arg2Type, Name arg3Name, DevConsoleArgType arg3Type);
 	void RemoveDevConsoleCommand(Name eventName, EventCallbackFunction function);
 };
 

@@ -205,26 +205,14 @@
     <ClCompile Include="Game\SFloatingText.cpp">
       <Filter>ECS\Systems\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\MapGeneratorDef.cpp">
-      <Filter>Definitions</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\MapGeneratorComponentDef.cpp">
-      <Filter>Definitions</Filter>
-    </ClCompile>
     <ClCompile Include="Game\BiomeDef.cpp">
       <Filter>Definitions</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\MapGenerator.cpp">
-      <Filter>Game\World</Filter>
     </ClCompile>
     <ClCompile Include="Game\CTime.cpp">
       <Filter>ECS\Components</Filter>
     </ClCompile>
     <ClCompile Include="Game\SCWaves.cpp">
       <Filter>ECS\Singletons</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\MapGeneratorComponent.cpp">
-      <Filter>Game\World</Filter>
     </ClCompile>
     <ClCompile Include="Game\SSaveLoad.cpp">
       <Filter>ECS\Systems\SaveLoad</Filter>
@@ -351,6 +339,27 @@
     </ClCompile>
     <ClCompile Include="Game\SRenderSwirls.cpp">
       <Filter>ECS\Systems\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MapGeneratorDef.cpp">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MapGeneratorComponentDef.cpp">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\TileSelectorComponentDef.cpp">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\TileSelectorComponent.cpp">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MapGenerator.cpp">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\MapGeneratorComponent.cpp">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\NoiseParams.cpp">
+      <Filter>Definitions\MapGenerator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -642,20 +651,8 @@
     <ClInclude Include="Game\FloatingTextInstance.h">
       <Filter>Game\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Game\MapGeneratorDef.h">
-      <Filter>Definitions</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\MapGeneratorComponentDef.h">
-      <Filter>Definitions</Filter>
-    </ClInclude>
     <ClInclude Include="Game\BiomeDef.h">
       <Filter>Definitions</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\MapGenerator.h">
-      <Filter>Game\World</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\MapGeneratorComponent.h">
-      <Filter>Game\World</Filter>
     </ClInclude>
     <ClInclude Include="Game\SSaveLoad.h">
       <Filter>ECS\Systems\SaveLoad</Filter>
@@ -777,6 +774,27 @@
     <ClInclude Include="Game\SRenderSwirls.h">
       <Filter>ECS\Systems\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="Game\MapGeneratorDef.h">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MapGeneratorComponentDef.h">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TileSelectorComponentDef.h">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\TileSelectorComponent.h">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MapGeneratorComponent.h">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MapGenerator.h">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\NoiseParams.h">
+      <Filter>Definitions\MapGenerator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Framework">
@@ -874,6 +892,9 @@
     </Filter>
     <Filter Include="Definitions\AbilityDefs\Ability">
       <UniqueIdentifier>{e98cb851-6305-433d-92f0-24708918ddde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Definitions\MapGenerator">
+      <UniqueIdentifier>{9091d94b-46aa-48ab-8731-db04697b81cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

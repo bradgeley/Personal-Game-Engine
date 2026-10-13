@@ -7,197 +7,13 @@
 #include "SCWorld.h"
 #include "SInput.h" // todo: Weird include for function, move it later
 #include "TileDef.h"
+#include "TileSelectorComponent.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
-#include "Engine/Math/Noise.h"
 #include "Engine/Math/MathUtils.h"
+#include "Engine/Math/Noise.h"
 #include "Engine/Performance/ScopedTimer.h"
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-NoiseRangeSelectorComponent::NoiseRangeSelectorComponent(NoiseRangeSelectorComponentDef const& def) : m_noiseRange(def.m_noiseRange), m_params(def.m_noiseParams)
-{
-	m_name = def.m_name;
-	m_tagQuery = def.m_tagQuery;
-	m_runOrder = def.m_runOrder;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void NoiseRangeSelectorComponent::ForEachSelectedTile(MapGenerator& generator, SCWorld& world, std::function<bool(IntVec2 const&)> const& func)
-{
-	ScopedTimer timer(StringUtils::StringF("NoiseRangeSelectorComponent::ForEachSelectedTile - %s", m_name.ToCStr()));
-
-	uint32_t seed = generator.GetSeed() + static_cast<uint32_t>(m_params.m_seedOffset);
-
-	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
-	{
-		if (!world.DoesTileMatchTagQuery(tileCoords, m_tagQuery))
-		{
-			return true;
-		}
-
-		float noiseValue = Noise::GetPerlinNoise2D((float) tileCoords.x, (float) tileCoords.y, m_params.m_scale, m_params.m_numOctaves, m_params.m_octavePersistence, m_params.m_octaveScale, m_params.m_renormalize, seed);
-		float rangeMappedNoise = MathUtils::RangeMapClamped(noiseValue, -1.f, 1.f, m_params.m_outputRange.x, m_params.m_outputRange.y);
-
-		if (rangeMappedNoise >= m_noiseRange.x && rangeMappedNoise <= m_noiseRange.y)
-		{
-			if (!func(tileCoords))
-			{
-				return false;
-			}
-		}
-		return true; // Continue iterating
-	});
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-NoisePeakSelectorComponent::NoisePeakSelectorComponent(NoisePeakSelectorComponentDef const& def) : m_params(def.m_noiseParams)
-{
-	m_name = def.m_name;
-	m_tagQuery = def.m_tagQuery;
-	m_runOrder = def.m_runOrder;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void NoisePeakSelectorComponent::ForEachSelectedTile(MapGenerator& generator, SCWorld& world, std::function<bool(IntVec2 const&)> const& func)
-{
-	ScopedTimer timer(StringUtils::StringF("NoisePeakSelectorComponent::ForEachSelectedTile - %s", m_name.ToCStr()));
-
-	uint32_t seed = generator.GetSeed() + static_cast<uint32_t>(m_params.m_seedOffset);
-
-	m_cachedNoiseValues.resize(world.m_tiles.GetSize(), 0.f);
-
-	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
-	{
-		int tileIndex = world.m_tiles.GetIndexForCoords(tileCoords);
-		float noiseValue = Noise::GetPerlinNoise2D((float) tileCoords.x, (float) tileCoords.y, m_params.m_scale, m_params.m_numOctaves, m_params.m_octavePersistence, m_params.m_octaveScale, m_params.m_renormalize, seed);
-		float rangeMappedNoise = MathUtils::RangeMapClamped(noiseValue, -1.f, 1.f, m_params.m_outputRange.x, m_params.m_outputRange.y);
-		m_cachedNoiseValues[tileIndex] = rangeMappedNoise;
-		return true; // Continue iterating
-	});
-
-	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
-	{
-		if (!world.DoesTileMatchTagQuery(tileCoords, m_tagQuery))
-		{
-			return true;
-		}
-
-		int tileIndex = world.m_tiles.GetIndexForCoords(tileCoords);
-		float const& noiseValue = m_cachedNoiseValues[tileIndex];
-
-		bool isNoiseValuePeak = true;
-		world.ForEachPlayableNeighboringTile(tileCoords, [&](IntVec2 const& neighborCoords)
-		{
-			int neighborIndex = world.m_tiles.GetIndexForCoords(neighborCoords);
-			float const& neighborNoiseValue = m_cachedNoiseValues[neighborIndex];
-			if (noiseValue <= neighborNoiseValue)
-			{
-				// One neighbor is larger, so this is not a peak
-				isNoiseValuePeak = false;
-				return false;
-			}
-			return true; // Continue checking neighbors
-		});
-
-		if (isNoiseValuePeak)
-		{
-			if (!func(tileCoords))
-			{
-				return false; // Stop iterating
-			}
-		}
-		return true; // Continue iterating
-	});
-
-	m_cachedNoiseValues.clear();
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-DistanceFieldSelectorComponent::DistanceFieldSelectorComponent(DistanceFieldSelectorComponentDef const& def)
-{
-	m_name = def.m_name;
-	m_tagQuery = def.m_tagQuery;
-	m_runOrder = def.m_runOrder;
-	m_distanceRange = def.m_distanceRange;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void DistanceFieldSelectorComponent::ForEachSelectedTile(MapGenerator&, SCWorld& world, std::function<bool(IntVec2 const&)> const& func)
-{
-	m_distanceFieldValues.clear();
-
-	m_distanceFieldValues.resize(world.m_tiles.GetSize(), 9999);
-
-	std::priority_queue<IntVec2> openList;
-
-	// Seed tiles
-	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
-	{
-		if (!world.DoesTileMatchTagQuery(tileCoords, m_tagQuery))
-		{
-			return true;
-		}
-		int tileIndex = world.m_tiles.GetIndexForCoords(tileCoords);
-		m_distanceFieldValues[tileIndex] = 0;
-		openList.emplace(IntVec2(0, tileIndex));
-		return true; // Continue iterating
-	});
-
-	// Run Dijkstra's algorithm to compute distance field
-	while (openList.empty() == false)
-	{
-		IntVec2 pair = openList.top();
-		openList.pop();
-		int const& currentDistance = pair.x;
-		int const& currentIndex = pair.y;
-
-		if (currentDistance > m_distanceFieldValues[currentIndex])
-		{
-			continue; // Already found a shorter path to this tile
-		}
-
-		IntVec2 currentCoords = world.m_tiles.GetCoordsForIndex(currentIndex);
-		world.ForEachPlayableNeighboringTile(currentCoords, [&](IntVec2 const& neighborCoords)
-		{
-			int neighborIndex = world.m_tiles.GetIndexForCoords(neighborCoords);
-			int newDistance = currentDistance + 1; // Assuming uniform cost for each step
-			if (newDistance < m_distanceFieldValues[neighborIndex])
-			{
-				m_distanceFieldValues[neighborIndex] = newDistance;
-				openList.emplace(IntVec2(newDistance, neighborIndex));
-			}
-			return true; // Continue checking neighbors
-		});
-	}
-
-	// Run selector logic
-	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
-	{
-		int tileIndex = world.m_tiles.GetIndexForCoords(tileCoords);
-		int distanceValue = m_distanceFieldValues[tileIndex];
-		if (distanceValue >= m_distanceRange.x && distanceValue <= m_distanceRange.y)
-		{
-			if (!func(tileCoords))
-			{
-				return false; // Stop iterating
-			}
-		}
-		return true; // Continue iterating
-	});
-}
 
 
 
@@ -206,7 +22,6 @@ TileGeneratorComponent::TileGeneratorComponent(TileGeneratorComponentDef const& 
 {
 	m_runOrder = def.m_runOrder;
 }
-
 
 
 

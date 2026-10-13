@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "BiomeDef.h"
 #include "MapGeneratorComponentDef.h"
+#include "TileSelectorComponentDef.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 
@@ -33,7 +34,15 @@ BiomeDef::BiomeDef(XmlElement const* biomeDefXmlElement)
 		}
 		else
 		{
-			ERROR_AND_DIE(StringUtils::StringF("Failed to create MapGeneratorComponentDef from XML element <%s> in BiomeDef: %s", mapGeneratorComponentDefElement->Name(), m_name.ToCStr()));
+			TileSelectorComponentDef const* tileSelectorComponentDef = TileSelectorComponentDef::MakeFromXmlElement(mapGeneratorComponentDefElement);
+			if (tileSelectorComponentDef)
+			{
+				m_tileSelectorComponentDefs.emplace_back(tileSelectorComponentDef);
+			}
+			else
+			{
+				ERROR_AND_DIE(StringUtils::StringF("Failed to create MapGeneratorComponentDef from XML element <%s> in BiomeDef: %s", mapGeneratorComponentDefElement->Name(), m_name.ToCStr()));
+			}
 		}
 		mapGeneratorComponentDefElement = mapGeneratorComponentDefElement->NextSiblingElement();
 	}
@@ -54,6 +63,12 @@ void BiomeDef::Release()
 		delete m_generatorComponentDefs[i];
 	}
 	m_generatorComponentDefs.clear();
+
+	for (size_t i = 0; i < m_tileSelectorComponentDefs.size(); ++i)
+	{
+		delete m_tileSelectorComponentDefs[i];
+	}
+	m_tileSelectorComponentDefs.clear();
 }
 
 

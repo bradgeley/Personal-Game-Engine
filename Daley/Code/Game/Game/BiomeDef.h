@@ -8,6 +8,7 @@
 
 
 struct MapGeneratorComponentDef;
+struct TileSelectorComponentDef;
 
 
 
@@ -38,5 +39,6 @@ public:
 	Name		m_goalTile		= "islandWater";
 	Name 		m_pathTile		= "snow";
 	std::vector<MapGeneratorComponentDef const*> m_generatorComponentDefs;
+	std::vector<TileSelectorComponentDef const*> m_tileSelectorComponentDefs;
 	LevelWaveGenDef m_waveGenDef;
 };

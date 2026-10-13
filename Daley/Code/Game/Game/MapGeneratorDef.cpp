@@ -2,6 +2,7 @@
 #include "MapGeneratorDef.h"
 #include "BiomeDef.h"
 #include "MapGeneratorComponentDef.h"
+#include "TileSelectorComponentDef.h"
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Math/Noise.h"
@@ -18,10 +19,6 @@ std::vector<MapGeneratorDef> MapGeneratorDef::s_mapGeneratorDefs;
 MapGeneratorDef::MapGeneratorDef(XmlElement const* mapGeneratorDefXmlElement)
 {
 	m_name = XmlUtils::ParseXmlAttribute(*mapGeneratorDefXmlElement, "name", m_name);
-	m_biome = XmlUtils::ParseXmlAttribute(*mapGeneratorDefXmlElement, "biome", m_biome);
-
-	BiomeDef const* biomeDef = BiomeDef::GetBiomeDef(m_biome);
-	ASSERT_OR_DIE(biomeDef != nullptr, StringUtils::StringF("MapGeneratorDef '%s' has invalid biome '%s'", m_name.ToCStr(), m_biome.ToCStr()));
 
 	XmlElement const* mapGeneratorComponentDefElement = mapGeneratorDefXmlElement->FirstChildElement();
 	while (mapGeneratorComponentDefElement)
@@ -33,7 +30,15 @@ MapGeneratorDef::MapGeneratorDef(XmlElement const* mapGeneratorDefXmlElement)
 		}
 		else
 		{
-			ERROR_AND_DIE(StringUtils::StringF("Failed to create MapGeneratorComponentDef from XML element <%s> in MapGeneratorDef: %s", mapGeneratorComponentDefElement->Name(), m_name.ToCStr()));
+			TileSelectorComponentDef const* tileSelectorComponentDef = TileSelectorComponentDef::MakeFromXmlElement(mapGeneratorComponentDefElement);
+			if (tileSelectorComponentDef)
+			{
+				m_tileSelectorComponentDefs.emplace_back(const_cast<TileSelectorComponentDef*>(tileSelectorComponentDef));
+			}
+			else
+			{
+				ERROR_AND_DIE(StringUtils::StringF("Failed to create MapGeneratorComponentDef from XML element <%s> in MapGeneratorDef: %s", mapGeneratorComponentDefElement->Name(), m_name.ToCStr()));
+			}
 		}
 		mapGeneratorComponentDefElement = mapGeneratorComponentDefElement->NextSiblingElement();
 	}
@@ -49,6 +54,12 @@ MapGeneratorDef::~MapGeneratorDef()
 		delete m_mapGeneratorComponentDefs[i];
 	}
 	m_mapGeneratorComponentDefs.clear();
+
+	for (size_t i = 0; i < m_tileSelectorComponentDefs.size(); ++i)
+	{
+		delete m_tileSelectorComponentDefs[i];
+	}
+	m_tileSelectorComponentDefs.clear();
 }
 
 
@@ -56,10 +67,11 @@ MapGeneratorDef::~MapGeneratorDef()
 //----------------------------------------------------------------------------------------------------------------------
 MapGeneratorDef::MapGeneratorDef(MapGeneratorDef&& other) noexcept :
 	m_name(other.m_name),
-	m_biome(other.m_biome),
-	m_mapGeneratorComponentDefs(std::move(other.m_mapGeneratorComponentDefs))
+	m_mapGeneratorComponentDefs(std::move(other.m_mapGeneratorComponentDefs)),
+	m_tileSelectorComponentDefs(std::move(other.m_tileSelectorComponentDefs))
 {
 	other.m_mapGeneratorComponentDefs.clear();
+	other.m_tileSelectorComponentDefs.clear();
 }
 
 

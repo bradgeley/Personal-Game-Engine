@@ -1,31 +1,13 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "Engine/Core/Name.h"
+#include "Engine/Core/XmlUtils.h"
 #include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
-#include "Engine/Core/Name.h"
-#include "Engine/Core/TagQuery.h"
-#include "Engine/Core/XmlUtils.h"
 
 
 
 class MapGeneratorComponent;
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct NoiseParams
-{
-	NoiseParams() = default;
-	NoiseParams(XmlElement const* xmlElement);
-
-	Vec2	 m_outputRange = Vec2(0.f, 1.f); // Result will be range mapped to this range after renormalization
-	float	 m_scale = 1.f;
-	int		 m_numOctaves = 1;
-	float	 m_octavePersistence = 0.5f;
-	float	 m_octaveScale = 2.f;
-	bool	 m_renormalize = true;
-	int		 m_seedOffset = 0;
-};
 
 
 
@@ -41,58 +23,6 @@ struct MapGeneratorComponentDef
 	static MapGeneratorComponentDef const* MakeFromXmlElement(XmlElement const* xmlElement);
 
 	int m_runOrder = 0; // Lower numbers run first
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// Places tiles in a range of noise values
-//
-struct NoiseRangeSelectorComponentDef : public MapGeneratorComponentDef
-{
-	NoiseRangeSelectorComponentDef(XmlElement const* xmlElement);
-	~NoiseRangeSelectorComponentDef() = default;
-
-	virtual MapGeneratorComponent* MakeComponentInstance() const override;
-
-	Name m_name = "Unnamed SelectorDef";
-	Vec2 m_noiseRange = Vec2(0.f, 1.f);
-	NoiseParams m_noiseParams;
-	TagQuery m_tagQuery;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// Places tiles at local maxima of noise values
-//
-struct NoisePeakSelectorComponentDef : public MapGeneratorComponentDef
-{
-	NoisePeakSelectorComponentDef(XmlElement const* xmlElement);
-	~NoisePeakSelectorComponentDef() = default;
-
-	virtual MapGeneratorComponent* MakeComponentInstance() const override;
-
-	Name m_name = "Unnamed SelectorDef";
-	NoiseParams m_noiseParams;
-	TagQuery m_tagQuery;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// Places tiles in a range of distance field values based on a tile tag query
-//
-struct DistanceFieldSelectorComponentDef : public MapGeneratorComponentDef
-{
-	DistanceFieldSelectorComponentDef(XmlElement const* xmlElement);
-	~DistanceFieldSelectorComponentDef() = default;
-
-	virtual MapGeneratorComponent* MakeComponentInstance() const override;
-
-	Name m_name = "Unnamed SelectorDef";
-	IntVec2 m_distanceRange = IntVec2(0, 999);
-	TagQuery m_tagQuery;
 };
 
 

@@ -108,6 +108,22 @@ void DevConsoleUtils::AddDevConsoleCommand(Name eventName, EventCallbackFunction
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void DevConsoleUtils::AddDevConsoleCommand(Name eventName, EventCallbackFunction function, Name arg1Name, DevConsoleArgType arg1Type, Name arg2Name, DevConsoleArgType arg2Type, Name arg3Name, DevConsoleArgType arg3Type)
+{
+	EventUtils::SubscribeEventCallbackFunction(eventName, function);
+	if (g_devConsole)
+	{
+		DevConsoleCommandInfo commandInfo(eventName);
+		commandInfo.AddArg(arg1Name, arg1Type);
+		commandInfo.AddArg(arg2Name, arg2Type);
+		commandInfo.AddArg(arg3Name, arg3Type);
+		g_devConsole->AddDevConsoleCommandInfo(commandInfo);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void DevConsoleUtils::RemoveDevConsoleCommand(Name eventName, EventCallbackFunction function)
 {
 	EventUtils::UnsubscribeEventCallbackFunction(eventName, function);

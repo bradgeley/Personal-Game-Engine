@@ -40,6 +40,7 @@ struct PlaceableTower
 //----------------------------------------------------------------------------------------------------------------------
 struct MissionGenData
 {
+	Name m_biomeName = Name::Invalid;
 	Name m_mapName = Name::Invalid;
 };
 

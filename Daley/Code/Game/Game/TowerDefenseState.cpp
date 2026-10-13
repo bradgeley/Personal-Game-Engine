@@ -100,12 +100,17 @@ void TowerDefenseState::StartGame(NamedProperties const& inProps)
 	int numWaves = StaticGameSettings::s_numWavesInFirstMission + runData.m_missionIndex * StaticGameSettings::s_numWavesIncreasePerMission;
     uint32_t seed = runData.m_seed + static_cast<uint32_t>(runData.m_missionIndex);
 
+	MissionGenData const& currentMissionGenData = scRunData.m_data->m_missionGenData[runData.m_missionIndex];
+	Name biomeName = currentMissionGenData.m_biomeName;
+
     g_ecs->Startup();
 
     NamedProperties props;
     props.Set<uint32_t>("seed", seed);
 	props.Set<int>("numWaves", numWaves);
 	props.Set<GameMode>("mode", runData.m_mode);
+	props.Set<Name>("biomeName", biomeName);
+
 	g_eventSystem->FireEvent("GenerateWaves", props);
 
 	g_eventSystem->FireEvent("StartWaves", props);

@@ -16,17 +16,17 @@
         <NoiseParams outputRange="0,1" scale="10" numOctaves="2" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="2"></NoiseParams>
       </NoiseRangeSelector>
       
-      <NoiseRangeSelector name="smallTrees" range="0.75,1">
+      <NoiseRangeSelector name="smallTrees" range="0.75,1" chance="0.5">
         <TagQuery doesNotHaveAny="path"></TagQuery>
         <NoiseParams outputRange="0,1" scale="10" numOctaves="3" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="4"></NoiseParams>
       </NoiseRangeSelector>
       
-      <NoisePeakSelector name="bigTrees">
+      <NoisePeakSelector name="bigTrees" chance="1">
         <TagQuery doesNotHaveAny="path"></TagQuery>
         <NoiseParams outputRange="0,1" scale="10" numOctaves="1" octavePersistence="0.5f" octaveScale="2.f" renormalize="true" seedOffset="5"></NoiseParams>
       </NoisePeakSelector>
 
-      <DistanceFieldSelector name="treesDistanceField" range="12,40">
+      <DistanceFieldSelector name="treesDistanceField" range="12,40" chance="0.25">
         <TagQuery hasAny="path,goal"></TagQuery>
       </DistanceFieldSelector>
 

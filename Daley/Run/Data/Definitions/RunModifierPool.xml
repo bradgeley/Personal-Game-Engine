@@ -16,7 +16,7 @@
       <DisplayData displayName="Random Flavor" spriteSheet="Data/SpriteSheets/Icons.xml" anim="swirl3" tint="255,255,255"></DisplayData>
     </FlavorUnlockRunModifier>
     
-    <FlavorUnlockRunModifier name="Vanilla" baseCost="60" levelRequirement="0" weight="1">
+    <FlavorUnlockRunModifier name="Vanilla" baseCost="20" levelRequirement="0" weight="1">
       <DisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
     </FlavorUnlockRunModifier>
 

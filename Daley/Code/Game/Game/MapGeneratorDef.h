@@ -7,6 +7,7 @@
 
 
 struct MapGeneratorComponentDef;
+struct TileSelectorComponentDef;
 
 
 
@@ -38,7 +39,7 @@ private:
 public:
 
 	Name m_name = "Unnamed MapGeneratorDef";
-	Name m_biome = "Unnamed Biome";
 	 
 	std::vector<MapGeneratorComponentDef*> m_mapGeneratorComponentDefs;
+	std::vector<TileSelectorComponentDef*> m_tileSelectorComponentDefs;
 }; 

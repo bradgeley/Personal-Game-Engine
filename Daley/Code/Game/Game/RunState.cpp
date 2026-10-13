@@ -43,19 +43,19 @@ void SetupJourney(RunData& runData)
 	// Todo: make a file for journey
 
 	// Forest Biome first
-	runData.m_missionGenData[0] = { "forest" };
-	runData.m_missionGenData[1] = { "forestOpen" };
-	runData.m_missionGenData[2] = { "forestHatch" };
+	runData.m_missionGenData[0] = { "forest", "simple"};
+	runData.m_missionGenData[1] = { "forest", "open" };
+	runData.m_missionGenData[2] = { "forest", "hatch" };
 
 	// Then Desert
-	runData.m_missionGenData[3] = { "desert" };
-	runData.m_missionGenData[4] = { "desertOpen" };
-	runData.m_missionGenData[5] = { "desertHatch" };
+	runData.m_missionGenData[3] = { "desert", "simple" };
+	runData.m_missionGenData[4] = { "desert", "open" };
+	runData.m_missionGenData[5] = { "desert", "hatch" };
 
 	// Then River
-	runData.m_missionGenData[6] = { "river" };
-	runData.m_missionGenData[7] = { "riverDouble" };
-	runData.m_missionGenData[8] = { "riverHatch" };
+	runData.m_missionGenData[6] = { "river", "simple" };
+	runData.m_missionGenData[7] = { "river", "double" };
+	runData.m_missionGenData[8] = { "river", "hatch" };
 }
 
 
@@ -69,7 +69,7 @@ void SetupEndless(RunData& runData)
 	runData.m_mode = GameMode::Endless;
 
 	//runData.m_missionGenData[0] = { mapGeneratorDef->m_name };
-	runData.m_missionGenData[0] = { "forest" };
+	runData.m_missionGenData[0] = { "forest", "simple" };
 }
 
 

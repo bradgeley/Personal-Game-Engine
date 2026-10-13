@@ -23,9 +23,9 @@ public:
 	MapGenerator& operator=(MapGenerator const&) = delete;
 	~MapGenerator();
 
-	void Initialize(MapGeneratorDef const& mapGenDef, uint32_t seed);
+	void Initialize(MapGeneratorDef const& mapGenDef, BiomeDef const& biomeDef, uint32_t seed);
 	uint32_t GetSeed() const { return m_seed; }
-	BiomeDef const* GetBiomeDef() const;
+	BiomeDef const* GetBiomeDef() const { return m_biomeDef; }
 	TileSelectorComponent* GetTileSelectorComponentByName(Name const& name) const;
 
 	bool GenerateMap(SCWorld& world);
@@ -33,7 +33,9 @@ public:
 private:
 
 	MapGeneratorDef const* m_def = nullptr;
+	BiomeDef const* m_biomeDef = nullptr;
 	uint32_t m_seed = 0;
+	std::vector<TileSelectorComponent*> m_tileSelectors;
 	std::vector<MapGeneratorComponent*> m_components;
 	//std::vector<MapGeneratorModifier> m_modifiers;
 };

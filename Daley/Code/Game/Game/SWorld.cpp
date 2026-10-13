@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SWorld.h"
+#include "BiomeDef.h"
 #include "CCollision.h"
 #include "MapGeneratorDef.h"
 #include "MapGenerator.h"
@@ -28,6 +29,7 @@ void SWorld::Startup()
 
 	NamedProperties props;
 	props.Set<Name>("mapGenName", missionGenData.m_mapName);
+	props.Set<Name>("biomeName", missionGenData.m_biomeName);
 	props.Set<uint32_t>("seed", runData.m_seed + static_cast<uint32_t>(runData.m_missionIndex));
 	GenerateMap(props);
 }
@@ -86,6 +88,7 @@ void SWorld::EndFrame() const
 bool SWorld::GenerateMap(NamedProperties& params)
 {
 	Name mapGenName = params.Get<Name>("mapGenName", Name(""));
+	Name biomeName = params.Get<Name>("biomeName", Name(""));
 	uint32_t seed = params.Get<uint32_t>("seed", 0);
 
 	MapGeneratorDef const* def = MapGeneratorDef::GetMapGeneratorDef(mapGenName);
@@ -94,13 +97,18 @@ bool SWorld::GenerateMap(NamedProperties& params)
 		return false;
 	}
 
-	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
+	BiomeDef const* biomeDef = BiomeDef::GetBiomeDef(biomeName);
+	if (biomeDef == nullptr)
+	{
+		biomeDef = BiomeDef::GetBiomeDef("forest");
+	}
 
 	g_ecs->DestroyAllEntities();
 
 	MapGenerator mapGenerator;
-	mapGenerator.Initialize(*def, seed);
+	mapGenerator.Initialize(*def, *biomeDef, seed);
 
+	SCWorld& world = g_ecs->GetSingleton<SCWorld>();
 	mapGenerator.GenerateMap(world);
 
 	SCEntityFactory& scEntityFactory = g_ecs->GetSingleton<SCEntityFactory>();
