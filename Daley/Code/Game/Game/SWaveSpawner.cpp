@@ -428,7 +428,7 @@ void SWaveSpawner::GenerateEndlessWaves(SCWaves& waves, RunData const& runData, 
 {
 	LevelWaveGenDef waveGenDef;
 
-	waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier = 2.f;
+	waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier = 1.f;
 
 	std::vector<Name> bossNames;
 	EntityDef::GetAllEntityDefsWithTags({ "boss" }, bossNames);
@@ -442,22 +442,22 @@ void SWaveSpawner::GenerateEndlessWaves(SCWaves& waves, RunData const& runData, 
 
 	FixedWaveStreamDef firstWave;
 	firstWave.m_entityName = GetRandomEnemyWithTags({ "small" }, *g_rng);
-	firstWave.m_numEntities = 20;
-	firstWave.m_overTimeSeconds = 20.f;
+	firstWave.m_numEntities = 60;
+	firstWave.m_overTimeSeconds = 60.f;
 	firstWave.m_waveIndex = 0;
 	waveGenDef.m_fixedWaves.push_back(firstWave);
 
 	FixedWaveStreamDef secondWave;
-	secondWave.m_entityName = GetRandomEnemyWithTags({ "small" }, *g_rng);
+	secondWave.m_entityName = GetRandomEnemyWithTags({ "medium" }, *g_rng);
 	secondWave.m_numEntities = 30;
-	secondWave.m_overTimeSeconds = 20.f;
+	secondWave.m_overTimeSeconds = 60.f;
 	secondWave.m_waveIndex = 1;
 	waveGenDef.m_fixedWaves.push_back(secondWave);
 
 	FixedWaveStreamDef thirdWave;
-	thirdWave.m_entityName = GetRandomEnemyWithTags({ "small" }, *g_rng);
-	thirdWave.m_numEntities = 50;
-	thirdWave.m_overTimeSeconds = 20.f;
+	thirdWave.m_entityName = GetRandomEnemyWithTags({ "large" }, *g_rng);
+	thirdWave.m_numEntities = 15;
+	thirdWave.m_overTimeSeconds = 60.f;
 	thirdWave.m_waveIndex = 2;
 	waveGenDef.m_fixedWaves.push_back(thirdWave);
 
@@ -476,23 +476,23 @@ void SWaveSpawner::GenerateEndlessWaves(SCWaves& waves, RunData const& runData, 
 
 	RandomWaveStreamDef smallWave;
 	smallWave.m_enemyTags = { "small" };
-	smallWave.m_minNumEntities = 30;
-	smallWave.m_maxNumEntities = 40;
-	smallWave.m_overTimeSeconds = 20.f;
+	smallWave.m_minNumEntities = 100;
+	smallWave.m_maxNumEntities = 100;
+	smallWave.m_overTimeSeconds = 60.f;
 	waveGenDef.m_randomWaves.push_back(smallWave);
 
 	RandomWaveStreamDef mediumWave;
 	mediumWave.m_enemyTags = { "medium" };
-	mediumWave.m_minNumEntities = 20;
-	mediumWave.m_maxNumEntities = 30;
-	mediumWave.m_overTimeSeconds = 20.f;
+	mediumWave.m_minNumEntities = 50;
+	mediumWave.m_maxNumEntities = 50;
+	mediumWave.m_overTimeSeconds = 60.f;
 	waveGenDef.m_randomWaves.push_back(mediumWave);
 
 	RandomWaveStreamDef largeWave;
 	largeWave.m_enemyTags = { "large" };
-	largeWave.m_minNumEntities = 10;
-	largeWave.m_maxNumEntities = 20;
-	largeWave.m_overTimeSeconds = 20.f;
+	largeWave.m_minNumEntities = 25;
+	largeWave.m_maxNumEntities = 25;
+	largeWave.m_overTimeSeconds = 60.f;
 	waveGenDef.m_randomWaves.push_back(largeWave);
 
 	GenerateWaves(waves, waveGenDef, runData, seed, maxEndlessWaves);

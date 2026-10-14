@@ -110,7 +110,7 @@ namespace StaticGameSettings
 
 	static constexpr float s_minCameraHeight				= 10.f;
 	static constexpr float s_maxCameraHeight				= 1000.f;
-	static constexpr float s_cameraZoomRatioPerStep			= 0.2f;
+	static constexpr float s_cameraZoomRatioPerStep			= 0.1f;
 	static constexpr float s_baseCameraHeightInTiles		= 100.f;
 	static constexpr float s_cameraHeightRatioPanSpeed		= 0.5f; // If camera is 10 tiles high, pan speed is 5 tiles per second if this value is 0.5. That way panning gets faster the more zoomed out you are.
 
