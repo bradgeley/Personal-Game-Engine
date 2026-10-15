@@ -169,7 +169,7 @@ public:
 	AbilityScalingComponent() = default;
 	AbilityScalingComponent(AbilityScalingComponentDef const& def);
 
-	bool IsRelevant() const { return m_physical > 0.f || m_burn > 0.f || m_poison > 0.f || m_slow > 0.f || m_haste > 0.f; }
+	bool IsRelevant() const { return m_physical > 0.f || m_burn > 0.f || m_poison > 0.f || m_vulnerability > 0.f || m_slow > 0.f || m_haste > 0.f; }
 	HitPayload CalculateHitPayload(CAbility const& ability, bool didCrit = false, float critMultiplier = 1.f) const;
 	HitPayload CalculateDotPayload(CAbility const& ability, float deltaSeconds) const;
 

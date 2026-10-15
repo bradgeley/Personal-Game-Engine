@@ -509,6 +509,7 @@ void AbilityScalingComponent::AppendDebugString(EntityDebugContext& debugContext
 	}
 
 	float physScaling = GetPhysicalScaling(*debugContext.m_abilityComp);
+	float vulnScaling = GetVulnerabilityScaling(*debugContext.m_abilityComp);
 	float burnScaling = GetBurnScaling(*debugContext.m_abilityComp);
 	float poisonScaling = GetPoisonScaling(*debugContext.m_abilityComp);
 	float slowScaling = GetSlowScaling(*debugContext.m_abilityComp);
@@ -518,6 +519,10 @@ void AbilityScalingComponent::AppendDebugString(EntityDebugContext& debugContext
     {
 		debugContext.m_debugString += StringUtils::StringF("Phys (%.2f) ", physScaling);
     }
+	if (vulnScaling > 0.f)
+	{
+		debugContext.m_debugString += StringUtils::StringF("Vuln (%.2f) ", vulnScaling);
+	}
 	if (burnScaling > 0.f)
 	{
 		debugContext.m_debugString += StringUtils::StringF("Burn (%.2f) ", burnScaling);

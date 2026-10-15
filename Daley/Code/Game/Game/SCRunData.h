@@ -82,6 +82,7 @@ public:
 	float		m_fractionalExperience	= 0.f; // overflow exp from multiplier increases
 	float		m_experienceMultiplier	= 1.f;
 	float		m_startingGold			= StaticGameSettings::s_baseGold;
+	float		m_income				= StaticGameSettings::s_baseIncome;
 	float		m_creditLimit			= StaticGameSettings::s_baseCreditLimit;
 	float		m_savingsInterestRate	= StaticGameSettings::s_baseSavingsInterestRate;
 	float		m_debtInterestRate		= StaticGameSettings::s_baseDebtInterestRate;

@@ -130,6 +130,7 @@ void RunData::GenerateModifierChoices()
 void RunData::ResetModifiableAttributes()
 {
 	m_goldGainMultiplier = 1.f;
+	m_income = StaticGameSettings::s_baseIncome;
 	m_savingsInterestRate = StaticGameSettings::s_baseSavingsInterestRate;
 	m_interestTimerSeconds = StaticGameSettings::s_baseInterestTimerSeconds;
 	m_maxSellsPerMission = StaticGameSettings::s_baseSellMaximum;

@@ -80,13 +80,15 @@ namespace StaticGameSettings
 
 	static constexpr float s_basePlayerHealth				= 100.f;
 	static constexpr float s_basePlayerHealthRegen			= 0.1f;
-	static constexpr float s_baseGold						= 200.f;
+	static constexpr float s_baseGold						= 100.f;
+	static constexpr float s_baseIncome						= 30.f;
+	static constexpr float s_baseIncomePerLevel				= 0.1f;
 	static constexpr float s_baseCreditLimit				= 0.f;
 	static constexpr float s_baseSavingsInterestRate		= 0.01f;
 	static constexpr float s_baseDebtInterestRate			= 0.5f;
 	static constexpr float s_baseInterestTimerSeconds		= 30.f;
 	static constexpr float s_baseSellRefundRate				= 0.5f;
-	static constexpr float s_baseCostRampPerTower			= 1.2f;
+	static constexpr float s_baseCostRampPerTower			= 1.05f;
 	static constexpr float s_baseSwirlCost					= 100.f;
 	static constexpr int   s_baseSellMaximum				= 5;
 	static constexpr int   s_flavorUnlockLimit				= 4; // max flavors that can be unlocked in 1 run

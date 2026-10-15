@@ -58,10 +58,20 @@ void SCurrency::Run(SystemContext const& context) const
 
 	// Tick interest timer
 	runData.m_interestTimerSecondsRemaining -= context.m_deltaSeconds;
-	
-	// Add interest/debt to player gold if interest timer expired
+
+	if (runData.m_interestTimerSecondsRemaining > 0.f)
+	{
+		return;
+	}
+
+	float incomeIncrease = runData.GetLevelData(runData.m_experience).m_level * StaticGameSettings::s_baseIncomePerLevel;
+	float totalIncome = runData.m_income + incomeIncrease;
+
+	// Add income/interest/debt to player gold if interest timer expired
 	while (runData.m_interestTimerSecondsRemaining <= 0.f)
 	{
+		runData.m_gold += totalIncome * runData.m_goldGainMultiplier;
+
 		if (runData.m_gold > 0.f)
 		{
 			runData.m_gold += runData.m_gold * runData.m_savingsInterestRate;
@@ -70,6 +80,7 @@ void SCurrency::Run(SystemContext const& context) const
 		{
 			runData.m_gold += runData.m_gold * runData.m_debtInterestRate;
 		}
+
 		runData.m_interestTimerSecondsRemaining += runData.m_interestTimerSeconds;
 	}
 }
