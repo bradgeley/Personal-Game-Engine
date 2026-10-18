@@ -8,7 +8,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 bool CTime::IsSlowed() const
 {
-	return m_remainingSlowDuration > 0.f;
+	return m_remainingSlowDuration > 0.f || GetIsSlowedThisFrame();
 }
 
 
@@ -16,7 +16,7 @@ bool CTime::IsSlowed() const
 //----------------------------------------------------------------------------------------------------------------------
 bool CTime::IsHasted() const
 {
-	return m_remainingHasteDuration > 0.f;
+	return m_remainingHasteDuration > 0.f || GetIsHastedThisFrame();
 }
 
 
@@ -24,8 +24,55 @@ bool CTime::IsHasted() const
 //----------------------------------------------------------------------------------------------------------------------
 void CTime::TakePayload(HitPayload const& payload)
 {
-	m_remainingSlowDuration += payload.m_slowDuration;
+	float slowTaken = payload.m_slowDuration * (1.f - m_slowResistance);
+	m_remainingSlowDuration += slowTaken;
 	m_remainingHasteDuration += payload.m_hasteDuration;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CTime::GetIsSlowedThisFrame() const
+{
+	return (static_cast<uint8_t>(m_timeFlags) & static_cast<uint8_t>(TimeFlags::SlowedThisFrame)) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CTime::GetIsHastedThisFrame() const
+{
+	return (static_cast<uint8_t>(m_timeFlags) & static_cast<uint8_t>(TimeFlags::HastedThisFrame)) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CTime::SetIsSlowedThisFrame(bool isSlowed)
+{
+	if (isSlowed)
+	{
+		m_timeFlags = static_cast<TimeFlags>(static_cast<uint8_t>(m_timeFlags) | static_cast<uint8_t>(TimeFlags::SlowedThisFrame));
+	}
+	else
+	{
+		m_timeFlags = static_cast<TimeFlags>(static_cast<uint8_t>(m_timeFlags) & ~static_cast<uint8_t>(TimeFlags::SlowedThisFrame));
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CTime::SetIsHastedThisFrame(bool isHasted)
+{
+	if (isHasted)
+	{
+		m_timeFlags = static_cast<TimeFlags>(static_cast<uint8_t>(m_timeFlags) | static_cast<uint8_t>(TimeFlags::HastedThisFrame));
+	}
+	else
+	{
+		m_timeFlags = static_cast<TimeFlags>(static_cast<uint8_t>(m_timeFlags) & ~static_cast<uint8_t>(TimeFlags::HastedThisFrame));
+	}
 }
 
 

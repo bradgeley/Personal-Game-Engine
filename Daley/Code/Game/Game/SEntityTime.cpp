@@ -44,6 +44,9 @@ void SEntityTime::Run(SystemContext const& context) const
 		bool isSlowed = cTime.IsSlowed();
 		bool isHasted = cTime.IsHasted();
 
+		cTime.SetIsHastedThisFrame(false);
+		cTime.SetIsSlowedThisFrame(false);
+
 		double timeDilation = 1.0;
 		if (isSlowed)
 		{

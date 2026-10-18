@@ -192,7 +192,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				if (context.HasComponent<CHealth>(it.GetEntityID()))
 				{
 					CHealth const& health = healthStorage[it];
-					health.AppendDebugString(debugContext);
+ 					health.AppendDebugString(debugContext);
 				}
 				if (context.HasComponent<CMovement>(it.GetEntityID()))
 				{

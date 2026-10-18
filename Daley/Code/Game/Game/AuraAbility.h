@@ -28,6 +28,8 @@ public:
 	virtual void AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
+	AuraAbilityDef const* GetDef() const;
+
 public:
 
 	float m_radius = 0.f;

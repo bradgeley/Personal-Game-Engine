@@ -120,7 +120,8 @@ void SystemScheduler::RunFrame(float deltaSeconds)
 	{
 		for (auto& system : systemSubgraph->m_systems)
 		{
-			system->BeginFrame();
+			SystemContext context(system, deltaSeconds);
+			system->BeginFrame(context);
 		}
 	}
 
@@ -138,7 +139,8 @@ void SystemScheduler::RunFrame(float deltaSeconds)
 	{
 		for (auto& system : systemSubgraph->m_systems)
 		{
-			system->EndFrame();
+			SystemContext context(system, deltaSeconds);
+			system->EndFrame(context);
 		}
 	}
 }

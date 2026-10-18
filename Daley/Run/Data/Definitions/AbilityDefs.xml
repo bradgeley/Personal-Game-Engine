@@ -204,12 +204,27 @@
     <Render tint="255,255,255,25" depth="0.92"/>
   </AuraAbilityDef>
 
+  <AuraAbilityDef name="HasteAura" type="Haste">
+    <Targeting maxRange="4"/>
+    <Render tint="255,255,255,25" depth="0.92"/>
+  </AuraAbilityDef>
+
+  <AuraAbilityDef name="SlowAura" type="Slow">
+    <Targeting maxRange="4"/>
+    <Render tint="255,255,255,25" depth="0.92"/>
+  </AuraAbilityDef>
+
   <AuraAbilityDef name="BurnSuppressionAura" type="BurnSuppression">
     <Targeting maxRange="4"/>
     <Render tint="255,0,0,25" depth="0.92"/>
   </AuraAbilityDef>
 
   <AuraAbilityDef name="PoisonSuppressionAura" type="PoisonSuppression">
+    <Targeting maxRange="4"/>
+    <Render tint="0,100,0,25" depth="0.92"/>
+  </AuraAbilityDef>
+
+  <AuraAbilityDef name="HealingAura" type="Healing">
     <Targeting maxRange="4"/>
     <Render tint="0,255,0,25" depth="0.92"/>
   </AuraAbilityDef>

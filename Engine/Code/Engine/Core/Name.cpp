@@ -24,10 +24,6 @@ Name::Name(std::string const& string)
 {
     ASSERT_OR_DIE(g_nameTable, "Name table does not exist yet.");
 
-    #if defined(NAME_USE_DEBUG_STRING)
-        m_debugString = string;
-    #endif
-
 	// Need to lock a mutex for insertion into the name table, since this could be happening on multiple threads at once
 	// After that, the name table itself is a deque, which means that pointers to strings in the table will not be invalidated by future insertions
     // so no mutex lock is needed for comparing names or looking up the corresponding string.
@@ -51,9 +47,7 @@ Name::Name(std::string const& string)
 //----------------------------------------------------------------------------------------------------------------------
 Name::Name(const char* string) : Name(std::string(string))
 {
-    #if defined(NAME_USE_DEBUG_STRING)
-        m_debugString = string;
-    #endif
+
 }
 
 
@@ -61,9 +55,7 @@ Name::Name(const char* string) : Name(std::string(string))
 //----------------------------------------------------------------------------------------------------------------------
 Name::Name(Name const& other) : m_nameIndex(other.m_nameIndex)
 {
-    #if defined(NAME_USE_DEBUG_STRING)
-        m_debugString = other.m_debugString;
-    #endif
+
 }
 
 

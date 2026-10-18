@@ -4,7 +4,6 @@
 #include "Engine/Core/Name.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/ECS/EntityID.h"
-#include <array>
 #include <vector>
 
 
@@ -20,11 +19,12 @@ public:
 
 	explicit EnemyAffixDef(XmlElement const& affixElement);
 
-	bool ApplyToEnemy(EntityID id, SystemContext& context);
+	bool ApplyToEntity(EntityID id, SystemContext const& context) const;
 
 	static void LoadFromXML();
 	static void Shutdown();
 	static EnemyAffixDef const* GetAffixDef(Name name);
+	static EnemyAffixDef const* GetRandom(int seed);
 
 private:
 
@@ -36,6 +36,8 @@ public:
 
 	// Grants an ability by name (optional, Name::Invalid if this affix does not grant an ability)
 	Name m_grantedAbilityName = Name::Invalid;
+
+	uint8_t m_healthFlags = 0;
 
 	// Bonuses applied to the enemy that has this affix
 	AbilityAttributes m_enemyAttributeBonuses;

@@ -2,6 +2,7 @@
 #include "RunState.h"
 #include "AbilityDef.h"
 #include "BiomeDef.h"
+#include "EnemyAffixDef.h"
 #include "FlavorDef.h"
 #include "TileDef.h"
 #include "MapGeneratorDef.h"
@@ -10,7 +11,6 @@
 #include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/NamedProperties.h"
-#include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/Events/EventSystem.h"
 #include "Engine/Math/RandomNumberGenerator.h"
 #include "Engine/Renderer/Renderer.h"
@@ -67,8 +67,6 @@ void SetupEndless(RunData& runData)
 	ASSERT_OR_DIE(mapGeneratorDef != nullptr, "SetupEndless() - No MapGeneratorDefs available for endless mode.");
 
 	runData.m_mode = GameMode::Endless;
-
-	//runData.m_missionGenData[0] = { mapGeneratorDef->m_name };
 	runData.m_missionGenData[0] = { "forest", "simple" };
 }
 
@@ -84,6 +82,7 @@ void RunState::Enter(NamedProperties const& props)
 	TileDef::LoadFromXML();
 	BiomeDef::LoadFromXML();
 	MapGeneratorDef::LoadFromXML();
+	EnemyAffixDef::LoadFromXML();
 
 	Name mode = props.Get<Name>("mode", Name::Invalid);
 
@@ -128,6 +127,7 @@ void RunState::Enter(NamedProperties const& props)
 //----------------------------------------------------------------------------------------------------------------------
 void RunState::Exit(NamedProperties const& props)
 {
+	EnemyAffixDef::Shutdown();
 	MapGeneratorDef::Shutdown();
 	BiomeDef::Shutdown();
 	TileDef::Shutdown();

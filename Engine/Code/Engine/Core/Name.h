@@ -25,10 +25,6 @@ public:
 	std::string const& ToString() const;
 	const char* ToCStr() const;
 
-#if defined(NAME_USE_DEBUG_STRING)
-	std::string const& GetDebugString() const { return m_debugString; };
-#endif // _DEBUG
-
 	bool operator==(Name const& other) const;
 	bool operator!=(Name const& other) const;
 
@@ -45,11 +41,6 @@ public:
 protected:
 
 	uint32_t m_nameIndex = s_invalidNameIndex;
-
-#if defined(NAME_USE_DEBUG_STRING)
-	// This is purely for easy debugging. Custom natvis file did not work using ToString or ToCStr
-	std::string m_debugString;
-#endif
 };
 
 

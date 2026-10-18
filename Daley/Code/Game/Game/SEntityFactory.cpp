@@ -1,9 +1,11 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SEntityFactory.h"
+#include "EnemyAffixDef.h"
 #include "EntityDef.h"
 #include "CTransform.h"
 #include "SCEntityFactory.h"
 #include "Engine/Core/ErrorUtils.h"
+#include "Engine/Core/StringUtils.h"
 #include "Engine/Debug/DevConsoleUtils.h"
 #include "Engine/ECS/SystemContext.h"
 
@@ -196,6 +198,12 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
         }
     }
 
+	for (int affixIndex = 0; affixIndex < spawnInfo.m_numAffixes; ++affixIndex)
+	{
+		EnemyAffixDef const* randomAffixDef = EnemyAffixDef::GetRandom(spawnInfo.m_randomSeed + affixIndex);
+		ASSERT_OR_DIE(randomAffixDef != nullptr, StringUtils::StringF("SpawnEntity - failed to roll random affix for entity %s", spawnInfo.m_def->m_name.ToCStr()));
+		randomAffixDef->ApplyToEntity(id, context);
+	}
 
     return id;
 }

@@ -25,7 +25,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SWaveSpawner::Startup()
 {
-	AddReadDependencies<SCWorld>();
+	AddReadDependencies<SCRunData, SCWorld>();
 	AddWriteDependencies<SCWaves, SCEntityFactory, SCRandomNumberGenerator>();
 
 	m_runWhilePaused = false;
@@ -54,6 +54,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 {
 	// Read Dependencies
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
+	SCRunData const& scRunData = context.GetSingletonConst<SCRunData>();
 
 	// Write Dependencies
 	SCWaves& waves = context.GetSingleton<SCWaves>();
@@ -108,6 +109,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 
 		for (int spawnIndex = 0; spawnIndex < (int) numSpawns; ++spawnIndex)
 		{
+			spawnInfo.m_randomSeed = scRunData.m_data->m_seed + waves.m_totalEnemiesSpawned;
 			spawnInfo.m_outlineTint = Rgba8::TransparentWhite;
 			spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier;
 			spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier;
@@ -120,6 +122,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 
 				if (rarityRoll < rareEnemyChance)
 				{
+					spawnInfo.m_numAffixes = StaticGameSettings::s_rareEnemyBaseNumAffixes;
 					spawnInfo.m_outlineTint = StaticGameSettings::s_rareEnemyOutlineTint;
 					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_rareEnemyHealthMultiplier;
 					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier * StaticGameSettings::s_rareEnemySpeedMultiplier;
@@ -129,6 +132,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 				}
 				else if (rarityRoll < magicEnemyChance)
 				{
+					spawnInfo.m_numAffixes = StaticGameSettings::s_magicEnemyBaseNumAffixes;
 					spawnInfo.m_outlineTint = StaticGameSettings::s_magicEnemyOutlineTint;
 					spawnInfo.m_spawnHealthMultiplier = streamHealthMultiplier * StaticGameSettings::s_magicEnemyHealthMultiplier;
 					spawnInfo.m_spawnSpeedMultiplier = streamSpeedMultiplier * StaticGameSettings::s_magicEnemySpeedMultiplier;
@@ -141,6 +145,7 @@ void SWaveSpawner::Run(SystemContext const& context) const
 			spawnInfo.m_spawnPos = world.GetRandomSpawnLocation_SeededNoise(stream.m_numSpawned, stream.m_entityStream.m_id + 1, rng);
 			factory.m_entitiesToSpawn.push_back(spawnInfo);
 			stream.m_numSpawned++;
+			waves.m_totalEnemiesSpawned++;
 		}
 
 		if (stream.IsComplete())
@@ -175,6 +180,7 @@ bool SWaveSpawner::StartWaves(NamedProperties&)
 	waves.m_wavesStarted = true;
 	waves.m_wavesFinished = false;
 	waves.m_currentWaveIndex = 0;
+	waves.m_totalEnemiesSpawned = 0;
 
 	waves.m_waveTimer = Timer(waves.m_secondsBetweenWaves, true);
 	waves.m_waveTimer.ForceComplete(); // First wave starts immediately

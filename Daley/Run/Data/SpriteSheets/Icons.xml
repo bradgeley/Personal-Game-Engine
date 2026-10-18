@@ -1,7 +1,7 @@
 
 
 
-<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="16,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="Icons" texture="Data/SpriteSheets/Icons.png" layout="27,1" edgePadding="0,0" innerPadding="0,0">
   
     <SpriteAnimation name="Slow" frames="0"></SpriteAnimation>
     <SpriteAnimation name="Void" frames="1"></SpriteAnimation>
@@ -19,5 +19,16 @@
     <SpriteAnimation name="AttackSpeed" frames="13"></SpriteAnimation>
     <SpriteAnimation name="Swirl2" frames="14"></SpriteAnimation>
     <SpriteAnimation name="Swirl3" frames="15"></SpriteAnimation>
+    <SpriteAnimation name="ProtectionAura" frames="16"></SpriteAnimation>
+    <SpriteAnimation name="HasteAura" frames="17"></SpriteAnimation>
+    <SpriteAnimation name="SlowAura" frames="18"></SpriteAnimation>
+    <SpriteAnimation name="BurnSuppressionAura" frames="19"></SpriteAnimation>
+    <SpriteAnimation name="PoisonSuppressionAura" frames="20"></SpriteAnimation>
+    <SpriteAnimation name="HealingAura" frames="21"></SpriteAnimation>
+    <SpriteAnimation name="Bulky" frames="22"></SpriteAnimation>
+    <SpriteAnimation name="Speedy" frames="23"></SpriteAnimation>
+    <SpriteAnimation name="Armored" frames="24"></SpriteAnimation>
+    <SpriteAnimation name="ColdBlooded" frames="25"></SpriteAnimation>
+    <SpriteAnimation name="IronStomach" frames="26"></SpriteAnimation>
   
 </GridSpriteSheet>

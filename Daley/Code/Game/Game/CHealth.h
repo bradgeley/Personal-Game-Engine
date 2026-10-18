@@ -14,16 +14,16 @@ struct TagQuery;
 enum class HealthFlags : uint8_t
 {
     // Statuses
-	RegenSuppressed         = 1 << 0,
-    CanBeProtected          = 1 << 1,
+	RegenSuppressed              = 1 << 0,
+    CannotBeProtected            = 1 << 1,
 
     // State
-	HealthReachedZero       = 1 << 2,
+	HealthReachedZero            = 1 << 2,
 
     // Single Frame Only
-    IsProtected             = 1 << 3,
-    IsSuppressingBurn       = 1 << 4,
-    IsSuppressingPoison     = 1 << 5,
+    IsProtectedThisFrame         = 1 << 3,
+    IsSuppressingBurnThisFrame   = 1 << 4,
+    IsSuppressingPoisonThisFrame = 1 << 5,
 };
 
 
@@ -37,6 +37,7 @@ public:
     explicit CHealth(void const* xmlElement);
 
     void TakeDamage(float damage);
+    void TakeHealing(float healing);
     void TakePayload(HitPayload const& payload);
 
 	float GetHealthFraction() const;
@@ -49,7 +50,7 @@ public:
 
     bool GetIsImmune() const;
     bool GetRegenSuppressed() const;
-    bool GetCanBeProtected() const;
+    bool GetCannotBeProtected() const;
     bool GetHealthReachedZero() const;
 	bool GetIsProtected() const;
 	bool GetIsSuppressingBurn() const;
@@ -57,7 +58,7 @@ public:
 
     void SetImmunityDuration(float duration);
 	void SetRegenSuppressed(bool regenSuppressed); // maybe replace with a int counter for multiple sources of suppress regen
-	void SetCanBeProtected(bool canBeProtected);
+	void SetCannotBeProtected(bool cannotBeProtected);
 	void SetHealthReachedZero(bool reachedZero);
 	void SetIsProtected(bool isProtected);
 	void SetIsSuppressingBurn(bool isSuppressingBurn);

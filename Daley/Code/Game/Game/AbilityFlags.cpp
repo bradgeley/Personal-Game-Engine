@@ -43,6 +43,11 @@ bool AbilityFlags::HasFlag(AbilityFlag flag) const
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityFlags::AppendDebugString(EntityDebugContext& debugContext) const
 {
+	if (m_flags == 0)
+	{
+		return;
+	}
+
 	auto const& flagNames = GetAllFlagNames();
 
 	debugContext.m_debugString += StringUtils::StringF("---Ability Flags---\n");
@@ -62,6 +67,5 @@ void AbilityFlags::AppendDebugString(EntityDebugContext& debugContext) const
 std::array<Name, static_cast<size_t>(AbilityFlag::Count)> AbilityFlags::GetAllFlagNames()
 {
 	static std::array<Name, static_cast<size_t>(AbilityFlag::Count)> s_flagNames = { "Hit", "Splash", "Puddle" };
-	//static_assert(s_flagNames.size() == static_cast<size_t>(AbilityFlag::Count), "AbilityFlags::GetAllFlagNames - s_flagNames size does not match AbilityFlag::Count."); // doesnt work?
 	return s_flagNames;
 }

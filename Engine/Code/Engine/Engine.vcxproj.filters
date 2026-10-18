@@ -740,4 +740,7 @@
       <UniqueIdentifier>{95f7b6d2-5fd7-4602-911b-f1dbca134d6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="Core\Name.natvis" />
+  </ItemGroup>
 </Project>

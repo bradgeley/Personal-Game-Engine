@@ -4,7 +4,9 @@
 
 <EnemyAffixDefs>
 
-  <EnemyAffix name="Protective" ability="ProtectionAura"/>
+  <EnemyAffix name="Protective" ability="ProtectionAura">
+    <HealthFlags cannotBeProtected="true"></HealthFlags>
+  </EnemyAffix>
   
   <EnemyAffix name="Hasty" ability="HasteAura"/>
   

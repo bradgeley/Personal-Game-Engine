@@ -2,6 +2,7 @@
 #include "AbilityDef.h"
 #include "AdjacentHitAbilityDef.h"
 #include "AoEHitAbilityDef.h"
+#include "AuraAbilityDef.h"
 #include "LaserAbilityDef.h"
 #include "PassiveAoEAbilityDef.h"
 #include "ProjectileHitAbilityDef.h"
@@ -104,6 +105,21 @@ void AbilityDef::LoadFromXML(Name filepath)
         s_abilityDefs.push_back(newDef);
         laserAbilityDefElem = laserAbilityDefElem->NextSiblingElement("LaserAbilityDef");
 	}
+
+    // Aura Abilities (enemy)
+    XmlElement* auraAbilityDefElem = root->FirstChildElement("AuraAbilityDef");
+    while (auraAbilityDefElem)
+    {
+        Name name = XmlUtils::ParseXmlAttribute(*auraAbilityDefElem, "name", Name::Invalid);
+        if (GetAbilityDefID(name) != -1)
+        {
+            DevConsoleUtils::LogError("Duplicate Ability Def: %s", name.ToCStr());
+        }
+
+        AuraAbilityDef* newDef = new AuraAbilityDef(auraAbilityDefElem);
+        s_abilityDefs.push_back(newDef);
+        auraAbilityDefElem = auraAbilityDefElem->NextSiblingElement("AuraAbilityDef");
+    }
 }
 
 

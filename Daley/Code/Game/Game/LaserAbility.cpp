@@ -208,7 +208,7 @@ void LaserAbility::AddDebugVerts(VertexBuffer& out_vbo, SystemContext const& con
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void LaserAbility::AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability, Vec2 const& location) const
+void LaserAbility::AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const&, CAbility const& ability, Vec2 const& location) const
 {
     float maxRange = m_targetingComp.GetMaxRange(ability);
     if (maxRange > 0.f)

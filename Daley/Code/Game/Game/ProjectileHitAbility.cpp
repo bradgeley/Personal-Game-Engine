@@ -168,7 +168,7 @@ void ProjectileHitAbility::AddDebugVerts(VertexBuffer& out_vbo, SystemContext co
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void ProjectileHitAbility::AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability, Vec2 const& location) const
+void ProjectileHitAbility::AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const&, CAbility const& ability, Vec2 const& location) const
 {
     float maxRange = m_targetingComp.GetMaxRange(ability);
     if (maxRange > 0.f)

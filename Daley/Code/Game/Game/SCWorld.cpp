@@ -783,7 +783,6 @@ bool SCWorld::SetTileOccupant(IntVec2 const& tileCoords, EntityID entityID)
 		if (currentOccupant != EntityID::Invalid && entityID != EntityID::Invalid)
 		{
 			ERROR_AND_DIE("SCWorld::SetTileOccupant - Attempting to set tile occupant for a tile that is already occupied by another entity.");
-			return false;
 		}
 
 		m_tileOccupancy.Set(tileCoords, entityID);

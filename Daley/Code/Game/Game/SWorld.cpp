@@ -64,6 +64,15 @@ void SWorld::Run(SystemContext const& context) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void SWorld::EndFrame(SystemContext const& context) const
+{
+	SCWorld& scWorld = context.GetSingleton<SCWorld>();
+	scWorld.m_solidnessOfPathTileChanged = false;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void SWorld::Shutdown() const
 {
 	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
@@ -71,15 +80,6 @@ void SWorld::Shutdown() const
 
 	DevConsoleUtils::RemoveDevConsoleCommand("GenerateMap", &SWorld::GenerateMap);
 
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void SWorld::EndFrame() const
-{
-	SCWorld& scWorld = g_ecs->GetSingleton<SCWorld>();
-	scWorld.m_solidnessOfPathTileChanged = false;
 }
 
 

@@ -16,6 +16,14 @@ AuraAbilityDef::AuraAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
 	{
 		m_auraType = AuraType::Protection;
 	}
+	else if (typeStr == "Haste")
+	{
+		m_auraType = AuraType::Haste;
+	}
+	else if (typeStr == "Slow")
+	{
+		m_auraType = AuraType::Slow;
+	}
 	else if (typeStr == "BurnSuppression")
 	{
 		m_auraType = AuraType::BurnSuppression;
@@ -24,13 +32,9 @@ AuraAbilityDef::AuraAbilityDef(void const* xmlElement) : AbilityDef(xmlElement)
 	{
 		m_auraType = AuraType::PoisonSuppression;
 	}
-	else if (typeStr == "Haste")
+	else if (typeStr == "Healing")
 	{
-		m_auraType = AuraType::Haste;
-	}
-	else if (typeStr == "Slow")
-	{
-		m_auraType = AuraType::Slow;
+		m_auraType = AuraType::Healing;
 	}
 
     if (XmlElement const* targetingElem = elem.FirstChildElement("Targeting"))

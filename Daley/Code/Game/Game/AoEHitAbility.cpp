@@ -214,7 +214,7 @@ void AoEHitAbility::AddDebugVerts(VertexBuffer& out_vbo, SystemContext const& co
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AoEHitAbility::AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability, Vec2 const& location) const
+void AoEHitAbility::AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const&, CAbility const& ability, Vec2 const& location) const
 {
     float maxRange = m_targetingComp.GetMaxRange(ability);
     if (maxRange > 0.f)

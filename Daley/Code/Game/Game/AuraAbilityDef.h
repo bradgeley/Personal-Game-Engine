@@ -10,10 +10,11 @@ enum class AuraType : uint8_t
 {
 	Invalid,
 	Protection,
-	BurnSuppression,
-	PoisonSuppression,
 	Haste,
 	Slow,
+	BurnSuppression,
+	PoisonSuppression,
+	Healing,
 };
 
 

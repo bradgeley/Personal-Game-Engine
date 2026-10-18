@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="Name">
+		<DisplayString Condition="g_nameTable == 0">[No NameTable]</DisplayString>
+		<DisplayString Condition="m_nameIndex == 0">Invalid Name</DisplayString>
+		<DisplayString>{g_nameTable->m_nameTable[m_nameIndex]}</DisplayString>
+		<Expand>
+			<Item Name="[Index]">m_nameIndex</Item>
+			<Item Name="[String]" Condition="g_nameTable != 0">g_nameTable->m_nameTable[m_nameIndex]</Item>
+		</Expand>
+	</Type>
+</AutoVisualizer>

@@ -55,7 +55,7 @@ enum class AbilityAttribute : uint8_t
     PoisonResistance,
     SlowResistance,
     Health_Multi,
-	MovementSpeed_Multi,
+	MoveSpeed_Multi,
 
     Count
 };

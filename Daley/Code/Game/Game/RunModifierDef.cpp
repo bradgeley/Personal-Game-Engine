@@ -89,7 +89,6 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 	}
 
 	ERROR_AND_DIE(StringUtils::StringF("Unknown RunModifierDef type: %s", modElement.Name()));
-	return nullptr;
 }
 
 

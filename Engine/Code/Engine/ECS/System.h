@@ -29,11 +29,11 @@ public:
 	virtual void Startup()											{}  // Main thread, once per system
 	virtual void Shutdown() const									{}  // Main thread, once per system
 
-	virtual void BeginFrame() const									{}  // Main thread, once per system, before any systems run
+	virtual void BeginFrame(SystemContext const&) const				{}  // Main thread, once per system, before any systems run
 	virtual void PreRun(SystemContext const&) const					{}	// Workers or main, once per system
 	virtual void Run(SystemContext const&) const					{}  // Workers or main, may be more than 1 thread when splitting
 	virtual void PostRun(SystemContext const&) const				{}  // Workers or main, once per system
-	virtual void EndFrame() const									{}  // Main thread, once per system, after all systems run
+	virtual void EndFrame(SystemContext const&) const				{}  // Main thread, once per system, after all systems run
 
 	bool IsActive() const											{ return m_isActive; }
 	void SetActive(bool isActive)									{ m_isActive = isActive; }

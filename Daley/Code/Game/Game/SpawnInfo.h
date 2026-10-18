@@ -24,6 +24,8 @@ struct SpawnInfo
 {
 	bool AddSpawnTag(Name tag);
 
+	int m_randomSeed = 0; // Seed used for this enemy for the purposes of rolling random affixes, etc.
+
     Vec2  m_spawnPos;
     float m_spawnOrientation		= 0.f;
 	float m_spawnScale				= 1.f;
@@ -31,6 +33,7 @@ struct SpawnInfo
 	float m_spawnHealthMultiplier	= 1.f;
 	float m_spawnSpeedMultiplier	= 1.f;
 	float m_spawnExpMultiplier		= 1.f;
+	int m_numAffixes = 0;
 	std::optional<Rgba8> m_baseTint;
 	Rgba8 m_outlineTint				= Rgba8::TransparentWhite;
 	int m_numSpawnTags				= 0;
