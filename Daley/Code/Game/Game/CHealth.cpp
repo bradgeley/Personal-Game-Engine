@@ -17,12 +17,6 @@ CHealth::CHealth(void const* xmlElement)
 	m_maxHealth = XmlUtils::ParseXmlAttribute(elem, "maxHealth", m_maxHealth);
 	m_healthRegen = XmlUtils::ParseXmlAttribute(elem, "healthRegen", m_healthRegen);
 	m_currentHealth = m_maxHealth;
-
-	bool neverShowHealthBar = XmlUtils::ParseXmlAttribute(elem, "neverShowHealthBar", false);
-	SetNeverShowHealthBar(neverShowHealthBar);
-
-	bool isTargetable = XmlUtils::ParseXmlAttribute(elem, "isTargetable", false);
-	SetIsTargetable(isTargetable);
 }
 
 
@@ -30,7 +24,7 @@ CHealth::CHealth(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 void CHealth::TakeDamage(float damage)
 {
-	float effectiveDamage = damage * m_damageTakenMultiplier;
+	float effectiveDamage = damage * (1.f - m_physicalResistance) * m_damageTakenMultiplier;
 
 	m_currentHealth -= effectiveDamage;
 
@@ -46,8 +40,16 @@ void CHealth::TakeDamage(float damage)
 //----------------------------------------------------------------------------------------------------------------------
 void CHealth::TakePayload(HitPayload const& payload)
 {
-	m_currentBurn += payload.m_burn;
-	m_currentPoison += payload.m_poison;
+	if (GetIsProtected() || GetIsImmune())
+	{
+		return;
+	}
+
+	float burnDealt = payload.m_burn * (1.f - m_burnResistance) * (GetIsSuppressingBurn() ? StaticGameSettings::s_burnSuppressionRatio : 1.f);
+	float poisonDealt = payload.m_poison * (1.f - m_poisonResistance) * (GetIsSuppressingPoison() ? StaticGameSettings::s_poisonSuppressionRatio : 1.f);
+
+	m_currentBurn += burnDealt;
+	m_currentPoison += poisonDealt;
 	m_currentVulnerability += payload.m_vulnerability;
 
 	TakeDamage(payload.m_physical);
@@ -109,25 +111,9 @@ bool CHealth::MatchesTagQuery(TagQuery const& query) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CHealth::GetHealthReachedZero() const
+bool CHealth::GetIsImmune() const
 {
-	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::HealthReachedZero)) != 0;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool CHealth::GetIsInvincible() const
-{
-	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::Invincible)) != 0;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-bool CHealth::GetNeverShowHealthBar() const
-{
-	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::NeverShowHealthBar)) != 0;
+	return m_immunityDurationLeft > 0.f;
 }
 
 
@@ -141,54 +127,58 @@ bool CHealth::GetRegenSuppressed() const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-bool CHealth::GetIsTargetable() const
+bool CHealth::GetCanBeProtected() const
 {
-	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::IsTargetable)) != 0;
+	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::CanBeProtected)) != 0;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CHealth::SetHealthReachedZero(bool reachedZero)
+bool CHealth::GetHealthReachedZero() const
 {
-	if (reachedZero)
-	{
-		m_healthFlags |= static_cast<uint8_t>(HealthFlags::HealthReachedZero);
-	}
-	else
-	{
-		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::HealthReachedZero);
-	}
+	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::HealthReachedZero)) != 0;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CHealth::SetInvincible(bool isInvincible)
+bool CHealth::GetIsProtected() const
 {
-	if (isInvincible)
+	if (!GetCanBeProtected())
 	{
-		m_healthFlags |= static_cast<uint8_t>(HealthFlags::Invincible);
+		return false;
 	}
-	else
-	{
-		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::Invincible);
-	}
+	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::IsProtected)) != 0;
 }
 
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CHealth::SetNeverShowHealthBar(bool neverShowHealthBar)
+bool CHealth::GetIsSuppressingBurn() const
 {
-	if (neverShowHealthBar)
+	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::IsSuppressingBurn)) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool CHealth::GetIsSuppressingPoison() const
+{
+	return (m_healthFlags & static_cast<uint8_t>(HealthFlags::IsSuppressingPoison)) != 0;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::SetImmunityDuration(float duration)
+{
+	if (GetIsImmune())
 	{
-		m_healthFlags |= static_cast<uint8_t>(HealthFlags::NeverShowHealthBar);
+		// Can't become immune if already immune, for balance reasons
+		return;
 	}
-	else
-	{
-		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::NeverShowHealthBar);
-	}
+	m_immunityDurationLeft = duration;
 }
 
 
@@ -209,15 +199,75 @@ void CHealth::SetRegenSuppressed(bool regenSuppressed)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CHealth::SetIsTargetable(bool isTargetable)
+void CHealth::SetCanBeProtected(bool canBeProtected)
 {
-	if (isTargetable)
+	if (canBeProtected)
 	{
-		m_healthFlags |= static_cast<uint8_t>(HealthFlags::IsTargetable);
+		m_healthFlags |= static_cast<uint8_t>(HealthFlags::CanBeProtected);
 	}
 	else
 	{
-		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::IsTargetable);
+		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::CanBeProtected);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::SetHealthReachedZero(bool reachedZero)
+{
+	if (reachedZero)
+	{
+		m_healthFlags |= static_cast<uint8_t>(HealthFlags::HealthReachedZero);
+	}
+	else
+	{
+		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::HealthReachedZero);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::SetIsProtected(bool isProtected)
+{
+	if (isProtected)
+	{
+		m_healthFlags |= static_cast<uint8_t>(HealthFlags::IsProtected);
+	}
+	else
+	{
+		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::IsProtected);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::SetIsSuppressingBurn(bool isSuppressingBurn)
+{
+	if (isSuppressingBurn)
+	{
+		m_healthFlags |= static_cast<uint8_t>(HealthFlags::IsSuppressingBurn);
+	}
+	else
+	{
+		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::IsSuppressingBurn);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void CHealth::SetIsSuppressingPoison(bool isSuppressingPoison)
+{
+	if (isSuppressingPoison)
+	{
+		m_healthFlags |= static_cast<uint8_t>(HealthFlags::IsSuppressingPoison);
+	}
+	else
+	{
+		m_healthFlags &= ~static_cast<uint8_t>(HealthFlags::IsSuppressingPoison);
 	}
 }
 

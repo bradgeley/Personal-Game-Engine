@@ -81,7 +81,7 @@ void SRenderUI::Run(SystemContext const& context) const
 		{
 			for (Ability* const& ability : abilityComp->m_abilities)
 			{
-				ability->AddDebugVerts(untexturedVerts, *placeable, *abilityComp, transform->m_pos);
+				ability->AddDebugVerts(untexturedVerts, context, *abilityComp);
 			}
 		}
 	}
@@ -147,8 +147,7 @@ void SRenderUI::RenderTowerPlacementPreview(SystemContext const& context, TowerP
 
 	for (auto& ability : tempAbilityComp.m_abilities)
 	{
-		// Render range indicators for abilities when in placement mode, with all mods applied for accurate range
-		ability->AddDebugVerts(untexturedVerts, placeableCopy, tempAbilityComp, placementInfo.m_worldPos);
+		ability->AddDebugVertsAtLocation(untexturedVerts, context, tempAbilityComp, placementInfo.m_worldPos);
 	}
 
 	scWorld.ForEachPlayableTileInRegion(placementInfo.m_botLeftTileCoords, placementInfo.m_topRightTileCoords, [&](IntVec2 const& tileCoords)

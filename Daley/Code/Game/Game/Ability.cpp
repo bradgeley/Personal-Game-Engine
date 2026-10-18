@@ -33,6 +33,30 @@ void Ability::Render(SystemContext const&, CAbility const&, Vec2 const&) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void Ability::CopyTransientDataTo(Ability&) const
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Ability::AddDebugVerts(VertexBuffer&, SystemContext const&, CAbility const&) const
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void Ability::AddDebugVertsAtLocation(VertexBuffer&, SystemContext const&, CAbility const&, Vec2 const&) const
+{
+
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void Ability::AppendDebugString(EntityDebugContext& debugContext) const
 {
     debugContext.m_debugString += StringUtils::StringF("Ability: %s\n", m_abilityDef ? m_abilityDef->m_name.ToCStr() : "Invalid");

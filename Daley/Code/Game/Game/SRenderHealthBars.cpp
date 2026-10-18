@@ -89,7 +89,7 @@ void SRenderHealthBars::Run(SystemContext const& context) const
 		}
 
 		CHealth const& health = healthStorage[it];
-		bool shouldShowHealthBar = !health.GetNeverShowHealthBar() && (health.m_currentHealth < health.m_maxHealth || health.GetBurnSaturation() > 0.f || health.GetPoisonSaturation() > 0.f);
+		bool shouldShowHealthBar = (health.m_currentHealth < health.m_maxHealth || health.GetBurnSaturation() > 0.f || health.GetPoisonSaturation() > 0.f);
 
 		if (shouldShowHealthBar)
 		{

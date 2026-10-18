@@ -1,5 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
+#include "AttributeDisplayInfo.h"
 #include "Engine/Core/Name.h"
 #include <array>
 #include <cstdint>
@@ -18,7 +19,7 @@ struct EntityDebugContext;
 // - EAbilityAttribute enum
 // - AbilityAttributes::GetAttributeNames
 //
-enum class AbilityAttribute : uint32_t
+enum class AbilityAttribute : uint8_t
 {
     // Base Damage Values
     Physical,
@@ -48,30 +49,15 @@ enum class AbilityAttribute : uint32_t
     ChainDistance_Multi,
     MultishotCount_Add,
 
+    // Enemy Attributes
+    PhysicalResistance,
+    BurnResistance,
+    PoisonResistance,
+    SlowResistance,
+    Health_Multi,
+	MovementSpeed_Multi,
+
     Count
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-enum class AttributeDisplayType : uint8_t
-{
-    FlatValue,          // "15 Damage"
-    FlatSigned,         // "+2 Chain Count"
-    Percent,            // "25%"
-    PercentSigned,      // "+25%"
-    MultiplierPercent,  // 1.25 -> "+25%"
-    Seconds,            // "2.5s Slow"
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct AbilityAttributeDisplayInfo
-{
-    Name m_displayName;
-    AttributeDisplayType m_displayType;
-    std::string m_format = "";
 };
 
 
@@ -79,10 +65,14 @@ struct AbilityAttributeDisplayInfo
 //----------------------------------------------------------------------------------------------------------------------
 struct AbilityAttributes
 {
-    AbilityAttributes();
+public:
+
+    AbilityAttributes() = default;
     explicit AbilityAttributes(void const* xmlElement);
 
-	float GetValue(AbilityAttribute attribute) const;
+    float GetValue(AbilityAttribute attribute) const;
+    void SetValue(AbilityAttribute attribute, float value);
+    void AddValue(AbilityAttribute attribute, float delta);
 
 	void AppendDebugString(EntityDebugContext& debugContext) const;
 
@@ -91,8 +81,16 @@ struct AbilityAttributes
 	AbilityAttributes operator*(float value) const;
 
 	static std::array<Name, (int) AbilityAttribute::Count> const& GetAttributeNames();
-	static AbilityAttributeDisplayInfo const& GetAttributeDisplayInfo(AbilityAttribute attribute);
+	static AttributeDisplayInfo const& GetAttributeDisplayInfo(AbilityAttribute attribute);
     static std::string FormatAttribute(AbilityAttribute attr, float value);
 
-    std::array<float, (int) AbilityAttribute::Count> m_values;
+public:
+
+    static constexpr int s_maxAttributes = 10;
+
+public:
+
+    uint8_t m_count = 0;
+    std::array<AbilityAttribute, s_maxAttributes> m_keys = {};
+    std::array<float, s_maxAttributes> m_values = {};
 };

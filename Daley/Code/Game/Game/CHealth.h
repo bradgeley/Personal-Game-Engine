@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
 #include <cstdint>
-#include <string>
 
 
 
@@ -14,16 +13,17 @@ struct TagQuery;
 //----------------------------------------------------------------------------------------------------------------------
 enum class HealthFlags : uint8_t
 {
-    // Usually immutable
-	IsTargetable            = 1 << 0,
-	NeverShowHealthBar      = 1 << 1,
-
     // Statuses
-    Invincible              = 1 << 2,
-	RegenSuppressed         = 1 << 3,
+	RegenSuppressed         = 1 << 0,
+    CanBeProtected          = 1 << 1,
 
     // State
-	HealthReachedZero       = 1 << 4,
+	HealthReachedZero       = 1 << 2,
+
+    // Single Frame Only
+    IsProtected             = 1 << 3,
+    IsSuppressingBurn       = 1 << 4,
+    IsSuppressingPoison     = 1 << 5,
 };
 
 
@@ -46,17 +46,22 @@ public:
 	float GetVulnerabilitySaturation() const;
 
     bool MatchesTagQuery(TagQuery const& query) const;
-    bool GetHealthReachedZero() const;
-    bool GetIsInvincible() const;
-    bool GetNeverShowHealthBar() const;
-    bool GetRegenSuppressed() const;
-	bool GetIsTargetable() const;
 
-	void SetHealthReachedZero(bool reachedZero);
-    void SetInvincible(bool isInvincible);
-	void SetNeverShowHealthBar(bool neverShowHealthBar);
+    bool GetIsImmune() const;
+    bool GetRegenSuppressed() const;
+    bool GetCanBeProtected() const;
+    bool GetHealthReachedZero() const;
+	bool GetIsProtected() const;
+	bool GetIsSuppressingBurn() const;
+	bool GetIsSuppressingPoison() const;
+
+    void SetImmunityDuration(float duration);
 	void SetRegenSuppressed(bool regenSuppressed); // maybe replace with a int counter for multiple sources of suppress regen
-	void SetIsTargetable(bool isTargetable);
+	void SetCanBeProtected(bool canBeProtected);
+	void SetHealthReachedZero(bool reachedZero);
+	void SetIsProtected(bool isProtected);
+	void SetIsSuppressingBurn(bool isSuppressingBurn);
+	void SetIsSuppressingPoison(bool isSuppressingPoison);
 
 	void AppendDebugString(EntityDebugContext& context) const;
 
@@ -70,6 +75,11 @@ public:
     float m_currentPoison           = 0.f;
     float m_currentVulnerability    = 0.f;
 	float m_damageTakenMultiplier   = 1.f; // Calculated as 1 + (vulnerability^X / 100) where X is vuln exponent
+    float m_immunityDurationLeft    = 0.f; // Remaining immunity
+   
+	float m_physicalResistance      = 0.f;
+	float m_burnResistance          = 0.f;
+	float m_poisonResistance        = 0.f;
 
     uint8_t m_healthFlags           = 0;
 };

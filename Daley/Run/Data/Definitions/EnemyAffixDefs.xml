@@ -1,0 +1,39 @@
+<!--Bradley Christensen - 2022-2026-->
+
+
+
+<EnemyAffixDefs>
+
+  <EnemyAffix name="Protective" ability="ProtectionAura"/>
+  
+  <EnemyAffix name="Hasty" ability="HasteAura"/>
+  
+  <EnemyAffix name="Slow" ability="SlowAura"/>
+  
+  <EnemyAffix name="Fireman" ability="BurnSuppressionAura"/>
+  
+  <EnemyAffix name="Doctor" ability="PoisonSuppressionAura"/>
+  
+  <EnemyAffix name="Healer" ability="HealingAura"/>
+  
+  <EnemyAffix name="Bulky">
+    <Attributes healthMulti="0.5"></Attributes>
+  </EnemyAffix>
+  
+  <EnemyAffix name="Speedy">
+    <Attributes movementSpeedMulti="0.5"></Attributes>
+  </EnemyAffix>
+
+  <EnemyAffix name="Armored">
+    <Attributes physicalResistance="0.5"></Attributes>
+  </EnemyAffix>
+
+  <EnemyAffix name="Cold Blooded">
+    <Attributes burnResistance="0.5"></Attributes>
+  </EnemyAffix>
+
+  <EnemyAffix name="Iron Stomach">
+    <Attributes poisonResistance="0.5"></Attributes>
+  </EnemyAffix>
+  
+</EnemyAffixDefs>

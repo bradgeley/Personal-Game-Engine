@@ -26,7 +26,8 @@ public:
 	virtual void Update(SystemContext const& context, CAbility const& ability, Vec2 const& location, float timeDilation) override;
 	virtual Ability* DeepCopy() const override;
 	virtual void CopyTransientDataTo(Ability& other) const override;
-	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, CAbility const& ability, Vec2 const& location) const override;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability) const override;
+	virtual void AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability, Vec2 const& location) const override;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const override;
 
 public:

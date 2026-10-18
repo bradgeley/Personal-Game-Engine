@@ -1,8 +1,10 @@
 // Bradley Christensen - 2022-2026
 #include "PassiveAoEAbility.h"
+#include "CAbility.h"
 #include "CHealth.h"
 #include "CTags.h"
 #include "CTime.h"
+#include "CTransform.h"
 #include "SCRenderer.h"
 #include "DiscShaderCPU.h"
 #include "PassiveAoEAbilityDef.h"
@@ -103,7 +105,19 @@ void PassiveAoEAbility::CopyTransientDataTo(Ability&) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void PassiveAoEAbility::AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const&, CAbility const& ability,    Vec2 const& location) const
+void PassiveAoEAbility::AddDebugVerts(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability) const
+{
+    CTransform const* transform = context.GetComponentUnsafe<CTransform>(m_owner);
+    if (transform)
+    {
+        AddDebugVertsAtLocation(out_vbo, context, ability, transform->m_pos);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void PassiveAoEAbility::AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability, Vec2 const& location) const
 {
     float maxRange = m_targetingComp.GetMaxRange(ability);
     if (maxRange > 0.f)

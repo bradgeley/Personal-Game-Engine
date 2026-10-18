@@ -1,16 +1,9 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "AbilityAttributes.h"
 #include "EntityDebugContext.h"
+#include "Engine/Core/ErrorUtils.h"
 #include "Engine/Core/StringUtils.h"
 #include "Engine/Core/XmlUtils.h"
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-AbilityAttributes::AbilityAttributes()
-{
-	m_values.fill(0.f);
-}
 
 
 
@@ -21,31 +14,15 @@ AbilityAttributes::AbilityAttributes(void const* xmlElement)
 
 	auto const& attributeNames = GetAttributeNames();
 
-	m_values[(int) AbilityAttribute::Physical] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Physical].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::Burn] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Burn].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::Poison] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Poison].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::Vulnerability] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Vulnerability].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::SlowDuration] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::SlowDuration].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::HasteDuration] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::HasteDuration].ToCStr(), 0.f);
-
-	m_values[(int) AbilityAttribute::Physical_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Physical_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::Burn_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Burn_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::Poison_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Poison_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::Vulnerability_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Vulnerability_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::Slow_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Slow_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::Haste_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Haste_Multi].ToCStr(), 0.f);
-
-	m_values[(int) AbilityAttribute::AttackSpeed_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::AttackSpeed_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::Range_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::Range_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::AreaOfEffect_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::AreaOfEffect_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::AreaDamage_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::AreaDamage_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::ProjectileSpeed_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::ProjectileSpeed_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::CritChance_Add] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::CritChance_Add].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::CritMulti_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::CritMulti_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::ChainCount_Add] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::ChainCount_Add].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::ChainChance_Add] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::ChainChance_Add].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::ChainDistance_Multi] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::ChainDistance_Multi].ToCStr(), 0.f);
-	m_values[(int) AbilityAttribute::MultishotCount_Add] = XmlUtils::ParseXmlAttribute(elem, attributeNames[(int) AbilityAttribute::MultishotCount_Add].ToCStr(), 0.f);
+	for (int i = 0; i < (int) AbilityAttribute::Count; ++i)
+	{
+		AbilityAttribute attribute = (AbilityAttribute) i;
+		float value = XmlUtils::ParseXmlAttribute(elem, attributeNames[i].ToCStr(), 0.f);
+		if (value != 0.f)
+		{
+			SetValue(attribute, value);
+		}
+	}
 }
 
 
@@ -53,7 +30,42 @@ AbilityAttributes::AbilityAttributes(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 float AbilityAttributes::GetValue(AbilityAttribute attribute) const
 {
-	return m_values[(int) attribute];
+	for (int i = 0; i < m_count; ++i)
+	{
+		if (m_keys[i] == attribute)
+		{
+			return m_values[i];
+		}
+	}
+	return 0.f;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityAttributes::SetValue(AbilityAttribute attribute, float value)
+{
+	for (int i = 0; i < m_count; ++i)
+	{
+		if (m_keys[i] == attribute)
+		{
+			m_values[i] = value;
+			return;
+		}
+	}
+
+	ASSERT_OR_DIE(m_count < s_maxAttributes, "AbilityAttributes::SetValue - exceeded s_maxAttributes, raise the cap or reduce the number of attributes on this ability.");
+	m_keys[m_count] = attribute;
+	m_values[m_count] = value;
+	m_count++;
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AbilityAttributes::AddValue(AbilityAttribute attribute, float delta)
+{
+	SetValue(attribute, GetValue(attribute) + delta);
 }
 
 
@@ -61,17 +73,19 @@ float AbilityAttributes::GetValue(AbilityAttribute attribute) const
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityAttributes::AppendDebugString(EntityDebugContext& debugContext) const
 {
+	if (m_count == 0)
+	{
+		return;
+	}
+
 	auto const& attributeNames = GetAttributeNames();
 
 	debugContext.m_debugString += StringUtils::StringF("---Ability Attributes---\n");
 
-	for (int i = 0; i < (int) AbilityAttribute::Count; i++)
+	for (int i = 0; i < m_count; ++i)
 	{
-		if (m_values[i] == 0.f)
-		{
-			continue;
-		}
-		debugContext.m_debugString += attributeNames[i].ToString() + ": " + std::to_string(m_values[i]) + "\n";
+		int attributeIndex = (int) m_keys[i];
+		debugContext.m_debugString += attributeNames[attributeIndex].ToString() + ": " + std::to_string(m_values[i]) + "\n";
 	}
 }
 
@@ -80,9 +94,9 @@ void AbilityAttributes::AppendDebugString(EntityDebugContext& debugContext) cons
 //----------------------------------------------------------------------------------------------------------------------
 void AbilityAttributes::operator+=(AbilityAttributes const& other)
 {
-	for (int i = 0; i < (int) AbilityAttribute::Count; i++)
+	for (int i = 0; i < other.m_count; ++i)
 	{
-		m_values[i] += other.m_values[i];
+		AddValue(other.m_keys[i], other.m_values[i]);
 	}
 }
 
@@ -102,7 +116,7 @@ AbilityAttributes AbilityAttributes::operator+(AbilityAttributes const& other) c
 AbilityAttributes AbilityAttributes::operator*(float value) const
 {
 	AbilityAttributes result = *this;
-	for (int i = 0; i < (int) AbilityAttribute::Count; i++)
+	for (int i = 0; i < result.m_count; ++i)
 	{
 		result.m_values[i] *= value;
 	}
@@ -140,7 +154,14 @@ std::array<Name, (int) AbilityAttribute::Count> const& AbilityAttributes::GetAtt
 		Name("ChainCount"),
 		Name("ChainChance"),
 		Name("ChainDistance"),
-		Name("MultishotCount")
+		Name("MultishotCount"),
+
+		Name("PhysicalResistance"),
+		Name("BurnResistance"),
+		Name("PoisonResistance"),
+		Name("SlowResistance"),
+		Name("HealthMulti"),
+		Name("MovementSpeedMulti"),
 	};
 	return s_names;
 }
@@ -148,39 +169,46 @@ std::array<Name, (int) AbilityAttribute::Count> const& AbilityAttributes::GetAtt
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityAttributeDisplayInfo const& AbilityAttributes::GetAttributeDisplayInfo(AbilityAttribute attribute)
+AttributeDisplayInfo const& AbilityAttributes::GetAttributeDisplayInfo(AbilityAttribute attribute)
 {
-	static std::array<AbilityAttributeDisplayInfo, (int) AbilityAttribute::Count> s_infos =
+	static std::array<AttributeDisplayInfo, (int) AbilityAttribute::Count> s_infos =
 	{
-		AbilityAttributeDisplayInfo{Name("Physical"),					AttributeDisplayType::FlatValue,			"+%d"},
-		AbilityAttributeDisplayInfo{Name("Burn"),						AttributeDisplayType::FlatValue,			"+%d"},
-		AbilityAttributeDisplayInfo{Name("Poison"),						AttributeDisplayType::FlatValue,			"+%d"},
-		AbilityAttributeDisplayInfo{Name("Vulnerability"),				AttributeDisplayType::FlatValue,			"+%d"},
-		AbilityAttributeDisplayInfo{Name("Slow Duration"),				AttributeDisplayType::Seconds,			   "+%ds"},
-		AbilityAttributeDisplayInfo{Name("Haste Duration"),				AttributeDisplayType::Seconds,			   "+%ds"},
+		AttributeDisplayInfo{Name("Physical"),					AttributeDisplayType::FlatValue,			"+%d"},
+		AttributeDisplayInfo{Name("Burn"),						AttributeDisplayType::FlatValue,			"+%d"},
+		AttributeDisplayInfo{Name("Poison"),					AttributeDisplayType::FlatValue,			"+%d"},
+		AttributeDisplayInfo{Name("Vulnerability"),				AttributeDisplayType::FlatValue,			"+%d"},
+		AttributeDisplayInfo{Name("Slow Duration"),				AttributeDisplayType::Seconds,			   "+%ds"},
+		AttributeDisplayInfo{Name("Haste Duration"),			AttributeDisplayType::Seconds,			   "+%ds"},
 
-		AbilityAttributeDisplayInfo{Name("Physical Multiplier"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Burn Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Poison Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Vulnerability Multiplier"),	AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Slow Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Haste Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Physical Multiplier"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Burn Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Poison Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Vulnerability Multiplier"),	AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Slow Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Haste Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
 
-		AbilityAttributeDisplayInfo{Name("Attack Speed"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Range"),						AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Area of Effect"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Area Damage"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Projectile Speed"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Crit Chance"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Crit Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Chain Count"),				AttributeDisplayType::FlatSigned,			"+%d"},
-		AbilityAttributeDisplayInfo{Name("Chain Chance"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Chain Distance"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
-		AbilityAttributeDisplayInfo{Name("Multishot Count"),			AttributeDisplayType::FlatSigned,			"+%d"}
+		AttributeDisplayInfo{Name("Attack Speed"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Range"),						AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Area of Effect"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Area Damage"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Projectile Speed"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Crit Chance"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Crit Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Chain Count"),				AttributeDisplayType::FlatSigned,			"+%d"},
+		AttributeDisplayInfo{Name("Chain Chance"),				AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Chain Distance"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Multishot Count"),			AttributeDisplayType::FlatSigned,			"+%d"},
+
+		AttributeDisplayInfo{Name("Physical Resistance"),		AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Burn Resistance"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Poison Resistance"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Slow Resistance"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Health Multiplier"),			AttributeDisplayType::PercentSigned,	"+%.0f%%"},
+		AttributeDisplayInfo{Name("Movement Speed Multiplier"),	AttributeDisplayType::PercentSigned,	"+%.0f%%"}
 	};
 
 
-	return s_infos[(int)attribute];
+	return s_infos[(int) attribute];
 }
 
 
@@ -188,7 +216,7 @@ AbilityAttributeDisplayInfo const& AbilityAttributes::GetAttributeDisplayInfo(Ab
 //----------------------------------------------------------------------------------------------------------------------
 std::string AbilityAttributes::FormatAttribute(AbilityAttribute attr, float value)
 {
-	AbilityAttributeDisplayInfo const& info = GetAttributeDisplayInfo(attr);
+	AttributeDisplayInfo const& info = GetAttributeDisplayInfo(attr);
 
 	switch (info.m_displayType)
 	{
@@ -208,7 +236,7 @@ std::string AbilityAttributes::FormatAttribute(AbilityAttribute attr, float valu
 			return StringUtils::StringF("%+.0f%%", (value - 1.f) * 100.f);
 
 		case AttributeDisplayType::Seconds:
-			return StringUtils::StringF("%.*fs", value);
+			return StringUtils::StringF("%.1fs", value);
 		default:
 			return "Invalid display type";
 	}

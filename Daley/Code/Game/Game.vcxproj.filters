@@ -289,22 +289,7 @@
     <ClCompile Include="Game\AbilityComponentDefs.cpp">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClCompile>
-    <ClCompile Include="Game\AoEHitAbilityDef.cpp">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\PassiveAoEAbilityDef.cpp">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\AdjacentHitAbilityDef.cpp">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\LaserAbilityDef.cpp">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClCompile>
     <ClCompile Include="Game\AbilityDef.cpp">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\ProjectileHitAbilityDef.cpp">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClCompile>
     <ClCompile Include="Game\AbilityAttributes.cpp">
@@ -317,21 +302,6 @@
       <Filter>Definitions\AbilityDefs\Ability</Filter>
     </ClCompile>
     <ClCompile Include="Game\AbilityComponents.cpp">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\ProjectileHitAbility.cpp">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\AoEHitAbility.cpp">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\PassiveAoEAbility.cpp">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\AdjacentHitAbility.cpp">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\LaserAbility.cpp">
       <Filter>Definitions\AbilityDefs\Ability</Filter>
     </ClCompile>
     <ClCompile Include="Game\AbilityFlags.cpp">
@@ -360,6 +330,45 @@
     </ClCompile>
     <ClCompile Include="Game\NoiseParams.cpp">
       <Filter>Definitions\MapGenerator</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EnemyAffixDef.cpp">
+      <Filter>Definitions\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AdjacentHitAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AoEHitAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\LaserAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\PassiveAoEAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\ProjectileHitAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AuraAbility.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\EnemyAbilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AdjacentHitAbilityDef.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AoEHitAbilityDef.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\LaserAbilityDef.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\PassiveAoEAbilityDef.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\ProjectileHitAbilityDef.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AuraAbilityDef.cpp">
+      <Filter>Definitions\AbilityDefs\Ability\EnemyAbilities\EnemyAbilityDefs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -720,22 +729,7 @@
     <ClInclude Include="Game\AbilityComponentDefs.h">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClInclude>
-    <ClInclude Include="Game\LaserAbilityDef.h">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\AoEHitAbilityDef.h">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\PassiveAoEAbilityDef.h">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\AdjacentHitAbilityDef.h">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClInclude>
     <ClInclude Include="Game\AbilityDef.h">
-      <Filter>Definitions\AbilityDefs</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\ProjectileHitAbilityDef.h">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClInclude>
     <ClInclude Include="Game\AbilityAttributes.h">
@@ -748,21 +742,6 @@
       <Filter>Definitions\AbilityDefs\Ability</Filter>
     </ClInclude>
     <ClInclude Include="Game\AbilityComponents.h">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\ProjectileHitAbility.h">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\AoEHitAbility.h">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\PassiveAoEAbility.h">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\AdjacentHitAbility.h">
-      <Filter>Definitions\AbilityDefs\Ability</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\LaserAbility.h">
       <Filter>Definitions\AbilityDefs\Ability</Filter>
     </ClInclude>
     <ClInclude Include="Game\AbilityFlags.h">
@@ -794,6 +773,48 @@
     </ClInclude>
     <ClInclude Include="Game\NoiseParams.h">
       <Filter>Definitions\MapGenerator</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EnemyAffixDef.h">
+      <Filter>Definitions\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AttributeDisplayInfo.h">
+      <Filter>Definitions</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AdjacentHitAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AoEHitAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\LaserAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PassiveAoEAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\ProjectileHitAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AuraAbility.h">
+      <Filter>Definitions\AbilityDefs\Ability\EnemyAbilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\ProjectileHitAbilityDef.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AdjacentHitAbilityDef.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AoEHitAbilityDef.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\LaserAbilityDef.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PassiveAoEAbilityDef.h">
+      <Filter>Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AuraAbilityDef.h">
+      <Filter>Definitions\AbilityDefs\Ability\EnemyAbilities\EnemyAbilityDefs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -896,6 +917,21 @@
     <Filter Include="Definitions\MapGenerator">
       <UniqueIdentifier>{9091d94b-46aa-48ab-8731-db04697b81cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Definitions\Enemies">
+      <UniqueIdentifier>{5eede18e-bb21-40e6-8318-e8166ead1acf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Definitions\AbilityDefs\Ability\TowerAbilities">
+      <UniqueIdentifier>{7811e850-cbeb-421c-830a-ed090cf7ba6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Definitions\AbilityDefs\Ability\EnemyAbilities">
+      <UniqueIdentifier>{b3e3a79a-4363-4344-9579-9d18e8e66b41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Definitions\AbilityDefs\Ability\TowerAbilities\TowerAbilityDefs">
+      <UniqueIdentifier>{6f5792e6-4102-43af-b232-610dcb387a52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Definitions\AbilityDefs\Ability\EnemyAbilities\EnemyAbilityDefs">
+      <UniqueIdentifier>{50f0446c-f73f-40fb-a00c-20453898411e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\Run\Data\SpriteSheets\Terrain.xml">
@@ -972,6 +1008,9 @@
     </Xml>
     <Xml Include="..\..\Run\Data\Shaders\SwirlShader.xml">
       <Filter>Data\Shaders</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\EnemyAffixDefs.xml">
+      <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>
   <ItemGroup>

@@ -301,6 +301,9 @@
     <ClCompile Include="Game\AbilityFlags.cpp" />
     <ClCompile Include="Game\AdjacentHitAbility.cpp" />
     <ClCompile Include="Game\AdjacentHitAbilityDef.cpp" />
+    <ClCompile Include="Game\AuraAbility.cpp" />
+    <ClCompile Include="Game\AuraAbilityDef.cpp" />
+    <ClCompile Include="Game\EnemyAffixDef.cpp" />
     <ClCompile Include="Game\AoEHitAbility.cpp" />
     <ClCompile Include="Game\AoEHitAbilityDef.cpp" />
     <ClCompile Include="Game\BiomeDef.cpp" />
@@ -422,11 +425,15 @@
     <ClInclude Include="Game\AbilityFlags.h" />
     <ClInclude Include="Game\AdjacentHitAbility.h" />
     <ClInclude Include="Game\AdjacentHitAbilityDef.h" />
+    <ClInclude Include="Game\AuraAbility.h" />
+    <ClInclude Include="Game\AuraAbilityDef.h" />
+    <ClInclude Include="Game\EnemyAffixDef.h" />
     <ClInclude Include="Game\AllComponents.h" />
     <ClInclude Include="Game\AllSingletonComponents.h" />
     <ClInclude Include="Game\AllSystems.h" />
     <ClInclude Include="Game\AoEHitAbility.h" />
     <ClInclude Include="Game\AoEHitAbilityDef.h" />
+    <ClInclude Include="Game\AttributeDisplayInfo.h" />
     <ClInclude Include="Game\BiomeDef.h" />
     <ClInclude Include="Game\AbilityBuff.h" />
     <ClInclude Include="Game\CAbility.h" />
@@ -562,6 +569,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="..\..\Run\Data\Definitions\EnemyAffixDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\BiomeDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\FlavorCombinationAbilityDefs.xml" />

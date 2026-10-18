@@ -66,7 +66,7 @@
     <Cooldown cooldown="0.5"/>
     <Targeting maxRange="15"/>
     <OnHit>
-      <Scaling physical="0.5" burn="0.25" poison="0.125" vulnerability="0.5" slow="1"/>
+      <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="1" slow="1"/>
       <Splash radius="1">
         <Scaling physical="0.25" burn="0.125" poison="0.075" vulnerability="0.25" slow="0.25"/>
       </Splash>
@@ -130,11 +130,11 @@
     <Targeting maxRange="8"/>
     <Crit critChance="0.1" critMulti="0.5"/>
     <Splash radius="4">
-      <Scaling physical="5" burn="2.5" poison="1.25" vulnerability="5" slow="0.25"/>
+      <Scaling physical="0.66" burn=".25" poison=".125" vulnerability="0.5" slow="0.25"/>
       <Render depth="0.95" duration="0.2"/>
     </Splash>
     <Puddle radius="2" duration="2">
-      <Scaling physical="2.5" burn="1.25" poison="0.625" vulnerability="2.5" slow="0.25"/>
+      <Scaling physical="0.66" burn="0.25" poison="0.125" vulnerability="0.5" slow="0.25"/>
       <Render depth="0.95"/>
     </Puddle>
   </AoEHitAbilityDef>
@@ -144,11 +144,11 @@
     <Targeting maxRange="5"/>
     <Crit critChance="0" critMulti="0"/>
     <Splash radius="4">
-      <Scaling physical="2" burn="1" poison="0.5" vulnerability="2" slow="1"/>
+      <Scaling physical="0.5" burn="0.33" poison="0.125" vulnerability="0.5" slow="0.25"/>
       <Render depth="0.95" duration="0.2"/>
     </Splash>
     <Puddle radius="2" duration="0.5">
-      <Scaling physical="1" burn="0.5" poison="0.25" vulnerability="1" slow="0.25"/>
+      <Scaling physical="0.5" burn="0.33" poison="0.125" vulnerability="0.5" slow="0.25"/>
       <Render depth="0.95"/>
     </Puddle>
   </AoEHitAbilityDef>
@@ -167,7 +167,7 @@
   <PassiveAoEAbilityDef name="MintAttack">
     <Targeting maxRange="4"/>
     <Puddle radius="4">
-      <Scaling physical="0.5" burn="0.25" poison="0.125" vulnerability="0.125" slow="1"/>
+      <Scaling physical="0.25" burn="0.125" poison="0.0625" vulnerability="0.0625" slow="1"/>
       <Render depth="0.95"/>
     </Puddle>
   </PassiveAoEAbilityDef>
@@ -175,7 +175,7 @@
   <PassiveAoEAbilityDef name="OrangeSorbetAttack">
     <Targeting maxRange="4"/>
     <Puddle radius="4">
-      <Scaling physical="0.5" burn="0.25" poison="0.125" vulnerability="0.125" slow="1"/>
+      <Scaling physical="0.25" burn="0.125" poison="0.0625" vulnerability="0.0625" slow="1"/>
       <Render depth="0.95"/>
     </Puddle>
   </PassiveAoEAbilityDef>
@@ -195,5 +195,33 @@
       </Splash>
     </OnHit>
   </LaserAbilityDef>
+
+  <!-- ==================================================================================================================== -->
+  <!-- Enemy Auras -->
+
+  <AuraAbilityDef name="ProtectionAura" type="Protection">
+    <Targeting maxRange="4"/>
+    <Render tint="255,255,255,25" depth="0.92"/>
+  </AuraAbilityDef>
+
+  <AuraAbilityDef name="BurnSuppressionAura" type="BurnSuppression">
+    <Targeting maxRange="4"/>
+    <Render tint="255,0,0,25" depth="0.92"/>
+  </AuraAbilityDef>
+
+  <AuraAbilityDef name="PoisonSuppressionAura" type="PoisonSuppression">
+    <Targeting maxRange="4"/>
+    <Render tint="0,255,0,25" depth="0.92"/>
+  </AuraAbilityDef>
+
+  <AuraAbilityDef name="HasteAura" type="Haste">
+    <Targeting maxRange="4"/>
+    <Render tint="255,255,0,25" depth="0.92"/>
+  </AuraAbilityDef>
+
+  <AuraAbilityDef name="SlowAura" type="Slow">
+    <Targeting maxRange="4"/>
+    <Render tint="25,25,25,25" depth="0.92"/>
+  </AuraAbilityDef>
 
 </AbilityDefs>

@@ -27,8 +27,9 @@ public:
 	virtual void Update(SystemContext const& context, CAbility const& ability, Vec2 const& location, float timeDilation = 1.f) = 0;
 	virtual void Render(SystemContext const& context, CAbility const& ability, Vec2 const& location) const;
 	virtual Ability* DeepCopy() const = 0;
-	virtual void CopyTransientDataTo(Ability& other) const = 0;
-	virtual void AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const& placeable, CAbility const& ability, Vec2 const& location) const = 0;
+	virtual void CopyTransientDataTo(Ability& other) const;
+	virtual void AddDebugVerts(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability) const;
+	virtual void AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability, Vec2 const& location) const;
 	virtual void AppendDebugString(EntityDebugContext& debugContext) const;
 
 public:

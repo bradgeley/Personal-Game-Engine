@@ -89,15 +89,21 @@ void AdjacentHitAbility::CopyTransientDataTo(Ability& other) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void AdjacentHitAbility::AddDebugVerts(VertexBuffer& vbo, CPlaceable const& placeable, CAbility const&,  Vec2 const&) const
+void AdjacentHitAbility::AddDebugVerts(VertexBuffer& vbo, SystemContext const& context, CAbility const&) const
 {
-	IntVec2 topRight = placeable.m_botLeftTile + placeable.m_dims - IntVec2::OneVector;
+	CPlaceable const* placeable = context.GetComponent<CPlaceable>(m_owner);
+	if (!placeable)
+	{
+		return;
+	}
+
+	IntVec2 topRight = placeable->m_botLeftTile + placeable->m_dims - IntVec2::OneVector;
 
 	Rgba8 tint = Rgba8::Orange;
 	tint.a = 128;
 
     // Top Row
-	for (int x = placeable.m_botLeftTile.x; x <= topRight.x; ++x)
+	for (int x = placeable->m_botLeftTile.x; x <= topRight.x; ++x)
 	{
 		AABB2 aabb = AABB2(Vec2((float) x, (float) topRight.y + 1.f), Vec2((float) x + 1.f, (float) topRight.y + 2.f));
 		aabb.Translate(Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY));
@@ -105,28 +111,36 @@ void AdjacentHitAbility::AddDebugVerts(VertexBuffer& vbo, CPlaceable const& plac
 	}
 
 	// Bottom Row
-	for (int x = placeable.m_botLeftTile.x; x <= topRight.x; ++x)
+	for (int x = placeable->m_botLeftTile.x; x <= topRight.x; ++x)
 	{
-		AABB2 aabb = AABB2(Vec2((float) x, (float) placeable.m_botLeftTile.y - 1.f), Vec2((float) x + 1.f, (float) placeable.m_botLeftTile.y));
+		AABB2 aabb = AABB2(Vec2((float) x, (float) placeable->m_botLeftTile.y - 1.f), Vec2((float) x + 1.f, (float) placeable->m_botLeftTile.y));
 		aabb.Translate(Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY));
 		VertexUtils::AddVertsForAABB2(vbo, aabb, tint);
 	}
 
     // Left Column
-	for (int y = placeable.m_botLeftTile.y; y <= topRight.y; ++y)
+	for (int y = placeable->m_botLeftTile.y; y <= topRight.y; ++y)
 	{
-		AABB2 aabb = AABB2(Vec2((float) placeable.m_botLeftTile.x - 1.f, (float) y), Vec2((float) placeable.m_botLeftTile.x, (float) y + 1.f));
+		AABB2 aabb = AABB2(Vec2((float) placeable->m_botLeftTile.x - 1.f, (float) y), Vec2((float) placeable->m_botLeftTile.x, (float) y + 1.f));
 		aabb.Translate(Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY));
 		VertexUtils::AddVertsForAABB2(vbo, aabb, tint);
 	}
 
     // Right Column
-	for (int y = placeable.m_botLeftTile.y; y <= topRight.y; ++y)
+	for (int y = placeable->m_botLeftTile.y; y <= topRight.y; ++y)
 	{
 		AABB2 aabb = AABB2(Vec2((float) topRight.x + 1.f, (float) y), Vec2((float) topRight.x + 2.f, (float) y + 1.f));
 		aabb.Translate(Vec2(StaticWorldSettings::s_worldOffsetX, StaticWorldSettings::s_worldOffsetY));
 		VertexUtils::AddVertsForAABB2(vbo, aabb, tint);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void AdjacentHitAbility::AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability, Vec2 const&) const
+{
+	AddDebugVerts(out_vbo, context, ability);
 }
 
 

@@ -103,7 +103,7 @@ void LaserAbility::Update(SystemContext const& context, CAbility const& ability,
                     {
                         CHealth& healthComp = healthStorage[splashEntityID];
 
-                        if (!healthComp.GetIsTargetable() || healthComp.GetHealthReachedZero())
+                        if (healthComp.GetHealthReachedZero())
                         {
                             return true;
                         }
@@ -196,7 +196,19 @@ void LaserAbility::CopyTransientDataTo(Ability&) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void LaserAbility::AddDebugVerts(VertexBuffer& out_vbo, CPlaceable const&, CAbility const& ability, Vec2 const& location) const
+void LaserAbility::AddDebugVerts(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability) const
+{
+    CTransform const* transform = context.GetComponentUnsafe<CTransform>(m_owner);
+    if (transform)
+    {
+        AddDebugVertsAtLocation(out_vbo, context, ability, transform->m_pos);
+    }
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void LaserAbility::AddDebugVertsAtLocation(VertexBuffer& out_vbo, SystemContext const& context, CAbility const& ability, Vec2 const& location) const
 {
     float maxRange = m_targetingComp.GetMaxRange(ability);
     if (maxRange > 0.f)

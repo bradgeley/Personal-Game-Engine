@@ -130,7 +130,7 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, CAb
         {
             CHealth& healthComp = healthStorage[entityID];
 
-            if (!healthComp.GetIsTargetable() || healthComp.GetHealthReachedZero())
+            if (healthComp.GetHealthReachedZero())
             {
                 return true;
             }
@@ -235,7 +235,7 @@ bool AbilityPrecisionTargetingComponent::FindTargets(SystemContext const& contex
                 }
 
                 CHealth const& healthComp = healthStorage[entityID];
-                if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
+                if (!healthComp.GetHealthReachedZero())
                 {
                     IntVec2 targetCoords = IntVec2(numTargets, 0);
                     m_targetChains.Set(targetCoords, entityID);
@@ -306,7 +306,7 @@ EntityID AbilityPrecisionTargetingComponent::FindChainTarget(SystemContext const
 				return true; // keep iterating
 			}
 			CHealth const& healthComp = healthStorage[entityID];
-			if (healthComp.GetIsTargetable() && !healthComp.GetHealthReachedZero())
+			if (!healthComp.GetHealthReachedZero())
 			{
 				result = entityID;
                 return false; // stop iterating

@@ -53,11 +53,13 @@ static std::array<std::string, 3> s_metaAttributeEnumStrings = { "Invalid", "Exp
 namespace StaticGameSettings
 {
     // Static
-    static constexpr float s_burnDecayedValueAfterOneSecond	= 0.85f;
+    static constexpr float s_burnDecayedValueAfterOneSecond	= 0.65f;
 	static constexpr double s_slowStatusTimeDilation		= 0.5;
 	static constexpr double s_hasteStatusTimeDilation		= 1.5;
 	static constexpr double s_vulnerabilityExponent			= 0.5f;
-    static constexpr float s_defaultPuddleRenderDepth	= 0.95f;
+    static constexpr float s_defaultPuddleRenderDepth		= 0.95f;
+	static constexpr float s_burnSuppressionRatio			= 0.5f;	
+	static constexpr float s_poisonSuppressionRatio			= 0.5f;	
 
 	static constexpr float s_baseCritMultiplier				= 2.f;
 	static constexpr float s_baseChainChance				= 1.f;
@@ -65,6 +67,8 @@ namespace StaticGameSettings
 	static constexpr float s_baseChainPayloadMulti			= 0.8f;
 	static constexpr int   s_maxChainTargets				= 10; // Absolute maximum
 
+
+	static constexpr int   s_maxEnemyAffixes				= 3;
 	static constexpr float s_baseMagicEnemyChance			= 0.05f;
 	static constexpr float s_baseRareEnemyChance			= 0.01f;
 	static Rgba8		   s_magicEnemyOutlineTint			= Rgba8(0, 0, 255, 255);

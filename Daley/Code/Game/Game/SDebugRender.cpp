@@ -90,7 +90,6 @@ void SDebugRender::Run(SystemContext const& context) const
     auto& collStorage = context.GetArrayStorageConst<CCollision>();
     auto& renderStorage = context.GetArrayStorageConst<CRender>();
     auto& transStorage = context.GetArrayStorageConst<CTransform>();
-    auto& placeableStorage = context.GetMapStorageConst<CPlaceable>();
 
     FlowField const& toGoalFlowField = scFlowfield.m_toGoalFlowField;
     Font const* font = renderer.GetDefaultFont();
@@ -235,7 +234,6 @@ void SDebugRender::Run(SystemContext const& context) const
         for (auto it = context.Iterate<CAbility, CPlaceable, CTransform>(); it.IsValid(); ++it)
         {
             CTransform const& transform = transStorage[it];
-            CPlaceable const& placeable = placeableStorage[it];
             CAbility const& abilityComponent = abilityStorage[it];
 
             Vec2 abilityPos = transform.m_pos;
@@ -243,7 +241,7 @@ void SDebugRender::Run(SystemContext const& context) const
 
 			for (Ability const* ability : abilityComponent.m_abilities)
             {
-				ability->AddDebugVerts(untexturedVerts, placeable, abilityComponent, transform.m_pos);
+				ability->AddDebugVerts(untexturedVerts, context, abilityComponent);
             }
         }
 	}
