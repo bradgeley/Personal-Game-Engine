@@ -48,6 +48,7 @@ public:
 
     bool MatchesTagQuery(TagQuery const& query) const;
 
+    bool GetIsTargetable() const;
     bool GetIsImmune() const;
     bool GetRegenSuppressed() const;
     bool GetCannotBeProtected() const;
@@ -60,9 +61,9 @@ public:
 	void SetRegenSuppressed(bool regenSuppressed); // maybe replace with a int counter for multiple sources of suppress regen
 	void SetCannotBeProtected(bool cannotBeProtected);
 	void SetHealthReachedZero(bool reachedZero);
-	void SetIsProtected(bool isProtected);
-	void SetIsSuppressingBurn(bool isSuppressingBurn);
-	void SetIsSuppressingPoison(bool isSuppressingPoison);
+	void SetIsProtectedThisFrame(bool isProtected);
+	void SetIsSuppressingBurnThisFrame(bool isSuppressingBurn);
+	void SetIsSuppressingPoisonThisFrame(bool isSuppressingPoison);
 
 	void AppendDebugString(EntityDebugContext& context) const;
 

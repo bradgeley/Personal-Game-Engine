@@ -322,7 +322,7 @@ RunModifier* FlavorAbilityRunModifierDef::MakeModifierInstance() const
 //----------------------------------------------------------------------------------------------------------------------
 void FlavorAbilityRunModifierDef::GetDescription(std::string& outStr) const
 {
-	for (int attributeIndex = 0; attributeIndex < (int) AbilityAttribute::Count; ++attributeIndex)
+	for (int attributeIndex = 0; attributeIndex < AbilityAttributes::s_maxAttributes; ++attributeIndex)
 	{
 		float firstValue = m_modifiers.m_values[attributeIndex];
 		if (firstValue == 0.f)
@@ -419,7 +419,7 @@ void FlavorAbilityRunModifier::GetDescription(std::string& outStr) const
 	AbilityAttributes currentValues = GetValue();
 	AbilityAttributes nextValues = GetDef().m_modifiers + (GetDef().m_modifiersPerLevel * static_cast<float>(m_level));
 
-	for (int attributeIndex = 0; attributeIndex < (int) AbilityAttribute::Count; ++attributeIndex)
+	for (int attributeIndex = 0; attributeIndex < AbilityAttributes::s_maxAttributes; ++attributeIndex)
 	{
 		float currentValue = currentValues.m_values[attributeIndex];
 		float nextValue = nextValues.m_values[attributeIndex];

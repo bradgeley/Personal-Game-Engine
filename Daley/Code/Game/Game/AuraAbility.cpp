@@ -2,6 +2,7 @@
 #include "AuraAbility.h"
 #include "AuraAbilityDef.h"
 #include "CAbility.h"
+#include "CCollision.h"
 #include "CHealth.h"
 #include "CTime.h"
 #include "CTransform.h"
@@ -10,6 +11,7 @@
 #include "SCWorld.h"
 #include "DiscShaderCPU.h"
 #include "Engine/ECS/SystemContext.h"
+#include "Engine/Math/GeometryUtils.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/InstanceBuffer.h"
 #include "Engine/Renderer/VertexBuffer.h"
@@ -36,6 +38,8 @@ void AuraAbility::Update(SystemContext const& context, CAbility const&, Vec2 con
 	// Read Dependencies
 	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 	SCCollision const& collision = context.GetSingletonConst<SCCollision>();
+	auto const& transformStorage = context.GetArrayStorageConst<CTransform>();
+	auto const& collisionStorage = context.GetArrayStorageConst<CCollision>();
 
     // Write Dependencies
 	auto& healthStorage = context.GetArrayStorage<CHealth>();
@@ -74,6 +78,17 @@ void AuraAbility::Update(SystemContext const& context, CAbility const&, Vec2 con
 			int tileIndex = world.m_tiles.GetIndexForCoords(coords);
 			collision.ForEachEnemyInTile(tileIndex, [&](EntityID entityID)
 			{
+                if (!context.IsValid(entityID))
+                {
+                    return true;
+                }
+                CTransform const& transform = transformStorage[entityID];
+                CCollision const& collision = collisionStorage[entityID];
+				if (!GeometryUtils::DoDiscsOverlap2D(location, m_radius, transform.m_pos, collision.m_radius))
+				{
+                    return true;
+				}
+
 				switch (def->m_auraType)
 				{
                     case AuraType::Protection:
@@ -83,7 +98,7 @@ void AuraAbility::Update(SystemContext const& context, CAbility const&, Vec2 con
                         {
                             break;
                         }
-                        health.SetIsProtected(true);
+                        health.SetIsProtectedThisFrame(true);
 						break;
                     }
                     case AuraType::Haste:
@@ -95,13 +110,13 @@ void AuraAbility::Update(SystemContext const& context, CAbility const&, Vec2 con
                     case AuraType::BurnSuppression:
                     {
 						CHealth& health = healthStorage[entityID];
-						health.SetIsSuppressingBurn(true);
+						health.SetIsSuppressingBurnThisFrame(true);
                         break;
                     }
                     case AuraType::PoisonSuppression:
                     {
                         CHealth& health = healthStorage[entityID];
-                        health.SetIsSuppressingPoison(true);
+                        health.SetIsSuppressingPoisonThisFrame(true);
                         break;
                     }
                     case AuraType::Healing:

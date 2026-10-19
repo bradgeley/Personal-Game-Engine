@@ -128,6 +128,14 @@ bool CHealth::MatchesTagQuery(TagQuery const& query) const
 
 
 //----------------------------------------------------------------------------------------------------------------------
+bool CHealth::GetIsTargetable() const
+{
+	return !GetHealthReachedZero() && !GetIsImmune() && !GetIsProtected();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 bool CHealth::GetIsImmune() const
 {
 	return m_immunityDurationLeft > 0.f;
@@ -246,7 +254,7 @@ void CHealth::SetHealthReachedZero(bool reachedZero)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CHealth::SetIsProtected(bool isProtected)
+void CHealth::SetIsProtectedThisFrame(bool isProtected)
 {
 	if (isProtected)
 	{
@@ -261,7 +269,7 @@ void CHealth::SetIsProtected(bool isProtected)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CHealth::SetIsSuppressingBurn(bool isSuppressingBurn)
+void CHealth::SetIsSuppressingBurnThisFrame(bool isSuppressingBurn)
 {
 	if (isSuppressingBurn)
 	{
@@ -276,7 +284,7 @@ void CHealth::SetIsSuppressingBurn(bool isSuppressingBurn)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void CHealth::SetIsSuppressingPoison(bool isSuppressingPoison)
+void CHealth::SetIsSuppressingPoisonThisFrame(bool isSuppressingPoison)
 {
 	if (isSuppressingPoison)
 	{

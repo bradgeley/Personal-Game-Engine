@@ -60,7 +60,8 @@ void AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
 
         world.ForEachPathTileInRange(location, 0.f, maxRange, [&](IntVec2 const& worldCoords)
         {
-            m_cachedTilesInRange.push_back(worldCoords);
+			int tileIndex = world.m_tiles.GetIndexForCoords(worldCoords);
+            m_cachedTilesInRange.push_back(tileIndex);
             return true;
         });
 
@@ -68,13 +69,11 @@ void AbilityTargetingComponent::UpdateCachedTiles(SystemContext const& context, 
         {
             // Sort by distance so that when we go to find targets, the best target is first in the list.
             SCFlowField const& flowfield = context.GetSingletonConst<SCFlowField>();
-            std::sort(m_cachedTilesInRange.begin(), m_cachedTilesInRange.end(), [&](IntVec2 const& a, IntVec2 const& b)
+            std::sort(m_cachedTilesInRange.begin(), m_cachedTilesInRange.end(), [&](int a, int b)
             {
-                int aTileIndex = world.m_tiles.GetIndexForCoords(a);
-                int bTileIndex = world.m_tiles.GetIndexForCoords(b);
-                return flowfield.m_toGoalFlowField.m_distanceField.Get(aTileIndex) < flowfield.m_toGoalFlowField.m_distanceField.Get(bTileIndex);
+                return flowfield.m_toGoalFlowField.m_distanceField.Get(a) < flowfield.m_toGoalFlowField.m_distanceField.Get(b);
             });
-        }
+        }       
     }
 }
 
@@ -111,7 +110,6 @@ float AbilityAoETargetingComponent::GetMaxRange(CAbility const& ability) const
 //----------------------------------------------------------------------------------------------------------------------
 bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, CAbility const& ability, int maxTargets /*= -1*/)
 {
-	SCWorld const& world = context.GetSingletonConst<SCWorld>();
 	SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
 	auto& healthStorage = context.GetArrayStorage<CHealth>();
 	auto& transformStorage = context.GetArrayStorageConst<CTransform>();
@@ -122,10 +120,8 @@ bool AbilityAoETargetingComponent::FindTargets(SystemContext const& context, CAb
     m_targets.clear();
     m_targets.reserve(maxTargets > 0 ? maxTargets : 32);
 
-    for (IntVec2 const& cachedPathTile : m_cachedTilesInRange)
+    for (int tileIndex : m_cachedTilesInRange)
     {
-        int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
-
         scCollision.ForEachEnemyInTile(tileIndex, [&](EntityID entityID)
         {
             CHealth& healthComp = healthStorage[entityID];
@@ -207,7 +203,6 @@ bool AbilityPrecisionTargetingComponent::FindTargets(SystemContext const& contex
         return false;
 	}
 
-    SCWorld const& world = context.GetSingletonConst<SCWorld>();
     SCCollision const& scCollision = context.GetSingletonConst<SCCollision>();
     auto& healthStorage = context.GetArrayStorageConst<CHealth>();
 	auto& transStorage = context.GetArrayStorageConst<CTransform>();
@@ -219,10 +214,8 @@ bool AbilityPrecisionTargetingComponent::FindTargets(SystemContext const& contex
 
     if (m_targetingMode == AbilityTargetingMode::ClosestToGoal)
     {
-        for (IntVec2 const& cachedPathTile : m_cachedTilesInRange)
+        for (int tileIndex : m_cachedTilesInRange)
         {
-            int tileIndex = world.m_tiles.GetIndexForCoords(cachedPathTile);
-
             scCollision.ForEachEnemyInTile(tileIndex, [&](EntityID entityID)
             {
                 if (!context.IsValid(entityID))
@@ -235,27 +228,29 @@ bool AbilityPrecisionTargetingComponent::FindTargets(SystemContext const& contex
                 }
 
                 CHealth const& healthComp = healthStorage[entityID];
-                if (!healthComp.GetHealthReachedZero())
+				if (!healthComp.GetIsTargetable())
+				{
+					return true;
+				}
+
+                IntVec2 targetCoords = IntVec2(numTargets, 0);
+                m_targetChains.Set(targetCoords, entityID);
+
+                Vec2 currentChainPosition = transStorage[entityID].m_pos;
+
+                for (int chainIndex = 0; chainIndex < maxChains; ++chainIndex)
                 {
-                    IntVec2 targetCoords = IntVec2(numTargets, 0);
-                    m_targetChains.Set(targetCoords, entityID);
-
-                    Vec2 currentChainPosition = transStorage[entityID].m_pos;
-
-                    for (int chainIndex = 0; chainIndex < maxChains; ++chainIndex)
+                    IntVec2 chainTargetCoords = IntVec2(numTargets, chainIndex + 1);
+                    EntityID chainTarget = FindChainTarget(context, currentChainPosition, maxChainDistance);
+                    if (chainTarget == EntityID::Invalid)
                     {
-                        IntVec2 chainTargetCoords = IntVec2(numTargets, chainIndex + 1);
-                        EntityID chainTarget = FindChainTarget(context, currentChainPosition, maxChainDistance);
-                        if (chainTarget == EntityID::Invalid)
-                        {
-                            break;
-                        }
-                        m_targetChains.Set(chainTargetCoords, chainTarget);
-                        currentChainPosition = transStorage[chainTarget].m_pos;
+                        break;
                     }
-
-                    numTargets++;
+                    m_targetChains.Set(chainTargetCoords, chainTarget);
+                    currentChainPosition = transStorage[chainTarget].m_pos;
                 }
+
+                numTargets++;
 
                 return numTargets < maxTargets;
             });
@@ -295,25 +290,30 @@ EntityID AbilityPrecisionTargetingComponent::FindChainTarget(SystemContext const
             {
                 return true;
             }
+
 			if (m_targetChains.Contains(entityID))
 			{
 				return true; // keep iterating
 			}
+
 			CTransform const& transformComp = transStorage[entityID];
 			float distSquared = MathUtils::GetDistanceSquared2D(pos, transformComp.m_pos);
 			if (distSquared > maxDistanceSquared)
 			{
 				return true; // keep iterating
 			}
+
 			CHealth const& healthComp = healthStorage[entityID];
-			if (!healthComp.GetHealthReachedZero())
+			if (!healthComp.GetIsTargetable())
 			{
-				result = entityID;
-                return false; // stop iterating
+                return true; // keep iterating
 			}
-			return result != EntityID::Invalid;
+
+            result = entityID;
+			return false; // found chain target, stop iterating
 		});
-		return result != EntityID::Invalid;
+
+		return result == EntityID::Invalid; // keep iterating as long as chain target is invalid
 	});
 
     return result;

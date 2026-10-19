@@ -200,18 +200,18 @@
   <!-- Enemy Auras -->
 
   <AuraAbilityDef name="ProtectionAura" type="Protection">
-    <Targeting maxRange="4"/>
+    <Targeting maxRange="2"/>
     <Render tint="255,255,255,25" depth="0.92"/>
   </AuraAbilityDef>
 
   <AuraAbilityDef name="HasteAura" type="Haste">
-    <Targeting maxRange="4"/>
-    <Render tint="255,255,255,25" depth="0.92"/>
+    <Targeting maxRange="5"/>
+    <Render tint="255,255,0,25" depth="0.92"/>
   </AuraAbilityDef>
 
   <AuraAbilityDef name="SlowAura" type="Slow">
     <Targeting maxRange="4"/>
-    <Render tint="255,255,255,25" depth="0.92"/>
+    <Render tint="0,0,0,25" depth="0.92"/>
   </AuraAbilityDef>
 
   <AuraAbilityDef name="BurnSuppressionAura" type="BurnSuppression">
@@ -225,18 +225,8 @@
   </AuraAbilityDef>
 
   <AuraAbilityDef name="HealingAura" type="Healing">
-    <Targeting maxRange="4"/>
+    <Targeting maxRange="3"/>
     <Render tint="0,255,0,25" depth="0.92"/>
-  </AuraAbilityDef>
-
-  <AuraAbilityDef name="HasteAura" type="Haste">
-    <Targeting maxRange="4"/>
-    <Render tint="255,255,0,25" depth="0.92"/>
-  </AuraAbilityDef>
-
-  <AuraAbilityDef name="SlowAura" type="Slow">
-    <Targeting maxRange="4"/>
-    <Render tint="25,25,25,25" depth="0.92"/>
   </AuraAbilityDef>
 
 </AbilityDefs>

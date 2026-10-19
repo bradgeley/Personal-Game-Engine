@@ -82,7 +82,7 @@ public:
 	float m_cachedMaxRange = 0.f;
 	uint8_t m_needsCacheUpdate = 1;
 	Vec2 m_cachedLocation = Vec2::ZeroVector;
-	std::vector<IntVec2> m_cachedTilesInRange;
+	std::vector<int> m_cachedTilesInRange;
 };
 
 

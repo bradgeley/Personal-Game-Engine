@@ -22,9 +22,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void SRenderUI::Startup()
 {
-	AddReadDependencies<CAbility, CPlaceable, CTransform>();
-	AddReadDependencies<SCInputSystem, SCRunData, SCWorld>();
-	AddWriteDependencies<SCRenderer>();
+	AddWriteAllDependencies();
 
 	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
 	Renderer& renderer = *scRenderer.GetRenderer();

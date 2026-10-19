@@ -35,11 +35,6 @@ void SHealth::Run(SystemContext const& context) const
 			continue;
 		}
 
-		// Clear last frame stuff
-		health.SetIsProtected(false);
-		health.SetIsSuppressingBurn(false);
-		health.SetIsSuppressingPoison(false);
-
 		// Calculate vulnerability multi
 		health.m_damageTakenMultiplier = 1.f + (MathUtils::PowF(health.m_currentVulnerability, StaticGameSettings::s_vulnerabilityExponent) / 100.f);
 
