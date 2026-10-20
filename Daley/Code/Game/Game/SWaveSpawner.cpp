@@ -423,7 +423,7 @@ void SWaveSpawner::GenerateWaves(SCWaves& waves, LevelWaveGenDef const& def, Run
 		wave.m_waveStreams.push_back(stream);
 		waves.m_waves.push_back(wave);
 
-		numEntitiesMultiplier += waves.m_waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave;
+		numEntitiesMultiplier += waves.m_waveGenDef.m_waveGenModifiers.m_entityMultiplierIncreasePerWave;
 	}
 }
 
@@ -434,15 +434,18 @@ void SWaveSpawner::GenerateEndlessWaves(SCWaves& waves, RunData const& runData, 
 {
 	LevelWaveGenDef waveGenDef;
 
-	waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier = 1.f;
-
 	std::vector<Name> bossNames;
 	EntityDef::GetAllEntityDefsWithTags({ "boss" }, bossNames);
 
 	int maxEndlessWaves = 1000;
 	int bossWaveInterval = 10;
 
-	waveGenDef.m_waveGenModifiers.m_numEntitiesMultiplierIncreasePerWave = 0.25f; // 25% more enemies per wave
+	waveGenDef.m_waveGenModifiers.m_entityMultiplierIncreasePerWave		= StaticGameSettings::s_endlessEntityMultiplierIncreasePerWave; // 10% more enemies per wave
+	waveGenDef.m_waveGenModifiers.m_magicEnemyChance					= StaticGameSettings::s_baseMagicEnemyChance;
+	waveGenDef.m_waveGenModifiers.m_magicEnemyChanceIncreasePerWave		= StaticGameSettings::s_magicEnemyChanceIncreasePerWave;
+	waveGenDef.m_waveGenModifiers.m_rareEnemyChance						= StaticGameSettings::s_baseRareEnemyChance;
+	waveGenDef.m_waveGenModifiers.m_rareEnemyChanceIncreasePerWave		= StaticGameSettings::s_rareEnemyChanceIncreasePerWave;
+	waveGenDef.m_waveGenModifiers.m_waveSpawnRateMultiplier				= 1.f;
 
 	// First waves fixed to avoid bad RNG
 

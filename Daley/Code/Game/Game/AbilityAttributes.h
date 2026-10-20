@@ -86,7 +86,7 @@ public:
 
 public:
 
-    static constexpr int s_maxAttributes = 10;
+    static constexpr int s_maxAttributes = 15;
 
 public:
 

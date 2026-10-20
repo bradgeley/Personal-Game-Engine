@@ -36,9 +36,11 @@ void SRenderUI::Startup()
 void SRenderUI::Shutdown() const
 {
 	SCRenderer& scRenderer = g_ecs->GetSingleton<SCRenderer>();
+	Renderer& renderer = *scRenderer.GetRenderer();
+
 	if (scRenderer.m_immediateVBO != RendererUtils::InvalidID)
 	{
-		scRenderer.GetRenderer()->ReleaseVertexBuffer(scRenderer.m_immediateVBO);
+		renderer.ReleaseVertexBuffer(scRenderer.m_immediateVBO);
 	}
 }
 

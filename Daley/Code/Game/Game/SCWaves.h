@@ -92,7 +92,7 @@ struct FixedWaveStreamDef : public WaveStreamDef
 struct LevelWaveGenModifiers
 {
 	float m_numEntitiesMultiplier = 1.f;					// Multiplies the number of entities spawned in the wave by this amount.
-	float m_numEntitiesMultiplierIncreasePerWave = 0.2f;	// Increase numEntitiesMultiplier by this amount per wave
+	float m_entityMultiplierIncreasePerWave = 0.2f;	// Increase numEntitiesMultiplier by this amount per wave
 	float m_waveSpawnRateMultiplier = 1.f;					// Multiplies the spawn rate (both time between waves and stream spawn rate) of waves by this amount (2.0 means twice as fast)
 	float m_healthMultiplier = 1.f;							// Multiplies the health of all enemies spawned
 	float m_healthMultiplierIncreasePerWave = 0.15f;		// Increase health multiplier by this amount per wave
