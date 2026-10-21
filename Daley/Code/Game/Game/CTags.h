@@ -12,10 +12,6 @@ struct FlavorDef;
 
 
 
-//----------------------------------------------------------------------------------------------------------------------
-constexpr int MAX_TAGS = 8;
-
-
 
 //----------------------------------------------------------------------------------------------------------------------
 struct CTags
@@ -37,7 +33,10 @@ public:
 
 	void AppendDebugString(std::string& out) const;
 
+	static constexpr int s_maxTags = 8;
+
 private:
     
-    std::array<Name, MAX_TAGS> m_tags = { Name::Invalid };
+	int m_tagCount = 0;
+    std::array<Name, s_maxTags> m_tags = { Name::Invalid };
 };

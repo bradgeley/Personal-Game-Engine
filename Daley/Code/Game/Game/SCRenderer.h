@@ -27,6 +27,7 @@ public:
 	AssetID m_healthBarShaderAsset					= AssetID::Invalid;				// Owned by SRenderUI
 	AssetID m_discShaderAsset						= AssetID::Invalid;				// Owned by SRenderDiscs
 	AssetID m_iconsSpriteSheet						= AssetID::Invalid;				// Owned by SRenderUI
+	AssetID m_healthBarIconsSpriteSheet				= AssetID::Invalid;				// Owned by SRenderHealthBars
 	AssetID m_statusEffectsSpriteSheet				= AssetID::Invalid;				// Owned by SVisualEffects
 
 	ConstantBufferID m_spriteSheetConstantsBuffer	= RendererUtils::InvalidID;		// Owned by SRenderEntities

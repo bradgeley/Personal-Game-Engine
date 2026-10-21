@@ -118,6 +118,8 @@ void SVisualEffects::Run(SystemContext const& context) const
 		}
     }
 
+	auto healthBit = context.GetComponentBitMask<CHealth>();
+
     for (auto it = context.Iterate<CTime, CRender, CAnimation>(); it.IsValid(); ++it)
     {
         CRender& render = renderStorage[it];
@@ -125,6 +127,12 @@ void SVisualEffects::Run(SystemContext const& context) const
         {
             continue;
         }
+
+		if (context.HasComponentsUnsafe(it.m_currentIndex, healthBit))
+		{
+            // Skip stuff with health component (enemies)
+			continue;
+		}
 
 		CTime const& time = timeStorage[it];
         if (time.IsHasted())

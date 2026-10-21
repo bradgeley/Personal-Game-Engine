@@ -1,0 +1,25 @@
+
+
+
+<GridSpriteSheet name="HealthBarIcons" texture="Data/SpriteSheets/HealthBarIcons.png" layout="17,1" edgePadding="0,0" innerPadding="0,0">
+  
+    <SpriteAnimation name="Bulky" frames="0"></SpriteAnimation>
+    <SpriteAnimation name="Speedy" frames="1"></SpriteAnimation>
+    <SpriteAnimation name="Armored" frames="2"></SpriteAnimation>
+    <SpriteAnimation name="ColdBlooded" frames="3"></SpriteAnimation>
+    <SpriteAnimation name="IronStomach" frames="4"></SpriteAnimation>
+
+    <SpriteAnimation name="ProtectionAura" frames="5"></SpriteAnimation>
+    <SpriteAnimation name="Protected" frames="6"></SpriteAnimation>
+    <SpriteAnimation name="HasteAura" frames="7"></SpriteAnimation>
+    <SpriteAnimation name="Hasted" frames="8"></SpriteAnimation>
+    <SpriteAnimation name="SlowAura" frames="9"></SpriteAnimation>
+    <SpriteAnimation name="Slowed" frames="10"></SpriteAnimation>
+    <SpriteAnimation name="BurnSuppressionAura" frames="11"></SpriteAnimation>
+    <SpriteAnimation name="SuppressingBurn" frames="12"></SpriteAnimation>
+    <SpriteAnimation name="PoisonSuppressionAura" frames="13"></SpriteAnimation>
+    <SpriteAnimation name="SuppressingPoison" frames="14"></SpriteAnimation>
+    <SpriteAnimation name="HealingAura" frames="15"></SpriteAnimation>
+    <SpriteAnimation name="BeingHealed" frames="16"></SpriteAnimation>
+  
+</GridSpriteSheet>

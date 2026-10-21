@@ -10,7 +10,7 @@
   
   <EnemyAffix name="Hasty" ability="HasteAura"/>
   
-  <EnemyAffix name="Slow" ability="SlowAura"/>
+  <EnemyAffix name="Slowing" ability="SlowAura"/>
   
   <EnemyAffix name="Fireman" ability="BurnSuppressionAura"/>
   
@@ -30,11 +30,11 @@
     <Attributes physicalResistance="0.5"></Attributes>
   </EnemyAffix>
 
-  <EnemyAffix name="Cold Blooded">
+  <EnemyAffix name="ColdBlooded">
     <Attributes burnResistance="0.5"></Attributes>
   </EnemyAffix>
 
-  <EnemyAffix name="Iron Stomach">
+  <EnemyAffix name="IronStomach">
     <Attributes poisonResistance="0.5"></Attributes>
   </EnemyAffix>
   

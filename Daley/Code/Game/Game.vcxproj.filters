@@ -250,9 +250,6 @@
     <ClCompile Include="Game\SRenderPopupOverlay.cpp">
       <Filter>ECS\Systems\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SRenderStatusIcons.cpp">
-      <Filter>ECS\Systems\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Game\SRenderUI.cpp">
       <Filter>ECS\Systems\UI</Filter>
     </ClCompile>
@@ -694,9 +691,6 @@
       <Filter>ECS\Systems\UI</Filter>
     </ClInclude>
     <ClInclude Include="Game\SRenderHUD.h">
-      <Filter>ECS\Systems\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\SRenderStatusIcons.h">
       <Filter>ECS\Systems\UI</Filter>
     </ClInclude>
     <ClInclude Include="Game\SRenderPopupOverlay.h">

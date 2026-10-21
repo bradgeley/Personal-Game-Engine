@@ -220,6 +220,11 @@ TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& request, Syste
 		return TowerSwirlResult::AlreadyHasFlavor;
     }
 
+    if (tags.HasTag(Name("Obstacle")))
+    {
+        return TowerSwirlResult::PlaceableCannotSwirl;
+    }
+
 	int numFlavors = 0;
     for (FlavorDef const& flavor : allFlavors)
     {

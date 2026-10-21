@@ -43,6 +43,7 @@ bool CTags::AddTag(Name const& tag)
 	}
 
 	m_tags[emptyIndex] = tag;
+	m_tagCount++;
 	return true;
 }
 
@@ -51,11 +52,20 @@ bool CTags::AddTag(Name const& tag)
 //----------------------------------------------------------------------------------------------------------------------
 bool CTags::RemoveTag(Name const& tag)
 {
-	for (int i = 0; i < MAX_TAGS; ++i)
+	for (int i = 0; i < m_tagCount; ++i)
 	{
 		if (m_tags[i] == tag)
 		{
-			m_tags[i] = Name::Invalid;
+			if (i == m_tagCount - 1)
+			{
+				m_tags[i] = Name::Invalid;
+			}
+			else
+			{
+				m_tags[i] = m_tags[m_tagCount - 1]; // Move the last tag into this slot, to maintain a contiguous array of tags
+			}
+
+			m_tagCount--;
 			return true;
 		}
 	}
@@ -67,7 +77,7 @@ bool CTags::RemoveTag(Name const& tag)
 //----------------------------------------------------------------------------------------------------------------------
 bool CTags::HasTag(Name const& tag) const
 {
-	for (int i = 0; i < MAX_TAGS; ++i)
+	for (int i = 0; i < m_tagCount; ++i)
 	{
 		if (m_tags[i] == tag)
 		{
@@ -82,7 +92,12 @@ bool CTags::HasTag(Name const& tag) const
 //----------------------------------------------------------------------------------------------------------------------
 int CTags::FindTag(Name const& tag) const
 {
-	for (int i = 0; i < MAX_TAGS; ++i)
+	if (tag == Name::Invalid && m_tagCount < CTags::s_maxTags)
+	{
+		return m_tagCount;
+	}
+
+	for (int i = 0; i < m_tagCount; ++i)
 	{
 		if (m_tags[i] == tag)
 		{
@@ -173,7 +188,7 @@ Rgba8 CTags::GetFlavorTint() const
 void CTags::AppendDebugString(std::string& out) const
 {
 	bool hasTag = false;
-	for (int i = 0; i < MAX_TAGS; ++i)
+	for (int i = 0; i < m_tagCount; ++i)
 	{
 		if (m_tags[i] != Name::Invalid)
 		{

@@ -50,7 +50,6 @@
 #include "SRenderPopupOverlay.h"
 #include "SRenderPuddles.h"
 #include "SRenderModSelection.h"
-#include "SRenderStatusIcons.h"
 #include "SRenderSwirls.h"
 #include "SRenderUI.h"
 #include "SRenderWorld.h"

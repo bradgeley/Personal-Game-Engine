@@ -9,5 +9,6 @@
     <InputLayoutAttribute semantic="HEALTHFRACTION" semanticIndex="0" format="float1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
     <InputLayoutAttribute semantic="FIREFRACTION" semanticIndex="0" format="float1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
     <InputLayoutAttribute semantic="POISONFRACTION" semanticIndex="0" format="float1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
+    <InputLayoutAttribute semantic="ICONMASK" semanticIndex="0" format="uint1" inputSlot="0" isPerInstance="true"></InputLayoutAttribute>
   </InputLayout>
 </Shader>

@@ -389,7 +389,6 @@
     <ClCompile Include="Game\STowerSpawner.cpp" />
     <ClCompile Include="Game\SVisualEffects.cpp" />
     <ClCompile Include="Game\SRenderHealthBars.cpp" />
-    <ClCompile Include="Game\SRenderStatusIcons.cpp" />
     <ClCompile Include="Game\SDebugRender.cpp" />
     <ClCompile Include="Game\SEntityFactory.cpp" />
     <ClCompile Include="Game\SFlowField.cpp" />
@@ -534,7 +533,6 @@
     <ClInclude Include="Game\STowerSpawner.h" />
     <ClInclude Include="Game\SVisualEffects.h" />
     <ClInclude Include="Game\SRenderHealthBars.h" />
-    <ClInclude Include="Game\SRenderStatusIcons.h" />
     <ClInclude Include="Game\SDebugRender.h" />
     <ClInclude Include="Game\SEntityFactory.h" />
     <ClInclude Include="Game\SFlowField.h" />
