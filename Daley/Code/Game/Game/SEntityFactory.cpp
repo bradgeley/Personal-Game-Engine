@@ -198,9 +198,10 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
         }
     }
 
+    bool isRare = spawnInfo.m_numAffixes > 1; // janky way to know its rare, change if design changes later
 	for (int affixIndex = 0; affixIndex < spawnInfo.m_numAffixes; ++affixIndex)
 	{
-		EnemyAffixDef const* randomAffixDef = EnemyAffixDef::GetRandom(spawnInfo.m_randomSeed + affixIndex);
+		EnemyAffixDef const* randomAffixDef = EnemyAffixDef::GetRandom(spawnInfo.m_randomSeed + affixIndex, isRare);
 		ASSERT_OR_DIE(randomAffixDef != nullptr, StringUtils::StringF("SpawnEntity - failed to roll random affix for entity %s", spawnInfo.m_def->m_name.ToCStr()));
 		randomAffixDef->ApplyToEntity(id, context);
 	}

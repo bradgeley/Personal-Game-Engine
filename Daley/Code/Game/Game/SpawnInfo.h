@@ -18,8 +18,6 @@ constexpr int MAX_SPAWN_TAGS = 8;
 
 
 //----------------------------------------------------------------------------------------------------------------------
-// Todo: add std::optional to most things in here?
-//
 struct SpawnInfo
 {
 	bool AddSpawnTag(Name tag);

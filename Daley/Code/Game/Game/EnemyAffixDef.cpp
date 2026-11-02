@@ -25,6 +25,8 @@ EnemyAffixDef::EnemyAffixDef(XmlElement const& affixElement)
 {
 	m_name = XmlUtils::ParseXmlAttribute(affixElement, "name", m_name);
 	m_grantedAbilityName = XmlUtils::ParseXmlAttribute(affixElement, "ability", m_grantedAbilityName);
+	m_weight = XmlUtils::ParseXmlAttribute(affixElement, "weight", m_weight);
+	m_rare = XmlUtils::ParseXmlAttribute(affixElement, "rare", m_rare);
 
 	if (XmlElement const* healthFlagsElement = affixElement.FirstChildElement("HealthFlags"))
 	{
@@ -167,14 +169,38 @@ EnemyAffixDef const* EnemyAffixDef::GetAffixDef(Name name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-EnemyAffixDef const* EnemyAffixDef::GetRandom(int seed)
+EnemyAffixDef const* EnemyAffixDef::GetRandom(int seed, bool rare /*= false*/)
 {
 	if (s_affixDefs.empty())
 	{
 		return nullptr;
 	}
 
-	int randomInt = Noise::GetRandomIntInRange(0, static_cast<int>(s_affixDefs.size()) - 1, 0, seed);
+	int totalWeight = 0;
+	for (EnemyAffixDef const* affixDef : s_affixDefs)
+	{
+		if (affixDef->m_rare && !rare)
+		{
+			continue;
+		}
+		totalWeight += affixDef->m_weight;
+	}
 
-	return s_affixDefs[randomInt];
+	int randomInt = Noise::GetRandomIntInRange(0, totalWeight - 1, 0, seed);
+
+	int runningWeight = 0;
+	for (EnemyAffixDef const* affixDef : s_affixDefs)
+	{
+		if (affixDef->m_rare && !rare)
+		{
+			continue;
+		}
+		runningWeight += affixDef->m_weight;
+		if (randomInt < runningWeight)
+		{
+			return affixDef;
+		}
+	}
+
+	return nullptr;
 }

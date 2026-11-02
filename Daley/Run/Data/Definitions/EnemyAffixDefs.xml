@@ -4,37 +4,37 @@
 
 <EnemyAffixDefs>
 
-  <EnemyAffix name="Protective" ability="ProtectionAura">
+  <EnemyAffix name="Protective" ability="ProtectionAura" weight="1" rare="true">
     <HealthFlags cannotBeProtected="true"></HealthFlags>
   </EnemyAffix>
   
-  <EnemyAffix name="Hasty" ability="HasteAura"/>
+  <EnemyAffix name="Hasty" ability="HasteAura" weight="1" rare="true"/>
   
-  <EnemyAffix name="Slowing" ability="SlowAura"/>
+  <EnemyAffix name="Slowing" ability="SlowAura" weight="1" rare="true"/>
   
-  <EnemyAffix name="Fireman" ability="BurnSuppressionAura"/>
+  <EnemyAffix name="Fireman" ability="BurnSuppressionAura" weight="1" rare="true"/>
   
-  <EnemyAffix name="Doctor" ability="PoisonSuppressionAura"/>
+  <EnemyAffix name="Doctor" ability="PoisonSuppressionAura" weight="1" rare="true"/>
   
-  <EnemyAffix name="Healer" ability="HealingAura"/>
+  <EnemyAffix name="Healer" ability="HealingAura" weight="1" rare="true"/>
   
-  <EnemyAffix name="Bulky">
+  <EnemyAffix name="Bulky" weight="10">
     <Attributes healthMulti="0.5"></Attributes>
   </EnemyAffix>
   
-  <EnemyAffix name="Speedy">
+  <EnemyAffix name="Speedy" weight="10">
     <Attributes movementSpeedMulti="0.5"></Attributes>
   </EnemyAffix>
 
-  <EnemyAffix name="Armored">
+  <EnemyAffix name="Armored" weight="10">
     <Attributes physicalResistance="0.5"></Attributes>
   </EnemyAffix>
 
-  <EnemyAffix name="ColdBlooded">
+  <EnemyAffix name="ColdBlooded" weight="10">
     <Attributes burnResistance="0.5"></Attributes>
   </EnemyAffix>
 
-  <EnemyAffix name="IronStomach">
+  <EnemyAffix name="IronStomach" weight="10">
     <Attributes poisonResistance="0.5"></Attributes>
   </EnemyAffix>
   
