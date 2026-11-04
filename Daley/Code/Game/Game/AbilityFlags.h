@@ -42,12 +42,7 @@ struct AbilityFlags
 
 	static std::array<Name, static_cast<size_t>(AbilityFlag::Count)> GetAllFlagNames();
 
-	AbilityFlags operator+(AbilityFlags const& other) const
-	{
-		AbilityFlags result;
-		result.m_flags = m_flags | other.m_flags;
-		return result;	
-	}
+	AbilityFlags operator+(AbilityFlags const& other) const;
 
 	uint8_t m_flags = 0;
 };
