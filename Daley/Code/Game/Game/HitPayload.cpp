@@ -8,7 +8,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 void HitPayload::AppendDebugString(EntityDebugContext& debugContext) const
 {
-	if (m_didCrit)
+	if (GetDidCrit())
 	{
 		debugContext.m_debugString += "Critical Hit!\n";
 	}
@@ -36,4 +36,73 @@ void HitPayload::AppendDebugString(EntityDebugContext& debugContext) const
 	{
 		debugContext.m_debugString += StringUtils::StringF("Haste Duration: %.2f\n", m_hasteDuration);
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void HitPayload::SetDidCrit(bool didCrit)
+{
+	if (didCrit)
+	{
+		m_flags |= static_cast<uint8_t>(HitPayloadFlags::DidCrit);
+	}
+	else
+	{
+		m_flags &= ~static_cast<uint8_t>(HitPayloadFlags::DidCrit);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void HitPayload::SetMultiplyByMaxHealth(bool multiplyByMaxHealth)
+{
+	if (multiplyByMaxHealth)
+	{
+		m_flags |= static_cast<uint8_t>(HitPayloadFlags::MultiplyByMaxHealth);
+	}
+	else
+	{
+		m_flags &= ~static_cast<uint8_t>(HitPayloadFlags::MultiplyByMaxHealth);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void HitPayload::SetIgnoreResistances(bool ignoreResistances)
+{
+	if (ignoreResistances)
+	{
+		m_flags |= static_cast<uint8_t>(HitPayloadFlags::IgnoreResistances);
+	}
+	else
+	{
+		m_flags &= ~static_cast<uint8_t>(HitPayloadFlags::IgnoreResistances);
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool HitPayload::GetDidCrit() const
+{
+	return static_cast<uint8_t>(m_flags) & static_cast<uint8_t>(HitPayloadFlags::DidCrit);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool HitPayload::GetMultiplyByMaxHealth() const
+{
+	return static_cast<uint8_t>(m_flags) & static_cast<uint8_t>(HitPayloadFlags::MultiplyByMaxHealth);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+bool HitPayload::GetIgnoreResistances() const
+{
+	return static_cast<uint8_t>(m_flags) & static_cast<uint8_t>(HitPayloadFlags::IgnoreResistances);
 }

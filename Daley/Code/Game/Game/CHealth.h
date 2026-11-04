@@ -76,7 +76,7 @@ public:
     float m_currentBurn             = 0.f;
     float m_currentPoison           = 0.f;
     float m_currentVulnerability    = 0.f;
-	float m_damageTakenMultiplier   = 1.f; // Calculated as 1 + (vulnerability^X / 100) where X is vuln exponent
+	float m_physTakenMultiplier     = 1.f; // Calculated as 1 + (vulnerability^X / 100) where X is vuln exponent
     float m_immunityDurationLeft    = 0.f; // Remaining immunity
    
 	float m_physicalResistance      = 0.f;

@@ -24,13 +24,12 @@ CHealth::CHealth(void const* xmlElement)
 //----------------------------------------------------------------------------------------------------------------------
 void CHealth::TakeDamage(float damage)
 {
-	float effectiveDamage = damage * (1.f - m_physicalResistance) * m_damageTakenMultiplier;
+	m_currentHealth -= damage;
 
-	m_currentHealth -= effectiveDamage;
+	m_currentHealth = MathUtils::Clamp(m_currentHealth, 0.f, m_maxHealth);
 
 	if (m_currentHealth <= 0.f)
 	{
-		m_currentHealth = 0.f;
 		SetHealthReachedZero(true);
 	}
 }
@@ -62,14 +61,43 @@ void CHealth::TakePayload(HitPayload const& payload)
 		return;
 	}
 
-	float burnDealt = payload.m_burn * (1.f - m_burnResistance) * (GetIsSuppressingBurn() ? StaticGameSettings::s_burnSuppressionRatio : 1.f);
-	float poisonDealt = payload.m_poison * (1.f - m_poisonResistance) * (GetIsSuppressingPoison() ? StaticGameSettings::s_poisonSuppressionRatio : 1.f);
+	float physicalDealt = payload.m_physical;
+	float burnDealt = payload.m_burn; ;
+	float poisonDealt = payload.m_poison;
+
+	if (payload.GetMultiplyByMaxHealth())
+	{
+		burnDealt *= m_maxHealth;
+		poisonDealt *= m_maxHealth;
+		physicalDealt *= m_maxHealth;
+	}
+
+	if (!payload.GetIgnoreResistances())
+	{
+		physicalDealt *= (1.f - m_physicalResistance) * m_physTakenMultiplier;
+		burnDealt *= (1.f - m_burnResistance) * (GetIsSuppressingBurn() ? StaticGameSettings::s_burnSuppressionRatio : 1.f);
+		poisonDealt *= (1.f - m_poisonResistance) * (GetIsSuppressingPoison() ? StaticGameSettings::s_poisonSuppressionRatio : 1.f);
+	}
 
 	m_currentBurn += burnDealt;
-	m_currentPoison += poisonDealt;
-	m_currentVulnerability += payload.m_vulnerability;
+	if (m_currentBurn < 0.f)
+	{
+		m_currentBurn = 0.f;
+	}
 
-	TakeDamage(payload.m_physical);
+	m_currentPoison += poisonDealt;
+	if (m_currentPoison < 0.f)
+	{
+		m_currentPoison = 0.f;
+	}
+
+	m_currentVulnerability += payload.m_vulnerability;
+	if (m_currentVulnerability < 0.f)
+	{
+		m_currentVulnerability = 0.f;
+	}
+
+	TakeDamage(physicalDealt);
 }
 
 
@@ -113,7 +141,7 @@ float CHealth::GetPoisonSaturation() const
 //----------------------------------------------------------------------------------------------------------------------
 float CHealth::GetVulnerabilitySaturation() const
 {
-	float saturation = MathUtils::RangeMapClamped(m_damageTakenMultiplier, 1.f, 2.f, 0.f, 1.f);
+	float saturation = MathUtils::RangeMapClamped(m_physTakenMultiplier, 1.f, 2.f, 0.f, 1.f);
 	return saturation;
 }
 
@@ -316,7 +344,7 @@ void CHealth::AppendDebugString(EntityDebugContext& context) const
 	}
 	if (m_currentVulnerability > 0.f)
 	{
-		context.m_debugString += StringUtils::StringF("Vuln: %.1f (x%.2f)\n", m_currentVulnerability, m_damageTakenMultiplier);
+		context.m_debugString += StringUtils::StringF("Vuln: %.1f (x%.2f)\n", m_currentVulnerability, m_physTakenMultiplier);
 	}
 	if (m_physicalResistance > 0.f)
 	{

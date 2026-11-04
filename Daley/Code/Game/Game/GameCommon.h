@@ -39,6 +39,16 @@ enum class EDirection : int
 
 
 //----------------------------------------------------------------------------------------------------------------------
+enum class AbilityScalingType : uint8_t
+{
+	Attribute,			// Scales off of base attributes
+	Flat,				// Value treated as flat amount
+	RatioOfMaxHealth,	// Value == base * target max health
+};
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 enum class MetaAttribute : uint32_t
 {
 	Invalid = 0,

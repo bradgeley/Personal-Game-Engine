@@ -159,8 +159,12 @@ Rgba8 CTags::GetFlavorTint() const
 	}
 
 	int numFlavors = GetNumFlavorTags();
+	if (numFlavors == 0)
+	{
+		return Rgba8::White;
+	}
 
-	Rgba8 ownerColor;
+	Rgba8 ownerColor = Rgba8::White;
 	if (numFlavors > 1)
 	{
 		Rgba8 flavorTints[StaticGameSettings::s_absoluteSwirlLimit] = {};

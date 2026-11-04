@@ -239,13 +239,17 @@ RolledOnHitComponent LaserAbility::RollDamageAndEffects(CAbility const& ability,
 {
 	RolledOnHitComponent rolledHitResult;
 
-    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Hit) && m_onHitComp.m_scaling.IsRelevant())
+    AbilityFlags combinedFlags = m_abilityDef->m_innateFlags + ability.m_globalFlags;
+    bool canHit = combinedFlags.HasFlag(AbilityFlag::Hit);
+    bool canSplash = combinedFlags.HasFlag(AbilityFlag::Splash);
+	bool canPuddle = canSplash || combinedFlags.HasFlag(AbilityFlag::Puddle);
+
+    if (canHit && m_onHitComp.m_scaling.IsRelevant())
     {
         rolledHitResult.m_payload = m_onHitComp.m_scaling.CalculateDotPayload(ability, deltaSeconds);
     }
 
-    bool canSplash = ability.m_abilityFlags.HasFlag(AbilityFlag::Splash) || ability.m_abilityFlags.HasFlag(AbilityFlag::Puddle);
-    if (canSplash && m_onHitComp.m_splashOnHit.IsRelevant())
+    if (canPuddle && m_onHitComp.m_splashOnHit.IsRelevant())
     {
         rolledHitResult.m_splashOnHit = m_onHitComp.m_splashOnHit.CalculateDotPayload(ability, deltaSeconds);
     }

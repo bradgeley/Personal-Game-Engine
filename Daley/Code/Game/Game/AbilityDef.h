@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "AbilityFlags.h"
 #include "Engine/Core/Name.h"
 #include <cstdint>
 #include <vector>
@@ -46,4 +47,5 @@ private:
 public:
 
 	Name m_name = Name::Invalid;
+	AbilityFlags m_innateFlags;
 };

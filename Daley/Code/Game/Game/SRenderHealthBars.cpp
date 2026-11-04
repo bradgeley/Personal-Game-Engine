@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 // This list must match the order and count of the icons in the HealthBarIcons sprite sheet
 //
-constexpr int s_healthBarIconCount = 17;
+constexpr int s_healthBarIconCount = 20;
 
 enum class HealthBarIconBit : uint32_t
 {
@@ -43,7 +43,11 @@ enum class HealthBarIconBit : uint32_t
 	Doctor = 1 << 13,
 	SuppressingPoison = 1 << 14,
 	Healer = 1 << 15,
-	BeingHealed = 1 << 16
+	BeingHealed = 1 << 16,
+
+	HealBurn = 1 << 17,
+	HealPoison = 1 << 18,
+	HealVulnerability = 1 << 19,
 };
 
 static std::array<Name, s_healthBarIconCount> GetHealthBarIconNames()
@@ -66,7 +70,11 @@ static std::array<Name, s_healthBarIconCount> GetHealthBarIconNames()
 		"Doctor",
 		"SuppressingPoison",
 		"Healer",
-		"BeingHealed"
+		"BeingHealed",
+
+		"HealBurn",
+		"HealPoison",
+		"HealVulnerability",
 	};
 }	
 

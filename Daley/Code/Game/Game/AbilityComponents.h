@@ -6,7 +6,6 @@
 #include "Engine/Core/Name.h"
 #include "Engine/ECS/EntityID.h"
 #include "Engine/Math/Grid.h"
-#include "Engine/Math/IntVec2.h"
 #include "Engine/Math/Vec2.h"
 #include "Engine/Renderer/Rgba8.h"
 #include <optional>
@@ -169,7 +168,7 @@ public:
 	AbilityScalingComponent() = default;
 	AbilityScalingComponent(AbilityScalingComponentDef const& def);
 
-	bool IsRelevant() const { return m_physical > 0.f || m_burn > 0.f || m_poison > 0.f || m_vulnerability > 0.f || m_slow > 0.f || m_haste > 0.f; }
+	bool IsRelevant() const { return m_physical != 0.f || m_burn != 0.f || m_poison != 0.f || m_vulnerability != 0.f || m_slow != 0.f || m_haste != 0.f; }
 	HitPayload CalculateHitPayload(CAbility const& ability, bool didCrit = false, float critMultiplier = 1.f) const;
 	HitPayload CalculateDotPayload(CAbility const& ability, float deltaSeconds) const;
 
@@ -185,6 +184,8 @@ public:
 public:
 
 	// Scaling values are multiplied by the entity's ability attributes to determine the final payload
+	AbilityScalingType m_type = AbilityScalingType::Attribute;
+	bool m_ignoreResistances = false; // todo: flags
 	float m_physical = 0.f;
 	float m_burn = 0.f;
 	float m_poison = 0.f;

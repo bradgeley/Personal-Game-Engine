@@ -228,5 +228,41 @@
     <Targeting maxRange="3"/>
     <Render tint="0,255,0,25" depth="0.92"/>
   </AuraAbilityDef>
+  
+  <!-- ==================================================================================================================== -->
+  <!-- Enemy Splash Abilities -->
+  
+  <AoEHitAbilityDef name="HealBurn">
+    <InnateFlags flags="Splash"/>
+    <Cooldown cooldown="10"/>
+    <Targeting maxRange="3"/>
+    <Splash radius="3">
+      <Scaling burn="-1.0" scalingType="RatioOfMaxHealth" ignoreResistances="true"/>
+      <Render depth="0.95" duration="0.2"/>
+    </Splash>
+    <Render tint="255,0,0,25" depth="0.92"/>
+  </AoEHitAbilityDef>
+
+  <AoEHitAbilityDef name="HealPoison">
+    <InnateFlags flags="Splash"/>
+    <Cooldown cooldown="10"/>
+    <Targeting maxRange="3"/>
+    <Splash radius="3">
+      <Scaling poison="-1.0" scalingType="RatioOfMaxHealth" ignoreResistances="true"/>
+      <Render depth="0.95" duration="0.2"/>
+    </Splash>
+    <Render tint="0,255,0,25" depth="0.92"/>
+  </AoEHitAbilityDef>
+
+  <AoEHitAbilityDef name="HealVulnerability">
+    <InnateFlags flags="Splash"/>
+    <Cooldown cooldown="10"/>
+    <Targeting maxRange="3"/>
+    <Splash radius="3">
+      <Scaling vulnerability="-1.0" scalingType="RatioOfMaxHealth" ignoreResistances="true"/>
+      <Render depth="0.95" duration="0.2"/>
+    </Splash>
+    <Render tint="255,0,0,25" depth="0.92"/>
+  </AoEHitAbilityDef>
 
 </AbilityDefs>

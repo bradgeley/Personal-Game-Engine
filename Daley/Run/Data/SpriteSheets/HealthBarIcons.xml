@@ -1,7 +1,7 @@
 
 
 
-<GridSpriteSheet name="HealthBarIcons" texture="Data/SpriteSheets/HealthBarIcons.png" layout="17,1" edgePadding="0,0" innerPadding="0,0">
+<GridSpriteSheet name="HealthBarIcons" texture="Data/SpriteSheets/HealthBarIcons.png" layout="20,1" edgePadding="0,0" innerPadding="0,0">
   
     <SpriteAnimation name="Bulky" frames="0"></SpriteAnimation>
     <SpriteAnimation name="Speedy" frames="1"></SpriteAnimation>
@@ -21,5 +21,9 @@
     <SpriteAnimation name="SuppressingPoison" frames="14"></SpriteAnimation>
     <SpriteAnimation name="HealingAura" frames="15"></SpriteAnimation>
     <SpriteAnimation name="BeingHealed" frames="16"></SpriteAnimation>
+  
+    <SpriteAnimation name="HealBurn" frames="17"></SpriteAnimation>
+    <SpriteAnimation name="HealPoison" frames="18"></SpriteAnimation>
+    <SpriteAnimation name="HealVulnerability" frames="19"></SpriteAnimation>
   
 </GridSpriteSheet>

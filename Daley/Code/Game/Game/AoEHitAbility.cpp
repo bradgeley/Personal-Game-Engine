@@ -253,12 +253,16 @@ RolledOnHitComponent AoEHitAbility::RollDamageAndEffects(CAbility const& ability
         didCrit = critRoll < critChance;
     }
 
-    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Splash) && m_splashComp.IsRelevant())
+    AbilityFlags combinedFlags = m_abilityDef->m_innateFlags + ability.m_globalFlags;
+	bool canSplash = combinedFlags.HasFlag(AbilityFlag::Splash);
+	bool canPuddle = combinedFlags.HasFlag(AbilityFlag::Puddle);
+
+    if (canSplash && m_splashComp.IsRelevant())
     {
         result.m_splashOnHit = m_splashComp.CalculateSplashPayload(ability, didCrit, critMultiplier);
     }
 
-    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Puddle) && m_puddleComp.IsRelevant())
+    if (canPuddle && m_puddleComp.IsRelevant())
     {
         result.m_puddleOnHit = m_puddleComp.CalculatePuddlePayload(ability);
     }

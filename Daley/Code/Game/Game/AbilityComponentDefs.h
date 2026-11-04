@@ -1,5 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
+#include "GameCommon.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Renderer/Rgba8.h"
 
@@ -45,12 +46,14 @@ struct AbilityScalingComponentDef
 	AbilityScalingComponentDef() = default;
 	explicit AbilityScalingComponentDef(void const* xmlElement);
 
-	float m_physical		= 0.f;
-	float m_burn			= 0.f;
-	float m_poison			= 0.f;
-	float m_vulnerability	= 0.f;
-	float m_slow			= 0.f;
-	float m_haste			= 0.f;
+	AbilityScalingType m_type	= AbilityScalingType::Attribute;
+	bool m_ignoreResistances	= false; // todo: flags
+	float m_physical			= 0.f;
+	float m_burn				= 0.f;
+	float m_poison				= 0.f;
+	float m_vulnerability		= 0.f;
+	float m_slow				= 0.f;
+	float m_haste				= 0.f;
 };
 
 

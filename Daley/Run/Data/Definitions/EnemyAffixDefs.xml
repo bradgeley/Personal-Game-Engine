@@ -4,7 +4,7 @@
 
 <EnemyAffixDefs>
 
-  <EnemyAffix name="Protective" ability="ProtectionAura" weight="1" rare="true">
+  <EnemyAffix name="Protective" ability="ProtectionAura" weight="0.5" rare="true">
     <HealthFlags cannotBeProtected="true"></HealthFlags>
   </EnemyAffix>
   
@@ -16,7 +16,7 @@
   
   <EnemyAffix name="Doctor" ability="PoisonSuppressionAura" weight="1" rare="true"/>
   
-  <EnemyAffix name="Healer" ability="HealingAura" weight="1" rare="true"/>
+  <EnemyAffix name="Healer" ability="HealingAura" weight="0.5" rare="true"/>
   
   <EnemyAffix name="Bulky" weight="10">
     <Attributes healthMulti="0.5"></Attributes>
@@ -37,5 +37,9 @@
   <EnemyAffix name="IronStomach" weight="10">
     <Attributes poisonResistance="0.5"></Attributes>
   </EnemyAffix>
+
+  <EnemyAffix name="HealBurn" ability="HealBurn" weight="0.5" rare="true"/>
+  <EnemyAffix name="HealPoison" ability="HealPoison" weight="0.5" rare="true"/>
+  <EnemyAffix name="HealVulnerability" ability="HealVulnerability" weight="0.5" rare="true"/>
   
 </EnemyAffixDefs>

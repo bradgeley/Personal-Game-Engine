@@ -394,6 +394,9 @@ void AbilityCritComponent::AppendDebugString(EntityDebugContext& debugContext) c
 //----------------------------------------------------------------------------------------------------------------------
 AbilityScalingComponent::AbilityScalingComponent(AbilityScalingComponentDef const& def)
 {
+	m_type = def.m_type;
+	m_ignoreResistances = def.m_ignoreResistances;
+
     m_physical = def.m_physical;
 	m_burn = def.m_burn;
 	m_poison = def.m_poison;
@@ -408,13 +411,37 @@ AbilityScalingComponent::AbilityScalingComponent(AbilityScalingComponentDef cons
 HitPayload AbilityScalingComponent::CalculateHitPayload(CAbility const& ability, bool didCrit, float critMultiplier) const
 {
     HitPayload result;
-	result.m_didCrit        = didCrit;
-    result.m_physical       = ability.m_attributes.GetValue(AbilityAttribute::Physical)        * GetPhysicalScaling(ability);
-    result.m_burn           = ability.m_attributes.GetValue(AbilityAttribute::Burn)            * GetBurnScaling(ability);
-    result.m_poison         = ability.m_attributes.GetValue(AbilityAttribute::Poison)          * GetPoisonScaling(ability);
-    result.m_vulnerability  = ability.m_attributes.GetValue(AbilityAttribute::Vulnerability)   * GetVulnerabilityScaling(ability);
-    result.m_slowDuration   = ability.m_attributes.GetValue(AbilityAttribute::SlowDuration)    * GetSlowScaling(ability);
-    result.m_hasteDuration  = ability.m_attributes.GetValue(AbilityAttribute::HasteDuration)   * GetHasteScaling(ability);
+	result.SetDidCrit(didCrit);
+	result.SetMultiplyByMaxHealth(m_type == AbilityScalingType::RatioOfMaxHealth);
+	result.SetIgnoreResistances(m_ignoreResistances);
+
+    switch (m_type)
+    {
+		case AbilityScalingType::Attribute:
+            result.m_physical       = ability.m_attributes.GetValue(AbilityAttribute::Physical)         * GetPhysicalScaling(ability);
+            result.m_burn           = ability.m_attributes.GetValue(AbilityAttribute::Burn)             * GetBurnScaling(ability);
+            result.m_poison         = ability.m_attributes.GetValue(AbilityAttribute::Poison)           * GetPoisonScaling(ability);
+            result.m_vulnerability  = ability.m_attributes.GetValue(AbilityAttribute::Vulnerability)    * GetVulnerabilityScaling(ability);
+            result.m_slowDuration   = ability.m_attributes.GetValue(AbilityAttribute::SlowDuration)     * GetSlowScaling(ability);
+            result.m_hasteDuration  = ability.m_attributes.GetValue(AbilityAttribute::HasteDuration)    * GetHasteScaling(ability);
+			break;
+		case AbilityScalingType::Flat:
+			result.m_physical = m_physical;
+			result.m_burn = m_burn;
+			result.m_poison = m_poison;
+			result.m_vulnerability = m_vulnerability;
+			result.m_slowDuration = m_slow;
+			result.m_hasteDuration = m_haste;
+			break;
+        case AbilityScalingType::RatioOfMaxHealth: // Max health applied in TakePayload
+            result.m_physical = m_physical;
+            result.m_burn = m_burn;
+            result.m_poison = m_poison;
+            result.m_vulnerability = m_vulnerability;
+            result.m_slowDuration = m_slow;
+            result.m_hasteDuration = m_haste;
+            break;
+    }
 
     if (didCrit)
     {

@@ -69,3 +69,13 @@ std::array<Name, static_cast<size_t>(AbilityFlag::Count)> AbilityFlags::GetAllFl
 	static std::array<Name, static_cast<size_t>(AbilityFlag::Count)> s_flagNames = { "Hit", "Splash", "Puddle" };
 	return s_flagNames;
 }
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+AbilityFlags AbilityFlags::operator+(AbilityFlags const& other) const
+{
+	AbilityFlags result;
+	result.m_flags = m_flags | other.m_flags;
+	return result;
+}

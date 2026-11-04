@@ -210,17 +210,19 @@ RolledOnHitComponent ProjectileHitAbility::RollDamageAndEffects(CAbility const& 
         didCrit = critRoll < critChance;
 	}
 
-	if (ability.m_abilityFlags.HasFlag(AbilityFlag::Hit) && m_onHitComp.m_scaling.IsRelevant())
+    AbilityFlags combinedFlags = m_abilityDef->m_innateFlags + ability.m_globalFlags;
+
+	if (combinedFlags.HasFlag(AbilityFlag::Hit) && m_onHitComp.m_scaling.IsRelevant())
 	{
         rolledHitResult.m_payload = m_onHitComp.m_scaling.CalculateHitPayload(ability, didCrit, critMultiplier);
 	}  
 
-    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Splash) && m_onHitComp.m_splashOnHit.IsRelevant())
+    if (combinedFlags.HasFlag(AbilityFlag::Splash) && m_onHitComp.m_splashOnHit.IsRelevant())
     {
         rolledHitResult.m_splashOnHit = m_onHitComp.m_splashOnHit.CalculateSplashPayload(ability, didCrit, critMultiplier);
     }
 
-    if (ability.m_abilityFlags.HasFlag(AbilityFlag::Puddle) && m_onHitComp.m_puddleOnHit.IsRelevant())
+    if (combinedFlags.HasFlag(AbilityFlag::Puddle) && m_onHitComp.m_puddleOnHit.IsRelevant())
     {
 		rolledHitResult.m_puddleOnHit = m_onHitComp.m_puddleOnHit.CalculatePuddlePayload(ability);
     }

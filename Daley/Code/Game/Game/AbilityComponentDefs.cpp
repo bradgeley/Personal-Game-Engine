@@ -44,12 +44,27 @@ AbilityCritComponentDef::AbilityCritComponentDef(void const* xmlElement)
 AbilityScalingComponentDef::AbilityScalingComponentDef(void const* xmlElement)
 {
 	XmlElement const& elem = *reinterpret_cast<XmlElement const*>(xmlElement);
+	m_ignoreResistances = XmlUtils::ParseXmlAttribute(elem, "ignoreResistances", m_ignoreResistances);
 	m_physical = XmlUtils::ParseXmlAttribute(elem, "Physical", m_physical);
 	m_burn = XmlUtils::ParseXmlAttribute(elem, "Burn", m_burn);
 	m_poison = XmlUtils::ParseXmlAttribute(elem, "Poison", m_poison);
 	m_vulnerability = XmlUtils::ParseXmlAttribute(elem, "Vulnerability", m_vulnerability);
 	m_slow = XmlUtils::ParseXmlAttribute(elem, "Slow", m_slow);
 	m_haste = XmlUtils::ParseXmlAttribute(elem, "Haste", m_haste);
+
+	Name scalingType = XmlUtils::ParseXmlAttribute(elem, "ScalingType", Name::Invalid);
+	if (scalingType == Name("Attribute"))
+	{
+		m_type = AbilityScalingType::Attribute;
+	}
+	else if (scalingType == Name("Flat"))
+	{
+		m_type = AbilityScalingType::Flat;
+	}
+	else if (scalingType == Name("RatioOfMaxHealth"))
+	{
+		m_type = AbilityScalingType::RatioOfMaxHealth;
+	}
 }
 
 

@@ -600,7 +600,7 @@ bool AddFlavorToTower(EntityID tower, Name flavorName, bool isBaseFlavor, System
 	abilityComp->m_attributes += flavorDef->m_attributes;
 
     // Flags
-	abilityComp->m_abilityFlags.m_flags |= flavorDef->m_abilityFlags.m_flags;
+	abilityComp->m_globalFlags.m_flags |= flavorDef->m_abilityFlags.m_flags;
 
     // Handle abilities
     if (isBaseFlavor)

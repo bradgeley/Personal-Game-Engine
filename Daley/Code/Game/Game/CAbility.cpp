@@ -61,7 +61,7 @@ void CAbility::RebuildAttributes(SystemContext const& context, EntityID entityID
 void CAbility::AppendDebugString(EntityDebugContext& debugContext) const
 {
 	m_attributes.AppendDebugString(debugContext);
-	m_abilityFlags.AppendDebugString(debugContext);
+	m_globalFlags.AppendDebugString(debugContext);
 
 	for (auto& ability : m_abilities)
 	{

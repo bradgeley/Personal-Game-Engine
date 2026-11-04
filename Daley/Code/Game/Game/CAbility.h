@@ -40,7 +40,7 @@ public:
 	bool m_needsAttributeRebuild = true;
 
     AbilityAttributes m_attributes;
-    AbilityFlags m_abilityFlags;
+    AbilityFlags m_globalFlags; // Enable features of abilities globally
 	std::vector<AbilityBuff*> m_activeBuffs; // todo
 	std::vector<Ability*> m_abilities;
 };

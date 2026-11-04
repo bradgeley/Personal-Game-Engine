@@ -36,7 +36,7 @@ void SHealth::Run(SystemContext const& context) const
 		}
 
 		// Calculate vulnerability multi
-		health.m_damageTakenMultiplier = 1.f + (MathUtils::PowF(health.m_currentVulnerability, StaticGameSettings::s_vulnerabilityExponent) / 100.f);
+		health.m_physTakenMultiplier = 1.f + (MathUtils::PowF(health.m_currentVulnerability, StaticGameSettings::s_vulnerabilityExponent) / 100.f);
 
 		// Regen/Poison
 		float regenAmount = health.GetRegenSuppressed() ? 0.f : health.m_healthRegen;
