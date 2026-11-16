@@ -18,6 +18,7 @@ public:
 	IntVec2 m_tileCoords;
 	float m_distance = 0.f;
 
+	// Intentionally inverted < operator for use in std::priority_queue, which is a max-heap by default. We want a min-heap.
 	bool operator<(FlowGenerationCoords const& rhs) const { return m_distance > rhs.m_distance; }
 };
 

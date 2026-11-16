@@ -171,7 +171,7 @@ void DistanceFieldSelectorComponent::ForEachSelectedTile(MapGenerator& generator
 
 	m_distanceFieldValues.resize(world.m_tiles.GetSize(), 9999);
 
-	std::priority_queue<IntVec2> openList;
+	std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, std::greater<std::pair<int, int>>> openList;
 
 	// Seed tiles
 	world.ForEachPlayableTile([&](IntVec2 const& tileCoords)
@@ -183,17 +183,17 @@ void DistanceFieldSelectorComponent::ForEachSelectedTile(MapGenerator& generator
 
 		int tileIndex = world.m_tiles.GetIndexForCoords(tileCoords);
 		m_distanceFieldValues[tileIndex] = 0;
-		openList.emplace(IntVec2(0, tileIndex));
+		openList.emplace(0, tileIndex);
 		return true; // Continue iterating
 	});
 
 	// Run Dijkstra's algorithm to compute distance field
 	while (openList.empty() == false)
 	{
-		IntVec2 pair = openList.top();
+		std::pair<int, int> pair = openList.top();
 		openList.pop();
-		int const& currentDistance = pair.x;
-		int const& currentIndex = pair.y;
+		int const& currentDistance = pair.first;
+		int const& currentIndex = pair.second;
 
 		if (currentDistance > m_distanceFieldValues[currentIndex])
 		{
@@ -208,7 +208,7 @@ void DistanceFieldSelectorComponent::ForEachSelectedTile(MapGenerator& generator
 			if (newDistance < m_distanceFieldValues[neighborIndex])
 			{
 				m_distanceFieldValues[neighborIndex] = newDistance;
-				openList.emplace(IntVec2(newDistance, neighborIndex));
+				openList.emplace(newDistance, neighborIndex);
 			}
 			return true; // Continue checking neighbors
 		});
