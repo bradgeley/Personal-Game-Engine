@@ -52,7 +52,8 @@ enum class HealthBarIconBit : uint32_t
 
 static std::array<Name, s_healthBarIconCount> GetHealthBarIconNames()
 {
-	return {
+	return 
+	{
 		"Bulky",
 		"Speedy",
 		"Armored",
@@ -168,6 +169,12 @@ void SRenderHealthBars::Run(SystemContext const& context) const
 			continue;
 		}
 
+		CHealth const& health = healthStorage[it];
+		if (health.GetHealthReachedZero())
+		{
+			continue;
+		}
+
 		HealthBarInstance instance;
 		instance.m_iconMask = 0;
 
@@ -184,7 +191,6 @@ void SRenderHealthBars::Run(SystemContext const& context) const
 			}
 		}
 
-		CHealth const& health = healthStorage[it];
 		CTime const& time = timeStorage[it];
 
 		if (health.GetIsProtected())

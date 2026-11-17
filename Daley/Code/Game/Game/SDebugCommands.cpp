@@ -212,6 +212,13 @@ bool SDebugCommands::UnlockAllMods(NamedProperties&)
 		}
 	}
 
+	auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
+	for (GroupIter it = g_ecs->IterateAll<CAbility, CPlaceable>(); it.IsValid(); ++it)
+	{
+		CAbility& ability = abilityStorage[it];
+		ability.m_needsAttributeRebuild = true;
+	}
+
 	runData.m_data->m_needsModifierRecalculation = true;
 
 	return false;
@@ -226,6 +233,7 @@ bool SDebugCommands::Unlock(NamedProperties& args)
 
 	SCRunData& runData = g_ecs->GetSingleton<SCRunData>();
 
+	bool unlockedMod = false;
 	for (auto& mod : runData.m_data->m_runModifierPool.m_runModifierDefs)
 	{
 		if (mod->m_name != modName || mod->m_name == Name::Invalid)
@@ -249,10 +257,23 @@ bool SDebugCommands::Unlock(NamedProperties& args)
 			RunModifier* newMod = mod->MakeModifierInstance();
 			newMod->m_level = mod->m_maxLevel;
 			runData.m_data->m_activeRunModifiers.push_back(newMod);
+			unlockedMod = true;
 		}
+
+		break;
 	}
 
-	runData.m_data->m_needsModifierRecalculation = true;
+	if (unlockedMod)
+	{
+		auto& abilityStorage = g_ecs->GetMapStorage<CAbility>();
+		for (GroupIter it = g_ecs->IterateAll<CAbility, CPlaceable>(); it.IsValid(); ++it)
+		{
+			CAbility& ability = abilityStorage[it];
+			ability.m_needsAttributeRebuild = true;
+		}
+
+		runData.m_data->m_needsModifierRecalculation = true;
+	}
 
 	return false;
 }

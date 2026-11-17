@@ -10,8 +10,6 @@
 //----------------------------------------------------------------------------------------------------------------------
 // Thread Safe Priority Queue
 //
-// Thread safe wrapper around std::priority_queue
-//
 template<typename T>
 class ThreadSafePrioQueue
 {

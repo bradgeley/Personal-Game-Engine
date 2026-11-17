@@ -373,8 +373,8 @@ void FlavorAbilityRunModifier::Apply(SystemContext const& context) const
 		bool matchesTagRequirement = true;
 		for (int tagIndex = 0; tagIndex < RunModifierDef::s_maxRequirements; ++tagIndex)
 		{
-			Name tagRequirement = GetDef().m_tagRequirements[tagIndex];
-			if (tagRequirement != Name::Invalid && !tagComponent.HasTag(tagRequirement))
+			Name const& tagRequirement = GetDef().m_tagRequirements[tagIndex];
+			if (tagRequirement.IsValid() && !tagComponent.HasTag(tagRequirement))
 			{
 				matchesTagRequirement = false;
 				break;
@@ -398,9 +398,9 @@ void FlavorAbilityRunModifier::ApplyToAbility(CAbility& ability, CTags const& ta
 {
 	auto& def = GetDef();
 
-	for (auto& tag : def.m_tagRequirements)
+	for (Name const& tag : def.m_tagRequirements)
 	{
-		if (!tags.HasTag(tag))
+		if (tag.IsValid() && !tags.HasTag(tag))
 		{
 			return;
 		}

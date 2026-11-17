@@ -37,7 +37,7 @@ public:
     
 public:
     
-	bool m_needsAttributeRebuild = true;
+	bool m_needsAttributeRebuild = false;
 
     AbilityAttributes m_attributes;
     AbilityFlags m_globalFlags; // Enable features of abilities globally

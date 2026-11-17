@@ -12,7 +12,7 @@
   <RunModifierPool name="Towers">
 
     <!-- Level 1 -->
-    <FlavorUnlockRunModifier name="RandomFlavor" baseCost="25" levelRequirement="0" weight="10">
+    <FlavorUnlockRunModifier name="RandomFlavor" baseCost="25" levelRequirement="0" weight="1">
       <DisplayData displayName="Random Flavor" spriteSheet="Data/SpriteSheets/Icons.xml" anim="swirl3" tint="255,255,255"></DisplayData>
     </FlavorUnlockRunModifier>
     
@@ -549,9 +549,9 @@
     </EconomyRunModifier>
 
     <!-- Level 20 -->
-    <EconomyRunModifier name="Interest Rate" interestBase="0.025" interestPerLevel="0.025" interestTimerSpeedBase="0.05" interestTimerSpeedPerLevel="0.05" weight="0.5" levelRequirement="20" maxLevel="5">
+    <!--<EconomyRunModifier name="Interest Rate" interestBase="0.025" interestPerLevel="0.025" interestTimerSpeedBase="0.05" interestTimerSpeedPerLevel="0.05" weight="0.5" levelRequirement="20" maxLevel="5">
       <DisplayData displayName="Interest Rate" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
-    </EconomyRunModifier>
+    </EconomyRunModifier> -->
 
     <!-- Level 30 -->
     <!--<EconomyRunModifier name="Debt" creditLimitBase="50" creditLimitPerLevel="50" debtInterestRateBase="-0.05" debtInterestRatePerLevel="-0.05" weight="1" levelRequirement="30" maxLevel="5">
