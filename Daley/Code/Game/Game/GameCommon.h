@@ -108,7 +108,7 @@ namespace StaticGameSettings
 	static constexpr float s_baseCostRampPerTower			= 1.00f;
 
 	// Difficulty Settings
-	static constexpr int   s_maxEnemyAffixes				= 3;
+	static constexpr int   s_maxEnemyAffixes				= 2;
 	static constexpr float s_endlessEntityMultiplierIncreasePerWave = 1.1f;
 
 	// Magic/Rare Enemy Settings

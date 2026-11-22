@@ -169,7 +169,7 @@ EnemyAffixDef const* EnemyAffixDef::GetAffixDef(Name name)
 
 
 //----------------------------------------------------------------------------------------------------------------------
-EnemyAffixDef const* EnemyAffixDef::GetRandom(int seed, bool rare /*= false*/)
+EnemyAffixDef const* EnemyAffixDef::GetRandom(int seed, bool rare /*= false*/, Name ignoreAffix /*= Name::Invalid*/)
 {
 	if (s_affixDefs.empty())
 	{
@@ -179,6 +179,10 @@ EnemyAffixDef const* EnemyAffixDef::GetRandom(int seed, bool rare /*= false*/)
 	int totalWeight = 0;
 	for (EnemyAffixDef const* affixDef : s_affixDefs)
 	{
+		if (affixDef->m_name == ignoreAffix)
+		{
+			continue;
+		}
 		if (affixDef->m_rare && !rare)
 		{
 			continue;
@@ -191,6 +195,10 @@ EnemyAffixDef const* EnemyAffixDef::GetRandom(int seed, bool rare /*= false*/)
 	int runningWeight = 0;
 	for (EnemyAffixDef const* affixDef : s_affixDefs)
 	{
+		if (affixDef->m_name == ignoreAffix)
+		{
+			continue;
+		}
 		if (affixDef->m_rare && !rare)
 		{
 			continue;

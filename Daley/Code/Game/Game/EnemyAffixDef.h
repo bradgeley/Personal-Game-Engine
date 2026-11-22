@@ -24,7 +24,7 @@ public:
 	static void LoadFromXML();
 	static void Shutdown();
 	static EnemyAffixDef const* GetAffixDef(Name name);
-	static EnemyAffixDef const* GetRandom(int seed, bool rare = false);
+	static EnemyAffixDef const* GetRandom(int seed, bool rare = false, Name ignoreAffix = Name::Invalid);
 
 private:
 

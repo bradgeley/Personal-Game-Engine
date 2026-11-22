@@ -198,12 +198,20 @@ EntityID SEntityFactory::SpawnEntity(SystemContext const& context, SpawnInfo con
         }
     }
 
-    bool isRare = spawnInfo.m_numAffixes > 1; // janky way to know its rare, change if design changes later
+	ASSERT_OR_DIE(spawnInfo.m_numAffixes <= StaticGameSettings::s_maxEnemyAffixes, StringUtils::StringF("SpawnEntity - spawn info has too many affixes (%i), max is %i", spawnInfo.m_numAffixes, StaticGameSettings::s_maxEnemyAffixes));
+    bool isRare = spawnInfo.m_numAffixes == StaticGameSettings::s_rareEnemyBaseNumAffixes; // janky way to know its rare, change if design changes later
+
+    Name firstAffixName = Name::Invalid;
 	for (int affixIndex = 0; affixIndex < spawnInfo.m_numAffixes; ++affixIndex)
 	{
-		EnemyAffixDef const* randomAffixDef = EnemyAffixDef::GetRandom(spawnInfo.m_randomSeed + affixIndex, isRare);
+		EnemyAffixDef const* randomAffixDef = EnemyAffixDef::GetRandom(spawnInfo.m_randomSeed + affixIndex, isRare, firstAffixName); // Change func if we allow 3+ affixes in the future
 		ASSERT_OR_DIE(randomAffixDef != nullptr, StringUtils::StringF("SpawnEntity - failed to roll random affix for entity %s", spawnInfo.m_def->m_name.ToCStr()));
 		randomAffixDef->ApplyToEntity(id, context);
+
+		if (affixIndex == 0)
+		{
+			firstAffixName = randomAffixDef->m_name;
+		}
 	}
 
     return id;
