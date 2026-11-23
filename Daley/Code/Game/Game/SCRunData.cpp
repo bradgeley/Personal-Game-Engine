@@ -130,14 +130,19 @@ void RunData::GenerateModifierChoices()
 void RunData::ResetModifiableAttributes()
 {
 	m_goldGainMultiplier = 1.f;
+	m_experienceMultiplier = 1.f;
 	m_income = StaticGameSettings::s_baseIncome;
-	m_savingsInterestRate = StaticGameSettings::s_baseSavingsInterestRate;
-	m_interestTimerSeconds = StaticGameSettings::s_baseInterestTimerSeconds;
-	m_maxSellsPerMission = StaticGameSettings::s_baseSellMaximum;
-	m_sellRefundRate = StaticGameSettings::s_baseSellRefundRate;
 	m_creditLimit = StaticGameSettings::s_baseCreditLimit;
+	m_savingsInterestRate = StaticGameSettings::s_baseSavingsInterestRate;
 	m_debtInterestRate = StaticGameSettings::s_baseDebtInterestRate;
+	m_interestTimerSeconds = StaticGameSettings::s_baseInterestTimerSeconds;
+	m_maxHealth = StaticGameSettings::s_basePlayerHealth;
+	m_healthRegen = StaticGameSettings::s_basePlayerHealthRegen;
+	m_maxFlavors = StaticGameSettings::s_flavorUnlockLimit;
 	m_swirlLimit = StaticGameSettings::s_baseSwirlLimit;
+	m_costRampPerTower = StaticGameSettings::s_baseCostRampPerTower;
+	m_sellRefundRatio = StaticGameSettings::s_baseSellRefundRatio;
+	m_maxSellsPerMission = StaticGameSettings::s_baseSellCount;
 }
 
 
@@ -149,6 +154,9 @@ void RunData::PrepareForMissionStart()
 	m_health = StaticGameSettings::s_basePlayerHealth;
 	m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
 	m_numSoldTowers = 0;
+	m_numActiveModifierChoices = 0;
+	m_modifierChoices.fill(nullptr);
+
 	m_needsModifierRecalculation = true;
 	m_wantsModifierChoice = true;
 

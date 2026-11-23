@@ -68,7 +68,7 @@ namespace StaticGameSettings
 	static Rgba8		   s_rareEnemyOutlineTint			= Rgba8(255, 255, 0, 255);
 
     // Static
-    static constexpr float s_burnDecayedValueAfterOneSecond	= 0.65f;
+    static constexpr float s_burnDecayedValueAfterOneSecond	= 0.75f;
 	static constexpr double s_slowStatusTimeDilation		= 0.5;
 	static constexpr double s_hasteStatusTimeDilation		= 1.5;
 	static constexpr double s_vulnerabilityExponent			= 0.5f;
@@ -103,8 +103,8 @@ namespace StaticGameSettings
 	static constexpr float s_baseDebtInterestRate			= 0.5f;
 	static constexpr float s_baseInterestTimerSeconds		= 30.f;
 	static constexpr float s_baseSwirlCost					= 50.f;
-	static constexpr int   s_baseSellMaximum				= 5;
-	static constexpr float s_baseSellRefundRate				= 0.5f;
+	static constexpr int   s_baseSellCount				= 5;
+	static constexpr float s_baseSellRefundRatio				= 0.5f;
 	static constexpr float s_baseCostRampPerTower			= 1.00f;
 
 	// Difficulty Settings

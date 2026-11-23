@@ -523,7 +523,7 @@ bool STowerSpawner::ProcessTowerRemovalRequest(TowerRemovalRequest const& reques
 
     if (request.m_isSell)
     {
-        float refund = placeable.m_costOfPurchase * runData.m_sellRefundRate;
+        float refund = placeable.m_costOfPurchase * runData.m_sellRefundRatio;
         runData.m_gold += refund;
 
         FloatingTextInstance floatingTextInstance;

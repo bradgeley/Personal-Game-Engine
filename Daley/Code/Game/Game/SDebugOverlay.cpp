@@ -107,7 +107,6 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	float leftSidePadding = 200.f;
 	float spaceBetweenLines = overlayTextHeight + spacing;
 
-
 	Vec2 topLeft = screenBounds.GetTopLeft();
 	currentHeightOffset -= 100.f;
 	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, "Debug Overlay Enabled", Rgba8::White);
@@ -146,6 +145,88 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	{
 		ActiveWaveStream const& activeStream = waves.m_activeStreams[streamIndex];
 		font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 90.f + 30.f * (float) streamIndex), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Active Stream: %s (%d/%d)", activeStream.m_entityStream.m_entityName.ToCStr(), activeStream.m_numSpawned, activeStream.m_entityStream.m_numEntities), Rgba8::White);
+	}
+
+	// Run data info (second and third columns)
+	float const runDataColumnX = leftSidePadding + 450.f;
+	float const runDataColumnWidth = 730.f;
+	float const runDataHeightOffset = -110.f;
+	Vec2 const runDataTopLeft = topLeft + Vec2(runDataColumnX, runDataHeightOffset);
+
+	std::vector<std::string> runDataLines;
+	auto addRunDataLine = [&](std::string const& text)
+	{
+		runDataLines.push_back(text);
+	};
+
+	addRunDataLine("Run Data");
+
+	// Static / Generated Run Data
+	addRunDataLine(StringUtils::StringF("Num Run Modifier Defs: %d", (int) runData.m_runModifierPool.m_runModifierDefs.size()));
+	addRunDataLine(StringUtils::StringF("Seed: %d", runData.m_seed));
+	addRunDataLine(StringUtils::StringF("Mode: %s", runData.m_mode == GameMode::Endless ? "Endless" : "Journey"));
+	addRunDataLine(StringUtils::StringF("Num Missions: %d", (int) runData.m_missionGenData.size()));
+	for (size_t i = 0; i < runData.m_missionGenData.size(); ++i)
+	{
+		MissionGenData const& missionGenData = runData.m_missionGenData[i];
+		addRunDataLine(StringUtils::StringF("Mission %d: %s (Biome: %s)", (int) i, missionGenData.m_mapName.ToCStr(), missionGenData.m_biomeName.ToCStr()));
+	}
+
+	// Non-Resettable Data
+	ExperienceLevelData const levelData = RunData::GetLevelData(runData.m_experience);
+	addRunDataLine(StringUtils::StringF("Mission Index: %d", runData.m_missionIndex));
+	addRunDataLine(StringUtils::StringF("Experience: %llu", runData.m_experience));
+	addRunDataLine(StringUtils::StringF("Fractional Experience: %.2f", runData.m_fractionalExperience));
+	addRunDataLine(StringUtils::StringF("Level: %d%s (%.1f%%, %llu/%llu)", levelData.m_level, levelData.m_isMaxLevel ? " (Max)" : "", levelData.m_percentIntoLevel * 100.f, levelData.m_experienceIntoLevel, levelData.m_experienceNeededForNextLevel));
+	addRunDataLine(StringUtils::StringF("Modifier Choices Remaining: %d", runData.m_numModifierChoicesRemaining));
+	addRunDataLine(StringUtils::StringF("Modifier Choices Completed: %d", runData.m_numModifierChoicesCompleted));
+	addRunDataLine(StringUtils::StringF("Active Run Modifiers: %d", (int) runData.m_activeRunModifiers.size()));
+	for (size_t i = 0; i < runData.m_placeableTowers.size(); ++i)
+	{
+		PlaceableTower const& tower = runData.m_placeableTowers[i];
+		addRunDataLine(StringUtils::StringF("Placeable Tower %d: %s / %s [%c] Cost: %.1f (Base: %.1f)", (int) i, tower.m_towerName.ToCStr(), tower.m_flavorName.ToCStr(), tower.m_hotkey, tower.m_cost, tower.m_baseCost));
+	}
+	for (size_t i = 0; i < runData.m_towerPlacementKeyBindings.size(); ++i)
+	{
+		addRunDataLine(StringUtils::StringF("Placement Key Binding %d: %c", (int) i, (char) runData.m_towerPlacementKeyBindings[i]));
+	}
+
+	// Resettable Data
+	addRunDataLine(StringUtils::StringF("Gold: %.1f", runData.m_gold));
+	addRunDataLine(StringUtils::StringF("Health: %.1f", runData.m_health));
+	addRunDataLine(StringUtils::StringF("Interest Timer Remaining: %.1f", runData.m_interestTimerSecondsRemaining));
+	addRunDataLine(StringUtils::StringF("Num Sold Towers: %d", runData.m_numSoldTowers));
+	addRunDataLine(StringUtils::StringF("Num Active Modifier Choices: %d", runData.m_numActiveModifierChoices));
+
+	// Modifiable Data
+	addRunDataLine(StringUtils::StringF("Gold Gain Multiplier: %.2f", runData.m_goldGainMultiplier));
+	addRunDataLine(StringUtils::StringF("Experience Multiplier: %.2f", runData.m_experienceMultiplier));
+	addRunDataLine(StringUtils::StringF("Income: %.1f", runData.m_income));
+	addRunDataLine(StringUtils::StringF("Credit Limit: %.1f", runData.m_creditLimit));
+	addRunDataLine(StringUtils::StringF("Savings Interest Rate: %.3f", runData.m_savingsInterestRate));
+	addRunDataLine(StringUtils::StringF("Debt Interest Rate: %.3f", runData.m_debtInterestRate));
+	addRunDataLine(StringUtils::StringF("Interest Timer Seconds: %.1f", runData.m_interestTimerSeconds));
+	addRunDataLine(StringUtils::StringF("Max Health: %.1f", runData.m_maxHealth));
+	addRunDataLine(StringUtils::StringF("Health Regen: %.2f", runData.m_healthRegen));
+	addRunDataLine(StringUtils::StringF("Max Flavors: %d", runData.m_maxFlavors));
+	addRunDataLine(StringUtils::StringF("Swirl Limit: %d", runData.m_swirlLimit));
+	addRunDataLine(StringUtils::StringF("Cost Ramp Per Tower: %.3f", runData.m_costRampPerTower));
+	addRunDataLine(StringUtils::StringF("Sell Refund Ratio: %.2f", runData.m_sellRefundRatio));
+	addRunDataLine(StringUtils::StringF("Max Sells Per Mission: %d", runData.m_maxSellsPerMission));
+
+	// Persistent / Transient State
+	addRunDataLine(StringUtils::StringF("Current Time Dilation: %.2f", runData.m_currentTimeDilation));
+	addRunDataLine(StringUtils::StringF("Wants Modifier Choice: %s", runData.m_wantsModifierChoice ? "true" : "false"));
+	addRunDataLine(StringUtils::StringF("Needs Modifier Recalculation: %s", runData.m_needsModifierRecalculation ? "true" : "false"));
+
+	int const numRunDataLines = (int) runDataLines.size();
+	int const numLinesPerColumn = (numRunDataLines + 1) / 2;
+	for (int lineIndex = 0; lineIndex < numRunDataLines; ++lineIndex)
+	{
+		int const columnIndex = lineIndex / numLinesPerColumn;
+		int const rowIndex = lineIndex % numLinesPerColumn;
+		Vec2 const linePos = runDataTopLeft + Vec2(runDataColumnWidth * (float) columnIndex, -spaceBetweenLines * (float) rowIndex);
+		font->AddVertsForAlignedText2D(fontVerts, linePos, Vec2(1.f, -1.f), overlayTextHeight, runDataLines[lineIndex], Rgba8::White);
 	}
 
 	// Show ability information for hovered entity

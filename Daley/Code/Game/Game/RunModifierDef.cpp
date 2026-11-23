@@ -662,7 +662,7 @@ void EconomyRunModifier::ApplyToRunData(RunData& runData) const
 	runData.m_goldGainMultiplier += def.m_goldGainMultiplierIncreaseBase + (def.m_goldGainMultiplierIncreasePerLevel * static_cast<float>(m_level - 1));
 	runData.m_savingsInterestRate += def.m_interestRateIncreaseBase + (def.m_interestRateIncreasePerLevel * static_cast<float>(m_level - 1));
 	runData.m_maxSellsPerMission += def.m_baseSells + (def.m_sellsPerLevel * (m_level - 1));
-	runData.m_sellRefundRate += def.m_baseSellRateIncrease + (def.m_sellRateIncreasePerLevel * static_cast<float>(m_level - 1));
+	runData.m_sellRefundRatio += def.m_baseSellRateIncrease + (def.m_sellRateIncreasePerLevel * static_cast<float>(m_level - 1));
 	runData.m_creditLimit += def.m_creditLimitIncreaseBase + (def.m_creditLimitIncreasePerLevel * static_cast<float>(m_level - 1));
 	float interestRateMultiplier = 1.f - (def.m_interestRateIncreaseBase + (def.m_interestRateIncreasePerLevel * static_cast<float>(m_level - 1)));
 	runData.m_interestTimerSeconds *= interestRateMultiplier;
