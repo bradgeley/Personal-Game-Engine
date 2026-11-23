@@ -113,7 +113,7 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	float const leftSidePadding = 200.f;
 	float const topPadding = 110.f;
 	float const spaceBetweenLines = overlayTextHeight + spacing;
-	int const numColumns = 3;
+	int const numColumns = 2;
 
 	// Every line shown in the overlay's columns is added through this one lambda
 	std::vector<DebugOverlayLine> debugOverlayLines;
