@@ -1,7 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #include "SDebugOverlay.h"
 #include "CAbility.h"
-#include "Ability.h"
 #include "CCollision.h"
 #include "CEntityName.h"
 #include "CHealth.h"
@@ -18,7 +17,6 @@
 #include "SCRenderer.h"
 #include "SCRunData.h"
 #include "SCWaves.h"
-#include "SCWindow.h"
 #include "SGoal.h"
 #include "Engine/Assets/Font.h"
 #include "Engine/Core/StringUtils.h"
@@ -29,7 +27,16 @@
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Renderer/VertexBuffer.h"
 #include "Engine/Renderer/VertexUtils.h"
-#include "Engine/Window/Window.h"
+
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+struct DebugOverlayLine
+{
+	std::string m_text;
+	Rgba8 m_color = Rgba8::White;
+};
 
 
 
@@ -101,134 +108,141 @@ void SDebugOverlay::Run(SystemContext const& context) const
 	// Add transparent black background
 	VertexUtils::AddVertsForAABB2(untexVerts, screenBounds, Rgba8(0, 0, 0, 120), AABB2::ZeroToOne);
 
-	float currentHeightOffset = -10.f;
-	float overlayTextHeight = 25.f;
-	float spacing = 5.f;
-	float leftSidePadding = 200.f;
-	float spaceBetweenLines = overlayTextHeight + spacing;
+	float const overlayTextHeight = 25.f;
+	float const spacing = 5.f;
+	float const leftSidePadding = 200.f;
+	float const topPadding = 110.f;
+	float const spaceBetweenLines = overlayTextHeight + spacing;
+	int const numColumns = 3;
 
-	Vec2 topLeft = screenBounds.GetTopLeft();
-	currentHeightOffset -= 100.f;
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, "Debug Overlay Enabled", Rgba8::White);
-
-	currentHeightOffset -= spaceBetweenLines;
-	int totalEntities = context.NumEntities();
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Total Entities: %d", totalEntities), Rgba8::White);
-
-	currentHeightOffset -= spaceBetweenLines;
-	int numEnemies = waves.m_remainingEnemies;
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Remaining Enemies: %d", numEnemies), Rgba8::White);
-
-	currentHeightOffset -= spaceBetweenLines;
-	Name mapName = runData.m_missionGenData[runData.m_missionIndex].m_mapName;
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Map: %s", mapName.ToCStr()), Rgba8::White);
-
-	currentHeightOffset -= spaceBetweenLines;
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Run Seed: %d", runData.m_seed), Rgba8::White);
-
-	currentHeightOffset -= spaceBetweenLines;
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Mission Seed: %d", runData.m_seed + runData.m_missionIndex), Rgba8::White);
-
-	currentHeightOffset -= spaceBetweenLines;
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Current Mission: %d/%d", runData.m_missionIndex + 1, runData.m_missionGenData.size()), Rgba8::White);
-
-	currentHeightOffset -= spaceBetweenLines;
-	bool isGodMode = scDebug.m_godMode;
-	font->AddVertsForAlignedText2D(fontVerts, topLeft + Vec2(leftSidePadding, currentHeightOffset), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("God Mode: %s", isGodMode ? "Enabled" : "Disabled"), Rgba8::White);
-
-	// Wave spawner info
-	Vec2 wavesTopLeft = screenBounds.maxs - Vec2(350.f, 10.f);
-	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft, Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Waves: %s", waves.m_wavesStarted ? (waves.m_wavesFinished ? "Finished" : "In Progress") : "Not Started"), Rgba8::White);
-	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 30.f), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Current Wave: %d/%d", waves.m_currentWaveIndex, waves.m_waves.size()), Rgba8::White);
-	font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 60.f), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Time Until Next Wave: %.1f", waves.m_waveTimer.GetRemainingSeconds()), Rgba8::Yellow);
-	for (int streamIndex = 0; streamIndex < (int) waves.m_activeStreams.size(); ++streamIndex)
+	// Every line shown in the overlay's columns is added through this one lambda
+	std::vector<DebugOverlayLine> debugOverlayLines;
+	auto addDebugOverlayLine = [&](std::string const& text, Rgba8 const& color = Rgba8::White)
 	{
-		ActiveWaveStream const& activeStream = waves.m_activeStreams[streamIndex];
-		font->AddVertsForAlignedText2D(fontVerts, wavesTopLeft - Vec2(0.f, 90.f + 30.f * (float) streamIndex), Vec2(1.f, -1.f), overlayTextHeight, StringUtils::StringF("Active Stream: %s (%d/%d)", activeStream.m_entityStream.m_entityName.ToCStr(), activeStream.m_numSpawned, activeStream.m_entityStream.m_numEntities), Rgba8::White);
-	}
-
-	// Run data info (second and third columns)
-	float const runDataColumnX = leftSidePadding + 450.f;
-	float const runDataColumnWidth = 730.f;
-	float const runDataHeightOffset = -110.f;
-	Vec2 const runDataTopLeft = topLeft + Vec2(runDataColumnX, runDataHeightOffset);
-
-	std::vector<std::string> runDataLines;
-	auto addRunDataLine = [&](std::string const& text)
+		debugOverlayLines.push_back({ text, color });
+	};
+	auto addHeader = [&](std::string const& text)
 	{
-		runDataLines.push_back(text);
+		addDebugOverlayLine("");
+		addDebugOverlayLine(text, Rgba8::Yellow);
 	};
 
-	addRunDataLine("Run Data");
+	// General
+	addDebugOverlayLine("Debug Overlay Enabled", Rgba8::Yellow);
+	addDebugOverlayLine(StringUtils::StringF("Total Entities: %d", context.NumEntities()));
+	addDebugOverlayLine(StringUtils::StringF("Remaining Enemies: %d", waves.m_remainingEnemies));
+	addDebugOverlayLine(StringUtils::StringF("God Mode: %s", scDebug.m_godMode ? "Enabled" : "Disabled"));
+
+	// Current Mission
+	addHeader("Current Mission");
+	addDebugOverlayLine(StringUtils::StringF("Map: %s", runData.m_missionGenData[runData.m_missionIndex].m_mapName.ToCStr()));
+	addDebugOverlayLine(StringUtils::StringF("Run Seed: %d", runData.m_seed));
+	addDebugOverlayLine(StringUtils::StringF("Mission Seed: %d", runData.m_seed + runData.m_missionIndex));
+	addDebugOverlayLine(StringUtils::StringF("Current Mission: %d/%d", runData.m_missionIndex + 1, (int) runData.m_missionGenData.size()));
+
+	// Waves
+	addHeader("Waves");
+	addDebugOverlayLine(StringUtils::StringF("Waves: %s", waves.m_wavesStarted ? (waves.m_wavesFinished ? "Finished" : "In Progress") : "Not Started"));
+	addDebugOverlayLine(StringUtils::StringF("Current Wave: %d/%d", waves.m_currentWaveIndex, (int) waves.m_waves.size()));
+	addDebugOverlayLine(StringUtils::StringF("Time Until Next Wave: %.1f", waves.m_waveTimer.GetRemainingSeconds()), Rgba8::Yellow);
+	for (ActiveWaveStream const& activeStream : waves.m_activeStreams)
+	{
+		addDebugOverlayLine(StringUtils::StringF("Active Stream: %s (%d/%d)", activeStream.m_entityStream.m_entityName.ToCStr(), activeStream.m_numSpawned, activeStream.m_entityStream.m_numEntities));
+	}
 
 	// Static / Generated Run Data
-	addRunDataLine(StringUtils::StringF("Num Run Modifier Defs: %d", (int) runData.m_runModifierPool.m_runModifierDefs.size()));
-	addRunDataLine(StringUtils::StringF("Seed: %d", runData.m_seed));
-	addRunDataLine(StringUtils::StringF("Mode: %s", runData.m_mode == GameMode::Endless ? "Endless" : "Journey"));
-	addRunDataLine(StringUtils::StringF("Num Missions: %d", (int) runData.m_missionGenData.size()));
+	addHeader("Run Data");
+	addDebugOverlayLine(StringUtils::StringF("Num Run Modifier Defs: %d", (int) runData.m_runModifierPool.m_runModifierDefs.size()));
+	addDebugOverlayLine(StringUtils::StringF("Seed: %d", runData.m_seed));
+	addDebugOverlayLine(StringUtils::StringF("Mode: %s", runData.m_mode == GameMode::Endless ? "Endless" : "Journey"));
+	addDebugOverlayLine(StringUtils::StringF("Num Missions: %d", (int) runData.m_missionGenData.size()));
 	for (size_t i = 0; i < runData.m_missionGenData.size(); ++i)
 	{
 		MissionGenData const& missionGenData = runData.m_missionGenData[i];
-		addRunDataLine(StringUtils::StringF("Mission %d: %s (Biome: %s)", (int) i, missionGenData.m_mapName.ToCStr(), missionGenData.m_biomeName.ToCStr()));
+		addDebugOverlayLine(StringUtils::StringF("Mission %d: %s (Biome: %s)", (int) i, missionGenData.m_mapName.ToCStr(), missionGenData.m_biomeName.ToCStr()));
 	}
 
 	// Non-Resettable Data
+	addHeader("Non-Resettable Data");
 	ExperienceLevelData const levelData = RunData::GetLevelData(runData.m_experience);
-	addRunDataLine(StringUtils::StringF("Mission Index: %d", runData.m_missionIndex));
-	addRunDataLine(StringUtils::StringF("Experience: %llu", runData.m_experience));
-	addRunDataLine(StringUtils::StringF("Fractional Experience: %.2f", runData.m_fractionalExperience));
-	addRunDataLine(StringUtils::StringF("Level: %d%s (%.1f%%, %llu/%llu)", levelData.m_level, levelData.m_isMaxLevel ? " (Max)" : "", levelData.m_percentIntoLevel * 100.f, levelData.m_experienceIntoLevel, levelData.m_experienceNeededForNextLevel));
-	addRunDataLine(StringUtils::StringF("Modifier Choices Remaining: %d", runData.m_numModifierChoicesRemaining));
-	addRunDataLine(StringUtils::StringF("Modifier Choices Completed: %d", runData.m_numModifierChoicesCompleted));
-	addRunDataLine(StringUtils::StringF("Active Run Modifiers: %d", (int) runData.m_activeRunModifiers.size()));
+	addDebugOverlayLine(StringUtils::StringF("Mission Index: %d", runData.m_missionIndex));
+	addDebugOverlayLine(StringUtils::StringF("Experience: %llu", runData.m_experience));
+	addDebugOverlayLine(StringUtils::StringF("Fractional Experience: %.2f", runData.m_fractionalExperience));
+	addDebugOverlayLine(StringUtils::StringF("Level: %d%s (%.1f%%, %llu/%llu)", levelData.m_level, levelData.m_isMaxLevel ? " (Max)" : "", levelData.m_percentIntoLevel * 100.f, levelData.m_experienceIntoLevel, levelData.m_experienceNeededForNextLevel));
+	addDebugOverlayLine(StringUtils::StringF("Modifier Choices Remaining: %d", runData.m_numModifierChoicesRemaining));
+	addDebugOverlayLine(StringUtils::StringF("Modifier Choices Completed: %d", runData.m_numModifierChoicesCompleted));
+	addDebugOverlayLine(StringUtils::StringF("Active Run Modifiers: %d", (int) runData.m_activeRunModifiers.size()));
 	for (size_t i = 0; i < runData.m_placeableTowers.size(); ++i)
 	{
 		PlaceableTower const& tower = runData.m_placeableTowers[i];
-		addRunDataLine(StringUtils::StringF("Placeable Tower %d: %s / %s [%c] Cost: %.1f (Base: %.1f)", (int) i, tower.m_towerName.ToCStr(), tower.m_flavorName.ToCStr(), tower.m_hotkey, tower.m_cost, tower.m_baseCost));
+		addDebugOverlayLine(StringUtils::StringF("Placeable Tower %d: %s / %s [%c] Cost: %.1f (Base: %.1f)", (int) i, tower.m_towerName.ToCStr(), tower.m_flavorName.ToCStr(), tower.m_hotkey, tower.m_cost, tower.m_baseCost));
 	}
 	for (size_t i = 0; i < runData.m_towerPlacementKeyBindings.size(); ++i)
 	{
-		addRunDataLine(StringUtils::StringF("Placement Key Binding %d: %c", (int) i, (char) runData.m_towerPlacementKeyBindings[i]));
+		addDebugOverlayLine(StringUtils::StringF("Placement Key Binding %d: %c", (int) i, (char) runData.m_towerPlacementKeyBindings[i]));
 	}
 
 	// Resettable Data
-	addRunDataLine(StringUtils::StringF("Gold: %.1f", runData.m_gold));
-	addRunDataLine(StringUtils::StringF("Health: %.1f", runData.m_health));
-	addRunDataLine(StringUtils::StringF("Interest Timer Remaining: %.1f", runData.m_interestTimerSecondsRemaining));
-	addRunDataLine(StringUtils::StringF("Num Sold Towers: %d", runData.m_numSoldTowers));
-	addRunDataLine(StringUtils::StringF("Num Active Modifier Choices: %d", runData.m_numActiveModifierChoices));
+	addHeader("Resettable Data");
+	addDebugOverlayLine(StringUtils::StringF("Gold: %.1f", runData.m_gold));
+	addDebugOverlayLine(StringUtils::StringF("Health: %.1f", runData.m_health));
+	addDebugOverlayLine(StringUtils::StringF("Interest Timer Remaining: %.1f", runData.m_interestTimerSecondsRemaining));
+	addDebugOverlayLine(StringUtils::StringF("Num Sold Towers: %d", runData.m_numSoldTowers));
+	addDebugOverlayLine(StringUtils::StringF("Num Active Modifier Choices: %d", runData.m_numActiveModifierChoices));
 
 	// Modifiable Data
-	addRunDataLine(StringUtils::StringF("Gold Gain Multiplier: %.2f", runData.m_goldGainMultiplier));
-	addRunDataLine(StringUtils::StringF("Experience Multiplier: %.2f", runData.m_experienceMultiplier));
-	addRunDataLine(StringUtils::StringF("Income: %.1f", runData.m_income));
-	addRunDataLine(StringUtils::StringF("Credit Limit: %.1f", runData.m_creditLimit));
-	addRunDataLine(StringUtils::StringF("Savings Interest Rate: %.3f", runData.m_savingsInterestRate));
-	addRunDataLine(StringUtils::StringF("Debt Interest Rate: %.3f", runData.m_debtInterestRate));
-	addRunDataLine(StringUtils::StringF("Interest Timer Seconds: %.1f", runData.m_interestTimerSeconds));
-	addRunDataLine(StringUtils::StringF("Max Health: %.1f", runData.m_maxHealth));
-	addRunDataLine(StringUtils::StringF("Health Regen: %.2f", runData.m_healthRegen));
-	addRunDataLine(StringUtils::StringF("Max Flavors: %d", runData.m_maxFlavors));
-	addRunDataLine(StringUtils::StringF("Swirl Limit: %d", runData.m_swirlLimit));
-	addRunDataLine(StringUtils::StringF("Cost Ramp Per Tower: %.3f", runData.m_costRampPerTower));
-	addRunDataLine(StringUtils::StringF("Sell Refund Ratio: %.2f", runData.m_sellRefundRatio));
-	addRunDataLine(StringUtils::StringF("Max Sells Per Mission: %d", runData.m_maxSellsPerMission));
+	addHeader("Modifiable Data");
+	addDebugOverlayLine(StringUtils::StringF("Gold Gain Multiplier: %.2f", runData.m_goldGainMultiplier));
+	addDebugOverlayLine(StringUtils::StringF("Experience Multiplier: %.2f", runData.m_experienceMultiplier));
+	addDebugOverlayLine(StringUtils::StringF("Income: %.1f", runData.m_income));
+	addDebugOverlayLine(StringUtils::StringF("Credit Limit: %.1f", runData.m_creditLimit));
+	addDebugOverlayLine(StringUtils::StringF("Savings Interest Rate: %.3f", runData.m_savingsInterestRate));
+	addDebugOverlayLine(StringUtils::StringF("Debt Interest Rate: %.3f", runData.m_debtInterestRate));
+	addDebugOverlayLine(StringUtils::StringF("Interest Timer Seconds: %.1f", runData.m_interestTimerSeconds));
+	addDebugOverlayLine(StringUtils::StringF("Max Health: %.1f", runData.m_maxHealth));
+	addDebugOverlayLine(StringUtils::StringF("Health Regen: %.2f", runData.m_healthRegen));
+	addDebugOverlayLine(StringUtils::StringF("Max Flavors: %d", runData.m_maxFlavors));
+	addDebugOverlayLine(StringUtils::StringF("Swirl Limit: %d", runData.m_swirlLimit));
+	addDebugOverlayLine(StringUtils::StringF("Cost Ramp Per Tower: %.3f", runData.m_costRampPerTower));
+	addDebugOverlayLine(StringUtils::StringF("Sell Refund Ratio: %.2f", runData.m_sellRefundRatio));
+	addDebugOverlayLine(StringUtils::StringF("Max Sells Per Mission: %d", runData.m_maxSellsPerMission));
 
 	// Persistent / Transient State
-	addRunDataLine(StringUtils::StringF("Current Time Dilation: %.2f", runData.m_currentTimeDilation));
-	addRunDataLine(StringUtils::StringF("Wants Modifier Choice: %s", runData.m_wantsModifierChoice ? "true" : "false"));
-	addRunDataLine(StringUtils::StringF("Needs Modifier Recalculation: %s", runData.m_needsModifierRecalculation ? "true" : "false"));
+	addHeader("Persistent / Transient State");
+	addDebugOverlayLine(StringUtils::StringF("Current Time Dilation: %.2f", runData.m_currentTimeDilation));
+	addDebugOverlayLine(StringUtils::StringF("Wants Modifier Choice: %s", runData.m_wantsModifierChoice ? "true" : "false"));
+	addDebugOverlayLine(StringUtils::StringF("Needs Modifier Recalculation: %s", runData.m_needsModifierRecalculation ? "true" : "false"));
 
-	int const numRunDataLines = (int) runDataLines.size();
-	int const numLinesPerColumn = (numRunDataLines + 1) / 2;
-	for (int lineIndex = 0; lineIndex < numRunDataLines; ++lineIndex)
+	// Lay out all lines evenly across the columns, spacing columns by the width of their widest line
+	float const spaceBetweenColumns = 50.f;
+	Vec2 const linesTopLeft = screenBounds.GetTopLeft() + Vec2(leftSidePadding, -topPadding);
+	int const numLines = (int) debugOverlayLines.size();
+	int const numLinesPerColumn = (numLines + numColumns - 1) / numColumns;
+
+	// Find the widest line in each column
+	std::array<float, numColumns> columnWidths = {};
+	for (int lineIndex = 0; lineIndex < numLines; ++lineIndex)
+	{
+		int const columnIndex = lineIndex / numLinesPerColumn;
+		float const lineWidth = font->GetLineWidth(overlayTextHeight, debugOverlayLines[lineIndex].m_text);
+		columnWidths[columnIndex] = MathUtils::Max(columnWidths[columnIndex], lineWidth);
+	}
+
+	// Each column starts after the previous column's widest line, plus spacing
+	std::array<float, numColumns> columnStartXs = {};
+	for (int columnIndex = 1; columnIndex < numColumns; ++columnIndex)
+	{
+		columnStartXs[columnIndex] = columnStartXs[columnIndex - 1] + columnWidths[columnIndex - 1] + spaceBetweenColumns;
+	}
+
+	for (int lineIndex = 0; lineIndex < numLines; ++lineIndex)
 	{
 		int const columnIndex = lineIndex / numLinesPerColumn;
 		int const rowIndex = lineIndex % numLinesPerColumn;
-		Vec2 const linePos = runDataTopLeft + Vec2(runDataColumnWidth * (float) columnIndex, -spaceBetweenLines * (float) rowIndex);
-		font->AddVertsForAlignedText2D(fontVerts, linePos, Vec2(1.f, -1.f), overlayTextHeight, runDataLines[lineIndex], Rgba8::White);
+		Vec2 const linePos = linesTopLeft + Vec2(columnStartXs[columnIndex], -spaceBetweenLines * (float) rowIndex);
+		font->AddVertsForAlignedText2D(fontVerts, linePos, Vec2(1.f, -1.f), overlayTextHeight, debugOverlayLines[lineIndex].m_text, debugOverlayLines[lineIndex].m_color);
 	}
-
+	
 	// Show ability information for hovered entity
 	for (auto it = context.Iterate<CTags, CTransform, CEntityName>(); it.IsValid(); ++it)
 	{
@@ -311,9 +325,9 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				float infoCardTitleSpacing = 20.f;
 				Vec2 minCardDims = Vec2(300.f, 300.f);
 				StringUtils::TrimTrailingWhitespace(debugContext.m_debugString);
-				Strings lines = StringUtils::SplitStringOnDelimiter(debugContext.m_debugString, '\n');
-				int numLines = (int) lines.size();
-				float textHeight = titleLineHeight + infoCardTitleSpacing + textLineHeight * (float) numLines + textLineSpacingRatio * textLineHeight* (float) (numLines - 1);
+				Strings splitLines = StringUtils::SplitStringOnDelimiter(debugContext.m_debugString, '\n');
+				int numSpitLines = (int) splitLines.size();
+				float textHeight = titleLineHeight + infoCardTitleSpacing + textLineHeight * (float) numSpitLines + textLineSpacingRatio * textLineHeight* (float) (numSpitLines - 1);
 				float totalHeight = textHeight + infoCardEdgeWidth * 2.f;
 				float cardHeight = MathUtils::Max(minCardDims.y, totalHeight);
 				float textStartHeightOffset = -infoCardEdgeWidth - titleLineHeight - infoCardTitleSpacing;
@@ -321,9 +335,9 @@ void SDebugOverlay::Run(SystemContext const& context) const
 				int longestLineIndex = 0;
 				float longestLineWidth = 0.f;
 
-				for (int lineIndex = 0; lineIndex < numLines; ++lineIndex)
+				for (int lineIndex = 0; lineIndex < numSpitLines; ++lineIndex)
 				{
-					float width = font->GetLineWidth(textLineHeight, lines[lineIndex]);
+					float width = font->GetLineWidth(textLineHeight, splitLines[lineIndex]);
 					if (width > longestLineWidth)
 					{
 						longestLineWidth = width;
