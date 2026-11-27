@@ -84,7 +84,7 @@ void SRenderPopupOverlay::Run(SystemContext const& context) const
 
 	PopupOverlayType overlayType = PopupOverlayType::None;
 
-	if (runData.m_health <= 0.f)
+	if (runData.GetHealth() <= 0.f)
 	{
 		overlayType = PopupOverlayType::Defeat;
 	}

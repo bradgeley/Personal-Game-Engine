@@ -31,8 +31,6 @@ static PerfFrameData s_frameData;
 //----------------------------------------------------------------------------------------------------------------------
 Engine::Engine()
 {
-    g_nameTable = new NameTable();
-    g_nameTable->Startup();
     m_engineClock = new Clock();
     g_rng = new RandomNumberGenerator();
 }
@@ -44,9 +42,7 @@ Engine::~Engine()
 {
     delete m_engineClock;
     m_engineClock = nullptr;
-    g_nameTable->Shutdown();
-    delete g_nameTable;
-    g_nameTable = nullptr;
+    NameTable::Get().Shutdown();
     g_engine = nullptr;
     delete g_rng;
     g_rng = nullptr;

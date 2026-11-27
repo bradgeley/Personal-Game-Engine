@@ -1,5 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "RunModifierDef.h"
+#include "AttributeDef.h"
+#include "AttributeSet.h"
 #include "CAbility.h"
 #include "CTags.h"
 #include "FlavorDef.h"
@@ -53,7 +55,7 @@ RunModifierDef::RunModifierDef(XmlElement const& modElement)
 	std::string modRequirementsString = XmlUtils::ParseXmlAttribute(modElement, "requirements", "");
 	Strings modRequirementStrings = StringUtils::SplitStringOnDelimiter(modRequirementsString, ',');
 
-	Strings& combinedRequirements = poolRequirementStrings;
+	Strings combinedRequirements = poolRequirementStrings;
 	combinedRequirements.insert(combinedRequirements.end(), modRequirementStrings.begin(), modRequirementStrings.end());
 
 	ASSERT_OR_DIE(combinedRequirements.size() <= s_maxRequirements, StringUtils::StringF("RunModifierDef \"%s\" has too many requirements. Max is %d", m_name.ToString().c_str(), s_maxRequirements));
@@ -78,10 +80,6 @@ RunModifierDef const* RunModifierDef::MakeFromXml(XmlElement const& modElement)
 	else if (modTypeName == "FlavorAbilityRunModifier")
 	{
 		return new FlavorAbilityRunModifierDef(modElement);
-	}
-	else if (modTypeName == "EconomyRunModifier")
-	{
-		return new EconomyRunModifierDef(modElement);
 	}
 	else if (modTypeName == "MetaRunModifier")
 	{
@@ -209,7 +207,8 @@ bool FlavorUnlockRunModifierDef::AreRequirementsMet(RunData const& runData) cons
 		}
 	}
 
-	int maxNumPlaceables = (runData.m_maxFlavors + numStartingTowers);
+	int maxFlavors = static_cast<int>(runData.GetAttribute("FlavorLimit", 0.f));
+	int maxNumPlaceables = (maxFlavors + numStartingTowers);
 	if (numFlavors >= maxNumPlaceables)
 	{
 		return false;
@@ -287,12 +286,12 @@ FlavorAbilityRunModifierDef::FlavorAbilityRunModifierDef(XmlElement const& modEl
 {
 	if (XmlElement const* baseAttributesElem = modElement.FirstChildElement("Attributes"))
 	{
-		m_modifiers = AbilityAttributes(baseAttributesElem);
+		m_modifiers = AttributeSet(baseAttributesElem);
 	}
 
 	if (XmlElement const* perLevelAttributesElem = modElement.FirstChildElement("AttributesPerLevel"))
 	{
-		m_modifiersPerLevel = AbilityAttributes(perLevelAttributesElem);
+		m_modifiersPerLevel = AttributeSet(perLevelAttributesElem);
 	}
 
 	std::string payloadTypesString = XmlUtils::ParseXmlAttribute(modElement, "type", "");
@@ -322,7 +321,7 @@ RunModifier* FlavorAbilityRunModifierDef::MakeModifierInstance() const
 //----------------------------------------------------------------------------------------------------------------------
 void FlavorAbilityRunModifierDef::GetDescription(std::string& outStr) const
 {
-	for (int attributeIndex = 0; attributeIndex < AbilityAttributes::s_maxAttributes; ++attributeIndex)
+	for (int attributeIndex = 0; attributeIndex < m_modifiers.m_count; ++attributeIndex)
 	{
 		float firstValue = m_modifiers.m_values[attributeIndex];
 		if (firstValue == 0.f)
@@ -330,7 +329,7 @@ void FlavorAbilityRunModifierDef::GetDescription(std::string& outStr) const
 			continue;
 		}
 
-		std::string formattedValue = AbilityAttributes::FormatAttribute((AbilityAttribute) attributeIndex, firstValue);
+		std::string formattedValue = AttributeSet::FormatAttribute(m_modifiers.m_keys[attributeIndex], firstValue);
 
 		outStr += StringUtils::StringF("Value: %s\n", formattedValue.c_str());
 	}
@@ -352,7 +351,7 @@ FlavorAbilityRunModifier::FlavorAbilityRunModifier(FlavorAbilityRunModifierDef c
 
 
 //----------------------------------------------------------------------------------------------------------------------
-AbilityAttributes FlavorAbilityRunModifier::GetValue() const
+AttributeSet FlavorAbilityRunModifier::GetValue() const
 {
 	FlavorAbilityRunModifierDef const& def = GetDef();
 	return def.m_modifiers + (def.m_modifiersPerLevel * static_cast<float>(m_level - 1));
@@ -406,9 +405,9 @@ void FlavorAbilityRunModifier::ApplyToAbility(CAbility& ability, CTags const& ta
 		}
 	}
 
-	AbilityAttributes valuesToAdd = def.m_modifiers + (def.m_modifiersPerLevel * static_cast<float>(m_level - 1));
+	AttributeSet valuesToAdd = def.m_modifiers + (def.m_modifiersPerLevel * static_cast<float>(m_level - 1));
 
-	ability.m_attributes += def.m_modifiers + (def.m_modifiersPerLevel * static_cast<float>(m_level - 1));
+	ability.m_attributes += valuesToAdd;
 }
 
 
@@ -416,22 +415,27 @@ void FlavorAbilityRunModifier::ApplyToAbility(CAbility& ability, CTags const& ta
 //----------------------------------------------------------------------------------------------------------------------
 void FlavorAbilityRunModifier::GetDescription(std::string& outStr) const
 {
-	AbilityAttributes currentValues = GetValue();
-	AbilityAttributes nextValues = GetDef().m_modifiers + (GetDef().m_modifiersPerLevel * static_cast<float>(m_level));
+	AttributeSet const& perLevel = GetDef().m_modifiersPerLevel;
+	AttributeSet const currentValues = GetValue();
+	AttributeSet const nextValues = GetDef().m_modifiers + (perLevel * static_cast<float>(m_level));
 
-	for (int attributeIndex = 0; attributeIndex < AbilityAttributes::s_maxAttributes; ++attributeIndex)
+	// Only the attributes that scale per level can change, so they are the only ones worth showing
+	for (int i = 0; i < perLevel.m_count; ++i)
 	{
-		float currentValue = currentValues.m_values[attributeIndex];
-		float nextValue = nextValues.m_values[attributeIndex];
-		if (currentValue == 0.f && nextValue == 0.f || nextValue == currentValue)
+		if (perLevel.m_values[i] == 0.f)
 		{
 			continue;
 		}
 
-		std::string currentFormatted = AbilityAttributes::FormatAttribute((AbilityAttribute) attributeIndex, currentValue);
-		std::string nextFormatted = AbilityAttributes::FormatAttribute((AbilityAttribute) attributeIndex, nextValue);
+		Name const& key = perLevel.m_keys[i];
 
-		outStr += StringUtils::StringF("Current: %s\nNext: %s\n", currentFormatted.c_str(), nextFormatted.c_str());
+		AttributeDef const* def = AttributeDef::GetAttributeDef(key);
+		char const* displayName = def ? def->m_displayInfo.m_displayName.ToCStr() : key.ToCStr();
+
+		std::string const currentFormatted = AttributeSet::FormatAttribute(key, currentValues.GetValue(key));
+		std::string const nextFormatted = AttributeSet::FormatAttribute(key, nextValues.GetValue(key));
+
+		outStr += StringUtils::StringF("%s: %s -> %s\n", displayName, currentFormatted.c_str(), nextFormatted.c_str());
 	}
 }
 
@@ -448,18 +452,14 @@ FlavorAbilityRunModifierDef const& FlavorAbilityRunModifier::GetDef() const
 //----------------------------------------------------------------------------------------------------------------------
 MetaRunModifierDef::MetaRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
 {
-	m_baseValue = XmlUtils::ParseXmlAttribute(modElement, "base", m_baseValue);
-	m_valuePerLevel = XmlUtils::ParseXmlAttribute(modElement, "perLevel", m_valuePerLevel);
-
-	Name metaTypeName = Name(XmlUtils::ParseXmlAttribute(modElement, "type", ""));
-
-	for (int metaAttributeIndex = 0; metaAttributeIndex < (int) s_metaAttributeEnumStrings.size(); ++metaAttributeIndex)
+	if (XmlElement const* baseAttributesElem = modElement.FirstChildElement("Attributes"))
 	{
-		if (metaTypeName == Name(s_metaAttributeEnumStrings[metaAttributeIndex]))
-		{
-			m_metaAttribute = static_cast<MetaAttribute>(metaAttributeIndex);
-			return;
-		}
+		m_modifiers = AttributeSet(baseAttributesElem);
+	}
+
+	if (XmlElement const* perLevelAttributesElem = modElement.FirstChildElement("AttributesPerLevel"))
+	{
+		m_modifiersPerLevel = AttributeSet(perLevelAttributesElem);
 	}
 }
 
@@ -472,12 +472,32 @@ RunModifier* MetaRunModifierDef::MakeModifierInstance() const
 }
 
 
-
 //----------------------------------------------------------------------------------------------------------------------
 void MetaRunModifierDef::GetDescription(std::string& outStr) const
 {
-	float baseMultiplier = 1.f + m_baseValue;
-	outStr += StringUtils::StringF("Base: %.2fx\nPer Level: +%.2fx\n", baseMultiplier, m_valuePerLevel);
+	for (int i = 0; i < m_modifiers.m_count; ++i)
+	{
+		Name const& key = m_modifiers.m_keys[i];
+		float const baseValue = m_modifiers.m_values[i];
+		float const perLevelValue = m_modifiersPerLevel.GetValue(key);
+
+		if (baseValue == 0.f && perLevelValue == 0.f)
+		{
+			continue;
+		}
+
+		AttributeDef const* attributeDef = AttributeDef::GetAttributeDef(key);
+		Name displayName = attributeDef ? attributeDef->m_displayInfo.m_displayName : key;
+
+		std::string const baseFormatted = AttributeSet::FormatAttribute(key, baseValue);
+		outStr += StringUtils::StringF("%s: %s\n", displayName.ToCStr(), baseFormatted.c_str());
+
+		if (m_maxLevel > 1 && perLevelValue != 0.f)
+		{
+			std::string const perLevelFormatted = AttributeSet::FormatAttribute(key, perLevelValue);
+			outStr += StringUtils::StringF("Per Level: %s\n", perLevelFormatted.c_str());
+		}
+	}
 
 	if (m_maxLevel > 1)
 	{
@@ -496,10 +516,10 @@ MetaRunModifier::MetaRunModifier(MetaRunModifierDef const& def) : RunModifier(de
 
 
 //----------------------------------------------------------------------------------------------------------------------
-float MetaRunModifier::GetValue() const
+AttributeSet MetaRunModifier::GetValue() const
 {
 	MetaRunModifierDef const& def = GetDef();
-	return def.m_baseValue + (def.m_valuePerLevel * static_cast<float>(m_level - 1));
+	return def.m_modifiers + (def.m_modifiersPerLevel * static_cast<float>(m_level - 1));
 }
 
 
@@ -518,21 +538,7 @@ void MetaRunModifier::Apply(SystemContext const& context) const
 //----------------------------------------------------------------------------------------------------------------------
 void MetaRunModifier::ApplyToRunData(RunData& runData) const
 {
-	MetaRunModifierDef const& def = GetDef();
-
-	if (def.m_metaAttribute == MetaAttribute::Exp)
-	{
-		runData.m_experienceMultiplier += GetValue();
-	}
-	else if (def.m_metaAttribute == MetaAttribute::SwirlLimit)
-	{
-		runData.m_swirlLimit += static_cast<int>(GetValue());
-		runData.m_swirlLimit = MathUtils::Clamp(runData.m_swirlLimit, 1, StaticGameSettings::s_absoluteSwirlLimit);
-	}
-	else
-	{
-		ERROR_AND_DIE(StringUtils::StringF("Unknown MetaRunModifierDef meta attribute: %s", s_metaAttributeEnumStrings[(int) def.m_metaAttribute].c_str()));
-	}
+	runData.m_attributes += GetValue();
 }
 
 
@@ -541,17 +547,51 @@ void MetaRunModifier::ApplyToRunData(RunData& runData) const
 void MetaRunModifier::GetDescription(std::string& outStr) const
 {
 	MetaRunModifierDef const& def = GetDef();
+	AttributeSet const currentValues = GetValue();
 
-	if (m_def.m_maxLevel > 1)
+	if (def.m_maxLevel > 1)
 	{
-		float currentMultiplier = 1.f + GetValue();
-		float nextMultiplier = currentMultiplier + def.m_valuePerLevel;
-		outStr += StringUtils::StringF("Current: %.2fx\nNext: %.2fx\nLevel: %d/%d\n", currentMultiplier, nextMultiplier, m_level, def.m_maxLevel);
+		AttributeSet const& perLevel = def.m_modifiersPerLevel;
+		AttributeSet const nextValues = def.m_modifiers + (perLevel * static_cast<float>(m_level));
+
+		// Only the attributes that scale per level can change, so they are the only ones worth showing
+		for (int i = 0; i < perLevel.m_count; ++i)
+		{
+			if (perLevel.m_values[i] == 0.f)
+			{
+				continue;
+			}
+
+			Name const& key = perLevel.m_keys[i];
+
+			AttributeDef const* attributeDef = AttributeDef::GetAttributeDef(key);
+			char const* displayName = attributeDef ? attributeDef->m_displayInfo.m_displayName.ToCStr() : key.ToCStr();
+
+			std::string const currentFormatted = AttributeSet::FormatAttribute(key, currentValues.GetValue(key));
+			std::string const nextFormatted = AttributeSet::FormatAttribute(key, nextValues.GetValue(key));
+
+			outStr += StringUtils::StringF("%s: %s -> %s\n", displayName, currentFormatted.c_str(), nextFormatted.c_str());
+		}
+
+		outStr += StringUtils::StringF("Level: %d/%d\n", m_level, def.m_maxLevel);
 	}
 	else
 	{
-		float currentMultiplier = 1.f + def.m_baseValue;
-		outStr += StringUtils::StringF("Multiplier (additive): %.2fx\n", currentMultiplier);
+		for (int i = 0; i < currentValues.m_count; ++i)
+		{
+			if (currentValues.m_values[i] == 0.f)
+			{
+				continue;
+			}
+
+			Name const& key = currentValues.m_keys[i];
+
+			AttributeDef const* attributeDef = AttributeDef::GetAttributeDef(key);
+			char const* displayName = attributeDef ? attributeDef->m_displayInfo.m_displayName.ToCStr() : key.ToCStr();
+
+			std::string const formatted = AttributeSet::FormatAttribute(key, currentValues.GetValue(key));
+			outStr += StringUtils::StringF("%s: %s\n", displayName, formatted.c_str());
+		}
 	}
 }
 
@@ -561,204 +601,4 @@ void MetaRunModifier::GetDescription(std::string& outStr) const
 MetaRunModifierDef const& MetaRunModifier::GetDef() const
 {
 	return static_cast<MetaRunModifierDef const&>(m_def);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-EconomyRunModifierDef::EconomyRunModifierDef(XmlElement const& modElement) : RunModifierDef(modElement)
-{
-	// Gold gain
-	m_goldGainMultiplierIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "goldGainBase", m_goldGainMultiplierIncreaseBase);
-	m_goldGainMultiplierIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "goldGainPerLevel", m_goldGainMultiplierIncreasePerLevel);
-
-	// Interest
-	m_interestRateIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "interestBase", m_interestRateIncreaseBase);
-	m_interestRateIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "interestPerLevel", m_interestRateIncreasePerLevel);
-	m_interestTimerSpeedIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "interestTimerSpeedBase", m_interestTimerSpeedIncreaseBase);
-	m_interestTimerSpeedIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "interestTimerSpeedPerLevel", m_interestTimerSpeedIncreasePerLevel);
-
-	// Selling
-	m_baseSells = XmlUtils::ParseXmlAttribute(modElement, "baseSells", m_baseSells);
-	m_sellsPerLevel = XmlUtils::ParseXmlAttribute(modElement, "sellsPerLevel", m_sellsPerLevel);
-	m_baseSellRateIncrease = XmlUtils::ParseXmlAttribute(modElement, "baseSellRateIncrease", m_baseSellRateIncrease);
-	m_sellRateIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "sellRateIncreasePerLevel", m_sellRateIncreasePerLevel);
-
-	// Debt
-	m_creditLimitIncreaseBase = XmlUtils::ParseXmlAttribute(modElement, "creditLimitBase", m_creditLimitIncreaseBase);
-	m_creditLimitIncreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "creditLimitPerLevel", m_creditLimitIncreasePerLevel);
-	m_debtInterestRateDecreaseBase = XmlUtils::ParseXmlAttribute(modElement, "debtInterestRateBase", m_debtInterestRateDecreaseBase);
-	m_debtInterestRateDecreasePerLevel = XmlUtils::ParseXmlAttribute(modElement, "debtInterestRatePerLevel", m_debtInterestRateDecreasePerLevel);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-RunModifier* EconomyRunModifierDef::MakeModifierInstance() const
-{
-	return new EconomyRunModifier(*this);
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void EconomyRunModifierDef::GetDescription(std::string& outStr) const
-{
-	if (m_goldGainMultiplierIncreaseBase > 0.f || m_goldGainMultiplierIncreasePerLevel > 0.f)
-	{
-		outStr += StringUtils::StringF("Gold Gain: +%.2fx (+%.2fx Per Level)\n", m_goldGainMultiplierIncreaseBase, m_goldGainMultiplierIncreasePerLevel);
-	}
-	if (m_interestRateIncreaseBase > 0.f || m_interestRateIncreasePerLevel > 0.f)
-	{
-		outStr += StringUtils::StringF("Interest Rate: +%.2fx (+%.2fx Per Level)\n", m_interestRateIncreaseBase, m_interestRateIncreasePerLevel);
-	}
-	if (m_interestTimerSpeedIncreaseBase > 0.f || m_interestTimerSpeedIncreasePerLevel > 0.f)
-	{
-		outStr += StringUtils::StringF("Interest Timer Speed: +%.2fx (+%.2fx Per Level)\n", m_interestTimerSpeedIncreaseBase, m_interestTimerSpeedIncreasePerLevel);
-	}
-	if (m_baseSells > 0.f || m_sellsPerLevel > 0.f)
-	{
-		outStr += StringUtils::StringF("Sells: +%d (+%d Per Level)\n", m_baseSells, m_sellsPerLevel);
-	}
-	if (m_baseSellRateIncrease > 0.f || m_sellRateIncreasePerLevel > 0.f)
-	{
-		outStr += StringUtils::StringF("Sell Rate: +%.2fx (+%.2fx Per Level)\n", m_baseSellRateIncrease, m_sellRateIncreasePerLevel);
-	}
-	if (m_creditLimitIncreaseBase > 0.f || m_creditLimitIncreasePerLevel > 0.f)
-	{
-		outStr += StringUtils::StringF("Credit Limit: +%.2f (+%.2f Per Level)\n", m_creditLimitIncreaseBase, m_creditLimitIncreasePerLevel);
-	}
-	if (m_debtInterestRateDecreaseBase != 0.f || m_debtInterestRateDecreasePerLevel != 0.f)
-	{
-		outStr += StringUtils::StringF("Debt Interest Rate: +%.2fx (+%.2fx Per Level)\n", m_debtInterestRateDecreaseBase, m_debtInterestRateDecreasePerLevel);
-	}	
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-EconomyRunModifier::EconomyRunModifier(EconomyRunModifierDef const& def) : RunModifier(def)
-{
-
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void EconomyRunModifier::Apply(SystemContext const& context) const
-{
-	SCRunData& scRunData = context.GetSingleton<SCRunData>();
-	RunData& runData = *scRunData.m_data;
-
-	runData.m_needsModifierRecalculation = true;
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void EconomyRunModifier::ApplyToRunData(RunData& runData) const
-{
-	EconomyRunModifierDef const& def = GetDef();
-	runData.m_goldGainMultiplier += def.m_goldGainMultiplierIncreaseBase + (def.m_goldGainMultiplierIncreasePerLevel * static_cast<float>(m_level - 1));
-	runData.m_savingsInterestRate += def.m_interestRateIncreaseBase + (def.m_interestRateIncreasePerLevel * static_cast<float>(m_level - 1));
-	runData.m_maxSellsPerMission += def.m_baseSells + (def.m_sellsPerLevel * (m_level - 1));
-	runData.m_sellRefundRatio += def.m_baseSellRateIncrease + (def.m_sellRateIncreasePerLevel * static_cast<float>(m_level - 1));
-	runData.m_creditLimit += def.m_creditLimitIncreaseBase + (def.m_creditLimitIncreasePerLevel * static_cast<float>(m_level - 1));
-	float interestRateMultiplier = 1.f - (def.m_interestRateIncreaseBase + (def.m_interestRateIncreasePerLevel * static_cast<float>(m_level - 1)));
-	runData.m_interestTimerSeconds *= interestRateMultiplier;
-	runData.m_debtInterestRate += def.m_debtInterestRateDecreaseBase + (def.m_debtInterestRateDecreasePerLevel * static_cast<float>(m_level - 1));
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-void EconomyRunModifier::GetDescription(std::string& outStr) const
-{
-	EconomyRunModifierDef const& def = GetDef();
-	if (def.m_maxLevel > 1)
-	{
-		if (def.m_goldGainMultiplierIncreaseBase > 0.f || def.m_goldGainMultiplierIncreasePerLevel > 0.f)
-		{
-			float currentMultiplier = 1.f + def.m_goldGainMultiplierIncreaseBase + (def.m_goldGainMultiplierIncreasePerLevel * static_cast<float>(m_level - 1));
-			float nextMultiplier = currentMultiplier + def.m_goldGainMultiplierIncreasePerLevel;
-			outStr += StringUtils::StringF("Gold Gain: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
-		}
-		if (def.m_interestRateIncreaseBase > 0.f || def.m_interestRateIncreasePerLevel > 0.f)
-		{
-			float currentMultiplier = def.m_interestRateIncreaseBase + (def.m_interestRateIncreasePerLevel * static_cast<float>(m_level - 1));
-			float nextMultiplier = currentMultiplier + def.m_interestRateIncreasePerLevel;
-			outStr += StringUtils::StringF("Interest Rate: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
-		}
-		if (def.m_interestTimerSpeedIncreaseBase > 0.f || def.m_interestTimerSpeedIncreasePerLevel > 0.f)
-		{
-			float currentMultiplier = 1.f + def.m_interestTimerSpeedIncreaseBase + (def.m_interestTimerSpeedIncreasePerLevel * static_cast<float>(m_level - 1));
-			float nextMultiplier = currentMultiplier + def.m_interestTimerSpeedIncreasePerLevel;
-			outStr += StringUtils::StringF("Interest Timer Speed: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
-		}
-		if (def.m_baseSells > 0 || def.m_sellsPerLevel > 0)
-		{
-			int currentSells = def.m_baseSells + (def.m_sellsPerLevel * (m_level - 1));
-			int nextSells = currentSells + def.m_sellsPerLevel;
-			outStr += StringUtils::StringF("Sells: Current: %d, Next: %d\n", currentSells, nextSells);
-		}
-		if (def.m_baseSellRateIncrease > 0.f || def.m_sellRateIncreasePerLevel > 0.f)
-		{
-			float currentMultiplier = def.m_baseSellRateIncrease + (def.m_sellRateIncreasePerLevel * static_cast<float>(m_level - 1));
-			float nextMultiplier = currentMultiplier + def.m_sellRateIncreasePerLevel;
-			outStr += StringUtils::StringF("Sell Rate: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
-		}
-		if (def.m_creditLimitIncreaseBase > 0.f || def.m_creditLimitIncreasePerLevel > 0.f)
-		{
-			float currentMultiplier = def.m_creditLimitIncreaseBase + (def.m_creditLimitIncreasePerLevel * static_cast<float>(m_level - 1));
-			float nextMultiplier = currentMultiplier + def.m_creditLimitIncreasePerLevel;
-			outStr += StringUtils::StringF("Credit Limit: Current: %.2f, Next: %.2f\n", currentMultiplier, nextMultiplier);
-		}
-		if (def.m_debtInterestRateDecreaseBase != 0.f || def.m_debtInterestRateDecreasePerLevel != 0.f)
-		{
-			float currentMultiplier = def.m_debtInterestRateDecreaseBase + (def.m_debtInterestRateDecreasePerLevel * static_cast<float>(m_level - 1));
-			float nextMultiplier = currentMultiplier + def.m_debtInterestRateDecreasePerLevel;
-			outStr += StringUtils::StringF("Debt Interest Rate: Current: %.2fx, Next: %.2fx\n", currentMultiplier, nextMultiplier);
-		}
-
-		outStr += StringUtils::StringF("Level: %d/%d\n", m_level, m_def.m_maxLevel);
-	}
-	else
-	{
-		if (def.m_goldGainMultiplierIncreaseBase > 0.f || def.m_goldGainMultiplierIncreasePerLevel > 0.f)
-		{
-			outStr += StringUtils::StringF("Gold Gain: +%.2fx\n", def.m_goldGainMultiplierIncreaseBase);
-		}
-		if (def.m_interestRateIncreaseBase > 0.f || def.m_interestRateIncreasePerLevel > 0.f)
-		{
-			outStr += StringUtils::StringF("Interest Rate: +%.2fx\n", def.m_interestRateIncreaseBase);
-		}
-		if (def.m_interestTimerSpeedIncreaseBase > 0.f || def.m_interestTimerSpeedIncreasePerLevel > 0.f)
-		{
-			outStr += StringUtils::StringF("Interest Timer Speed: +%.2fx\n", def.m_interestTimerSpeedIncreaseBase);
-		}
-		if (def.m_baseSells > 0 || def.m_sellsPerLevel > 0)
-		{
-			outStr += StringUtils::StringF("Sells: +%d\n", def.m_baseSells);
-		}
-		if (def.m_baseSellRateIncrease > 0.f || def.m_sellRateIncreasePerLevel > 0.f)
-		{
-			outStr += StringUtils::StringF("Sell Rate: +%.2fx\n", def.m_baseSellRateIncrease);
-		}
-		if (def.m_creditLimitIncreaseBase > 0.f || def.m_creditLimitIncreasePerLevel > 0.f)
-		{
-			outStr += StringUtils::StringF("Credit Limit: +%.2f\n", def.m_creditLimitIncreaseBase);
-		}
-		if (def.m_debtInterestRateDecreaseBase != 0.f || def.m_debtInterestRateDecreasePerLevel != 0.f)
-		{
-			outStr += StringUtils::StringF("Debt Interest Rate: +%.2fx\n", def.m_debtInterestRateDecreaseBase);
-		}
-	}
-}
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-EconomyRunModifierDef const& EconomyRunModifier::GetDef() const
-{
-	return static_cast<EconomyRunModifierDef const&>(m_def);
 }

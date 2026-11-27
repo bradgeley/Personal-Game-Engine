@@ -184,28 +184,28 @@ void SDebugOverlay::Run(SystemContext const& context) const
 
 	// Resettable Data
 	addHeader("Resettable Data");
-	addDebugOverlayLine(StringUtils::StringF("Gold: %.1f", runData.m_gold));
-	addDebugOverlayLine(StringUtils::StringF("Health: %.1f", runData.m_health));
-	addDebugOverlayLine(StringUtils::StringF("Interest Timer Remaining: %.1f", runData.m_interestTimerSecondsRemaining));
-	addDebugOverlayLine(StringUtils::StringF("Num Sold Towers: %d", runData.m_numSoldTowers));
+	addDebugOverlayLine(StringUtils::StringF("Gold: %.1f", runData.GetAttribute("Gold", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Health: %.1f", runData.GetAttribute("Health", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Income Interval Remaining: %.1f", runData.m_incomeIntervalSecondsRemaining));
+	addDebugOverlayLine(StringUtils::StringF("Sells Used: %d", static_cast<int>(runData.GetAttribute("SellsUsed", 0.f))));
 	addDebugOverlayLine(StringUtils::StringF("Num Active Modifier Choices: %d", runData.m_numActiveModifierChoices));
 
 	// Modifiable Data
 	addHeader("Modifiable Data");
-	addDebugOverlayLine(StringUtils::StringF("Gold Gain Multiplier: %.2f", runData.m_goldGainMultiplier));
-	addDebugOverlayLine(StringUtils::StringF("Experience Multiplier: %.2f", runData.m_experienceMultiplier));
-	addDebugOverlayLine(StringUtils::StringF("Income: %.1f", runData.m_income));
-	addDebugOverlayLine(StringUtils::StringF("Credit Limit: %.1f", runData.m_creditLimit));
-	addDebugOverlayLine(StringUtils::StringF("Savings Interest Rate: %.3f", runData.m_savingsInterestRate));
-	addDebugOverlayLine(StringUtils::StringF("Debt Interest Rate: %.3f", runData.m_debtInterestRate));
-	addDebugOverlayLine(StringUtils::StringF("Interest Timer Seconds: %.1f", runData.m_interestTimerSeconds));
-	addDebugOverlayLine(StringUtils::StringF("Max Health: %.1f", runData.m_maxHealth));
-	addDebugOverlayLine(StringUtils::StringF("Health Regen: %.2f", runData.m_healthRegen));
-	addDebugOverlayLine(StringUtils::StringF("Max Flavors: %d", runData.m_maxFlavors));
-	addDebugOverlayLine(StringUtils::StringF("Swirl Limit: %d", runData.m_swirlLimit));
-	addDebugOverlayLine(StringUtils::StringF("Cost Ramp Per Tower: %.3f", runData.m_costRampPerTower));
-	addDebugOverlayLine(StringUtils::StringF("Sell Refund Ratio: %.2f", runData.m_sellRefundRatio));
-	addDebugOverlayLine(StringUtils::StringF("Max Sells Per Mission: %d", runData.m_maxSellsPerMission));
+	addDebugOverlayLine(StringUtils::StringF("Gold Gain Multiplier: %.2f", runData.GetAttribute("GoldMulti", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Experience Multiplier: %.2f", runData.GetAttribute("ExpMulti", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Income: %.1f", runData.GetAttribute("Income", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Credit Limit: %.1f", runData.GetAttribute("CreditLimit", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Savings Interest Rate: %.3f", runData.GetAttribute("SavingsInterestRate", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Debt Interest Rate: %.3f", runData.GetAttribute("DebtInterestRate", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Income Interval: %.1f", runData.GetAttribute("IncomeInterval", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Max Health: %.1f", runData.GetAttribute("MaxHealth", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Health Regen: %.2f", runData.GetAttribute("HealthRegen", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Flavor Limit: %d", static_cast<int>(runData.GetAttribute("FlavorLimit", 0.f))));
+	addDebugOverlayLine(StringUtils::StringF("Swirl Limit: %d", static_cast<int>(runData.GetAttribute("SwirlLimit", 0.f))));
+	addDebugOverlayLine(StringUtils::StringF("Cost Ramp Per Tower: %.3f", runData.GetAttribute("TowerCostRamp", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Sell Refund Ratio: %.2f", runData.GetAttribute("SellRefundRatio", 0.f)));
+	addDebugOverlayLine(StringUtils::StringF("Max Sells Per Mission: %d", static_cast<int>(runData.GetAttribute("SellLimit", 0.f))));
 
 	// Persistent / Transient State
 	addHeader("Persistent / Transient State");

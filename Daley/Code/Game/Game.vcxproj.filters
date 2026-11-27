@@ -289,7 +289,7 @@
     <ClCompile Include="Game\AbilityDef.cpp">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClCompile>
-    <ClCompile Include="Game\AbilityAttributes.cpp">
+    <ClCompile Include="Game\AttributeSet.cpp">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClCompile>
     <ClCompile Include="Game\AbilityBuff.cpp">
@@ -366,6 +366,9 @@
     </ClCompile>
     <ClCompile Include="Game\AuraAbilityDef.cpp">
       <Filter>Definitions\AbilityDefs\Ability\EnemyAbilities\EnemyAbilityDefs</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\AttributeDef.cpp">
+      <Filter>Definitions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -726,7 +729,7 @@
     <ClInclude Include="Game\AbilityDef.h">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClInclude>
-    <ClInclude Include="Game\AbilityAttributes.h">
+    <ClInclude Include="Game\AttributeSet.h">
       <Filter>Definitions\AbilityDefs</Filter>
     </ClInclude>
     <ClInclude Include="Game\AbilityBuff.h">
@@ -809,6 +812,9 @@
     </ClInclude>
     <ClInclude Include="Game\AuraAbilityDef.h">
       <Filter>Definitions\AbilityDefs\Ability\EnemyAbilities\EnemyAbilityDefs</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\AttributeDef.h">
+      <Filter>Definitions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1004,6 +1010,9 @@
       <Filter>Data\Shaders</Filter>
     </Xml>
     <Xml Include="..\..\Run\Data\Definitions\EnemyAffixDefs.xml">
+      <Filter>Data\Definitions</Filter>
+    </Xml>
+    <Xml Include="..\..\Run\Data\Definitions\AttributeDefs.xml">
       <Filter>Data\Definitions</Filter>
     </Xml>
   </ItemGroup>

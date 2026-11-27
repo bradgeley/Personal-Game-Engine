@@ -284,7 +284,7 @@ bool SDebugCommands::Unlock(NamedProperties& args)
 bool SDebugCommands::DumpNameTable(NamedProperties&)
 {
 	std::string debugString;
-	g_nameTable->AppendDebugString(debugString);
+	NameTable::Get().AppendDebugString(debugString);
 
 	DevConsoleUtils::Log(Rgba8::AliceBlue, debugString.c_str());
 

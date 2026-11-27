@@ -158,7 +158,7 @@ void SInput::Run(SystemContext const& context) const
 
 	// Game Over?
 	bool isVictory = waves.m_wavesFinished;
-	bool isDefeat = runData.m_health <= 0.f;
+	bool isDefeat = runData.GetHealth() <= 0.f;
 	bool gameOver = isVictory || isDefeat;
 	if (gameOver)
 	{
@@ -294,7 +294,9 @@ void SInput::Run(SystemContext const& context) const
 //----------------------------------------------------------------------------------------------------------------------
 bool SInput::CanAffordTower(PlaceableTower const& tower, RunData const& runData)
 {
-	return runData.m_gold + runData.m_creditLimit >= tower.m_cost;
+	float gold = runData.GetAttribute("Gold", 0.f);
+	float creditLimit = runData.GetAttribute("CreditLimit", 0.f);
+	return gold + creditLimit >= tower.m_cost;
 }
 
 
@@ -302,7 +304,10 @@ bool SInput::CanAffordTower(PlaceableTower const& tower, RunData const& runData)
 //----------------------------------------------------------------------------------------------------------------------
 bool SInput::CanAffordSwirl(PlaceableTower const& tower, RunData const& runData)
 {
-	return (runData.m_gold + runData.m_creditLimit) >= (tower.m_cost + StaticGameSettings::s_baseSwirlCost);
+	float gold = runData.GetAttribute("Gold", 0.f);
+	float creditLimit = runData.GetAttribute("CreditLimit", 0.f);
+	float swirlCost = StaticGameSettings::s_baseSwirlCost + tower.m_cost;
+	return (gold + creditLimit) >= swirlCost;
 }
 
 

@@ -1,0 +1,82 @@
+
+
+<!-- Unified attribute list. Unsuffixed = additive, "Multi" = multiplicative. Names must be unique. --> 
+<Attributes>
+
+  <!-- Shared Attributes-->
+  <Attribute name="MaxHealthMulti" displayName="Max Health Multiplier" displayType="PercentSigned"/>
+
+  <!-- Ability (Towers) -->
+
+  <!-- Base Payload Values -->
+  <Attribute name="Physical"            displayName="Physical"                  displayType="Decimal"/>
+  <Attribute name="Burn"                displayName="Burn"                      displayType="Decimal"/>
+  <Attribute name="Poison"              displayName="Poison"                    displayType="Decimal"/>
+  <Attribute name="Vulnerability"       displayName="Vulnerability"             displayType="Decimal"/>
+  <Attribute name="Slow"                displayName="Slow Duration"             displayType="Decimal"/>
+  <Attribute name="Haste"               displayName="Haste Duration"            displayType="Decimal"/>
+
+  <!-- Base Ability Values -->
+  <Attribute name="CritChance"          displayName="Critical Chance" displayType="PercentSigned"/>
+  <Attribute name="ChainCount"          displayName="Chain Count"     displayType="Integer"/>
+  <Attribute name="ChainChance"         displayName="Chain Chance"    displayType="PercentSigned"/>
+  <Attribute name="Multishot"           displayName="Multishot"       displayType="Integer"/>
+
+  <!-- Ability Multipliers -->
+  <Attribute name="PhysicalMulti"       displayName="Physical Multiplier"         displayType="PercentSigned"/>
+  <Attribute name="BurnMulti"           displayName="Burn Multiplier"             displayType="PercentSigned"/>
+  <Attribute name="PoisonMulti"         displayName="Poison Multiplier"           displayType="PercentSigned"/>
+  <Attribute name="VulnerabilityMulti"  displayName="Vulnerability Multiplier"    displayType="PercentSigned"/>
+  <Attribute name="SlowMulti"           displayName="Slow Duration Multiplier"    displayType="PercentSigned"/>
+  <Attribute name="HasteMulti"          displayName="Haste Duration Multiplier"   displayType="PercentSigned"/>
+
+  <Attribute name="AttackSpeedMulti"    displayName="Attack Speed Multiplier"     displayType="PercentSigned"/>
+  <Attribute name="RangeMulti"          displayName="Range Multiplier"            displayType="PercentSigned"/>
+  <Attribute name="AreaOfEffectMulti"   displayName="Area of Effect Multiplier"   displayType="PercentSigned"/>
+  <Attribute name="AreaDamageMulti"     displayName="Area Damage Multiplier"      displayType="PercentSigned"/>
+  <Attribute name="ProjSpeedMulti"      displayName="Projectile Speed Multiplier" displayType="PercentSigned"/>
+  <Attribute name="CritMulti"           displayName="Critical Multiplier"         displayType="PercentSigned"/>
+  <Attribute name="ChainDistanceMulti"  displayName="Chain Distance Multiplier"   displayType="PercentSigned"/>
+
+  <!-- Enemies -->
+
+  <!-- Enemy Base Values -->
+  <Attribute name="PhysicalResist"      displayName="Physical Resistance"      displayType="PercentSigned"/>
+  <Attribute name="BurnResist"          displayName="Burn Resistance"          displayType="PercentSigned"/>
+  <Attribute name="PoisonResist"        displayName="Poison Resistance"        displayType="PercentSigned"/>
+  <Attribute name="VulnerabilityResist" displayName="Vulnerability Resistance" displayType="PercentSigned"/>
+  <Attribute name="SlowResist"          displayName="Slow Resistance"          displayType="PercentSigned"/>
+
+  <!-- Enemy Multipliers -->
+  <Attribute name="MoveSpeedMulti"      displayName="Move Speed Multiplier"    displayType="PercentSigned"/>
+
+
+  <!-- Meta (Player/Run) -->
+
+  <!-- Persistent State -->
+  <Attribute name="Experience"  persistent="true"  displayName="Experience" displayType="Integer"/>
+
+  <!-- Transient State -->
+  <Attribute name="Gold"      state="true"  displayName="Gold"              displayType="Decimal"/>
+  <Attribute name="Health"    state="true"  displayName="Health"            displayType="Decimal"/>
+  <Attribute name="SellsUsed" state="true"  displayName="Sells Used"        displayType="Integer"/>
+
+  <!-- Base Meta Values -->
+  <Attribute name="MaxHealth"           displayName="Max Health"            displayType="Decimal"/>
+  <Attribute name="HealthRegen"         displayName="Health Regeneration"   displayType="Decimal"/>
+  <Attribute name="Income"              displayName="Income"                displayType="Integer"/>
+  <Attribute name="IncomeInterval"      displayName="Income Interval"       displayType="Decimal"/>
+  <Attribute name="FlavorLimit"         displayName="Flavor Limit"          displayType="Integer"/>
+  <Attribute name="SwirlLimit"          displayName="Swirl Limit"           displayType="Integer"/>
+  <Attribute name="SellLimit"           displayName="Sell Limit"            displayType="Integer"/>
+  <Attribute name="SellRefundRatio"     displayName="Sell Refund Ratio"     displayType="Decimal"/>
+  <Attribute name="CreditLimit"         displayName="Credit Limit"          displayType="Integer"/>
+  <Attribute name="SavingsInterestRate" displayName="Savings Interest Rate" displayType="PercentSigned"/>
+  <Attribute name="DebtInterestRate"    displayName="Debt Interest Rate"    displayType="PercentSigned"/>
+  <Attribute name="TowerCostRamp"       displayName="Tower Cost Ramp"       displayType="Decimal"/>
+
+  <!-- Meta Multipliers -->
+  <Attribute name="ExpMulti"            displayName="Experience Multiplier" displayType="PercentSigned"/>
+  <Attribute name="GoldMulti"           displayName="Gold Multiplier"       displayType="PercentSigned"/>
+
+</Attributes>

@@ -64,6 +64,7 @@ struct RunData
 {
 public:
 
+	void InitAttributes();
 	void Shutdown();
 
 	static ExperienceLevelData GetLevelData(uint64_t experience);
@@ -74,7 +75,21 @@ public:
 	void OnTowerPlacementSuccess(TowerPlacementRequest const& request);
 	void OnSwirlSuccess(TowerSwirlRequest const& request);
 
+	float GetHealth() const;
+	float GetAttribute(Name attribute, float defaultValue = 0.f, bool errorIfNotFound = false) const;
+	int GetIntAttribute(Name attribute, int defaultValue = 0, bool errorIfNotFound = false) const;
+
+	void AddGold(float gold);
+	void AddSells(int sells);
+	void ApplyPlayerDamage(float damage);
+	void ApplyPlayerHealthRegen(float deltaSeconds);
+	void ApplyPlayerIncome();
+	float ApplySell(float costOfPurchase);
+
 public:
+
+	// Current Mission Data
+	int			m_missionIndex = 0;
 
 	// Static Run Data
 	RunModifierPool m_runModifierPool;
@@ -84,8 +99,10 @@ public:
 	GameMode    m_mode = GameMode::Journey;
 	std::array<MissionGenData, StaticGameSettings::s_numMissionsForVictory> m_missionGenData;
 
-	// Non-Resettable Data (carries over from mission to mission)
-	int			m_missionIndex					= 0;
+	// Attributes
+	AttributeSet m_attributes;
+
+	// Persistent Data (carries over from mission to mission)
 	uint64_t 	m_experience					= 0;
 	float		m_fractionalExperience			= 0.f; // overflow exp from multiplier increases
 	int			m_numModifierChoicesRemaining	= 0;
@@ -95,28 +112,9 @@ public:
 	std::array<uint8_t, StaticGameSettings::s_flavorUnlockLimit + 1> m_towerPlacementKeyBindings = { 'T', 'Q', 'E', 'R', 'Y' }; // todo: move to some kind of user settings, out of run data
 	
 	// Resettable Data (resets at the start of each mission)
-	float		m_gold							= StaticGameSettings::s_baseGold;
-	float		m_health						= StaticGameSettings::s_basePlayerHealth;
-	float		m_interestTimerSecondsRemaining	= StaticGameSettings::s_baseInterestTimerSeconds;
-	int			m_numSoldTowers					= 0;
+	float		m_incomeIntervalSecondsRemaining	= StaticGameSettings::s_baseIncomeInterval;
 	int			m_numActiveModifierChoices		= 0;
 	std::array<RunModifierDef const*, MAX_MODIFIER_CHOICES> m_modifierChoices;
-
-	// Modifiable Data (carries over from mission to mission)
-	float 		m_goldGainMultiplier	= 1.f;
-	float		m_experienceMultiplier	= 1.f;
-	float		m_income				= StaticGameSettings::s_baseIncome;
-	float		m_creditLimit			= StaticGameSettings::s_baseCreditLimit;
-	float		m_savingsInterestRate	= StaticGameSettings::s_baseSavingsInterestRate;
-	float		m_debtInterestRate		= StaticGameSettings::s_baseDebtInterestRate;
-	float		m_interestTimerSeconds	= StaticGameSettings::s_baseInterestTimerSeconds;
-	float		m_maxHealth				= StaticGameSettings::s_basePlayerHealth;
-	float		m_healthRegen			= StaticGameSettings::s_basePlayerHealthRegen;
-	int			m_maxFlavors			= StaticGameSettings::s_flavorUnlockLimit;
-	int			m_swirlLimit			= StaticGameSettings::s_baseSwirlLimit;
-	float		m_costRampPerTower		= StaticGameSettings::s_baseCostRampPerTower;
-	float		m_sellRefundRatio		= StaticGameSettings::s_baseSellRefundRatio;
-	int			m_maxSellsPerMission	= StaticGameSettings::s_baseSellCount;
 
 	// Persistent State (carries over from mission to mission)
 	float m_currentTimeDilation = 1.f;

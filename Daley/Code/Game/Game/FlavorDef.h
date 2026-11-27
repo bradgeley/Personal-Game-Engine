@@ -1,6 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
-#include "AbilityAttributes.h"
+#include "AttributeSet.h"
 #include "AbilityFlags.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/Renderer/Rgba8.h"
@@ -31,7 +31,7 @@ public:
 	Name m_name	= "Unnamed FlavorDef";
 	int m_flavorIndex = -1;
 	std::array<Name, s_maxAbilities> m_abilities;
-	AbilityAttributes m_attributes;
+	AttributeSet m_attributes;
 	AbilityFlags m_abilityFlags;
 
 	// Display Data

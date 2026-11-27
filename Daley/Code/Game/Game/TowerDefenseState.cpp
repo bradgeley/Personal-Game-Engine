@@ -62,7 +62,7 @@ void TowerDefenseState::Update(float)
 	SCRunData const& scRunData = g_ecs->GetSingleton<SCRunData>();
 	RunData const& runData = *scRunData.m_data;
 	SCWaves& waves = g_ecs->GetSingleton<SCWaves>();
-	if (runData.m_health <= 0.f || waves.m_wavesFinished)
+	if (runData.GetHealth() <= 0.f || waves.m_wavesFinished)
 	{
         deltaSeconds = 0.f; // run paused if game is over due to loss
 	}
@@ -294,9 +294,9 @@ bool TowerDefenseState::Win(NamedProperties&)
 
     SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
     RunData& runData = *scRunData.m_data;
-    if (runData.m_health < 0.f)
+    if (runData.GetHealth() < 0.f)
     {
-        runData.m_health = 1.f;
+		runData.m_attributes.SetValue("Health", 0.f);
     }
 
     return false;
@@ -310,7 +310,7 @@ bool TowerDefenseState::Lose(NamedProperties&)
     SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
     RunData& runData = *scRunData.m_data;
 
-    runData.m_health = 0.f;
+    runData.m_attributes.SetValue("Health", 0.f);
 
     return false;
 }

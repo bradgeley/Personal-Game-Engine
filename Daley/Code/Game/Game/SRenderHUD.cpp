@@ -88,9 +88,14 @@ void SRenderHUD::Run(SystemContext const& context) const
 	constexpr float hudLineSpacing = 0.25f; // TOOD: make configurable
 
 	{
+		float gold = runData.GetAttribute("Gold", 0.f);
+		float health = runData.GetAttribute("Health", 0.f);
+		float maxHealth = runData.GetAttribute("MaxHealth", 0.f);
+		float healthRegen = runData.GetAttribute("HealthRegen", 0.f);
+
 		std::string hudText = StringUtils::StringF("Gold: %.2f\nHealth: %.2f/%.2f (+%.2f/s)\nInterest Timer (%.2f)\nWave %i/%i (%.2f)",
-												   runData.m_gold, runData.m_health, runData.m_maxHealth, runData.m_healthRegen,
-												   runData.m_interestTimerSecondsRemaining, waves.m_currentWaveIndex, waves.m_waves.size(),
+												   gold, health, maxHealth, healthRegen,
+												   runData.m_incomeIntervalSecondsRemaining, waves.m_currentWaveIndex, waves.m_waves.size(),
 												   waves.m_waveTimer.GetRemainingSeconds());
 
 		Vec2 hudTextDims = font->GetTextDims(hudTextSize, hudLineSpacing, hudText);

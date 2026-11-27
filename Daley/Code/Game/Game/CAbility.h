@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "AbilityAttributes.h"
+#include "AttributeSet.h"
 #include "AbilityFlags.h"
 #include "Engine/ECS/EntityID.h"
 #include <vector>
@@ -39,7 +39,7 @@ public:
     
 	bool m_needsAttributeRebuild = false;
 
-    AbilityAttributes m_attributes;
+    AttributeSet m_attributes;
     AbilityFlags m_globalFlags; // Enable features of abilities globally
 	std::vector<AbilityBuff*> m_activeBuffs; // todo
 	std::vector<Ability*> m_abilities;

@@ -74,9 +74,9 @@ void CHealth::TakePayload(HitPayload const& payload)
 
 	if (!payload.GetIgnoreResistances())
 	{
-		physicalDealt *= (1.f - m_physicalResistance) * m_physTakenMultiplier;
-		burnDealt *= (1.f - m_burnResistance) * (GetIsSuppressingBurn() ? StaticGameSettings::s_burnSuppressionRatio : 1.f);
-		poisonDealt *= (1.f - m_poisonResistance) * (GetIsSuppressingPoison() ? StaticGameSettings::s_poisonSuppressionRatio : 1.f);
+		physicalDealt *= (1.f - m_physicalResist) * m_physTakenMultiplier;
+		burnDealt *= (1.f - m_burnResist) * (GetIsSuppressingBurn() ? StaticGameSettings::s_burnSuppressionRatio : 1.f);
+		poisonDealt *= (1.f - m_poisonResist) * (GetIsSuppressingPoison() ? StaticGameSettings::s_poisonSuppressionRatio : 1.f);
 	}
 
 	m_currentBurn += burnDealt;
@@ -346,17 +346,17 @@ void CHealth::AppendDebugString(EntityDebugContext& context) const
 	{
 		context.m_debugString += StringUtils::StringF("Vuln: %.1f (x%.2f)\n", m_currentVulnerability, m_physTakenMultiplier);
 	}
-	if (m_physicalResistance > 0.f)
+	if (m_physicalResist > 0.f)
 	{
-		context.m_debugString += StringUtils::StringF("Phys Resist: %.1f%%\n", m_physicalResistance * 100.f);
+		context.m_debugString += StringUtils::StringF("Phys Resist: %.1f%%\n", m_physicalResist * 100.f);
 	}
-	if (m_burnResistance > 0.f)
+	if (m_burnResist > 0.f)
 	{
-		context.m_debugString += StringUtils::StringF("Burn Resist: %.1f%%\n", m_burnResistance * 100.f);
+		context.m_debugString += StringUtils::StringF("Burn Resist: %.1f%%\n", m_burnResist * 100.f);
 	}
-	if (m_poisonResistance > 0.f)
+	if (m_poisonResist > 0.f)
 	{
-		context.m_debugString += StringUtils::StringF("Poison Resist: %.1f%%\n", m_poisonResistance * 100.f);
+		context.m_debugString += StringUtils::StringF("Poison Resist: %.1f%%\n", m_poisonResist * 100.f);
 	}
 	if (GetCannotBeProtected())
 	{

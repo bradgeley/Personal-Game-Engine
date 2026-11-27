@@ -1,6 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "RunState.h"
 #include "AbilityDef.h"
+#include "AttributeDef.h"
 #include "BiomeDef.h"
 #include "EnemyAffixDef.h"
 #include "FlavorDef.h"
@@ -24,6 +25,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 static constexpr char const* MAIN_MENU_FONT_NAME = "Data/Fonts/Gypsy.fnt";
 const char* s_abilityDefsFilePath = "Data/Definitions/AbilityDefs.xml";
+const char* s_attributeDefsFilePath = "Data/Definitions/AttributeDefs.xml";
 
 
 
@@ -77,6 +79,7 @@ void RunState::Enter(NamedProperties const& props)
 {
 	GameState::Enter(props);
 
+	AttributeDef::LoadFromXML(s_attributeDefsFilePath);
 	AbilityDef::LoadFromXML(s_abilityDefsFilePath);
 	FlavorDef::LoadFromXML();
 	TileDef::LoadFromXML();
@@ -116,6 +119,8 @@ void RunState::Enter(NamedProperties const& props)
 		SetupJourney(m_runData);
 	}
 
+	m_runData.InitAttributes();
+
 	NamedProperties transitionProps;
 	transitionProps.Set<Name>("state", "TowerDefense");
 	transitionProps.Set<RunData*>("runData", &m_runData);
@@ -133,6 +138,7 @@ void RunState::Exit(NamedProperties const& props)
 	TileDef::Shutdown();
 	FlavorDef::Shutdown();
 	AbilityDef::Shutdown();
+	AttributeDef::Shutdown();
 
 	g_eventSystem->UnsubscribeMethod("MissionOver", this, &RunState::MissionOver);
 
@@ -188,7 +194,8 @@ void RunState::Render() const
 //----------------------------------------------------------------------------------------------------------------------
 bool RunState::MissionOver(NamedProperties&)
 {
-	if (m_runData.m_health <= 0.f)
+	float health = m_runData.GetAttribute("Health", 0.f);
+	if (health <= 0.f)
 	{
 		NamedProperties popStateProps;
 		popStateProps.Set<Name>("state", "MainMenu");

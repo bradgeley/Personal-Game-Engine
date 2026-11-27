@@ -55,7 +55,7 @@ void SGoal::Run(SystemContext const& context) const
 			if (!scDebug.m_godMode)
 			{
 				float damage = GetDamageToPlayerByTags(tags);
-				runData.m_health -= damage;
+				runData.ApplyPlayerDamage(damage);
 			}
 		}
 	}

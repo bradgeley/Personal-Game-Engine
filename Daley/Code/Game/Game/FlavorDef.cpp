@@ -30,7 +30,7 @@ FlavorDef::FlavorDef(XmlElement const* flavorDefXmlElement)
 	// Attributes
 	if (XmlElement const* attributesElement = flavorDefXmlElement->FirstChildElement("Attributes"))
 	{
-		m_attributes = AbilityAttributes(attributesElement);
+		m_attributes = AttributeSet(attributesElement);
 	}
 
 	// Ability Flags

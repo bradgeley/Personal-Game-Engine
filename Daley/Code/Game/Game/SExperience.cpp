@@ -33,7 +33,7 @@ void GrantExpInternal(RunData& runData, double exp)
 {
 	int levelBefore = RunData::GetLevelData(runData.m_experience).m_level;
 
-	double totalExp = exp * static_cast<double>(runData.m_experienceMultiplier);
+	double totalExp = exp * static_cast<double>(1.f + runData.GetAttribute("ExpMulti", 0.f));
 	uint64_t wholeExp = static_cast<uint64_t>(totalExp);
 	double remainder = totalExp - static_cast<double>(wholeExp);
 

@@ -19,23 +19,23 @@
   <EnemyAffix name="Healer" ability="HealingAura" weight="0.5" rare="true"/>
   
   <EnemyAffix name="Bulky" weight="10">
-    <Attributes healthMulti="0.5"></Attributes>
+    <Attributes MaxHealthMulti="0.5"></Attributes>
   </EnemyAffix>
   
   <EnemyAffix name="Speedy" weight="10">
-    <Attributes movementSpeedMulti="0.5"></Attributes>
+    <Attributes MoveSpeedMulti="0.5"></Attributes>
   </EnemyAffix>
 
   <EnemyAffix name="Armored" weight="10">
-    <Attributes physicalResistance="0.5"></Attributes>
+    <Attributes PhysicalResist="0.5"></Attributes>
   </EnemyAffix>
 
   <EnemyAffix name="ColdBlooded" weight="10">
-    <Attributes burnResistance="0.5"></Attributes>
+    <Attributes BurnResist="0.5"></Attributes>
   </EnemyAffix>
 
   <EnemyAffix name="IronStomach" weight="10">
-    <Attributes poisonResistance="0.5"></Attributes>
+    <Attributes PoisonResist="0.5"></Attributes>
   </EnemyAffix>
 
   <EnemyAffix name="HealBurn" ability="HealBurn" weight="0.5" rare="true"/>

@@ -8,6 +8,14 @@
 
 
 //----------------------------------------------------------------------------------------------------------------------
+void RunData::InitAttributes()
+{
+	ResetModifiableAttributes();
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
 void RunData::Shutdown()
 {
 	m_runModifierPool.Shutdown();
@@ -129,20 +137,22 @@ void RunData::GenerateModifierChoices()
 //----------------------------------------------------------------------------------------------------------------------
 void RunData::ResetModifiableAttributes()
 {
-	m_goldGainMultiplier = 1.f;
-	m_experienceMultiplier = 1.f;
-	m_income = StaticGameSettings::s_baseIncome;
-	m_creditLimit = StaticGameSettings::s_baseCreditLimit;
-	m_savingsInterestRate = StaticGameSettings::s_baseSavingsInterestRate;
-	m_debtInterestRate = StaticGameSettings::s_baseDebtInterestRate;
-	m_interestTimerSeconds = StaticGameSettings::s_baseInterestTimerSeconds;
-	m_maxHealth = StaticGameSettings::s_basePlayerHealth;
-	m_healthRegen = StaticGameSettings::s_basePlayerHealthRegen;
-	m_maxFlavors = StaticGameSettings::s_flavorUnlockLimit;
-	m_swirlLimit = StaticGameSettings::s_baseSwirlLimit;
-	m_costRampPerTower = StaticGameSettings::s_baseCostRampPerTower;
-	m_sellRefundRatio = StaticGameSettings::s_baseSellRefundRatio;
-	m_maxSellsPerMission = StaticGameSettings::s_baseSellCount;
+	AttributeSet& attrs = m_attributes;
+
+	attrs.SetValue("MaxHealth", StaticGameSettings::s_basePlayerHealth);
+	attrs.SetValue("HealthRegen", StaticGameSettings::s_basePlayerHealthRegen);
+	attrs.SetValue("Income", StaticGameSettings::s_baseIncome);
+	attrs.SetValue("IncomeInterval", StaticGameSettings::s_baseIncomeInterval);
+	attrs.SetValue("FlavorLimit", static_cast<float>(StaticGameSettings::s_flavorUnlockLimit));
+	attrs.SetValue("SwirlLimit", static_cast<float>(StaticGameSettings::s_baseSwirlLimit));
+	attrs.SetValue("SellLimit", static_cast<float>(StaticGameSettings::s_baseSellCount));
+	attrs.SetValue("SellRefundRatio", StaticGameSettings::s_baseSellRefundRatio);
+	attrs.SetValue("CreditLimit", StaticGameSettings::s_baseCreditLimit);
+	attrs.SetValue("SavingsInterestRate", StaticGameSettings::s_baseSavingsInterestRate);
+	attrs.SetValue("DebtInterestRate", StaticGameSettings::s_baseDebtInterestRate);
+	attrs.SetValue("TowerCostRamp", StaticGameSettings::s_baseCostRampPerTower);
+	attrs.SetValue("ExpMulti", 0.f);
+	attrs.SetValue("GoldMulti", 0.f);
 }
 
 
@@ -150,10 +160,12 @@ void RunData::ResetModifiableAttributes()
 //----------------------------------------------------------------------------------------------------------------------
 void RunData::PrepareForMissionStart()
 {
-	m_gold = StaticGameSettings::s_baseGold * m_goldGainMultiplier;
-	m_health = StaticGameSettings::s_basePlayerHealth;
-	m_interestTimerSecondsRemaining = StaticGameSettings::s_baseInterestTimerSeconds;
-	m_numSoldTowers = 0;
+	m_attributes.SetValue("Gold", StaticGameSettings::s_baseGold * (1.f + m_attributes.GetValue("GoldMulti")));
+	m_attributes.SetValue("Health", m_attributes.GetValue("MaxHealth", StaticGameSettings::s_basePlayerHealth));
+	m_attributes.SetValue("SellsUsed", 0.f);
+
+	m_incomeIntervalSecondsRemaining = m_attributes.GetValue("IncomeInterval");
+
 	m_numActiveModifierChoices = 0;
 	m_modifierChoices.fill(nullptr);
 
@@ -171,13 +183,15 @@ void RunData::PrepareForMissionStart()
 //----------------------------------------------------------------------------------------------------------------------
 void RunData::OnTowerPlacementSuccess(TowerPlacementRequest const& request)
 {
-	m_gold -= request.m_cost;
+	m_attributes.AddValue("Gold", -request.m_cost);
+
+	float costRampValue = m_attributes.GetValue("TowerCostRamp", 0.f);
 
 	for (PlaceableTower& tower : m_placeableTowers)
 	{
 		if (tower.m_towerName == request.m_towerEntityName && tower.m_flavorName == request.m_flavorName)
 		{
-			tower.m_cost *= m_costRampPerTower;
+			tower.m_cost *= (1.f + costRampValue);
 		}
 	}
 }
@@ -187,13 +201,131 @@ void RunData::OnTowerPlacementSuccess(TowerPlacementRequest const& request)
 //----------------------------------------------------------------------------------------------------------------------
 void RunData::OnSwirlSuccess(TowerSwirlRequest const& request)
 {
-	m_gold -= request.m_cost;
+	m_attributes.AddValue("Gold", -request.m_cost);
+	
+	float costRampValue = m_attributes.GetValue("TowerCostRamp", 0.f);
 
 	for (PlaceableTower& tower : m_placeableTowers)
 	{
 		if (tower.m_flavorName == request.m_flavor)
 		{
-			tower.m_cost *= m_costRampPerTower;
+			tower.m_cost *= (1.f + costRampValue);
 		}
 	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float RunData::GetHealth() const
+{
+	return m_attributes.GetValue("Health", 0.f);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float RunData::GetAttribute(Name attribute, float defaultValue, bool errorIfNotFound) const
+{
+	return m_attributes.GetValue(attribute, defaultValue, errorIfNotFound);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+int RunData::GetIntAttribute(Name attribute, int defaultValue, bool errorIfNotFound) const
+{
+	return static_cast<int>(m_attributes.GetValue(attribute, static_cast<float>(defaultValue), errorIfNotFound));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunData::AddGold(float gold)
+{
+	float goldGainMulti = m_attributes.GetValue("GoldMulti", 0.f);
+	m_attributes.AddValue("Gold", gold * (1.f + goldGainMulti));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunData::AddSells(int sells)
+{
+	m_attributes.AddValue("SellsUsed", static_cast<float>(sells));
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunData::ApplyPlayerDamage(float damage)
+{
+	m_attributes.AddValue("Health", -damage);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunData::ApplyPlayerHealthRegen(float deltaSeconds)
+{
+	float health = m_attributes.GetValue("Health", 0.f);
+	if (health <= 0.f)
+	{
+		return;
+	}
+
+	float healthRegen = m_attributes.GetValue("HealthRegen", 0.f);
+	float maxHealth = m_attributes.GetValue("MaxHealth", 0.f);
+
+	health += healthRegen * deltaSeconds;
+	if (health > maxHealth)
+	{
+		health = maxHealth;
+	}
+
+	m_attributes.SetValue("Health", health);
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void RunData::ApplyPlayerIncome()
+{
+	while (m_incomeIntervalSecondsRemaining <= 0.f)
+	{
+		float income = m_attributes.GetValue("Income", StaticGameSettings::s_baseIncome);
+		float incomeIncrease = GetLevelData(m_experience).m_level * StaticGameSettings::s_baseIncomePerLevel;
+
+		float totalIncome = income + incomeIncrease;
+		float gold = m_attributes.GetValue("Gold", 0.f);
+		float goldMulti = m_attributes.GetValue("GoldMulti", 0.f);
+
+		gold += totalIncome * (1.f + goldMulti);
+
+		if (gold > 0.f)
+		{
+			float savingsInterestRate = m_attributes.GetValue("SavingsInterestRate", StaticGameSettings::s_baseSavingsInterestRate);
+			gold += gold * savingsInterestRate;
+		}
+		else if (gold < 0.f)
+		{
+			float debtInterestRate = m_attributes.GetValue("DebtInterestRate", StaticGameSettings::s_baseDebtInterestRate);
+			gold += gold * debtInterestRate;
+		}
+
+		m_attributes.SetValue("Gold", gold);
+
+		float incomeInterval = m_attributes.GetValue("IncomeInterval", StaticGameSettings::s_baseIncomeInterval);
+		m_incomeIntervalSecondsRemaining += incomeInterval;
+	}
+}
+
+
+
+//----------------------------------------------------------------------------------------------------------------------
+float RunData::ApplySell(float costOfPurchase)
+{
+	float refund = costOfPurchase * m_attributes.GetValue("SellRefundRatio", 0.f);
+	m_attributes.AddValue("Gold", refund);
+	return refund;
 }

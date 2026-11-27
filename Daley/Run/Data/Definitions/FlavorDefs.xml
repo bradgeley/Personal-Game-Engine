@@ -1,4 +1,4 @@
-<!--Bradley Christensen - 2022-2026-->q
+<!--Bradley Christensen - 2022-2026-->
 
 
 
@@ -9,13 +9,13 @@
   </FlavorDef>
 
   <FlavorDef name="Vanilla" abilities="VanillaAttack">
-    <Attributes Physical="100" Vulnerability="10" CritChance="0.1" CritMulti="0.5" Range="0.1"/>
+    <Attributes Physical="100" Vulnerability="10" CritChance="0.1" CritMulti="0.5" RangeMulti="0.1"/>
     <AbilityFlags flags="Hit"/>
     <DisplayData displayName="Vanilla" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171" desc="Quickly fires physical projectiles"></DisplayData>
   </FlavorDef>
 
   <FlavorDef name="Chocolate" abilities="ChocolateAttack">
-    <Attributes Physical="100" Vulnerability="5" AreaOfEffect="0.5" CritChance="0.1" CritMulti="0.5"/>
+    <Attributes Physical="100" Vulnerability="5" AreaOfEffectMulti="0.5" CritChance="0.1" CritMulti="0.5"/>
     <AbilityFlags flags="splash"/>
     <DisplayData displayName="Chocolate" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20" desc="Fires physical projectiles that splash "></DisplayData>
   </FlavorDef>
@@ -27,13 +27,13 @@
   </FlavorDef>
 
   <FlavorDef name="OrangeSorbet" abilities="OrangeSorbetAttack">
-    <Attributes Burn="100" AreaOfEffect="0.25"/>
+    <Attributes Burn="100" AreaOfEffectMulti="0.25"/>
     <AbilityFlags flags="Puddle"/>
     <DisplayData displayName="Orange Sorbet" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="255,165,0" desc="Burns nearby enemies"></DisplayData>
   </FlavorDef>
 
   <FlavorDef name="RaspberrySorbet" abilities="RaspberrySorbetAttack">
-    <Attributes Burn="100" AreaOfEffect="0.25"/>
+    <Attributes Burn="100" AreaOfEffectMulti="0.25"/>
     <AbilityFlags flags="Splash"/>
     <DisplayData displayName="Raspberry Sorbet" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="227,11,93" desc="Periodically burns nearby enemies"></DisplayData>
   </FlavorDef>
@@ -45,13 +45,13 @@
   </FlavorDef>
 
   <FlavorDef name="Coconut" abilities="CoconutAttack">
-    <Attributes Physical="100" Vulnerability="5" Slow="1" AreaOfEffect="0.25" CritChance="0.1" CritMulti="0.5"/>
+    <Attributes Physical="100" Vulnerability="5" Slow="1" AreaOfEffectMulti="0.25" CritChance="0.1" CritMulti="0.5"/>
     <AbilityFlags flags="Splash"/>
     <DisplayData displayName="Coconut" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250" desc="Periodically deals physical and slows nearby enemies"></DisplayData>
   </FlavorDef>
 
   <FlavorDef name="Ube" abilities="UbeAttack">
-    <Attributes Physical="33" Burn="33" Poison="11" Vulnerability="2.5" NumChains="1"/>
+    <Attributes Physical="33" Burn="33" Poison="11" Vulnerability="2.5" ChainCount="1"/>
     <AbilityFlags flags="Hit"/>
     <DisplayData displayName="Ube" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245" desc="Laser that deals physical, burn, and poison"></DisplayData>
   </FlavorDef>
@@ -63,7 +63,7 @@
   </FlavorDef>
 
   <FlavorDef name="Coffee" abilities="CoffeeAttack">
-    <Attributes Haste="1" AttackSpeed="0.5" Range="0.1" MultishotCount="1" ChainCount="1"/>
+    <Attributes Haste="1" AttackSpeedMulti="0.5" RangeMulti="0.1" Multishot="1" ChainCount="1"/>
     <DisplayData displayName="Coffee" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="165,130,90" desc="Hastes adjacent towers"></DisplayData>
   </FlavorDef>
   

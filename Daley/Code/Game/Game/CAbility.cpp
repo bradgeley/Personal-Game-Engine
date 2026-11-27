@@ -37,7 +37,7 @@ void CAbility::RebuildAttributes(SystemContext const& context, EntityID entityID
 	CTags const& tags = *context.GetComponent<CTags>(entityID);
 	RunData const& runData = *context.GetSingletonConst<SCRunData>().m_data;
 
-	m_attributes = AbilityAttributes(); // Reset attributes
+	m_attributes.Clear();
 
 	for (auto const& flavorDef : flavorDefs)
 	{

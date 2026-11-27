@@ -220,6 +220,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>false</ExceptionHandling>
+      <DisableSpecificWarnings>4530;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -245,6 +246,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>false</ExceptionHandling>
+      <DisableSpecificWarnings>4530;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -273,6 +275,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <Optimization>Disabled</Optimization>
       <ExceptionHandling>false</ExceptionHandling>
+      <DisableSpecificWarnings>4530;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -294,7 +297,8 @@
     <ClCompile Include="Framework\WASM\WebApplication.cpp" />
     <ClCompile Include="Framework\Windows\Main_Windows.cpp" />
     <ClCompile Include="Game\Ability.cpp" />
-    <ClCompile Include="Game\AbilityAttributes.cpp" />
+    <ClCompile Include="Game\AttributeDef.cpp" />
+    <ClCompile Include="Game\AttributeSet.cpp" />
     <ClCompile Include="Game\AbilityComponentDefs.cpp" />
     <ClCompile Include="Game\AbilityComponents.cpp" />
     <ClCompile Include="Game\AbilityDef.cpp" />
@@ -417,7 +421,8 @@
     <ClInclude Include="Framework\EngineBuildPreferences.h" />
     <ClInclude Include="Framework\WASM\WebApplication.h" />
     <ClInclude Include="Game\Ability.h" />
-    <ClInclude Include="Game\AbilityAttributes.h" />
+    <ClInclude Include="Game\AttributeDef.h" />
+    <ClInclude Include="Game\AttributeSet.h" />
     <ClInclude Include="Game\AbilityComponentDefs.h" />
     <ClInclude Include="Game\AbilityComponents.h" />
     <ClInclude Include="Game\AbilityDef.h" />
@@ -567,6 +572,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="..\..\Run\Data\Definitions\AttributeDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\EnemyAffixDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\BiomeDefs.xml" />
     <Xml Include="..\..\Run\Data\Definitions\EntityDefs.xml" />

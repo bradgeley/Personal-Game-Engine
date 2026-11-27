@@ -235,7 +235,7 @@ TowerSwirlResult STowerSpawner::CanSwirl(TowerSwirlRequest const& request, Syste
     }
 
 	RunData const& runData = *context.GetSingleton<SCRunData>().m_data;
-    if (numFlavors >= runData.m_swirlLimit)
+    if (numFlavors >= runData.GetIntAttribute("SwirlLimit", 0))
 	{
 		return TowerSwirlResult::TowerAtSwirlLimit;
 	}
@@ -494,7 +494,9 @@ bool STowerSpawner::ProcessTowerRemovalRequest(TowerRemovalRequest const& reques
         }
     }
 
-    if (runData.m_numSoldTowers == runData.m_maxSellsPerMission)
+	int sellsUsed = runData.GetIntAttribute("SellsUsed", 0);
+	int sellLimit = runData.GetIntAttribute("SellLimit", 0);
+    if (sellsUsed >= sellLimit)
     {
         FloatingTextInstance floatingTextInstance;
         floatingTextInstance.m_lifetimeSeconds = 2.f;
@@ -506,7 +508,7 @@ bool STowerSpawner::ProcessTowerRemovalRequest(TowerRemovalRequest const& reques
         return false;
     }
 
-    runData.m_numSoldTowers++;
+	runData.m_attributes.AddValue("SellsUsed", 1.f);
 
     AABB2 towerBounds = AABB2(transform.m_pos, static_cast<float>(placeable.m_dims.x) * 0.5f, static_cast<float>(placeable.m_dims.y) * 0.5f);
     towerBounds.Squeeze(0.1f);
@@ -523,14 +525,15 @@ bool STowerSpawner::ProcessTowerRemovalRequest(TowerRemovalRequest const& reques
 
     if (request.m_isSell)
     {
-        float refund = placeable.m_costOfPurchase * runData.m_sellRefundRatio;
-        runData.m_gold += refund;
+        float refund = runData.ApplySell(placeable.m_costOfPurchase);
+		sellsUsed = runData.GetIntAttribute("SellsUsed", 0);
+		sellLimit = runData.GetIntAttribute("SellLimit", 0);
 
         FloatingTextInstance floatingTextInstance;
         floatingTextInstance.m_lifetimeSeconds = 2.f;
         floatingTextInstance.m_pos = transform.m_pos;
         floatingTextInstance.m_velocity = Vec2(0.f, 1.f);
-        floatingTextInstance.m_text = StringUtils::StringF("+$%.1f (%i remaining)", refund, runData.m_maxSellsPerMission - runData.m_numSoldTowers);
+        floatingTextInstance.m_text = StringUtils::StringF("+$%.1f (%i remaining)", refund, sellLimit - sellsUsed);
         floatingTextInstance.m_tint = Rgba8::Green;
         floatingTextInstance.m_scale = 1.5f;
         scFloatingText.m_floatingTextInstances.push_back(floatingTextInstance);

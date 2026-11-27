@@ -45,44 +45,22 @@ void SCurrency::Run(SystemContext const& context) const
 		CDeath const& death = deathComponents[it];
 		if (death.GetDiedThisFrame())
 		{
-			runData.m_gold += death.m_goldReward * runData.m_goldGainMultiplier;
+			runData.AddGold(death.m_goldReward);
 		}
 	}
 
 	// Tick player health regen (maybe move to separate system later?)
-	runData.m_health += runData.m_healthRegen * context.m_deltaSeconds;
-	if (runData.m_health > runData.m_maxHealth)
-	{
-		runData.m_health = runData.m_maxHealth;
-	}
+	runData.ApplyPlayerHealthRegen(context.m_deltaSeconds);
 
 	// Tick interest timer
-	runData.m_interestTimerSecondsRemaining -= context.m_deltaSeconds;
+	runData.m_incomeIntervalSecondsRemaining -= context.m_deltaSeconds;
 
-	if (runData.m_interestTimerSecondsRemaining > 0.f)
+	if (runData.m_incomeIntervalSecondsRemaining > 0.f)
 	{
 		return;
 	}
 
-	float incomeIncrease = runData.GetLevelData(runData.m_experience).m_level * StaticGameSettings::s_baseIncomePerLevel;
-	float totalIncome = runData.m_income + incomeIncrease;
-
-	// Add income/interest/debt to player gold if interest timer expired
-	while (runData.m_interestTimerSecondsRemaining <= 0.f)
-	{
-		runData.m_gold += totalIncome * runData.m_goldGainMultiplier;
-
-		if (runData.m_gold > 0.f)
-		{
-			runData.m_gold += runData.m_gold * runData.m_savingsInterestRate;
-		}
-		else if (runData.m_gold < 0.f)
-		{
-			runData.m_gold += runData.m_gold * runData.m_debtInterestRate;
-		}
-
-		runData.m_interestTimerSecondsRemaining += runData.m_interestTimerSeconds;
-	}
+	runData.ApplyPlayerIncome();
 }
 
 
@@ -93,7 +71,7 @@ bool SCurrency::GrantGold(NamedProperties& params)
 	SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
 	RunData& runData = *scRunData.m_data;
 	float gold = params.Get<float>("gold", 0.f);
-	runData.m_gold += gold;
+	runData.AddGold(gold);
 	return false;
 }
 
@@ -105,6 +83,6 @@ bool SCurrency::GrantSells(NamedProperties& params)
 	SCRunData& scRunData = g_ecs->GetSingleton<SCRunData>();
 	RunData& runData = *scRunData.m_data;
 	int sells = params.Get<int>("sells", 0);
-	runData.m_numSoldTowers -= sells;
+	runData.AddSells(sells);
 	return false;
 }

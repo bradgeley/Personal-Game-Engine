@@ -1,9 +1,9 @@
 // Bradley Christensen - 2022-2026
 #pragma once
 #include "StringUtils.h"
+#include <shared_mutex>
 #include <unordered_map>
-#include <queue>
-#include <mutex>
+#include <deque>
 
 
 
@@ -11,7 +11,6 @@
 // THE Name Table
 //
 extern class NameTable* g_nameTable;
-
 
 
 
@@ -24,6 +23,9 @@ class NameTable
 {
 public:
 
+	NameTable();
+	static NameTable& Get();
+
 	void Startup();
 	void Shutdown();
 
@@ -31,9 +33,9 @@ public:
 
 protected:
 
-	std::mutex m_lookupTableMutex;
+	mutable std::shared_mutex m_lookupTableMutex;
 	std::unordered_map<std::string, size_t, StringUtils::CaseInsensitiveStringHash, StringUtils::CaseInsensitiveStringEquals> m_lookupTable;
-	std::deque<std::string> m_nameTable; // Deque to avoid reallocations that would invalidate pointers to strings in the table, for thread safety
+	std::deque<std::string> m_nameTable;
 
 	friend struct Name;
 };

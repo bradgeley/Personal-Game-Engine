@@ -1,6 +1,6 @@
 // Bradley Christensen - 2022-2026
 #pragma once
-#include "AbilityAttributes.h"
+#include "AttributeSet.h"
 #include "GameCommon.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Core/XmlUtils.h"
@@ -135,8 +135,8 @@ public:
 public:
 
 	// Linear increase per level of one attribute
-	AbilityAttributes m_modifiers;
-	AbilityAttributes m_modifiersPerLevel;
+	AttributeSet m_modifiers;
+	AttributeSet m_modifiersPerLevel;
 	std::array<Name, s_maxRequirements> m_tagRequirements; // this modifier applies to towers with these tags
 };
 
@@ -149,7 +149,7 @@ public:
 
 	FlavorAbilityRunModifier(FlavorAbilityRunModifierDef const& def);
 
-	AbilityAttributes GetValue() const;
+	AttributeSet GetValue() const;
 
 	virtual void Apply(SystemContext const& context) const override;
 	virtual void ApplyToAbility(CAbility& ability, CTags const& tags) const override;
@@ -174,9 +174,8 @@ public:
 
 public:
 
-	MetaAttribute m_metaAttribute = MetaAttribute::Invalid;
-	float m_baseValue = 0.f;
-	float m_valuePerLevel = 0.f;
+	AttributeSet m_modifiers;
+	AttributeSet m_modifiersPerLevel;
 };
 
 
@@ -188,7 +187,7 @@ public:
 
 	MetaRunModifier(MetaRunModifierDef const& def);
 
-	float GetValue() const;
+	AttributeSet GetValue() const;
 
 	virtual void Apply(SystemContext const& context) const override;
 	virtual void ApplyToRunData(RunData& runData) const override;
@@ -196,59 +195,4 @@ public:
 	virtual void GetDescription(std::string& outStr) const override;
 
 	MetaRunModifierDef const& GetDef() const;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct EconomyRunModifierDef : public RunModifierDef
-{
-public:
-
-	EconomyRunModifierDef(XmlElement const& modElement);
-
-	virtual RunModifier* MakeModifierInstance() const override;
-
-	virtual void GetDescription(std::string& outStr) const override;
-
-public:
-
-	// Gold gain
-	float m_goldGainMultiplierIncreaseBase = 0.f;
-	float m_goldGainMultiplierIncreasePerLevel = 0.f;
-
-	// Interest
-	float m_interestRateIncreaseBase = 0.f;
-	float m_interestRateIncreasePerLevel = 0.f;
-	float m_interestTimerSpeedIncreaseBase = 0.f;
-	float m_interestTimerSpeedIncreasePerLevel = 0.f;
-
-	// Selling
-	int m_baseSells = 0;
-	int m_sellsPerLevel = 0;
-	float m_baseSellRateIncrease = 0.f;
-	float m_sellRateIncreasePerLevel = 0.f;
-
-	// Debt
-	float m_creditLimitIncreaseBase = 0.f;
-	float m_creditLimitIncreasePerLevel = 0.f;
-	float m_debtInterestRateDecreaseBase = 0.f;
-	float m_debtInterestRateDecreasePerLevel = 0.f;
-};
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
-struct EconomyRunModifier : public RunModifier
-{
-public:
-
-	EconomyRunModifier(EconomyRunModifierDef const& def);
-
-	virtual void Apply(SystemContext const& context) const override;
-	virtual void ApplyToRunData(RunData& runData) const override;
-
-	virtual void GetDescription(std::string& outStr) const override;
-
-	EconomyRunModifierDef const& GetDef() const;
 };

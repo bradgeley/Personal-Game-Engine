@@ -79,9 +79,9 @@ public:
 	float m_physTakenMultiplier     = 1.f; // Calculated as 1 + (vulnerability^X / 100) where X is vuln exponent
     float m_immunityDurationLeft    = 0.f; // Remaining immunity
    
-	float m_physicalResistance      = 0.f;
-	float m_burnResistance          = 0.f;
-	float m_poisonResistance        = 0.f;
+	float m_physicalResist          = 0.f;
+	float m_burnResist              = 0.f;
+	float m_poisonResist            = 0.f;
 
     uint8_t m_healthFlags           = 0;
 };

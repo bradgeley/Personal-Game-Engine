@@ -40,7 +40,7 @@ EnemyAffixDef::EnemyAffixDef(XmlElement const& affixElement)
 
 	if (XmlElement const* attributeBonusesElement = affixElement.FirstChildElement("Attributes"))
 	{
-		m_enemyAttributeBonuses = AbilityAttributes(attributeBonusesElement);
+		m_attributes = AttributeSet(attributeBonusesElement);
 	}
 }
 
@@ -49,12 +49,19 @@ EnemyAffixDef::EnemyAffixDef(XmlElement const& affixElement)
 //----------------------------------------------------------------------------------------------------------------------
 bool EnemyAffixDef::ApplyToEntity(EntityID id, SystemContext const& context) const
 {
-	float healthMultiplier = m_enemyAttributeBonuses.GetValue(AbilityAttribute::Health_Multi);
-	float moveSpeedMultiplier = m_enemyAttributeBonuses.GetValue(AbilityAttribute::MoveSpeed_Multi);
-	float physResist = m_enemyAttributeBonuses.GetValue(AbilityAttribute::PhysicalResistance);
-	float burnResist = m_enemyAttributeBonuses.GetValue(AbilityAttribute::BurnResistance);
-	float poisonResist = m_enemyAttributeBonuses.GetValue(AbilityAttribute::PoisonResistance);
-	float slowResist = m_enemyAttributeBonuses.GetValue(AbilityAttribute::SlowResistance);
+	static Name const healthMultiName("HealthMulti");
+	static Name const moveSpeedMultiName("MoveSpeedMulti");
+	static Name const physResistName("PhysicalResist");
+	static Name const burnResistName("BurnResist");
+	static Name const poisonResistName("PoisonResist");
+	static Name const slowResistName("SlowResist");
+
+	float healthMultiplier = m_attributes.GetValue(healthMultiName);
+	float moveSpeedMultiplier = m_attributes.GetValue(moveSpeedMultiName);
+	float physResist = m_attributes.GetValue(physResistName);
+	float burnResist = m_attributes.GetValue(burnResistName);
+	float poisonResist = m_attributes.GetValue(poisonResistName);
+	float slowResist = m_attributes.GetValue(slowResistName);
 
 	bool relevantToHealth = (m_healthFlags != 0 || healthMultiplier != 0.f || physResist != 0.f || burnResist != 0.f || poisonResist != 0.f);
 	bool relevantToMovement = (moveSpeedMultiplier != 0.f);
@@ -74,9 +81,9 @@ bool EnemyAffixDef::ApplyToEntity(EntityID id, SystemContext const& context) con
 			health->m_healthFlags |= m_healthFlags;
 			health->m_maxHealth *= (1.f + healthMultiplier);
 			health->m_currentHealth = health->m_maxHealth;
-			health->m_physicalResistance += physResist;
-			health->m_burnResistance += burnResist;
-			health->m_poisonResistance += poisonResist;
+			health->m_physicalResist += physResist;
+			health->m_burnResist += burnResist;
+			health->m_poisonResist += poisonResist;
 		}
 	}
 

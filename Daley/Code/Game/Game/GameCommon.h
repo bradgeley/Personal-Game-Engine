@@ -49,17 +49,6 @@ enum class AbilityScalingType : uint8_t
 
 
 //----------------------------------------------------------------------------------------------------------------------
-enum class MetaAttribute : uint32_t
-{
-	Invalid = 0,
-	Exp,
-	SwirlLimit,
-};
-static std::array<std::string, 3> s_metaAttributeEnumStrings = { "Invalid", "Exp", "SwirlLimit" };
-
-
-
-//----------------------------------------------------------------------------------------------------------------------
 namespace StaticGameSettings
 {
 	// Rendering
@@ -101,11 +90,11 @@ namespace StaticGameSettings
 	static constexpr float s_baseCreditLimit				= 0.f;
 	static constexpr float s_baseSavingsInterestRate		= 0.01f;
 	static constexpr float s_baseDebtInterestRate			= 0.5f;
-	static constexpr float s_baseInterestTimerSeconds		= 30.f;
+	static constexpr float s_baseIncomeInterval				= 30.f;
 	static constexpr float s_baseSwirlCost					= 50.f;
-	static constexpr int   s_baseSellCount				= 5;
-	static constexpr float s_baseSellRefundRatio				= 0.5f;
-	static constexpr float s_baseCostRampPerTower			= 1.00f;
+	static constexpr int   s_baseSellCount					= 5;
+	static constexpr float s_baseSellRefundRatio			= 0.5f;
+	static constexpr float s_baseCostRampPerTower			= 0.0f;
 
 	// Difficulty Settings
 	static constexpr int   s_maxEnemyAffixes				= 2;

@@ -90,14 +90,14 @@
 
     <!-- Level 10 -->
     <FlavorAbilityRunModifier name="GenericAttackSpeed" weight="0.5" levelRequirement="10" maxLevel="5">
-      <Attributes attackSpeed="0.05"/>
-      <AttributesPerLevel attackSpeed="0.05"/>
+      <Attributes attackSpeedMulti="0.05"/>
+      <AttributesPerLevel attackSpeedMulti="0.05"/>
       <DisplayData displayName="Attack Speed" spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <FlavorAbilityRunModifier name="GenericRange" weight="0.5" levelRequirement="10" maxLevel="5">
-      <Attributes range="0.05"/>
-      <AttributesPerLevel range="0.05"/>
+      <Attributes rangeMulti="0.05"/>
+      <AttributesPerLevel rangeMulti="0.05"/>
       <DisplayData displayName="Range" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </FlavorAbilityRunModifier>
 
@@ -114,15 +114,15 @@
     </FlavorAbilityRunModifier>
 
     <FlavorAbilityRunModifier name="GenericAoE" weight="0.5" levelRequirement="10" maxLevel="3">
-      <Attributes areaofEffect="0.1"/>
-      <AttributesPerLevel areaofEffect="0.1"/>
+      <Attributes areaOfEffectMulti="0.1"/>
+      <AttributesPerLevel areaOfEffectMulti="0.1"/>
       <DisplayData displayName="Area of Effect" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Range"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <!-- Level 20 -->
     <FlavorAbilityRunModifier name="GenericMultiShot" weight="0.25" levelRequirement="20" maxLevel="1">
-      <Attributes multishotCount="1"/>
-      <AttributesPerLevel multishotCount="1"/>
+      <Attributes multishot="1"/>
+      <AttributesPerLevel multishot="1"/>
       <DisplayData displayName="+1 Multi-Shot" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Multishot"></DisplayData>
     </FlavorAbilityRunModifier>
 
@@ -222,8 +222,8 @@
 
     <!-- Level 5 -->
     <FlavorAbilityRunModifier name="VanillaAttackSpeed" tagRequirement="Vanilla" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes attackSpeed="0.2"/>
-      <AttributesPerLevel attackSpeed="0.2"/>
+      <Attributes attackSpeedMulti="0.2"/>
+      <AttributesPerLevel attackSpeedMulti="0.2"/>
       <DisplayData displayName="Vanilla Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
     </FlavorAbilityRunModifier>
@@ -238,8 +238,8 @@
 
     <!-- Level 50 -->
     <FlavorAbilityRunModifier name="VanillaMultiShot" tagRequirement="Vanilla" weight="0.1" levelRequirement="50" maxLevel="1">
-      <Attributes multishotCount="1"/>
-      <AttributesPerLevel multishotCount="1"/>
+      <Attributes multishot="1"/>
+      <AttributesPerLevel multishot="1"/>
       <DisplayData displayName="Vanilla Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,229,171"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="multiShot"></DisplayData>
     </FlavorAbilityRunModifier>
@@ -259,16 +259,16 @@
 
     <!-- Level 5 -->
     <FlavorAbilityRunModifier name="ChocolateAttackSpeed" tagRequirement="Chocolate" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes attackSpeed="0.2"/>
-      <AttributesPerLevel attackSpeed="0.2"/>
+      <Attributes attackSpeedMulti="0.2"/>
+      <AttributesPerLevel attackSpeedMulti="0.2"/>
       <DisplayData displayName="Chocolate Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <!-- Level 50 -->
     <FlavorAbilityRunModifier name="ChocolateMultiShot" tagRequirement="Chocolate" weight="1" levelRequirement="50" maxLevel="1">
-      <Attributes multishotCount="1"/>
-      <AttributesPerLevel multishotCount="1"/>
+      <Attributes multishot="1"/>
+      <AttributesPerLevel multishot="1"/>
       <DisplayData displayName="Chocolate Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="112,66,20"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="multiShot"></DisplayData>
     </FlavorAbilityRunModifier>
@@ -295,16 +295,16 @@
 
     <!-- Level 5 -->
     <FlavorAbilityRunModifier name="StrawberryAttackSpeed" tagRequirement="Strawberry" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes attackSpeed="0.2"/>
-      <AttributesPerLevel attackSpeed="0.2"/>
+      <Attributes attackSpeedMulti="0.2"/>
+      <AttributesPerLevel attackSpeedMulti="0.2"/>
       <DisplayData displayName="Strawberry Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <!-- Level 50 -->
     <FlavorAbilityRunModifier name="StrawberryMultiShot" tagRequirement="Strawberry" weight="1" levelRequirement="50" maxLevel="1">
-      <Attributes multishotCount="1"/>
-      <AttributesPerLevel multishotCount="1"/>
+      <Attributes multishot="1"/>
+      <AttributesPerLevel multishot="1"/>
       <DisplayData displayName="Strawberry Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="243,182,193"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="multiShot"></DisplayData>
     </FlavorAbilityRunModifier>
@@ -358,8 +358,8 @@
 
     <!-- Level 5 -->
     <FlavorAbilityRunModifier name="CoffeeAttackSpeed" tagRequirement="Coffee" weight="1" levelRequirement="5" maxLevel="2">
-      <Attributes attackSpeed="0.2"/>
-      <AttributesPerLevel attackSpeed="0.2"/>
+      <Attributes attackSpeedMulti="0.2"/>
+      <AttributesPerLevel attackSpeedMulti="0.2"/>
       <DisplayData displayName="Coffee Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="165, 130, 90"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
     </FlavorAbilityRunModifier>
@@ -379,16 +379,16 @@
 
     <!-- Level 5 -->
     <FlavorAbilityRunModifier name="PistachioAttackSpeed" tagRequirement="Pistachio" weight="1" levelRequirement="5" maxLevel="3">
-      <Attributes attackSpeed="0.2"/>
-      <AttributesPerLevel attackSpeed="0.2"/>
+      <Attributes attackSpeedMulti="0.2"/>
+      <AttributesPerLevel attackSpeedMulti="0.2"/>
       <DisplayData displayName="Pistachio Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="147,197,114"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
     </FlavorAbilityRunModifier>
 
     <!-- Level 50 -->
     <FlavorAbilityRunModifier name="PistachioMultiShot" tagRequirement="Pistachio" weight="1" levelRequirement="50" maxLevel="1">
-      <Attributes multishotCount="1"/>
-      <AttributesPerLevel multishotCount="1"/>
+      <Attributes multishot="1"/>
+      <AttributesPerLevel multishot="1"/>
       <DisplayData displayName="Pistachio Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="147,197,114"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="multiShot"></DisplayData>
     </FlavorAbilityRunModifier>
@@ -414,8 +414,8 @@
     </FlavorAbilityRunModifier>
 
     <FlavorAbilityRunModifier name="CoconutAttackSpeed" tagRequirement="Coconut" weight="1" levelRequirement="1" maxLevel="3">
-      <Attributes attackSpeed="0.2"/>
-      <AttributesPerLevel attackSpeed="0.2"/>
+      <Attributes attackSpeedMulti="0.2"/>
+      <AttributesPerLevel attackSpeedMulti="0.2"/>
       <DisplayData displayName="Coconut Attack Speed" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="250,250,250"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="attackSpeed"></DisplayData>
     </FlavorAbilityRunModifier>
@@ -464,8 +464,8 @@
     </FlavorAbilityRunModifier>
 
     <FlavorAbilityRunModifier name="UbeMultishot" tagRequirement="Ube" weight="1" levelRequirement="10" maxLevel="1">
-      <Attributes multishotCount="1"/>
-      <AttributesPerLevel multishotCount="1"/>
+      <Attributes multishot="1"/>
+      <AttributesPerLevel multishot="1"/>
       <DisplayData displayName="Ube Multi-Shot" spriteSheet="Data/SpriteSheets/Towers.xml" anim="iceCreamScoop" tint="174,153,245"></DisplayData>
       <DisplayData spriteSheet="Data/SpriteSheets/Icons.xml" anim="multishot"></DisplayData>
     </FlavorAbilityRunModifier>
@@ -480,7 +480,7 @@
     </CapabilityRunModifier>
 
     <CapabilityRunModifier name="ImprovedBurn" type="ImprovedBurn" weight="0.2" levelRequirement="5">
-    <DisplayData displayName="Burn Duration" spriteSheet="Data/SpriteSheets/Icons.xml" anim="burn"></DisplayData>
+      <DisplayData displayName="Burn Duration" spriteSheet="Data/SpriteSheets/Icons.xml" anim="burn"></DisplayData>
     </CapabilityRunModifier>
 
     <CapabilityRunModifier name="BurnCrit" type="BurnCrit" weight="0.2" levelRequirement="5">
@@ -503,33 +503,41 @@
       <DisplayData displayName="Improved Vulnerability" spriteSheet="Data/SpriteSheets/Icons.xml" anim="damage"></DisplayData>
     </CapabilityRunModifier>
 
-</RunModifierPool>-->
+  </RunModifierPool> -->
 
 <!-- Misc Mods -->
   <RunModifierPool name="Misc">
 
     <!-- Level 5 -->
-    <MetaRunModifier name="ExpGain" type="exp" base="0.1" perLevel="0.1" weight="0.75" levelRequirement="5" maxLevel="2">
+    <MetaRunModifier name="ExpGain" weight="0.75" levelRequirement="5" maxLevel="2">
+      <Attributes expMulti="0.1"/>
+      <AttributesPerLevel expMulti="0.1"/>
       <DisplayData displayName="Experience Gain" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Exp"></DisplayData>
     </MetaRunModifier>
     
     <!-- Level 10 -->
-    <MetaRunModifier name="SwirlLimit1" type="swirlLimit" base="1" perLevel="1" weight="3" levelRequirement="10" maxLevel="1">
+    <MetaRunModifier name="SwirlLimit1" weight="3" levelRequirement="10" maxLevel="1">
+      <Attributes swirlLimit="1"/>
       <DisplayData displayName="Swirl Limit 1" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Swirl2"></DisplayData>
     </MetaRunModifier>
 
     <!-- Level 20 -->
-    <MetaRunModifier name="SwirlLimit2" type="swirlLimit" base="1" perLevel="1" weight="3" levelRequirement="20" maxLevel="1">
+    <MetaRunModifier name="SwirlLimit2" weight="3" levelRequirement="20" maxLevel="1">
+      <Attributes swirlLimit="1"/>
       <DisplayData displayName="Swirl Limit 2" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Swirl3"></DisplayData>
     </MetaRunModifier>
 
     <!-- Level 25 -->
-    <MetaRunModifier name="ExpGain2" type="exp" base="0.25" perLevel="0.25" weight="0.5" levelRequirement="25" maxLevel="2">
+    <MetaRunModifier name="ExpGain2" weight="0.5" levelRequirement="25" maxLevel="2">
+      <Attributes expMulti="0.25"/>
+      <AttributesPerLevel expMulti="0.25"/>
       <DisplayData displayName="More Experience Gain" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Exp"></DisplayData>
     </MetaRunModifier>
 
     <!-- Level 40 -->
-    <MetaRunModifier name="ExpGain3" type="exp" base="0.5" perLevel="0.5" weight="0.25" levelRequirement="40 " maxLevel="2">
+    <MetaRunModifier name="ExpGain3" weight="0.25" levelRequirement="40" maxLevel="2">
+      <Attributes expMulti="0.5"/>
+      <AttributesPerLevel expMulti="0.5"/>
       <DisplayData displayName="Huge Experience Gain" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Exp"></DisplayData>
     </MetaRunModifier>
 
@@ -539,24 +547,32 @@
   <RunModifierPool name="Economy">
 
     <!-- Level 2 -->
-    <EconomyRunModifier name="GoldGain" goldGainBase="0.075" goldGainPerLevel="0.075" weight="1" levelRequirement="2" maxLevel="5">
+    <MetaRunModifier name="GoldGain" weight="1" levelRequirement="2" maxLevel="5">
+      <Attributes goldMulti="0.075"/>
+      <AttributesPerLevel goldMulti="0.075"/>
       <DisplayData displayName="Gold Gain" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
-    </EconomyRunModifier>
+    </MetaRunModifier>
 
     <!-- Level 10 -->
-    <EconomyRunModifier name="Sells" baseSells="2" sellsPerLevel="2" baseSellRateIncrease="0.05" sellRateIncreasePerLevel="0.05" weight="0.5" levelRequirement="10" maxLevel="5">
+    <MetaRunModifier name="Sells" weight="0.5" levelRequirement="10" maxLevel="5">
+      <Attributes sellLimit="2" sellRefundRatio="0.05"/>
+      <AttributesPerLevel sellLimit="2" sellRefundRatio="0.05"/>
       <DisplayData displayName="Sell Power" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
-    </EconomyRunModifier>
+    </MetaRunModifier>
 
     <!-- Level 20 -->
-    <!--<EconomyRunModifier name="Interest Rate" interestBase="0.025" interestPerLevel="0.025" interestTimerSpeedBase="0.05" interestTimerSpeedPerLevel="0.05" weight="0.5" levelRequirement="20" maxLevel="5">
+    <!--<MetaRunModifier name="Interest Rate" weight="0.5" levelRequirement="20" maxLevel="5">
+      <Attributes interestBase="0.0025" IncomeInterval="-1"/>
+      <AttributesPerLevel interestPerLevel="0.0025" IncomeInterval="-1"/>
       <DisplayData displayName="Interest Rate" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
-    </EconomyRunModifier> -->
+    </MetaRunModifier> -->
 
     <!-- Level 30 -->
-    <!--<EconomyRunModifier name="Debt" creditLimitBase="50" creditLimitPerLevel="50" debtInterestRateBase="-0.05" debtInterestRatePerLevel="-0.05" weight="1" levelRequirement="30" maxLevel="5">
+    <!--<MetaRunModifier name="Debt" weight="1" levelRequirement="30" maxLevel="5">
+      <Attributes CreditLimit="50" DebtInterestRate="-0.05"/>
+      <AttributesPerLevel CreditLimit="50" DebtInterestRate="-0.05"/>
       <DisplayData displayName="Credit Limit" spriteSheet="Data/SpriteSheets/Icons.xml" anim="Gold"></DisplayData>
-    </EconomyRunModifier> -->
+    </MetaRunModifier> -->
 
   </RunModifierPool>
 

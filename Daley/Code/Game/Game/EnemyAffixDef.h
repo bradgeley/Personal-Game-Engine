@@ -1,6 +1,6 @@
 ﻿// Bradley Christensen - 2022-2026
 #pragma once
-#include "AbilityAttributes.h"
+#include "AttributeSet.h"
 #include "Engine/Core/Name.h"
 #include "Engine/Core/XmlUtils.h"
 #include "Engine/ECS/EntityID.h"
@@ -43,5 +43,5 @@ public:
 	uint8_t m_healthFlags = 0;
 
 	// Bonuses applied to the enemy that has this affix
-	AbilityAttributes m_enemyAttributeBonuses;
+	AttributeSet m_attributes;
 };

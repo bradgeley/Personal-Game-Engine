@@ -1,7 +1,7 @@
 // Bradley Christensen - 2022-2026
 #include "Name.h"
 #include "NameTable.h"
-#include "Engine/Core/ErrorUtils.h"
+#include <shared_mutex>
 
 
 
@@ -22,24 +22,32 @@ Name::Name() : Name(s_invalidNameString)
 //----------------------------------------------------------------------------------------------------------------------
 Name::Name(std::string const& string)
 {
-    ASSERT_OR_DIE(g_nameTable, "Name table does not exist yet.");
+	NameTable& nameTable = NameTable::Get();
 
-	// Need to lock a mutex for insertion into the name table, since this could be happening on multiple threads at once
-	// After that, the name table itself is a deque, which means that pointers to strings in the table will not be invalidated by future insertions
-    // so no mutex lock is needed for comparing names or looking up the corresponding string.
-	std::unique_lock<std::mutex> lock(g_nameTable->m_lookupTableMutex);
-
-    auto it = g_nameTable->m_lookupTable.find(string);
-    if (it == g_nameTable->m_lookupTable.end())
     {
-        m_nameIndex = static_cast<uint32_t>(g_nameTable->m_nameTable.size());
-        g_nameTable->m_lookupTable[string] = m_nameIndex;
-        g_nameTable->m_nameTable.push_back(string);
+        // Fast path: any number of threads can read the name table at once if the names already exist
+        std::shared_lock<std::shared_mutex> readLock(nameTable.m_lookupTableMutex);
+        auto const it = nameTable.m_lookupTable.find(string);
+        if (it != nameTable.m_lookupTable.end())
+        {
+            m_nameIndex = static_cast<uint32_t>(it->second);
+            return;
+        }
     }
-    else
+
+	// Slow path: Name needs to be added to the name table
+    std::unique_lock<std::shared_mutex> writeLock(nameTable.m_lookupTableMutex);
+
+    auto const it = nameTable.m_lookupTable.find(string); // Re-check: another thread may have inserted it
+    if (it != nameTable.m_lookupTable.end())
     {
         m_nameIndex = static_cast<uint32_t>(it->second);
+        return;
     }
+
+    m_nameIndex = static_cast<uint32_t>(nameTable.m_nameTable.size());
+    nameTable.m_lookupTable[string] = m_nameIndex;
+    nameTable.m_nameTable.push_back(string);
 }
 
 
@@ -79,9 +87,11 @@ uint32_t Name::GetNameIndex() const
 //----------------------------------------------------------------------------------------------------------------------
 std::string const& Name::ToString() const
 {
-    if (g_nameTable && IsValid())
+    if (IsValid())
     {
-        return g_nameTable->m_nameTable[m_nameIndex];
+        std::shared_lock<std::shared_mutex> readLock(NameTable::Get().m_lookupTableMutex);
+        std::string const& result = NameTable::Get().m_nameTable[m_nameIndex];
+        return result;
     }
     return s_invalidNameString;
 }
@@ -91,9 +101,11 @@ std::string const& Name::ToString() const
 //----------------------------------------------------------------------------------------------------------------------
 const char* Name::ToCStr() const
 {
-    if (g_nameTable && IsValid())
+    if (IsValid())
     {
-        return g_nameTable->m_nameTable[m_nameIndex].c_str();
+        std::shared_lock<std::shared_mutex> readLock(NameTable::Get().m_lookupTableMutex);
+        std::string const& result = NameTable::Get().m_nameTable[m_nameIndex];
+        return result.c_str();
     }
     return s_invalidNameString.c_str();
 }
